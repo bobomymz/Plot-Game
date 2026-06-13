@@ -1,0 +1,152 @@
+/* ========== 全局重置 ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: #0a0a0a;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;          /* 允许纵向滚动查看选项 */
+}
+
+/* ========== 主容器（自然流布局） ========== */
+#game-container {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ========== 图片区域：占满一屏高度 ========== */
+#image-area {
+  width: 100%;
+  height: 100vh;             /* 恰好占满视口 */
+  background: #0f3460;       /* 加载前底色 */
+  position: relative;
+  overflow: hidden;
+}
+
+#scene-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* 裁剪铺满，不变形 */
+  display: block;
+}
+
+/* ========== 剧情文字：向上贴住图片底部（毛玻璃） ========== */
+#text-area {
+  position: relative;
+  z-index: 2;
+  width: 88%;
+  max-width: 1200px;
+  max-height: 100px;        /* 根据你期望的区域大小调整 */
+  overflow-y: auto;         /* 纵向超出时显示滚动条 */
+  padding-right: 8px;       /* 让滚动条不遮挡文字 */
+  margin: -200px auto 0;      /* 向上移动 200px，覆盖图片底部边缘 */
+  padding: 26px 30px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -8px 25px rgba(0,0,0,0.5);
+}
+
+#scene-text {
+  color: #f2f2f2;
+  font-size: 18px;
+  line-height: 1.9;
+  letter-spacing: 0.5px;
+  white-space: pre-wrap;
+  position: relative;
+}
+
+/* 打字机光标 */
+#scene-text.typing::after {
+  content: "▮";
+  color: #fff;
+  font-size: 20px;
+  animation: blink 0.8s infinite;
+  margin-left: 2px;
+  vertical-align: baseline;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ========== 选项区域（文字下方，需下滑查看） ========== */
+#choices-area {
+  width: 88%;
+  max-width: 640px;
+  margin: 20px auto 40px;    /* 与文字保持间距，底部留空 */
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.choice-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 22px;
+  font-size: 16px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.choice-btn:hover {
+  background: rgba(123, 45, 142, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(123, 45, 142, 0.5);
+}
+
+.choice-btn:active {
+  transform: translateY(0);
+}
+
+/* 无选项提示文字 */
+#choices-area p {
+  color: #f0c040;
+  text-align: center;
+  font-size: 20px;
+  margin: 0 auto;
+}
+
+/* ========== 重新开始按钮（固定右上角） ========== */
+#status-bar {
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  z-index: 100;
+}
+
+#restart-btn {
+  padding: 8px 22px;
+  font-size: 14px;
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#restart-btn:hover {
+  color: #fff;
+  background: rgba(0, 0, 0, 0.75);
+  border-color: rgba(255, 255, 255, 0.5);
+}

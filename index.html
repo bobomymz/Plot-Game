@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>尸潮笔记 - wqx出品</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="game-container">
+    <!-- 场景图片 -->
+    <div id="image-area">
+      <img id="scene-image" src="" alt="场景图">
+    </div>
+
+    <!-- 剧情文字 -->
+    <div id="text-area">
+      <p id="scene-text"></p>
+    </div>
+
+    <!-- 选项按钮 -->
+    <div id="choices-area"></div>
+
+    <!-- 底部工具栏 -->
+    <div id="status-bar">
+      <button id="restart-btn">🔄 重新开始</button>
+    </div>
+  </div>
+
+  <!-- 先加载剧情数据，再加载引擎 -->
+  <script src="story.js"></script>
+  <script src="engine.js"></script>
+</body>
+</html>
