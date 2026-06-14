@@ -179,7 +179,7 @@ const storyData = {
 你砰的一下摔上房门，门外传来沉重的倒地声，丧尸大抵头部挨了点伤害。",
     choices: [
       {
-        text: "看门马上去楼梯间（你不会想和丧尸打架的）",
+        text: "开门马上去楼梯间（你不会想和丧尸打架的）",
         nextScene: "家外楼梯间的抉择"
       },
       {
@@ -281,6 +281,7 @@ const storyData = {
         nextScene: "西出口",
         condition: "visitExitTimes >= 2", 
 // 不查看地图，则东西出口至少要逛两次才能走通，其中西出口可以直接离开，东出口有其他剧情
+// 西出口不是西门，西出口是地下车库的出口
         elseScene: "西出口-丧尸堵路"
       },
       {
@@ -296,9 +297,126 @@ const storyData = {
     ]
   },
 
+  "B1-2nd": {
+    image: "images/home/B1-2nd.png",
+    text: "你回到了你那栋楼的地底下。",
+    choices: [
+      {
+        text: "上1楼",
+        nextScene: "1楼-安全"
+      },
+      {
+        text: "查看柱子上的纸张",
+        nextScene: "柱子上的纸张"
+      },
+      {
+        text: "往前走",
+        nextScene: "西出口",
+        condition: "visitExitTimes >= 2", 
+// 不查看地图，则东西出口至少要逛两次才能走通，其中西出口可以直接离开，东出口有其他剧情
+        elseScene: "西出口-丧尸堵路"
+      },
+      {
+        text: "往左走",
+        nextScene: "东出口",
+        condition: "visitExitTimes >= 2",
+        elseScene: "东出口-废车堵路"
+      }
+    ]
+  },
+
+  "1楼-安全": {
+    image: "images/home/1楼.png",
+    text: "你到了一楼大厅。这里似乎有被火烧过的痕迹，地上还有很多脚印。",
+//开party的丧尸不小心点燃了什么易燃物体把自己烧死了
+    choices: [
+      {
+        text: "出去看看",
+        nextScene: "小区道路"
+      },
+      {
+        text: "回到B1",
+        nextScene: "B1"
+      }
+    ]
+  },
+
+  "小区道路": {
+    image: "images/home/小区道路.png",
+    text: "你走在小区的小道上，曾经你在这里练习足球，可以看到很多老年人带着孩子玩。现在，不会再有了。\n\
+你看到有一个人坐在椅子上，像是睡着了.\n\
+还能这么悠闲？",
+//开party的丧尸不小心点燃了什么易燃物体把自己烧死了
+    choices: [
+      {
+        text: "看看那个人",
+        nextScene: "装睡的丧尸"
+      },
+      {
+        text: "去小区东门",
+        nextScene: "小区东门"
+      },
+      {
+        text: "去小区西门",
+        nextScene: "小区西门"
+      }
+    ]
+  },
+
+  "装睡的丧尸": {
+    image: "images/home/sleepyombie.png",
+    text: "你靠近那个人，ta穿着连帽衫，看不到脸，两手戴着蓝色手套，交叉放于胸前。\n\
+你轻轻拍了拍，ta没有反应。\n\
+你决定？",
+    choices: [
+      {
+        text: "摇醒ta",
+        nextScene: "摇睡丧尸"
+      },
+      {
+        text: "不管它，不如先躲回家",
+        nextScene: "反杀老6",
+        condition: "strength >= 1",
+        elseScene: "背后的偷袭"
+      }
+    ]
+  },
+
+  "摇睡丧尸": {
+    image: "images/home/zombieAwake.png",
+    text: "你用更大的力气摇了摇ta，连帽衫的帽子掉了。你惊呆了，这是一只丧尸！\n\
+它突然抬起头来，眼睛瞪着你，向你扑来。\n\
+达成结局：不要试图叫醒一个装睡的入"
+  },
+
+  "反杀老6": {
+    image: "images/home/killSix.png",
+    text: "你对它丧失了兴趣，转身离开。\n\
+只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后飞踹一脚，把什么东西踹飞了出去。\n\
+回头一看，正是椅子上的那个睡神，它竟是一只丧尸！\n\
+趁着它暂时晕过去了，你得赶紧离开了。",
+    choices: [
+      {
+        text: "去东门",
+        nextScene: "小区东门",
+      },
+      {
+        text: "去西门",
+        nextScene: "小区西门",
+      }
+    ]
+  },
+
+  "背后的偷袭": {
+    image: "images/home/attackBehind.png",
+    text: "你对ta丧失了兴趣，转身离开。\n\
+只听得背后传来木头长椅的嘎吱一响，背后阴风袭来。你只感觉脖颈一痛，便失去了知觉。"
+  },
+
   "西出口-丧尸堵路": {
     image: "images/home/zombie.png",
-    text: "一只丧尸堵在了路上，你无法继续前进。",
+    text: "你走在前往西出口的路上。这里你轻车熟路，因为平时雨天你都会走这条路回家。\n\
+突然，一只丧尸从一个柱子后面闪了出来，你无法继续前进。",
     OnEnter: { add: { visitExitTimes: 1 } },
     choices: [
       {
@@ -307,7 +425,7 @@ const storyData = {
       },
       {
         text: "快跑",
-        nextScene: "B1"
+        nextScene: "B1-2nd"
       }
     ]
   },
@@ -331,7 +449,7 @@ const storyData = {
       {
         text: "身体",
         nextScene: "击退丧尸",
-        condition: "strength >= 1",
+        condition: "strength >= 2",
         elseScene: "被丧尸扑倒咬死"
       }
     ]
@@ -359,6 +477,7 @@ const storyData = {
   "击退丧尸": {
     image: "images/home/zombie.png",
     text: "你一拳打在丧尸胸口，将它击退，它踉跄几步，眼神凶狠，加快速度向你扑来",
+    OnEnter: { add: { strength: -2 } },
     choices: [
       {
         text: "快跑！",
@@ -390,9 +509,20 @@ const storyData = {
     choices: [
       {
         text: "继续前进",
-        condition: "visitExitTimes <= 3",
+        condition: "visitExitTimes >= 2",
         nextScene: "西出口",
         elseScene: "西出口-丧尸堵路"
+      }
+    ]
+  },
+
+  "西出口": {
+    image: "images/home/exit.png",
+    text: "你来到了西出口，成功逃出了地下车库",
+    choices: [
+      {
+        text: "继续前进",
+        nextScene: "小区西门"
       }
     ]
   },
@@ -404,16 +534,16 @@ const storyData = {
       {
         text: "继续前进",
         nextScene: "东出口",
-        condition: "visitExitTimes <= 3",
+        condition: "visitExitTimes >= 2",
         elseScene: "东出口-废车堵路"
       }
     ]
   },
 
-  "柱子上的纸条": {
+  "柱子上的纸张": {
     image: "images/home/columnMap.png",
     /* 地图上写道：如果你看到这行字，你应该去东出口，西出口堵上了 */
-    text: "你查看柱子上的纸条，发现这是一张地图。其中标注了西出口和东出口的位置，看来你可以少绕点路了。",
+    text: "你查看柱子上的纸张，发现这是一张地图。其中标注了西出口和东出口的位置，看来你可以少绕点路了。",
     choices: [
       {
         text: "去东出口",
@@ -482,6 +612,8 @@ const storyData = {
       }
     ]
   }
+
+
 
 
 };

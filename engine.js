@@ -5,15 +5,19 @@ const sceneImage  = document.getElementById("scene-image");
 const sceneText   = document.getElementById("scene-text");
 const choicesArea = document.getElementById("choices-area");
 const restartBtn  = document.getElementById("restart-btn");
+const backtrackBtn = document.getElementById("backtrack-btn");
+
 
 // --- 游戏运行状态 ---
 let currentScene = "start";
 let gameState = {};
+let historyStack = [];   // ★ 新增：回溯历史 [{ sceneId, gameState }]
 
 // ====== 打字机相关 ======
 let typingTimer = null;
 let typingCallback = null;
 let typingFullText = "";
+let typingIsHtml = false;      // ★ 新增：标记当前是否 HTML 模式
 
 function stopTyping() {
   if (typingTimer) {
@@ -31,7 +35,7 @@ function stopTyping() {
 function typeText(element, fullText, speed = 50, onComplete) {
   stopTyping();
   typingFullText = fullText;
-  element.textContent = "";
+  element.innerHTML = "";                  // ★ 统一用 innerHTML 清空
   element.classList.add("typing");
 
   if (!fullText) {
@@ -40,13 +44,38 @@ function typeText(element, fullText, speed = 50, onComplete) {
     return;
   }
 
+  const hasHtml = /<[^>]+>/.test(fullText);
+  typingIsHtml = hasHtml;                  // ★ 记下模式，供 skip 使用
+
   let i = 0;
+  let result = "";
   typingCallback = onComplete;
+
   typingTimer = setInterval(() => {
     if (i < fullText.length) {
-      element.textContent += fullText.charAt(i);
-      i++;
+
+      if (hasHtml && fullText[i] === '<') {
+        // === HTML 模式：标签作为整体一次性插入 ===
+        let j = i;
+        while (j < fullText.length && fullText[j] !== '>') j++;
+        if (j < fullText.length) {
+          result += fullText.substring(i, j + 1);   // 整个 <...> 一起加入
+          i = j + 1;
+        } else {
+          // 畸形标签（没有 >），当普通字符
+          result += fullText[i];
+          i++;
+        }
+      } else {
+        // === 普通字符：逐字加入 ===
+        result += fullText[i];
+        i++;
+      }
+
+      element.innerHTML = result;           // ★ 关键：用 innerHTML 渲染
+
     } else {
+      // 打字完毕
       clearInterval(typingTimer);
       typingTimer = null;
       element.classList.remove("typing");
@@ -59,12 +88,18 @@ function typeText(element, fullText, speed = 50, onComplete) {
   }, speed);
 }
 
-// 点击文字可跳过打字机
 sceneText.addEventListener("click", () => {
   if (typingTimer) {
     clearInterval(typingTimer);
     typingTimer = null;
-    sceneText.textContent = typingFullText;
+
+    // ★ 根据模式选择 innerHTML 或 textContent
+    if (typingIsHtml) {
+      sceneText.innerHTML = typingFullText;
+    } else {
+      sceneText.textContent = typingFullText;
+    }
+
     sceneText.classList.remove("typing");
     if (typingCallback) {
       const cb = typingCallback;
@@ -90,12 +125,14 @@ function applyEffect(effect) {
   }
   if (effect.add) {
     for (let key in effect.add) {
-      gameState[key] = (gameState[key] || 0) + effect.add[key];
+      if(gameState[key] === undefined) gameState[key] = effect.add[key];
+      else gameState[key] += effect.add[key];
     }
   }
   if (effect.mul) {
     for (let key in effect.mul) {
-      gameState[key] = (gameState[key] || 0) * effect.mul[key];
+      if(gameState[key] === undefined) gameState[key] = effect.mul[key];
+      else gameState[key] *= effect.mul[key];
     }
   }
 }
@@ -139,6 +176,31 @@ function checkCondition(condition, variables) {
   return true;
 }
 
+// ====== 回溯功能 ======
+function pushHistory() {
+  historyStack.push({
+    sceneId: currentScene,
+    gameState: JSON.parse(JSON.stringify(gameState))  // 深拷贝
+  });
+  backtrackBtn.style.display = 'inline-block';  // 有历史就显示顶部按钮
+}
+
+function backtrack() {
+  if (historyStack.length === 0) return;
+  stopTyping();
+  const prev = historyStack.pop();
+  gameState = prev.gameState;
+  currentScene = prev.sceneId;
+
+  // 历史清空则隐藏顶部按钮
+  if (historyStack.length === 0) {
+    backtrackBtn.style.display = 'none';
+  }
+
+  // ★ 回溯时跳过 onEnter，避免效果重复触发
+  renderScene(currentScene, true);
+}
+
 // ====== 渲染选项 ======
 function renderChoices(scene) {
   choicesArea.innerHTML = "";
@@ -159,6 +221,7 @@ function renderChoices(scene) {
 
       btn.addEventListener("click", () => {
         const nowCondMet = checkCondition(choice.condition, gameState);
+        pushHistory();   // ★ 压入历史
         if (nowCondMet) {
           if (choice.effect) applyEffect(choice.effect);
           currentScene = choice.nextScene;
@@ -175,18 +238,35 @@ function renderChoices(scene) {
       const noChoiceMsg = document.createElement("p");
       noChoiceMsg.textContent = "（没有可行的选择……剧情终止）";
       choicesArea.appendChild(noChoiceMsg);
+      // ★ 结局：底部放回溯按钮
+      appendBacktrackToChoices();
     }
   } else {
+    // ★ 无 choices = 结局
     const endMsg = document.createElement("p");
     endMsg.textContent = "— 剧 终 —";
     choicesArea.appendChild(endMsg);
+    // ★ 结局：底部放回溯按钮
+    appendBacktrackToChoices();
   }
 
-  choicesArea.style.display = "flex";  // 恢复正常显示
+  choicesArea.style.display = "flex";
+}
+
+// ★ 新增辅助函数
+function appendBacktrackToChoices() {
+  if (historyStack.length === 0) return;
+  const btn = document.createElement("button");
+  btn.className = "choice-btn";
+  btn.style.background = "rgba(180, 140, 60, 0.45)";  // 金色调区分
+  btn.style.border = "1px solid rgba(200, 160, 80, 0.5)";
+  btn.textContent = "↩ 回溯到上一次选择";
+  btn.addEventListener("click", backtrack);
+  choicesArea.appendChild(btn);
 }
 
 // ====== 核心渲染 ======
-function renderScene(sceneId) {
+function renderScene(sceneId, skipOnEnter = false) {
   stopTyping();
 
   if (!gameState || (Object.keys(gameState).length === 0 && storyData && storyData._variables)) {
@@ -202,8 +282,8 @@ function renderScene(sceneId) {
     return;
   }
 
-  // 进入效果
-  if (scene.onEnter) {
+  // ★ 进入效果（回溯时跳过）
+  if (scene.onEnter && !skipOnEnter) {
     applyEffect(scene.onEnter);
   }
 
@@ -215,55 +295,41 @@ function renderScene(sceneId) {
     sceneImage.style.display = "none";
   }
 
-  // 先隐藏选项（等待打字结束）
   choicesArea.style.display = "none";
 
-  // 替换变量占位符
   let displayText = scene.text || "";
   displayText = displayText.replace(/\{(\w+)\}/g, (match, key) => {
     return gameState[key] !== undefined ? gameState[key] : match;
   });
 
-  // ★★★ 新增：重置并应用场景样式 ★★★
-  // 先清掉上一场景可能设置的 style
   sceneText.style.cssText = '';
-  // 如果场景定义了 style 属性，则应用
   if (scene.style) {
-    // 支持两种写法：字符串 "font-size: 24px; color: red;" 或对象 {fontSize: "24px", color: "red"}
     if (typeof scene.style === 'string') {
       sceneText.style.cssText = scene.style;
     } else if (typeof scene.style === 'object') {
       for (const [prop, val] of Object.entries(scene.style)) {
-        // 把驼峰式转为连字符式：fontSize → font-size
         const cssProp = prop.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
         sceneText.style.setProperty(cssProp, val);
       }
     }
   }
 
-  // ★★★ 新增：检测是否包含 HTML 标签 ★★★
-  const hasHtml = /<[^>]+>/.test(displayText);
-
-  if (hasHtml) {
-    // HTML 模式：跳过打字机，直接 innerHTML
-    sceneText.innerHTML = displayText;
-    sceneText.classList.remove("typing");
+  typeText(sceneText, displayText, 50, () => {
     renderChoices(scene);
-  } else {
-    // 纯文本模式：正常打字机
-    typeText(sceneText, displayText, 50, () => {
-      renderChoices(scene);
-    });
-  }
+  });
 }
 
 // ====== 重新开始 ======
 restartBtn.addEventListener("click", () => {
   stopTyping();
+  historyStack = [];          // ★ 清空历史
+  backtrackBtn.style.display = 'none';  // ★ 隐藏回溯
   initGameState();
   currentScene = "start";
   renderScene(currentScene);
 });
+// ★★★ 新增：回溯按钮事件绑定 ★★★
+backtrackBtn.addEventListener("click", backtrack);
 
 // ====== 页面启动 ======
 window.addEventListener("DOMContentLoaded", () => {
