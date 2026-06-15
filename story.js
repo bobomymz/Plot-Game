@@ -654,7 +654,6 @@ const storyData = {
   "陌生的岔路口": {
     image: "images/home/crossing.png",
     text: "现在你正处于一个陌生的岔路口，该往哪里走呢？",
-    onEnter: { add: { strength: -1 } },
     choices: [
       {
         text: "直走到底",
@@ -1053,20 +1052,24 @@ const storyData = {
 
   "物资区的丧尸": {
     image: "images/home/zombie.png",
-    text: "你抬头一看，两只丧尸从杂物堆里走了出来，对你虎视眈眈",
+    text: "你抬头一看，两只丧尸一前一后从杂物堆里走了出来，对你虎视眈眈",
     choices: [
       {
-        text: "战斗",
+        text: "先揍前面那个",
         nextScene: "被丧尸扑倒咬死"
       },
       {
-        text: "开门冲出去",
+        text: "先揍后面那个",
         condition: "Math.random() < 0.5", // 50%的概率开门失败
         nextScene: "门锁上了"
       },
       {
-        text: "闪！右转进入暗处",
-        nextScene: "初遇毒气型丧尸"
+        text: "搬开箱子找找武器",
+        nextScene: "通风管道"
+      },
+      {
+        text: "还愣着干啥快跑啊",
+        nextScene: "被丧尸扑倒咬死"
       }
     ]
   },
