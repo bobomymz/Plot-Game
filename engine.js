@@ -282,6 +282,9 @@ function backtrack() {
   if (historyStack.length === 0) {
     backtrackBtn.style.display = 'none';
   }
+  else {
+    backtrackBtn.style.display = 'inline-block';
+  }
 
   // 回溯时跳过 onEnter，避免效果重复触发
   renderScene(currentScene, true);   // skipOnEnter = true，depth 默认为 0
