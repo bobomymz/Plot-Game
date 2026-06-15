@@ -6,24 +6,98 @@ const storyData = {
   _variables: {
     strength: 4,            // 体力值
     visitExitTimes: 0,        // 访问小区出口次数，达到3自动放行
-    // 你可以自由添加其他变量，例如：gold: 0, visitedKitchen: false
+    foodUnderBed: true,      // 底下是否有食物，初始为true
+    visitWaitingRoomTimes: 0, // 访问等候区次数，达到3丧尸会出现
+    repeatedClickTimes: 0,    // 点击重复次数，可以用来设置连点环节
+    hasBroom:  false,          // 是否有扫帚
+    hasDiary:  false,          // 是否有日记本
+    hasTorch:  false,          // 是否有手电筒
+    hasBike:   false,          // 是否有自行车
+    hasKey:    false,          // 是否有钥匙
+    hasMask:   false,          // 是否有防毒面具
   },
 
-  // -------- 2. 场景列表 --------
+  // -------- 2. 全局触发器和屏幕特效 --------
+  _globalTriggers: [
+      {
+        condition: "strength <= 0",       // 体力归零
+        targetScene: "体力耗尽猝死",
+        priority: 1
+      },
+      {
+        condition: "hasBroom + hasDiary + hasTorch + hasBike + hasKey + hasMask >= 3", 
+        // 玩家最多携带3件物品，后续可以加更多东西
+        targetScene: "物品太多啦",
+        priority: 2,
+        backtrack: "回溯"
+      },
+      // 未来可继续添加
+      // {
+      //   condition: "sanity <= 0",
+      //   targetScene: "精神崩溃发疯",
+      //   priority: 2
+      // }
+  ],
+  // -------- 屏幕特效（基于状态的视觉反馈）--------
+  _screenEffects: [
+      {
+          condition: "strength == 2",
+          className: "vignette-warning"
+      },
+      {
+          condition: "strength <= 1",
+          className: "vignette-danger"
+      }
+      // 未来可扩展：
+      // { condition: "sanity <= 2", className: "screen-wobble" },
+      // { condition: "poisoned",    className: "screen-green-tint" },
+  ],
+
+
+  // -------- 3. 场景列表 --------
 
   // 每个场景都是一个对象，以场景ID为键
-  "start": { // 此名字不可更改
-    image: "images/home/bedroom.png",
-    text: "你是建平中学的毕业生，高考已经结束，日子仿佛被抽去了骨架，软塌塌地摊在七月闷热的空气里。这天早上你醒来时，阳光已经穿过半旧的窗帘，在地板上烙下懒洋洋的光斑。\n\
-闹钟显示7:30，如果是在往日，早读已经过去一半了。\n哦，这么算的话，再过半小时，妈妈就买早餐回来了。", 
-    /* 玩家可以反复回到此场景，闹钟时间均不变，暗示闹钟早就坏了，而妈妈不会再回来了 */
+
+  // 全局触发节点
+  "体力耗尽猝死": {
+      image: "images/home/tooWeak.png",  
+      text: "你的体力彻底耗尽……眼前一黑，倒在了冰冷的地面上。\n再也没有醒来。",
+      style: "color: #ff4444; font-weight: bold;"
+  },
+  "物品太多啦": {
+      image: "images/home/tooMany.png",  
+      text: "你携带的物品太多啦，不能拿啦。你可以选择撤回哦~",
+      style: "color: #ff4444; font-weight: bold;"
+  },
+
+  // 正常的剧情节点
+  "start": { // 此名字不可更改, 开始场景
+    image: "images/gameStart.jpg", // 开始场景图片，写着“尸潮笔记”
     // 可选，图片路径
+    text: "",
     // 文本中可以用 {变量名} 显示变量
-    // 进入场景时自动触发的效果（可选）
     onEnter: {
+    // 进入场景时自动触发的效果（可选）
       // 例如：每次进入卧室都扣5点体力（测试用）
       // add: { strength: -5 }  
     },
+    choices: [
+      {
+        text: "开始游戏",
+        nextScene: "初始卧室"
+        // elseScene: "cant_jump" // 如果希望始终显示，跳转失败场景，可以加这个
+        // condition: 表示只有在满足条件时才显示，例如：visitExitTimes >= 3
+        // effect: 表示点击后触发的效果，例如：add: { visitExitTimes: 1 } // 每次点击增加访问次数1
+      }
+    ]
+  },
+
+
+  "初始卧室": {
+    image: "images/home/bedroom.png",
+    text: "你是建平中学的毕业生，高考已经结束，日子仿佛被抽去了骨架，软塌塌地摊在七月闷热的空气里。这天早上你醒来时，阳光已经穿过半旧的窗帘，在地板上烙下懒洋洋的光斑。<span style='font-size: 12px;'>请往下滑动哦</span>\n\
+闹钟显示7:30，如果是在往日，早读已经过去一半了。\n哦，这么算的话，再过半小时，妈妈就买早餐回来了。", 
+    /* 玩家可以反复回到此场景，闹钟时间均不变，暗示闹钟早就坏了，而妈妈不会再回来了 */
     choices: [
       {
         text: "起床散步去喽",
@@ -36,9 +110,6 @@ const storyData = {
       {
         text: "玩弄一下闹钟",
         nextScene: "闹钟"
-        // elseScene: "cant_jump" // 如果希望始终显示，跳转失败场景，可以加这个
-        // condition: 表示只有在满足条件时才显示，例如：visitExitTimes >= 3
-        // effect: 表示点击后触发的效果，例如：add: { visitExitTimes: 1 } // 每次点击增加访问次数1
       },
       {
         text: "拿出床底的手机",
@@ -49,14 +120,14 @@ const storyData = {
 
   "卧室": { // 卧室后续回来的场景
     image: "images/home/bedroom.png",
-    text: "这是你的卧室，你想干什么呢？", 
+    text: "", 
     choices: [
       {
-        text: "起床散步去喽",
+        text: "下楼散步",
         nextScene: "开幕雷击"
       },
       {
-        text: "推开窗户",
+        text: "看看窗外",
         nextScene: "窗外的风景"
       },
       {
@@ -64,15 +135,32 @@ const storyData = {
         nextScene: "闹钟"
       },
       {
-        text: "拿出床底的手机",
-        nextScene: "床底的食物"
+        text: "看看床底",
+        nextScene: "床底的食物",
+        condition: "foodUnderBed",
+        elseScene: "什么都没有"
+      }
+    ]
+  },
+
+  "什么都没有": {
+    image: "images/home/nothingUnderBed.png",
+    text: "床底什么都没有，说了什么都没有。",
+    onEnter: {
+      add: { strength: -1 }  
+// 反复查看会扣体力，然后累死（搞笑）
+    },
+    choices: [
+      {
+        text: "看看其它东西",
+        nextScene: "卧室"
       }
     ]
   },
 
   "开幕雷击": {
     image: "images/home/enclosure.png",
-    text: "你打开房门，一个丧尸冲了进来————剧终\n你觉得为什么游戏叫这个名字？:)"
+    text: "你打开房门，一个丧尸冲了进来————剧终\n你猜为什么游戏叫这个名字？:)"
   },
 
   "玄关": {
@@ -125,7 +213,7 @@ const storyData = {
     text: "最明智的选择，尸潮什么的，与我无关——————————————",
     choices: [
       {
-        text: "你要再试一遍吗？",
+        text: "重生之我直面尸潮",
         nextScene: "start"
       }
     ]
@@ -134,10 +222,12 @@ const storyData = {
   "床底的食物": {
     image: "images/home/foodUnderBed.png",
     onEnter: {
-      add: { strength: 1 },
-      min: { strength: 5 } // 体力不能高于5点
+      set: { foodUnderBed: false },
+      add: { strength: 1 }
     },
-    text: "你看了眼床底，手机怎么没了？。这里只有一包方便面。\n这是你两个月前藏的私货，你想起来了。毕业前没来得及在学校食堂消耗掉，所以带回家里了。\n妈妈还要半小时才回来，不如先吃一顿，大不了中午少吃一点",
+    text: "你看了眼床底，手机怎么没了？这里只有一包方便面。\n这是你两个月前藏的私货，你想起来了。毕业前没来得及在学校食堂消耗掉，所以带回家里了。\n\
+妈妈还要半小时才回来，不如先吃一顿，大不了中午少吃一点。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复一点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "方便面真好吃",
@@ -162,7 +252,7 @@ const storyData = {
   },
 
   "打开闹钟": {
-    image: "images/home/clock.png",
+    image: "images/home/clockInside.png",
     text: "你打不开闹钟，搞不清楚里面有什么东西。也许只是钟坏了，你想。",
     choices: [
       {
@@ -171,27 +261,43 @@ const storyData = {
       }
     ]
   },
-
+  // 家门外的丧尸场景添加抖动效果
   "家门外的丧尸": {
     image: "images/home/zombieOutsideHome.png",
-    text: "咔哒一声，钥匙插入。你按下把手，拉开家门，外面竟是一只蠢蠢欲动的丧尸！\n\
-它加快脚步，向你扑了过来。\n（看到这个游戏的名字，想必你早就料到了这熟悉的剧情。）\n\
-你砰的一下摔上房门，门外传来沉重的倒地声，丧尸大抵头部挨了点伤害。",
+    text: "咔哒一声，钥匙插入。你按下把手，拉开家门，外面竟是一只蠢蠢欲动的丧尸！",
+    qte: {
+      timeout: 5000,              // 5 秒（这次选错就是即死结局，没什么决策深度，所以时间紧）
+      onTimeout: "被丧尸扑倒咬死"  // 超时则被咬死
+    },
+    onEnter: {
+      shake: true  // 场景抖动
+    },
     choices: [
       {
-        text: "开门马上去楼梯间（你不会想和丧尸打架的）",
+        text: "一个闪身冲向楼梯间",
         nextScene: "家外楼梯间的抉择"
       },
       {
-        text: "躲在家里，从门缝看看丧尸走远了没有",
+        text: "躲在家里，从门缝看",
         nextScene: "丧尸的凝视"
       }
     ]
   },
 
+  "丧尸破门而入": {
+    image: "images/home/zombieBreakDoor.png",
+    text: "突然，丧尸猛地撞开了门，你脑袋挨了重重一击，晕了过去。"
+  },
+
   "家外楼梯间的抉择": {
     //image: "images/staircase.png",
-    text: "你跑到楼梯间。丧尸突然闪到了你的身后，你只能快速选择一个楼层离开。",
+    text: "你跑到楼梯间。丧尸突然闪到了你的身后！\n\
+你只能快速选择一个楼层离开，或者躲起来，祈祷丧尸不会追你",
+    qte: {
+      timeout: 10000,              // 10 秒
+      hidden: true,
+      onTimeout: "被丧尸扑倒咬死"  // 超时则被咬死
+    },
     choices: [
       {
         text: "上楼",
@@ -207,14 +313,18 @@ const storyData = {
       },
       {
         text: "去坐电梯",
-        nextScene: "电梯"
+        nextScene: "家门口电梯"
       }
     ]
   },
 
-  "电梯": {
-    image: "images/home/电梯.png",
+  "家门口电梯": {
+    image: "images/home/lift.jpg",
     text: "你躲进了电梯，丧尸没有追上来。你显然不能继续待在你家的2楼，需要赶快选个楼层离开",
+    qte: {
+      timeout: 15000,              // 15 秒
+      onTimeout: "电梯门开了"  // 超时则被咬死
+    },
     choices: [ // 选择楼层
       {
         text: "F3",
@@ -230,6 +340,12 @@ const storyData = {
       }
     ]
   },  
+
+  "电梯门开了": {
+    image: "images/home/电梯.png",
+    text: "电梯门突然开了，丧尸冲进来咬死了你。\n\
+想 必 你 下 次 会 更 加 果 断 吧。"
+  },
 
   "3楼-安全": {
     image: "images/home/3rdFloor.png",
@@ -248,15 +364,67 @@ const storyData = {
     text: "你走到3楼。这里不知何时已经堆满了家具，你无法进入。",
     choices: [
       {
-        text: "返回楼梯间",
+        text: "躲在家具里",
+        nextScene: "来自丧尸的惊吓"
+      }
+    ]
+  },
+
+  "来自丧尸的惊吓": {
+    image: "images/home/zombieScare.png",
+    text: "突然，一只丧尸不知从什么地方窜了出来，向你扑来！",
+    qte: {
+      timeout: "5000 - repeatedClickTimes * 2000 - foodUnderBed * 999", // 5 秒，但每次点击减少2秒
+      onTimeout: "反应太慢被咬死了"  // 超时则被咬死
+    },
+    choices: [
+      {
+        text: "闪！你抵消丧尸一张杀。",
+        nextScene: "来自丧尸的惊吓",
+        condition: "repeatedClickTimes < 2", 
+        // 相当于点击2次，因为先检查condition再造成effect
+        effect: {
+          add: {repeatedClickTimes: 1}
+        },
+        elseScene: "初遇陈默"
+      }
+    ]
+  },
+
+  "反应太慢被咬死了": {
+    image: "images/home/zombieKnockYouDown.png",
+    text: "丧尸冲了上来，把你扑在地上。没来得及反应，你就被咬死了。",
+    choices: [
+      {
+        text: "重来！这次不算！",
+        nextScene: "初始卧室"
+      }
+    ]
+  },
+
+  "初遇陈默": {
+    image: "images/home/chenMoSaveYou.png",
+    onEnter: {
+      set: { repeatedClickTimes: 0 }
+    },
+    text: "一个黑衣人突然从墙角闪了出来，一棍子打飞了丧尸。他转头看向你，一半脸庞隐藏在鸭舌帽的阴影下。\n\
+<em><span style='color: #f8d305ff;'>算你好运。跟着我，我可以带你出小区。</span></em>\n\
+你决定？",
+    choices: [
+      {
+        text: "跟着他",
+        nextScene: "小区西门"
+      },
+      {
+        text: "不跟着他",
         nextScene: "被丧尸扑倒咬死"
       }
     ]
   },
 
   "被丧尸扑倒咬死": {
-    image: "images/home/zombie.png",
-    text: "丧尸追上了你，你被咬死了。"
+    image: "images/home/zombieKnockYouDown.png",
+    text: "丧尸冲了上来，猛地把你扑倒在地。没来得及反应，你就被咬死了。"
   },// 会自动给出重新开始按钮
 
   "1楼": {
@@ -270,7 +438,7 @@ const storyData = {
     choices: [
       {
         text: "返回楼梯间",
-        nextScene: "被丧尸扑倒咬死"
+        nextScene: "来自丧尸的惊吓"
       },
       {
         text: "查看柱子上的纸张",
@@ -376,7 +544,7 @@ const storyData = {
       {
         text: "不管它，不如先躲回家",
         nextScene: "反杀老6",
-        condition: "strength >= 1",
+        condition: "strength > 1",
         elseScene: "背后的偷袭"
       }
     ]
@@ -384,6 +552,7 @@ const storyData = {
 
   "摇睡丧尸": {
     image: "images/home/zombieAwake.png",
+    onEnter: {shake: true},
     text: "你用更大的力气摇了摇ta，连帽衫的帽子掉了。你惊呆了，这是一只丧尸！\n\
 它突然抬起头来，眼睛瞪着你，向你扑来。\n\
 达成结局：不要试图叫醒一个装睡的入"
@@ -392,7 +561,7 @@ const storyData = {
   "反杀老6": {
     image: "images/home/killSix.png",
     text: "你对它丧失了兴趣，转身离开。\n\
-只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后飞踹一脚，把什么东西踹飞了出去。\n\
+只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后<span style = 'font-weight: bold;'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
 回头一看，正是椅子上的那个睡神，它竟是一只丧尸！\n\
 趁着它暂时晕过去了，你得赶紧离开了。",
     choices: [
@@ -409,6 +578,7 @@ const storyData = {
 
   "背后的偷袭": {
     image: "images/home/attackBehind.png",
+    onEnter: {shake: true},
     text: "你对ta丧失了兴趣，转身离开。\n\
 只听得背后传来木头长椅的嘎吱一响，背后阴风袭来。你只感觉脖颈一痛，便失去了知觉。"
   },
@@ -417,7 +587,10 @@ const storyData = {
     image: "images/home/zombie.png",
     text: "你走在前往西出口的路上。这里你轻车熟路，因为平时雨天你都会走这条路回家。\n\
 突然，一只丧尸从一个柱子后面闪了出来，你无法继续前进。",
-    OnEnter: { add: { visitExitTimes: 1 } },
+    qte: {
+      timeout: 3000,              // 3秒
+      onTimeout: "被丧尸扑倒咬死"  // 超时则被咬死
+    },
     choices: [
       {
         text: "战斗！",
@@ -432,24 +605,29 @@ const storyData = {
 
   "地下车库的丧尸": {
     image: "images/home/zombie.png",
+    onEnter: {shake: true},
     text: "丧尸向你袭来，你要攻击它哪里？",
+    qte: {
+      timeout: 2000,              // 2秒
+      onTimeout: "被丧尸扑倒咬死"  // 超时则被咬死
+    },
     choices: [
       {
         text: "脚",
         nextScene: "嘎吱嘎吱",
-        condition: "strength >= 1",
+        condition: "strength > 1",
         elseScene: "被丧尸扑倒咬死"
       },
       {
         text: "头",
         nextScene: "KO丧尸",
-        condition: "strength >= 1",
+        condition: "strength > 1",
         elseScene: "被丧尸扑倒咬死"
       },
       {
         text: "身体",
         nextScene: "击退丧尸",
-        condition: "strength >= 2",
+        condition: "strength > 2",
         elseScene: "被丧尸扑倒咬死"
       }
     ]
@@ -457,31 +635,94 @@ const storyData = {
 
   "嘎吱嘎吱": {
     image: "images/home/zombie.png",
+    onEnter: {shake: true},
     text: "你一脚踢出，被丧尸一口咬住，你被咬死了。"
   },
 
   "KO丧尸": {
-    image: "images/home/zombie.png",
+    image: "images/home/KOzombie.png",
     text: "你一拳挥出，将丧尸击倒，又补了几脚，它不动了。看来一时半会儿不会有问题了。",
-    OnEnter: { add: { strength: -1 } },
+    onEnter: { add: { strength: -1 } },
+    choices: [
+      {
+        text: "还不快走",
+        nextScene: "陌生的岔路口"
+      }
+    ]
+  },
+
+  "陌生的岔路口": {
+    image: "images/home/crossing.png",
+    text: "现在你正处于一个陌生的岔路口，该往哪里走呢？",
+    onEnter: { add: { strength: -1 } },
+    choices: [
+      {
+        text: "直走到底",
+        condition: "visitExitTimes > 2",
+        nextScene: "西出口",
+        elseScene: "西出口-丧尸堵路"
+      },
+      {
+        text: "前面右转",
+        nextScene: "地下非机动车停靠区"
+      }
+    ]
+  },
+
+  "地下非机动车停靠区": {
+    image: "images/home/nonMotorized.png",
+    text: "你来到了地下非机动车停靠区，这里有不少自行车和电瓶车。",
     choices: [
       {
         text: "继续前进",
-        condition: "visitExitTimes >= 2",
+        condition: "visitExitTimes > 2",
         nextScene: "西出口",
         elseScene: "西出口-丧尸堵路"
+      },
+      {
+        text: "骑上一辆自行车",
+        nextScene: "车上锁了"
+      },
+      {
+        text: "骑上一辆电瓶车",
+        condition: "Math.random() < 0.3 || hasKey", // 30%概率解锁一辆电瓶车
+        nextScene: "骑车去西出口",
+        elseScene: "车上锁了"
+      }
+    ]
+  },
+
+  "车上锁了" : {
+    image: "images/home/lockedBike.png",
+    text: "哎呀，这车上有锁，看来你是不能白嫖了。",
+    choices: [
+      {
+        text: "四处看看",
+        nextScene: "地下非机动车停靠区"
+      }
+    ]
+  },
+
+  "骑车去西出口": {
+    image: "images/home/cycleToExit.png",
+    onEnter: {hasBike: true},
+    text: "你的运气很好，这辆车没锁。跑了半天的你悠哉游哉骑着车，向西出口前进。",
+    choices: [
+      {
+        text: "继续前进",
+        nextScene: "西出口" // 骑车可以快速解锁西出口
       }
     ]
   },
 
   "击退丧尸": {
-    image: "images/home/zombie.png",
+    image: "images/home/beatZombie.png",
     text: "你一拳打在丧尸胸口，将它击退，它踉跄几步，眼神凶狠，加快速度向你扑来",
-    OnEnter: { add: { strength: -2 } },
+    onEnter: { add: { strength: -2 } },
     choices: [
       {
         text: "快跑！",
-        condition: "visitExitTimes >= 2",
+        condition: "visitExitTimes > 2",
         nextScene: "东出口",
         elseScene: "防爆门"
       }
@@ -491,6 +732,10 @@ const storyData = {
   "防爆门": {
     image: "images/home/防爆门.png",
     text: "你仓皇逃窜，眼前是一道防爆门，关上它就能挡住丧尸！",
+    qte: {
+      timeout: 3000,              // 3秒
+      onTimeout: "被丧尸扑倒咬死"  // 超时则被咬死
+    },
     choices: [
       {
         text: "把手左旋",
@@ -504,12 +749,14 @@ const storyData = {
   },
 
   "丧尸被防爆门夹扁": {
-    image: "images/home/zombie.png",
-    text: "在丧尸冲过来时，你侧身把防爆门关上了，它的半只手臂夹在了中间，却仍不断挥舞着。你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。",
+    image: "images/home/squeezeZombie.png",
+    onEnter: { add: { strength: -1 } },
+    text: "在丧尸冲过来时，你侧身把防爆门关上了，它的半只手臂夹在了中间，却仍不断挥舞着。\n\
+你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。",
     choices: [
       {
         text: "继续前进",
-        condition: "visitExitTimes >= 2",
+        condition: "visitExitTimes > 2",
         nextScene: "西出口",
         elseScene: "西出口-丧尸堵路"
       }
@@ -534,7 +781,7 @@ const storyData = {
       {
         text: "继续前进",
         nextScene: "东出口",
-        condition: "visitExitTimes >= 2",
+        condition: "visitExitTimes > 2",
         elseScene: "东出口-废车堵路"
       }
     ]
@@ -557,9 +804,11 @@ const storyData = {
   },
 
   "东出口-废车堵路": {
-    image: "images/home/zombie.png",
-    OnEnter: { add: { visitExitTimes: 1 } },
-    text: "东出口被一辆报废面包车斜卡着，四个轮胎全瘪，活像一只死透的甲虫。你正琢磨怎么翻过去，身后传来熟悉的拖步声，一只丧尸跟了上来",
+    image: "images/home/carBlock.png",
+    onEnter: { add: { visitExitTimes: 1 } },
+    text: "东出口被一辆报废面包车斜卡着，四个轮胎全瘪，活像一只死透的甲虫。\n\
+看来，只能指望西出口了（你总不会想和楼道里那些丧尸打吧）。\n\
+你正琢磨怎么翻过去，身后传来熟悉的拖步声，一只丧尸跟了上来。",
     choices: [
       {
         text: "战斗！",
@@ -577,7 +826,7 @@ const storyData = {
         nextScene: "没用的按钮"
       },
       {
-        text: "打开铁门",
+        text: "打开铁门进去",
         nextScene: "民防设施-等候区"
       }
     ]
@@ -589,31 +838,238 @@ const storyData = {
     choices: [
       {
         text: "谁？",
-        nextScene: "被丧尸扑倒咬死"
+        nextScene: "来自丧尸的惊吓"
       }
     ]
   },
 
   "民防设施-等候区": {
-    image: "images/home/doorOpen.png",
-    text: "你打开铁门，进入了一个小房间。这个房间空无一人，只有一张桌子和墙上的一些告示。",
+    image: "images/home/CDwaitingRoom.png",
+    text: "你在一个小房间里。这个房间空无一人，只有一张桌子和墙上的一些告示。",
     choices: [
       {
+        showCondition: "!hasDiary && !hasTorch",
         text: "查看桌子",
-        nextScene: "没用的桌子"
+        nextScene: "等候区的桌子"
       },
       {
+        showCondition: "!hasBroom",
+        text: "拿起扫帚",
+        nextScene: "等候区的扫帚"
+      },
+      {
+        showCondition: "!hasKey",
         text: "阅读墙上的告示",
         nextScene: "墙上的民防告示"
       },
       {
-        text: "去相邻的小房间看看",
+        text: "往走廊深处走",
         nextScene: "民防设施-楼梯间"
+      },
+      {
+        showCondition: "visitWaitingRoomTimes <= 1",
+        text: "回头离开",
+        nextScene: "陌生的岔路口"
       }
     ]
-  }
+  },
 
+  "等候区的桌子": {
+    image: "images/home/table.png",
+    text: "你走向桌子，这里叠着几本小册子，有检修报告、民防守则、报纸等。这里看起来平时是有人的。\n\
+你仔细翻看了一下，发现其中夹着一本日记本。打开一看，里面是空白的。",
+    onEnter: { add: { visitWaitingRoomTimes: 1 } },
+    choices: [
+      {
+        text: "拿上日记本",
+        nextScene: "民防设施-等候区",
+        condition: "visitWaitingRoomTimes <= 2", 
+        // 如果在等候区决策过多次数，丧尸就会进来（不再重复声明）
+        effect: { add: { hasDiary: true } },
+        elseScene: "丧尸破门而入",
+      },
+      {
+        text: "拉开抽屉",
+        nextScene: "抽屉里的手电筒",
+        condition: "visitWaitingRoomTimes <= 2", 
+        elseScene: "丧尸破门而入",
+      }
+    ]
+  },
 
+  "抽屉里的手电筒": {
+    image: "images/home/light.png",
+    onEnter: { add: { visitWaitingRoomTimes: 1 } },
+    text: "你打开抽屉，发现里面有一个小手电筒。",
+    choices: [
+      {
+        text: "拿上手电筒",
+        nextScene: "民防设施-等候区",
+        effect: { add: { hasTorch: true } }
+      },
+      {
+        text: "不拿手电筒",
+        nextScene: "民防设施-等候区"
+      }
+    ]
+  },
+
+  "等候区的扫帚": {
+    image: "images/home/broom.png",
+    onEnter: { set: { hasBroom: true }, add: { visitWaitingRoomTimes: 1 } },
+    text: "你拿起扫帚抖了抖，并没有什么发现。",
+    choices: [
+      {
+        text: "拿上扫帚",
+        nextScene: "民防设施-等候区",
+        condition: "visitWaitingRoomTimes <= 2", 
+        effect: { add: { hasBroom: true } },
+        elseScene: "丧尸破门而入",
+      },
+      {
+        text: "不拿扫帚",
+        nextScene: "民防设施-等候区",
+        condition: "visitWaitingRoomTimes <= 2", 
+        elseScene: "丧尸破门而入",
+      }
+    ]
+  },
+
+  "墙上的民防告示": {
+    image: "images/home/notice.png",
+    onEnter: { add: { visitWaitingRoomTimes: 1 } },
+    text: "你查看了告示",
+    qte: {
+      timeout: 20000,
+      hidden: true,
+      onTimeout: "告示后面的钥匙",
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: "民防设施-等候区"
+      }
+    ]
+  },
+
+  "告示后面的钥匙": {
+    image: "images/home/key.png",
+    onEnter: { set: { hasKey: true } },
+    text: "你揭下了告示纸，后面掉出来一个小钥匙，像是电瓶车的车钥匙。",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "民防设施-等候区"
+      }
+    ]
+  },
+
+  "民防设施-紧急出口": {
+    image: "images/home/stairs.png",
+    text: "你往走廊深处走，发现了一个楼梯间。\n\
+<span style='color:red'>突然，你听到砰的一声，进来的那扇铁门被硬生生撞开了，一个魁梧的丧尸钻了进来。</span>\n\
+你要怎么办？",
+    choices: [
+      {
+        text: "继续前进找紧急出口",
+        nextScene: "紧急出口"
+      },
+      {
+        text: "上楼梯",
+        nextScene: "民防设施-物资区"
+      }
+    ]
+  },
+
+  "紧急出口": {
+    image: "images/home/exit.png",
+    text: "你来到了紧急出口，而丧尸已经近在眼前",
+    choices: [
+      {
+        text: "战斗",
+        nextScene: "被丧尸扑倒咬死"
+      },
+      {
+        text: "开门冲出去",
+        condition: "Math.random() < 0.5", // 50%的概率开门失败
+        nextScene: "门锁上了"
+      },
+      {
+        text: "闪！右转进入暗处",
+        nextScene: "初遇毒气型丧尸"
+      }
+    ]
+  },
+
+  "门锁上了": {
+    image: "images/home/lock.png",
+    text: "不好意思，门锁了。\n你还没来得及骂检修人员，就被丧尸创飞了。"
+  },
+
+  "初遇毒气型丧尸": {
+    image: "images/home/po.png",
+    text: "那只魁梧的丧尸像野兽一般朝你扑来，擦过你的后背，狠狠撞在紧急出口的门上。\n\
+门震了一下，一点油漆都没刮掉。\n\
+你躲进了暗处，大气都不敢喘。\n\
+。。。。。。。。。。。。。。。。。。。。。\n\
+。。。。。。。。。。。。。。。。。。。。。\n\
+。。。。。。。。。。。。。。。。。。。。。\n\
+。。。。。。。。。。。。。。。。。。。。。\n\
+那只丧尸大抵脑子撞坏了，愣是不知道你去哪了，只能悻悻离开。再等了一会儿，没声音了。",
+    choices: [
+      {
+        text: "原路返回",
+        nextScene: "民防设施-等候区"
+      },
+      {
+        text: "再等一会儿",
+        nextScene: "初遇毒气型丧尸"
+      }
+    ]
+  },
+
+  "初遇毒气型丧尸": {
+    image: "images/home/zombieGas.png",
+    text: "你等了一会儿，没有声音了。           \n\
+突然，你看到身边的黑暗中，出现了一个绿色的亮斑，就像一只萤火虫悬停在空中。\n\
+只听嘶的一声，亮斑闪烁起来，像被什么挡住了。你闻到一股刺鼻的气味，晕了过去"
+  },
+
+  "民防设施-物资区": {
+    image: "images/home/material.png",
+    text: "你来到了物资区。这里对着很多纸箱子，但不少都是空的。你在其中找到了一个老式防毒面具。",
+    choices: [
+      {
+        text: "拿上防毒面具",
+        nextScene: "物资区的丧尸",
+        effect: { add: { hasMask: true } }
+      },
+      {
+        text: "不拿防毒面具",
+        nextScene: "物资区的丧尸"
+      }
+    ]
+  },
+
+  "物资区的丧尸": {
+    image: "images/home/zombie.png",
+    text: "你抬头一看，两只丧尸从杂物堆里走了出来，对你虎视眈眈",
+    choices: [
+      {
+        text: "战斗",
+        nextScene: "被丧尸扑倒咬死"
+      },
+      {
+        text: "开门冲出去",
+        condition: "Math.random() < 0.5", // 50%的概率开门失败
+        nextScene: "门锁上了"
+      },
+      {
+        text: "闪！右转进入暗处",
+        nextScene: "初遇毒气型丧尸"
+      }
+    ]
+  },
 
 
 };

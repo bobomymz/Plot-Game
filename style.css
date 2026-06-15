@@ -158,10 +158,71 @@ html, body {
   cursor: pointer;
   transition: all 0.3s;
   margin-right: 8px;
+  display: none;
 }
 
 #backtrack-btn:hover {
   color: #fff;
   background: rgba(180, 140, 60, 0.6);
   border-color: rgba(220, 180, 100, 0.7);
+}
+
+/* QTE 倒计时容器与选项的间距 */
+#qte-timer {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* ===== 场景抖动 ===== */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%      { transform: translateX(-7px) rotate(-0.6deg); }
+  30%      { transform: translateX(7px)  rotate(0.6deg); }
+  50%      { transform: translateX(-5px) rotate(-0.3deg); }
+  70%      { transform: translateX(5px)  rotate(0.3deg); }
+  90%      { transform: translateX(-2px); }
+}
+#game-container.shake {
+  animation: shake 0.45s ease-out;
+  will-change: transform;   /* 隔离渲染层，避免重排扩散 */
+}
+
+/* ===== 屏幕特效遮罩层 ===== */
+#screen-effect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;        /* 不阻挡点击 */
+  z-index: 50;
+  transition: background 0.8s ease;
+}
+
+/* 体力=2：轻微暗角 */
+#screen-effect-overlay.vignette-warning {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+
+/* 体力≤1：重度暗角 + 脉冲呼吸感 */
+#screen-effect-overlay.vignette-danger {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  animation: pulse-vignette 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-vignette {
+  0%, 100% {
+    background: radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.6) 100%);
+  }
+  50% {
+    background: radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.78) 100%);
+  }
 }
