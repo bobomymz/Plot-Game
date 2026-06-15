@@ -5,16 +5,19 @@ const storyData = {
   // -------- 1. 变量定义（必须放在最前面）--------
   _variables: {
     strength: 4,            // 体力值
-    visitExitTimes: 0,        // 访问小区出口次数，达到3自动放行
+    visitExitTimes: 0,        // 访问小区出口次数，达到2自动放行
     foodUnderBed: true,      // 底下是否有食物，初始为true
     visitWaitingRoomTimes: 0, // 访问等候区次数，达到3丧尸会出现
     repeatedClickTimes: 0,    // 点击重复次数，可以用来设置连点环节
+    itemCount: 0,             // 物品数量
+    bagVolume: 3,             // 背包容量（最大物品数量）
     hasBroom:  false,          // 是否有扫帚
     hasDiary:  false,          // 是否有日记本
     hasTorch:  false,          // 是否有手电筒
     hasBike:   false,          // 是否有自行车
     hasKey:    false,          // 是否有钥匙
     hasMask:   false,          // 是否有防毒面具
+    hasIronPipe: false,        // 是否有铁管
   },
 
   // -------- 2. 全局触发器和屏幕特效 --------
@@ -25,8 +28,8 @@ const storyData = {
         priority: 1
       },
       {
-        condition: "hasBroom + hasDiary + hasTorch + hasBike + hasKey + hasMask >= 3", 
-        // 玩家最多携带3件物品，后续可以加更多东西
+        condition: "itemCount > bagVolume", 
+        // 玩家最多携带[背包容量]件物品，后续可以加更多东西
         targetScene: "物品太多啦",
         priority: 2,
         backtrack: "回溯"
@@ -159,7 +162,7 @@ const storyData = {
   },
 
   "开幕雷击": {
-    image: "images/home/enclosure.png",
+    image: "images/home/zombieKnockYouDown.png",
     text: "你打开房门，一个丧尸冲了进来————剧终\n你猜为什么游戏叫这个名字？:)"
   },
 
@@ -704,7 +707,7 @@ const storyData = {
 
   "骑车去西出口": {
     image: "images/home/cycleToExit.png",
-    onEnter: {hasBike: true},
+    onEnter: { hasBike: true, add: { itemCount: 1 } },
     text: "你的运气很好，这辆车没锁。跑了半天的你悠哉游哉骑着车，向西出口前进。",
     choices: [
       {
@@ -763,7 +766,7 @@ const storyData = {
   },
 
   "西出口": {
-    image: "images/home/exit.png",
+    image: "images/home/westExit.png",
     text: "你来到了西出口，成功逃出了地下车库",
     choices: [
       {
@@ -817,8 +820,8 @@ const storyData = {
   },
 
   "东出口": {
-    image: "images/home/exit.png",
-    text: "你来到了东出口。不幸的是，地下车库的门关上了，你无法打开。右边的墙上有一个按钮，左边有一扇铁门，里面黑漆漆的。",
+    image: "images/home/eastExit.png",
+    text: "你来到了东出口。不幸的是，地下车库的门关上了，你无法打开。右边的墙上有一个红色的按钮，左边有一扇铁门，里面黑漆漆的。",
     choices: [
       {
         text: "按下按钮",
@@ -884,7 +887,7 @@ const storyData = {
         nextScene: "民防设施-等候区",
         condition: "visitWaitingRoomTimes <= 2", 
         // 如果在等候区决策过多次数，丧尸就会进来（不再重复声明）
-        effect: { add: { hasDiary: true } },
+        effect: { set: { hasDiary: true }, add: { itemCount: 1 } },
         elseScene: "丧尸破门而入",
       },
       {
@@ -904,7 +907,7 @@ const storyData = {
       {
         text: "拿上手电筒",
         nextScene: "民防设施-等候区",
-        effect: { add: { hasTorch: true } }
+        effect: { set: { hasTorch: true }, add: { itemCount: 1 } }
       },
       {
         text: "不拿手电筒",
@@ -915,14 +918,14 @@ const storyData = {
 
   "等候区的扫帚": {
     image: "images/home/broom.png",
-    onEnter: { set: { hasBroom: true }, add: { visitWaitingRoomTimes: 1 } },
+    onEnter: { add: { visitWaitingRoomTimes: 1 } },
     text: "你拿起扫帚抖了抖，并没有什么发现。",
     choices: [
       {
         text: "拿上扫帚",
         nextScene: "民防设施-等候区",
         condition: "visitWaitingRoomTimes <= 2", 
-        effect: { add: { hasBroom: true } },
+        effect: { set: { hasBroom: true }, add: { itemCount: 1 } },
         elseScene: "丧尸破门而入",
       },
       {
@@ -953,7 +956,7 @@ const storyData = {
 
   "告示后面的钥匙": {
     image: "images/home/key.png",
-    onEnter: { set: { hasKey: true } },
+    onEnter: { set: { hasKey: true }, add: { itemCount: 1 } },
     text: "你揭下了告示纸，后面掉出来一个小钥匙，像是电瓶车的车钥匙。",
     choices: [
       {
@@ -1028,9 +1031,9 @@ const storyData = {
   },
 
   "初遇毒气型丧尸": {
-    image: "images/home/zombieGas.png",
+    image: "images/home/gasZombie.jpg",
     text: "你等了一会儿，没有声音了。           \n\
-突然，你看到身边的黑暗中，出现了一个绿色的亮斑，就像一只萤火虫悬停在空中。\n\
+突然，你看到身边的黑暗中，出现了2个绿色的亮斑，就像2只萤火虫悬停在空中。\n\
 只听嘶的一声，亮斑闪烁起来，像被什么挡住了。你闻到一股刺鼻的气味，晕了过去"
   },
 
@@ -1041,7 +1044,7 @@ const storyData = {
       {
         text: "拿上防毒面具",
         nextScene: "物资区的丧尸",
-        effect: { add: { hasMask: true } }
+        effect: { set: { hasMask: true }, add: { itemCount: 1 } }
       },
       {
         text: "不拿防毒面具",
@@ -1051,8 +1054,14 @@ const storyData = {
   },
 
   "物资区的丧尸": {
-    image: "images/home/zombie.png",
-    text: "你抬头一看，两只丧尸一前一后从杂物堆里走了出来，对你虎视眈眈",
+    image: "images/home/twoZombies.png",
+    text: "你抬头一看，两只丧尸一前一后从杂物堆里走了出来，对你虎视眈虎",
+    qte: {
+      timeout: 5000,
+      hidden: true,
+      onTimeout: "物资区的丧尸",
+    },
+    onEnter: { shake: true },
     choices: [
       {
         text: "先揍前面那个",
@@ -1060,19 +1069,157 @@ const storyData = {
       },
       {
         text: "先揍后面那个",
-        condition: "Math.random() < 0.5", // 50%的概率开门失败
-        nextScene: "门锁上了"
+        nextScene: "拳打脚踢"
       },
       {
         text: "搬开箱子找找武器",
-        nextScene: "通风管道"
+        nextScene: "民防设施-通风管道"
       },
       {
         text: "还愣着干啥快跑啊",
+        nextScene: "民防设施-等候区"
+      }
+    ]
+  },
+
+  "民防设施-通风管道": {
+    image: "images/home/vent.png",
+    text: "你一脚踹开箱子，这里什么都没有，但是有个通风管道的格栅，看起来不太牢靠。",
+    choices: [
+      {
+        text: "掰开格栅进去",
+        nextScene: "民防设施-通风管道的抉择"
+      },
+      {
+        text: "继续找武器",
         nextScene: "被丧尸扑倒咬死"
       }
     ]
   },
+
+  "民防设施-通风管道的抉择": {
+    image: "images/home/vent.png",
+    text: "你钻进了通风管道，前面是岔路。",
+    choices: [
+      {
+        text: "往左爬",
+        nextScene: "死路一条"
+      },
+      {
+        text: "往右爬",
+        nextScene: "小区东门"
+      }
+    ]
+  },
+
+  "死路一条": {
+    image: "images/home/deadEnd.png",
+    text: "你走错了路，前面是死路一条。\n\
+丧尸的那绿色的眼睛是你最后的记忆。"
+  },
+
+  "拳打脚踢": {
+    image: "images/home/1v2.png",
+    onEnter: { add: { strength: -1 } },
+    text: "你率先发动了攻击。\n\
+前面那只丧尸向你缓缓走来，你一个滑铲闪过去，冲向后面那只愣神的丧尸，一拳正中脑门。\n\
+丧尸一个踉跄将要倒地，被你擒住手臂，一个过肩摔，把它重重砸在它的同伙上。\n\
+两只丧尸缓缓爬起来，眼睛似乎在燃烧。你决定？",
+    choices: [
+      {
+        text: "躲进旁边的房间",
+        nextScene: "民防设施-生活区"
+      },
+      {
+        text: "继续战斗",
+        nextScene: "拳打脚踢2"
+      }
+    ]
+  },
+
+  "拳打脚踢2": {
+    image: "images/home/1v2.png",
+    onEnter: { add: { strength: -1 } },
+    text: "你从墙上掰下来一根长长的铁管，狠狠砸在丧尸们的脑袋上。\n\
+咚！咚！        \n\
+嗯，现在不会有问题了。",
+    choices: [
+      {
+        text: "进入旁边的房间",
+        condition: "itemCount < bagVolume",
+        nextScene: "民防设施-进风机房",
+        effect: { set : { hasIronPipe: true }, add: { itemCount: 1 } }, // 如果物品还够放，那就拿上铁管
+        elseScene: "民防设施-进风机房"
+      }
+    ]
+  },
+
+  "民防设施-进风机房": {
+    image: "images/home/fanRoom.png",
+    text: "你来到了进风机房。\n\
+这里有大型电动脚踏两用风机，断电时可人力踩踏送风，配套庞大保温风管、电气控制箱，整间布满金属管道，密密麻麻，如同蜘蛛网。\n\
+外面传来砰砰砰的敲门声，你必须尽快做出抉择。",
+    choices: [
+      {
+        text: "走为上策",
+        nextScene: "丧尸破门而入"
+      },
+      {
+        showCondition: "hasIronPipe",
+        text: "用铁管顶住门",
+        condition: "hasTorch",
+        nextScene: "民防设施-进风机房-安全",
+        elseScene: "民防设施-进风机房-失败"
+      },
+      {
+        showCondition: "hasBroom",
+        text: "用扫把顶住门",
+        condition: "hasTorch",
+        nextScene: "民防设施-进风机房-安全",
+        elseScene: "民防设施-进风机房-失败"
+      }
+    ]
+  },
+
+  "民防设施-进风机房-安全": {
+    image: "images/home/fanRoom.png",
+    text: "吁，现在安全了。\n\
+你继续沿着通道走，经过了消毒室等房间，终于走了出去。",
+    choices: [
+      {
+        text: "小区东门",
+        nextScene: "小区东门"
+      }
+    ]
+  },
+
+  "民防设施-进风机房-失败": {
+    image: "images/home/fanRoom.png",
+    text: "你成功地顶住了门。\n\
+吁，现在安全了。\n\
+你望着眼前的幽深走廊，犹豫片刻，向前走去。\n\
+突然，你看到身边的黑暗中，出现了2个绿色的亮斑，就像2只萤火虫悬停在空中。\n\
+只听嘶的一声，亮斑闪烁起来，像被什么挡住了。你闻到一股刺鼻的气味，晕了过去。",
+    choices: [
+      {
+        showCondition: "hasMask",
+        text: "还不戴上你的防毒面具！",
+        nextScene: "民防设施-物资区-安全"
+      }
+    ]
+  },
+
+  "小区东门": {
+    image: "images/home/eastGate.png",
+    text: "你来到了小区东门。\n\
+"
+  },
+
+  "小区西门": {
+    image: "images/home/westGate.png",
+    text: "你来到了小区西门。\n\
+"
+  }
 
 
 };
