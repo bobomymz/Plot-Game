@@ -1,0 +1,347 @@
+/* ========== 全局重置 ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: #0a0a0a;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;          /* 允许纵向滚动查看选项 */
+}
+
+/* ========== 主容器（自然流布局） ========== */
+#game-container {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ========== 图片区域：占满一屏高度 ========== */
+#image-area {
+  width: 100%;
+  height: 100vh;             /* 恰好占满视口 */
+  background: #0f3460;       /* 加载前底色 */
+  position: relative;
+  overflow: hidden;
+}
+
+#scene-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;         /* 裁剪铺满，不变形 */
+  display: block;
+}
+
+/* ========== 剧情文字：向上贴住图片底部（毛玻璃） ========== */
+#text-area {
+  position: relative;
+  z-index: 2;
+  width: 88%;
+  max-width: 1200px;
+  max-height: 100px;        /* 根据你期望的区域大小调整 */
+  overflow-y: auto;         /* 纵向超出时显示滚动条 */
+  padding-right: 8px;       /* 让滚动条不遮挡文字 */
+  margin: -200px auto 0;      /* 向上移动 200px，覆盖图片底部边缘 */
+  padding: 26px 30px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -8px 25px rgba(0,0,0,0.5);
+}
+
+#scene-text {
+  color: #f2f2f2;
+  font-size: 18px;
+  line-height: 1.9;
+  letter-spacing: 0.5px;
+  white-space: pre-wrap;
+  position: relative;
+  transition: opacity 0.4s;
+}
+
+/* 打字机光标 */
+#scene-text.typing::after {
+  content: "▮";
+  color: #fff;
+  font-size: 20px;
+  animation: blink 0.8s infinite;
+  margin-left: 2px;
+  vertical-align: baseline;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/* ========== 选项区域（文字下方，需下滑查看） ========== */
+#choices-area {
+  width: 88%;
+  max-width: 1000px;
+  margin: 20px auto 40px;    /* 与文字保持间距，底部留空 */
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.choice-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 22px;
+  font-size: 16px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.choice-btn:hover {
+  background: rgba(123, 45, 142, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(123, 45, 142, 0.5);
+}
+
+.choice-btn:active {
+  transform: translateY(0);
+}
+
+/* ===== 输入框选项 ===== */
+.choice-input-container {
+  z-index: 999;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.choice-input-label {
+  color: #f0c040;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.choice-input-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.choice-input-field {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 18px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.3s;
+  font-family: inherit;
+  letter-spacing: 2px;
+}
+
+.choice-input-field:focus {
+  border-color: #f0c040;
+  box-shadow: 0 0 12px rgba(240, 192, 64, 0.3);
+}
+
+.choice-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0;
+}
+
+.choice-input-submit {
+  flex-shrink: 0;
+  width: auto;
+  padding: 12px 24px;
+  background: rgba(240, 192, 64, 0.2);
+  border-color: rgba(240, 192, 64, 0.4);
+}
+
+.choice-input-submit:hover {
+  background: rgba(240, 192, 64, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 无选项提示文字 */
+#choices-area p {
+  color: #f0c040;
+  text-align: center;
+  font-size: 20px;
+  margin: 0 auto;
+}
+
+/* ========== 重新开始按钮（固定右上角） ========== */
+#status-bar {
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  z-index: 100;
+}
+
+#restart-btn {
+  padding: 8px 22px;
+  font-size: 14px;
+  color: #ccc;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+/* 回溯按钮（顶部） */
+#backtrack-btn {
+  padding: 8px 22px;
+  font-size: 14px;
+  color: #f0c040;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(200, 160, 80, 0.4);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-right: 8px;
+  display: none;
+}
+
+#backtrack-btn:hover {
+  color: #fff;
+  background: rgba(180, 140, 60, 0.6);
+  border-color: rgba(220, 180, 100, 0.7);
+}
+
+/* QTE 倒计时容器与选项的间距 */
+#qte-timer {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* ===== 场景抖动 ===== */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%      { transform: translateX(-7px) rotate(-0.6deg); }
+  30%      { transform: translateX(7px)  rotate(0.6deg); }
+  50%      { transform: translateX(-5px) rotate(-0.3deg); }
+  70%      { transform: translateX(5px)  rotate(0.3deg); }
+  90%      { transform: translateX(-2px); }
+}
+#game-container.shake {
+  animation: shake 0.45s ease-out;
+  will-change: transform;   /* 隔离渲染层，避免重排扩散 */
+}
+
+/* ===== 屏幕特效遮罩层 ===== */
+#screen-effect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;        /* 不阻挡点击 */
+  z-index: 50;
+  transition: background 0.8s ease;
+}
+
+/* 体力=2：轻微暗角 */
+#screen-effect-overlay.vignette-warning {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+
+/* 体力≤1：重度暗角 + 脉冲呼吸感 */
+#screen-effect-overlay.vignette-danger {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 35%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  animation: pulse-vignette 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-vignette {
+  0%, 100% {
+    background: radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.6) 100%);
+  }
+  50% {
+    background: radial-gradient(ellipse at center, transparent 28%, rgba(0,0,0,0.78) 100%);
+  }
+}
+
+/* ===== 预加载遮罩 ===== */
+#preload-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease;
+  opacity: 1;
+}
+#preload-overlay.preload-done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#preload-box {
+  width: 80%;
+  max-width: 480px;
+  text-align: center;
+}
+
+#preload-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #c0a060;
+  letter-spacing: 6px;
+  margin-bottom: 28px;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+#preload-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+#preload-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #8b5e3c, #c0a060);
+  border-radius: 3px;
+  transition: width 0.25s ease;
+}
+
+#preload-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 1px;
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+}

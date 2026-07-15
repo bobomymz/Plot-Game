@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>尸潮笔记 - wqx出品</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 预加载遮罩 -->
+  <div id="preload-overlay">
+    <div id="preload-box">
+      <div id="preload-title">尸潮笔记</div>
+      <div id="preload-track">
+        <div id="preload-bar"></div>
+      </div>
+      <div id="preload-label">加载资源中…</div>
+    </div>
+  </div>
+
+  <div id="game-container">
+    <!-- 场景图片 -->
+    <div id="image-area">
+      <img id="scene-image" src="" alt="场景图">
+    </div>
+
+    <!-- 剧情文字 -->
+    <div id="text-area">
+      <p id="scene-text"></p>
+    </div>
+
+    <!-- 选项按钮 -->
+    <div id="choices-area"></div>
+
+    <!-- 底部工具栏 -->
+    <div id="status-bar">
+      <button id="backtrack-btn" style="display:none;">↩ 回溯</button>
+      <button id="restart-btn">🔄 重新开始</button>
+    </div>
+  </div>
+
+  <!-- 先加载剧情数据，再加载引擎 -->
+  <script src="story/utils.js"></script>      <!-- updateTime 等工具函数 -->
+  <script src="story/core.js"></script>       <!-- 声明 storyData + 变量 + 触发器 -->
+  <script src="story/夜晚剧情.js"></script>           <!-- 天黑强制过夜系统 -->
+  <script src="story/樱桃苑（初始小区）.js"></script>       <!-- 我的小区 -->
+  <script src="story/东明街道路径.js"></script>  <!-- 邻近社区（主要包含道路和简单剧情，某些地点的复杂剧情可单独拆分） -->
+  <script src="story/东明社区图书馆.js"></script>  <!-- 东明社区图书馆（微型dungeon，清场解锁安全屋） -->
+  <script src="story/地铁站.js"></script>           <!-- 11号线三林东路站（枢纽，连接迪士尼等区域） -->
+  <script src="story/五金店.js"></script>           <!-- 五金店（正门必死，暗道通联华超市） -->
+  <script src="story/上实南校.js"></script>          <!-- 上实南校（初中校园，救同学） -->
+  <script src="story/新达汇.js"></script>            <!-- 新达汇·三林（大型商场，B1~5F+屋顶+东区） -->
+  <script src="story/新达汇地下车库.js"></script>     <!-- 新达汇B1停车场（8区解谜找车钥匙） -->
+  <script src="story/全家和公交站.js"></script>       <!-- 小区东门的全家便利店 + 公交站剧情 -->
+  <script src="story/安盛街.js"></script>            <!-- 安盛街（理发店、文具店、服装店、食品批发部） -->
+  <script src="story/安居苑.js"></script>            <!-- 三林安居苑（老小区） -->
+  <script src="story/上海市区路径.js"></script>    <!-- 城市级别连接（高架、隧道、地铁、长途公交等，连接出城/临港等剧情线） -->
+  
+  <script src="engine.js"></script>
+</body>
+</html>
