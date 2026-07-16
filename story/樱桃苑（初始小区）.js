@@ -50,10 +50,6 @@ Object.assign(storyData, {
         nextScene: "床底的食物",
         condition: "foodUnderBed",
         elseScene: "什么都没有"
-      },
-      {
-        text: "我要打丧尸",
-        nextScene: "丧尸袭来"
       }
     ]
   },
@@ -1318,7 +1314,7 @@ Object.assign(storyData, {
 吁，现在安全了。\n\
 你望着眼前的幽深走廊，犹豫片刻，向前走去。\n\
 突然，你看到身边的黑暗中，出现了2个绿色的亮斑，就像2只萤火虫悬停在空中。\n\
-只听嘶的一声，亮斑闪烁起来，像被什么挡住了。你闻到一股刺鼻的气味，感到头晕目眩。那双绿色的眼睛，缓缓向你靠近。",
+只听嘶的一声，亮斑闪烁起来，像被什么挡住了。你眼前一阵发黑，感到头晕目眩。那双绿色的眼睛，缓缓向你靠近。",
     choices: [
       {
         showCondition: "maskRemainingUses > 0",

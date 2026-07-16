@@ -51,7 +51,7 @@ Object.assign(storyData, {
   },
   "新达汇-B1美食广场": {
     image: "images/新达汇/b1FoodCourt.png",
-    text: function(vars) { return "你走进B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。空气中弥漫着一股发酵的馊味。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着\"后勤通道 · 非工作人员勿入\"的标签。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "你走进B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。地面上散落着打翻的餐盘和发霉的剩菜，苍蝇在上面嗡嗡地盘旋。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着\"后勤通道 · 非工作人员勿入\"的标签。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "推开防火门进入后勤通道",
@@ -385,7 +385,7 @@ Object.assign(storyData, {
   "新达汇-1F味千拉面": {
     image: "images/新达汇/ramenShop.png",
     text: function(vars) {
-      var desc = "你钻进卷帘门，来到味千拉面店内。\n灶台上的汤锅已经冷透了，空气中还残留着一股猪骨汤底的油脂味。后厨的操作台上散落着几包未拆封的袋装拉面——不是店里的货，看起来是员工自己囤的。";
+      var desc = "你钻进卷帘门，来到味千拉面店内。\n灶台上的汤锅已经冷透了，汤面凝了一层白色的油脂。后厨的操作台上散落着几包未拆封的袋装拉面——不是店里的货，看起来是员工自己囤的。";
       if (vars._ramenVisited) desc += "\n你之前已经来过这里，卷帘门还维持着你离开时的样子。";
       desc += "\n" + describeZombieWave(vars);
       return desc;
@@ -1960,7 +1960,7 @@ Object.assign(storyData, {
   "新达汇-4F日料店": {
     image: "images/新达汇/japaneseRestaurant.png",
     text: function(vars) {
-      var desc = "吧台被砸了，清酒瓶碎了一地，空气中一股浓郁的酒精味。地上满是碎玻璃和陶瓷片。";
+      var desc = "吧台被砸了，清酒瓶碎了一地，地上满是碎玻璃和陶瓷片，踩上去咔嚓作响。脚下黏糊糊的——酒液浸透了地毯，走起来带出轻微的粘滞声。";
       if (!vars._catChasing && !vars._powerOut && vars._catFed && Math.random() < 0.3) {
         desc += "\n吧台上有一个轻盈的身影一闪而过——那只变异猫正蹲在碎酒瓶之间，舔舐着地上打翻的三文鱼碎。它看到你，叼起一块鱼肉跳下吧台，消失在阴影里。";
       }
@@ -2831,7 +2831,7 @@ Object.assign(storyData, {
   },
   "新达汇-B1垃圾清运通道": {
     image: "images/新达汇/backHallB1.png",
-    text: function(v) { var d = "走廊在这里拐了一个弯，变得更窄了。墙上的应急灯有一盏不亮了，照得通道明暗交错。空气中弥漫着一股混合着馊水和消毒水的刺鼻气味。\n\
+    text: function(v) { var d = "走廊在这里拐了一个弯，变得更窄了。墙上的应急灯有一盏不亮了，照得通道明暗交错。地面上有一层滑腻的污水渍，踩上去鞋底直打滑。\n\
 前方有一堆倾倒的货架堵住了半边走廊——生锈的铁架横七竖八地卡在中间，只留出一条勉强能侧身挤过去的窄缝。";
       if (v.chasedByZombies > 0) d += "\n<span style='color: #ff4444;'>身后传来丧尸熟悉的脚步声——越来越近了，不知道是什么时候跟上来的。你没有时间犹豫。</span>"; 
     return d; },
@@ -2965,7 +2965,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F后勤仓库": {
     image: "images/新达汇/backHall1f.png",
-    text: "你推开门，一股陈旧的纸箱气味扑面而来。这是一间小型储物仓库，货架上堆着一些落满灰的清洁用品和几箱矿泉水。矿泉水箱上放着一瓶已经开封的——看起来是某个员工留下的。",
+    text: "你推开门。这是一间小型储物仓库，货架上堆着一些落满灰的清洁用品和几箱矿泉水。矿泉水箱上放着一瓶已经开封的——看起来是某个员工留下的。",
     choices: [
       {
         text: "回到后勤走廊",
@@ -3199,7 +3199,7 @@ Object.assign(storyData, {
       else if (v.chasedByZombies == 2) v.chasedByZombies = 1;
       return {};
     },
-    text: function(v) { return "5F的后勤走廊狭窄而低矮——天花板上的管道几乎要碰到头。空气里有一股炭火和烧烤酱的味道。走廊两侧各有一扇门，分别通向不同的餐厅后厨。\n" + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>你反手关好后厨门——门锁卡进了门框。低矮的天花板和交错的管道让丧尸很难成群挤进来。暂时安全了。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>你冲进来关好门，追兵撞了几下门板后散开了大半——窄管道挡住了它们的来路。</span>" : "") + describeZombieWave(v); },
+    text: function(v) { return "5F的后勤走廊狭窄而低矮——天花板上的管道几乎要碰到头。隔墙传来管道里的滴答声——残留的油脂在水管里缓慢流动，像是什么东西在墙后面窃窃私语。走廊两侧各有一扇门，分别通向不同的餐厅后厨。\n" + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>你反手关好后厨门——门锁卡进了门框。低矮的天花板和交错的管道让丧尸很难成群挤进来。暂时安全了。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>你冲进来关好门，追兵撞了几下门板后散开了大半——窄管道挡住了它们的来路。</span>" : "") + describeZombieWave(v); },
     choices: [
       {
         text: "去看看走廊尽头的清洁工具间",
@@ -3225,7 +3225,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F清洁工具间": {
     image: "images/新达汇/backHall5f.png",
-    text: "你推开门——是一间清洁工具间。几把拖把靠墙立着，水桶里还残留着半桶浑浊的水，散发出一股霉味。墙上挂着一本保洁签到表，最后一次签名的日期是6月25日。签到表旁边用圆珠笔贴着一张皱巴巴的便条。",
+    text: "你推开门——是一间清洁工具间。几把拖把靠墙立着，水桶里还残留着半桶浑浊的水，水面浮着一层灰白色的霉膜。墙上挂着一本保洁签到表，最后一次签名的日期是6月25日。签到表旁边用圆珠笔贴着一张皱巴巴的便条。",
     choices: [
       {
         text: "凑近看看那张便条",
