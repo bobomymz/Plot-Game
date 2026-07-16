@@ -1361,13 +1361,17 @@ Object.assign(storyData, {
       midnight: "images/home/小区西门-midnight.png"
     }),
     onEnter: updateTime(2, { set : { positionAfterOperation: "小区西门-整装待发", currentPlace: "初始小区", currentPos: "西门" } }),
-    text: "你来到了小区西门。\n\
+    text: function(vars) {
+      let basicDes = "你来到了小区西门。\n\
 推开失灵的感应门。门外是一条空荡荡的街道，几辆歪斜的汽车堵在路中间，车窗碎裂，里面空无一人。\n\
 社区图书馆的大楼静静伫立在你的眼前，横幅在空中摇荡。\n\
 几片落叶悄然飘过，跌宕着飞向左边的地铁站。\n\
 远处有一块路牌，上面写着“东明路”。\n\
 除了风声，这里什么声音都没有。\n\
-死寂。",
+死寂。";
+      if(_visit['初遇陈默']) basicDes += "陈默踏过石砖路，向北方走去。“我只能帮你到这里。接下来，你只能靠自己了。”他的话在风中回荡。“\n";
+      return basicDes;
+    },
     choices: [
       {
         showCondition: "itemCount > 0",

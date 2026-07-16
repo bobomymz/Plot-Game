@@ -133,7 +133,7 @@ Object.assign(storyData, {
       },
       {
         text: "去银行",
-        nextScene: "银行",
+        nextScene: "银行门口",
         effect: updateTime(4)
       },
       {
@@ -287,20 +287,52 @@ Object.assign(storyData, {
 
 
   // ==================== 建设银行 ====================
-  "银行": {
-    image: "images/小区周边/constructionBank.png",
+  "银行门口": {
+    image: timeImage({
+      morning: "images/小区周边/银行门口-morning.png",
+      evening: "images/小区周边/银行门口-evening.png",
+      night: "images/小区周边/银行门口-night.png",
+      midnight: "images/小区周边/银行门口-midnight.png",
+    }),
     onEnter: { set: { currentPlace: "三林路", currentPos: "银行" } },
-    text: "你推开银行的玻璃门。大厅里一片狼藉——叫号机倒在地上，宣传单页撒了一地，几盆绿植被打翻，泥土和碎瓷片混合在一起。\nATM机被砸开了，屏幕碎裂，里面空空如也——当然，这时候钱也没什么用了。\n倒是保安室的门半开着，里面似乎有什么东西在动……又好像只是光影。",
+    text: "你来到了建设银行门口。这是你办第一张储蓄卡的地方，你把自己的压岁钱存了2年定期，但是1年就取出来了，只有活期的利率。不过，本来也没多少钱。\n\
+如果你带卡了，或许可以去ATM机里掏出一些钱来————不过，这末世里钱有什么用？",
     choices: [
       {
-        text: "小心靠近保安室",
+        text: "进入银行",
+        nextScene: "银行内部",
+        effect: updateTime(1)
+      },
+      {
+        text: "离开",
+        nextScene: "三林路"
+      }
+    ]
+  },
+
+  "银行内部": {
+    image: "images/小区周边/constructionBank.png",
+    onEnter: { set: { currentPlace: "三林路", currentPos: "银行" } },
+    text: "你推开银行的玻璃门。大厅里一片狼藉——叫号机倒在地上，宣传单页撒了一地，几盆绿植被打翻，泥土和碎瓷片混合在一起。\n\
+ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没什么用了，为什么有人会抢呢？他们真觉得自己能逃出上海啊。\n\
+保安室的门半开着，里面似乎有什么东西在动……好像只是树叶的影子。",
+    choices: [
+      {
+        text: "查看保安室",
         nextScene: "银行-保安室",
         effect: updateTime(1)
       },
       {
-        text: "查看金库方向",
+        text: "查看金库",
         nextScene: "银行-金库",
         effect: updateTime(1)
+      },
+      {
+        text: "翻看地上散落的单据",
+        condition: "!hasBankSlip",
+        nextScene: "银行-存款凭条",
+        effect: updateTime(1),
+        elseScene: "地上剩下的单据都已经被踩烂了，什么也看不清。"
       },
       {
         text: "没什么值得留的，离开",
@@ -311,7 +343,8 @@ Object.assign(storyData, {
 
   "银行-保安室": {
     image: "images/小区周边/bankSecurityRoom.png",
-    text: "你探头往保安室里看。一个穿着保安制服的丧尸被卡在办公椅和墙壁之间，一条腿被椅腿别住了，正徒劳地蹬着地面，发出吱——吱——的摩擦声。它看到你，伸出手臂徒劳地抓挠，但够不到你。\n、办公桌上有一瓶没开封的矿泉水，在日光灯下反射着微光。",
+    text: "你探头往保安室里看。一个穿着保安制服的丧尸被卡在办公椅和墙壁之间，一条腿被椅腿别住了，正徒劳地蹬着地面，发出吱——吱——的摩擦声。它看到你，伸出手臂徒劳地抓挠，但够不到你。\n\
+办公桌上有一瓶没开封的矿泉水，在日光灯下反射着微光。",
     choices: [
       {
         text: "绕过它去拿水",
@@ -319,7 +352,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "算了，不管它",
+        text: "太危险了，走吧",
         nextScene: "三林路"
       }
     ]
@@ -328,7 +361,11 @@ Object.assign(storyData, {
   "银行-拿水": {
     image: "images/小区周边/bankSecurityRoom.png",
     onEnter: { add: { strength: 1 } },
-    text: "你贴着墙壁，小心翼翼地绕到办公桌旁。保安丧尸在你身后徒劳地嘶吼着，但你够到了那瓶水。\n拧开瓶盖灌了几口，清凉的液体顺着喉咙滑下去——在这种天气里，一瓶干净的水比什么都珍贵。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n你绕过挣扎的保安，退出了银行。",
+    text: "你贴着墙壁，小心翼翼地绕到办公桌旁。保安丧尸在你身后徒劳地嘶吼着，但你够到了那瓶水。\n\
+拧开瓶盖灌了几口，清凉的液体顺着喉咙滑下去——在这种天气里，一瓶干净的水比什么都珍贵。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
+你转头看向那只丧尸，它正努力地向你移动。“你叫什么名字啊？”耳边只传来虚弱的嘶吼声。”知道你不会说话。好吧，拜拜了。“\n\
+你绕过挣扎的保安，退出了银行。",
     choices: [
       {
         text: "继续",
@@ -344,6 +381,35 @@ Object.assign(storyData, {
     choices: [
       {
         text: "回去",
+        nextScene: "三林路"
+      }
+    ]
+  },
+
+  "银行-存款凭条": {
+    image: "images/小区周边/constructionBank.png",
+    onEnter: { set: { hasBankSlip: true } },
+    text: "你蹲下来，从满地的宣传单页和碎纸中捡起一张还算完整的单据。\n\
+是一张建设银行的存款凭条——大概是6月28日上午柜台上还没来得及收起来的。\n\n\
+<div style=\"border-left: 3px solid #8B7355; padding-left: 14px; margin: 14px 0; font-family: 'Courier New', monospace; color: #c0c0c0; font-size: 14px; line-height: 1.8;\">\n\
+━━━ 中国建设银行 · 存款凭条 ━━━<br>\n\
+<br>\n\
+网点：环林东路支行<br>\n\
+日期：2026/06/28  09:37<br>\n\
+柜员：3127<br>\n\
+户名：周启明<br>\n\
+金额：¥860.00<br>\n\
+━━━━━━━━━━━━━━━━━━<br>\n\
+</div>\n\n\
+860块——大概是一个小店主三四天的流水。\n\
+你把凭条叠好塞进口袋，虽然也不知道留着还有什么用。",
+    choices: [
+      {
+        text: "继续探索银行",
+        nextScene: "银行内部"
+      },
+      {
+        text: "离开银行",
         nextScene: "三林路"
       }
     ]
