@@ -7,7 +7,7 @@ Object.assign(storyData, {
 
   // ==================== 入口区 ====================
   "新达汇-B1停车场A区": {
-    image: "images/xindahui/b1ParkingA.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingA.png */,
     onEnter: { set: { currentPlace: "新达汇", currentPos: "地下车库" } },
     text: "你来到停车场A区。这是离走廊最近的一片区域，头顶还有几盏灯亮着，昏黄的光勉强勾勒出停车位的轮廓。\n前方一走下去就是主通道，两侧延伸入黑暗中——左边隐约能看到一些车辆轮廓，右边拐过去似乎是一个角落。",
     choices: [
@@ -20,7 +20,7 @@ Object.assign(storyData, {
 
   // ==================== 主通道（中枢） ====================
   "新达汇-B1停车场B区": {
-    image: "images/xindahui/b1ParkingB.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingB.png */,
     text: function(vars) {
       var desc = "你站在停车场主通道的中段。这里几乎没有光线，只有远处入口区的灯光在墙壁上投下一层模糊的轮廓。";
       if (vars._wiredCorrectly) {
@@ -42,7 +42,7 @@ Object.assign(storyData, {
 
   // ==================== C区 · 配电室 ====================
   "新达汇-B1停车场C区": {
-    image: "images/xindahui/parkingC.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingC.png */,
     text: function(vars) {
       if (vars._wiredCorrectly) return "配电室的灯亮着。墙上的配电箱面板已经合上了——几根重新接好的电线整齐地排列着。没什么需要再做的了。";
       return "你穿过防火门，走进停车场附属的配电室。墙上的配电箱面板掉了一半，几根不同颜色的电线从接口处松脱，垂落在外面。\n如果你能把它们重新接好，应该能恢复这一片的照明。";
@@ -61,7 +61,7 @@ Object.assign(storyData, {
 
   // ==================== 接线谜题 ====================
   "新达汇-B1停车场-接线": {
-    image: "images/xindahui/powerPanel.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
     onEnter: { add: { _garageOps: 1 } },
     text: function(vars) {
       var desc = "配电箱里的线头脱落了好几根。你凑近一看——所有电线的外皮都是黑色的，没有颜色标记。\n配电箱盖板内侧贴着一张接线图，但被灰尘和油污盖住了大半。";
@@ -90,7 +90,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-接线成功": {
-    image: "images/xindahui/powerPanel.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
     onEnter: { set: { _wiredCorrectly: true } },
     text: function(vars) {
       if (vars._powerOut) return "你推上电闸。灯管闪了两下——然后灭了。配电箱深处传来一声低沉的嗡鸣，但什么也没有发生。总闸没电，你这里的电闸推上去也没用。";
@@ -102,7 +102,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-接线失败": {
-    image: "images/xindahui/powerPanel.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: "你把线接上了，但推上电闸的瞬间——啪！一阵火花闪过，灯没亮。你接错了。\n短路的声音在空旷的停车场里回荡……肯定引起了什么东西的注意。你得小心了。",
     choices: [
@@ -113,7 +113,7 @@ Object.assign(storyData, {
 
   // ==================== D区 · 排水沟（环境叙事） ====================
   "新达汇-B1停车场D区": {
-    image: "images/xindahui/parkingD.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingD.png */,
     text: "你走下几级台阶，来到停车场旧区。地面比上面低了一截，脚下的水泥地湿漉漉的，踩上去有细碎的回声。\n地面上有一排排水沟的铁栅栏——栅栏缝隙里能看到浑浊的水面。水面在手电筒/手机光下泛着暗色的光，看起来不深，但有一种……细微的、有节奏的拍水声从下面传来。\n你不太确定那是水流还是别的东西。",
     choices: [
       { text: "仔细看看栅栏上的刻字", nextScene: "新达汇-B1停车场-涂鸦" },
@@ -123,7 +123,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-涂鸦": {
-    image: "images/xindahui/parkingD.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingD.png */,
     text: "你蹲下来看铁栅栏边缘。有人用马克笔在水泥地上写了一行字，字迹潦草但用力：\n\n\"别在车里过夜。它们会从排水沟爬上来。——一个忠告\"\n\n下面还有一行更小的字，像是同一个人后来又加的：\n\"不听就算了。\"\n\n你站起来，看了一眼排水沟的栅栏。铁条之间的缝隙大约有十厘米宽。足够什么东西伸出来。",
     choices: [
       { text: "离开这里", nextScene: "新达汇-B1停车场D区" }
@@ -132,7 +132,7 @@ Object.assign(storyData, {
 
   // ==================== E区 · 白色SUV（假线索） ====================
   "新达汇-B1停车场E区": {
-    image: "images/xindahui/parkingE.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingE.png */,
     text: function(vars) {
       if (vars._wiredCorrectly || vars.hasTorch) {
         return "你来到停车场东北角停着一辆白色荣威SUV。驾驶座的门虚掩着，座位上放着一个空了半截的矿泉水瓶，看起来不久前还有人待过。\n你检查了钥匙孔——上面有明显的划痕，像是被人用什么东西撬过或者试过。方向盘上落了一层薄灰，这辆车至少一周没动过了。";
@@ -146,7 +146,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-搜SUV": {
-    image: "images/xindahui/parkingE.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingE.png */,
     onEnter: { add: { _garageOps: 1 } },
     text: "你翻了手套箱、中央扶手箱和车门储物格——只有过期的保险单、几张停车票和一包已经潮了的纸巾。没有任何钥匙的踪影。",
     choices: [
@@ -156,7 +156,7 @@ Object.assign(storyData, {
 
   // ==================== F区 · 黑色大众轿车（真钥匙） ====================
   "新达汇-B1停车场F区": {
-    image: "images/xindahui/parkingF.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
     text: function(vars) {
       if (!vars._wiredCorrectly && !vars.hasTorch) {
         return "停车场最深处的角落里停着一辆黑色大众轿车。车身干净，没有落太多灰——有人在最近几天还开过它。车里一片黑，看不清有什么东西。";
@@ -182,7 +182,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-拿钥匙": {
-    image: "images/xindahui/carKey.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/carKey.png */,
     onEnter: { add: { _garageOps: 1 }, set: { positionAfterOperation: "新达汇-B1停车场-拿钥匙" } },
     text: "你坐进车里，翻开遮阳板——一把车钥匙掉在你手里。\n钥匙上贴着丰田的标志。\n如果能找到这辆车，也许能早点离开东明街道。",
     choices: [
@@ -197,7 +197,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-没钥匙": {
-    image: "images/xindahui/carKey.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/carKey.png */,
     onEnter: { add: { _garageOps: 1 }, set: { positionAfterOperation: "新达汇-B1停车场-没钥匙" } },
     text: "你坐进车里，翻找了一会儿。这里除了一本驾驶手册以外并没有什么像样的东西。你只能悻悻离开。",
     choices: [
@@ -206,7 +206,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-检查后备箱": {
-    image: "images/xindahui/parkingF.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
     onEnter: { add: { _garageOps: 1 } },
     text: "你打开后备箱，里面有一个小黄人行李箱，鼓鼓的。你拉开拉链，一只丧尸的手突然窜了出来，掐住了你的脖子。\n\
 你挣脱那只手，夺路而逃。           \n\
@@ -217,7 +217,7 @@ Object.assign(storyData, {
 
   // ==================== G区 · 银色面包车（假线索+噪音） ====================
   "新达汇-B1停车场G区": {
-    image: "images/xindahui/parkingG.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingG.png */,
     text: function(vars) {
       if (vars._wiredCorrectly || vars.hasTorch) {
         return "西侧角落停着一辆银色五菱面包车。后门没有锁，车厢里堆满了纸箱和杂物。方向盘上落满了灰——这辆车已经很久没人碰过了。\n不太像是最近被开过的车。";
@@ -232,7 +232,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-搜面包车": {
-    image: "images/xindahui/parkingG.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingG.png */,
     onEnter: { add: { _garageOps: 1, chasedByZombies: 1 } },
     text: "你翻进车厢，在纸箱里摸索了一会儿——有几包受潮的压缩饼干和几瓶过期的矿泉水。吃的倒是有，但没有钥匙。\n你在翻动纸箱时发出了不小的声响——纸箱倒了一个，哐当一声掉在地上。回音在空旷的车库里传得很远很远。",
     choices: [
@@ -242,7 +242,7 @@ Object.assign(storyData, {
 
   // ==================== 操作计数检查 ====================
   "新达汇-B1停车场-车库检查": {
-    image: "images/xindahui/b1ParkingB.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingB.png */,
     text: function(vars) {
       if (vars._garageOps >= 5) {
         return "排水沟那边传来一阵剧烈的翻涌声——水花四溅，然后是什么沉重的东西爬上了地面的声音。你没有回头看。你跑了。";
@@ -265,7 +265,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-B1停车场-强制驱逐": {
-    image: "images/xindahui/b1Corridor.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/b1Corridor.png */,
     onEnter: { set: { _garageOps: 0 } },
     text: "你拔腿就跑，穿过B区、冲过A区，一路没有回头。直到站在B1走廊的灯光下，你才敢停下来喘气。\n身后的停车场深处，水声还在回荡。",
     choices: [
@@ -275,7 +275,7 @@ Object.assign(storyData, {
 
   // ==================== H区 · 死胡同（环境叙事） ====================
   "新达汇-B1停车场H区": {
-    image: "images/xindahui/parkingH.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingH.png */,
     text: "你拐进角落，但前面是一堵墙——死胡同。这里堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。\n购物车里有一只落满灰的毛绒熊玩偶，半埋在杂物里。墙上有人用马克笔写着：\n\
 \"它们会从排水沟爬上来。\"",
     choices: [

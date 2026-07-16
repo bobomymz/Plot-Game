@@ -216,10 +216,6 @@ Object.assign(storyData, {
     image: "images/home/zombieOutsideHome.png",
     text: "【教程】接下来，屏幕将会闪烁不同的颜色，你需要在规定时间内输入你看到的颜色。输入错误，你就会被丧尸扑倒咬死。",
     onEnter: initMemoryGame(["红","蓝"], 5),
-    qte: {
-      timeout: 10000,              // 10 秒（这次选错就是即死结局，没什么决策深度，所以时间紧）
-      onTimeout: "结局-被丧尸扑倒咬死"  // 超时则被咬死
-    },
     choices: [
       {
         text: "输入你看到的颜色",
@@ -232,14 +228,14 @@ Object.assign(storyData, {
         },
         effect: updateTime(5, { add: { strength: -1 } }),
         nextScene: "家外楼梯间的抉择",
-        //timeout: 10000,           // ← 10秒倒计时
-        //timeoutScene: "结局-被丧尸扑倒咬死"       // ← 超时自动触发
+        timeout: 10000,           // ← 10秒倒计时
+        timeoutScene: "结局-被丧尸扑倒咬死"       // ← 超时自动触发
       }
     ]
   },
 
   "结局-颜色错误，被丧尸咬死": {
-    image: "images/home/颜色错误.png",
+    image: "images/placeholder.png" /* TODO: images/home/颜色错误.png */,
     text: "你灵活地躲开丧尸的爪子，但反应慢了半拍，丧尸转身又扑了上来……你被丧尸咬死了。\n—— 结局：视力有待提高 ——"
   },
 
@@ -478,7 +474,7 @@ Object.assign(storyData, {
   },
 
   "小区道路": {
-    image: "images/home/小区道路.png",
+    image: "images/placeholder.png" /* TODO: images/home/小区道路.png */,
     onEnter: { set: { currentPlace: "初始小区", currentPos: "小区道路" } },
     text: "你走在小区的小道上。曾经你在这里练习足球，可以看到很多老年人带着孩子玩，时不时有外卖员驶过。现在，不会再有了。\n\
 你看到有一个人坐在椅子上，像是睡着了.\n\
@@ -503,7 +499,7 @@ Object.assign(storyData, {
   },
 
   "装睡的丧尸": {
-    image: "images/home/sleepyombie.png",
+    image: "images/placeholder.png" /* TODO: images/home/sleepyombie.png */,
     text: "你靠近那个人，ta穿着连帽衫，看不到脸，两手戴着蓝色手套，交叉放于胸前。\n\
 你轻轻拍了拍，ta没有反应。\n\
 你决定？",
@@ -523,7 +519,7 @@ Object.assign(storyData, {
   },
 
   "摇睡丧尸": {
-    image: "images/home/zombieAwake.png",
+    image: "images/placeholder.png" /* TODO: images/home/zombieAwake.png */,
     onEnter: {shake: true},
     text: "你用更大的力气摇了摇ta，连帽衫的帽子掉了。你惊呆了，这是一只丧尸！\n\
 它突然抬起头来，眼睛瞪着你，向你扑来。\n\
@@ -531,7 +527,7 @@ Object.assign(storyData, {
   },
 
   "反杀老6": {
-    image: "images/home/killSix.png",
+    image: "images/placeholder.png" /* TODO: images/home/killSix.png */,
     text: "你对它丧失了兴趣，转身离开。\n\
 只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后<span style = 'font-weight: bold;'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
 回头一看，正是椅子上的那个睡神，它竟是一只丧尸！\n\
@@ -551,14 +547,14 @@ Object.assign(storyData, {
   },
 
   "背后的偷袭": {
-    image: "images/home/attackBehind.png",
+    image: "images/placeholder.png" /* TODO: images/home/attackBehind.png */,
     onEnter: {shake: true},
     text: "你对ta丧失了兴趣，转身离开。\n\
 只听得背后传来木头长椅的嘎吱一响，背后阴风袭来。你只感觉脖颈一痛，便失去了知觉。"
   },
 
   "西出口-丧尸堵路": {
-    image: "images/home/zombie.png",
+    image: "images/placeholder.png" /* TODO: images/home/zombie.png */,
     onEnter: updateTime(1, { add: { visitExitTimes: 1 }}), // 花1分钟碰到丧尸
     text: "你走在前往西出口的路上。这里你轻车熟路，因为平时雨天你都会走这条路回家。\n\
 突然，一只丧尸从一根柱子后面闪了出来，你无法继续前进。",
@@ -579,7 +575,7 @@ Object.assign(storyData, {
   },
 
   "地下车库的丧尸": {
-    image: "images/home/zombie.png",
+    image: "images/placeholder.png" /* TODO: images/home/zombie.png */,
     onEnter: {shake: true},
     text: "丧尸向你袭来，你要攻击它哪里？",
     qte: {
@@ -609,7 +605,7 @@ Object.assign(storyData, {
   },
 
   "结局-嘎吱嘎吱": {
-    image: "images/home/zombie.png",
+    image: "images/placeholder.png" /* TODO: images/home/zombie.png */,
     onEnter: {shake: true},
     text: "你一脚踢出，被丧尸一口咬住，你被咬死了。\n\
 —— 结局：嘎吱嘎吱 ——"
@@ -628,7 +624,7 @@ Object.assign(storyData, {
   },
 
   "陌生的岔路口": {
-    image: "images/home/crossing.png",
+    image: "images/placeholder.png" /* TODO: images/home/crossing.png */,
     text: "现在你正处于一个陌生的岔路口，该往哪里走呢？",
     choices: [
       {
@@ -676,7 +672,7 @@ Object.assign(storyData, {
   },
 
   "车上锁了" : {
-    image: "images/home/lockedBike.png",
+    image: "images/placeholder.png" /* TODO: images/home/lockedBike.png */,
     text: "哎呀，这车上有锁，看来你是不能白嫖了。",
     choices: [
       {
@@ -687,7 +683,7 @@ Object.assign(storyData, {
   },
 
   "骑车去西出口": {
-    image: "images/home/cycleToExit.png",
+    image: "images/placeholder.png" /* TODO: images/home/cycleToExit.png */,
     onEnter: { set: { positionAfterOperation: "骑车去西出口" } },
     text: "你的运气很好，这辆车没锁。你可以骑上它向西出口前进。",
     choices: [
@@ -702,7 +698,7 @@ Object.assign(storyData, {
   },
 
   "击退丧尸": {
-    image: "images/home/beatZombie.png",
+    image: "images/placeholder.png" /* TODO: images/home/beatZombie.png */,
     text: "你一拳打在丧尸胸口，将它击退，它踉跄几步，眼神凶狠，加快速度向你扑来",
     onEnter: { add: { strength: -2 } },
     choices: [
@@ -717,7 +713,7 @@ Object.assign(storyData, {
   },
 
   "防爆门": {
-    image: "images/home/防爆门.png",
+    image: "images/placeholder.png" /* TODO: images/home/防爆门.png */,
     text: "你仓皇逃窜，眼前是一道防爆门，关上它就能挡住丧尸！",
     qte: {
       timeout: 3000,              // 3秒
@@ -736,7 +732,7 @@ Object.assign(storyData, {
   },
 
   "丧尸被防爆门夹扁": {
-    image: "images/home/squeezeZombie.png",
+    image: "images/placeholder.png" /* TODO: images/home/squeezeZombie.png */,
     onEnter: { add: { strength: -1 } },
     text: "在丧尸冲过来时，你侧身把防爆门关上了，它的半只手臂夹在了中间，却仍不断挥舞着。\n\
 你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。",
@@ -893,7 +889,7 @@ Object.assign(storyData, {
   },
 
   "抽屉里的手电筒": {
-    image: "images/home/light.png",
+    image: "images/placeholder.png" /* TODO: images/home/light.png */,
     onEnter: { add: { visitWaitingRoomTimes: 1 } },
     text: "你打开抽屉，发现里面有一个小手电筒。",
     choices: [
@@ -948,7 +944,7 @@ Object.assign(storyData, {
   },
 
   "告示后面的钥匙": {
-    image: "images/home/key.png",
+    image: "images/placeholder.png" /* TODO: images/home/key.png */,
     onEnter: { set: { positionAfterOperation: "告示后面的钥匙" } },
     text: "你揭下了告示纸，后面掉出来一个小钥匙，像是电瓶车的车钥匙。",
     choices: [
@@ -963,7 +959,7 @@ Object.assign(storyData, {
   },
 
   "民防设施-楼梯间": {
-    image: "images/home/CDstairs.png",
+    image: "images/placeholder.png" /* TODO: images/home/CDstairs.png */,
     qte: {
       timeout: 5000,
       onTimeout: "结局-被丧尸扑倒咬死"
@@ -1008,7 +1004,7 @@ Object.assign(storyData, {
   },
 
   "初遇毒气型丧尸": {
-    image: "images/home/po.png",
+    image: "images/placeholder.png" /* TODO: images/home/po.png */,
     onEnter: updateTime(5), // 花5分钟躲在黑暗里
     text: "那只魁梧的丧尸像野兽一般朝你扑来，擦过你的后背，狠狠撞在紧急出口的门上。\n\
 门震了一下，一点油漆都没刮掉。\n\
@@ -1033,7 +1029,7 @@ Object.assign(storyData, {
   },
 
   "民防设施-物资区": {
-    image: "images/home/material.png",
+    image: "images/placeholder.png" /* TODO: images/home/material.png */,
     onEnter: { set: { positionAfterOperation: "民防设施-物资区" } },
     text: "你来到了物资区。这里堆着很多纸箱子，但不少都是空的。你在其中找到了一个老式防毒面具。这时，杂物堆方向传来窸窸窣窣的声音。",
     choices: [
@@ -1113,13 +1109,13 @@ Object.assign(storyData, {
   },
 
   "死路一条": {
-    image: "images/home/deadEnd.png",
+    image: "images/placeholder.png" /* TODO: images/home/deadEnd.png */,
     text: "你走错了路，前面是死路一条。\n\
 丧尸的那绿色的眼睛是你最后的记忆。\n—— 结局：死路一条 ——"
   },
 
   "拳打脚踢": {
-    image: "images/home/1v2.png",
+    image: "images/placeholder.png" /* TODO: images/home/1v2.png */,
     onEnter: { add: { strength: -1 } },
     text: "你率先发动了攻击。\n\
 前面那只丧尸向你缓缓走来，你一个滑铲闪过去，冲向后面那只愣神的丧尸，一拳正中脑门。\n\
@@ -1138,7 +1134,7 @@ Object.assign(storyData, {
   },
 
   "拳打脚踢2": {
-    image: "images/home/1v2.png",
+    image: "images/placeholder.png" /* TODO: images/home/1v2.png */,
     onEnter: updateTime(3, { add: { strength: -1 } }), // 花3分钟再打一次
     text: "你从墙上掰下来一根长长的铁管，狠狠砸在丧尸们的脑袋上。\n\
 咚！咚！        \n\
@@ -1159,7 +1155,7 @@ Object.assign(storyData, {
   },
 
   "民防设施-物资区-检修记录表": {
-    image: "images/home/检修记录表.png",
+    image: "images/placeholder.png" /* TODO: images/home/检修记录表.png */,
     text: "你从纸箱里翻出一沓文件，掸了掸灰。这是一张《民防设施储藏区检修记录表》，盖着红章，填得还算规整：\n\n\
 ━━━━━ 民防设施储藏区检修记录表 ━━━━━\n\
 检修编号：MF-2024-0873\n\
@@ -1297,7 +1293,7 @@ Object.assign(storyData, {
   },
 
   "民防设施-进风机房-安全": {
-    image: "images/home/CDpassage.png",
+    image: "images/placeholder.png" /* TODO: images/home/CDpassage.png */,
     text: "吁，现在安全了。\n\
 你继续沿着通道走，经过了消毒室等房间，终于走了出去。",
     choices: [

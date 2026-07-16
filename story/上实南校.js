@@ -36,7 +36,7 @@ Object.assign(storyData, {
 
   // ==================== 1号楼·走廊→教务室 ====================
   "上实南校-1号楼走廊": {
-    image: "images/上实南校/schoolCorridor.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor.png */,
     text: "你走进1号楼。走廊两侧是教室，门有的开着有的关着，黑板上还留着粉笔字。午后的阳光从窗户斜射进来，照得空气中悬浮的粉笔灰像细小的雪粒，在光柱里缓缓浮动。\n\
 走廊尽头有几只穿着校服的丧尸在游荡——它们听到你的脚步声，缓缓转过头来。你侧身闪进最近的一间办公室，关上了门。\n\
 这是一间教务室。办公桌上堆着作业本和教案，角落里有一个铁皮柜，上面挂着一把弹子锁，不知道钥匙在哪里。",
@@ -59,7 +59,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-教务室-翻桌": {
-    image: "images/上实南校/schoolOffice.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolOffice.png */,
     text: "你翻了几张办公桌——大多是批改到一半的试卷和教案。在教务主任的抽屉里，你找到了一张手绘的校园平面图。\n\
 图上标出了三栋教学楼和一个复合楼的位置，还有几条连廊和通道。你注意到3号楼的4楼画着一个\"实\"字——实验室。",
     choices: [
@@ -71,7 +71,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-教务室-开柜": {
-    image: "images/上实南校/schoolOffice.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolOffice.png */,
     onEnter: { set: { _hasCampusKey: true } },
     text: "你用美工刀对准锁扣处的铁皮，几下就割开了一个口子。锁头连着铁皮一起掉了下来。\n\
 柜子里堆着一些杂物——旧的荣誉证书、几个奖杯，还有一个钥匙串，上面贴着\"员工通道\"的标签。你收起了钥匙。",
@@ -85,7 +85,7 @@ Object.assign(storyData, {
 
   // ==================== 天桥（1号楼→2号楼） ====================
   "上实南校-天桥": {
-    image: "images/上实南校/schoolBridge.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolBridge.png */,
     text: "你走上连接2号楼的廊桥。地面上散落着碎玻璃，走廊两侧的艺术作品上有着大片大片的血迹，刺鼻的血腥味和沉闷的空气揉在了一起。\n\
 前方通往2号楼的门是一扇生锈的铁栅栏门，门轴锈死了，推不动。",
     choices: [
@@ -117,7 +117,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-天桥-润滑油": {
-    image: "images/上实南校/schoolBridge.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolBridge.png */,
     onEnter: { set: { hasLubricant: false } },
     text: "你掏出润滑油，往门轴缝隙里喷了喷。等了片刻，你用力一推——门无声地滑开了。",
     choices: [
@@ -130,7 +130,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-天桥-硬砸": {
-    image: "images/上实南校/schoolBridge.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolBridge.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: "你举起手中的家伙狠狠砸了几下门轴。铁锈簌簌地往下掉——门终于松动了。你用力撞开门，但金属撞击声在天桥之间回荡，肯定引起了注意。",
     choices: [
@@ -144,7 +144,7 @@ Object.assign(storyData, {
 
   // ==================== 2号楼走廊·第一次遭遇体育老师 ====================
   "上实南校-2号楼走廊": {
-    image: "images/上实南校/schoolCorridor2.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor2.png */,
     text: "你走进2号楼走廊。这里比1号楼暗一些，日光灯管大部分不亮了。走廊两侧是教室，门牌写着\"初一（3）班\"、\"初一（4）班\"……。\n\
 你正准备往前走，突然听到前方拐角处传来沉重的拖拽声——呲啦、呲啦——像是有什么金属在地面上被拖着走。\n\
 然后拐角处出现了一个高大的身影。它穿着一件沾满血污的黑色运动服，胸前挂着一只歪斜的口哨，手里拖着一根断裂的旗杆。\n\
@@ -167,19 +167,19 @@ Object.assign(storyData, {
   },
 
   "上实南校-第一次-战斗": {
-    image: "images/上实南校/peTeacher.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/peTeacher.png */,
     text: "你握紧手中的家伙冲了上去。\n体育老师丧尸看到你冲来，抡起旗杆就是一个横扫。你试图格挡——但它的力量大得惊人。旗杆砸在你的武器上，震得你手臂发麻，然后第二下直接砸在了你的头上。\n\
 你最后的意识是它面无表情地举起旗杆，又砸了一下。"
   },
 
   "结局-上实南校-第一次-跑": {
-    image: "images/上实南校/schoolCorridor2.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor2.png */,
     text: "你转身就跑。但走廊尽头的门是锁着的——你一拉，纹丝不动。\n你回头时它已经离你不到三米了。旗杆拖在地上发出刺耳的摩擦声。\n你无路可退。\n\
 ————结局：谁特么锁的门————"
   },
 
   "上实南校-第一次-躲教室": {
-    image: "images/上实南校/schoolClassroom.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolClassroom.png */,
     text: "你侧身闪进旁边的教室，轻轻关上门。\n体育老师沉重的脚步声在门外停住了。你屏住呼吸，贴着墙壁——它似乎失去了目标。\n\
 过了十几秒，脚步声又响了起来，越来越远。你从门缝里看到它拖着旗杆走远了。\n你松了口气，走到教室后窗——窗外是花坛。",
     choices: [
@@ -196,14 +196,14 @@ Object.assign(storyData, {
   },
 
   "结局-上实南校-第一次-回马枪": {
-    image: "images/上实南校/schoolClassroom.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolClassroom.png */,
     text: "你开门离开教室，门锁发出轻微的声响。你刚往前走了几步，远处的脚步声又响了起来，越来越近。\n\
 ————结局：看我装唐阴你一手————"
   },
 
   // ==================== 3号楼·漆黑走廊→每层可选 ====================
   "上实南校-3号楼走廊": {
-    image: "images/上实南校/schoolCorridorDark.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridorDark.png */,
     text: "你从花坛翻了下去，绕到3号楼，从侧门溜了进去。\n\
 3号楼里一片漆黑——电停了。走廊里只有尽头应急出口的绿色标志发出微弱的光，在地面上投下一片惨绿色的阴影。空气又冷又沉，越靠近楼梯，那种阴冷的感觉就越重。\n你摸到了楼梯口。扶手摸起来冰凉的——该上几楼？",
     choices: [
@@ -229,7 +229,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-3号楼-2楼": {
-    image: "images/上实南校/schoolCorridorDark.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridorDark.png */,
     text: "你摸索着走上2楼。推开楼梯口的门——走廊里堆满了倒下的桌椅和散落的试卷，一片狼藉。黑暗中你隐约看到走廊尽头有什么东西在动。\n你屏住呼吸，退回楼梯口。这里没有什么可用的东西。得往上走。",
     choices: [
       {
@@ -246,7 +246,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-3号楼-3楼": {
-    image: "images/上实南校/schoolCorridorDark.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridorDark.png */,
     text: "你推开3楼的门。走廊尽头就是美术室——门半开着，里面传来有节奏的声响：唰——唰——像是画笔在画布上涂抹的声音。\n\
 你往前走了一步，想看清楚——脚底踩到了一根掉落的画笔，发出清脆的断裂声。\n声音停了。然后你听到了脚步声，正朝着门口走来。",
     choices: [
@@ -262,7 +262,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-3号楼-4楼": {
-    image: "images/上实南校/schoolStairsDark.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolStairsDark.png */,
     text: "你打着手电筒上到4楼。楼道尽头是一扇门，门牌上写着\"化学实验室\"。门缝里隐约飘出一股淡淡的白色气体。",
     choices: [
       {
@@ -273,7 +273,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-3号楼-4楼-摸黑": {
-    image: "images/上实南校/schoolStairsDark.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolStairsDark.png */,
     onEnter: { add: { strength: -1 } },
     text: "你摸黑爬上4楼。膝盖在台阶上磕了一下，但你忍住了。楼道尽头你摸到了一扇门——门牌上凹凸的字迹你辨认了半天：\"化学实验室\"。",
     choices: [
@@ -286,7 +286,7 @@ Object.assign(storyData, {
 
   // ==================== 化学实验室（4楼）·三选一 ====================
   "上实南校-化学实验室": {
-    image: "images/上实南校/chemLab.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
     text: "你推开化学实验室的门。一股刺鼻的气味扑面而来——角落里的一个试剂柜倒了，白色的气体正从柜门缝隙里一丝一丝地漏出来，贴着地面蔓延。\n实验台上整齐地摆着几样东西：一盏酒精灯、一瓶盐酸溶液、一支温度计。\n气体越来越浓了——你没有太多时间。",
     choices: [
       {
@@ -304,7 +304,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-化学实验室-面具坏了被毒死": {
-    image: "images/上实南校/chemLab.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
     text: function(vars) {
       if(vars._visit['民防设施-物资区-检修记录表']) return "你戴上面具，快步走进实验室。\n\
 一股刺鼻的刺激感直冲鼻腔，喉咙像被什么烧了一下——好像是酒精味……不对，好恶心。\n\
@@ -317,7 +317,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-化学实验室-面具有": {
-    image: "images/上实南校/chemLab.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
     onEnter: { add: { maskRemainingUses: -1 } },
     text: "你戴上面具，快步走进实验室，气体对你没有影响。\n你站在实验台前。你可以拿走一样东西——时间只够拿一件。",
     choices: [
@@ -340,7 +340,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-化学实验室-憋气": {
-    image: "images/上实南校/chemLab.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
     onEnter: { add: { strength: -3 }, set: { hurtByZombie: true } },
     text: "你深吸一口气，屏住呼吸冲了进去。气体刺激着你的眼睛和皮肤，但你忍着痛在实验台上摸索。\n你抓到了最近的一样东西——酒精灯。你转身冲了出来，扶着墙大口喘气。\n你的手和脸火辣辣地疼，但至少拿到了东西。",
     choices: [
@@ -353,7 +353,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-拿到酒精灯": {
-    image: "images/上实南校/chemLab.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
     text: "酒精灯里还有大半盏酒精，盖子旁边塞着一盒火柴。你把它们小心地收进口袋。\n酒精可以做燃烧弹，火柴可以点火——也许能派上用场。",
     choices: [
       {
@@ -364,7 +364,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-拿到盐酸": {
-    image: "images/上实南校/chemLab.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
     text: "你拿起那瓶盐酸。溶液澄清透明，瓶身上贴着\"HCl 36%\"的标签。\n这东西够浓——泼在普通丧尸身上够它受的。但对付大家伙恐怕不太够。",
     choices: [
       {
@@ -375,7 +375,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-拿到温度计": {
-    image: "images/上实南校/chemLab.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
     text: "你拿起温度计。普通的玻璃体温计，没什么特别的——但如果有同伴受伤了，至少能测一下有没有发烧感染。",
     choices: [
       {
@@ -387,7 +387,7 @@ Object.assign(storyData, {
 
   // ==================== 3号楼·下楼 ====================
   "上实南校-3号楼下楼": {
-    image: "images/上实南校/schoolStairs.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolStairs.png */,
     text: "你从4楼开始往下走。每层楼的楼梯口都有一扇门通向走廊——你隐约能听到门后传来的声音。",
     choices: [
       {
@@ -412,17 +412,17 @@ Object.assign(storyData, {
   },
 
   "结局-上实南校-美术室": {
-    image: "images/上实南校/artRoom.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/artRoom.png */,
     text: "你推开3楼美术室的门。画架上还立着未完成的素描，水彩颜料干裂在调色盘上。\n然后你看到了它——一个穿着沾满颜料围裙的身影，正背对着你，在一幅巨大的画布前专注地涂抹着什么。它的手边堆着几十支画笔，每一支的笔尖都是暗红色的。\n它听到了你的声音。它转过头来。\n你没能跑掉。\n\n—— 结局：美术室 ——"
   },
 
   "结局-上实南校-2楼": {
-    image: "images/上实南校/schoolCorridor2.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor2.png */,
     text: "你推开2楼的门，走进走廊。这里比想象中安静——太安静了。\n然后你听到了一扇教室门后传来闷响——砰砰砰——像是有很多东西在撞门。\n你后退了一步。门锁崩断了。\n穿着校服的丧尸像潮水一样从教室里涌了出来。\n\n—— 结局：2楼走廊 ——"
   },
 
   "上实南校-1楼出口": {
-    image: "images/上实南校/schoolCorridor1.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor1.png */,
     text: "你顺利下到了1楼。前方有一扇门通向外面——穿过一小片空地就是2号楼的一楼入口。",
     choices: [
       {
@@ -434,7 +434,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-员工通道": {
-    image: "images/上实南校/staffPassage.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/staffPassage.png */,
     text: "你用校工钥匙打开了员工通道的门。这是一条内部的楼梯间，干净、安静——天花板上还有应急灯亮着。几步就下到了1楼的后出口。\n你从后出口出来，发现自己直接站在了2号楼1楼的后门附近。",
     choices: [
       {
@@ -447,7 +447,7 @@ Object.assign(storyData, {
 
   // ==================== 2号楼1楼·二次遭遇体育老师（酒精灯决战） ====================
   "上实南校-2号楼1楼-二次遭遇": {
-    image: "images/上实南校/schoolCorridor1.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor1.png */,
     text: "你刚走进2号楼1楼的走廊，就听到了那个你不想再听到的声音——旗杆拖在地上的摩擦声。\n它从走廊的另一端出现了。它找到了你——或者说它一直在等你。\n体育老师丧尸拖着旗杆朝你冲了过来。",
     choices: [
       {
@@ -472,12 +472,12 @@ Object.assign(storyData, {
   },
 
   "上实南校-二次-无酒精灯": {
-    image: "images/上实南校/peTeacher.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/peTeacher.png */,
     text: "你没有任何东西能克制它。桌椅挡不住它多久，武器打在它身上就像打在木头上——它甚至不觉得痛。\n旗杆带着破风声砸了下来。"
   },
 
   "上实南校-二次-桌椅": {
-    image: "images/上实南校/schoolCorridor1.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor1.png */,
     onEnter: { add: { strength: -1 } },
     text: "你抓起一把椅子砸向它，又掀翻了一张桌子挡在走廊中间。它被阻了一下，但很快绕过桌子继续追来——你争取到了一点时间，但不多。\n你依然需要能真正击倒它的东西。",
     choices: [
@@ -495,18 +495,18 @@ Object.assign(storyData, {
   },
 
   "上实南校-二次-战斗": {
-    image: "images/上实南校/peTeacher.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/peTeacher.png */,
     text: "你举起武器迎了上去。旗杆和你的武器撞在一起，发出刺耳的金属声——你挡住了第一下，但手臂被震得几乎失去知觉。\n第二下你没能挡住。"
   },
 
   "上实南校-二次-跑": {
-    image: "images/上实南校/schoolCorridor1.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor1.png */,
     text: "你转身就跑。但你不知道这里的布局——你跑进了一条死路。你回头时它已经堵住了退路。"
   },
 
   // ==================== 酒精灯QTE ====================
   "上实南校-酒精灯-投掷": {
-    image: "images/上实南校/alcoholLampThrow.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/alcoholLampThrow.png */,
     text: "你掏出酒精灯，拧开盖子，把酒精泼向它——然后狠狠把灯砸了过去。\n酒精灯在它胸口碎裂，玻璃碴和酒精溅了一身。它愣了一下，低头看了看湿透的运动服——然后更狂暴地朝你扑了过来，浑身散发着刺鼻的酒精味。\n你掏出火柴——必须划燃它扔过去。但它离你只有几步之遥了。",
     qte: {
       timeout: 3000,
@@ -525,7 +525,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-酒精灯-再战": {
-    image: "images/上实南校/peTeacher.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/peTeacher.png */,
     text: "你侧身闪开——它扑了个空，撞在墙上，发出一声闷响。它转过身来，浑身酒精味，嘴里发出低沉的嘶吼。\n你还有机会。火柴还在你手里。",
     qte: {
       timeout: 2000,
@@ -545,12 +545,12 @@ Object.assign(storyData, {
   },
 
   "结局-上实南校-酒精灯烧死": {
-    image: "images/上实南校/fireDeath.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/fireDeath.png */,
     text: "它扑到了你身上。你手中的火柴盒脱手飞了出去，掉在地上——其中一根滑燃了。\n火焰在酒精中蔓延。你最后看到的是它和你一起被火焰吞没。\n\n—— 结局：酒精灯 ——"
   },
 
   "上实南校-击败体育老师": {
-    image: "images/上实南校/peTeacherDefeated.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/peTeacherDefeated.png */,
     text: "你划燃火柴，朝它扔了过去。\n火柴划过一道弧线，落在它湿透的胸口——火焰瞬间腾起，像一个火球一样炸开。它发出了一声不像人类的尖啸，在烈火中踉跄了几步，然后倒在了地上。\n火焰燃烧了一会儿，然后熄灭了。它不再动弹。\n你站在原地大口喘气。前面的路终于通了。",
     choices: [
       {
@@ -562,7 +562,7 @@ Object.assign(storyData, {
 
   // ==================== 复合楼·礼堂 ====================
   "上实南校-复合楼入口": {
-    image: "images/上实南校/complexBuilding.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/complexBuilding.png */,
     text: "你从2号楼的后门走进复合楼。左手边是体育馆，右手边是食堂，正前方是礼堂。\n礼堂的门半掩着。你听到里面有人压低声音说话的声音。",
     choices: [
       {
@@ -581,7 +581,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-体育馆": {
-    image: "images/上实南校/gym.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/gym.png */,
     text: "你推开体育馆的门。场馆里很空旷，篮球架歪斜着，地面散落着几个落满灰的篮球。\n然后你看到了它——一只穿着保安制服的丧尸，背对着你，在场地中央漫无目的地踱步。它的腰间挂着一串钥匙和一根甩棍。\n你后退了一步——脚踏在木地板上发出吱呀一声。\n保安丧尸停了下来，缓缓转过身来。它看到了你，从腰间抽出了甩棍。",
     choices: [
       {
@@ -597,12 +597,12 @@ Object.assign(storyData, {
   },
 
   "上实南校-体育馆-战斗": {
-    image: "images/上实南校/gym.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/gym.png */,
     text: "你冲了上去。保安丧尸的动作出乎意料地快——它侧身闪过你的攻击，甩棍狠狠砸在你的手臂上。你听到了骨裂的声音。\n你倒在地上，保安丧尸站在你面前，举起了甩棍。落下的最后一击精准而冷酷。"
   },
 
   "上实南校-食堂": {
-    image: "images/上实南校/cafeteria.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/cafeteria.png */,
     text: "你走进食堂。取餐台上还放着没来得及收的餐盘，剩菜已经馊了，灶台上的锅具东倒西歪，地面有一层黏糊糊的油渍，踩上去鞋底发出轻微的粘腻声响。\n后厨的门半开着。你走进去看了看——货架上堆着一些罐头和真空包装的食品，都还完好。角落地上的纸箱里放着几包压缩饼干，看起来没过期。角落的一个纸箱里放着几包看起来还没过期的压缩饼干。",
     choices: [
       {
@@ -617,12 +617,12 @@ Object.assign(storyData, {
   },
 
   "上实南校-食堂-中毒": {
-    image: "images/上实南校/cafeteria.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/cafeteria.png */,
     text: "你撕开包装咬了一口——味道有点怪，但你没在意。几秒钟后，你的胃开始剧烈绞痛。\n你扶着灶台蹲下，冷汗直冒。视线开始模糊——包装袋上有个不起眼的小破口，里面的饼干早就受潮变质了。\n你倒在地上，周围只有没收拾的餐盘和冰冷的灶台。"
   },
 
   "上实南校-相认": {
-    image: "images/上实南校/auditorium.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
     text: "你推开门。礼堂里的座椅东倒西歪，舞台上方的幕布垂落下来，遮住了大半个舞台。\n幕布后面传来一阵骚动。然后一个人头探了出来——瘦高个，戴眼镜，一脸警惕。\n他看到了你，愣了两秒，然后脱口而出：\"卧槽？\"\n另一个人也从幕布后探出头来，短发圆脸：\"谁？是人还是……\"\n然后他认出了你。\n你也认出了他们——**小陆**、**小王**。是你初中同班同学。\n\"你怎么在这里？\"小陆从舞台上跳下来，一把抓住你的肩膀，\"外面那个穿运动服的还在不在？它追了我们两天了！\"",
     choices: [
       {
@@ -633,7 +633,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-相认-说明": {
-    image: "images/上实南校/auditorium.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
     text: "你告诉他们体育老师已经被解决了。小陆长长地舒了口气，整个人松弛下来。小王招呼幕布后面的人出来——**小赵**从阴影里走了出来，一瘸一拐的。\n\"打扰了。\"小赵不好意思地笑了笑，\"我腿不太利索——前两天被追的时候摔的。\"\n小陆简单说明了情况：他们三个约好回来看班主任，结果到学校那天已经出事了。班主任不在，他们被困在了礼堂里，靠食堂仓库的储备粮撑了三天。\n\"我们想过来着，但那东西一直在外面转悠，我们不敢出去。\"",
     choices: [
       {
@@ -644,7 +644,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-储备粮": {
-    image: "images/上实南校/auditorium.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
     text: "小王拖出几个大纸箱——食堂仓库里搬出来的。方便面、矿泉水、饼干，堆了半个纸箱。\n\"东西够吃几天的，但纸箱封得太紧了，我们撕不开，只能用钥匙划……但这个费劲。\"\n纸箱上的胶带缠了好几层，接头处严丝合缝。",
     choices: [
       {
@@ -661,7 +661,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-储备粮-割开": {
-    image: "images/上实南校/auditorium.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
     onEnter: { add: { strength: 5 } },
     text: "你掏出美工刀，沿着胶带划了一圈。纸箱啪地弹开了。\n方便面、饼干、矿泉水——你们四个人分着吃了一些。虽然不是什么大餐，但在这种时候能填饱肚子就是幸福。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复5点体力，当前体力：{strength}。</span>",
     choices: [
@@ -673,7 +673,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-储备粮-撕不开": {
-    image: "images/上实南校/auditorium.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
     text: "你试着用手撕胶带——胶带缠了好几层，纹丝不动。\n小王不好意思地说：\"我们试过了，实在打不开……用钥匙划了半天也没划开。\"",
     choices: [
       {
@@ -684,7 +684,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-小赵的伤": {
-    image: "images/上实南校/auditorium.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
     text: "小赵坐在舞台边缘，裤腿卷到膝盖以上，脚踝处有一片淤青和擦伤。\n\"跑的时候踩到花坛边沿崴了一下，然后摔的。这几天一直用冷敷……但不知道有没有发炎。\"",
     choices: [
       {
@@ -701,7 +701,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-小赵的伤-测温": {
-    image: "images/上实南校/auditorium.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
     text: "你拿出温度计，甩了甩，让小赵夹在腋下。过了几分钟你取出来看了看——三十七度一，正常体温。\n\"没有发烧，皮外伤。好好休息几天就好了。\"\n小赵松了口气。小陆拍了拍你的肩膀：\"可以啊，装备挺齐全。\"",
     choices: [
       {
@@ -712,7 +712,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-小赵的伤-目测": {
-    image: "images/上实南校/auditorium.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
     text: "你蹲下来看了看伤口——没有化脓，周围皮肤颜色正常。\n\"应该没感染。不过有条件的话还是消一下毒比较好。\"\n小赵点了点头：\"嗯，我注意着。\"",
     choices: [
       {
@@ -724,7 +724,7 @@ Object.assign(storyData, {
 
   // ==================== 后门·撤离 ====================
   "上实南校-后门侦查": {
-    image: "images/上实南校/backDoor.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/backDoor.png */,
     text: "你走到礼堂后门，透过门缝往外看。\n后门外是一条窄巷，通向街外。但巷子里有一只丧尸在徘徊——穿着白衬衫和西裤，胸前挂着一张褪色的工作牌。从装束看，是学校里的值日教师。\n它还没有发现你们，但一直在这附近转悠，没有离开的意思。",
     choices: [
       {
@@ -745,7 +745,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-撤离-盐酸": {
-    image: "images/上实南校/backDoorAcid.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/backDoorAcid.png */,
     text: "你拧开瓶盖，把盐酸倒在一块破布上——然后拉开门，朝值日教师扔了过去。破布正中它的脸。\n它发出一声嘶哑的惨叫，捂着脸倒在地上，不再动弹。\n\"走吧。\"你回头招呼他们。三个人跟着你，小心翼翼地跨过地上的尸体，走出了窄巷。\n你们终于离开了学校。",
     choices: [
       {
@@ -756,7 +756,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-撤离-潜行": {
-    image: "images/上实南校/backDoor.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/backDoor.png */,
     text: "你拉开门，压低身形走了出去。值日教师背对着你——你贴着墙壁，一步一步往外挪。\n你已经走到了窄巷的一半——还有几步就是街口。\n然后你踩到了一根树枝。\n咔嚓一声。值日教师猛地转过身来。",
     qte: {
       timeout: 3000,
@@ -775,7 +775,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-撤离-潜行成功": {
-    image: "images/上实南校/backDoor.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/backDoor.png */,
     text: "你撒腿就跑。值日教师追了几步——但三个同学也冲了出来，大家一起跑。人多脚步声杂，它似乎迟疑了一下，然后被你们甩开了。\n你们跑出了窄巷，跑到了街上。回头看时，那只丧尸站在巷口，没有追出来。\n你们终于离开了学校。",
     choices: [
       {
@@ -786,7 +786,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-撤离-潜行失败": {
-    image: "images/上实南校/backDoor.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/backDoor.png */,
     text: "你躲到垃圾箱后面——但位置太窄了，你挤不进去。值日教师冲了过来，在你反应过来之前抓住了你的手臂。\n你挣开了它，但手臂上多了一道深深的血痕。同学们冲出来帮你，小陆用拖把杆砸了它的头——你们趁这个机会一起跑了出去。\n有人受了伤，但大家都出来了。",
     choices: [
       {
@@ -798,7 +798,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-撤离-硬冲": {
-    image: "images/上实南校/backDoor.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/backDoor.png */,
     text: "\"一起冲！\"你拉开门，四个人一起冲了出去。\n值日教师被突然的动静惊到，转身扑了过来——它抓住了跑在最后的小赵。你回头一棍子砸在它手上，它松开了，但小赵的裤腿被撕破了一块。\n你们四个人连跑带颠地冲出了窄巷。回头看时，值日教师在巷口朝着你们嘶吼，但没有追出来。\n你们终于离开了学校。",
     choices: [
       {
@@ -811,7 +811,7 @@ Object.assign(storyData, {
 
   // ==================== 撤离成功 ====================
   "上实南校-撤离成功": {
-    image: "images/上实南校/schoolGate.png",
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolGate.png */,
     onEnter: { set: { hasClassMates: true } },
     text: "你们站在学校外的路边。小陆、小王、小赵——三个人都灰头土脸的，但都活着。\n\"谢了，\"小陆拍了拍你的肩膀，\"要不是你来了，我们真不知道还能撑几天。\"\n小王咧嘴笑了笑：\"以后有啥需要帮忙的说一声。\"\n小赵对你点了点头，眼神里满是感激。\n你多了三个同伴。在这个崩坏的世界里，多一个人就是多一份力量。",
     choices: [

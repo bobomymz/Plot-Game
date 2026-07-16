@@ -21,7 +21,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店内部": {
-    image: "images/小区周边/全家便利店内部.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家便利店内部.png */,
     text: function(vars) {
       var base = "你走进熟悉又陌生的便利店。\n\
 前面的冷藏区放着一些牛奶、鲜肉盒、饮料，以及你常买来作为早餐的饭团。\n\
@@ -79,7 +79,7 @@ Object.assign(storyData, {
   },
 
   "全家-吃零食": {
-    image: "images/小区周边/零食.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/零食.png */,
     onEnter: updateTime(1, { add : { strength: 1 } }),
     text: "薯片在你口中嘎嘣作响，嗯，真好吃。\n\
 突然，员工通道的门被一只丧尸撞开了。它双眼通红，眼神呆滞地盯着你，好像眼力不太好。\n\
@@ -137,7 +137,7 @@ Object.assign(storyData, {
   },
 
   "被丧尸咬": {
-    image: "images/grappleWithZombie.png",
+    image: "images/placeholder.png" /* TODO: images/grappleWithZombie.png */,
     onEnter: updateTime(1, { set : { hurtByZombie: true, FamilymartHasZombie: false } }),
     text: "你狠狠揍了丧尸几拳，它掐住你的脖子，和你纠缠在地上。你努力控住它的嘴，砰！砰！砰！终于，它倒下了，但你身上多了不少抓痕和咬痕，不知道有没有受伤。",
     choices: [
@@ -177,7 +177,7 @@ Object.assign(storyData, {
   },
 
   "躲在货架后": {
-    image: "images/hide.png",
+    image: "images/placeholder.png" /* TODO: images/hide.png */,
     onEnter: updateTime(1),
     text: "你转身躲在货架后面，大气也不敢喘，缓慢地向门口挪动身子。\n\
 突然，日记本从兜里掉了出来，噗地一声落地。\n\
@@ -241,7 +241,7 @@ Object.assign(storyData, {
   },
 
   "一拳KO": {
-    image: "images/小区周边/pipeAttack.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/pipeAttack.png */,
     onEnter: { set: { FamilymartHasZombie: false} },
     text: "你猛地出拳，正中丧尸面门，右手生疼，而丧尸已经倒地不起。\n\
 一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。",
@@ -259,7 +259,7 @@ Object.assign(storyData, {
   },
 
   "棒打丧尸腿": {
-    image: "images/小区周边/pipeAttack.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/pipeAttack.png */,
     onEnter: { set: { FamilymartHasZombie: false} },
     text: "你回手掏出钢管，狠狠地抽在它腿上。只听得嘎吱一声脆响，不知是钢管还是它骨头断裂的声音。那只丧尸已经瘫倒在了地上，像一条扭曲的蛆在蠕动。\
 一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。",
@@ -312,7 +312,7 @@ Object.assign(storyData, {
   },
 
   "公交车站（环林东路）": {
-    image: "images/小区周边/bus.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/bus.png */,
     onEnter: { set : {positionAfterOperation: "三林路-环林东路 十字路口", currentPlace: "初始小区", currentPos: "公交站"}},
     text: function(vars) {
       return "你来到了公交车站。\n那辆1003的车窗反射着日光，让你的眼睛不太舒服。窗内有群人影在蠕动，想都不用想就知道是丧尸。\n车门关着，所以你不会被它们围殴，问题不大。\n" + describeZombieWave(vars);
@@ -340,7 +340,7 @@ Object.assign(storyData, {
   // ========== 饼干引路 + 员工通道 ==========
 
   "全家便利店-饼干引路": {
-    image: "images/小区周边/饼干引路.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/饼干引路.png */,
     text: "你从口袋里掏出那包饼干，撕开包装，用力朝员工通道的方向扔了过去。\n\
 饼干砸在金属门上，碎屑四溅。那只迅捷丧尸的注意力瞬间被吸引——它像一道闪电般扑向声音的来源，一头扎进了黑漆漆的员工通道。\n\
 紧接着，通道深处传来咣当一声巨响——它似乎撞翻了什么重物，然后是一阵杂乱的刮擦声……渐渐安静了下来。\n你等了几秒，确认它没有回来。员工通道的门半开着，里面一片漆黑。",
@@ -364,7 +364,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店-员工通道": {
-    image: "images/小区周边/员工通道.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/员工通道.png */,
     onEnter: function(vars) {
       vars.positionAfterOperation = "全家便利店-员工通道";
       return updateTime(3)(vars);
@@ -394,7 +394,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店-员工通道-摸黑": {
-    image: "images/小区周边/员工通道-暗.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/员工通道-暗.png */,
     onEnter: function(vars) {
       if (vars.FamilymartHasZombie) {
         return initMemoryGame(["红","蓝","绿"], 9)(vars);
@@ -431,7 +431,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店-员工通道-踢飞丧尸": {
-    image: "images/小区周边/员工通道-暗.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/员工通道-暗.png */,
     onEnter: updateTime(1, { set: { FamilymartHasZombie: false } }),
     text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱哗啦啦地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n砰——门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。",
     choices: [

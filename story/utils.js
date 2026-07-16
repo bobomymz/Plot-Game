@@ -147,7 +147,7 @@ function normalizeColorAnswer(str) {
 }
 
 // 躲藏场景工厂：统一管理随机躲藏逻辑与 _hideFail 状态
-// 用法: "场景": hideOnLocation("images/xxx.png", "失败文案", "成功文案")
+// 用法: "场景": hideOnLocation("images/placeholder.png" /* TODO: images/xxx.png */, "失败文案", "成功文案")
 // image / failText / successText 可以是字符串或 function(vars) => string
 function hideOnLocation(image, failText, successText) {
   // 兼容旧调用：如果只有2个参数且第一个不是图片路径，则 image 为 failText, failText 为 successText

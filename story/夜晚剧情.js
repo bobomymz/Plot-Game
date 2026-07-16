@@ -7,8 +7,8 @@ Object.assign(storyData, {
   // ==================== 夜间入口 ====================
   "天黑必须过夜": {
     image: function(vars) {
-      if (vars.currentArea === "高架") return "images/highway/highwayNight.png";
-      return "images/小区周边/nightStreet.png";
+      if (vars.currentArea === "高架") return "images/placeholder.png" /* TODO: images/highway/highwayNight.png */;
+      return "images/placeholder.png" /* TODO: images/小区周边/nightStreet.png */;
     },
     onEnter: function(vars) {
       vars.strength = Math.max(5, vars.strength);
@@ -134,7 +134,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 理发店 ====================
   "过夜-理发店": {
-    image: "images/anshengStreet/barberShopRest.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopRest.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -151,7 +151,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 前往理发店 ====================
   "过夜-前往理发店": {
-    image: "images/anshengStreet/nightRun.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/nightRun.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -171,7 +171,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 理发店特殊流浪结局 ====================
   "过夜-理发店流浪": {
-    image: "images/anshengStreet/nightWander.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/nightWander.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -189,7 +189,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 全家员工通道 ====================
   "过夜-全家": {
-    image: "images/小区周边/familyMartNight.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/familyMartNight.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -204,7 +204,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 联华超市地下室 ====================
   "过夜-小超市": {
-    image: "images/小区周边/supermarketBasement.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/supermarketBasement.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -219,7 +219,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 安居苑空房 ====================
   "过夜-安居苑": {
-    image: "images/anshengStreet/anJuYuanBedroom.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/anJuYuanBedroom.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -250,7 +250,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 车内过夜 ====================
   "过夜-车内": {
-    image: "images/highway/carSleep.png",
+    image: "images/placeholder.png" /* TODO: images/highway/carSleep.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -266,7 +266,7 @@ Object.assign(storyData, {
 
   // ==================== 兜底 - 街头过夜 ====================
   "过夜-街头兜底": {
-    image: "images/小区周边/streetNight.png",
+    image: "images/placeholder.png" /* TODO: images/小区周边/streetNight.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -283,7 +283,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 哥哥的深夜食堂 ====================
   "过夜-哥哥的深夜食堂": {
-    image: "images/xindahui/izakayaNight.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/izakayaNight.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -305,7 +305,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 社区图书馆 ====================
   "过夜-图书馆": {
-    image: "images/library/libraryNight.png",
+    image: "images/placeholder.png" /* TODO: images/library/libraryNight.png */,
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -338,7 +338,7 @@ Object.assign(storyData, {
 
   // ==================== 成功结局 ====================
   "临时的避难所": {
-    image: "images/library/libraryEnding.png",
+    image: "images/placeholder.png" /* TODO: images/library/libraryEnding.png */,
     text: function(vars) {
       return "你在这个小小的社区图书馆里撑过了最难的时刻。\n\n书架上的书还在，日光灯管偶尔还在闪，门锁结实，窗户完好。你找到的物资省着点用还能撑好些天。外面的世界没有变好——丧尸还在街上游荡，城市的天空依然灰蒙蒙的。但你有了一个可以称之为\"据点\"的地方。\n\n你想起第一天早上醒来时，闹钟显示7:30，阳光穿过半旧的窗帘，你想的是\"妈妈还有半小时就买早餐回来了\"。\n\n现在你已经很久没有想起妈妈了。\n\n你不知道她去了哪里。你不知道这座城市还能撑多久。你不知道明天会怎样。\n\n但至少今天——你还活着。\n在图书馆里，你找到了一本《霍乱时期的爱情》。\n你没有翻开它。\n\n<span style='color: #f8d305ff;'>—— 临时避难所·结局 ——</span>\n\n<span style='color: #888; font-size: 14px;'>你是4217人中第一个达成此结局的玩家。</span>";
     },
@@ -378,14 +378,14 @@ Object.assign(storyData, {
 
   // ==================== 死亡 - 图书馆未清理 ====================
   "结局-过夜-图书馆未清理": {
-    image: "images/library/libraryNight.png",
+    image: "images/placeholder.png" /* TODO: images/library/libraryNight.png */,
     text: "你推开图书馆的门，摸黑走了进去。这里安静得不像话，只有你自己的呼吸声在回荡。\n你摸索着找到阅览室，打算在沙发上凑合一晚——\n但黑暗中有什么东西碰了碰你的肩膀。\n你转过头，迎上一张灰白的脸。\n图书馆里的丧尸，原来一直没有离开。\n\n—— 结局：图书馆夜宿 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
 
   // ==================== 死亡 - 深夜食堂上锁 ====================
   "结局-过夜-深夜食堂上锁": {
-    image: "images/xindahui/eastBridge.png",
+    image: "images/placeholder.png" /* TODO: images/xindahui/eastBridge.png */,
     text: "你穿过东区天桥，来到哥哥的深夜食堂门口。\nU型锁还挂在那里。你没有钥匙。\n你用力拉了拉门，纹丝不动。\n身后的天桥入口传来拖沓的脚步声——几只丧尸正朝你走来。你无处可退，被困在了天桥上。\n夜晚的寒风裹着腐臭味，成了你最后记忆里的全部。\n\n—— 结局：深夜食堂上锁 ——",
     style: "color: #ff4444; font-weight: bold;"
   },

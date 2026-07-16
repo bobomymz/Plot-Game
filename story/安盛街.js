@@ -6,7 +6,7 @@ Object.assign(storyData, {
 
   // ==================== 入口：安盛街东侧 ====================
   "安盛街东侧": {
-    image: "images/anshengStreet/eastEntrance.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/eastEntrance.png */,
     onEnter: { set: { currentPlace: "安盛街", currentPos: "安盛街" } },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
@@ -43,7 +43,7 @@ Object.assign(storyData, {
   },
 
   "安盛街东侧-犹豫": {
-    image: "images/anshengStreet/eastEntrance.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/eastEntrance.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: "你在街口犹豫了一下——就是这一下，远处徘徊的那几只丧尸注意到了你。它们拖着步子朝你的方向聚拢过来。\n你不能再站在这里了。前方那个拄着拐杖的身影还在那里——但它只有一只，而朝你走来的远不止一只。",
     choices: [
@@ -62,7 +62,7 @@ Object.assign(storyData, {
 
   // ==================== 老头丧尸遭遇战 ====================
   "遭遇老头丧尸": {
-    image: "images/anshengStreet/oldManZombie.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManZombie.png */,
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "遭遇老头丧尸-犹豫"
@@ -89,12 +89,12 @@ Object.assign(storyData, {
   },
 
   "结局-老头丧尸砸死你": {
-    image: "images/anshengStreet/oldManKill.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManKill.png */,
     text: "你冲上去的瞬间，老头丧尸举起拐杖狠狠砸了下来。\n它的力气大得惊人——你眼前一黑，倒在了冰冷的地面上。\n你为自己莽撞的攻击付出了代价。\n\n—— 结局：老头丧尸 ——"
   },
 
   "遭遇老头丧尸-犹豫": {
-    image: "images/anshengStreet/oldManZombie.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManZombie.png */,
     text: "你盯着老头丧尸犹豫要怎么处理它——但它没给你犹豫的时间。它举起拐杖，拖着步子加速朝你冲了过来。\n你只能仓促应对。",
     choices: [
       {
@@ -111,7 +111,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-踹倒老头丧尸": {
-    image: "images/anshengStreet/oldManFall.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManFall.png */,
     onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true } }),
     text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。",
     choices: [
@@ -129,7 +129,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-获得拐杖": {
-    image: "images/anshengStreet/cane.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/cane.png */,
     onEnter: { set: { positionAfterOperation: "安盛街-获得拐杖" } },
     text: "老头丧尸的拐杖掉在地上，是一根金属材质的——沉甸甸的，虽然不是什么神兵利器，但总比空手强。\n老头丧尸在地上扭动着，朝你发出嘶哑的吼声。该走了。",
     choices: [
@@ -149,7 +149,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-物品栏满了": {
-    image: "images/anshengStreet/oldManFall.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManFall.png */,
     text: "你想捡起拐杖，但身上东西已经太多了。你犹豫了一下，还是放下了拐杖。\n毕竟带着一堆东西逃命不是什么好事。",
     choices: [
       {
@@ -161,7 +161,7 @@ Object.assign(storyData, {
   },
 
   "绕过老头丧尸": {
-    image: "images/anshengStreet/bypassOldMan.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/bypassOldMan.png */,
     onEnter: updateTime(1, { set: { defeatedOldMan: true } }),
     text: "你侧身一闪，从老头丧尸的左边绕了过去。它挥舞拐杖试图够到你，但动作太慢了，你轻松躲开，头也不回地朝前走去。",
     choices: [
@@ -179,7 +179,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-理发店（安全屋入口） ====================
   "安盛街-理发店": {
-    image: "images/anshengStreet/barberShopOutside.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopOutside.png */,
     text: function(vars) {
       let basicDes = "";
       let isNight = vars.hh >= 19 || vars.hh <= 6;
@@ -219,7 +219,7 @@ Object.assign(storyData, {
 
   // ==================== 理发店内部（入口，从街上进入时触发） ====================
   "理发店内部": {
-    image: "images/anshengStreet/barberShopInside.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     onEnter: { set: { currentPlace: "安盛街", currentPos: "理发店" } },
     text: function(vars) {
       let isNight = vars.hh >= 19 || vars.hh <= 6;
@@ -268,7 +268,7 @@ Object.assign(storyData, {
 
   // ==================== 理发店-店内（中枢，内部操作后回到这里） ====================
   "理发店-店内": {
-    image: "images/anshengStreet/barberShopInside.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     onEnter: { set: { currentPlace: "安盛街", currentPos: "理发店" } },
     text: function(vars) {
       let isNight = vars.hh >= 19 || vars.hh <= 6;
@@ -314,7 +314,7 @@ Object.assign(storyData, {
 
   // ==================== 理发店-交谈 ====================
   "理发店-交谈": {
-    image: "images/anshengStreet/barberShopInside.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     onEnter: { set: { talkToBarber: true } },
     text: function(vars) {
       let desc = "周师傅靠在理发椅上，指了指窗外：\"\
@@ -340,7 +340,7 @@ Object.assign(storyData, {
 
   // ==================== 理发店-休息（晚上清零尸潮） ====================
   "理发店-休息": {
-    image: "images/anshengStreet/barberShopRest.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopRest.png */,
     text: function(vars) { // 历史遗留设计，现在晚上强制选择庇护所
       let isNight = vars.hh >= 19 || vars.hh <= 6; // 包含了timeImage的night和midnight
       let isMorning = vars.hh > 6 && vars.hh < 12; // 是不是早上
@@ -386,7 +386,7 @@ Object.assign(storyData, {
 
   // ==================== 理发店-观察 ====================
   "理发店-观察": {
-    image: "images/anshengStreet/barberShopInside.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     text: function(vars) {
       let desc = "你环顾理发店。镜台上整齐地排列着剪刀、推子、梳子，墙上贴着几张褪色的发型海报。角落里堆着矿泉水和几箱方便面——周师傅囤了不少物资。\n\
 柜台后面有一台老式收音机，此刻正发出沙沙的静电声。周师傅说它已经两天没收到任何信号了。";
@@ -410,7 +410,7 @@ Object.assign(storyData, {
   },
 
   "理发店-拿到拖把杆": {
-    image: "images/anshengStreet/mopHandle.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/mopHandle.png */,
     onEnter: { set: { positionAfterOperation: "理发店-拿到拖把杆" } },
     text: "墙角靠着一根金属拖把杆，拆下来应该能当武器用。",
     choices: [
@@ -430,7 +430,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-后巷 ====================
   "安盛街-后巷": {
-    image: "images/anshengStreet/backAlley.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/backAlley.png */,
     onEnter: {
       set: {hurtByZombie: true}
     },
@@ -449,7 +449,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街中段 ====================
   "安盛街中段": {
-    image: "images/anshengStreet/midStreet.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/midStreet.png */,
     onEnter: { set: { positionAfterOperation: "安盛街中段", currentArea: "周边社区", currentPlace: "安盛街", currentPos: "安盛街" } },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
@@ -507,7 +507,7 @@ Object.assign(storyData, {
   },
 
   "安盛街中段-犹豫": {
-    image: "images/anshengStreet/midStreet.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/midStreet.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: "你在街中央站得太久了。丧尸从街道两端围拢过来，低吼声此起彼伏。你不能再犹豫了——必须立刻做出选择。",
     choices: [
@@ -526,7 +526,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-文具店 ====================
   "安盛街-文具店": {
-    image: "images/anshengStreet/stationeryShop.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryShop.png */,
     text: "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n收银台后面有动静——像是什么东西在翻找东西。",
     choices: [
       {
@@ -547,7 +547,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店的丧尸": {
-    image: "images/anshengStreet/stationeryZombie.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
     text: "你蹑手蹑脚地靠近收银台。一个穿校服的少年丧尸正蹲在地上，专心致志地啃咬一盒水彩笔，五颜六色的颜料糊了它一脸。\n它似乎还没发现你——但只要你发出一点声音……",
     choices: [
       {
@@ -579,7 +579,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店击杀": {
-    image: "images/anshengStreet/stationeryKill.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryKill.png */,
     onEnter: { add: { strength: -1 } },
     text: function(vars) {
       let weaponDesc = "你举起手中的家伙";
@@ -601,12 +601,12 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-文具店被反杀": {
-    image: "images/anshengStreet/stationeryZombie.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
     text: "你举起手中的家伙，但它太重了，你的手臂发软，这一击只擦过了丧尸的肩膀。\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n你太虚弱了，根本无力招架。\n\n—— 结局：文具店被反杀 ——"
   },
 
   "安盛街-文具店搜刮": {
-    image: "images/anshengStreet/stationeryLoot.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLoot.png */,
     onEnter: { set: { raidStationeryShop: true } }, // 标记为已搜刮过文具店的物品
     text: "你看着门口附近凌乱的货架。铅笔橡皮撒了一地，收银台下面似乎有什么东西在闪光。",
     choices: [
@@ -625,7 +625,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店搜刮-快速": {
-    image: "images/anshengStreet/stationeryLoot.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLoot.png */,
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-快速" } },
     text: "你弯腰捡起柜台下面那把美工刀，揣进口袋就走了。店里太安静了，待久了总觉得不太安全。\n也许有些藏在角落的东西没来得及看，但命更重要。",
     choices: [
@@ -644,7 +644,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店搜刮-仔细": {
-    image: "images/anshengStreet/stationeryLoot.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLoot.png */,
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-仔细" } },
     text: "你蹲下身，从货架底层开始一排一排地翻。铅笔、橡皮、尺子——都不是你要的。但收银台下面的抽屉里有一把崭新的美工刀，还有一整盒备用刀片。\n\
 你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，里面是半包饼干和一张皱巴巴的传单。",
@@ -671,7 +671,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店仓库": {
-    image: "images/anshengStreet/stationeryWarehouse.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryWarehouse.png */,
     text: "你推开吱嘎作响的铁门，走进文具店后面的小仓库。货架上堆满了各种文具和办公用品，墙角有几箱没拆封的打印纸。\n你的目光落在角落的一个铁柜上——上面贴着\"员工物品\"的标签，柜门虚掩着。",
     choices: [
       {
@@ -692,7 +692,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜": {
-    image: "images/anshengStreet/stationeryLocker.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLocker.png */,
     text: "你打开铁柜，里面放着一个帆布袋、半包饼干、一瓶没开过的矿泉水。",
     choices: [
       {
@@ -714,7 +714,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜-吃喝": {
-    image: "images/anshengStreet/stationeryLocker.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLocker.png */,
     onEnter: { add: { strength: 2 } },
     text: "你拧开矿泉水瓶盖，咕嘟咕嘟喝了几大口，又撕开饼干包装吃了两块。虽然不是什么美餐，但足够补充体力了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
@@ -726,7 +726,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-物品栏满了2": {
-    image: "images/anshengStreet/stationeryZombie.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
     text: "你想再捡点东西，但身上已经满当当的了。\n少年丧尸似乎察觉到了什么，开始抬起头来。你当机立断——现在不走更待何时。",
     choices: [
       {
@@ -738,7 +738,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-服装店 ====================
   "安盛街-服装店": {
-    image: "images/anshengStreet/clothingStore.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/clothingStore.png */,
     text: "你走进服装店。模特假人歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。\n\
 这家店看起来已经被洗劫过了，货架被推得东倒西歪。",
     choices: [
@@ -760,7 +760,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店试衣间": {
-    image: "images/anshengStreet/fittingRoom.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/fittingRoom.png */,
     qte: {
       timeout: 5000,
       onTimeout: "结局-安盛街-试衣间丧尸扑脸"
@@ -786,12 +786,12 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-试衣间丧尸扑脸": {
-    image: "images/anshengStreet/zombieInFittingRoom.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/zombieInFittingRoom.png */,
     text: "丧尸猛地扑到你身上，你失去平衡仰面摔倒。\n还没来得及挣扎，它已经咬了下来。\n\n—— 结局：试衣间丧尸 ——"
   },
 
   "安盛街-服装店反击": {
-    image: "images/anshengStreet/fittingRoomFight.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/fittingRoomFight.png */,
     onEnter: { add: { strength: -1 } },
     text: "你一脚正中丧尸的胸口，它被踹回了试衣间，撞在墙上发出沉闷的声响。\n趁它还没爬起来，你头也不回地冲出了服装店。",
     choices: [
@@ -803,7 +803,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店逃出": {
-    image: "images/anshengStreet/clothingStoreExit.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/clothingStoreExit.png */,
     onEnter: updateTime(1),
     text: "你猛地拉上帘子，转身就跑。身后传来丧尸撞破帘子的声音，但你已经在店门外了。\n心跳得厉害。你靠在墙上喘了几口气，确定它没有追出来。",
     choices: [
@@ -815,7 +815,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店收银台": {
-    image: "images/anshengStreet/clothingCounter.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/clothingCounter.png */,
     text: "你翻找收银台。收银机已经被撬开了，里面一分钱都没有——但这年头钱也没什么用。柜台下面的抽屉半开着，里面塞着一堆票据和杂物。",
     choices: [
       {
@@ -836,7 +836,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店收银台-仔细": {
-    image: "images/anshengStreet/clothingCounter.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/clothingCounter.png */,
     onEnter: { set: { positionAfterOperation: "安盛街-服装店收银台-仔细" } },
     text: function(vars) {
       let basicDes = "你把抽屉整个拉了出来，把里面的东西倒在地上。一堆过期的会员卡、几张外卖单、半管护手霜";
@@ -866,7 +866,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-食品批发部 ====================
   "安盛街-食品批发部": {
-    image: "images/anshengStreet/convenienceStore.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceStore.png */,
     text: function(vars) {
       let desc = "这是一家临街的食品批发部，几箱饮料摞在门口，但胜在不起眼。玻璃门上贴满了促销海报，看不清里面的情况。";
       if (vars.chasedByZombies >= 3) {
@@ -888,7 +888,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品批发部内部": {
-    image: "images/anshengStreet/convenienceStoreInside.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceStoreInside.png */,
     text: "你推开门，门上的风铃发出清脆的响声。\n货架上的东西不多，但还剩一些：几瓶矿泉水、几包饼干、两罐午餐肉。柜台后面的冰柜已经不制冷了，柜门没有关严，里面的东西表面长出了灰绿色的霉斑。\n正当你准备搜刮时，柜台后面站起来一个人——不，一只穿着店员制服的丧尸。它似乎刚才在柜台下面\"休息\"。",
     qte: {
       timeout: "8000 - chasedByZombies * 1500",
@@ -914,7 +914,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品批发部得手": { // 一个有时限的无限补给点，可供玩家不断补给
-    image: "images/anshengStreet/convenienceLoot.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceLoot.png */,
     onEnter: updateTime(1, { add: { strength: 1 } }),
     text: "你飞快地抓起离你最近的一瓶水和一包饼干，转身就跑。店员丧尸慢悠悠地从柜台后面绕出来，但你已经在门外了。\n你拧开瓶盖灌了几口水，体力恢复了一些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
@@ -929,7 +929,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品批发部战斗": {
-    image: "images/anshengStreet/convenienceFight.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceFight.png */,
     onEnter: { add: { strength: -1 } },
     text: "你举起手中的家伙，一棍子把店员丧尸打翻在地。它挣扎了几下，不动了。\n你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。",
     choices: [
@@ -942,7 +942,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品批发部战斗-吃喝": {
-    image: "images/anshengStreet/convenienceFight.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceFight.png */,
     onEnter: { add: { strength: 2 } },
     text: "你拧开一瓶水，就着饼干和午餐肉吃了一顿。虽然冷了点，但能填饱肚子就是好事。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
@@ -954,7 +954,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品批发部逃跑": {
-    image: "images/anshengStreet/convenienceEscape.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceEscape.png */,
     onEnter: updateTime(1),
     text: "你转身就跑，店员丧尸慢吞吞地跟在后面，但还没追到门口就放弃了——它似乎被什么东西绊倒了，哗啦一声撞在冰柜上。\n管他呢，跑就对了。",
     choices: [
@@ -966,13 +966,13 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-食品批发部被咬": {
-    image: "images/anshengStreet/convenienceStoreInside.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceStoreInside.png */,
     text: "你在货架前犹豫了太久。店员丧尸悄无声息地走到了你身后——\n等你察觉到脖子上传来的凉意时，已经太晚了。\n\n—— 结局：批发部被咬 ——"
   },
 
   // ==================== 安盛街-尸潮遭遇战 ====================
   "安盛街-尸潮来袭": {
-    image: "images/anshengStreet/zombieWave.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/zombieWave.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: "你正走着，突然听到身后传来一阵密集的脚步声。\n回头一看，一群丧尸从十字路口的方向涌了过来——至少二三十只，像潮水一样塞满了整条街道。它们看到了你，发出嘶哑的吼声，加快了速度。\n你必须马上决定往哪跑！",
     qte: {
@@ -999,12 +999,12 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-被尸潮吞没": {
-    image: "images/anshengStreet/zombieWaveSwallow.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/zombieWaveSwallow.png */,
     text: "你在街道中央犹豫了太久。\n尸潮像一面墙一样压了过来，无数双手抓住了你的衣服、手臂、脖子……\n你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\n—— 结局：被尸潮吞没 ——"
   },
 
   "安盛街-逃往安居苑": {
-    image: "images/anshengStreet/runToAnJuYuan.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/runToAnJuYuan.png */,
     onEnter: updateTime(2, { add: { chasedByZombies: 1 } }),
     text: "你朝着老小区的方向拔腿狂奔。肺像被火烧一样，双腿酸软，但身后的脚步声越来越近——你不能停。\n\
 前方出现了三林安居苑的后门。门卫亭、几辆歪斜的电瓶车、一道半开的大铁门，在你看来简直是一道天然的防线。\n\
@@ -1019,7 +1019,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-躲进店铺": {
-    image: "images/anshengStreet/hideInShop.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/hideInShop.png */,
     onEnter: updateTime(5, { add: { chasedByZombies: -2 } }),
     text: "你一头扎进路边一家不知名的店铺，蹲在柜台后面，用手捂住嘴巴。\n\
 外面的脚步声越来越近，越来越密。丧尸的嚎叫声此起彼伏，听得你头皮发麻。你甚至能闻到它们身上那股腐烂的臭味——它们就在门外。\n\
@@ -1033,7 +1033,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-逃回理发店": {
-    image: "images/anshengStreet/runToBarberShop.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/runToBarberShop.png */,
     onEnter: updateTime(2),
     text: "你转身就跑，沿着来时的路狂奔。理发店的灯箱是你唯一认得的坐标。\n你用尽全力拍打玻璃门：\"周师傅！开门！是我！\"\n门锁咔哒一声打开了，一只手把你拉了进去。周师傅迅速锁好门，拉上窗帘。外面传来杂乱的脚步声和低吼——但它们没有停留，直接从门前过去了。\n\"你运气真是太好了，\"周师傅擦着额头的汗，\"下次可别引这么多回来。\"",
     choices: [
@@ -1046,7 +1046,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-被包围 ====================
   "安盛街-被包围": {
-    image: "images/anshengStreet/surrounded.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/surrounded.png */,
     onEnter: { add: { chasedByZombies: 2 } },
     text: "你走到一半，发现事情不太对——丧尸不只从后面来。\n前面、左边的小巷、右边的店铺里，都有丧尸在向你靠近。它们不知道什么时候绕到了你的前方，形成了一个松散的包围圈。\n留给你的时间不多了。",
     qte: {
@@ -1070,7 +1070,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-破门逃生": {
-    image: "images/anshengStreet/breakDoor.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/breakDoor.png */,
     onEnter: updateTime(2, { add: { strength: -1 } }),
     text: "你举起手中的家伙，对准店铺门的锁狠狠砸了下去。一下，两下——锁头终于崩开了。\n你踹开门冲了进去，反手把门顶上。外面传来丧尸撞门的声音，但这扇铁门足够结实。\n\
     你穿过黑漆漆的店铺，从另一侧的门钻了出来，发现自己到了安盛街的后巷。",
@@ -1083,7 +1083,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-冲出包围": {
-    image: "images/anshengStreet/breakThrough.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/breakThrough.png */,
     onEnter: updateTime(2, { add: { strength: -1, chasedByZombies: 1 } }),
     text: "你深吸一口气，朝着最薄弱的缺口猛冲过去。一只丧尸伸手抓向你的衣领，被你一肘击翻；另一只从侧面扑来，你侧身闪过。\n你的肺部在燃烧，腿像灌了铅一样沉重——但你不能停。\n终于，你冲出了包围圈。身后的丧尸群还在追，但你已经甩开了距离。前方就是安盛街西侧，视野开阔了很多。",
     choices: [
@@ -1096,7 +1096,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街西侧（分岔路口） ====================
   "安盛街西侧": {
-    image: "images/anshengStreet/westStreet.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/westStreet.png */,
     onEnter: { set: { positionAfterOperation: "安盛街西侧", currentArea: "周边社区", currentPlace: "安盛街", currentPos: "安盛街" } },
     text: function(vars) {
       let desc = "你来到了安盛街西侧。这里比东侧更加破败——路面上到处是斑斑点点的血迹，有些已经发暗，有些还泛着潮。几辆废弃的车辆歪停在路边。\n\
@@ -1142,7 +1142,7 @@ Object.assign(storyData, {
   },
 
   "朝新达汇前进": {
-    image: "images/anshengStreet/toXindahui.png",
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/toXindahui.png */,
     text: "你沿着大路向西走去。越往前走，街道越宽阔，路边出现了更多的商铺和写字楼。\n远处的天际线上，你能看到新达汇商场的大楼——玻璃幕墙反射着夕阳的余晖，像一个沉默的巨人。\n但路上并不太平。沿途的丧尸明显多了起来——毕竟是通往大型商场的主干道。",
     choices: [
       {
@@ -1161,10 +1161,10 @@ Object.assign(storyData, {
 
   // ========== 躲藏场景（安盛街区域） ==========
 
-  "安盛街东侧-躲藏": hideOnLocation("images/anshengStreet/eastEntrance.png",
+  "安盛街东侧-躲藏": hideOnLocation("images/placeholder.png" /* TODO: images/anshengStreet/eastEntrance.png */,
     "你侧身挤进路边一个半塌的报刊亭，但铁皮墙突然被什么东西撞了一下——一只丧尸在无意识地撞墙。铁皮发出凹痕声，再待下去就要被发现。你只能一脚踹开门，冲了出去。",
     "你侧身挤进路边一个半塌的报刊亭。里面散落着过期杂志和碎玻璃。你蹲在柜台后面，从缝隙里看着街道。几只丧尸从亭外经过，没往里面看一眼。等了很久，你才推开吱呀作响的门走出来。"),
-  "安盛街西侧-躲藏": hideOnLocation("images/anshengStreet/westStreet.png",
+  "安盛街西侧-躲藏": hideOnLocation("images/placeholder.png" /* TODO: images/anshengStreet/westStreet.png */,
     "你躲到一块倒下的巨型广告牌后面，但铁架发出吱嘎声——几只丧尸爬上了倒下的广告牌。铁架在摇晃，快撑不住了！你一脚踹开最近的那只，从铁架缝隙里钻了出去。",
     "你躲到一块倒下的巨型广告牌后面。铁架和帆布形成了一个三角空间，像街边的一个临时掩体。外面的丧尸在广告牌另一侧徘徊，看不见你。等声音远去，你才从里面爬出来。"),
 });
