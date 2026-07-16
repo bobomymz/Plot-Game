@@ -10,6 +10,9 @@ Object.assign(storyData, {
       if (vars.currentArea === "高架") return "images/highway/highwayNight.png";
       return "images/小区周边/nightStreet.png";
     },
+    onEnter: function(vars) {
+      vars.strength = Math.max(5, vars.strength);
+    },
     text: function(vars) {
       let desc = "天色已经完全暗下来了。\n";
       if (vars.currentArea === "周边社区") {

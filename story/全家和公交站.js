@@ -34,26 +34,32 @@ Object.assign(storyData, {
     },
     choices: [
       {
+        showCondition: "!_visit['全家-吃零食']",
         text: "吃零食",
-        nextScene: "吃零食"
+        nextScene: "全家-吃零食"
       },
       {
+        showCondition: "!_visit['全家-吃面包']",
         text: "吃面包",
-        nextScene: "吃面包"
+        nextScene: "全家-吃面包"
       },
       {
+        showCondition: "!_visit['全家-吃饭团']",
         text: "吃饭团",
-        nextScene: "吃饭团"
+        nextScene: "全家-吃饭团"
       },
       {
+        showCondition: "!_visit['全家-喝饮料腹泻']",
         text: "喝饮料",
-        nextScene: "喝饮料腹泻"
+        nextScene: "全家-喝饮料腹泻"
       },
       {
         showCondition: "hasTorch",
         text: "打手电筒探索员工通道",
+        condition: "_visit['全家便利店-饼干引路']",
         nextScene: "全家便利店-员工通道",
-        effect: updateTime(2)
+        effect: updateTime(2),
+        elseScene: "全家便利店-员工通道-丧尸的偷袭"
       },
       {
         showCondition: "!hasTorch",
@@ -64,7 +70,14 @@ Object.assign(storyData, {
     ]
   },
 
-  "吃零食": {
+  "全家便利店-员工通道-丧尸的偷袭": {
+    image: "images/小区周边/员工通道.png",
+    text: "你走进员工通道，里面是一个小仓库，货架都空了，冷库里只有些零星的冰棍和奶制品，而且已经停电了，估计都不能吃了。\n\
+你转身看看别处，手电筒的光照亮了货架深处，一只丧尸的脸出现在你面前。\n\
+刚想找武器，那只丧尸已如鬼魅般闪现到你的面前。",
+  },
+
+  "全家-吃零食": {
     image: "images/小区周边/零食.png",
     onEnter: updateTime(1, { add : { strength: 1 } }),
     text: "薯片在你口中嘎嘣作响，嗯，真好吃。\n\
@@ -262,7 +275,7 @@ Object.assign(storyData, {
     ]
   },
 
-  "吃面包": {
+  "全家-吃面包": {
     image: "images/小区周边/面包.png",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些面包，感觉肚子有了一些能量。\n\
@@ -275,7 +288,7 @@ Object.assign(storyData, {
     ]
   },
 
-  "吃饭团": {
+  "全家-吃饭团": {
     image: "images/小区周边/饭团.png",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些饭团，感觉肚子有了一些能量。\n\
@@ -288,7 +301,7 @@ Object.assign(storyData, {
     ]
   },
 
-  "喝饮料腹泻": {
+  "全家-喝饮料腹泻": {
     image: "images/小区周边/公厕里的丧尸.png",
     onEnter: updateTime(2),
     text: "你随手从冰柜里抓起一瓶冰凉的柠檬水，咕嘟咕嘟一饮而尽。片刻之后，你感觉胃部传来一阵绞痛。\n\
@@ -327,7 +340,9 @@ Object.assign(storyData, {
 
   "全家便利店-饼干引路": {
     image: "images/小区周边/饼干引路.png",
-    text: "你从口袋里掏出那包饼干，撕开包装，用力朝员工通道的方向扔了过去。\n饼干砸在金属门上，碎屑四溅。那只迅捷丧尸的注意力瞬间被吸引——它像一道闪电般扑向声音的来源，一头扎进了黑漆漆的员工通道。\n紧接着，通道深处传来咣当一声巨响——它似乎撞翻了什么重物，然后是一阵杂乱的刮擦声……渐渐安静了下来。\n你等了几秒，确认它没有回来。员工通道的门半开着，里面一片漆黑。",
+    text: "你从口袋里掏出那包饼干，撕开包装，用力朝员工通道的方向扔了过去。\n\
+饼干砸在金属门上，碎屑四溅。那只迅捷丧尸的注意力瞬间被吸引——它像一道闪电般扑向声音的来源，一头扎进了黑漆漆的员工通道。\n\
+紧接着，通道深处传来咣当一声巨响——它似乎撞翻了什么重物，然后是一阵杂乱的刮擦声……渐渐安静了下来。\n你等了几秒，确认它没有回来。员工通道的门半开着，里面一片漆黑。",
     choices: [
       {
         showCondition: "hasTorch",
@@ -336,7 +351,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "摸黑进去",
+        text: "摸黑进去看看",
         nextScene: "全家便利店-员工通道-摸黑",
         effect: updateTime(2)
       },
@@ -379,14 +394,56 @@ Object.assign(storyData, {
 
   "全家便利店-员工通道-摸黑": {
     image: "images/小区周边/员工通道-暗.png",
-    onEnter: updateTime(3, { add: { strength: -1 } }),
-    text: "你摸黑走进员工通道。太暗了，只能用手扶着墙慢慢往前挪。\n脚下突然踩到什么东西——咔嚓一声，像是一包薯片被你踩碎了。你心里一紧，但黑暗中除了自己的心跳声什么都听不到。\n你在走廊里摸索了半天，只找到几件挂在墙上的旧工作服和一个上锁的储物柜。似乎有什么重要的东西错过了，但太黑了，你看不清。\n<span style='color: #888;'>也许下次带个手电筒来会有收获。</span>",
+    onEnter: function(vars) {
+      if (vars.FamilymartHasZombie) {
+        return initMemoryGame(["红","蓝","绿"], 9)(vars);
+      }
+      return updateTime(3, { add: { strength: -1 } })(vars);
+    },
+    text: function(vars) {
+      if (vars.FamilymartHasZombie) {
+        return "你摸黑走进员工通道。太暗了，只能用手扶着墙慢慢往前挪。\n脚下突然踩到什么东西——咔嚓一声，像是一包薯片被你踩碎了。\n你心里一紧。黑暗中，你听到了呼吸声。\n不是你的。\n一道黑影从走廊深处猛地窜了出来——是那只迅捷丧尸！它刚才被你的脚步声吸引，一直在黑暗中等你。它的速度快得惊人，灰色的身影在黑暗中几乎看不清轨迹。\n<span style='color: #ffaa00;'>你必须在一瞬间判断它的攻击方向！</span>";
+      }
+      return "你摸黑走进员工通道。太暗了，只能用手扶着墙慢慢往前挪。\n上次那只迅捷丧尸已经不在了，走廊里很安静，只有你自己的呼吸声。\n你在走廊里摸索了半天，只找到几件挂在墙上的旧工作服和一个上锁的储物柜。\n<span style='color: #888;'>也许下次带个手电筒来会有收获。</span>";
+    },
     choices: [
+      {
+        showCondition: "FamilymartHasZombie",
+        text: "输入你看到的颜色分布（例如：3红3蓝3绿）",
+        input: {
+          match: function(vars, input) {
+            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
+          },
+          placeholder: "例如：3红3蓝3绿",
+          wrongScene: "结局-员工通道-迅捷丧尸咬死"
+        },
+        effect: updateTime(2, { add: { strength: -1 } }),
+        nextScene: "全家便利店-员工通道-踢飞丧尸",
+        timeout: 10000,
+        timeoutScene: "结局-员工通道-迅捷丧尸咬死"
+      },
       {
         text: "摸回去",
         nextScene: "全家便利店内部"
       }
     ]
+  },
+
+  "全家便利店-员工通道-踢飞丧尸": {
+    image: "images/小区周边/员工通道-暗.png",
+    onEnter: updateTime(1, { set: { FamilymartHasZombie: false } }),
+    text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱哗啦啦地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n砰——门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。",
+    choices: [
+      {
+        text: "快离开这里",
+        nextScene: "全家便利店（环林东路）"
+      }
+    ]
+  },
+
+  "结局-员工通道-迅捷丧尸咬死": {
+    image: "images/zombieKnockYouDown.png",
+    text: "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。\n\n—— 结局：员工通道的迅捷丧尸 ——"
   },
 
 

@@ -108,7 +108,7 @@ Object.assign(storyData, {
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了三林路。这里有你童年时住过的老小区，以及一些药店、银行、小超市等。\n你需要选择去哪里。\n快选哦，周围的丧尸就要围拢过来了。\n" + describeZombieWave(vars);
+      return "你来到了三林路。这里有你童年时住过的老小区，益丰大药房、建设银行、联华超市等。\n你需要选择去哪里。\n快选哦，周围的丧尸就要围拢过来了。\n" + describeZombieWave(vars);
     },
     choices: [
       {
