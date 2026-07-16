@@ -1100,8 +1100,8 @@ Object.assign(storyData, {
   "新达汇-2F服装店": {
     image: "images/新达汇/clothingStore.png",
     onEnter: { add: { chasedByZombies: 1 } },
-    text: "你刚靠近海澜之家的玻璃门，感应器就发出一声短促的电子提示音，门缓缓滑开。声音不大，但在安静的走廊里足够传到很远。\n\
-海澜之家和雅戈尔面对面开着。海澜之家白色装修，冷淡简约；雅戈尔深色木纹更显沉稳。试衣间的门关着。雅戈尔那边的收银台后面有一扇门，贴着\"员工间\"的标签。\n" + describeZombieWave(vars),
+    text: function(vars) { return "你刚靠近海澜之家的玻璃门，感应器就发出一声短促的电子提示音，门缓缓滑开。声音不大，但在安静的走廊里足够传到很远。\n\
+海澜之家和雅戈尔面对面开着。海澜之家白色装修，冷淡简约；雅戈尔深色木纹更显沉稳。试衣间的门关着。雅戈尔那边的收银台后面有一扇门，贴着\"员工间\"的标签。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "快躲进试衣间！",
