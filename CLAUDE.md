@@ -420,3 +420,26 @@ rules: [
 - 安居苑前门（北门）面向三林路，后门（南门）面向安盛街中段
 - 新达汇在东明路南侧，中学在东明路北侧，继续向北可从华夏西路上高架。
 - 11号线地铁站在三林路-东明路 十字路口，6号线地铁站在华夏西路上
+
+## 自动推送（AutoPushGame）
+
+Windows 任务计划程序创建了 `\AutoPushGame` 定时任务，每小时自动提交并推送代码到 GitHub。
+
+### 脚本位置
+- `C:\Users\wgdin\auto-push.sh` — 由 Git Bash 执行
+- 日志：`C:\Users\wgdin\push-log.txt`（追加模式，保留历史）
+
+### 推送逻辑
+```
+git add -A
+git commit -m "auto: 时间戳"
+git push origin main（先试直连）
+  └─ 直连失败 → 走代理 http://127.0.0.1:7890 重试
+```
+
+### 注意事项
+- Git 全局配置了 `http.proxy=http://127.0.0.1:7890`（Clash/VPN 代理）
+- 脚本会先尝试绕过代理直连，失败再走代理，避免代理未开启时推送失败
+- 如需查看上次推送结果：`cat /c/Users/wgdin/push-log.txt`
+- 定时任务位置：Windows 任务计划程序 → 任务计划程序库 → `\AutoPushGame`
+- 更新计划：每 1 小时，最早 9:00，最长运行 72 小时
