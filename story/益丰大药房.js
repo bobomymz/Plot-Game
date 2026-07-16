@@ -60,7 +60,7 @@ Object.assign(storyData,{
     text: "你绕到柜台侧面。一只穿着白大褂的丧尸突然窜了出来，你急忙闪开。它好像没看到你一样，蹲在地上，疯狂地撕咬一盒不知道什么的药。",
     choices: [
       {
-        showCondition: "hasCane || hasIronPipe || hasCutter",
+        showCondition: "hasCane || hasMopHandle || hasIronPipe || hasCutter",
         text: "给它来一下",
         nextScene: "益丰大药房-击杀",
         condition: "strength >= 2",
@@ -383,7 +383,7 @@ Object.assign(storyData,{
       }
 
       // 解脱选项（有武器、未杀）
-      if ((vars.hasCane || vars.hasIronPipe || vars.hasCutter) && !vars.pharmacyApprenticeKilled) {
+      if ((vars.hasCane || vars.hasMopHandle || vars.hasIronPipe || vars.hasCutter) && !vars.pharmacyApprenticeKilled) {
         opts.push({
           text: "给她一下子",
           nextScene: "益丰大药房-解脱学徒",

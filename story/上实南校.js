@@ -105,6 +105,11 @@ Object.assign(storyData, {
         nextScene: "上实南校-天桥-硬砸"
       },
       {
+        showCondition: "hasMopHandle",
+        text: "用拖把杆撬开",
+        nextScene: "上实南校-天桥-硬砸"
+      },
+      {
         text: "算了，撤回去",
         nextScene: "东明路-三林路"
       }

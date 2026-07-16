@@ -62,7 +62,8 @@ const storyData = {
     hasTorch:  false,          // 是否有手电筒（民房设施等候室桌子抽屉）
     hasGasMask:   false,       // 是否有防毒面具（民防设施物资区）
     hasIronPipe: false,        // 是否有铁管（民防设施物资区箱子后面，打斗中才能获得）
-    hasCane: false,            // 是否有拐杖/拖把杆
+    hasCane: false,            // 是否有拐杖（安盛街老头丧尸）
+    hasMopHandle: false,      // 是否有拖把杆（理发店）
     hasCutter: false,          // 是否有美工刀
     hasBiscuit: false,         // 是否有饼干（安盛街便利店）
     hasMap: false,             // 是否有交通地图（三林安居苑藤蔓丧尸）
@@ -290,8 +291,14 @@ const storyData = {
       },
       {
         showCondition: "hasCane",
-        text: "丢下拐杖/拖把杆",
+        text: "丢下拐杖",
         effect: updateTime(1, { set : { hasCane: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasMopHandle",
+        text: "丢下拖把杆",
+        effect: updateTime(1, { set : { hasMopHandle: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {

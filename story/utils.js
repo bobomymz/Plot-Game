@@ -145,3 +145,31 @@ function normalizeColorAnswer(str) {
   }
   return colors.filter(c => counts[c]).map(c => c + ':' + counts[c]).join(',');
 }
+
+// 躲藏场景工厂：统一管理随机躲藏逻辑与 _hideFail 状态
+// failText / successText 可以是字符串或 function(vars) => string
+function hideOnLocation(failText, successText) {
+  return {
+    onEnter: function(vars) {
+      updateTime(15 + Math.floor(Math.random() * 16))(vars);
+      if (vars.chasedByZombies >= 4 && Math.random() < 0.4) {
+        vars.strength = Math.max(0, vars.strength - 1);
+        vars._hideFail = true;
+      } else {
+        vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+        vars._hideFail = false;
+      }
+      return {};
+    },
+    text: typeof failText === 'function' || typeof successText === 'function'
+      ? function(vars) {
+          if (vars._hideFail) {
+            return typeof failText === 'function' ? failText(vars) : failText;
+          }
+          return typeof successText === 'function' ? successText(vars) : successText;
+        }
+      : function(vars) {
+          return vars._hideFail ? failText : successText;
+        }
+  };
+}

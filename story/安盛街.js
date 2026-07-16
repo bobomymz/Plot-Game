@@ -390,14 +390,14 @@ Object.assign(storyData, {
     text: function(vars) {
       let desc = "你环顾理发店。镜台上整齐地排列着剪刀、推子、梳子，墙上贴着几张褪色的发型海报。角落里堆着矿泉水和几箱方便面——周师傅囤了不少物资。\n\
 柜台后面有一台老式收音机，此刻正发出沙沙的静电声。周师傅说它已经两天没收到任何信号了。";
-      if (!vars.hasCane && vars.itemCount < vars.bagVolume) { // 如果背包已满，就不要强调这句话了
+      if (!vars.hasMopHandle && vars.itemCount < vars.bagVolume) { // 如果背包已满，就不要强调这句话了
         desc += "\n门后面立着一根备用的拖把杆——金属的，挺结实，可以当武器。";
       }
       return desc;
     },
     choices: [
       {
-        showCondition: "!hasCane && itemCount < bagVolume",
+        showCondition: "!hasMopHandle && itemCount < bagVolume",
         text: "拿走拖把杆",
         nextScene: "理发店-拿到拖把杆",
         effect: updateTime(1)
@@ -418,7 +418,7 @@ Object.assign(storyData, {
         text: "拿上拖把杆",
         condition: "itemCount < bagVolume",
         nextScene: "理发店-店内",
-        effect: { set: { hasCane: true }, add: { itemCount: 1 } },
+        effect: { set: { hasMopHandle: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
@@ -557,7 +557,14 @@ Object.assign(storyData, {
       },
       {
         showCondition: "hasCane",
-        text: "用拖把杆/拐杖敲它",
+        text: "抡起拐杖敲它脑袋",
+        nextScene: "安盛街-文具店击杀",
+        condition: "strength >= 3",
+        elseScene: "结局-安盛街-文具店被反杀"
+      },
+      {
+        showCondition: "hasMopHandle",
+        text: "抄起拖把杆砸过去",
         nextScene: "安盛街-文具店击杀",
         condition: "strength >= 3",
         elseScene: "结局-安盛街-文具店被反杀"
@@ -574,7 +581,12 @@ Object.assign(storyData, {
   "安盛街-文具店击杀": {
     image: "images/anshengStreet/stationeryKill.png",
     onEnter: { add: { strength: -1 } },
-    text: "你举起手中的家伙，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n你补了几下，确定它不会再动了。收银台后面的员工通道看起来通往更里面——也许仓库里还有什么有用的东西。",
+    text: function(vars) {
+      let weaponDesc = "你举起手中的家伙";
+      if (vars.hasCane) weaponDesc = "你抡起金属拐杖";
+      else if (vars.hasMopHandle) weaponDesc = "你抄起拖把杆";
+      return weaponDesc + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n你补了几下，确定它不会再动了。收银台后面的员工通道看起来通往更里面——也许仓库里还有什么有用的东西。";
+    },
     choices: [
       {
         text: "进去看看",
@@ -890,7 +902,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        showCondition: "hasCane || hasIronPipe",
+        showCondition: "hasCane || hasMopHandle || hasIronPipe",
         text: "抄家伙打它",
         nextScene: "安盛街-食品批发部战斗"
       },
@@ -1045,7 +1057,7 @@ Object.assign(storyData, {
       {
         text: "砸开右边店铺的门",
         nextScene: "安盛街-破门逃生",
-        condition: "hasCane || hasIronPipe",
+        condition: "hasCane || hasMopHandle || hasIronPipe",
         elseScene: "结局-安盛街-被尸潮吞没"
       },
       {
@@ -1149,47 +1161,16 @@ Object.assign(storyData, {
 
   // ========== 躲藏场景（安盛街区域） ==========
 
-  "安盛街东侧-躲藏": {
+  "安盛街东侧-躲藏": Object.assign({
     image: "images/anshengStreet/eastEntrance.png",
-    onEnter: function(vars) {
-      updateTime(15 + Math.floor(Math.random() * 16))(vars);
-      if (vars.chasedByZombies >= 4 && Math.random() < 0.4) {
-        vars.strength = Math.max(0, vars.strength - 1);
-        vars._hideFail = true;
-      } else {
-        vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
-        vars._hideFail = false;
-      }
-      return {};
-    },
-    text: function(vars) {
-      if (vars._hideFail) return "你侧身挤进路边一个半塌的报刊亭，但铁皮墙突然被什么东西撞了一下——一只丧尸在无意识地撞墙。铁皮发出凹痕声，再待下去就要被发现。你只能一脚踹开门，冲了出去。";
-      return "你侧身挤进路边一个半塌的报刊亭。里面散落着过期杂志和碎玻璃。你蹲在柜台后面，从缝隙里看着街道。几只丧尸从亭外经过，没往里面看一眼。等了很久，你才推开吱呀作响的门走出来。";
-    },
-    choices: [
-      { text: "继续", nextScene: "安盛街东侧" }
-    ]
-  },
-
-  "安盛街西侧-躲藏": {
+  }, hideOnLocation(
+    "你侧身挤进路边一个半塌的报刊亭，但铁皮墙突然被什么东西撞了一下——一只丧尸在无意识地撞墙。铁皮发出凹痕声，再待下去就要被发现。你只能一脚踹开门，冲了出去。",
+    "你侧身挤进路边一个半塌的报刊亭。里面散落着过期杂志和碎玻璃。你蹲在柜台后面，从缝隙里看着街道。几只丧尸从亭外经过，没往里面看一眼。等了很久，你才推开吱呀作响的门走出来。"
+  )),
+  "安盛街西侧-躲藏": Object.assign({
     image: "images/anshengStreet/westStreet.png",
-    onEnter: function(vars) {
-      updateTime(15 + Math.floor(Math.random() * 16))(vars);
-      if (vars.chasedByZombies >= 4 && Math.random() < 0.4) {
-        vars.strength = Math.max(0, vars.strength - 1);
-        vars._hideFail = true;
-      } else {
-        vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
-        vars._hideFail = false;
-      }
-      return {};
-    },
-    text: function(vars) {
-      if (vars._hideFail) return "你躲到一块倒下的巨型广告牌后面，但铁架发出吱嘎声——几只丧尸爬上了倒下的广告牌。铁架在摇晃，快撑不住了！你一脚踹开最近的那只，从铁架缝隙里钻了出去。";
-      return "你躲到一块倒下的巨型广告牌后面。铁架和帆布形成了一个三角空间，像街边的一个临时掩体。外面的丧尸在广告牌另一侧徘徊，看不见你。等声音远去，你才从里面爬出来。";
-    },
-    choices: [
-      { text: "继续", nextScene: "安盛街西侧" }
-    ]
-  }
+  }, hideOnLocation(
+    "你躲到一块倒下的巨型广告牌后面，但铁架发出吱嘎声——几只丧尸爬上了倒下的广告牌。铁架在摇晃，快撑不住了！你一脚踹开最近的那只，从铁架缝隙里钻了出去。",
+    "你躲到一块倒下的巨型广告牌后面。铁架和帆布形成了一个三角空间，像街边的一个临时掩体。外面的丧尸在广告牌另一侧徘徊，看不见你。等声音远去，你才从里面爬出来。"
+  )),
 });

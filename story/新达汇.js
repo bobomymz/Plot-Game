@@ -296,18 +296,18 @@ Object.assign(storyData, {
         text: "用铁管撬开味千拉面的卷帘门",
         nextScene: "新达汇-1F味千拉面",
         effect: updateTime(3, { set: { _ramenVisited: true } }),
-        showCondition: "(hasIronPipe || hasCane) && !_ramenVisited && chasedByZombies <= 1",
+        showCondition: "(hasIronPipe || hasCane || hasMopHandle) && !_ramenVisited && chasedByZombies <= 1",
       },
       {
         text: "快撬开味千拉面的卷帘门躲进去！",
         nextScene: "新达汇-1F味千拉面",
         effect: updateTime(2, { set: { _ramenVisited: true } }),
-        showCondition: "(hasIronPipe || hasCane) && !_ramenVisited && chasedByZombies >= 2",
+        showCondition: "(hasIronPipe || hasCane || hasMopHandle) && !_ramenVisited && chasedByZombies >= 2",
       },
       {
         text: "蹲下身试试能不能抬起卷帘门",
         nextScene: "新达汇-1F味千拉面-徒手",
-        showCondition: "!(hasIronPipe || hasCane) && !_ramenVisited",
+        showCondition: "!(hasIronPipe || hasCane || hasMopHandle) && !_ramenVisited",
       },
       {
         text: "进入味千拉面",

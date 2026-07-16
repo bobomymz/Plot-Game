@@ -220,6 +220,10 @@ Object.assign(storyData, {
     image: "images/home/zombieOutsideHome.png",
     text: "【教程】接下来，屏幕将会闪烁不同的颜色，你需要在规定时间内输入你看到的颜色。输入错误，你就会被丧尸扑倒咬死。",
     onEnter: initMemoryGame(["红","蓝"], 5),
+    qte: {
+      timeout: 10000,              // 10 秒（这次选错就是即死结局，没什么决策深度，所以时间紧）
+      onTimeout: "结局-被丧尸扑倒咬死"  // 超时则被咬死
+    },
     choices: [
       {
         text: "输入你看到的颜色",
@@ -232,8 +236,8 @@ Object.assign(storyData, {
         },
         effect: updateTime(5, { add: { strength: -1 } }),
         nextScene: "家外楼梯间的抉择",
-        timeout: 10000,           // ← 10秒倒计时
-        timeoutScene: "结局-被丧尸扑倒咬死"       // ← 超时自动触发
+        //timeout: 10000,           // ← 10秒倒计时
+        //timeoutScene: "结局-被丧尸扑倒咬死"       // ← 超时自动触发
       }
     ]
   },

@@ -59,7 +59,7 @@ Object.assign(storyData, {
         condition: "_visit['全家便利店-饼干引路']",
         nextScene: "全家便利店-员工通道",
         effect: updateTime(2),
-        elseScene: "全家便利店-员工通道-丧尸的偷袭"
+        elseScene: "结局-全家便利店-员工通道-丧尸的偷袭"
       },
       {
         showCondition: "!hasTorch",
@@ -70,11 +70,12 @@ Object.assign(storyData, {
     ]
   },
 
-  "全家便利店-员工通道-丧尸的偷袭": {
-    image: "images/小区周边/员工通道.png",
+  "结局-全家便利店-员工通道-丧尸的偷袭": {
+    image: "images/zombieKnockYouDown.png",
     text: "你走进员工通道，里面是一个小仓库，货架都空了，冷库里只有些零星的冰棍和奶制品，而且已经停电了，估计都不能吃了。\n\
 你转身看看别处，手电筒的光照亮了货架深处，一只丧尸的脸出现在你面前。\n\
-刚想找武器，那只丧尸已如鬼魅般闪现到你的面前。",
+刚想找武器，脚下踩到一块纸皮，嘎吱一声，那只丧尸已如鬼魅般闪现到你的面前。\n\
+—— 结局：你太慢啦 ——",
   },
 
   "全家-吃零食": {

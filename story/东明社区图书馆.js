@@ -45,7 +45,7 @@ Object.assign(storyData, {
     choices: [
         { text: "蹲下身子，从前台下方绕过去", nextScene: "图书馆-大厅-潜行", effect: updateTime(2) },
         { text: "从书架上抽一本书，朝另一侧扔出去", nextScene: "图书馆-大厅-声东击西", effect: updateTime(1) },
-        { text: "抄起门口的铁质书立，上去解决它", nextScene: "图书馆-大厅-战斗", condition: "hasCane || hasIronPipe || strength >= 3", elseScene: "图书馆-大厅-徒劳" }
+        { text: "抄起门口的铁质书立，上去解决它", nextScene: "图书馆-大厅-战斗", condition: "hasCane || hasMopHandle || hasIronPipe || strength >= 3", elseScene: "图书馆-大厅-徒劳" }
     ]
   },
 
@@ -71,7 +71,7 @@ Object.assign(storyData, {
       {
         text: "趁它背对你，从后面接近它",
         nextScene: "图书馆-大厅-背后突袭",
-        condition: "hasCane || hasIronPipe || hasCutter",
+        condition: "hasCane || hasMopHandle || hasIronPipe || hasCutter",
         elseScene: "图书馆-阅览室"
       }
     ]
@@ -80,7 +80,13 @@ Object.assign(storyData, {
   "图书馆-大厅-背后突袭": {
     image: "images/library/libraryHall.png",
     onEnter: { add: { strength: -1 } },
-    text: "你压低脚步跟了上去。志愿者丧尸正对着墙上被书砸出的痕迹发呆——它不太聪明的样子。\n你举起手中的家伙，对着它的后脑勺来了一下。它扑通一声倒在地上，不动了。\n你把它拖到前台后面，至少看上去不那么扎眼了。",
+    text: function(vars) {
+      let wpn = "手中的家伙";
+      if (vars.hasIronPipe) wpn = "铁管";
+      else if (vars.hasCane) wpn = "拐杖";
+      else if (vars.hasMopHandle) wpn = "拖把杆";
+      return "你压低脚步跟了上去。志愿者丧尸正对着墙上被书砸出的痕迹发呆——它不太聪明的样子。\n你举起" + wpn + "，对着它的后脑勺来了一下。它扑通一声倒在地上，不动了。\n你把它拖到前台后面，至少看上去不那么扎眼了。";
+    },
     choices: [
       {
         text: "继续探索",
@@ -92,7 +98,13 @@ Object.assign(storyData, {
   "图书馆-大厅-战斗": {
     image: "images/library/libraryFight.png",
     onEnter: { add: { strength: -1 } },
-    text: "你握紧手中的家伙，大步迎了上去。志愿者丧尸听到脚步声转过身来，张开嘴发出嘶哑的吼叫——但你比它快。\n一记结实的打击正中它的头部。它晃了晃，倒在地上不再动弹。\n你喘了口气。动静有点大，可能会把其他地方的东西引过来。",
+    text: function(vars) {
+      let wpn = "手中的家伙";
+      if (vars.hasIronPipe) wpn = "铁管";
+      else if (vars.hasCane) wpn = "拐杖";
+      else if (vars.hasMopHandle) wpn = "拖把杆";
+      return "你握紧" + wpn + "，大步迎了上去。志愿者丧尸听到脚步声转过身来，张开嘴发出嘶哑的吼叫——但你比它快。\n一记结实的打击正中它的头部。它晃了晃，倒在地上不再动弹。\n你喘了口气。动静有点大，可能会把其他地方的东西引过来。";
+    },
     choices: [
       {
         text: "赶紧离开大厅",
@@ -154,7 +166,7 @@ Object.assign(storyData, {
       {
         text: "用家伙招呼它",
         nextScene: "图书馆-阅览室-战斗",
-        condition: "hasCane || hasIronPipe || hasCutter",
+        condition: "hasCane || hasMopHandle || hasIronPipe || hasCutter",
         elseScene: "图书馆-阅览室-徒手"
       },
       {
@@ -179,7 +191,13 @@ Object.assign(storyData, {
   "图书馆-阅览室-战斗": {
     image: "images/library/libraryFight.png",
     onEnter: { add: { strength: -1 } },
-    text: "你挥出手中的家伙，准准地砸在了它的脑袋上。它踉跄了一步，但居然没有倒下——反而挥舞着那本厚书朝你脸上招呼过来。\n你后退两步，趁它重心不稳，又是一下。这一次它终于趴下了。",
+    text: function(vars) {
+      let wpn = "手中的家伙";
+      if (vars.hasIronPipe) wpn = "铁管";
+      else if (vars.hasCane) wpn = "拐杖";
+      else if (vars.hasMopHandle) wpn = "拖把杆";
+      return "你挥出" + wpn + "，准准地砸在了它的脑袋上。它踉跄了一步，但居然没有倒下——反而挥舞着那本厚书朝你脸上招呼过来。\n你后退两步，趁它重心不稳，又是一下。这一次它终于趴下了。";
+    },
     choices: [
       {
         text: "穿过去",
@@ -354,7 +372,7 @@ Object.assign(storyData, {
       {
         text: "趁它被压着，先解决掉它再拿钥匙",
         nextScene: "图书馆-办公室-清场",
-        condition: "hasCane || hasIronPipe || hasCutter",
+        condition: "hasCane || hasMopHandle || hasIronPipe || hasCutter",
         effect: updateTime(2),
         elseScene: "图书馆-办公室-受伤"
       },
@@ -377,7 +395,7 @@ Object.assign(storyData, {
       {
         text: "先解决它，再慢慢搜刮",
         nextScene: "图书馆-办公室-清场",
-        condition: "hasCane || hasIronPipe || hasCutter",
+        condition: "hasCane || hasMopHandle || hasIronPipe || hasCutter",
         elseScene: "图书馆-办公室-徒劳"
       }
     ]

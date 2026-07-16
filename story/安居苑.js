@@ -26,7 +26,7 @@ Object.assign(storyData, {
         effect: updateTime(4)
       },
       {
-        showCondition: "hasCane || hasIronPipe",
+        showCondition: "hasCane || hasMopHandle || hasIronPipe",
         text: "挥舞武器吓唬它们",
         nextScene: "三林安居苑-驱赶变异猫",
         effect: updateTime(2)
@@ -186,7 +186,7 @@ Object.assign(storyData, {
 藤蔓从长椅下方的花坛里疯长出来，把它整个下半身缠得严严实实。它只能扭动上半身，朝你张着黑洞洞的嘴，发出嗬嗬的气声。";
       if (vars.hasCutter) {
         desc += "\n<span style='color: #ffaa00;'>口袋里的美工刀正好可以用来割断这些藤蔓。</span>";
-      } else if (vars.hasCane || vars.hasIronPipe) {
+      } else if (vars.hasCane || vars.hasMopHandle || vars.hasIronPipe) {
         desc += "\n你没带刀，但手里的家伙足够长——可以试着拨开藤蔓，或者直接给它一下。";
       }
       return desc;
@@ -205,7 +205,7 @@ Object.assign(storyData, {
         effect: updateTime(1, {set: {fightWithVineZombie: true}})
       },
       {
-        showCondition: "hasCane || hasIronPipe",
+        showCondition: "hasCane || hasMopHandle || hasIronPipe",
         text: "用武器拨开藤蔓",
         nextScene: "三林安居苑-藤蔓丧尸-战斗",
         effect: updateTime(1, {set: {fightWithVineZombie: true}})
@@ -230,7 +230,13 @@ Object.assign(storyData, {
       },
       {
         showCondition: "hasCane && !hasIronPipe",
-        text: "用拐杖/拖把杆敲它",
+        text: "抡起拐杖，狠狠敲下去",
+        nextScene: "三林安居苑-藤蔓丧尸-击杀",
+        effect: updateTime(1, { add: { strength: -1 } })
+      },
+      {
+        showCondition: "hasMopHandle && !hasIronPipe",
+        text: "抄起拖把杆，猛地砸过去",
         nextScene: "三林安居苑-藤蔓丧尸-击杀",
         effect: updateTime(1, { add: { strength: -1 } })
       },
@@ -254,7 +260,13 @@ Object.assign(storyData, {
       },
       {
         showCondition: "hasCane && !hasIronPipe",
-        text: "拐杖/拖把杆猛敲",
+        text: "抡起拐杖，一击爆头",
+        nextScene: "三林安居苑-藤蔓丧尸-击杀",
+        effect: updateTime(1, { add: { strength: -1 } })
+      },
+      {
+        showCondition: "hasMopHandle && !hasIronPipe",
+        text: "拖把杆横扫，猛敲过去",
         nextScene: "三林安居苑-藤蔓丧尸-击杀",
         effect: updateTime(1, { add: { strength: -1 } })
       },
@@ -331,7 +343,7 @@ Object.assign(storyData, {
   "三林安居苑-居民楼-1楼": {
     image: "images/anJuYuan/anJuYuanBuilding.png",
     text: "你轻轻推开门。这是一户普通的人家——玄关摆着鞋柜，客厅的茶几上还放着半杯凉掉的茶。\n\
-厨房方向传来刮擦声，像是有人在用指甲挠墙。你探头一看：一只中年丧尸正趴在厨房地上，不知道在啃什么。\n\
+厨房方向传来刮擦声，像是有人在用指甲挠墙。你探头一看：一只老年丧尸正趴在厨房地上，不知道在啃什么。\n\
 它的腿似乎断了，无法站立，但双手依然有力。听到脚步声，它转头看向你，呲着牙发出威胁的低吼。\n卧室的门关着——不知道里面有什么。",
     choices: [
       {
@@ -342,7 +354,7 @@ Object.assign(storyData, {
       {
         text: "去厨房看看有什么物资",
         nextScene: "三林安居苑-厨房",
-        condition: "hasCane || hasIronPipe",
+        condition: "hasCane || hasMopHandle || hasIronPipe",
         elseScene: "三林安居苑-厨房危险"
       },
       {
@@ -646,47 +658,16 @@ Object.assign(storyData, {
 
   // ========== 躲藏场景（安居苑区域） ==========
 
-  "三林安居苑-躲藏": {
+  "三林安居苑-躲藏": Object.assign({
     image: "images/anJuYuan/anJuYuan.png",
-    onEnter: function(vars) {
-      updateTime(15 + Math.floor(Math.random() * 16))(vars);
-      if (vars.chasedByZombies >= 4 && Math.random() < 0.4) {
-        vars.strength = Math.max(0, vars.strength - 1);
-        vars._hideFail = true;
-      } else {
-        vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
-        vars._hideFail = false;
-      }
-      return {};
-    },
-    text: function(vars) {
-      if (vars._hideFail) return "你绕到门卫亭的窗台下蹲着，但一只丧尸慢悠悠地踱了过来——它似乎对墙角感兴趣。它看到了你，扑了过来。你侧身躲开，头也不回地跑了。";
-      return "你绕到门卫亭的窗台下，蹲在死角里。铁皮墙壁隔音效果不错，外面的声音变得闷闷的。你蜷缩着，等那些拖沓的脚步声都走远了，才站起来。";
-    },
-    choices: [
-      { text: "继续", nextScene: "三林安居苑" }
-    ]
-  },
-
-  "三林安居苑-小区内部-躲藏": {
+  }, hideOnLocation(
+    "你绕到门卫亭的窗台下蹲着，但一只丧尸慢悠悠地踱了过来——它似乎对墙角感兴趣。它看到了你，扑了过来。你侧身躲开，头也不回地跑了。",
+    "你绕到门卫亭的窗台下，蹲在死角里。铁皮墙壁隔音效果不错，外面的声音变得闷闷的。你蜷缩着，等那些拖沓的脚步声都走远了，才站起来。"
+  )),
+  "三林安居苑-小区内部-躲藏": Object.assign({
     image: "images/anJuYuan/anJuYuanInside.png",
-    onEnter: function(vars) {
-      updateTime(15 + Math.floor(Math.random() * 16))(vars);
-      if (vars.chasedByZombies >= 4 && Math.random() < 0.4) {
-        vars.strength = Math.max(0, vars.strength - 1);
-        vars._hideFail = true;
-      } else {
-        vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
-        vars._hideFail = false;
-      }
-      return {};
-    },
-    text: function(vars) {
-      if (vars._hideFail) return "你钻进花坛的灌木丛深处。但枝条沙沙作响——一只变异猫正在灌木丛里穿梭。它没发现你，但它的动静引得一只丧尸朝这边走来。你只能从另一侧钻出来，换了个地方。";
-      return "你钻进花坛的灌木丛深处。枝条和叶片把你完全遮住了。透过叶缝你能看到丧尸在小区里游荡，但它们没有注意到这片浓密的绿植。等小区重新安静下来，你才从灌木中钻出。";
-    },
-    choices: [
-      { text: "继续", nextScene: "三林安居苑-小区内部" }
-    ]
-  }
+  }, hideOnLocation(
+    "你钻进花坛的灌木丛深处。但枝条沙沙作响——一只变异猫正在灌木丛里穿梭。它没发现你，但它的动静引得一只丧尸朝这边走来。你只能从另一侧钻出来，换了个地方。",
+    "你钻进花坛的灌木丛深处。枝条和叶片把你完全遮住了。透过叶缝你能看到丧尸在小区里游荡，但它们没有注意到这片浓密的绿植。等小区重新安静下来，你才从灌木中钻出。"
+  )),
 });
