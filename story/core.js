@@ -232,7 +232,7 @@ const storyData = {
 —— 结局：尸潮撕碎了你 ——"
   },
   "整理整理": { // 汇总一下物品
-    image: "images/placeholder.png" /* TODO: images/home/eastGate.png */,
+    image: "images/整理整理.png" ,
     text: "你的东西也许有点多。把一些没用的东西丢掉，这样能拿更多有用的东西。",
     choices: [
       {
