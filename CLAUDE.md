@@ -70,12 +70,11 @@ images/             → 场景图（PNG/JPG），按区域存放
   showCondition: "表达式",       // 仅控制可见性（可选）
   // 输入框选项（替代普通按钮）：
   input: {
-    match: "正确值",             // 比对密码，也支持函数：function(vars, input) { return boolean; }
     placeholder: "提示文字",      // 输入框占位符（可选）
-    matchVar: "变量名",           // 把输入值存入 gameState（可选）
-    wrongScene: "错误跳转",       // 不匹配 match 时跳转（可选）
     maxLength: 6                  // 输入最大长度（可选）
   },
+  // input 只负责采集输入：提交时引擎把输入值写入 gameState._input，
+  // 之后走与普通按钮相同的流程——对错逻辑用 condition/elseScene 表达
   // QTE 选项：
   timeout: 5000,                 // 倒计时(ms)，支持字符串表达式
   timeoutScene: "超时跳转"       // 超时后的跳转目标
@@ -259,18 +258,19 @@ rules: [
 
 选项带上 `input` 字段后，引擎渲染为 **标签文字 + 输入框 + 确认按钮**，替代普通按钮。
 
+`input` 只负责**采集输入**：提交时引擎把输入值（trim 后）写入 `gameState._input`，之后完全走普通按钮的流程——对错判定、分支跳转全部由 `condition` / `elseScene` 表达，引擎没有任何输入专属的判定逻辑。
+
 ```javascript
 {
-  text: "输入密码",               // 选项文字显示为标签
+  text: "输入密码",                    // 选项文字显示为标签
   input: {
-    match: "114514",              // 正确值，输入匹配则走 nextScene，否则 wrongScene
-    placeholder: "6位数字",        // 输入框占位符（可选）
-    matchVar: "safeInput",        // 把输入值存入 gameState.safeInput（可选）
-    wrongScene: "密码错误",        // 不匹配时跳转的目标（可选，缺省则走 nextScene）
-    maxLength: 8                  // 输入最大长度（可选）
+    placeholder: "6位数字",            // 输入框占位符（可选）
+    maxLength: 8                      // 输入最大长度（可选）
   },
-  nextScene: "保险柜开了",
-  effect: { set: { openedSafe: true } }
+  condition: { _input: "114514" },    // 用 _input 判断对错，四种 condition 形式都可用
+  nextScene: "保险柜开了",             // 满足 → effect + nextScene
+  effect: { set: { openedSafe: true } },
+  elseScene: "密码错误"                // 不满足 → elseScene
 }
 ```
 
@@ -278,47 +278,57 @@ rules: [
 
 ```
 提交输入
-  ├─ 有 match →
-  │   ├─ 函数 → 调用 match(vars, input)，返回 true/false
-  │   ├─ 字符串 → 比对：
-  │   │   ├─ 匹配 → effect + 跳转 nextScene
-  │   │   └─ 不匹配 → 跳转 wrongScene（或 elseScene，或 nextScene）
-  │   └─ 缺省 → effect + 跳转 nextScene
-  └─ 无 match（纯记录）→ effect + 跳转 nextScene
-     （输入值通过 matchVar 存入 gameState，供后续 scene 使用）
+  1. gameState._input = 输入值（每次提交覆盖，不自动清除）
+  2. checkCondition(condition)
+      ├─ 满足（或没写 condition）→ effect + 跳转 nextScene
+      └─ 不满足 → 跳转 elseScene（缺省则 nextScene）
 ```
+
+**注意事项：**
+
+- 输入型选项的 `condition` 只在**提交时**求值（渲染时 `_input` 还不存在），可见性只由 `showCondition` 控制。
+- `_input` 是"最近一次输入"的通用变量，elseScene 目标场景的 text 可以用 `{_input}` 展示玩家输的内容。
+- 需要三路以上分支时：把 `nextScene` 写成函数 `function(vars) { return "场景ID"; }` 自由路由。注意 effect 只在 condition 满足时执行，各分支的专属效果应放到目标场景的 `onEnter` 里。
 
 **常用模式：**
 
 ```javascript
-// 1. 密码锁（比对 match）
+// 1. 密码锁
 {
   text: "请输入6位密码",
-  input: { match: "114514", placeholder: "密码", wrongScene: "密码错误" },
-  nextScene: "门开了"
+  input: { placeholder: "密码", maxLength: 6 },
+  condition: { _input: "114514" },
+  nextScene: "门开了",
+  elseScene: "密码错误"
 }
 
-// 2. 函数 match（自定义比对逻辑，如记忆闪色模糊匹配）
+// 2. 函数 condition（自定义比对逻辑，如记忆闪色模糊匹配）
 {
   text: "输入你看到的颜色分布",
-  input: {
-    match: function(vars, input) {
-      return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-    },
-    placeholder: "例如：3红2蓝",
-    wrongScene: "颜色记错了"
-  },
-  nextScene: "战斗胜利"
+  input: { placeholder: "例如：3红2蓝" },
+  condition: checkFlashAnswer,   // utils.js 提供，比对 _input 与 _currentAnswer
+  nextScene: "战斗胜利",
+  elseScene: "颜色记错了"
 }
 
-// 3. 纯记录（存变量，后续用 condition 判断）
+// 3. 纯记录（存变量，后续场景使用）
 {
   text: "输入你的名字",
-  input: { matchVar: "playerName", placeholder: "名字" },// matchVar 就是告诉引擎：把玩家输入的内容存到 gameState 的哪个变量里。
+  input: { placeholder: "名字" },
+  effect: function(vars) { vars.playerName = vars._input; return {}; },
   nextScene: "继续剧情"
 }
 
-// 3. 尝试次数限制（用 condition 手动实现，不需要引擎内置）
+// 4. 道具门槛叠加：答对了还得有道具，坑玩家专用
+{
+  text: "输入你看到的颜色分布",
+  input: { placeholder: "例如：3红2蓝" },
+  condition: function(vars) { return vars.hasFlashlight && checkFlashAnswer(vars); },
+  nextScene: "战斗胜利",
+  elseScene: "没看清就被扑倒了"
+}
+
+// 5. 尝试次数限制（用 condition 手动实现，不需要引擎内置）
 "密码错误": {
   onEnter: { add: { safeAttempts: 1 } },
   text: "密码错误（{safeAttempts}/3）",
@@ -363,27 +373,20 @@ rules: [
 - `randSeq(colors, len)` — 生成随机颜色序列，如 `randSeq(["红","蓝","绿"], 5)` → `["红","蓝","红","红","蓝"]`
 - `seqToAnswer(seq)` — 翻译为标准答案字符串，如 `["红","蓝","红","红","蓝"]` → `"3红2蓝"`
 - `initMemoryGame(colors, len)` — 工厂函数，返回记忆闪色场景的标准 `onEnter`，用法 `onEnter: initMemoryGame(["红","蓝","绿"], 5)`
-- `normalizeColorAnswer(str)` — 标准化颜色输入，无论"3红2蓝"还是"2蓝3红"都转为"蓝:2,红:3"（按颜色名排序），配合函数 match 做模糊比对
+- `normalizeColorAnswer(str)` — 标准化颜色输入，无论"3红2蓝"还是"2蓝3红"都转为"蓝:2,红:3"（按颜色名排序）
+- `checkFlashAnswer(vars)` — 标准判定函数：比对 `vars._input` 与 `vars._currentAnswer`（经 normalizeColorAnswer 标准化），直接用作输入选项的 `condition`
 
 **场景数据用法：**
 ```javascript
 "丧尸袭来": {
-  onEnter: function(vars) {
-    const seq = randSeq(["红","蓝","绿"], 5);  // 生成随机序列
-    vars._currentSeq = seq;                      // 存序列（驱动动画）
-    vars._currentAnswer = seqToAnswer(seq);       // 存答案
-    vars._seqPlayed = false;                      // 动画未播放
-    return {};
-  },
+  onEnter: initMemoryGame(["红","蓝","绿"], 5),  // 生成 _currentSeq / _currentAnswer / _seqPlayed
   text: "集中注意力！",
   choices: [{
     text: "输入你看到的颜色分布",
-    input: {
-      match: function(vars) { return vars._currentAnswer; }, // 支持函数动态匹配
-      placeholder: "例如：3红2蓝",
-      wrongScene: "颜色记错了"
-    },
-    nextScene: "战斗胜利"
+    input: { placeholder: "例如：3红2蓝" },
+    condition: checkFlashAnswer,     // 提交时比对 _input 与 _currentAnswer
+    nextScene: "战斗胜利",
+    elseScene: "颜色记错了"
   }]
 }
 ```

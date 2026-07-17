@@ -146,6 +146,12 @@ function normalizeColorAnswer(str) {
   return colors.filter(c => counts[c]).map(c => c + ':' + counts[c]).join(',');
 }
 
+// 记忆闪色标准判定：把玩家输入(_input)与当前答案(_currentAnswer)模糊比对
+// 用法: condition: checkFlashAnswer
+function checkFlashAnswer(vars) {
+  return normalizeColorAnswer(vars._input) === normalizeColorAnswer(vars._currentAnswer);
+}
+
 // 躲藏场景工厂：统一管理随机躲藏逻辑与 _hideFail 状态
 // 用法: "场景": hideOnLocation("images/placeholder.png" /* TODO: images/xxx.png */, "失败文案", "成功文案")
 // image / failText / successText 可以是字符串或 function(vars) => string

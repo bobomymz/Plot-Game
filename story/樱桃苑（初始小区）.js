@@ -219,13 +219,9 @@ Object.assign(storyData, {
     choices: [
       {
         text: "输入你看到的颜色",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：3红2蓝 或 2蓝3红",
-          wrongScene: "结局-颜色错误，被丧尸咬死"
-        },
+        input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
+        condition: checkFlashAnswer,
+        elseScene: "结局-颜色错误，被丧尸咬死",
         effect: updateTime(5, { add: { strength: -1 } }),
         nextScene: "家外楼梯间的抉择",
         timeout: 10000,           // ← 10秒倒计时
@@ -235,7 +231,7 @@ Object.assign(storyData, {
   },
 
   "结局-颜色错误，被丧尸咬死": {
-    image: "images/被丧尸扑倒咬死.png",
+    image: "images/zombieKnockYouDown.png",
     text: "你灵活地躲开丧尸的爪子，但反应慢了半拍，丧尸转身又扑了上来……你被丧尸咬死了。\n—— 结局：视力有待提高 ——"
   },
 
@@ -499,7 +495,7 @@ Object.assign(storyData, {
   },
 
   "装睡的丧尸": {
-    image: "images/home/sleepyombie.png",
+    image: "images/home/sleepyzombie.png",
     text: "你靠近那个人，ta穿着连帽衫，看不到脸，两手戴着蓝色手套，交叉放于胸前。\n\
 你轻轻拍了拍，ta没有反应。\n\
 你决定？",
@@ -672,7 +668,7 @@ Object.assign(storyData, {
   },
 
   "自行车上锁了" : {
-    image: "images/自行车上锁了.png",
+    image: "images/home/自行车上锁了.png",
     text: "哎呀，这车上有锁，看来你是不能白嫖了。你看了旁边几辆，不是有锁，就是生锈太厉害，估计骑了得给自己摔个狗啃泥。",
     choices: [
       {
@@ -683,7 +679,7 @@ Object.assign(storyData, {
   },
 
   "电瓶车上锁了" : {
-    image: "images/电瓶车上锁了.png",
+    image: "images/home/电瓶车上锁了.png",
     text: "哎呀，这车上有锁，看来你是不能白嫖了。",
     choices: [
       {
@@ -710,24 +706,18 @@ Object.assign(storyData, {
 
   "击退丧尸": {
     image: "images/placeholder.png" /* TODO: images/home/beatZombie.png */,
-    onEnter: initMemoryGame(["红","蓝"], 7, { add: { strength: -2 } }),
     text: "你一拳打在丧尸胸口，将它击退，它踉跄几步，眼神凶狠，加快速度向你扑来",
+    qte: {
+      timeout: 5000,
+      onTimeout: "结局-被丧尸扑倒咬死"
+    },
     choices: [
       {
-        text: "快跑！输入你看到的颜色进行闪避！",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：3红2蓝 或 2蓝3红",
-          wrongScene: "结局-颜色错误，被丧尸咬死"
-        },
+        text: "快跑！",
         condition: "visitExitTimes > 2",
         nextScene: "东出口",
         effect: updateTime(2), // 花2分钟到达东出口
-        elseScene: "防爆门",
-        timeout: 10000,           // ← 10秒倒计时
-        timeoutScene: "结局-被丧尸扑倒咬死"       // ← 超时自动触发
+        elseScene: "防爆门"
       }
     ]
   },
@@ -1411,13 +1401,9 @@ Object.assign(storyData, {
     choices: [
       {
         text: "输入你看到的颜色分布（例如：3红2蓝）",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：3红2蓝 或 2蓝3红",
-          wrongScene: "颜色记错了"
-        },
+        input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
+        condition: checkFlashAnswer,
+        elseScene: "颜色记错了",
         nextScene: "战斗胜利",
         effect: updateTime(5, { add: { strength: -1 } }),
         timeout: 8000,

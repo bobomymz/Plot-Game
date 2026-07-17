@@ -393,7 +393,8 @@ const storyData = {
     choices: [
       {
         text: "开始游戏",
-        input: { matchVar: "positionAfterOperation", placeholder: "去哪里？" },
+        input: { placeholder: "去哪里？" },
+        effect: function(vars) { vars.positionAfterOperation = vars._input; return {}; },
         nextScene: "{positionAfterOperation}"//"初始卧室"
       }
     ]

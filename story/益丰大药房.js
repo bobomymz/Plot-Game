@@ -253,13 +253,9 @@ Object.assign(storyData,{
     choices: [
       {
         text: "输入你看到的颜色",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：3红2蓝 或 2蓝3红",
-          wrongScene: "结局-颜色错误，被丧尸咬死"
-        },
+        input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
+        condition: checkFlashAnswer,
+        elseScene: "结局-颜色错误，被丧尸咬死",
         effect: updateTime(5, { add: { strength: -1 } }),
         nextScene: "益丰大药房-击倒针筒丧尸",
         timeout: 25000,
@@ -431,13 +427,9 @@ Object.assign(storyData,{
     choices: [
       {
         text: "输入你看到的颜色分布（例如：2红1蓝1绿）",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：2红1蓝1绿",
-          wrongScene: "益丰大药房-被咬到了"
-        },
+        input: { placeholder: "例如：2红1蓝1绿" },
+        condition: checkFlashAnswer,
+        elseScene: "益丰大药房-被咬到了",
         nextScene: "益丰大药房-沟通躲开",
         effect: updateTime(2),
         timeout: 15000,
@@ -772,13 +764,9 @@ Object.assign(storyData,{
     choices: [
       {
         text: "输入你看到的颜色",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：3红2蓝 或 2蓝3红",
-          wrongScene: "结局-颜色错误，被丧尸咬死"
-        },
+        input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
+        condition: checkFlashAnswer,
+        elseScene: "结局-颜色错误，被丧尸咬死",
         effect: updateTime(5, { add: { strength: -1 } }),
         nextScene: "三林路-环林东路 十字路口",
         timeout: 15000,

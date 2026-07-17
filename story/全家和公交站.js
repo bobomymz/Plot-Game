@@ -411,13 +411,9 @@ Object.assign(storyData, {
       {
         showCondition: "FamilymartHasZombie",
         text: "输入你看到的颜色分布（例如：3红3蓝3绿）",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：3红3蓝3绿",
-          wrongScene: "结局-员工通道-迅捷丧尸咬死"
-        },
+        input: { placeholder: "例如：3红3蓝3绿" },
+        condition: checkFlashAnswer,
+        elseScene: "结局-员工通道-迅捷丧尸咬死",
         effect: updateTime(2, { add: { strength: -1 } }),
         nextScene: "全家便利店-员工通道-踢飞丧尸",
         timeout: 10000,

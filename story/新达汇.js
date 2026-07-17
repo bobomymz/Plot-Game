@@ -2525,7 +2525,9 @@ Object.assign(storyData, {
     choices: [
       {
         text: "输入取餐码",
-        input: { match: "473829", placeholder: "六位取餐码", matchVar: "_enteredCode", wrongScene: "新达汇-屋顶花园-输错码", maxLength: 6 },
+        input: { placeholder: "六位取餐码", maxLength: 6 },
+        condition: { _input: "473829" },
+        elseScene: "新达汇-屋顶花园-输错码",
         nextScene: "新达汇-屋顶花园-起飞",
         showCondition: "!(_droneBattery <= 0 && _powerOut)",
       },

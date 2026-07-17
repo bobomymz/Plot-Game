@@ -605,9 +605,12 @@ function renderChoices(scene, sceneId) {
     if (choice.showCondition && !checkCondition(choice.showCondition, gameState)) return;
 
     const hasElse = choice.elseScene !== undefined;
-    const condMet = checkCondition(choice.condition, gameState);
 
-    if (!hasElse && !condMet) return;
+    // 输入型选项的 condition 依赖提交时的 _input，渲染期不检查（可见性由 showCondition 控制）
+    if (!choice.input) {
+      const condMet = checkCondition(choice.condition, gameState);
+      if (!hasElse && !condMet) return;
+    }
     visibleCount++;
 
     // === INPUT 型选项 ===
@@ -642,25 +645,16 @@ function renderChoices(scene, sceneId) {
       }
 
       const submit = () => {
-        const val = inp.value.trim();
+        // 输入只负责采集：写入 _input，之后与普通按钮完全一致地走 condition 分支
+        gameState._input = inp.value.trim();
         clearQTE();
-        if (choice.input.matchVar) gameState[choice.input.matchVar] = val;
         pushHistory();
-        const matchDef = choice.input.match;
-        let matchPass = true;
-        if (typeof matchDef === 'function') {
-          matchPass = matchDef(gameState, val);
-        } else if (matchDef !== undefined && matchDef !== null) {
-          matchPass = (val === matchDef);
-        }
-        if (!matchPass) {
-          const target = parseRedirectTarget(choice.input.wrongScene, gameState)
-                      || parseRedirectTarget(choice.elseScene, gameState)
-                      || parseRedirectTarget(choice.nextScene, gameState);
-          currentScene = target;
-        } else {
+        if (checkCondition(choice.condition, gameState)) {
           if (choice.effect) applyEffect(choice.effect);
           currentScene = parseRedirectTarget(choice.nextScene, gameState);
+        } else {
+          currentScene = parseRedirectTarget(choice.elseScene, gameState)
+                      || parseRedirectTarget(choice.nextScene, gameState);
         }
         renderScene(currentScene);
       };
@@ -717,8 +711,11 @@ function renderChoices(scene, sceneId) {
 
     for (const choice of _choices) {
       if (choice.showCondition && !checkCondition(choice.showCondition, gameState)) continue;
-      const condMet = checkCondition(choice.condition, gameState);
-      if (!condMet && !choice.elseScene) continue;
+      // 输入型选项的 condition 在提交时才求值，这里不做过滤
+      if (!choice.input) {
+        const condMet = checkCondition(choice.condition, gameState);
+        if (!condMet && !choice.elseScene) continue;
+      }
 
       if (choice.timeout !== undefined) {
         timedChoice = choice;
