@@ -705,7 +705,7 @@ Object.assign(storyData, {
   },
 
   "击退丧尸": {
-    image: "images/placeholder.png" /* TODO: images/home/beatZombie.png */,
+    image: "images/home/一脚击退地库丧尸.png" ,
     text: "你一拳打在丧尸胸口，将它击退，它踉跄几步，眼神凶狠，加快速度向你扑来",
     qte: {
       timeout: 5000,
