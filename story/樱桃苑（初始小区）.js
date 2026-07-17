@@ -235,7 +235,7 @@ Object.assign(storyData, {
   },
 
   "结局-颜色错误，被丧尸咬死": {
-    image: "images/placeholder.png" /* TODO: images/home/颜色错误.png */,
+    image: "images/被丧尸扑倒咬死.png",
     text: "你灵活地躲开丧尸的爪子，但反应慢了半拍，丧尸转身又扑了上来……你被丧尸咬死了。\n—— 结局：视力有待提高 ——"
   },
 
@@ -474,7 +474,7 @@ Object.assign(storyData, {
   },
 
   "小区道路": {
-    image: "images/placeholder.png" /* TODO: images/home/小区道路.png */,
+    image: "images/home/小区道路.png",
     onEnter: { set: { currentPlace: "初始小区", currentPos: "小区道路" } },
     text: "你走在小区的小道上。曾经你在这里练习足球，可以看到很多老年人带着孩子玩，时不时有外卖员驶过。现在，不会再有了。\n\
 你看到有一个人坐在椅子上，像是睡着了.\n\
