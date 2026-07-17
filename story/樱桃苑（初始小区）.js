@@ -547,14 +547,14 @@ Object.assign(storyData, {
   },
 
   "背后的偷袭": {
-    image: "images/placeholder.png" /* TODO: images/home/attackBehind.png */,
+    image: "images/home/zombieAwake.png",
     onEnter: {shake: true},
     text: "你对ta丧失了兴趣，转身离开。\n\
 只听得背后传来木头长椅的嘎吱一响，背后阴风袭来。你只感觉脖颈一痛，便失去了知觉。"
   },
 
   "西出口-丧尸堵路": {
-    image: "images/placeholder.png" /* TODO: images/home/zombie.png */,
+    image: "images/home/地库的丧尸.png",
     onEnter: updateTime(1, { add: { visitExitTimes: 1 }}), // 花1分钟碰到丧尸
     text: "你走在前往西出口的路上。这里你轻车熟路，因为平时雨天你都会走这条路回家。\n\
 突然，一只丧尸从一根柱子后面闪了出来，你无法继续前进。",
@@ -575,7 +575,7 @@ Object.assign(storyData, {
   },
 
   "地下车库的丧尸": {
-    image: "images/placeholder.png" /* TODO: images/home/zombie.png */,
+    image: "images/home/地库丧尸扑来.png",
     onEnter: {shake: true},
     text: "丧尸向你袭来，你要攻击它哪里？",
     qte: {
@@ -605,7 +605,7 @@ Object.assign(storyData, {
   },
 
   "结局-嘎吱嘎吱": {
-    image: "images/placeholder.png" /* TODO: images/home/zombie.png */,
+    image: "images/zombieKnockYouDown.png",
     onEnter: {shake: true},
     text: "你一脚踢出，被丧尸一口咬住，你被咬死了。\n\
 —— 结局：嘎吱嘎吱 ——"
@@ -624,7 +624,7 @@ Object.assign(storyData, {
   },
 
   "陌生的岔路口": {
-    image: "images/placeholder.png" /* TODO: images/home/crossing.png */,
+    image: "images/home/地库的岔路口.png",
     text: "现在你正处于一个陌生的岔路口，该往哪里走呢？",
     choices: [
       {
