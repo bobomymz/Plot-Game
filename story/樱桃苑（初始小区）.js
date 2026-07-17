@@ -655,13 +655,13 @@ Object.assign(storyData, {
       },
       {
         text: "骑上一辆自行车",
-        nextScene: "车上锁了"
+        nextScene: "自行车上锁了"
       },
       {
         text: "骑上一辆电瓶车",
         condition: "Math.random() < 0.2 || hasEbikeKey", // 30%概率解锁一辆电瓶车
         nextScene: "骑车去西出口",
-        elseScene: "车上锁了"
+        elseScene: "电瓶车上锁了"
       },
       {
         showCondition: "_visit['民防设施-等候区'] > 0", // 去过民防设施，才能上楼梯
@@ -671,8 +671,19 @@ Object.assign(storyData, {
     ]
   },
 
-  "车上锁了" : {
-    image: "images/placeholder.png" /* TODO: images/home/lockedBike.png */,
+  "自行车上锁了" : {
+    image: "images/自行车上锁了.png",
+    text: "哎呀，这车上有锁，看来你是不能白嫖了。你看了旁边几辆，不是有锁，就是生锈太厉害，估计骑了得给自己摔个狗啃泥。",
+    choices: [
+      {
+        text: "四处看看",
+        nextScene: "地下非机动车停靠区"
+      }
+    ]
+  },
+
+  "电瓶车上锁了" : {
+    image: "images/电瓶车上锁了.png",
     text: "哎呀，这车上有锁，看来你是不能白嫖了。",
     choices: [
       {
@@ -683,7 +694,7 @@ Object.assign(storyData, {
   },
 
   "骑车去西出口": {
-    image: "images/placeholder.png" /* TODO: images/home/cycleToExit.png */,
+    image: "images/home/nonMotorized.png",
     onEnter: { set: { positionAfterOperation: "骑车去西出口" } },
     text: "你的运气很好，这辆车没锁。你可以骑上它向西出口前进。",
     choices: [
@@ -699,15 +710,24 @@ Object.assign(storyData, {
 
   "击退丧尸": {
     image: "images/placeholder.png" /* TODO: images/home/beatZombie.png */,
+    onEnter: initMemoryGame(["红","蓝"], 7, { add: { strength: -2 } }),
     text: "你一拳打在丧尸胸口，将它击退，它踉跄几步，眼神凶狠，加快速度向你扑来",
-    onEnter: { add: { strength: -2 } },
     choices: [
       {
-        text: "快跑！",
+        text: "快跑！输入你看到的颜色进行闪避！",
+        input: {
+          match: function(vars, input) {
+            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
+          },
+          placeholder: "例如：3红2蓝 或 2蓝3红",
+          wrongScene: "结局-颜色错误，被丧尸咬死"
+        },
         condition: "visitExitTimes > 2",
         nextScene: "东出口",
         effect: updateTime(2), // 花2分钟到达东出口
-        elseScene: "防爆门"
+        elseScene: "防爆门",
+        timeout: 10000,           // ← 10秒倒计时
+        timeoutScene: "结局-被丧尸扑倒咬死"       // ← 超时自动触发
       }
     ]
   },
