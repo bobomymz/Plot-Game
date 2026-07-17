@@ -78,6 +78,7 @@ const storyData = {
     hasCarKey: false,          // 是否有轿车钥匙
     hasCatSnack: false,        // 是否有脆脆炒米（新达汇4F大渝火锅门口，猫零食）
     hasKey502: false,          // 是否有502钥匙（鹅卵石路自行车）
+    hasCommitteeKey: false,    // 是否有居委会钥匙（樱桃苑5楼孙阿姨）
     // 交通工具（不占背包）
     hasCar: false,             // 是否有轿车
     hasEbike:  false,          // 是否有电瓶车（地下车库非机动车区域）

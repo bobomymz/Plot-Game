@@ -252,8 +252,16 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "上楼",
+        text: "上楼到3楼",
         nextScene: "3楼"
+      },
+      {
+        text: "上楼到4楼",
+        nextScene: "樱桃苑-4楼"
+      },
+      {
+        text: "上楼到5楼",
+        nextScene: "樱桃苑-5楼"
       },
       {
         text: "下楼到1楼",
@@ -272,7 +280,7 @@ Object.assign(storyData, {
 
   "家门口电梯": {
     image: "images/home/lift.jpg",
-    text: "你躲进了电梯，丧尸没有追上来。你显然不能继续待在你家的2楼，需要赶快选个楼层离开",
+    text: "你躲进了电梯，丧尸没有追上来。你显然不能继续待在你家的2楼，需要赶快选个楼层离开。\nF5的按钮被人撬掉了，按不了——不知道是谁干的。",
     onEnter: updateTime(1), // 花1分钟到达2楼
     qte: {
       timeout: 15000,              // 15 秒
@@ -282,6 +290,10 @@ Object.assign(storyData, {
       {
         text: "F3",
         nextScene: "3楼-安全"
+      },
+      {
+        text: "F4",
+        nextScene: "樱桃苑-4楼"
       },
       {
         text: "F1",
@@ -1430,6 +1442,137 @@ Object.assign(storyData, {
       {
         text: "返回卧室重新挑战",
         nextScene: "初始卧室"
+      }
+    ]
+  },
+
+  // ========== 4楼：丧尸遭遇 + 记忆闪色 ==========
+
+  "樱桃苑-4楼": {
+    image: "images/home/4楼-丧尸.png",
+    onEnter: initMemoryGame(["红","蓝","绿","黄"], 4),
+    text: "四楼的走廊比楼下更暗——声控灯坏了两盏，只剩远处一盏在忽明忽暗地挣扎。空气里弥漫着一股甜腻的腐味。\n走廊中段，三个身影正背对着你，弓着腰围在一扇门前，发出低沉的咀嚼声。\n灯泡闪了一下。它们同时停了下来。\n然后缓缓转过头——不，不止三个。旁边的门半开着，里面又跌跌撞撞走出第四个。\n它们的眼睛在昏暗的光线中闪烁着不同的颜色——红、蓝、绿、黄——不同感染阶段在视网膜上留下的痕迹。你必须在一瞬间记住它们的分布。",
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: {
+          match: function(vars, input) {
+            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
+          },
+          placeholder: "例如：2红1蓝1绿",
+          wrongScene: "樱桃苑-4楼-失败"
+        },
+        nextScene: "樱桃苑-4楼-胜利",
+        effect: updateTime(3, { add: { strength: -1 } })
+      }
+    ]
+  },
+
+  "樱桃苑-4楼-胜利": {
+    image: "images/home/4楼-丧尸.png",
+    text: "你看穿了它们的攻击节奏。在第一个丧尸扑过来的瞬间，你侧身闪过，顺势把它推进了旁边的杂物堆。第二个被地上的尸体绊倒，你一脚踩住它的后背，借力跃过第三个伸来的手——第四个还在门口挣扎着挤出来，你一个箭步冲过了走廊。\n身后传来碰撞和低吼声，但它们暂时追不上来了。",
+    choices: [
+      {
+        text: "继续上楼到5楼",
+        nextScene: "樱桃苑-5楼",
+        effect: updateTime(1)
+      },
+      {
+        text: "退回楼梯间",
+        nextScene: "家外楼梯间的抉择"
+      }
+    ]
+  },
+
+  "樱桃苑-4楼-失败": {
+    image: "images/home/4楼-丧尸.png",
+    onEnter: { add: { strength: -2 } },
+    text: "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。\n剧痛让你眼前一黑。你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。",
+    choices: [
+      {
+        text: "退回楼梯间",
+        nextScene: "家外楼梯间的抉择"
+      }
+    ]
+  },
+
+  // ========== 5楼：孙阿姨 ==========
+
+  "樱桃苑-5楼": {
+    image: "images/home/5楼-走廊.png",
+    onEnter: { set: { currentPos: "居民楼" } },
+    text: "五楼走廊很安静。地面上铺着已经开始翘边的复合地板，踩上去嘎吱作响。并排三扇门：501、502、503，门牌是那种老式的蓝色塑料片，501的\"5\"已经歪了，快要掉下来。\n501的门上贴着一张褪色的\"福\"字，下面用透明胶粘着一个手写的纸牌——\"如有人找，请打居委会电话\"。字迹工整，像是练过毛笔字的老人写的。\n502门上没有任何装饰。503的门缝下面塞着一角超市传单，已经被踩得模糊了。",
+    choices: [
+      {
+        text: "查看501",
+        nextScene: "樱桃苑-5楼-501",
+        effect: updateTime(2)
+      },
+      {
+        text: "推开502的门",
+        nextScene: "樱桃苑-5楼-门锁了",
+        effect: function(vars) { vars._tryDoor = "502"; return {}; }
+      },
+      {
+        text: "推开503的门",
+        nextScene: "樱桃苑-5楼-门锁了",
+        effect: function(vars) { vars._tryDoor = "503"; return {}; }
+      },
+      {
+        text: "下楼",
+        nextScene: "家外楼梯间的抉择",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "樱桃苑-5楼-501": {
+    image: "images/home/501-孙阿姨.png",
+    onEnter: { set: { currentPos: "501室" } },
+    text: "门没锁。你轻轻一推，铰链发出干涩的吱呀声。\n客厅的光线很暗，窗帘只拉了一半。午后的光斜斜地打在老式藤椅上——藤椅上坐着一个短发老太太，头微微偏向一侧，像是午睡还没醒。\n\
+但她不会再醒了。\n茶几上放着一只老式闹钟，停在11:47。旁边摊着一本翻到一半的电话簿，圆珠笔还夹在她指间，笔尖已经干了。电话簿下面压着一张手写的小区住户去向表：\n\
+301 小两口 回娘家了（她妈妈在周浦）\n402 老周 我让他躲地下室了\n502 —（空了半年）\n503 小刘 电话没打通\n601 老徐家 门锁着，敲了没人应\n\
+字迹从工整到潦草，最后一行几乎辨认不清：\n\
+<em>我腿走不动了，不拖累你们。</em>\n\
+茶几角上放着一串钥匙，塑料标签上写着\"居委会\"三个字，用透明胶缠了好几圈。\n\
+墙上挂着一张泛黄的合影——她戴着红袖章站在小区花坛前，背后拉着横幅\"欢迎新住户入住樱桃苑\"。照片里的她笑得眼睛眯成两条缝。",
+    choices: [
+      {
+        text: "拿起居委会钥匙",
+        condition: "itemCount < bagVolume",
+        nextScene: "樱桃苑-5楼-501-拿钥匙",
+        effect: { set: { hasCommitteeKey: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      },
+      {
+        text: "放下钥匙，离开",
+        nextScene: "樱桃苑-5楼"
+      }
+    ]
+  },
+
+  "樱桃苑-5楼-501-拿钥匙": {
+    image: "images/home/501-孙阿姨.png",
+    onEnter: { set: { positionAfterOperation: "樱桃苑-5楼" } },
+    text: "你拿起那串钥匙。钥匙环上挂着三把——一把铜的、两把铝的，铜的那把已经磨得发亮。标签上的\"居委会\"三个字是圆珠笔写的，被透明胶缠得严严实实。\n你看了藤椅上的老人最后一眼，轻轻带上了门。",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "樱桃苑-5楼"
+      }
+    ]
+  },
+
+  "樱桃苑-5楼-门锁了": {
+    image: "images/home/5楼-走廊.png",
+    text: function(vars) {
+      if (vars._tryDoor === "502") return "502的门锁着。门把手上落了一层灰——很久没人动过了。门缝下面什么都没有。";
+      return "503的门也锁着。门缝下面塞着半张超市传单，日期是6月26日——特价鸡蛋，限量三斤。背面有人用铅笔写了一行字：\n<em>去了我妈家，如果有人找，打我电话。138——</em>\n后面的数字被撕掉了。";
+    },
+    choices: [
+      {
+        text: "返回",
+        nextScene: "樱桃苑-5楼"
       }
     ]
   }
