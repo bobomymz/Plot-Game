@@ -499,7 +499,7 @@ Object.assign(storyData, {
   },
 
   "装睡的丧尸": {
-    image: "images/placeholder.png" /* TODO: images/home/sleepyombie.png */,
+    image: "images/home/sleepyombie.png",
     text: "你靠近那个人，ta穿着连帽衫，看不到脸，两手戴着蓝色手套，交叉放于胸前。\n\
 你轻轻拍了拍，ta没有反应。\n\
 你决定？",
@@ -512,14 +512,14 @@ Object.assign(storyData, {
       {
         text: "不管它，不如先躲回家",
         nextScene: "反杀老6",
-        condition: "strength > 1",
+        condition: "strength > 2",
         elseScene: "背后的偷袭"
       }
     ]
   },
 
   "摇睡丧尸": {
-    image: "images/placeholder.png" /* TODO: images/home/zombieAwake.png */,
+    image: "images/home/zombieAwake.png",
     onEnter: {shake: true},
     text: "你用更大的力气摇了摇ta，连帽衫的帽子掉了。你惊呆了，这是一只丧尸！\n\
 它突然抬起头来，眼睛瞪着你，向你扑来。\n\
@@ -527,7 +527,7 @@ Object.assign(storyData, {
   },
 
   "反杀老6": {
-    image: "images/placeholder.png" /* TODO: images/home/killSix.png */,
+    image: "images/home/老六偷袭未果.png",
     text: "你对它丧失了兴趣，转身离开。\n\
 只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后<span style = 'font-weight: bold;'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
 回头一看，正是椅子上的那个睡神，它竟是一只丧尸！\n\
