@@ -82,7 +82,7 @@ images/             → 场景图（PNG/JPG），按区域存放
 
 ### 选项格式
 
-````javascript
+```javascript
 {
   text: "选项文字",               // 纯静态字符串，不支持函数或插值
   nextScene: "目标场景ID",        // 字符串（支持{变量名}插值）、函数(vars) => string
@@ -102,6 +102,7 @@ images/             → 场景图（PNG/JPG），按区域存放
   timeout: 5000,                 // 倒计时(ms)，支持 JS 表达式字符串
   timeoutScene: "超时跳转"       // 同 nextScene
 },
+```
 
 ### 条件系统（`condition` / `showCondition`）
 
@@ -118,59 +119,60 @@ images/             → 场景图（PNG/JPG），按区域存放
 
 两者的核心区别：
 
-| | `showCondition` | `condition` |
-|---|---|---|
-| 控制 | 选项**可见性** | 选项**执行结果** |
-| 不满足时 | 选项不显示 | 跳转 `elseScene`（必须提供） |
-| 适用场景 | "没这个道具就不该看到这个选项" | "选项一直可见，但有/无道具有不同结果" |
+| <br /> | `showCondition`  | `condition`          |
+| ------ | ---------------- | -------------------- |
+| 控制     | 选项**可见性**        | 选项**执行结果**           |
+| 不满足时   | 选项不显示            | 跳转 `elseScene`（必须提供） |
+| 适用场景   | "没这个道具就不该看到这个选项" | "选项一直可见，但有/无道具有不同结果" |
 
 **3条黄金法则：**
 
-1. **运用道具解锁剧情 → 用 `showCondition` 或者 `condition` + `elseScene` **
-   ```javascript
-   // 第一种情况，选项高度依赖道具：「用铁管撬开门」——没铁管的人根本不会去撬门，选项不该出现
-   { text: "用铁管撬开门", showCondition: "hasIronPipe", nextScene: "门开了" }
-   // 还有一种情况，这个解密选项的text表述上不一定需要道具，比如“砸开门”，但是需要道具才能成功执行
-   { text: "砸开门", condition: "hasIronPipe", nextScene: "门开了", elseScene: "门没开，手好痛" }
-   // 另外，这两个情况完全可以同时存在。前者解决是否有道具的问题，后者解决道具某些状态是否可靠的问题（比如剩余使用次数），可以参考上实南校.js中的防毒面具剧情
-````
+1. \*\*运用道具解锁剧情 → 用 `showCondition` 或者 `condition` + `elseScene` \*\*
 
-- 这是两种设计：第一种是选项高度依赖道具，第二种是选项不依赖道具，选项一直可见，但是执行结果不同。第二种更阴险，如果条件允许，尽量调整text，运用第二种设计来坑玩家。
+```javascript
+ // 第一种情况，选项高度依赖道具：「用铁管撬开门」——没铁管的人根本不会去撬门，选项不该出现
+ { text: "用铁管撬开门", showCondition: "hasIronPipe", nextScene: "门开了" }
+ // 还有一种情况，这个解密选项的text表述上不一定需要道具，比如“砸开门”，但是需要道具才能成功执行
+ { text: "砸开门", condition: "hasIronPipe", nextScene: "门开了", elseScene: "门没开，手好痛" }
+ // 另外，这两个情况完全可以同时存在。前者解决是否有道具的问题，后者解决道具某些状态是否可靠的问题（比如剩余使用次数），可以参考上实南校.js中的防毒面具剧情
+```
 
-1. **捡拾非交通工具、特殊道具（如背包）、个人记忆等**物品 → 初次捡拾用 `condition:itemCount < bagVolume` + `elseScene: "整理整理"`\*\*，回到同一场景用`condition: !has物品` + `elseScene: "这里是空的"`
-   - 注意，使用`condition: !has物品`的前提是这个物品在同一个开放区域内只出现1次，且不允许重复拾取
-   ```javascript
-   // 剧情节点设计
-   ```
+  这是两种设计：第一种是选项高度依赖道具，第二种是选项不依赖道具，选项一直可见，但是执行结果不同。第二种更阴险，如果条件允许，尽量调整text，运用第二种设计来坑玩家。
 
-"地点A":
-{
-text: "你来到了地点A。",
-choices: \[
-{
-text: "查看柜子",
-condition: "!hasIronPipe",
-nextScene: "发现铁管",
-elseScene: "这里是空的" // 防止开放式场景反复刷物品
-}
-]
+2. **捡拾非交通工具、特殊道具（如背包）、个人记忆等**物品 → 初次捡拾用 `condition:itemCount < bagVolume` + `elseScene: "整理整理"`\*\*，回到同一场景用`condition: !has物品` + `elseScene: "这里是空的"`
+
+- 注意，使用`condition: !has物品`的前提是这个物品在同一个开放区域内只出现1次，且不允许重复拾取
+
+```javascript
+"地点A": {
+    text: "你来到了地点A。",
+    choices: [
+      {
+        text: "查看柜子",
+        condition: "!hasIronPipe",
+        nextScene: "发现铁管",
+        elseScene: "这里是空的" // 防止开放式场景反复刷物品
+      }
+    ]
 },
 "发现铁管": {
-text: "你发现了一根铁管。",
-onEnter: { set: { positionAfterOperation: "发现铁管" } }, // 如果要先整理，整理完会跳回发现铁管场景
-choices: \[
-{
-text: "捡起铁管",
-condition: "itemCount < bagVolume",
-nextScene: "新场景",
-effect: { set: { hasIronPipe: true }, add: { itemCount: 1 } },
-elseScene: "整理整理" // 此节点强制要求玩家丢弃物品直到itemCount<=bagVolume
-},
-]
+  text: "你发现了一根铁管。",
+  onEnter: { set: { positionAfterOperation: "发现铁管" } }, // 如果要先整理，整理完会跳回发现铁管场景
+  choices: \[
+    {
+      text: "捡起铁管",
+      condition: "itemCount < bagVolume",
+      nextScene: "新场景",
+      effect: { set: { hasIronPipe: true }, add: { itemCount: 1 } },
+      elseScene: "整理整理" // 此节点强制要求玩家丢弃物品直到itemCount<=bagVolume
+    },
+  ]
 }
+ // 剧情节点设计
+```
 
-````
-3. 捡拾交通工具 → 一般用 `showCondtion: "has某个交通工具"`  `condition: "hasNoTransportation"` + `elseScene: "整理整理"`，但涉及道具解锁情节会更加复杂
+1. 捡拾交通工具 → 一般用 `showCondtion: "has某个交通工具"`  `condition: "hasNoTransportation"` + `elseScene: "整理整理"`，但涉及道具解锁情节会更加复杂
+
 ```javascript
 // 典型案例
 "三林安居苑-自行车": {
@@ -197,7 +199,7 @@ elseScene: "整理整理" // 此节点强制要求玩家丢弃物品直到itemCo
    }
  ]
 },
-````
+```
 
 **开放式场景守卫三件套：** 玩家可以自由往返的场景，物品/事件需要防止重复触发。
 
