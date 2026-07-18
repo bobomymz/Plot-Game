@@ -23,28 +23,93 @@ Object.assign(storyData, {
       midnight: "images/新达汇/喷泉广场-midnight.png"
     }),
     onEnter: { set: { currentPlace: "新达汇", currentArea: "周边社区", currentPos: "新达汇" } },
-    text: function(vars) { return "你来到新达汇·三林的主入口广场。中央的喷泉停着，池底浅浅一层积水漂着落叶。广场上零散地倒着几个歪斜的广告牌和废弃的购物车。\n正前方是商场西区的主入口，玻璃门敞开着；东侧能看到东区的开放式街区；地面有一个通往B1下沉广场的阶梯入口。\n" + describeZombieWave(vars); },
+    text: function(vars) {
+      var desc = "新达汇·三林的主入口广场。中央的喷泉停着，池底浅浅一层积水漂着落叶。广场上零散地倒着几个歪斜的广告牌和废弃的购物车。\n正前方是商场西区的主入口，玻璃门敞开着；东侧能看到东区的开放式街区；地面有一个通往B1下沉广场的阶梯入口。\n";
+      if (!vars._metGaoAtMall && vars.dd <= 3 && vars.hh >= 10 && vars.hh <= 14) {
+        desc += "喷泉边上停着一辆红色山地车，车架上贴着几张没撕干净的卡通贴纸。靠商场入口那一侧——一个锅盖头少年正被好几只丧尸围着。他攥着一根从旁边广告牌上拆下来的金属管，边退边打，嘴上还在骂骂咧咧。";
+      } else if (vars._metGaoAtMall) {
+        desc += "喷泉边上那辆红色山地车还在，车架上的卡通贴纸在日光下反射着褪色的光泽。";
+      }
+      return desc + describeZombieWave(vars);
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._metGaoAtMall && vars.dd <= 3 && vars.hh >= 10 && vars.hh <= 14) {
+        cs.push({ text: "冲上去帮忙", nextScene: "新达汇-喷泉广场-高锦睿-帮忙", effect: updateTime(2) });
+        cs.push({ text: "先看看情况", nextScene: "新达汇-喷泉广场-高锦睿-旁观", effect: updateTime(1) });
+      }
+      cs.push({ text: "进入西区1F中庭", nextScene: "新达汇-1F中庭", effect: updateTime(1) });
+      cs.push({ text: "走下阶梯到B1下沉广场", nextScene: "新达汇-B1下沉广场入口", effect: updateTime(2) });
+      cs.push({ text: "前往东区", nextScene: "新达汇-东区天桥1", effect: updateTime(4) });
+      cs.push({ text: "离开新达汇，回十字路口",
+        nextScene: "三林路-东明路 十字路口",
+        effect: updateTime(2) });
+      return cs;
+    }
+  },
+
+  // ==================== 高锦睿 · 喷泉广场相遇 ====================
+
+  "新达汇-喷泉广场-高锦睿-帮忙": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
+    onEnter: initMemoryGame(["红","蓝","绿"], 4),
+    text: "你抄起地上一根歪倒的广告牌支架冲了上去。丧尸们被喷泉池底的水汽吸引——一只、两只、三只、四只，从水池边同时转过头来。\n高锦睿回头看见你，愣了一下：“诶？！”",
     choices: [
       {
-        text: "进入西区1F中庭",
-        nextScene: "新达汇-1F中庭",
-        effect: updateTime(1),
-      },
+        text: "输入你看到的颜色分布",
+        input: {
+          match: function(vars, input) {
+            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
+          },
+          placeholder: "例如：2红1蓝1绿",
+          wrongScene: "新达汇-喷泉广场-高锦睿-被救"
+        },
+        nextScene: "新达汇-喷泉广场-高锦睿-聊",
+        effect: updateTime(2, { add: { strength: -1 } })
+      }
+    ]
+  },
+
+  "新达汇-喷泉广场-高锦睿-被救": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
+    onEnter: { set: { hurtByZombie: true }, add: { strength: -2 } },
+    text: "你记错了——一只丧尸从你侧面扑过来，你来不及反应。\n一根金属管从你耳边呼啸而过，咚地一声砸在丧尸脸上。那只丧尸踉跄着栽进了喷泉池里。\n高锦睿拽着你的衣领把你拉了起来：\
+”别愣着啊！走吧！“\n你低头一看——手臂上多了一道抓痕。",
+    choices: [
       {
-        text: "走下阶梯到B1下沉广场",
-        nextScene: "新达汇-B1下沉广场入口",
-        effect: updateTime(2),
-      },
+        text: "跟他撤到商场入口",
+        nextScene: "新达汇-喷泉广场-高锦睿-聊",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "新达汇-喷泉广场-高锦睿-旁观": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
+    text: "你退后一步，藏在一根倒下的广告牌后面。\n高锦睿用那根金属管又抡倒了一只，然后一脚把最后一只踹进了喷泉池。水花溅了他一身。\n他喘着粗气，把金属管往地上一扔，抬头看到你从广告牌后面走出来。\n\
+“你就看着是吧？”他翻了个白眼，但嘴角还是翘了起来。",
+    choices: [
       {
-        text: "前往东区",
-        nextScene: "新达汇-东区天桥1",
-        effect: updateTime(4),
-      },
+        text: "“你一个人不是也解决了？”",
+        nextScene: "新达汇-喷泉广场-高锦睿-聊",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "新达汇-喷泉广场-高锦睿-聊": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
+    onEnter: { set: { _metGaoAtMall: true } },
+    text: "他擦了擦脸上的水，一屁股坐在喷泉池沿上。“我靠，你也来这儿了？”\n\
+他告诉你他是骑车过来的——变速器修好了，一路上东躲西藏，刚到这个广场就被水池边的丧尸围了。“这东西好像特别喜欢水，不知道什么毛病。”\n\
+他站起来拍了拍裤子，把金属管往肩上一扛。“我打算进去逛逛——这么大的商场，总不能什么都不剩吧。你看看有没有什么好东西，回头碰上了跟我说。”\n\
+山地车被他随手锁在了喷泉边的路灯杆上。“反正也没人偷。”",
+    choices: [
       {
-        text: "离开新达汇，回十字路口",
-        nextScene: "三林路-东明路 十字路口",
-        effect: updateTime(2),
-      },
+        text: "“你小心点。”",
+        nextScene: "新达汇-喷泉广场",
+        effect: updateTime(1)
+      }
     ]
   },
 
@@ -585,6 +650,10 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/digitalStore.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: function(vars) {
+      if (vars._metGaoAtMall) {
+        if (vars._powerOut) return "华为体验店里一片漆黑。感应门没电了，你推开玻璃门走了进去。\n展示台前蹲着一个人——锅盖头，深色卫衣，手里攥着一台黑了屏的展示机。\n高锦睿抬头看到你，一脸绝望：\n“怎么没电了？！我刚下载好一个游戏——等了一下午才下完的。你知不知道商场的WiFi有多慢——不是，你知道拉电闸的是谁吗？”\n你说：“现在都这个样子了，你还想着玩游戏？”\n他愣了一秒，低头看了看手里黑屏的手机。\n“……不然还能干嘛呢。”\n这句话说得很轻。然后他把手机放回展示台，站了起来，咧嘴一笑：“算了算了，反正那游戏也不好玩——我看了评论才两星。”他拍了拍裤子上的灰，朝门口走去。\n“看到什么好东西记得喊我。”";
+        return "玻璃门自动滑开——“欢迎光临华为体验店！”\n高锦睿正坐在展示台前的一把转椅上，双眼死死盯着一台展示机。屏幕上是一款赛车游戏，他拇指在屏幕上狂划，嘴里念念有词。\n旁边的展示座上放着一瓶喝了一半的矿泉水——应该是从哪个自动贩卖机砸出来的。\n他看到你头都没抬：“等一下我这局快赢了——操，撞墙了。算了。”\n他把手机放下，转过来面对你。“这里面东西还挺多的，你逛了没？”";
+      }
       if (vars.hasPhone) return "华为店里没什么可看的了。";
       if (vars._powerOut) return "华为体验店里一片漆黑。感应门没电了。";
       return "你刚走到门口，玻璃门自动滑开——门框传来一声电子音：\n“欢迎光临华为体验店！”\n声音不大，但在空旷的商场里格外刺耳。\n展示柜被砸碎了，货架上只剩一些充电线和手机壳。";
