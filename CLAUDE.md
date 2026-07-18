@@ -127,51 +127,51 @@ images/             → 场景图（PNG/JPG），按区域存放
 
 **3条黄金法则：**
 
-1. \*\*运用道具解锁剧情 → 用 `showCondition` 或者 `condition` + `elseScene` \*\*
-
-```javascript
- // 第一种情况，选项高度依赖道具：「用铁管撬开门」——没铁管的人根本不会去撬门，选项不该出现
- { text: "用铁管撬开门", showCondition: "hasIronPipe", nextScene: "门开了" }
- // 还有一种情况，这个解密选项的text表述上不一定需要道具，比如“砸开门”，但是需要道具才能成功执行
- { text: "砸开门", condition: "hasIronPipe", nextScene: "门开了", elseScene: "门没开，手好痛" }
- // 另外，这两个情况完全可以同时存在。前者解决是否有道具的问题，后者解决道具某些状态是否可靠的问题（比如剩余使用次数），可以参考上实南校.js中的防毒面具剧情
-```
-
+1.\*\*运用道具解锁剧情 → 用 `showCondition` 或者 `condition` + `elseScene` \*\*
+  ````markdown
+  ```javascript
+  // 第一种情况，选项高度依赖道具：「用铁管撬开门」——没铁管的人根本不会去撬门，选项不该出现
+  { text: "用铁管撬开门", showCondition: "hasIronPipe", nextScene: "门开了" }
+  // 还有一种情况，这个解密选项的text表述上不一定需要道具，比如“砸开门”，但是需要道具才能成功执行
+  { text: "砸开门", condition: "hasIronPipe", nextScene: "门开了", elseScene: "门没开，手好痛" }
+  // 另外，这两个情况完全可以同时存在。前者解决是否有道具的问题，后者解决道具某些状态是否可靠的问题（比如剩余使用次数），可以参考上实南校.js中的防毒面具剧情
+  ```
+  ````
   这是两种设计：第一种是选项高度依赖道具，第二种是选项不依赖道具，选项一直可见，但是执行结果不同。第二种更阴险，如果条件允许，尽量调整text，运用第二种设计来坑玩家。
+  
+2.**捡拾非交通工具、特殊道具（如背包）、个人记忆等**物品 → 初次捡拾用 `condition:itemCount < bagVolume` + `elseScene: "整理整理"`\*\*，回到同一场景用`condition: !has物品` + `elseScene: "这里是空的"`
 
-2. **捡拾非交通工具、特殊道具（如背包）、个人记忆等**物品 → 初次捡拾用 `condition:itemCount < bagVolume` + `elseScene: "整理整理"`\*\*，回到同一场景用`condition: !has物品` + `elseScene: "这里是空的"`
+  - 注意，使用`condition: !has物品`的前提是这个物品在同一个开放区域内只出现1次，且不允许重复拾取
 
-- 注意，使用`condition: !has物品`的前提是这个物品在同一个开放区域内只出现1次，且不允许重复拾取
-
-```javascript
-"地点A": {
-    text: "你来到了地点A。",
-    choices: [
+  ```javascript
+  "地点A": {
+      text: "你来到了地点A。",
+      choices: [
+        {
+          text: "查看柜子",
+          condition: "!hasIronPipe",
+          nextScene: "发现铁管",
+          elseScene: "这里是空的" // 防止开放式场景反复刷物品
+        }
+      ]
+  },
+  "发现铁管": {
+    text: "你发现了一根铁管。",
+    onEnter: { set: { positionAfterOperation: "发现铁管" } }, // 如果要先整理，整理完会跳回发现铁管场景
+    choices: \[
       {
-        text: "查看柜子",
-        condition: "!hasIronPipe",
-        nextScene: "发现铁管",
-        elseScene: "这里是空的" // 防止开放式场景反复刷物品
-      }
+        text: "捡起铁管",
+        condition: "itemCount < bagVolume",
+        nextScene: "新场景",
+        effect: { set: { hasIronPipe: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理" // 此节点强制要求玩家丢弃物品直到itemCount<=bagVolume
+      },
     ]
-},
-"发现铁管": {
-  text: "你发现了一根铁管。",
-  onEnter: { set: { positionAfterOperation: "发现铁管" } }, // 如果要先整理，整理完会跳回发现铁管场景
-  choices: \[
-    {
-      text: "捡起铁管",
-      condition: "itemCount < bagVolume",
-      nextScene: "新场景",
-      effect: { set: { hasIronPipe: true }, add: { itemCount: 1 } },
-      elseScene: "整理整理" // 此节点强制要求玩家丢弃物品直到itemCount<=bagVolume
-    },
-  ]
-}
- // 剧情节点设计
-```
+  }
+  // 剧情节点设计
+  ```
 
-1. 捡拾交通工具 → 一般用 `showCondtion: "has某个交通工具"`  `condition: "hasNoTransportation"` + `elseScene: "整理整理"`，但涉及道具解锁情节会更加复杂
+3.捡拾交通工具 → 一般用 `showCondtion: "has某个交通工具"`  `condition: "hasNoTransportation"` + `elseScene: "整理整理"`，但涉及道具解锁情节会更加复杂
 
 ```javascript
 // 典型案例
