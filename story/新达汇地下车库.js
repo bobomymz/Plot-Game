@@ -213,6 +213,9 @@ Object.assign(storyData, {
 这时，传来一阵水声。           \n\
 然后是脚步声，由远及近。           \n\
 从四面八方而来。",
+    choices: [
+      { text: "拼命跑回F区", nextScene: "新达汇-B1停车场F区", effect: updateTime(1, { add: { chasedByZombies: 1 } }) }
+    ]
   },
 
   // ==================== G区 · 银色面包车（假线索+噪音） ====================

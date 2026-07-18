@@ -484,13 +484,17 @@ Object.assign(storyData, {
   "小区道路": {
     image: "images/home/小区道路.png",
     onEnter: { set: { currentPlace: "初始小区", currentPos: "小区道路" } },
-    text: "你走在小区的小道上。曾经你在这里练习足球，可以看到很多老年人带着孩子玩，时不时有外卖员驶过。现在，不会再有了。\n\
-你看到有一个人坐在椅子上，像是睡着了.\n\
-还能这么悠闲？",
+    text: function(vars) {
+      var desc = "你走在小区的小道上。曾经你在这里练习足球，可以看到很多老年人带着孩子玩，时不时有外卖员驶过。现在，不会再有了。\n";
+      if (!vars._sleepingZombieGone) desc += "你看到有一个人坐在椅子上，像是睡着了。\n还能这么悠闲？";
+      else desc += "那张长椅上空空荡荡，只留下几道抓痕。";
+      return desc;
+    },
 //开party的丧尸不小心点燃了什么易燃物体把自己烧死了
     choices: [
       {
         text: "看看那个人",
+        showCondition: "!_sleepingZombieGone",
         nextScene: "装睡的丧尸"
       },
       {
@@ -536,6 +540,7 @@ Object.assign(storyData, {
 
   "反杀老6": {
     image: "images/home/老六偷袭未果.png",
+    onEnter: { set: { _sleepingZombieGone: true } },
     text: "你对它丧失了兴趣，转身离开。\n\
 只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后<span style = 'font-weight: bold;'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
 回头一看，正是椅子上的那个睡神，它竟是一只丧尸！\n\
@@ -1351,8 +1356,7 @@ Object.assign(storyData, {
       midnight: "images/home/小区东门-midnight.png"
     }),
     onEnter: { set : { positionAfterOperation: "小区东门-整装待发", currentPlace: "初始小区", currentPos: "东门" } },
-    text: "你从民防设施钻了出来，刺眼的阳光让你眯起了眼。身后的铁门因为年久失修，已经锈死，你砰地一脚把它踹上。\n应该不会有什么鬼东西跟上了。\n\
-你沿着石板路走到保安亭，那年初的大红灯笼正挂在保安亭的墙上，随风摇曳，沙沙作响。\n\
+    text: "小区东门。保安亭的大红灯笼还挂在墙上，随风摇曳，沙沙作响。石板路从小区深处蜿蜒而出，在门口收束成短短的一段坡道。\n\
 空中传来几声鸟叫，你抬头，看见珠颈斑鸠滑翔而过，落在马路对面的全家便利店上。\n\
 你回头看了一眼小区，那栋你住了七八年的楼，静默地站在那里。\n\
 你不会再回去了。\n\

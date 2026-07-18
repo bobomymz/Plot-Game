@@ -40,12 +40,17 @@ Object.assign(storyData, {
   // ==================== 大厅 ====================
   "图书馆-大厅": {
     image: "images/placeholder.png" /* TODO: images/library/libraryHall.png */,
-    text: "你推开门，走进图书馆大厅。正前方是前台和还书机，左手边是阅览室，右手边是藏书区的入口。大厅中央站着一只丧尸——穿着图书馆志愿者的马甲，正漫无目的地原地踱步。\n\
-它还没注意到你。",
+    text: function(vars) {
+      if (vars.libraryCleared) return "图书馆大厅空荡荡的。前台和还书机还在原地，但那只穿志愿者马甲的丧尸已经不见了——地上只剩一滩暗色的痕迹。\n阅览室在左侧，藏书区在右侧。";
+      return "图书馆大厅。正前方是前台和还书机，左手边是阅览室，右手边是藏书区的入口。大厅中央站着一只丧尸——穿着图书馆志愿者的马甲，正漫无目的地原地踱步。\n它还没注意到你。";
+    },
     choices: [
-        { text: "蹲下身子，从前台下方绕过去", nextScene: "图书馆-大厅-潜行", effect: updateTime(2) },
-        { text: "从书架上抽一本书，朝另一侧扔出去", nextScene: "图书馆-大厅-声东击西", effect: updateTime(1) },
-        { text: "抄起门口的铁质书立，上去解决它", nextScene: "图书馆-大厅-战斗", condition: "hasCane || hasMopHandle || hasIronPipe || strength >= 3", elseScene: "图书馆-大厅-徒劳" }
+        { text: "蹲下身子，从前台下方绕过去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-潜行", effect: updateTime(2) },
+        { text: "从书架上抽一本书，朝另一侧扔出去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-声东击西", effect: updateTime(1) },
+        { text: "抄起门口的铁质书立，上去解决它", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-战斗", condition: "hasCane || hasMopHandle || hasIronPipe || strength >= 3", elseScene: "图书馆-大厅-徒劳" },
+        { text: "前往阅览室", showCondition: "libraryCleared", nextScene: "图书馆-阅览室" },
+        { text: "前往藏书区", showCondition: "libraryCleared", nextScene: "图书馆-藏书区" },
+        { text: "离开图书馆", showCondition: "libraryCleared", nextScene: "东明路-三林路" }
     ]
   },
 
@@ -121,23 +126,33 @@ Object.assign(storyData, {
   // ==================== 阅览室 ====================
   "图书馆-阅览室": {
     image: "images/placeholder.png" /* TODO: images/library/libraryReadingRoom.png */,
-    text: "你走进阅览室。几排长桌整齐排列，桌面上散落着几本书和借阅登记表。日光灯管还在微弱地闪烁，发出嗡嗡的电流声。\n\
-靠窗的座位上坐着一个人——一只穿着格子衬衫的丧尸。它低着头，双手捧着一本摊开的书，像在阅读一样。\n你没出声，但它似乎感觉到了什么，翻页的动作停了一下。",
+    text: function(vars) {
+      if (vars.libraryCleared) return "阅览室。几排长桌整齐排列，日光灯管还在微弱地闪烁。靠窗那个座位已经空了——椅子歪着，桌上一本摊开的书被风吹得翻过了好几页。";
+      return "你走进阅览室。几排长桌整齐排列，桌面上散落着几本书和借阅登记表。日光灯管还在微弱地闪烁，发出嗡嗡的电流声。\n靠窗的座位上坐着一个人——一只穿着格子衬衫的丧尸。它低着头，双手捧着一本摊开的书，像在阅读一样。\n你没出声，但它似乎感觉到了什么，翻页的动作停了一下。";
+    },
     choices: [
       {
         text: "沿着墙边书架绕过去",
+        showCondition: "!libraryCleared",
         nextScene: "图书馆-阅览室-绕行",
         effect: updateTime(2)
       },
       {
         text: "压低身形从桌椅之间穿过去",
+        showCondition: "!libraryCleared",
         nextScene: "图书馆-阅览室-穿行",
         effect: updateTime(2)
       },
       {
         text: "打量一下它在看什么书",
+        showCondition: "!libraryCleared",
         nextScene: "图书馆-阅览室-看书名",
         effect: updateTime(1)
+      },
+      {
+        text: "返回大厅",
+        showCondition: "libraryCleared",
+        nextScene: "图书馆-大厅"
       }
     ]
   },

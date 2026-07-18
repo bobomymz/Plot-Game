@@ -464,9 +464,9 @@ function renderChoices(scene, sceneId) {
   }
 
   // ===== QTE 分支（替换现有 QTE 分支）=====
-  if (scene.qte) {
+  const qte = typeof scene.qte === 'function' ? scene.qte(gameState) : scene.qte;
+  if (qte) {
     clearQTE();
-    const qte = scene.qte;
 
     // === 动态 timeout：支持字符串表达式 ===
     let timeout = qte.timeout;
@@ -929,7 +929,8 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     textArea.style.visibility = 'visible';
   }
 
-  if (scene.qte) {
+  const hasQte = typeof scene.qte === 'function' ? scene.qte(gameState) : scene.qte;
+  if (hasQte) {
     // QTE 场景直接显示文字，跳过打字机效果
     if (typingIsHtml) {
       sceneText.innerHTML = displayText;
