@@ -52,6 +52,7 @@ const storyData = {
     fightWithVineZombie: false,// 是否与被藤蔓缠绕的丧尸打过
     raidStationeryShop: false, // 是否搜刮过文具店的物品（不论是粗略还是仔细，只有一次机会）
     findKey502: false,         // 是否找到502钥匙
+    _droneIntel: false,        // 是否获得无人机侦察情报（物业楼高锦睿）
 
     // --- 物品状态 ---
     // 常规物品

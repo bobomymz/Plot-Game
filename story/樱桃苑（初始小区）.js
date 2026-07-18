@@ -495,8 +495,8 @@ Object.assign(storyData, {
       },
       {
         text: "往右走",
-        nextScene: "小区东门",
-        effect: updateTime(2) // 花2分钟到达小区东门
+        nextScene: "小区草地",
+        effect: updateTime(1) // 花1分钟走到草地
       },
       {
         text: "往左走",
@@ -1449,7 +1449,7 @@ Object.assign(storyData, {
   // ========== 4楼：丧尸遭遇 + 记忆闪色 ==========
 
   "樱桃苑-4楼": {
-    image: "images/home/4楼-丧尸.png",
+    image: "images/placeholder.png",
     onEnter: initMemoryGame(["红","蓝","绿","黄"], 4),
     text: "四楼的走廊比楼下更暗——声控灯坏了两盏，只剩远处一盏在忽明忽暗地挣扎。空气里弥漫着一股甜腻的腐味。\n走廊中段，三个身影正背对着你，弓着腰围在一扇门前，发出低沉的咀嚼声。\n灯泡闪了一下。它们同时停了下来。\n然后缓缓转过头——不，不止三个。旁边的门半开着，里面又跌跌撞撞走出第四个。\n它们的眼睛在昏暗的光线中闪烁着不同的颜色——红、蓝、绿、黄——不同感染阶段在视网膜上留下的痕迹。你必须在一瞬间记住它们的分布。",
     choices: [
@@ -1469,7 +1469,7 @@ Object.assign(storyData, {
   },
 
   "樱桃苑-4楼-胜利": {
-    image: "images/home/4楼-丧尸.png",
+    image: "images/placeholder.png",
     text: "你看穿了它们的攻击节奏。在第一个丧尸扑过来的瞬间，你侧身闪过，顺势把它推进了旁边的杂物堆。第二个被地上的尸体绊倒，你一脚踩住它的后背，借力跃过第三个伸来的手——第四个还在门口挣扎着挤出来，你一个箭步冲过了走廊。\n身后传来碰撞和低吼声，但它们暂时追不上来了。",
     choices: [
       {
@@ -1485,7 +1485,7 @@ Object.assign(storyData, {
   },
 
   "樱桃苑-4楼-失败": {
-    image: "images/home/4楼-丧尸.png",
+    image: "images/placeholder.png",
     onEnter: { add: { strength: -2 } },
     text: "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。\n剧痛让你眼前一黑。你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。",
     choices: [
@@ -1499,7 +1499,7 @@ Object.assign(storyData, {
   // ========== 5楼：孙阿姨 ==========
 
   "樱桃苑-5楼": {
-    image: "images/home/5楼-走廊.png",
+    image: "images/placeholder.png",
     onEnter: { set: { currentPos: "居民楼" } },
     text: "五楼走廊很安静。地面上铺着已经开始翘边的复合地板，踩上去嘎吱作响。并排三扇门：501、502、503，门牌是那种老式的蓝色塑料片，501的\"5\"已经歪了，快要掉下来。\n501的门上贴着一张褪色的\"福\"字，下面用透明胶粘着一个手写的纸牌——\"如有人找，请打居委会电话\"。字迹工整，像是练过毛笔字的老人写的。\n502门上没有任何装饰。503的门缝下面塞着一角超市传单，已经被踩得模糊了。",
     choices: [
@@ -1511,12 +1511,12 @@ Object.assign(storyData, {
       {
         text: "推开502的门",
         nextScene: "樱桃苑-5楼-门锁了",
-        effect: function(vars) { vars._tryDoor = "502"; return {}; }
+        effect: { set: { _tryDoor: "502" } }
       },
       {
         text: "推开503的门",
         nextScene: "樱桃苑-5楼-门锁了",
-        effect: function(vars) { vars._tryDoor = "503"; return {}; }
+        effect: { set: { _tryDoor: "503" } }
       },
       {
         text: "下楼",
@@ -1527,7 +1527,7 @@ Object.assign(storyData, {
   },
 
   "樱桃苑-5楼-501": {
-    image: "images/home/501-孙阿姨.png",
+    image: "images/placeholder.png",
     onEnter: { set: { currentPos: "501室" } },
     text: "门没锁。你轻轻一推，铰链发出干涩的吱呀声。\n客厅的光线很暗，窗帘只拉了一半。午后的光斜斜地打在老式藤椅上——藤椅上坐着一个短发老太太，头微微偏向一侧，像是午睡还没醒。\n\
 但她不会再醒了。\n茶几上放着一只老式闹钟，停在11:47。旁边摊着一本翻到一半的电话簿，圆珠笔还夹在她指间，笔尖已经干了。电话簿下面压着一张手写的小区住户去向表：\n\
@@ -1552,7 +1552,7 @@ Object.assign(storyData, {
   },
 
   "樱桃苑-5楼-501-拿钥匙": {
-    image: "images/home/501-孙阿姨.png",
+    image: "images/placeholder.png",
     onEnter: { set: { positionAfterOperation: "樱桃苑-5楼" } },
     text: "你拿起那串钥匙。钥匙环上挂着三把——一把铜的、两把铝的，铜的那把已经磨得发亮。标签上的\"居委会\"三个字是圆珠笔写的，被透明胶缠得严严实实。\n你看了藤椅上的老人最后一眼，轻轻带上了门。",
     choices: [
@@ -1564,7 +1564,7 @@ Object.assign(storyData, {
   },
 
   "樱桃苑-5楼-门锁了": {
-    image: "images/home/5楼-走廊.png",
+    image: "images/placeholder.png",
     text: function(vars) {
       if (vars._tryDoor === "502") return "502的门锁着。门把手上落了一层灰——很久没人动过了。门缝下面什么都没有。";
       return "503的门也锁着。门缝下面塞着半张超市传单，日期是6月26日——特价鸡蛋，限量三斤。背面有人用铅笔写了一行字：\n<em>去了我妈家，如果有人找，打我电话。138——</em>\n后面的数字被撕掉了。";
@@ -1573,6 +1573,179 @@ Object.assign(storyData, {
       {
         text: "返回",
         nextScene: "樱桃苑-5楼"
+      }
+    ]
+  },
+
+  // ========== 小区草地 + 物业楼（高锦睿） ==========
+
+  "小区草地": {
+    image: "images/placeholder.png",
+    onEnter: updateTime(1),
+    qte: {
+      timeout: 8000,
+      onTimeout: "小区草地-被追"
+    },
+    text: "你沿着小路往东走，穿过两栋楼之间的过道，眼前豁然开朗——一片不大的草地，中间是一方人工水池，水面上漂着几朵睡莲，粉白的花瓣在阳光下安静地开着。长椅倒在一旁，草地边缘的灌木丛被什么东西踩出了一条凌乱的痕迹。\n水池对面，几只丧尸正在草地上无目的地游荡。其中一只似乎嗅到了什么，停下脚步，缓缓朝你这边转过头来。",
+    choices: [
+      {
+        text: "躲到水池后面的长椅下",
+        nextScene: "小区草地-安全",
+        effect: updateTime(2)
+      },
+      {
+        text: "快步冲进物业楼",
+        nextScene: "物业楼",
+        effect: updateTime(1, { add: { chasedByZombies: 1 } })
+      },
+      {
+        text: "往东门方向冲刺",
+        nextScene: "小区东门",
+        effect: updateTime(1, { add: { chasedByZombies: 1 } })
+      }
+    ]
+  },
+
+  "小区草地-安全": {
+    image: "images/placeholder.png",
+    text: "你低身躲到水池后面的长椅下。睡莲的叶子遮住了你的身影，水面反射的光晃得你眯起了眼。那只丧尸在草地上徘徊了一阵——你屏住呼吸，听着它拖沓的脚步声一下一下踩在草地上。\n终于，脚步声远了。你从长椅下钻出来，拍了拍身上的草屑。",
+    choices: [
+      {
+        text: "去物业楼",
+        nextScene: "物业楼"
+      },
+      {
+        text: "继续前往东门",
+        nextScene: "小区东门"
+      },
+      {
+        text: "退回小区道路",
+        nextScene: "小区道路"
+      }
+    ]
+  },
+
+  "小区草地-被追": {
+    image: "images/placeholder.png",
+    onEnter: { add: { chasedByZombies: 2, strength: -1 } },
+    text: "你犹豫太久了。一只丧尸不知什么时候绕到了水池这一侧——你听到身后粗重的呼吸声才猛地回头，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。",
+    choices: [
+      {
+        text: "冲进物业楼",
+        nextScene: "物业楼"
+      }
+    ]
+  },
+
+  "物业楼": {
+    image: "images/placeholder.png",
+    onEnter: { set: { currentPos: "物业楼" } },
+    text: function(vars) {
+      if (vars.dd == 1 && vars.hh < 12) {
+        return "物业楼不大，靠墙立着几排档案柜，中间一张旧办公桌上摊着半张小区平面图，被茶杯印子洇了一圈褐色的环。空气里混着机油和自行车链条的金属味。\n一个锅盖头少年正蹲在地上捣鼓一辆红色山地车——变速器拆了一半，零件散了一地。他嘴里咬着一根不知道从哪找到的扎带，抬头看到你，愣了一秒，然后把扎带从嘴里拿出来：\n<em>\"我靠，你还没死啊？\"</em>";
+      }
+      return "物业楼里空荡荡的。办公桌还在，半张小区平面图已经被风吹到了地上。地上散落着几个拧废的螺丝和半截断掉的自行车链条。\n墙上有人用记号笔歪歪扭扭写了一行字：\n<em>去南边了——高 6/29</em>";
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars.dd == 1 && vars.hh < 12) {
+        cs.push({
+          text: "跟高锦睿聊聊",
+          nextScene: "物业楼-高锦睿"
+        });
+      }
+      cs.push({
+        text: "退出去",
+        nextScene: "小区草地-安全"
+      });
+      return cs;
+    }
+  },
+
+  "物业楼-高锦睿": {
+    image: "images/placeholder.png",
+    onEnter: { set: { currentPos: "物业楼" } },
+    text: "高锦睿——你的初中同桌，万年不变的锅盖头，深色卫衣配运动短裤，脚上一双标签掉了一半的假Yeezy。他跟以前一模一样，好像外面世界末日了也跟他没什么关系。\n他正在修他的红色美利达山地车，变速器卡了好几天了。旁边地上放着一个鼓鼓的背包，拉链半开着，能看到里面塞了半包辣条和一台大疆无人机。",
+    choices: function(vars) {
+      var cs = [];
+      cs.push({
+        text: "你怎么在这儿？",
+        nextScene: "物业楼-高锦睿-聊"
+      });
+      if (!vars._droneIntel) {
+        cs.push({
+          text: "你那个无人机还能飞吗？帮我看看东门",
+          nextScene: "物业楼-高锦睿-无人机"
+        });
+      }
+      cs.push({
+        text: "现在几点了？",
+        nextScene: "物业楼-高锦睿-时间"
+      });
+      cs.push({
+        text: "不打扰了，继续赶路",
+        nextScene: "小区草地-安全"
+      });
+      return cs;
+    }
+  },
+
+  "物业楼-高锦睿-聊": {
+    image: "images/placeholder.png",
+    text: function(vars) {
+      var desc = "\"在家待了一天一夜，坐不住了——\"他边拧螺丝边说，头也没抬。\"反正待着也是待着，出去看看外面成啥样了。\"\n他告诉你他爸妈6/28出门后没回来。说这话的时候他手上的活没停，语气轻得像在说昨天食堂的饭不好吃。\n\"等我把车修好就走——\"他把扎带剪断，捏了捏变速器，链条咔嗒一声归位了。\"<em>我去找我女朋友。</em>\"\n最后这句声音突然低了下去，像是在说给自己听。\n";
+      if (vars._droneIntel) desc += "他顿了顿，又说：\"刚才飞了一圈，东门那辆公交车里全是丧尸——你别走那边。\"";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._droneIntel) {
+        cs.push({
+          text: "你那个无人机还能飞吗？帮我看看东门",
+          nextScene: "物业楼-高锦睿-无人机"
+        });
+      }
+      cs.push({
+        text: "现在几点了？",
+        nextScene: "物业楼-高锦睿-时间"
+      });
+      cs.push({
+        text: "那我先走了，保重",
+        nextScene: "小区草地-安全"
+      });
+      return cs;
+    }
+  },
+
+  "物业楼-高锦睿-时间": {
+    image: "images/placeholder.png",
+    text: function(vars) {
+      return "他掏出手机瞄了一眼。\"现在" + vars.hh + "点" + (vars.mm < 10 ? "0" : "") + vars.mm + "分。\"屏幕亮了一瞬——壁纸是个扎马尾的女孩，笑得眼睛弯弯的。他很快把手机塞回了口袋。";
+    },
+    choices: [
+      {
+        text: "继续聊",
+        nextScene: "物业楼-高锦睿"
+      },
+      {
+        text: "赶路去东门",
+        nextScene: "小区草地-安全"
+      }
+    ]
+  },
+
+  "物业楼-高锦睿-无人机": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _droneIntel: true } },
+    text: "\"还能飞一块电池——\"他从背包里掏出无人机，熟练地开机、对频。小飞行器嗡地一声从窗户飞了出去。\n他把遥控器屏幕转向你，画面里是小区东门的俯视图。你看到保安亭、歪倒的灯笼、还有那辆停在公交站台旁的公交车。车窗全碎了，里面人影憧憧——不是乘客，是尸群。\n\"公交车里全是丧尸，别走那边。\"他收起遥控器，屏幕闪了一下——电池见红了。\"最后一块电池了。\"",
+    choices: [
+      {
+        text: "继续聊",
+        nextScene: "物业楼-高锦睿"
+      },
+      {
+        text: "谢谢你，我先去东门了",
+        nextScene: "小区草地-安全"
       }
     ]
   }
