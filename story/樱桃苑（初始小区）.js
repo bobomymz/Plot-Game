@@ -749,13 +749,19 @@ Object.assign(storyData, {
     choices: [
       {
         text: "把手左旋",
-        nextScene: "结局-被丧尸扑倒咬死"
+        nextScene: "结局-防爆门没锁上"
       },
       {
         text: "把手右旋",
         nextScene: "丧尸被防爆门夹扁"
       }
     ]
+  },
+
+  "结局-防爆门没锁上": {
+    image: "images/home/防爆门失败.png",
+    text: "你关上门转身想跑，丧尸突然撞开了门，向你扑来。你在劫难逃……\n\
+—— 结局：被丧尸扑倒咬死 ——"
   },
 
   "丧尸被防爆门夹扁": {
