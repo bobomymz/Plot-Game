@@ -765,7 +765,7 @@ Object.assign(storyData, {
   },
 
   "丧尸被防爆门夹扁": {
-    image: "images/home/防爆门成功.png" /* TODO: images/home/squeezeZombie.png */,
+    image: "images/home/防爆门成功.jpg" ,
     onEnter: { add: { strength: -1 } },
     text: "在丧尸冲过来时，你侧身把防爆门关上了，它的半只手臂夹在了中间，却仍不断挥舞着。\n\
 你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。",
@@ -781,7 +781,12 @@ Object.assign(storyData, {
   },
 
   "西出口": {
-    image: "images/home/westExit.png",
+    image: timeImage({
+      morning: "images/home/小区西门.png",
+      evening: "images/home/小区西门-evening.png",
+      night: "images/home/小区西门=night.png",
+      midnight: "images/home/小区西门-midnight.png"
+    }),
     text: "你来到了西出口，成功逃出了地下车库",
     choices: [
       {
@@ -922,7 +927,7 @@ Object.assign(storyData, {
   },
 
   "抽屉里的手电筒": {
-    image: "images/placeholder.png" /* TODO: images/home/light.png */,
+    image: "images/home/torch.png" /* TODO: images/home/light.png */,
     onEnter: { add: { visitWaitingRoomTimes: 1 } },
     text: "你打开抽屉，发现里面有一个小手电筒。",
     choices: [
