@@ -463,6 +463,14 @@ function renderChoices(scene, sceneId) {
     _choices = _choices(gameState);
   }
 
+  // 打乱选项顺序，防止玩家形成肌肉记忆
+  if (_choices && _choices.length > 0) {
+    for (let i = _choices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [_choices[i], _choices[j]] = [_choices[j], _choices[i]];
+    }
+  }
+
   // ===== QTE 分支（替换现有 QTE 分支）=====
   const qte = typeof scene.qte === 'function' ? scene.qte(gameState) : scene.qte;
   if (qte) {
