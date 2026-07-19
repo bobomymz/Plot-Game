@@ -765,7 +765,7 @@ Object.assign(storyData, {
   },
 
   "丧尸被防爆门夹扁": {
-    image: "images/home/防爆门成功.jpg" ,
+    image: "images/home/防爆门成功.png",
     onEnter: { add: { strength: -1 } },
     text: "在丧尸冲过来时，你侧身把防爆门关上了，它的半只手臂夹在了中间，却仍不断挥舞着。\n\
 你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。",
@@ -982,7 +982,7 @@ Object.assign(storyData, {
   },
 
   "告示后面的钥匙": {
-    image: "images/placeholder.png" /* TODO: images/home/key.png */,
+    image: "images/home/告示后的钥匙.png",
     onEnter: { set: { positionAfterOperation: "告示后面的钥匙" } },
     text: "你揭下了告示纸，后面掉出来一个小钥匙，像是电瓶车的车钥匙。",
     choices: [
@@ -1031,7 +1031,7 @@ Object.assign(storyData, {
       },
       {
         text: "闪！右转进入暗处",
-        nextScene: "初遇毒气型丧尸"
+        nextScene: "结局-初遇毒气型丧尸"
       }
     ]
   },
@@ -1041,29 +1041,14 @@ Object.assign(storyData, {
     text: "不好意思，门锁了。\n你还没来得及骂检修人员，就被丧尸创飞了。"
   },
 
-  "初遇毒气型丧尸": {
-    image: "images/placeholder.png" /* TODO: images/home/po.png */,
+  "结局-初遇毒气型丧尸": {
+    image: "images/home/gasZombie.png" ,
     onEnter: updateTime(5), // 花5分钟躲在黑暗里
     text: "那只魁梧的丧尸像野兽一般朝你扑来，擦过你的后背，狠狠撞在紧急出口的门上。\n\
 门震了一下，一点油漆都没刮掉。\n\
 你躲进了暗处，大气都不敢喘。\n\
-。。。。。。。。。。。。。。。。。。。。。\n\
-。。。。。。。。。。。。。。。。。。。。。\n\
-。。。。。。。。。。。。。。。。。。。。。\n\
-。。。。。。。。。。。。。。。。。。。。。\n\
-那只丧尸大抵脑子撞坏了，愣是不知道你去哪了，只能悻悻离开。再等了一会儿，没声音了。",
-    choices: [
-      {
-        text: "原路返回",
-        nextScene: "民防设施-等候区",
-        effect: updateTime(1) // 花1分钟原路返回
-      },
-      {
-        text: "再等一会儿",
-        nextScene: "初遇毒气型丧尸",
-        effect: updateTime(1) // 花1分钟再等一会儿
-      }
-    ]
+那只丧尸大抵脑子撞坏了，愣是不知道你去哪了，只能悻悻离开。再等了一会儿，没声音了。\n\
+你正暗自庆幸时，一只绿眼丧尸从黑暗中探出，你随即晕了过去，再也没有醒来。"
   },
 
   "民防设施-物资区": {
