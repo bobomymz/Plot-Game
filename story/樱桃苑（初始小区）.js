@@ -482,12 +482,13 @@ Object.assign(storyData, {
   },
 
   "小区道路": {
-    image: "images/home/小区道路.png",
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/home/小区道路.png"; },
     onEnter: { set: { currentPlace: "初始小区", currentPos: "小区道路" } },
     text: function(vars) {
       var desc = "你走在小区的小道上。曾经你在这里练习足球，可以看到很多老年人带着孩子玩，时不时有外卖员驶过。现在，不会再有了。\n";
       if (!vars._sleepingZombieGone) desc += "你看到有一个人坐在椅子上，像是睡着了。\n还能这么悠闲？";
       else desc += "那张长椅上空空荡荡，只留下几道抓痕。";
+      desc += "\n" + describeWeather(vars);
       return desc;
     },
 //开party的丧尸不小心点燃了什么易燃物体把自己烧死了
@@ -1147,7 +1148,7 @@ Object.assign(storyData, {
   },
 
   "拳打脚踢": {
-    image: "images/placeholder.png" /* TODO: images/home/1v2.png */,
+    image: "images/home/1v2.png",
     onEnter: { add: { strength: -1 } },
     text: "你率先发动了攻击。\n\
 前面那只丧尸向你缓缓走来，你一个滑铲闪过去，冲向后面那只愣神的丧尸，一拳正中脑门。\n\
@@ -1166,14 +1167,14 @@ Object.assign(storyData, {
   },
 
   "拳打脚踢2": {
-    image: "images/placeholder.png" /* TODO: images/home/1v2.png */,
+    image: "images/home/1v2KO.png",
     onEnter: updateTime(3, { add: { strength: -1 } }), // 花3分钟再打一次
     text: "你从墙上掰下来一根长长的铁管，狠狠砸在丧尸们的脑袋上。\n\
 咚！咚！        \n\
 嗯，现在不会有问题了。",
     choices: [
       {
-        text: "进入旁边的房间",
+        text: "往里面走",
         condition: "itemCount < bagVolume",
         nextScene: "民防设施-进风机房-安全",
         effect: { set : { hasIronPipe: true, positionAfterOperation: "民防设施-进风机房-安全" }, add: { itemCount: 1 } },
@@ -1191,7 +1192,7 @@ Object.assign(storyData, {
     text: "你从纸箱里翻出一沓文件，掸了掸灰。这是一张《民防设施储藏区检修记录表》，盖着红章，填得还算规整：\n\n\
 ━━━━━ 民防设施储藏区检修记录表 ━━━━━\n\
 检修编号：MF-2024-0873\n\
-储藏区位置：东明街道民防工程B2层 · 丙区-7号物资储藏室\n\
+储藏区位置：东明街道民防工程G层 · 丙区-7号物资储藏室\n\
 检修日期：2024年09月12日  14:30\n\
 下次检修日期：2024年12月12日\n\
 检修人员：王　　复核人员：刘\n\
@@ -1354,18 +1355,23 @@ Object.assign(storyData, {
   },
 
   "小区东门": {
-    image: timeImage({
-      morning: "images/home/小区东门.png",
-      evening: "images/home/小区东门-evening.png",
-      night: "images/home/小区东门-night.png",
-      midnight: "images/home/小区东门-midnight.png"
-    }),
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/home/小区东门.png",
+        evening: "images/home/小区东门-evening.png",
+        night: "images/home/小区东门-night.png",
+        midnight: "images/home/小区东门-midnight.png"
+      });
+      return f(vars);
+    },
     onEnter: { set : { positionAfterOperation: "小区东门-整装待发", currentPlace: "初始小区", currentPos: "东门" } },
-    text: "小区东门。保安亭的大红灯笼还挂在墙上，随风摇曳，沙沙作响。石板路从小区深处蜿蜒而出，在门口收束成短短的一段坡道。\n\
+    text: function(vars) {
+      return "小区东门。保安亭的大红灯笼还挂在墙上，随风摇曳，沙沙作响。石板路从小区深处蜿蜒而出，在门口收束成短短的一段坡道。\n\
 空中传来几声鸟叫，你抬头，看见珠颈斑鸠滑翔而过，落在马路对面的全家便利店上。\n\
 你回头看了一眼小区，那栋你住了七八年的楼，静默地站在那里。\n\
-你不会再回去了。\n\
-",
+你不会再回去了。\n" + describeWeather(vars);
+    },
     choices: [
       {
         showCondition: "itemCount > 0",
@@ -1381,12 +1387,16 @@ Object.assign(storyData, {
 
 
   "小区西门": {
-    image: timeImage({
-      morning: "images/home/小区西门.png",
-      evening: "images/home/小区西门-evening.png",
-      night: "images/home/小区西门-night.png",
-      midnight: "images/home/小区西门-midnight.png"
-    }),
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/home/小区西门.png",
+        evening: "images/home/小区西门-evening.png",
+        night: "images/home/小区西门-night.png",
+        midnight: "images/home/小区西门-midnight.png"
+      });
+      return f(vars);
+    },
     onEnter: updateTime(2, { set : { positionAfterOperation: "小区西门-整装待发", currentPlace: "初始小区", currentPos: "西门" } }),
     text: function(vars) {
       let basicDes = "你来到了小区西门。\n\
@@ -1397,6 +1407,7 @@ Object.assign(storyData, {
 除了风声，这里什么声音都没有。\n\
 死寂。";
       if(_visit['初遇陈默']) basicDes += "陈默踏过石砖路，向北方走去。“我只能帮你到这里。接下来，你只能靠自己了。”他的话在风中回荡。“\n";
+      basicDes += describeWeather(vars);
       return basicDes;
     },
     choices: [
@@ -1589,13 +1600,15 @@ Object.assign(storyData, {
   // ========== 小区草地 + 物业楼（高锦睿） ==========
 
   "小区草地": {
-    image: "images/placeholder.png",
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; },
     onEnter: updateTime(1),
     qte: {
       timeout: 8000,
       onTimeout: "小区草地-被追"
     },
-    text: "你沿着小路往东走，穿过两栋楼之间的过道，眼前豁然开朗——一片不大的草地，中间是一方人工水池，水面上漂着几朵睡莲，粉白的花瓣在阳光下安静地开着。长椅倒在一旁，草地边缘的灌木丛被什么东西踩出了一条凌乱的痕迹。\n水池对面，几只丧尸正在草地上无目的地游荡。其中一只似乎嗅到了什么，停下脚步，缓缓朝你这边转过头来。",
+    text: function(vars) {
+      return "你沿着小路往东走，穿过两栋楼之间的过道，眼前豁然开朗——一片不大的草地，中间是一方人工水池，水面上漂着几朵睡莲，粉白的花瓣在阳光下安静地开着。长椅倒在一旁，草地边缘的灌木丛被什么东西踩出了一条凌乱的痕迹。\n水池对面，几只丧尸正在草地上无目的地游荡。其中一只似乎嗅到了什么，停下脚步，缓缓朝你这边转过头来。\n" + describeWeather(vars);
+    },
     choices: [
       {
         text: "躲到水池后面的长椅下",

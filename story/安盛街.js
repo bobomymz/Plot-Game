@@ -6,17 +6,18 @@ Object.assign(storyData, {
 
   // ==================== 入口：安盛街东侧 ====================
   "安盛街东侧": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/eastEntrance.png */,
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/anshengStreet/eastEntrance.png */
     onEnter: { set: { currentPlace: "安盛街", currentPos: "安盛街" } },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "安盛街东侧-犹豫"
     },
     text: function(vars) {
+      var weather = describeWeather(vars);
       if (!vars._visit["理发店内部"]) {
-        return "你来到了安盛街东侧。小时候你经常来这里逛，那时人来人往、商铺林立。如今卷帘门半掩、招牌歪斜，街上只剩稀稀拉拉的几只丧尸在远处徘徊。\n你曾经理发的那个小店就在前面不远——希望那里还安全。";
+        return "你来到了安盛街东侧。小时候你经常来这里逛，那时人来人往、商铺林立。如今卷帘门半掩、招牌歪斜，街上只剩稀稀拉拉的几只丧尸在远处徘徊。\n你曾经理发的那个小店就在前面不远——希望那里还安全。\n" + weather;
       }
-      return "你再次回到安盛街东侧。街面上又多了一些血迹和碎玻璃，空气里的腐臭味比上次更重了。";
+      return "你再次回到安盛街东侧。街面上又多了一些血迹和碎玻璃，空气里的腐臭味比上次更重了。\n" + weather;
     },
     choices: [
       {
@@ -1096,7 +1097,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街西侧（分岔路口） ====================
   "安盛街西侧": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/westStreet.png */,
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/anshengStreet/westStreet.png */
     onEnter: { set: { positionAfterOperation: "安盛街西侧", currentArea: "周边社区", currentPlace: "安盛街", currentPos: "安盛街" } },
     text: function(vars) {
       let desc = "你来到了安盛街西侧。这里比东侧更加破败——路面上到处是斑斑点点的血迹，有些已经发暗，有些还泛着潮。几辆废弃的车辆歪停在路边。\n\
@@ -1104,8 +1105,7 @@ Object.assign(storyData, {
       if (vars.chasedByZombies >= 3) {
         desc += "\n<span style='color: #ff4444;'>身后的丧尸越来越近了，你必须赶快决定去向。</span>";
       }
-      let zombieDes = describeZombieWave(vars);
-      return desc + "\n" + zombieDes;
+      return desc + "\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     qte: {
       timeout: "12000 - chasedByZombies * 2000",

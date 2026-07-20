@@ -15,15 +15,95 @@ function timeImage(map) {
 function updateTime(addMinutes, extraEffect = {}) { // 更新时间
   addMinutes = addMinutes || 0;
   return function(vars) {
+    var oldHh = vars.hh;
     vars.mm += addMinutes;
     vars.hh += Math.floor(vars.mm / 60);
     vars.mm %= 60;
     vars.dd += Math.floor(vars.hh / 24);
     vars.hh %= 24;
-    // 24小时制，精确到分钟
+    // 天气：跨越整点时更新
+    if (vars.hh !== oldHh || addMinutes >= 60) {
+      updateWeather(vars);
+    }
     return extraEffect;
   }
 // 运用了一个特性：updateTime 直接修改了参数 vars（也就是 gameState），但返回的是空 effect 对象。这碰巧能工作，因为 applyEffect 之前 vars 已经被改了。
+}
+
+// ====== 天气系统 ======
+
+function updateWeather(vars) {
+  var hh = vars.hh;
+  var roll = Math.random();
+
+  // 上海夏季：6-11点多晴，12-17点易雷雨，夜间以阴为主
+  if (vars.weather === "雨") {
+    if (roll < 0.5) vars.weather = "阴";   // 雨停转阴
+    // else 雨继续
+  } else if (vars.weather === "阴") {
+    if (hh >= 6 && hh <= 11 && roll < 0.3) vars.weather = "晴";
+    else if (hh >= 12 && hh <= 17 && roll < 0.35) vars.weather = "雨";
+    // else 阴继续
+  } else { // 晴
+    if (hh >= 12 && hh <= 17 && roll < 0.3) vars.weather = "雨";
+    else if (roll < 0.2) vars.weather = "阴";
+    // else 晴继续
+  }
+
+  vars.windy = Math.random() < 0.55;
+}
+
+function describeWeather(vars) {
+  var s = vars.weather;
+  var w = vars.windy;
+  // 按当前小时取模选描述句，同一小时内保持一致
+  var n = ((vars.dd - 1) * 24 + vars.hh) % 3;
+
+  var pool;
+  if (s === "晴") {
+    if (w) {
+      pool = [
+        "阳光炽烈，晒得地面泛着白光。偶尔一阵风吹过，树叶哗哗作响，稍微缓解了炎热。",
+        "太阳火辣辣地挂在天上，影子缩成脚下小小一团。阵风掠过，带起一阵热浪和灰尘。",
+        "天空蓝得发白，阳光刺得人眯起了眼。风从树梢间穿过，把蝉鸣声吹得时远时近。"
+      ];
+    } else {
+      pool = [
+        "烈日当空，空气凝滞——没有一丝风。热浪从柏油路面蒸腾上来，远处的景物在热空气中微微扭曲。",
+        "太阳像一只烧红的铁盘扣在天上，闷得人喘不过气。树叶一动不动，整个世界安静得只剩下蝉鸣。",
+        "天气闷热得让人烦躁。汗水顺着额头往下淌，衣服早被浸透了。路面上蒸腾的热气模糊了远处的建筑。"
+      ];
+    }
+  } else if (s === "阴") {
+    if (w) {
+      pool = [
+        "天空蒙着一层铅灰色的云，看不到太阳。风断断续续地吹着，路边的塑料袋在地上翻滚，空气又闷又湿。",
+        "灰白的云层一直铺到天际线。风吹过来带着一股潮气，像暴雨要来但总也不来。",
+        "云层像被揉皱的棉絮，层层叠叠地堆在天上。风时大时小，把路边的枯叶卷起来又放下。"
+      ];
+    } else {
+      pool = [
+        "厚厚的云层压得很低，空气闷得像蒸笼。没有风，衣服粘在背上，呼吸都带着一股潮气。",
+        "乌云阴沉沉地压在城市上方，仿佛随时会塌下来。空气静止得像一潭死水，连路边的杂草都纹丝不动。",
+        "天色暗沉，分不清是上午还是傍晚。空气又闷又重，每吸一口都觉得费力。"
+      ];
+    }
+  } else { // 雨
+    if (w) {
+      pool = [
+        "雨不紧不慢地下着。风把雨丝吹得歪歪斜斜，打在路面上溅起细细的水花。远处偶尔传来低沉的雷声。",
+        "雨点被风裹挟着斜打在脸上，凉凉的。路面的积水被雨滴砸出密密麻麻的涟漪，又被风揉碎。",
+        "风雨交织，行道树被吹得左右摇晃，雨水顺着叶片哗哗地往下淌。远处传来一阵闷雷，像天空在低吼。"
+      ];
+    } else {
+      pool = [
+        "雨直直地落下来，整个世界只剩下淅淅沥沥的雨声。路面上的积水倒映着灰蒙蒙的天空，空气里弥漫着湿润的泥土味。",
+        "雨丝细密而均匀，不紧不慢地洗刷着街道。没有风，雨帘笔直地垂落，像天地间挂了无数道透明的线。",
+        "雨声沙沙的，不急不缓。水珠顺着屋檐、路灯、招牌的边缘往下滴，整个世界都笼罩在一片灰蒙蒙的雨幕中。"
+      ];
+    }
+  }
+  return pool[n];
 }
 
 // 位置回溯追踪：记录位置栈，检测回头路（ch>0 时折返到上一个地点会引来更多丧尸）

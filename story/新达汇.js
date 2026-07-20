@@ -16,12 +16,16 @@ function mallQTE(baseTimeout, onTimeout) {
 Object.assign(storyData, {
 
   "新达汇-喷泉广场": {
-    image: timeImage({
-      morning: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
-      evening: "images/新达汇/喷泉广场-evening.png",
-      night: "images/新达汇/喷泉广场-night.png",
-      midnight: "images/新达汇/喷泉广场-midnight.png"
-    }),
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
+        evening: "images/新达汇/喷泉广场-evening.png",
+        night: "images/新达汇/喷泉广场-night.png",
+        midnight: "images/新达汇/喷泉广场-midnight.png"
+      });
+      return f(vars);
+    },
     onEnter: { set: { currentPlace: "新达汇", currentArea: "周边社区", currentPos: "新达汇" } },
     text: function(vars) {
       var desc = "新达汇·三林的主入口广场。中央的喷泉停着，池底浅浅一层积水漂着落叶。广场上零散地倒着几个歪斜的广告牌和废弃的购物车。\n正前方是商场西区的主入口，玻璃门敞开着；东侧能看到东区的开放式街区；地面有一个通往B1下沉广场的阶梯入口。\n";
@@ -30,7 +34,7 @@ Object.assign(storyData, {
       } else if (vars._metGaoAtMall) {
         desc += "喷泉边上那辆红色山地车还在，车架上的卡通贴纸在日光下反射着褪色的光泽。";
       }
-      return desc + describeZombieWave(vars);
+      return desc + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: function(vars) {
       var cs = [];

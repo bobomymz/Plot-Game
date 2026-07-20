@@ -57,19 +57,23 @@ Object.assign(storyData, {
 
 
   "三林路-环林东路 十字路口": {
-    image: timeImage({
-      morning: "images/小区周边/十字路口.png",
-      evening: "images/小区周边/十字路口-evening.png",
-      night: "images/小区周边/十字路口-night.png",
-      midnight: "images/小区周边/十字路口-midnight.png"
-    }),
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/小区周边/十字路口.png",
+        evening: "images/小区周边/十字路口-evening.png",
+        night: "images/小区周边/十字路口-night.png",
+        midnight: "images/小区周边/十字路口-midnight.png"
+      });
+      return f(vars);
+    },
     onEnter: { set: { currentArea: "周边社区", currentPlace: "十字路口", currentPos: "十字路口" } },
     qte: {
       timeout: "10000 - chasedByZombies * 2000", // 尸潮越猛，限时越短
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了一个十字路口，你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\n" + describeZombieWave(vars);
+      return "你来到了一个十字路口，你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -102,14 +106,14 @@ Object.assign(storyData, {
   },
 
   "三林路": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/三林路.png */,
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/小区周边/三林路.png */
     onEnter: { set: { currentPlace: "三林路", currentPos: "三林路" } },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了三林路。这里有你童年时住过的老小区，益丰大药房、建设银行、联华超市等。\n你需要选择去哪里。\n快选哦，周围的丧尸就要围拢过来了。\n" + describeZombieWave(vars);
+      return "你来到了三林路。这里有你童年时住过的老小区，益丰大药房、建设银行、联华超市等。\n你需要选择去哪里。\n快选哦，周围的丧尸就要围拢过来了。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -164,12 +168,16 @@ Object.assign(storyData, {
   },
 
   "三林路-东明路 十字路口": {
-    image: timeImage({
-      morning: "images/小区周边/十字路口2.png",
-      evening: "images/小区周边/十字路口2-evening.png",
-      night: "images/小区周边/十字路口2-night.png",
-      midnight: "images/小区周边/十字路口2-midnight.png"
-    }),
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/小区周边/十字路口2.png",
+        evening: "images/小区周边/十字路口2-evening.png",
+        night: "images/小区周边/十字路口2-night.png",
+        midnight: "images/小区周边/十字路口2-midnight.png"
+      });
+      return f(vars);
+    },
     onEnter: { set: { currentArea: "周边社区", currentPlace: "十字路口", currentPos: "十字路口" } },
     qte: {
       timeout: "8000 - chasedByZombies * 1000",
@@ -177,7 +185,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你来到了一个十字路口。西边通向金谊广场，南边通向新达汇，它们都是大商场，可能有丰富的物资；北面是东明路，东面是三林路。\n你需要选择前进的方向。\n\
-快选哦，周围的丧尸就要围拢过来了。\n" + describeZombieWave(vars);
+快选哦，周围的丧尸就要围拢过来了。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -240,14 +248,14 @@ Object.assign(storyData, {
   },
 
   "东明路-三林路": {
-    image: "images/小区周边/东明路-三林路.png",
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/小区周边/东明路-三林路.png"; },
     onEnter: { set: { currentArea: "周边社区", currentPlace: "东明路", currentPos: "东明路" } },
     qte: {
       timeout: "8000 - chasedByZombies * 2000",
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了东明路上。这里有很多丧尸，你需要快点做出选择。\n" + describeZombieWave(vars);
+      return "你来到了东明路上。这里有很多丧尸，你需要快点做出选择。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {

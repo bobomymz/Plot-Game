@@ -5,7 +5,7 @@ Object.assign(storyData, {
 
   // ==================== 三林安居苑（老小区） ====================
   "三林安居苑": {
-    image: "images/安居苑/后门.png" /* TODO: images/安居苑/anJuYuan.png */,
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/安居苑/后门.png"; }, /* TODO: images/安居苑/anJuYuan.png */
     onEnter: { set: { currentPlace: "安居苑", currentPos: "安居苑" } },
     text: function(vars) {
       let desc = "你来到三林安居苑的入口。这是一个老小区，没有地下车库，几栋六层楼围绕着中间的小花园。\n";
@@ -13,6 +13,7 @@ Object.assign(storyData, {
         desc += "追在身后的尸群暂时还没跟上来——老小区的门卫亭和几辆废弃的电瓶车形成了一道天然的障碍，也许能挡一阵。\n";
       }
       desc += "小区里异常安静，只有风吹过树梢的沙沙声。你注意到花坛里有几只猫——不，它们看起来不太对劲。它们的眼睛泛着不正常的绿光，体型也比普通猫大了一圈。\n其中一只缓缓转过头来，盯着你，发出低沉的嘶嘶声。";
+      desc += "\n" + describeWeather(vars);
       return desc;
     },
     choices: [
@@ -928,8 +929,8 @@ Object.assign(storyData, {
   },
 
   "安居苑前门": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anjuyuanFrontDoor.png */,
-    text: "你来到了安居苑的前门",
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/安居苑/anjuyuanFrontDoor.png */
+    text: function(vars) { return "你来到了安居苑的前门\n" + describeWeather(vars); },
     choices: [
       {
         text: "离开这里",
