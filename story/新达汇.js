@@ -2783,7 +2783,7 @@ Object.assign(storyData, {
       {
         text: "前往天桥",
         nextScene: "新达汇-东区天桥1",
-        effect: updateTime(1),
+        effect: updateTime(5),
       },
     ]
   },

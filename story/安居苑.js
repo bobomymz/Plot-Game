@@ -861,7 +861,7 @@ Object.assign(storyData, {
 
 "三林安居苑-厨房": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
-    onEnter: updateTime(2, { add: { strength: 1 } }),
+    onEnter: updateTime(5, { add: { strength: 1 } }),
     text: "你握着武器靠近厨房。那只丧尸试图爬过来抓你，被你一棍子敲翻在地。\n你打开橱柜——里面还有几包没开封的挂面和一瓶食用油。虽然面条没法生吃，但你发现料理台上还有半箱矿泉水，以及几罐八宝粥。\n\
 你打开一罐八宝粥喝了个精光。甜腻的味道让你想起小时候的早餐，但此刻它是你吃过最好吃的东西。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",

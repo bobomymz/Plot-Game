@@ -900,7 +900,7 @@ Object.assign(storyData, {
         showCondition: "dd <= 2 && !hasBiscuit", // 还没有被拿光（周围可能有别的幸存者，到Day3就没有水和饼干了）
         text: "快拿一瓶水和一包饼干",
         nextScene: "安盛街-食品批发部得手",
-        effect: updateTime(1)
+        effect: updateTime(3)
       },
       {
         showCondition: "hasCane || hasMopHandle || hasIronPipe",
