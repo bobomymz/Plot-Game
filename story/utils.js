@@ -106,12 +106,13 @@ function describeWeather(vars) {
   return pool[n];
 }
 
-// 户外天气体力消耗：晴 -0.5/阴 -0.2/雨不扣，有风各减 0.1
+// 户外天气效果：晴 ch 归零（丧尸趋避阳光）+ 体力扣除，阴扣体力，雨无效果
 function applyWeatherDrain(vars) {
   if (vars.weather === "雨") return;
   var drain = vars.weather === "晴" ? 0.5 : 0.2;
   if (vars.windy) drain -= 0.1;
   vars.strength = Math.max(0, vars.strength - drain);
+  if (vars.weather === "晴") vars.chasedByZombies = 0;
 }
 
 // 位置回溯追踪：记录位置栈，检测回头路（ch>0 时折返到上一个地点会引来更多丧尸）
