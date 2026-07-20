@@ -1053,7 +1053,7 @@ Object.assign(storyData, {
   },
 
   "民防设施-物资区": {
-    image: "images/placeholder.png" /* TODO: images/home/material.png */,
+    image: "images/home/物资区.png",
     onEnter: { set: { positionAfterOperation: "民防设施-物资区" } },
     text: "你来到了物资区。这里堆着很多纸箱子，但不少都是空的。你在其中找到了一个老式防毒面具。这时，杂物堆方向传来窸窸窣窣的声音。",
     choices: [
