@@ -31,6 +31,7 @@ const storyData = {
     libraryCleared: false,     // 是否清空了社区图书馆的丧尸
     defeatedOldMan: false,     // 是否已击败安盛街老头丧尸
     _supermarketCompromised: false, // 联华超市地下室是否已暴露不再安全
+    _supermarketSuppliesTaken: false,// 联华超市的补给是否已经拿到
     maskRemainingUses: 1,      // 防毒面具剩余使用次数（初始1，含进风机房，耗尽可能二次使用会死）
     hasClassMates: false,      // 是否救出上实南校三位同学
     _yorozuyaUnlocked: false,  // 是否解锁哥哥的深夜食堂

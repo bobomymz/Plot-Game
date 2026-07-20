@@ -261,7 +261,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/小区周边/轿车.png */,
     onEnter: updateTime(2), 
     text: function(vars) {
-      return "你走进那辆丰田的车，使劲拉了拉车门，它纹丝不动。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。\n" + describeZombieWave(vars);
+      return "你走近那辆丰田的车，使劲拉了拉车门，它纹丝不动。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。\n" + describeZombieWave(vars);
     },
     choices: [
       {

@@ -852,6 +852,10 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   }
   stopTyping();
 
+  // 进入新场景时重置展开状态
+  document.getElementById("text-area").classList.remove("text-expanded");
+  document.getElementById("choices-area").classList.remove("text-expanded");
+
   if (!gameState || (Object.keys(gameState).length === 0 && storyData && storyData._variables)) {
     console.warn("【引擎】检测到 gameState 为空，重新初始化变量。");
     initGameState();
