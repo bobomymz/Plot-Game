@@ -1104,13 +1104,13 @@ Object.assign(storyData, {
   },
 
   "结局-民防设施楼梯断裂": {
-    image: "images/placeholder.png",
+    image: "images/home/踩塌台阶.png",
     text: "你转头就跑，跳下楼梯，木板发出不堪重负的嘎吱声，随即断裂。你掉入了深邃的黑暗中，转眼便被丧尸吞噬。\n\
 —— 结局：看你还跳不跳 ——"
   },
 
   "民防设施-通风管道": {
-    image: "images/home/vent.png",
+    image: "images/home/发现通风管道.png",
     onEnter: { add: { strength: -1 } }, // 一脚踹开箱子，费了点力气
     text: "你一脚踹开箱子，这里什么都没有，但是有个通风管道的格栅，看起来不太牢靠。",
     choices: [
@@ -1141,7 +1141,7 @@ Object.assign(storyData, {
   },
 
   "死路一条": {
-    image: "images/placeholder.png" /* TODO: images/home/deadEnd.png */,
+    image: "images/zombiePounceOnYou.jpg",
     text: "你走错了路，前面是死路一条。\n\
 丧尸的那绿色的眼睛是你最后的记忆。\n—— 结局：死路一条 ——"
   },
