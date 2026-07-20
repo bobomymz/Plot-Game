@@ -26,7 +26,12 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: { set: { currentPlace: "新达汇", currentArea: "周边社区", currentPos: "新达汇" } },
+    onEnter: function(vars) {
+      vars.currentPlace = "新达汇";
+      vars.currentArea = "周边社区";
+      vars.currentPos = "新达汇";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
       var desc = "新达汇·三林的主入口广场。中央的喷泉停着，池底浅浅一层积水漂着落叶。广场上零散地倒着几个歪斜的广告牌和废弃的购物车。\n正前方是商场西区的主入口，玻璃门敞开着；东侧能看到东区的开放式街区；地面有一个通往B1下沉广场的阶梯入口。\n";
       if (!vars._metGaoAtMall && vars.dd <= 3 && vars.hh >= 10 && vars.hh <= 14) {

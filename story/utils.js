@@ -106,6 +106,14 @@ function describeWeather(vars) {
   return pool[n];
 }
 
+// 户外天气体力消耗：晴 -0.5/阴 -0.2/雨不扣，有风各减 0.1
+function applyWeatherDrain(vars) {
+  if (vars.weather === "雨") return;
+  var drain = vars.weather === "晴" ? 0.5 : 0.2;
+  if (vars.windy) drain -= 0.1;
+  vars.strength = Math.max(0, vars.strength - drain);
+}
+
 // 位置回溯追踪：记录位置栈，检测回头路（ch>0 时折返到上一个地点会引来更多丧尸）
 // pos 是当前位置的名字，同一物理位置的不同场景共享同一个 pos 名即可
 function transit(vars, pos) {

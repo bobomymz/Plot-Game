@@ -6,7 +6,11 @@ Object.assign(storyData, {
   // ==================== 三林安居苑（老小区） ====================
   "三林安居苑": {
     image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/安居苑/后门.png"; }, /* TODO: images/安居苑/anJuYuan.png */
-    onEnter: { set: { currentPlace: "安居苑", currentPos: "安居苑" } },
+    onEnter: function(vars) {
+      vars.currentPlace = "安居苑";
+      vars.currentPos = "安居苑";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
       let desc = "你来到三林安居苑的入口。这是一个老小区，没有地下车库，几栋六层楼围绕着中间的小花园。\n";
       if (vars.chasedByZombies >= 2) {
@@ -930,6 +934,7 @@ Object.assign(storyData, {
 
   "安居苑前门": {
     image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/安居苑/anjuyuanFrontDoor.png */
+    onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) { return "你来到了安居苑的前门\n" + describeWeather(vars); },
     choices: [
       {

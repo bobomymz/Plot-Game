@@ -483,7 +483,11 @@ Object.assign(storyData, {
 
   "小区道路": {
     image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/home/小区道路.png"; },
-    onEnter: { set: { currentPlace: "初始小区", currentPos: "小区道路" } },
+    onEnter: function(vars) {
+      vars.currentPlace = "初始小区";
+      vars.currentPos = "小区道路";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
       var desc = "你走在小区的小道上。曾经你在这里练习足球，可以看到很多老年人带着孩子玩，时不时有外卖员驶过。现在，不会再有了。\n";
       if (!vars._sleepingZombieGone) desc += "你看到有一个人坐在椅子上，像是睡着了。\n还能这么悠闲？";
@@ -1365,7 +1369,12 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: { set : { positionAfterOperation: "小区东门-整装待发", currentPlace: "初始小区", currentPos: "东门" } },
+    onEnter: function(vars) {
+      vars.positionAfterOperation = "小区东门-整装待发";
+      vars.currentPlace = "初始小区";
+      vars.currentPos = "东门";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
       return "小区东门。保安亭的大红灯笼还挂在墙上，随风摇曳，沙沙作响。石板路从小区深处蜿蜒而出，在门口收束成短短的一段坡道。\n\
 空中传来几声鸟叫，你抬头，看见珠颈斑鸠滑翔而过，落在马路对面的全家便利店上。\n\
@@ -1397,7 +1406,11 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: updateTime(2, { set : { positionAfterOperation: "小区西门-整装待发", currentPlace: "初始小区", currentPos: "西门" } }),
+    onEnter: function(vars) {
+      var effect = updateTime(2, { set: { positionAfterOperation: "小区西门-整装待发", currentPlace: "初始小区", currentPos: "西门" } })(vars);
+      applyWeatherDrain(vars);
+      return effect;
+    },
     text: function(vars) {
       let basicDes = "你来到了小区西门。\n\
 推开失灵的感应门。门外是一条空荡荡的街道，几辆歪斜的汽车堵在路中间，车窗碎裂，里面空无一人。\n\
@@ -1601,7 +1614,11 @@ Object.assign(storyData, {
 
   "小区草地": {
     image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; },
-    onEnter: updateTime(1),
+    onEnter: function(vars) {
+      var effect = updateTime(1)(vars);
+      applyWeatherDrain(vars);
+      return effect;
+    },
     qte: {
       timeout: 8000,
       onTimeout: "小区草地-被追"

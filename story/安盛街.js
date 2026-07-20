@@ -7,7 +7,11 @@ Object.assign(storyData, {
   // ==================== 入口：安盛街东侧 ====================
   "安盛街东侧": {
     image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/anshengStreet/eastEntrance.png */
-    onEnter: { set: { currentPlace: "安盛街", currentPos: "安盛街" } },
+    onEnter: function(vars) {
+      vars.currentPlace = "安盛街";
+      vars.currentPos = "安盛街";
+      applyWeatherDrain(vars);
+    },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "安盛街东侧-犹豫"
@@ -1098,7 +1102,13 @@ Object.assign(storyData, {
   // ==================== 安盛街西侧（分岔路口） ====================
   "安盛街西侧": {
     image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/anshengStreet/westStreet.png */
-    onEnter: { set: { positionAfterOperation: "安盛街西侧", currentArea: "周边社区", currentPlace: "安盛街", currentPos: "安盛街" } },
+    onEnter: function(vars) {
+      vars.positionAfterOperation = "安盛街西侧";
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "安盛街";
+      vars.currentPos = "安盛街";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
       let desc = "你来到了安盛街西侧。这里比东侧更加破败——路面上到处是斑斑点点的血迹，有些已经发暗，有些还泛着潮。几辆废弃的车辆歪停在路边。\n\
   一块歪斜的路牌指向两个方向：右边是小区西门的方向，那里有个十字路口，左边沿大路一直走可以到新达汇商场。";

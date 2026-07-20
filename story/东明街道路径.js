@@ -67,7 +67,12 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: { set: { currentArea: "周边社区", currentPlace: "十字路口", currentPos: "十字路口" } },
+    onEnter: function(vars) {
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "十字路口";
+      vars.currentPos = "十字路口";
+      applyWeatherDrain(vars);
+    },
     qte: {
       timeout: "10000 - chasedByZombies * 2000", // 尸潮越猛，限时越短
       onTimeout: "结局-丧尸的围殴"
@@ -107,7 +112,11 @@ Object.assign(storyData, {
 
   "三林路": {
     image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/小区周边/三林路.png */
-    onEnter: { set: { currentPlace: "三林路", currentPos: "三林路" } },
+    onEnter: function(vars) {
+      vars.currentPlace = "三林路";
+      vars.currentPos = "三林路";
+      applyWeatherDrain(vars);
+    },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "结局-丧尸的围殴"
@@ -178,7 +187,12 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: { set: { currentArea: "周边社区", currentPlace: "十字路口", currentPos: "十字路口" } },
+    onEnter: function(vars) {
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "十字路口";
+      vars.currentPos = "十字路口";
+      applyWeatherDrain(vars);
+    },
     qte: {
       timeout: "8000 - chasedByZombies * 1000",
       onTimeout: "结局-丧尸的围殴"
@@ -249,7 +263,12 @@ Object.assign(storyData, {
 
   "东明路-三林路": {
     image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/小区周边/东明路-三林路.png"; },
-    onEnter: { set: { currentArea: "周边社区", currentPlace: "东明路", currentPos: "东明路" } },
+    onEnter: function(vars) {
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "东明路";
+      vars.currentPos = "东明路";
+      applyWeatherDrain(vars);
+    },
     qte: {
       timeout: "8000 - chasedByZombies * 2000",
       onTimeout: "结局-丧尸的围殴"
