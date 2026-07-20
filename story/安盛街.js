@@ -379,7 +379,7 @@ Object.assign(storyData, {
         vars._travelMinutes = 0;
         vars.strength = Math.min(10, vars.strength + 1);
         vars.restAtBarber = true;
-        updateTime(30);
+        updateTime(30)(vars);
         return {};
       }
     },

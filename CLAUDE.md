@@ -373,16 +373,26 @@ rules: [
 
 ### 游戏状态变量
 
-定义在 `story/core.js` 的 `_variables` 中。关键变量：
+全部定义在 `story/core.js` 的 `_variables` 中。这里列出剧作者常用的，完整列表见 `_variables`。
 
-| 变量                            | 范围   | 说明                |
-| ----------------------------- | ---- | ----------------- |
-| `strength`                    | 0-10 | 体力，0 死亡           |
-| `chasedByZombies`             | 0-5  | 尸潮追击等级，5 死亡       |
-| `itemCount` / `bagVolume`     | -    | 物品栏（上限3）          |
-| `dd` / `hh` / `mm`            | -    | 游戏时间              |
-| `isWeak`                      | bool | 体力 < 3 时自动设为 true |
-| `hasBroom` / `hasDiary` / ... | bool | 物品标志              |
+| 变量 | 范围/类型 | 说明 |
+|------|----------|------|
+| **基础数值** | | |
+| `strength` | 0–10 | 体力，初始 7。Reactive: 每小时 -1（饥饿）；< 3 → `isWeak` |
+| `dd` / `hh` / `mm` | int | Day/Hour/Minute，游戏时间，初始 Day1 8:00 |
+| `isWeak` | bool | `strength < 3` 自动置 true（reactive） |
+| `hurtByZombie` | bool | 被丧尸抓伤，加快饥饿掉体力节奏 |
+| **天气** | | |
+| `weather` | `"晴"/"阴"/"雨"` | 雨天 `updateTime` 自动 ×1.3，影响场景文本 |
+| `windy` | bool | 是否有风 |
+| **尸潮 & 疲劳** | | |
+| `chasedByZombies` | 0–5 | 追击等级，5 秒杀。晴夜归零。高值影响 QTE 时间、战斗风险 |
+| `_travelMinutes` | 0–… | 连续移动累积分钟（>6min 的 `updateTime` 累加）；20/36/48/56/60 五档各 -1 体力（reactive） |
+| **背包 & 物品** | | |
+| `itemCount` / `bagVolume` | int | 当前物品数 / 背包容量（初始 3） |
+| `hasXxx` | bool | 物品flag，添加时需同时 `add: { itemCount: 1 }`。交通工具和背包不占 `itemCount` |
+| **记忆系统** | | |
+| `gameMemorySet` / `personalMemorySet` | `Set` | 已收集的记忆，`gameMemoryThres`（10）为结局阈值 |
 
 ### 物品管理
 

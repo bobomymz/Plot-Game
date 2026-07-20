@@ -745,7 +745,7 @@ Object.assign(storyData, {
   },
 
   "防爆门": {
-    image: "images/placeholder.png" /* TODO: images/home/防爆门.png */,
+    image: "images/home/防爆门.jpg",
     text: "你仓皇逃窜，眼前是一道防爆门，关上它就能挡住丧尸！",
     qte: {
       timeout: 3000,              // 3秒
@@ -1330,7 +1330,7 @@ Object.assign(storyData, {
   },
 
   "民防设施-进风机房-安全": {
-    image: "images/placeholder.png" /* TODO: images/home/CDpassage.png */,
+    image: "images/home/fanRoom.png",
     text: "吁，现在安全了。\n\
 你继续沿着通道走，经过了消毒室等房间，终于走了出去。",
     choices: [
