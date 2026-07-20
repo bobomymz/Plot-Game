@@ -64,8 +64,12 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-小区内部": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanInside.png */,
-    onEnter: { set: { currentPlace: "安居苑", currentPos: "安居苑" } },
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/安居苑/anJuYuanInside.png */
+    onEnter: function(vars) {
+      vars.currentPlace = "安居苑";
+      vars.currentPos = "安居苑";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
       let basicDes = "你走在三林安居苑的一条小道上。老小区的布局很简单：中间是一个小花园，围绕着几栋六层居民楼。旁边还有一个下沉式小广场，你以前经常在这里玩滑板车。\n"
       if(!vars.fightWithVineZombie) basicDes += "花园里的长椅上躺着一个老人，已经变成丧尸了——它的身体被藤蔓缠住，动弹不得，只能发出微弱的嗬嗬声。\n"
@@ -75,7 +79,7 @@ Object.assign(storyData, {
       basicDes += "\n\
 东边那栋的门牌上写着\"8号楼\"——二楼靠东的窗户开着一道缝，像是被人推开后就没关回去。窗台上搁着一只白色的搪瓷缸，上面印着褪了色的红字。风大的时候，能听到什么东西在啪嗒啪嗒地响。"
       // 安居苑北门是前门，面向三林路，南门是后门，面向安盛街中段
-      return basicDes;
+      return basicDes + "\n" + describeWeather(vars);
     },
     choices: [
       {
@@ -121,10 +125,17 @@ Object.assign(storyData, {
   // ========== 小广场 ==========
 
   "三林安居苑-小广场": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/smallSquare.png */,
-    onEnter: { set: { currentPlace: "安居苑", currentPos: "小广场", positionAfterOperation: "三林安居苑-滑板车" } },
-    text: "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。小广场一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
-再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。",
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/安居苑/smallSquare.png */
+    onEnter: function(vars) {
+      vars.currentPlace = "安居苑";
+      vars.currentPos = "小广场";
+      vars.positionAfterOperation = "三林安居苑-滑板车";
+      applyWeatherDrain(vars);
+    },
+    text: function(vars) {
+      return "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。小广场一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
+再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。\n" + describeWeather(vars);
+    },
     choices: [
       {
         text: "往南走",

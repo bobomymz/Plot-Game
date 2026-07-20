@@ -95,11 +95,11 @@ function typeText(element, fullText, speed = 80, onComplete) {
 }
 
 sceneText.addEventListener("click", () => {
+  // 状态1：正在打字 → 停止打字，立即显示全文
   if (typingTimer) {
     clearInterval(typingTimer);
     typingTimer = null;
 
-    // 根据模式选择 innerHTML 或 textContent
     if (typingIsHtml) {
       sceneText.innerHTML = typingFullText;
     } else {
@@ -112,7 +112,14 @@ sceneText.addEventListener("click", () => {
       typingCallback = null;
       cb();
     }
+    return;
   }
+
+  // 状态2：打字已完成 → 切换文本展开/收起
+  const textArea = document.getElementById("text-area");
+  const choicesArea = document.getElementById("choices-area");
+  textArea.classList.toggle("text-expanded");
+  choicesArea.classList.toggle("text-expanded");
 });
 
 // ====== 工具函数 ======

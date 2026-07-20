@@ -764,7 +764,7 @@ Object.assign(storyData, {
   },
 
   "结局-防爆门没锁上": {
-    image: "images/home/防爆门失败.png",
+    image: "images/home/防爆门失败.jpg",
     text: "你关上门转身想跑，丧尸突然撞开了门，向你扑来。你在劫难逃……\n\
 —— 结局：被丧尸扑倒咬死 ——"
   },
@@ -789,7 +789,7 @@ Object.assign(storyData, {
     image: timeImage({
       morning: "images/home/小区西门.png",
       evening: "images/home/小区西门-evening.png",
-      night: "images/home/小区西门=night.png",
+      night: "images/home/小区西门-night.png",
       midnight: "images/home/小区西门-midnight.png"
     }),
     text: "你来到了西出口，成功逃出了地下车库",
@@ -1002,7 +1002,7 @@ Object.assign(storyData, {
   },
 
   "民防设施-楼梯间": {
-    image: "images/home/等候室走廊.png",
+    image: "images/home/等候室走廊.jpg",
     qte: {
       timeout: 5000,
       onTimeout: "结局-被丧尸扑倒咬死"
@@ -1047,7 +1047,7 @@ Object.assign(storyData, {
   },
 
   "结局-初遇毒气型丧尸": {
-    image: "images/home/gasZombie.png" ,
+    image: "images/home/gasZombie.jpg" ,
     onEnter: updateTime(5), // 花5分钟躲在黑暗里
     text: "那只魁梧的丧尸像野兽一般朝你扑来，擦过你的后背，狠狠撞在紧急出口的门上。\n\
 门震了一下，一点油漆都没刮掉。\n\
@@ -1192,7 +1192,7 @@ Object.assign(storyData, {
   },
 
   "民防设施-物资区-检修记录表": {
-    image: "images/placeholder.png" /* TODO: images/home/检修记录表.png */,
+    image: "images/home/检修记录表.png",
     text: "你从纸箱里翻出一沓文件，掸了掸灰。这是一张《民防设施储藏区检修记录表》，盖着红章，填得还算规整：\n\n\
 ━━━━━ 民防设施储藏区检修记录表 ━━━━━\n\
 检修编号：MF-2024-0873\n\

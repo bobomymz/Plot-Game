@@ -3,15 +3,20 @@
 
 Object.assign(storyData, {
   "小区东门-整装待发": { // 此时时间；Day1 12:00
-    image: timeImage({
-      morning: "images/home/小区东门.png",
-      evening: "images/home/小区东门-evening.png",
-      night: "images/home/小区东门-night.png",
-      midnight: "images/home/小区东门-midnight.png"
-    }),
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/home/小区东门.png",
+        evening: "images/home/小区东门-evening.png",
+        night: "images/home/小区东门-night.png",
+        midnight: "images/home/小区东门-midnight.png"
+      });
+      return f(vars);
+    },
+    onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) {
       return "你四处张望。\n远处有不少丧尸在游荡。紧挨着小区的门是一个全家便利店，你经常在那里买早餐。\n\
-你向身旁看去，那里有一辆你初中时常坐的公交车，此刻就像一头休憩的野兽，静静蹲守在一个公交站台旁。\n" + describeZombieWave(vars);
+你向身旁看去，那里有一辆你初中时常坐的公交车，此刻就像一头休憩的野兽，静静蹲守在一个公交站台旁。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
 // 真实地名为环林东路樱桃苑东门
     choices: [
@@ -40,13 +45,18 @@ Object.assign(storyData, {
   },
 
   "小区西门-整装待发": {
-    image: timeImage({
-      morning: "images/home/小区西门.png",
-      evening: "images/home/小区西门-evening.png",
-      night: "images/home/小区西门-night.png",
-      midnight: "images/home/小区西门-midnight.png"
-    }),
-    text: "你整理好东西，准备出发了。",
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/home/小区西门.png",
+        evening: "images/home/小区西门-evening.png",
+        night: "images/home/小区西门-night.png",
+        midnight: "images/home/小区西门-midnight.png"
+      });
+      return f(vars);
+    },
+    onEnter: function(vars) { applyWeatherDrain(vars); },
+    text: function(vars) { return "你整理好东西，准备出发了。" + describeWeather(vars); },
     choices: [
       {
         text: "继续",
@@ -316,15 +326,23 @@ Object.assign(storyData, {
 
   // ==================== 建设银行 ====================
   "银行门口": {
-    image: timeImage({
-      morning: "images/小区周边/银行门口-morning.png",
-      evening: "images/小区周边/银行门口-evening.png",
-      night: "images/小区周边/银行门口-night.png",
-      midnight: "images/小区周边/银行门口-midnight.png",
-    }),
-    onEnter: { set: { currentPlace: "三林路", currentPos: "银行" } },
-    text: "你来到了建设银行门口。这是你办第一张储蓄卡的地方，你把自己的压岁钱存了2年定期，但是1年就取出来了，只有活期的利率。不过，本来也没多少钱。\n\
-如果你带卡了，或许可以去ATM机里掏出一些钱来————不过，这末世里钱有什么用？",
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/小区周边/银行门口-morning.png",
+        evening: "images/小区周边/银行门口-evening.png",
+        night: "images/小区周边/银行门口-night.png",
+        midnight: "images/小区周边/银行门口-midnight.png",
+      });
+      return f(vars);
+    },
+    onEnter: function(vars) {
+      vars.currentPlace = "三林路";
+      vars.currentPos = "银行";
+      applyWeatherDrain(vars);
+    },
+    text: function(vars) { return "你来到了建设银行门口。这是你办第一张储蓄卡的地方，你把自己的压岁钱存了2年定期，但是1年就取出来了，只有活期的利率。不过，本来也没多少钱。\n\
+如果你带卡了，或许可以去ATM机里掏出一些钱来————不过，这末世里钱有什么用？" + describeWeather(vars); },
     choices: [
       {
         text: "进入银行",

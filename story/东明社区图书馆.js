@@ -6,11 +6,15 @@ Object.assign(storyData, {
 
   // ==================== 入口 ====================
   "图书馆": {
-    image: "images/placeholder.png" /* TODO: images/library/libraryFront.png */,
-    onEnter: { set: { currentPlace: "东明路", currentPos: "图书馆" } },
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/library/libraryFront.png */
+    onEnter: function(vars) {
+      vars.currentPlace = "东明路";
+      vars.currentPos = "图书馆";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
-      if (vars.libraryCleared) return "你再次来到东明社区图书馆。玻璃门上还留着上次你清理时留下的痕迹。里面很安静——你知道，现在这里是安全的。";
-      return "你来到东明社区图书馆。这是一栋不大的独栋建筑，灰色的外墙爬满了半枯的藤蔓。玻璃门上贴着闭馆通知，日期停留在七月初。\n门没有锁。";
+      if (vars.libraryCleared) return "你再次来到东明社区图书馆。玻璃门上还留着上次你清理时留下的痕迹。里面很安静——你知道，现在这里是安全的。" + describeWeather(vars);
+      return "你来到东明社区图书馆。这是一栋不大的独栋建筑，灰色的外墙爬满了半枯的藤蔓。玻璃门上贴着闭馆通知，日期停留在七月初。\n门没有锁。" + describeWeather(vars);
     },
     choices: [
       { text: "进去看看", nextScene: "图书馆-大厅", showCondition: "libraryCleared" },

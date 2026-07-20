@@ -2584,13 +2584,14 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-屋顶花园": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/新达汇/roofGarden.png */
+    onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) {
       var desc = "你站在新达汇的屋顶花园。视野豁然开朗。中央有一个小型直升机停机坪——旁边停放着一架白色的外卖无人机。";
       if (vars._powerOut && vars._droneBattery <= 0) desc += "\n无人机指示灯已灭，电池彻底耗尽。";
       else if (vars._powerOut) desc += "\n无人机指示灯显示剩余约" + Math.ceil(vars._droneBattery / 2) + "分钟。";
       else desc += "\n无人机充电底座亮着绿灯——充满电了。";
-      return desc + "\n" + describeZombieWave(vars);
+      return desc + "\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -2692,10 +2693,10 @@ Object.assign(storyData, {
 
   // ==================== 东区 ====================
   "新达汇-东区天桥1": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/eastBridge.png */,
-    onEnter: function(v) { transit(v, "东区-天桥1"); return {}; },
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/新达汇/eastBridge.png */
+    onEnter: function(v) { transit(v, "东区-天桥1"); applyWeatherDrain(v); return {}; },
     qte: mallQTE(10000, "结局-丧尸的围殴"),
-    text: function(vars) { return "玻璃顶的空中连廊，连接西区2F和东区。脚下能看到地面的广场。\n" + (!vars._catChasing && !vars._powerOut && vars._catFed && Math.random() < 0.3 ? "头顶的玻璃顶上传来轻轻的脚步声——那只变异猫正走在天桥外侧的玻璃上，像在走T台。它经过你的正上方时停了一下，低头看了看你，然后继续向前走去。\n" : "") + describeZombieWave(vars); },
+    text: function(vars) { return "玻璃顶的空中连廊，连接西区2F和东区。脚下能看到地面的广场。\n" + (!vars._catChasing && !vars._powerOut && vars._catFed && Math.random() < 0.3 ? "头顶的玻璃顶上传来轻轻的脚步声——那只变异猫正走在天桥外侧的玻璃上，像在走T台。它经过你的正上方时停了一下，低头看了看你，然后继续向前走去。\n" : "") + describeWeather(vars) + "\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "去哥哥的深夜食堂",
@@ -2720,10 +2721,10 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-东区天桥2": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/eastBridge2.png */,
-    onEnter: function(v) { transit(v, "东区-天桥2"); return {}; },
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/新达汇/eastBridge2.png */
+    onEnter: function(v) { transit(v, "东区-天桥2"); applyWeatherDrain(v); return {}; },
     qte: mallQTE(10000, "结局-丧尸的围殴"),
-    text: function(vars) { return "连接西区3F和东区的天桥，玻璃顶上有几道裂纹。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "连接西区3F和东区的天桥，玻璃顶上有几道裂纹。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "去东区3F平台",

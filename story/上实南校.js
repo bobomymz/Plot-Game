@@ -7,17 +7,25 @@ Object.assign(storyData, {
 
   // ==================== 校门口 ====================
   "上实南校门口": {
-    image: timeImage({
-      morning: "images/上实南校/门口-morning.png",
-      evening: "images/上实南校/门口-evening.png",
-      night: "images/上实南校/门口-night.png",
-      midnight: "images/上实南校/门口-midnight.png",
-    }),
-    onEnter: { set: { currentPlace: "东明路", currentPos: "上实南校" } },
+    image: function(vars) {
+      if (vars.weather === "雨") return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/上实南校/门口-morning.png",
+        evening: "images/上实南校/门口-evening.png",
+        night: "images/上实南校/门口-night.png",
+        midnight: "images/上实南校/门口-midnight.png",
+      });
+      return f(vars);
+    },
+    onEnter: function(vars) {
+      vars.currentPlace = "东明路";
+      vars.currentPos = "上实南校";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
-      if (vars.hasClassMates) return "你又回到了学校门口。铁门还是半开着，但门卫室的窗户今天看起来更破了。你在救出小陆他们之后带着他们离开了这里——学校里该拿的都拿了，不值得再冒一次险。";
+      if (vars.hasClassMates) return "你又回到了学校门口。铁门还是半开着，但门卫室的窗户今天看起来更破了。你在救出小陆他们之后带着他们离开了这里——学校里该拿的都拿了，不值得再冒一次险。\n" + describeWeather(vars);
       return "你来到上实南校门口。铁门半开着，门卫室里空无一人——窗户碎了，桌上的茶杯还冒着热气。\n仰望曾经的教室，走廊上散落着几只在游荡的丧尸，教学楼深红色的轮廓在阴沉的天色下显得格外压抑。\n\
-你记得初中四年每天从这里走进走出，如今再看，恍如隔世。";
+你记得初中四年每天从这里走进走出，如今再看，恍如隔世。\n" + describeWeather(vars);
     },
     choices: [
       {

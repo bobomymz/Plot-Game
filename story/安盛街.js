@@ -454,8 +454,14 @@ Object.assign(storyData, {
 
   // ==================== 安盛街中段 ====================
   "安盛街中段": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/midStreet.png */,
-    onEnter: { set: { positionAfterOperation: "安盛街中段", currentArea: "周边社区", currentPlace: "安盛街", currentPos: "安盛街" } },
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/anshengStreet/midStreet.png */
+    onEnter: function(vars) {
+      vars.positionAfterOperation = "安盛街中段";
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "安盛街";
+      vars.currentPos = "安盛街";
+      applyWeatherDrain(vars);
+    },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "安盛街中段-犹豫"
@@ -464,7 +470,7 @@ Object.assign(storyData, {
       let desc = "你来到街上。街道两旁的店铺大多紧闭着门，有几家的橱窗被砸碎了，玻璃渣洒了一地。\n\
 前方可以看到几家还开着门的店铺：一家文具店，一家服装店，还有一家食品批发部。北边是安居苑的后门。\n";
       let zombieDes = describeZombieWave(vars);
-      return desc + zombieDes;
+      return desc + describeWeather(vars) + zombieDes;
     },
     choices: [
       {

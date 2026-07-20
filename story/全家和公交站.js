@@ -2,10 +2,14 @@
 
 Object.assign(storyData, {
   "全家便利店（环林东路）": {
-    image: "images/小区周边/全家便利店门口.png",
-    onEnter: { set : { currentPlace: "初始小区", currentPos: "全家便利店" } },
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/小区周边/全家便利店门口.png"; },
+    onEnter: function(vars) {
+      vars.currentPlace = "初始小区";
+      vars.currentPos = "全家便利店";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
-      return "你来到了全家便利店。\n<span style='font-weight: bold;'>全家熟悉的专属开门声音传来，门缓缓打开。</span>\n也许你可以吃一些东西垫垫肚子。\n" + describeZombieWave(vars);
+      return "你来到了全家便利店。\n<span style='font-weight: bold;'>全家熟悉的专属开门声音传来，门缓缓打开。</span>\n也许你可以吃一些东西垫垫肚子。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -312,10 +316,15 @@ Object.assign(storyData, {
   },
 
   "公交车站（环林东路）": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/bus.png */,
-    onEnter: { set : {positionAfterOperation: "三林路-环林东路 十字路口", currentPlace: "初始小区", currentPos: "公交站"}},
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/小区周边/bus.png */
+    onEnter: function(vars) {
+      vars.positionAfterOperation = "三林路-环林东路 十字路口";
+      vars.currentPlace = "初始小区";
+      vars.currentPos = "公交站";
+      applyWeatherDrain(vars);
+    },
     text: function(vars) {
-      return "你来到了公交车站。\n那辆1003的车窗反射着日光，让你的眼睛不太舒服。窗内有群人影在蠕动，想都不用想就知道是丧尸。\n车门关着，所以你不会被它们围殴，问题不大。\n" + describeZombieWave(vars);
+      return "你来到了公交车站。\n那辆1003的车窗反射着日光，让你的眼睛不太舒服。窗内有群人影在蠕动，想都不用想就知道是丧尸。\n车门关着，所以你不会被它们围殴，问题不大。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {

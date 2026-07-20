@@ -6,9 +6,13 @@ Object.assign(storyData, {
 
   // ==================== 五金店入口（三林路） ====================
   "五金店": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStore.png */,
-    onEnter: { set: { currentPlace: "三林路", currentPos: "五金店" } },
-    text: "你来到三林路上那家老五金店。卷帘门半开着，里面黑漆漆的，看不清有什么。门缝里传出隐约的风声，像是空气在空旷的货架间穿行。\n你注意到侧面的窗户破了一扇，后巷也能绕过去。",
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/小区周边/hardwareStore.png */
+    onEnter: function(vars) {
+      vars.currentPlace = "三林路";
+      vars.currentPos = "五金店";
+      applyWeatherDrain(vars);
+    },
+    text: function(vars) { return "你来到三林路上那家老五金店。卷帘门半开着，里面黑漆漆的，看不清有什么。门缝里传出隐约的风声，像是空气在空旷的货架间穿行。\n你注意到侧面的窗户破了一扇，后巷也能绕过去。" + describeWeather(vars); },
     choices: [
       {
         text: "从正门钻进去",

@@ -65,6 +65,43 @@ html, body {
   transition: opacity 0.4s;
 }
 
+/* 展开/收起文本区域 */
+#text-area.text-expanded {
+  position: fixed;
+  top: 8%;
+  left: 5%;
+  width: 90%;
+  max-width: none;
+  max-height: 82vh;
+  z-index: 100;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+#text-area.text-expanded #scene-text {
+  cursor: zoom-out;
+}
+#text-area.text-expanded ~ #choices-area.text-expanded {
+  position: fixed;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 101;
+  width: 88%;
+  max-width: 1000px;
+  margin: 0;
+}
+#scene-text {
+  cursor: zoom-in;
+}
+#scene-text.typing {
+  cursor: pointer;
+}
+
 /* 打字机光标 */
 #scene-text.typing::after {
   content: "▮";
