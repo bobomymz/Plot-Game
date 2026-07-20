@@ -34,7 +34,7 @@ Object.assign(storyData, {
       {
         text: "继续睡觉",
         nextScene: "初始卧室",
-        effect: updateTime(180) // 睡3个小时
+        effect: updateTime(180, { set: { _travelMinutes: 0 } }) // 睡3个小时，重置疲劳
       },
       {
         text: "推开窗户",
@@ -149,7 +149,7 @@ Object.assign(storyData, {
       {
         text: "方便面真好吃",
         nextScene: "初始卧室",
-        effect: updateTime(15) // 花15分钟吃方便面
+        effect: updateTime(15, { set: { _travelMinutes: 0 } }) // 花15分钟吃方便面，顺带休息
       }
     ]
   },

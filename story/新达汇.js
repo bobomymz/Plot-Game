@@ -2784,6 +2784,7 @@ Object.assign(storyData, {
   },
   "新达汇-哥哥的深夜食堂-休息": {
     image: "images/placeholder.png" /* TODO: images/新达汇/izakaya.png */,
+    onEnter: { set: { _travelMinutes: 0 } },
     text: "你在吧台前坐下，喝了一瓶饮料。这里很安静。",
     choices: [
       {

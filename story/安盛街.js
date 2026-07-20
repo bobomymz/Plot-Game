@@ -367,6 +367,7 @@ Object.assign(storyData, {
       let isNight = vars.hh >= 19 || vars.hh <= 6;
       if (isNight) { // 在理发店过夜
         vars.chasedByZombies = 0;
+        vars._travelMinutes = 0;
         vars.strength = Math.min(10, vars.strength + 3); // 加三点体力
         vars.restAtBarber = true;
         vars.dd ++;
@@ -375,6 +376,7 @@ Object.assign(storyData, {
         // 更新时间为第二天7：30
         return {};
       } else {
+        vars._travelMinutes = 0;
         vars.strength = Math.min(10, vars.strength + 1);
         vars.restAtBarber = true;
         updateTime(30);

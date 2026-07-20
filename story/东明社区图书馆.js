@@ -20,6 +20,7 @@ Object.assign(storyData, {
       { text: "进去看看", nextScene: "图书馆-大厅", showCondition: "libraryCleared" },
       { text: "推门进去", nextScene: "图书馆-大厅", showCondition: "!libraryCleared" },
       { text: "绕到侧面试试窗户", nextScene: "图书馆-侧窗", showCondition: "!libraryCleared" },
+      { text: "在阅览室沙发上歇一会儿", showCondition: "libraryCleared && chasedByZombies <= 2", nextScene: "图书馆-小憩" },
       { text: "回东明路", nextScene: "东明路-三林路", showCondition: "libraryCleared" },
       { text: "算了，不进去了", nextScene: "东明路-三林路", showCondition: "!libraryCleared" }
     ]
@@ -493,5 +494,19 @@ Object.assign(storyData, {
   "结局-图书馆-书架间": {
     image: "images/placeholder.png" /* TODO: images/library/libraryBookshelf.png */,
     text: "你在书架间犹豫了太久。\n当你终于做出决定时，已经来不及了——脚步声从身后逼近，前方也出现了另一只丧尸的影子。\n狭窄的书架通道成了你的牢笼。前后都是丧尸，你无路可逃。\n\n—— 结局：书架之间 ——"
+  },
+
+  // ==================== 休息 ====================
+  "图书馆-小憩": {
+    image: "images/placeholder.png" /* TODO: images/library/libraryRest.png */,
+    onEnter: { set: { _travelMinutes: 0 } },
+    text: "你在阅览室的沙发上坐下，闭上眼睛。窗帘拉着，门从里面锁着——这里暂时是安全的。\n你听了一会儿窗外的风声，让酸痛的腿休息一下。十分钟后，你感觉好了一些。",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "图书馆",
+        effect: updateTime(10)
+      }
+    ]
   }
 });

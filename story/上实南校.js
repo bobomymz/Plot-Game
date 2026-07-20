@@ -724,6 +724,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       if (vars.itemCount > 0) vars.itemCount -= 1;
       vars._knownSideDoorPassword = true;
+      vars._travelMinutes = 0;
       vars.mm += 10;
       vars.hh += Math.floor(vars.mm / 60);
       vars.mm %= 60;
@@ -854,7 +855,7 @@ Object.assign(storyData, {
 
   "上实南校-储备粮-割开": {
     image: "images/placeholder.png" /* TODO: images/上实南校/auditorium.png */,
-    onEnter: updateTime(15, { add: { strength: 5 } }),
+    onEnter: updateTime(15, { add: { strength: 5 }, set: { _travelMinutes: 0 } }),
     text: "你掏出美工刀，沿着胶带划了一圈。纸箱啪地弹开了。\n方便面、饼干、矿泉水——你们四个人分着吃了一些。虽然不是什么大餐，但在这种时候能填饱肚子就是幸福。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复5点体力，当前体力：{strength}。</span>",
     choices: [

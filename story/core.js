@@ -22,6 +22,7 @@ const storyData = {
     _visit: {},                    // 自动记录各场景访问次数（引擎自动维护，不可修改）
     foodUnderBed: true,        // 底下是否有食物，初始为true
     chasedByZombies: 0,        // 被尸潮追击的等级（0~5，效果：进行任何战斗操作都有概率被群殴，qte时间均缩短，体力消耗增加）
+    _travelMinutes: 0,         // 连续移动累积时间（分钟），>6min的移动累加，休息/吃饭/过夜归零
     bikeInAnjuyuan: true,      // 三林安居苑是否还有锈蚀的自行车
     FamilymartHasZombie: true, // 全家是否还有员工丧尸
     pharmacyZombieKilled: false, // 益丰大药房白大褂丧尸是否已被击杀
@@ -141,6 +142,14 @@ const storyData = {
         condition:  "gameMinutes > minutesBetweenReduceStrength",
         triggerKey: "Math.floor(gameMinutes / minutesBetweenReduceStrength)",
         effect: { add: { strength: -1 } }   // 简单效果直接用对象
+      },
+
+      // --- 连续移动疲劳（20/36/48/56/60五档，间隔递减，每档-1体力） ---
+      {
+        id: "travel-fatigue",
+        condition:  "_travelMinutes >= 20",
+        triggerKey: "_travelMinutes >= 60 ? 5 : (_travelMinutes >= 56 ? 4 : (_travelMinutes >= 48 ? 3 : (_travelMinutes >= 36 ? 2 : 1)))",
+        effect: { add: { strength: -1 } }
       },
 
       // --- 体力低于 3 时进入虚弱状态 ---
@@ -399,9 +408,10 @@ const storyData = {
     choices: [
       {
         text: "开始游戏",
-        input: { placeholder: "去哪里？" },
-        effect: function(vars) { vars.positionAfterOperation = vars._input; return {}; },
-        nextScene: "{positionAfterOperation}"//"初始卧室"
+        nextScene: "初始卧室"
+        //input: { placeholder: "去哪里？" },
+        //effect: function(vars) { vars.positionAfterOperation = vars._input; return {}; },
+        //nextScene: "{positionAfterOperation}"//"初始卧室"
       }
     ]
   },

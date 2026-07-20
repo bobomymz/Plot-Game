@@ -139,6 +139,7 @@ Object.assign(storyData, {
       vars.dd += 1;
       vars.hh = 7;
       vars.mm = 0;
+      vars._travelMinutes = 0;
       vars.restAtBarber = true;
       vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
       return {};
@@ -156,6 +157,7 @@ Object.assign(storyData, {
       vars.dd += 1;
       vars.hh = 7;
       vars.mm = 0;
+      vars._travelMinutes = 0;
       vars.restAtBarber = true;
       vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
       vars.strength = Math.max(0, vars.strength - 1);
@@ -193,6 +195,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
+      vars._travelMinutes = 0;
       vars.mm = 0;
       return {};
     },
@@ -208,6 +211,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
+      vars._travelMinutes = 0;
       vars.mm = 0;
       return {};
     },
@@ -223,6 +227,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
+      vars._travelMinutes = 0;
       vars.mm = 0;
       return {};
     },
@@ -238,6 +243,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
+      vars._travelMinutes = 0;
       vars.mm = 0;
       vars.strength = Math.min(10, vars.strength + 2);
       return {};
@@ -270,6 +276,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
+      vars._travelMinutes = 0;
       vars.mm = 0;
       vars.strength = Math.max(0, vars.strength - 2);
       vars.hurtByZombie = true;
@@ -287,6 +294,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
+      vars._travelMinutes = 0;
       vars.mm = 0;
       return {};
     },
@@ -309,6 +317,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
+      vars._travelMinutes = 0;
       vars.mm = 0;
       vars.currentPlace = "图书馆";
       if (vars.dd >= 3) {

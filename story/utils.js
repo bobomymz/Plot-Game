@@ -15,6 +15,7 @@ function timeImage(map) {
 function updateTime(addMinutes, extraEffect = {}) { // 更新时间
   addMinutes = addMinutes || 0;
   return function(vars) {
+    if (vars.weather === "雨") addMinutes = Math.round(addMinutes * 1.3);
     var oldHh = vars.hh;
     vars.mm += addMinutes;
     vars.hh += Math.floor(vars.mm / 60);
@@ -24,6 +25,10 @@ function updateTime(addMinutes, extraEffect = {}) { // 更新时间
     // 天气：跨越整点时更新
     if (vars.hh !== oldHh || addMinutes >= 60) {
       updateWeather(vars);
+    }
+    // 疲劳系统：>6分钟的移动累加到连续移动时间
+    if (addMinutes > 6) {
+      vars._travelMinutes = (vars._travelMinutes || 0) + addMinutes;
     }
     return extraEffect;
   }
