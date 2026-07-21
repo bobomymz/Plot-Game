@@ -17,8 +17,16 @@ Object.assign(storyData, {
       if(vars._visit["初始卧室"] === 1) {
         return "你是建平中学的毕业生，高考已经结束，日子仿佛被抽去了骨架，软塌塌地摊在七月闷热的空气里。这天早上你醒来时，阳光已经穿过半旧的窗帘，在地板上烙下懒洋洋的光斑。\
     <span style='font-size: 12px;'>请往下滑动哦</span>\n\
-闹钟显示7:30，如果是在往日，早读已经过去一半了。\n哦，这么算的话，再过半小时，妈妈就买早餐回来了。\
-    <span style='font-size: 12px;'>鼠标点击此框可以快速过剧情哦</span>";
+闹钟显示7:30，如果是在往日，早读已经过去一半了。\n哦，这么算的话，再过半小时，妈妈就买早餐回来了。<span style='font-size: 12px;'>鼠标点击此框可以快速过剧情哦，若再点一次可以展开</span>\
+\n\
+\n\
+\n\
+\n\
+\n\
+\n\
+\n\
+\n\
+\n";
       }
       else if(vars.dd == 1 && vars.hh >= 11) return "有点饿了，妈妈为什么还没回来呢？";
       return "";
@@ -662,7 +670,7 @@ Object.assign(storyData, {
 
   "地下非机动车停靠区": {
     image: "images/home/nonMotorized.png",
-    text: "你来到了地下非机动车停靠区，这里有不少自行车和电瓶车。楼梯上方隐约传来丧尸的低吼声",
+    text: "你来到了地下非机动车停靠区，这里有不少自行车和电瓶车。楼梯上方隐约传来丧尸的低吼声……",
     choices: [
       {
         text: "继续前进",
@@ -792,7 +800,7 @@ Object.assign(storyData, {
       night: "images/home/小区西门-night.png",
       midnight: "images/home/小区西门-midnight.png"
     }),
-    text: "你来到了西出口，成功逃出了地下车库",
+    text: "你成功逃出地下车库，来到了西出口。",
     choices: [
       {
         text: "继续前进",
@@ -1417,7 +1425,7 @@ Object.assign(storyData, {
 远处有一块路牌，上面写着“东明路”。\n\
 除了风声，这里什么声音都没有。\n\
 死寂。";
-      if(_visit['初遇陈默']) basicDes += "陈默踏过石砖路，向北方走去。“我只能帮你到这里。接下来，你只能靠自己了。”他的话在风中回荡。“\n";
+      if(vars._visit['初遇陈默']) basicDes += "陈默踏过石砖路，向北方走去。“我只能帮你到这里。接下来，你只能靠自己了。”他的话在风中回荡。“\n";
       basicDes += describeWeather(vars);
       return basicDes;
     },
@@ -1553,7 +1561,7 @@ Object.assign(storyData, {
         effect: { set: { _tryDoor: "503" } }
       },
       {
-        text: "下楼",
+        text: "下楼回家",
         nextScene: "家外楼梯间的抉择",
         effect: updateTime(1)
       }

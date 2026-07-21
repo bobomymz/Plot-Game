@@ -23,6 +23,7 @@ const storyData = {
     foodUnderBed: true,        // 底下是否有食物，初始为true
     chasedByZombies: 0,        // 被尸潮追击的等级（0~5，效果：进行任何战斗操作都有概率被群殴，qte时间均缩短，体力消耗增加）
     _travelMinutes: 0,         // 连续移动累积时间（分钟），>6min的移动累加，休息/吃饭/过夜归零
+    _sleepingZombieGone: false,// 小区道路椅子上躺着的那个丧尸走了没有
     bikeInAnjuyuan: true,      // 三林安居苑是否还有锈蚀的自行车
     FamilymartHasZombie: true, // 全家是否还有员工丧尸
     pharmacyZombieKilled: false, // 益丰大药房白大褂丧尸是否已被击杀
