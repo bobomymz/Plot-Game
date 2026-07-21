@@ -1527,7 +1527,7 @@ Object.assign(storyData, {
 
   "樱桃苑-4楼-失败": {
     image: "images/home/4楼另一端-失败.png",
-    onEnter: { add: { strength: -2 }, set: {hurtByZombies: true} },
+    onEnter: { add: { strength: -2 }, set: {hurtByZombie: true} },
     text: "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。\n\
 剧痛让你眼前一黑。你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。",
     choices: [

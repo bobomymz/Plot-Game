@@ -503,12 +503,7 @@ Object.assign(storyData, {
 
   "三林安居苑-204室": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBuilding.png */,
-    onEnter: function(vars) {
-      if (!vars._enteredHong204) {
-        updateTime(2)(vars);
-      }
-      return {};
-    },
+    onEnter: {set: { _enteredHong204: true }},
     text: function(vars) {
       if (!vars._enteredHong204) {
         return "你轻轻推开门。一股甜腻的、让人不太舒服的气味飘了出来——不是腐败的臭味，而是一种说不清的、带着湿气的甜味。\n\
@@ -520,7 +515,7 @@ Object.assign(storyData, {
 脚边倒着一只空矿泉水瓶，瓶身上的标签歪歪扭扭写着几个字。桌上摊着一本翻开的笔记本，旁边还放着一个旧防毒面具。\n\
 厨房的窗台上，放着你在楼下看到的那只搪瓷缸——白色的，缸身印着褪了色的红字，勉强能认出是“芜湖”和“先进”几个字。缸底残留着一圈干透的茶渍。";
       } else {
-        return "204室里那股甜腻味还在，但比上次淡了一些。老洪还靠在橱柜边——已经不会再动了。\n\
+        return "204室里那股甜腻味还在，但比上次淡了一些。他还靠在橱柜边——已经不会再动了。\n\
 你上次没拿的东西还在原处：窗台上的搪瓷缸、桌子上的旧防毒面具和笔记本，地上的空水瓶。";
       }
     },
@@ -586,18 +581,18 @@ Object.assign(storyData, {
 
   "三林安居苑-204室-老洪": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
-    onEnter: { set: { _enteredHong204: true }, add: { strength: -1 } },
+    onEnter: { add: { strength: -1 } },
     text: "你蹲下身，靠近他。他的眼睛半睁着，眼球在微微颤动——他还活着，但已经说不出完整的话了。\n\
 他感觉到有人靠近，嘴唇动了动，发出一串含混的气音。你把耳朵凑近，勉强辨认出几个字：\n\
 \n\
 <em>“水……别喝……”</em>\n\
-<em>“芜湖……工厂……”</em>\n\
-<em>“儿子……”</em>\n\
+<em>“我的工作……”</em>\n\
+<em>“我要水……快给我水……水……”</em>\n\
 \n\
 他的头猛地向后仰了一下，喉咙里发出一阵咯咯声。他的眼神开始涣散——不是死亡，是那根弦彻底断了。\n\
 他挣了一下，脚踝上的电线在瓷砖地面上刮出一声刺耳的响。\n\
 \n\
-你后退了一步。他已经不再是“老洪”了。",
+你后退了一步。他已经不再是他了。",
     choices: [
       {
         text: "离开厨房",

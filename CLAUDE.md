@@ -117,6 +117,20 @@ images/             → 场景图（PNG/JPG），按区域存放
    - 支持的运算符：`>=`、`<=`、`>`、`<`、`!=`、`==`
    - 直接值表示严格等于：`{ hasBroom: true }`
 
+### ⚠️ 重要：所有变量必须先在 `_variables` 中定义
+
+引擎用 `new Function(...keys, \`return Boolean(${condition});\`)` 求值条件字符串，
+其中 `keys` 来自 `Object.keys(gameState)`。这意味着：
+
+- 字符串表达式中出现的**所有变量名**（如 `hasBroom && strength > 3` 中的 `hasBroom` 和 `strength`）
+- `set` / `add` / `mul` 效果中**赋值的所有变量名**
+- `text` 插值中的 `{变量名}`
+
+都必须先在 `story/core.js` 的 `_variables` 中声明初始值，否则 `new Function` 执行时
+会抛 `ReferenceError`（被 catch 吞掉后条件返回 false，控制台可见报错）。
+
+**添加新剧情变量时务必同步注册到 `_variables`**，否则会出现"条件明明写对了但就是走不通"的情况。
+
 ### showCondition vs condition 最佳实践
 
 两者的核心区别：
