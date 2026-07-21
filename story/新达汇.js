@@ -136,7 +136,7 @@ Object.assign(storyData, {
   },
   "新达汇-B1美食广场": {
     image: "images/placeholder.png" /* TODO: images/新达汇/b1FoodCourt.png */,
-    text: function(vars) { return "B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。地面上散落着打翻的餐盘和发霉的剩菜，苍蝇在上面嗡嗡地盘旋。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着\"后勤通道 · 非工作人员勿入\"的标签。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。地面上散落着打翻的餐盘和发霉的剩菜，苍蝇在上面嗡嗡地盘旋。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着“后勤通道 · 非工作人员勿入”的标签。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "推开防火门进入后勤通道",
@@ -322,7 +322,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/infoScreen.png */,
     text: "电子公告屏显示着停运前的楼层导览。\n\
 【1F】华为体验店 | 中庭\n【2F】Nike | 海澜之家 | 雅戈尔\n【3F】卡通尼乐园 | 金宝贝 | 爱婴室\n【4F】大渝火锅 | 大米先生 | 日料店 | CGV影城\n【5F】石物恋·烧肉 | 左庭右院 | 游戏厅\n\
-屏幕右下角贴着一张手写便签：\"猫在3F，别喂它，它只认保安。——物业\"",
+屏幕右下角贴着一张手写便签：“猫在3F，别喂它，它只认保安。——物业”",
     choices: [
       {
         text: "前往中庭",
@@ -337,7 +337,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "1F-北走廊西"); return {}; },
     text: function(vars) {
       var desc = "1F北走廊西段。走廊两侧是几家关了门的店铺，卷帘门拉着。其中有一家味千拉面，卷帘门的下沿有一道不起眼的缝隙——好像可以抬起来。";
-      if (!vars._backhallEntered) desc += "\n墙边有一扇白色的门，上面贴着\"员工通道\"的标签——门锁着，推不动。";
+      if (!vars._backhallEntered) desc += "\n墙边有一扇白色的门，上面贴着“员工通道”的标签——门锁着，推不动。";
       if (!vars._1f_wireFixed && !vars._powerOut) {
         desc += "\n前方地上有一根断裂的电线搭在积水里，噼啪地冒着火花——挡住了路。";
       } else if (!vars._1f_wireFixed && vars._powerOut) {
@@ -1205,7 +1205,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/clothingStore.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: function(vars) { return "你刚靠近海澜之家的玻璃门，感应器就发出一声短促的电子提示音，门缓缓滑开。声音不大，但在安静的走廊里足够传到很远。\n\
-海澜之家和雅戈尔面对面开着。海澜之家白色装修，冷淡简约；雅戈尔深色木纹更显沉稳。试衣间的门关着。雅戈尔那边的收银台后面有一扇门，贴着\"员工间\"的标签。\n" + describeZombieWave(vars); },
+海澜之家和雅戈尔面对面开着。海澜之家白色装修，冷淡简约；雅戈尔深色木纹更显沉稳。试衣间的门关着。雅戈尔那边的收银台后面有一扇门，贴着“员工间”的标签。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "快躲进试衣间！",
@@ -2061,7 +2061,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F大米先生": {
     image: "images/placeholder.png" /* TODO: images/新达汇/riceRestaurant.png */,
-    text: "门口堆满了等位椅。透过缝隙能看到白绿配色的装潢，暖木色桌椅，透明厨房隔断上贴着\"现炒现做\"。保温台上的菜盘已经凉透了。",
+    text: "门口堆满了等位椅。透过缝隙能看到白绿配色的装潢，暖木色桌椅，透明厨房隔断上贴着“现炒现做”。保温台上的菜盘已经凉透了。",
     choices: [
       {
         text: "离开",
@@ -2460,7 +2460,7 @@ Object.assign(storyData, {
   "新达汇-5F左庭右院-取外卖": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant2.png */,
     onEnter: { set: { _deliveryCode: "473829" }, add: { itemCount: 1 } },
-    text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：\"北青公路某号某室\"。",
+    text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：“北青公路某号某室”。",
     choices: [
       {
         text: "回到走廊",
@@ -2981,7 +2981,7 @@ Object.assign(storyData, {
   },
   "新达汇-B1废弃仓库": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
-    text: "你走进一间废弃的小仓库。配电箱的盖板掉在地上，几根电线裸露在外。墙角堆着几个落满灰的纸箱和几袋水泥——水泥已经完全结块了。靠墙还有一个老旧的工具箱，盖子上用记号笔写着\"王建国\"。",
+    text: "你走进一间废弃的小仓库。配电箱的盖板掉在地上，几根电线裸露在外。墙角堆着几个落满灰的纸箱和几袋水泥——水泥已经完全结块了。靠墙还有一个老旧的工具箱，盖子上用记号笔写着“王建国”。",
     choices: [
       {
         text: "翻开墙角那几个纸箱看看",
@@ -3014,8 +3014,8 @@ Object.assign(storyData, {
   "新达汇-B1废弃仓库-工具箱": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
     text: function(vars) {
-      if (vars.hasCutter) return "工具箱的盖子敞着，里面已经空了。把手旁那个\"王\"字还留在盖子上。";
-      return "你掀开工具箱的盖子。里面躺着一把美工刀——刀刃有些锈迹，但刀片还能换。把手旁边用记号笔写着一个\"王\"字。";
+      if (vars.hasCutter) return "工具箱的盖子敞着，里面已经空了。把手旁那个“王”字还留在盖子上。";
+      return "你掀开工具箱的盖子。里面躺着一把美工刀——刀刃有些锈迹，但刀片还能换。把手旁边用记号笔写着一个“王”字。";
     },
     onEnter: { set: { positionAfterOperation: "新达汇-B1废弃仓库" } },
     choices: [
@@ -3062,7 +3062,7 @@ Object.assign(storyData, {
   "新达汇-1F后勤走廊中": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall1f.png */,
     onEnter: function(v) { transit(v, "1F-后勤走廊中"); return {}; },
-    text: "走廊在这里分出了几条岔路。左侧墙上有一扇标着\"仓库\" 的门，门半掩着。正前方是一道普通的白色防火门，上面贴着\"通往商场\" 的标签。右侧的墙上有一扇同样的防火门，写着\"消防通道\"。",
+    text: "走廊在这里分出了几条岔路。左侧墙上有一扇标着“仓库” 的门，门半掩着。正前方是一道普通的白色防火门，上面贴着“通往商场” 的标签。右侧的墙上有一扇同样的防火门，写着“消防通道”。",
     choices: [
       {
         text: "推开右侧的防火门——进入消防通道",
@@ -3364,7 +3364,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F清洁工具间-便条": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall5f.png */,
-    text: "便条上潦草地写着几行字：\n\"老王，你要是看到这张条，保安室那边有个工具箱，里面有把美工刀和一些工具。钥匙我放在配电房第三个抽屉里了。——小刘 6/26\"\n便条下面有人用更粗的圆珠笔补了一行歪歪扭扭的字：\n\"小刘已经不在了。我把工具箱拿到B1仓库了，你要是还活着，去那边找找。配电房的钥匙我也拿走了。——王建国 6/27\"\n便条的边角微微发黄，像是被水泡过。",
+    text: "便条上潦草地写着几行字：\n“老王，你要是看到这张条，保安室那边有个工具箱，里面有把美工刀和一些工具。钥匙我放在配电房第三个抽屉里了。——小刘 6/26”\n便条下面有人用更粗的圆珠笔补了一行歪歪扭扭的字：\n“小刘已经不在了。我把工具箱拿到B1仓库了，你要是还活着，去那边找找。配电房的钥匙我也拿走了。——王建国 6/27”\n便条的边角微微发黄，像是被水泡过。",
     choices: [
       {
         text: "继续查看",
