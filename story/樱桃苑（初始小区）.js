@@ -1614,7 +1614,7 @@ Object.assign(storyData, {
   // ========== 小区草地 + 物业楼（高锦睿） ==========
 
   "小区草地": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/home/小区草地.png"; },
+    image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地-雨天.jpg" : "images/home/小区草地.jpg"; },
     onEnter: function(vars) {
       var effect = updateTime(1)(vars);
       applyWeatherDrain(vars);
@@ -1625,11 +1625,12 @@ Object.assign(storyData, {
       onTimeout: "小区草地-被追"
     },
     text: function(vars) {
-      return "你沿着小路往东走，穿过两栋楼之间的过道，眼前豁然开朗——一片不大的草地，中间是一方人工水池，水面上漂着几朵睡莲，粉白的花瓣在阳光下安静地开着。长椅倒在一旁，草地边缘的灌木丛被什么东西踩出了一条凌乱的痕迹。\n水池对面，几只丧尸正在草地上无目的地游荡。其中一只似乎嗅到了什么，停下脚步，缓缓朝你这边转过头来。\n" + describeWeather(vars);
+      return "你沿着小路往东走，穿过两栋楼之间的过道，眼前豁然开朗——一片不大的草地，种着稀稀拉拉的小树，是小区的居民们栽下的。长椅倒在一旁，草地边缘的灌木丛被什么东西踩出了一条凌乱的痕迹。\n\
+几只丧尸正在草地上无目的地游荡。其中几只似乎嗅到了什么，停下脚步，缓缓朝你这边转过头来。\n" + describeWeather(vars);
     },
     choices: [
       {
-        text: "躲到水池后面的长椅下",
+        text: "躲到草丛后面",
         nextScene: "小区草地-安全",
         effect: updateTime(2)
       },
@@ -1641,14 +1642,15 @@ Object.assign(storyData, {
       {
         text: "往东门方向冲刺",
         nextScene: "小区东门",
-        effect: updateTime(1, { add: { chasedByZombies: 1 } })
+        effect: updateTime(1, { add: { chasedByZombies: 1, strength: -1 } })
       }
     ]
   },
 
   "小区草地-安全": {
     image: "images/placeholder.png",
-    text: "你低身躲到水池后面的长椅下。睡莲的叶子遮住了你的身影，水面反射的光晃得你眯起了眼。那只丧尸在草地上徘徊了一阵——你屏住呼吸，听着它拖沓的脚步声一下一下踩在草地上。\n终于，脚步声远了。你从长椅下钻出来，拍了拍身上的草屑。",
+    text: "你低身躲到草丛后面，叶子遮住了你的身影。那只丧尸在草地上徘徊了一阵——你屏住呼吸，听着它拖沓的脚步声一下一下踩在石板上。\n\
+终于，脚步声远了。你从长椅下钻出来，拍了拍身上的草屑。",
     choices: [
       {
         text: "去物业楼",
@@ -1659,7 +1661,7 @@ Object.assign(storyData, {
         nextScene: "小区东门"
       },
       {
-        text: "退回小区道路",
+        text: "退回家门口",
         nextScene: "小区道路"
       }
     ]
@@ -1668,7 +1670,7 @@ Object.assign(storyData, {
   "小区草地-被追": {
     image: "images/placeholder.png",
     onEnter: { add: { chasedByZombies: 2, strength: -1 } },
-    text: "你犹豫太久了。一只丧尸不知什么时候绕到了水池这一侧——你听到身后粗重的呼吸声才猛地回头，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。",
+    text: "你犹豫太久了。一只丧尸已经走到了你面前，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。",
     choices: [
       {
         text: "冲进物业楼",
