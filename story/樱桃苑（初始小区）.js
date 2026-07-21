@@ -1668,7 +1668,7 @@ Object.assign(storyData, {
   },
 
   "小区草地-被追": {
-    image: "images/placeholder.png",
+    image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地被追-雨天.jpg" : "images/home/小区草地被追.png"; },
     onEnter: { add: { chasedByZombies: 2, strength: -1 } },
     text: "你犹豫太久了。一只丧尸已经走到了你面前，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。",
     choices: [
@@ -1716,7 +1716,9 @@ Object.assign(storyData, {
   "物业楼-居委会办公室": {
     image: "images/placeholder.png",
     onEnter: { set: { _committeeSearched: true } },
-    text: "钥匙转动——门开了。里面是一间不大的办公室，靠墙一排铁皮档案柜，桌上摊着几本翻开的台账。空气里飘着淡淡的樟脑丸味道。\n你拉开柜门翻了翻——旧文件夹、一盒干掉的印泥、半包口罩。在底层抽屉里，你找到了一个落满灰的纸箱，上面贴着“便民维修工具”的标签。\n箱子里有一套自行车修理工具——补胎胶、链条润滑油、几根备用辐条。看起来是居委会以前搞便民服务时留下的。",
+    text: "钥匙转动——门开了。里面是一间不大的办公室，靠墙一排铁皮档案柜，桌上摊着几本翻开的台账。空气里飘着淡淡的樟脑丸味道。\n\
+你拉开柜门翻了翻——旧文件夹、一盒干掉的印泥、半包口罩。在底层抽屉里，你找到了一个落满灰的纸箱，上面贴着“便民维修工具”的标签。\n\
+旁边的箱子里有一套自行车修理工具——补胎胶、链条润滑油、几根备用辐条。看起来是居委会以前搞便民服务时留下的。",
     choices: function(vars) {
       var cs = [];
       cs.push({
