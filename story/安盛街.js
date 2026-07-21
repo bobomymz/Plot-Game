@@ -6,7 +6,18 @@ Object.assign(storyData, {
 
   // ==================== 入口：安盛街东侧 ====================
   "安盛街东侧": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/anshengStreet/eastEntrance.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/anshengStreet/eastEntrance.png */
     onEnter: function(vars) {
       vars.currentPlace = "安盛街";
       vars.currentPos = "安盛街";
@@ -456,7 +467,18 @@ Object.assign(storyData, {
 
   // ==================== 安盛街中段 ====================
   "安盛街中段": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/anshengStreet/midStreet.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/anshengStreet/midStreet.png */
     onEnter: function(vars) {
       vars.positionAfterOperation = "安盛街中段";
       vars.currentArea = "周边社区";
@@ -1109,7 +1131,18 @@ Object.assign(storyData, {
 
   // ==================== 安盛街西侧（分岔路口） ====================
   "安盛街西侧": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/anshengStreet/westStreet.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/anshengStreet/westStreet.png */
     onEnter: function(vars) {
       vars.positionAfterOperation = "安盛街西侧";
       vars.currentArea = "周边社区";

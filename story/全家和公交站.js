@@ -2,7 +2,18 @@
 
 Object.assign(storyData, {
   "全家便利店（环林东路）": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/小区周边/全家便利店门口.png"; },
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/小区周边/全家便利店门口.png";
+    },
     onEnter: function(vars) {
       vars.currentPlace = "初始小区";
       vars.currentPos = "全家便利店";
@@ -316,7 +327,18 @@ Object.assign(storyData, {
   },
 
   "公交车站（环林东路）": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/小区周边/bus.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/小区周边/bus.png */
     onEnter: function(vars) {
       vars.positionAfterOperation = "三林路-环林东路 十字路口";
       vars.currentPlace = "初始小区";

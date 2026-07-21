@@ -6,7 +6,18 @@ Object.assign(storyData, {
 
   // ==================== 入口 ====================
   "图书馆": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/library/libraryFront.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/library/libraryFront.png */
     onEnter: function(vars) {
       vars.currentPlace = "东明路";
       vars.currentPos = "图书馆";

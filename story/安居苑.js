@@ -5,7 +5,18 @@ Object.assign(storyData, {
 
   // ==================== 三林安居苑（老小区） ====================
   "三林安居苑": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/安居苑/后门.png"; }, /* TODO: images/安居苑/anJuYuan.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/安居苑/后门.png";
+    }, /* TODO: images/安居苑/anJuYuan.png */
     onEnter: function(vars) {
       vars.currentPlace = "安居苑";
       vars.currentPos = "安居苑";
@@ -64,7 +75,18 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-小区内部": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/安居苑/anJuYuanInside.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/安居苑/anJuYuanInside.png */
     onEnter: function(vars) {
       vars.currentPlace = "安居苑";
       vars.currentPos = "安居苑";
@@ -125,7 +147,18 @@ Object.assign(storyData, {
   // ========== 小广场 ==========
 
   "三林安居苑-小广场": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/安居苑/smallSquare.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/安居苑/smallSquare.png */
     onEnter: function(vars) {
       vars.currentPlace = "安居苑";
       vars.currentPos = "小广场";
@@ -944,7 +977,18 @@ Object.assign(storyData, {
   },
 
   "安居苑前门": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/安居苑/anjuyuanFrontDoor.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/安居苑/anjuyuanFrontDoor.png */
     onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) { return "你来到了安居苑的前门\n" + describeWeather(vars); },
     choices: [

@@ -6,7 +6,18 @@ Object.assign(storyData, {
 
   // ==================== 五金店入口（三林路） ====================
   "五金店": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/小区周边/hardwareStore.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/小区周边/hardwareStore.png */
     onEnter: function(vars) {
       vars.currentPlace = "三林路";
       vars.currentPos = "五金店";

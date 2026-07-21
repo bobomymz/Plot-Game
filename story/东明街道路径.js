@@ -4,7 +4,15 @@
 Object.assign(storyData, {
   "小区东门-整装待发": { // 此时时间；Day1 12:00
     image: function(vars) {
-      if (vars.weather === "雨") return "images/placeholder.png";
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/home/小区东门.png",
         evening: "images/home/小区东门-evening.png",
@@ -46,7 +54,15 @@ Object.assign(storyData, {
 
   "小区西门-整装待发": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/placeholder.png";
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/home/小区西门.png",
         evening: "images/home/小区西门-evening.png",
@@ -68,7 +84,15 @@ Object.assign(storyData, {
 
   "三林路-环林东路 十字路口": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/placeholder.png";
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/小区周边/十字路口.png",
         evening: "images/小区周边/十字路口-evening.png",
@@ -121,7 +145,18 @@ Object.assign(storyData, {
   },
 
   "三林路": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/小区周边/三林路.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/小区周边/三林路.png */
     onEnter: function(vars) {
       vars.currentPlace = "三林路";
       vars.currentPos = "三林路";
@@ -188,7 +223,15 @@ Object.assign(storyData, {
 
   "三林路-东明路 十字路口": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/placeholder.png";
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/小区周边/十字路口2.png",
         evening: "images/小区周边/十字路口2-evening.png",
@@ -272,7 +315,18 @@ Object.assign(storyData, {
   },
 
   "东明路-三林路": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/小区周边/东明路-三林路.png"; },
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/小区周边/东明路-三林路.png";
+    },
     onEnter: function(vars) {
       vars.currentArea = "周边社区";
       vars.currentPlace = "东明路";
@@ -327,7 +381,15 @@ Object.assign(storyData, {
   // ==================== 建设银行 ====================
   "银行门口": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/placeholder.png";
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/小区周边/银行门口-morning.png",
         evening: "images/小区周边/银行门口-evening.png",

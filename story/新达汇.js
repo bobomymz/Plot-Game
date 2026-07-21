@@ -17,7 +17,15 @@ Object.assign(storyData, {
 
   "新达汇-喷泉广场": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/placeholder.png";
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
         evening: "images/新达汇/喷泉广场-evening.png",
@@ -2584,7 +2592,18 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-屋顶花园": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/新达汇/roofGarden.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/新达汇/roofGarden.png */
     onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) {
       var desc = "你站在新达汇的屋顶花园。视野豁然开朗。中央有一个小型直升机停机坪——旁边停放着一架白色的外卖无人机。";
@@ -2693,7 +2712,18 @@ Object.assign(storyData, {
 
   // ==================== 东区 ====================
   "新达汇-东区天桥1": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/新达汇/eastBridge.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/新达汇/eastBridge.png */
     onEnter: function(v) { transit(v, "东区-天桥1"); applyWeatherDrain(v); return {}; },
     qte: mallQTE(10000, "结局-丧尸的围殴"),
     text: function(vars) { return "玻璃顶的空中连廊，连接西区2F和东区。脚下能看到地面的广场。\n" + (!vars._catChasing && !vars._powerOut && vars._catFed && Math.random() < 0.3 ? "头顶的玻璃顶上传来轻轻的脚步声——那只变异猫正走在天桥外侧的玻璃上，像在走T台。它经过你的正上方时停了一下，低头看了看你，然后继续向前走去。\n" : "") + describeWeather(vars) + "\n" + describeZombieWave(vars); },
@@ -2721,7 +2751,18 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-东区天桥2": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; }, /* TODO: images/新达汇/eastBridge2.png */
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      return "images/placeholder.png";
+    }, /* TODO: images/新达汇/eastBridge2.png */
     onEnter: function(v) { transit(v, "东区-天桥2"); applyWeatherDrain(v); return {}; },
     qte: mallQTE(10000, "结局-丧尸的围殴"),
     text: function(vars) { return "连接西区3F和东区的天桥，玻璃顶上有几道裂纹。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars); },

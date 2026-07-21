@@ -8,7 +8,15 @@ Object.assign(storyData, {
   // ==================== 校门口 ====================
   "上实南校门口": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/placeholder.png";
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/上实南校/门口-morning.png",
         evening: "images/上实南校/门口-evening.png",
