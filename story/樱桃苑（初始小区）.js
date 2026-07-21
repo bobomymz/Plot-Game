@@ -1614,7 +1614,7 @@ Object.assign(storyData, {
   // ========== 小区草地 + 物业楼（高锦睿） ==========
 
   "小区草地": {
-    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/placeholder.png"; },
+    image: function(vars) { return vars.weather === "雨" ? "images/placeholder.png" : "images/home/小区草地.png"; },
     onEnter: function(vars) {
       var effect = updateTime(1)(vars);
       applyWeatherDrain(vars);
