@@ -1648,8 +1648,8 @@ Object.assign(storyData, {
   },
 
   "小区草地-安全": {
-    image: "images/placeholder.png",
-    text: "你低身躲到草丛后面，叶子遮住了你的身影。那只丧尸在草地上徘徊了一阵——你屏住呼吸，听着它拖沓的脚步声一下一下踩在石板上。\n\
+    image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地-雨天-躲藏.png" : "images/home/小区草地-躲藏.png"; },
+    text: "你低身躲到草丛后面，叶子遮住了你的身影。那些丧尸在草地上徘徊了一阵——你屏住呼吸，听着它拖沓的脚步声一下一下踩在石板上。\n\
 终于，脚步声远了。你从草丛后钻出来，拍了拍身上的草屑。",
     choices: [
       {
