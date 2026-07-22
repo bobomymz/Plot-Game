@@ -1421,10 +1421,10 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var rf = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
+        morning: "images/home/小区西门-雨天.png",
+        evening: "images/home/小区西门-evening-雨天.png",
+        night: "images/home/小区西门-night-雨天.png",
+        midnight: "images/home/小区西门-midnight-雨天.png"
         });
         return rf(vars);
       }
@@ -1720,12 +1720,7 @@ Object.assign(storyData, {
   },
 
   "物业楼": {
-    image: timeImage({
-      morning: "images/placeholder.png",
-      evening: "images/placeholder.png",
-      night: "images/placeholder.png",
-      midnight: "images/placeholder.png"
-    }),
+    image: "images/placeholder.png",
     onEnter: { set: { currentPos: "物业楼" } },
     text: function(vars) {
       if (vars.dd == 1 && vars.hh < 12) {
@@ -1759,12 +1754,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-居委会办公室": {
-    image: timeImage({
-      morning: "images/placeholder.png",
-      evening: "images/placeholder.png",
-      night: "images/placeholder.png",
-      midnight: "images/placeholder.png"
-    }),
+    image: "images/placeholder.png",
     onEnter: { set: { _committeeSearched: true } },
     text: "钥匙转动——门开了。里面是一间不大的办公室，靠墙一排铁皮档案柜，桌上摊着几本翻开的台账。空气里飘着淡淡的樟脑丸味道。\n\
 你拉开柜门翻了翻——旧文件夹、一盒干掉的印泥、半包口罩。在底层抽屉里，你找到了一个落满灰的纸箱，上面贴着“便民维修工具”的标签。\n\
@@ -1802,12 +1792,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿": {
-    image: timeImage({
-      morning: "images/placeholder.png",
-      evening: "images/placeholder.png",
-      night: "images/placeholder.png",
-      midnight: "images/placeholder.png"
-    }),
+    image: "images/placeholder.png",
     onEnter: { set: { currentPos: "物业楼" } },
     text: "高锦睿——你的初中同桌，万年不变的锅盖头，深色卫衣配运动短裤，脚上一双标签掉了一半的假Yeezy。他跟以前一模一样，好像外面世界末日了也跟他没什么关系。\n他正在修他的红色美利达山地车，变速器卡了好几天了。旁边地上放着一个鼓鼓的背包，拉链半开着，能看到里面塞了半包辣条和一台大疆无人机。",
     choices: function(vars) {
@@ -1835,12 +1820,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿-聊": {
-    image: timeImage({
-      morning: "images/placeholder.png",
-      evening: "images/placeholder.png",
-      night: "images/placeholder.png",
-      midnight: "images/placeholder.png"
-    }),
+    image: "images/placeholder.png",
     text: function(vars) {
       var desc = "“在家待了一天一夜，坐不住了——”他边拧螺丝边说，头也没抬。“反正待着也是待着，出去看看外面成啥样了。”\n\
 他告诉你他爸妈6/28出门后没回来。说这话的时候他手上的活没停，语气轻得像在说昨天食堂的饭不好吃。\n\
@@ -1869,12 +1849,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿-时间": {
-    image: timeImage({
-      morning: "images/placeholder.png",
-      evening: "images/placeholder.png",
-      night: "images/placeholder.png",
-      midnight: "images/placeholder.png"
-    }),
+    image: "images/placeholder.png",
     text: function(vars) {
       return "他掏出手机瞄了一眼。“现在" + vars.hh + "点" + (vars.mm < 10 ? "0" : "") + vars.mm + "分。”屏幕亮了一瞬——壁纸是个扎马尾、戴眼镜的女孩，笑得眼睛弯弯的。他很快把手机塞回了口袋。";
     },
@@ -1891,12 +1866,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿-无人机": {
-    image: timeImage({
-      morning: "images/placeholder.png",
-      evening: "images/placeholder.png",
-      night: "images/placeholder.png",
-      midnight: "images/placeholder.png"
-    }),
+    image: "images/placeholder.png",
     onEnter: { set: { _droneIntel: true } },
     text: "“还能飞一块电池——”他从背包里掏出无人机，熟练地开机、对频。小飞行器嗡地一声从窗户飞了出去。\n\
 他把遥控器屏幕转向你，画面里是小区东门的俯视图。你看到保安亭、歪倒的灯笼、还有那辆停在公交站台旁的公交车。车窗全碎了，里面人影憧憧——不是乘客，是尸群。\n\
