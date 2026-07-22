@@ -1624,10 +1624,10 @@ Object.assign(storyData, {
 
   "樱桃苑-5楼-501-拿钥匙": {
     image: timeImage({// 为了简便，此处用night指代evening+night+midnight
-      morning: "501的钥匙.jpg",
-      evening: "501的钥匙-night.jpg",
-      night: "501的钥匙-night.jpg",
-      midnight: "501的钥匙-night.jpg"
+      morning: "images/home/501的钥匙.jpg",
+      evening: "images/home/501的钥匙-night.jpg",
+      night: "images/home/501的钥匙-night.jpg",
+      midnight: "images/home/501的钥匙-night.jpg"
     }),
     onEnter: { set: { positionAfterOperation: "樱桃苑-5楼" } },
     text: "你拿起那串钥匙。钥匙环上挂着三把——一把铜的、两把铝的，铜的那把已经磨得发亮。\n你看了藤椅上的老人最后一眼，轻轻带上了门。",
@@ -1640,7 +1640,10 @@ Object.assign(storyData, {
   },
 
   "樱桃苑-5楼-门锁了": {
-    image: "images/placeholder.png",
+    image: function(vars) {
+      if (vars._tryDoor === "502") return "images/home/502.jpg";
+      return "images/home/503的传单.jpg";
+    },
     text: function(vars) {
       if (vars._tryDoor === "502") return "502的门锁着。门把手上落了一层灰——很久没人动过了。门缝下面什么都没有。";
       return "503的门也锁着。门缝下面塞着半张超市传单，日期是6月26日——特价鸡蛋，限量三斤。背面有人用铅笔写了一行字：\n<em>去了我妈家，如果有人找，打我电话。138——</em>\n后面的数字被撕掉了。";
@@ -1741,54 +1744,55 @@ Object.assign(storyData, {
       return "物业楼里空荡荡的。办公桌还在，半张小区平面图已经被风吹到了地上。地上散落着几个拧废的螺丝和半截断掉的自行车链条。\n\
 墙上有人用记号笔歪歪扭扭写了一行字：\n<em>去南边了——高 6/29</em>";
     },
-    choices: function(vars) {
-      var cs = [];
-      if (vars.dd == 1 && vars.hh < 12) {
-        cs.push({
-          text: "跟高锦睿聊聊",
-          nextScene: "物业楼-高锦睿"
-        });
-      }
-      if (vars.hasCommitteeKey && !vars._committeeSearched) {
-        cs.push({
-          text: "用居委会钥匙打开走廊尽头那扇门",
-          nextScene: "物业楼-居委会办公室"
-        });
-      }
-      cs.push({
+    choices: [
+      {
+        text: "跟高锦睿聊聊",
+        nextScene: "物业楼-高锦睿",
+        showCondition: "dd == 1 && hh < 12"
+      },
+      {
+        text: "用居委会钥匙打开走廊尽头那扇门",
+        nextScene: "物业楼-居委会办公室",
+        showCondition: "hasCommitteeKey && !_committeeSearched"
+      },
+      {
         text: "退出去",
         nextScene: "小区草地-安全"
-      });
-      return cs;
-    }
+      }
+    ]
   },
 
   "物业楼-居委会办公室": {
-    image: "images/home/居委会办公室.png",
+    image: timeImage({// 为了简便，此处用night指代evening+night+midnight
+      morning: "images/home/居委会办公室.jpg",
+      evening: "images/home/居委会办公室-night.jpg",
+      night: "images/home/居委会办公室-night.jpg",
+      midnight: "images/home/居委会办公室-night.jpg"
+    }),
     onEnter: { set: { _committeeSearched: true } },
     text: "钥匙转动——门开了。里面是一间不大的办公室，靠墙一排铁皮档案柜，桌上摊着几本翻开的台账。空气里飘着淡淡的樟脑丸味道。\n\
 你拉开柜门翻了翻——旧文件夹、一盒干掉的印泥、半包口罩。在底层抽屉里，你找到了一个落满灰的纸箱，上面贴着“便民维修工具”的标签。\n\
 旁边的箱子里有一套自行车修理工具——补胎胶、链条润滑油、几根备用辐条。看起来是居委会以前搞便民服务时留下的。",
-    choices: function(vars) {
-      var cs = [];
-      cs.push({
+    choices: [
+      {
         text: "拿给高锦睿",
         nextScene: "物业楼-居委会-给高锦睿",
         showCondition: "dd == 1 && hh < 12"
-      });
-      cs.push({
+      },
+      {
         text: "收起来，以后也许用得上",
         nextScene: "物业楼",
         effect: updateTime(2)
-      });
-      return cs;
-    }
+      }
+    ]
   },
 
   "物业楼-居委会-给高锦睿": {
     image: "images/placeholder.png",
     onEnter: updateTime(2),
-    text: "你把纸箱搬了过去，搁在高锦睿脚边。他低头看了一眼里面的东西，愣了一下。\n“不是吧——”他抓起那瓶链条油，摇了摇，眼里放光，“这东西我找了一上午了！”\n他立刻拧开盖子往链条上滴了几滴，转动踏板——链条顺畅地滑过齿轮，那声难听的咔嗒咔嗒终于消失了。\n“谢了。”他把变干净的抹布往工具箱里一扔，拍了拍手，“对了——”他从背包侧兜翻出一张折叠的纸，递给你。\n是一张手绘的小区周边地图。西门那边靠安盛街的位置，被他用红笔圈了一个圈，旁边潦草地写着两个字：<em>抄近路</em>。\n“我飞无人机的时候看到的。西门出去，贴着围墙走，有条小路绕过安盛街的堵口——比走正街快。”",
+    text: "你把纸箱搬了过去，搁在高锦睿脚边。他低头看了一眼里面的东西，愣了一下。\n“不是吧——”他抓起那瓶链条油，摇了摇，眼里放光，“这东西我找了一上午了！”\n\
+他立刻拧开盖子往链条上滴了几滴，转动踏板——链条顺畅地滑过齿轮，那声难听的咔嗒咔嗒终于消失了。\n“谢了。”他把变干净的抹布往工具箱里一扔，拍了拍手，“对了——”他从背包侧兜翻出一张折叠的纸，递给你。\n\
+是一张手绘的小区周边地图。西门那边靠安盛街的位置，被他用红笔圈了一个圈，旁边潦草地写着两个字：<em>抄近路</em>。\n“我飞无人机的时候看到的。西门出去，贴着围墙走，有条小路绕过安盛街的堵口——比走正街快。”",
     choices: [
       {
         text: "“厉害了，谢啦。”",
@@ -1804,29 +1808,27 @@ Object.assign(storyData, {
   "物业楼-高锦睿": {
     image: "images/placeholder.png",
     onEnter: { set: { currentPos: "物业楼" } },
-    text: "高锦睿——你的初中同桌，万年不变的锅盖头，深色卫衣配运动短裤，脚上一双标签掉了一半的假Yeezy。他跟以前一模一样，好像外面世界末日了也跟他没什么关系。\n他正在修他的红色美利达山地车，变速器卡了好几天了。旁边地上放着一个鼓鼓的背包，拉链半开着，能看到里面塞了半包辣条和一台大疆无人机。",
-    choices: function(vars) {
-      var cs = [];
-      cs.push({
+    text: "高锦睿——你的初中同桌，万年不变的锅盖头，深色卫衣配运动短裤，脚上一双标签掉了一半的假Yeezy。他跟以前一模一样，好像外面世界末日了也跟他没什么关系。\n\
+他正在修他的红色美利达山地车，变速器卡了好几天了。旁边地上放着一个鼓鼓的背包，拉链半开着，能看到里面塞了半包辣条和一台大疆无人机。",
+    choices: [
+      {
         text: "你怎么在这儿？",
         nextScene: "物业楼-高锦睿-聊"
-      });
-      if (!vars._droneIntel) {
-        cs.push({
-          text: "你那个无人机还能飞吗？帮我看看东门",
-          nextScene: "物业楼-高锦睿-无人机"
-        });
-      }
-      cs.push({
+      },
+      {
+        text: "你那个无人机还能飞吗？帮我看看东门",
+        nextScene: "物业楼-高锦睿-无人机",
+        showCondition: "!_droneIntel"
+      },
+      {
         text: "现在几点了？",
         nextScene: "物业楼-高锦睿-时间"
-      });
-      cs.push({
+      },
+      {
         text: "不打扰了，继续赶路",
         nextScene: "小区草地-安全"
-      });
-      return cs;
-    }
+      }
+    ]
   },
 
   "物业楼-高锦睿-聊": {
@@ -1838,24 +1840,21 @@ Object.assign(storyData, {
       if (vars._droneIntel) desc += "他顿了顿，又说：“刚才飞了一圈，东门那辆公交车里全是丧尸——你别走那边。”";
       return desc;
     },
-    choices: function(vars) {
-      var cs = [];
-      if (!vars._droneIntel) {
-        cs.push({
-          text: "你那个无人机还能飞吗？帮我看看东门",
-          nextScene: "物业楼-高锦睿-无人机"
-        });
-      }
-      cs.push({
+    choices: [
+      {
+        text: "你那个无人机还能飞吗？帮我看看东门",
+        nextScene: "物业楼-高锦睿-无人机",
+        showCondition: "!_droneIntel"
+      },
+      {
         text: "现在几点了？",
         nextScene: "物业楼-高锦睿-时间"
-      });
-      cs.push({
+      },
+      {
         text: "那我先走了，保重",
         nextScene: "小区草地-安全"
-      });
-      return cs;
-    }
+      }
+    ]
   },
 
   "物业楼-高锦睿-时间": {

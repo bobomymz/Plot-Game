@@ -61,6 +61,7 @@ const storyData = {
     findKey502: false,         // 是否找到502钥匙
     hasBankSlip: false,        // 是否拿到银行存单
     _droneIntel: false,        // 是否获得无人机侦察情报（物业楼高锦睿）
+    _committeeSearched: false,  // 是否搜过物业楼居委会办公室
 
     // --- 物品状态 ---
     // 常规物品
@@ -72,7 +73,7 @@ const storyData = {
     hasGasMask:   false,       // 是否有防毒面具（民防设施物资区）
     hasIronPipe: false,        // 是否有铁管（民防设施物资区箱子后面，打斗中才能获得）
     hasCane: false,            // 是否有拐杖（安盛街老头丧尸）
-    hasMopHandle: false,      // 是否有拖把杆（理发店）
+    hasMopHandle: false,       // 是否有拖把杆（理发店）
     hasCutter: false,          // 是否有美工刀
     hasBiscuit: false,         // 是否有饼干（安盛街便利店）
     hasMap: false,             // 是否有交通地图（三林安居苑藤蔓丧尸）
@@ -80,7 +81,7 @@ const storyData = {
     hasCrumpledLeaflet: false, // 是否有揉皱的传单
     hasPhone: false,           // 是否找到华为店展示机
     hasLiquidParaffin: false,  // 是否有医用石蜡油（益丰大药房左边货架）
-    hasBottle: false,                // 是否有水瓶
+    hasBottle: false,          // 是否有水瓶
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
