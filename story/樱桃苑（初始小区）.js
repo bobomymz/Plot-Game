@@ -803,12 +803,12 @@ Object.assign(storyData, {
 
   "西出口": {
     image: timeImage({
-      morning: "images/home/小区西门.png",
-      evening: "images/home/小区西门-evening.png",
-      night: "images/home/小区西门-night.png",
-      midnight: "images/home/小区西门-midnight.png"
+      morning: "images/home/西出口.png",
+      evening: "images/home/西出口-evening.png",
+      night: "images/home/西出口-night.png",
+      midnight: "images/home/西出口-midnight.png"
     }),
-    text: "你成功逃出地下车库，来到了西出口。",
+    text: "你来到了西出口，成功逃出了车库。",
     choices: [
       {
         text: "继续前进",
@@ -1565,7 +1565,7 @@ Object.assign(storyData, {
   // ========== 5楼：孙阿姨 ==========
 
   "樱桃苑-5楼": {
-    image: "images/placeholder.png",
+    image: "images/home/5楼.png",
     onEnter: { set: { currentPos: "居民楼" } },
     text: "五楼走廊很安静。地面上铺着已经开始翘边的复合地板，踩上去嘎吱作响。并排三扇门：501、502、503，门牌是那种老式的蓝色塑料片，501的“5”已经歪了，快要掉下来。\n501的门上贴着一张褪色的“福”字，下面用透明胶粘着一个手写的纸牌——“如有人找，请打居委会电话”。字迹工整，像是练过毛笔字的老人写的。\n502门上没有任何装饰。503的门缝下面塞着一角超市传单，已经被踩得模糊了。",
     choices: [
@@ -1593,7 +1593,12 @@ Object.assign(storyData, {
   },
 
   "樱桃苑-5楼-501": {
-    image: "images/placeholder.png",
+    image: timeImage({ // 为了简便，此处用night指代evening+night+midnight
+      morning: "images/home/501.jpg",
+      evening: "images/home/501-night",
+      night: "images/home/501-night",
+      midnight: "images/home/501-night",
+    }),
     onEnter: { set: { currentPos: "501室" } },
     text: "门没锁。你轻轻一推，铰链发出干涩的吱呀声。\n客厅的光线很暗，窗帘只拉了一半。午后的光斜斜地打在老式藤椅上——藤椅上坐着一个短发老太太，头微微偏向一侧，像是午睡还没醒。\n\
 但她不会再醒了。\n茶几上放着一只老式闹钟，停在11:47。旁边摊着一本翻到一半的电话簿，圆珠笔还夹在她指间，笔尖已经干了。电话簿下面压着一张手写的小区住户去向表：\n\
@@ -1618,9 +1623,14 @@ Object.assign(storyData, {
   },
 
   "樱桃苑-5楼-501-拿钥匙": {
-    image: "images/placeholder.png",
+    image: timeImage({// 为了简便，此处用night指代evening+night+midnight
+      morning: "501的钥匙.jpg",
+      evening: "501的钥匙-night.jpg",
+      night: "501的钥匙-night.jpg",
+      midnight: "501的钥匙-night.jpg"
+    }),
     onEnter: { set: { positionAfterOperation: "樱桃苑-5楼" } },
-    text: "你拿起那串钥匙。钥匙环上挂着三把——一把铜的、两把铝的，铜的那把已经磨得发亮。标签上的“居委会”三个字是圆珠笔写的，被透明胶缠得严严实实。\n你看了藤椅上的老人最后一眼，轻轻带上了门。",
+    text: "你拿起那串钥匙。钥匙环上挂着三把——一把铜的、两把铝的，铜的那把已经磨得发亮。\n你看了藤椅上的老人最后一眼，轻轻带上了门。",
     choices: [
       {
         text: "继续",
@@ -1754,7 +1764,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-居委会办公室": {
-    image: "images/placeholder.png",
+    image: "images/home/居委会办公室.png",
     onEnter: { set: { _committeeSearched: true } },
     text: "钥匙转动——门开了。里面是一间不大的办公室，靠墙一排铁皮档案柜，桌上摊着几本翻开的台账。空气里飘着淡淡的樟脑丸味道。\n\
 你拉开柜门翻了翻——旧文件夹、一盒干掉的印泥、半包口罩。在底层抽屉里，你找到了一个落满灰的纸箱，上面贴着“便民维修工具”的标签。\n\
