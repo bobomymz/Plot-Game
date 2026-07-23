@@ -1875,7 +1875,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿-无人机": {
-    image: "images/placeholder.png",
+    image: "images/home/俯瞰1003.png",
     onEnter: { set: { _droneIntel: true } },
     text: "“还能飞一块电池——”他从背包里掏出无人机，熟练地开机、对频。小飞行器嗡地一声从窗户飞了出去。\n\
 他把遥控器屏幕转向你，画面里是小区东门的俯视图。你看到保安亭、歪倒的灯笼、还有那辆停在公交站台旁的公交车。车窗全碎了，里面人影憧憧——不是乘客，是尸群。\n\
