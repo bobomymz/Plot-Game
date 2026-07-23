@@ -3,16 +3,8 @@
 Object.assign(storyData, {
   "全家便利店（环林东路）": {
     image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
-        return f(vars);
-      }
-      return "images/小区周边/全家便利店门口.png";
+      if (vars.weather === "雨") return "images/小区周边/全家和公交站全家便利店门口-night.png";
+      return "images/小区周边/全家和公交站全家便利店门口.png";
     },
     onEnter: function(vars) {
       vars.currentPlace = "初始小区";
@@ -36,7 +28,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店内部": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/全家便利店内部.png */,
+    image: "images/小区周边/全家和公交站全家便利店内部.png",
     text: function(vars) {
       var base = "你走进熟悉又陌生的便利店。\n\
 前面的冷藏区放着一些牛奶、鲜肉盒、饮料，以及你常买来作为早餐的饭团。\n\
@@ -94,7 +86,7 @@ Object.assign(storyData, {
   },
 
   "全家-吃零食": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/零食.png */,
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站零食.png */,
     onEnter: updateTime(1, { add : { strength: 1 } }),
     text: "薯片在你口中嘎嘣作响，嗯，真好吃。\n\
 突然，员工通道的门被一只丧尸撞开了。它双眼通红，眼神呆滞地盯着你，好像眼力不太好。\n\
@@ -217,7 +209,7 @@ Object.assign(storyData, {
   },
 
   "日记本的提示-迅捷丧尸": {
-    image: "images/小区周边/diary-fastZombie.png",
+    image: "images/小区周边/全家和公交站diary-fastZombie.png",
     text: "你打开了日记本，上面赫然多了一页日记：\n\
 7/15 傍晚 空气里有股腥臭味\n\
 今晚八点零三分，我躲在一栋单单元门里。\n\
@@ -256,7 +248,7 @@ Object.assign(storyData, {
   },
 
   "一拳KO": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/pipeAttack.png */,
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站pipeAttack.png */,
     onEnter: { set: { FamilymartHasZombie: false} },
     text: "你猛地出拳，正中丧尸面门，右手生疼，而丧尸已经倒地不起。\n\
 一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。",
@@ -274,7 +266,7 @@ Object.assign(storyData, {
   },
 
   "棒打丧尸腿": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/pipeAttack.png */,
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站pipeAttack.png */,
     onEnter: { set: { FamilymartHasZombie: false} },
     text: "你回手掏出钢管，狠狠地抽在它腿上。只听得嘎吱一声脆响，不知是钢管还是它骨头断裂的声音。那只丧尸已经瘫倒在了地上，像一条扭曲的蛆在蠕动。\
 一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。",
@@ -292,7 +284,7 @@ Object.assign(storyData, {
   },
 
   "全家-吃面包": {
-    image: "images/小区周边/面包.png",
+    image: "images/小区周边/全家和公交站面包.png",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些面包，感觉肚子有了一些能量。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
@@ -305,7 +297,7 @@ Object.assign(storyData, {
   },
 
   "全家-吃饭团": {
-    image: "images/小区周边/饭团.png",
+    image: "images/小区周边/全家和公交站饭团.png",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些饭团，感觉肚子有了一些能量。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
@@ -318,7 +310,7 @@ Object.assign(storyData, {
   },
 
   "全家-喝饮料腹泻": {
-    image: "images/小区周边/公厕里的丧尸.png",
+    image: "images/小区周边/全家和公交站公厕里的丧尸.png",
     onEnter: updateTime(2),
     text: "你随手从冰柜里抓起一瓶冰凉的柠檬水，咕嘟咕嘟一饮而尽。片刻之后，你感觉胃部传来一阵绞痛。\n\
 ——你已经一个早上没吃饭了，现在这么快灌下去，怕是又要拉肚子了。\n\
@@ -330,15 +322,21 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
+        morning: "images/小区周边/全家和公交站/公交车站-雨天.png",
+        evening: "images/小区周边/全家和公交站/公交车站-雨天-evening.png",
+        night: "images/小区周边/全家和公交站/公交车站-雨天-night.png",
+        midnight: "images/小区周边/全家和公交站/公交车站-雨天-midnight.png"
         });
         return f(vars);
       }
-      return "images/placeholder.png";
-    }, /* TODO: images/小区周边/bus.png */
+      var f = timeImage({
+        morning: "images/小区周边/全家和公交站/公交车站.png",
+        evening: "images/小区周边/全家和公交站/公交车站-evening.png",
+        night: "images/小区周边/全家和公交站/公交车站-night.png",
+        midnight: "images/小区周边/全家和公交站/公交车站-midnight.png"
+      });
+      return f(vars);
+    }, /* TODO: images/小区周边/全家和公交站bus.png */
     onEnter: function(vars) {
       vars.positionAfterOperation = "三林路-环林东路 十字路口";
       vars.currentPlace = "初始小区";
@@ -371,7 +369,7 @@ Object.assign(storyData, {
   // ========== 饼干引路 + 员工通道 ==========
 
   "全家便利店-饼干引路": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/饼干引路.png */,
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站饼干引路.png */,
     text: "你从口袋里掏出那包饼干，撕开包装，用力朝员工通道的方向扔了过去。\n\
 饼干砸在金属门上，碎屑四溅。那只迅捷丧尸的注意力瞬间被吸引——它像一道闪电般扑向声音的来源，一头扎进了黑漆漆的员工通道。\n\
 紧接着，通道深处传来咣当一声巨响——它似乎撞翻了什么重物，然后是一阵杂乱的刮擦声……渐渐安静了下来。\n你等了几秒，确认它没有回来。员工通道的门半开着，里面一片漆黑。",
@@ -395,7 +393,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店-员工通道": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/员工通道.png */,
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站员工通道.png */,
     onEnter: function(vars) {
       vars.positionAfterOperation = "全家便利店-员工通道";
       return updateTime(3)(vars);
@@ -425,7 +423,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店-员工通道-摸黑": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/员工通道-暗.png */,
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站员工通道-暗.png */,
     onEnter: function(vars) {
       if (vars.FamilymartHasZombie) {
         return initMemoryGame(["红","蓝","绿"], 9)(vars);
@@ -461,7 +459,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店-员工通道-踢飞丧尸": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/员工通道-暗.png */,
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站员工通道-暗.png */,
     onEnter: updateTime(1, { set: { FamilymartHasZombie: false } }),
     text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱哗啦啦地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n砰——门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。",
     choices: [

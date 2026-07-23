@@ -948,7 +948,7 @@ Object.assign(storyData, {
   },
 
   "抽屉里的手电筒": {
-    image: "images/home/torch.png" /* TODO: images/home/light.png */,
+    image: "images/home/torch.png",
     onEnter: { add: { visitWaitingRoomTimes: 1 } },
     text: "你打开抽屉，发现里面有一个小手电筒。",
     choices: [
