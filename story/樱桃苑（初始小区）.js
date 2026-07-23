@@ -1858,9 +1858,9 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿-时间": {
-    image: "images/placeholder.png",
+    image: "images/home/高锦睿的手机.png",
     text: function(vars) {
-      return "他掏出手机瞄了一眼。“现在" + vars.hh + "点" + (vars.mm < 10 ? "0" : "") + vars.mm + "分。”屏幕亮了一瞬——壁纸是个扎马尾、戴眼镜的女孩，笑得眼睛弯弯的。他很快把手机塞回了口袋。";
+      return "他掏出手机瞄了一眼。“现在" + vars.hh + "点" + (vars.mm < 10 ? "0" : "") + vars.mm + "分。”屏幕亮了一瞬——壁纸是个笑盈盈的女孩。他很快把手机塞回了口袋。";
     },
     choices: [
       {
