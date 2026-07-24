@@ -7,11 +7,11 @@ Object.assign(storyData, {
   "三林安居苑后门": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-        morning: "images/安居苑/后门-雨天.png",
-        evening: "images/安居苑/后门-雨天-evening.png",
-        night: "images/安居苑/后门-雨天-night.png",
-        midnight: "images/安居苑/后门-雨天-midnight.png"
+        var f = timeImage({ // evening ~ midnight 统一为 night
+          morning: "images/安居苑/后门-雨天.png",
+          evening: "images/安居苑/后门-雨天-night.png",
+          night: "images/安居苑/后门-雨天-night.png",
+          midnight: "images/安居苑/后门-雨天-night.png"
         });
         return f(vars);
       }

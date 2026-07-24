@@ -9,15 +9,21 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
+          morning: "images/安盛街/东侧街面-雨天.png",
+          evening: "images/安盛街/东侧街面-雨天-night.png",
+          night: "images/安盛街/东侧街面-雨天-night.png",
+          midnight: "images/安盛街/东侧街面-雨天-night.png"
         });
         return f(vars);
       }
-      return "images/placeholder.png";
-    }, /* TODO: images/anshengStreet/eastEntrance.png */
+      var f = timeImage({
+        morning: "images/安盛街/东侧街面.png",
+        evening: "images/安盛街/东侧街面-evening.png",
+        night: "images/安盛街/东侧街面-night.png",
+        midnight: "images/安盛街/东侧街面-midnight.png"
+      });
+      return f(vars);
+    }, 
     onEnter: function(vars) {
       vars.currentPlace = "安盛街";
       vars.currentPos = "安盛街";
@@ -59,7 +65,24 @@ Object.assign(storyData, {
   },
 
   "安盛街东侧-犹豫": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/eastEntrance.png */,
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/安盛街/东侧街面-雨天.png",
+          evening: "images/安盛街/东侧街面-雨天-night.png",
+          night: "images/安盛街/东侧街面-雨天-night.png",
+          midnight: "images/安盛街/东侧街面-雨天-night.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安盛街/东侧街面.png",
+        evening: "images/安盛街/东侧街面-evening.png",
+        night: "images/安盛街/东侧街面-night.png",
+        midnight: "images/安盛街/东侧街面-midnight.png"
+      });
+      return f(vars);
+    },
     onEnter: { add: { chasedByZombies: 1 } },
     text: "你在街口犹豫了一下——就是这一下，远处徘徊的那几只丧尸注意到了你。它们拖着步子朝你的方向聚拢过来。\n你不能再站在这里了。前方那个拄着拐杖的身影还在那里——但它只有一只，而朝你走来的远不止一只。",
     choices: [
