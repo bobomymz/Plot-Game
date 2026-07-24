@@ -8,14 +8,20 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
+        morning: "images/安居苑/后门-雨天.png",
+        evening: "images/安居苑/后门-雨天-evening.png",
+        night: "images/安居苑/后门-雨天-night.png",
+        midnight: "images/安居苑/后门-雨天-midnight.png"
         });
         return f(vars);
       }
-      return "images/安居苑/后门.png";
+      var f = timeImage({
+        morning: "images/安居苑/后门.png",
+        evening: "images/安居苑/后门-evening.png",
+        night: "images/安居苑/后门-night.png",
+        midnight: "images/安居苑/后门-midnight.png"
+      });
+      return f(vars);
     }, /* TODO: images/安居苑/anJuYuan.png */
     onEnter: function(vars) {
       vars.currentPlace = "安居苑";
