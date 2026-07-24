@@ -4,7 +4,7 @@
 Object.assign(storyData, {
 
   // ==================== 三林安居苑（老小区） ====================
-  "三林安居苑": {
+  "三林安居苑后门": {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({

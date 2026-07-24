@@ -529,7 +529,7 @@ Object.assign(storyData, {
       },
       {
         text: "去三林安居苑",
-        nextScene: "三林安居苑",
+        nextScene: "三林安居苑后门",
         effect: updateTime(2)
       },
       {
@@ -537,7 +537,7 @@ Object.assign(storyData, {
         text: "先整理一下东西",
         nextScene: "整理整理"
       },
-      sprintAway(["安盛街-文具店", "安盛街-服装店", "安盛街-食品批发部", "安盛街-理发店", "安盛街西侧", "安盛街东侧", "三林安居苑"])
+      sprintAway(["安盛街-文具店", "安盛街-服装店", "安盛街-食品批发部", "安盛街-理发店", "安盛街西侧", "安盛街东侧", "三林安居苑后门"])
     ]
   },
 
@@ -1048,7 +1048,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续",
-        nextScene: "三林安居苑"
+        nextScene: "三林安居苑后门"
       }
     ]
   },
@@ -1188,7 +1188,7 @@ Object.assign(storyData, {
         text: "躲到广告牌后面",
         nextScene: "安盛街西侧-躲藏"
       },
-      sprintAway(["朝新达汇前进", "三林安居苑", "安盛街中段"])
+      sprintAway(["朝新达汇前进", "三林安居苑后门", "安盛街中段"])
     ]
   },
 
