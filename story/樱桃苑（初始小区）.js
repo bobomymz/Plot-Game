@@ -341,7 +341,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "躲在家具里",
-        nextScene: "来自丧尸的惊吓"
+        nextScene: "结局-来自丧尸的惊吓"
       }
     ]
   },
@@ -355,7 +355,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "闪！你抵消丧尸一张杀。",
-        nextScene: "来自丧尸的惊吓",
+        nextScene: "结局-来自丧尸的惊吓",
         condition: "repeatedClickTimes < 2", 
         // 相当于点击2次，因为先检查condition再造成effect
         effect: {
@@ -415,7 +415,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "返回楼梯间",
-        nextScene: "来自丧尸的惊吓"
+        nextScene: "结局-来自丧尸的惊吓"
       },
       {
         text: "查看柱子上的纸张",
@@ -882,7 +882,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "谁？",
-        nextScene: "来自丧尸的惊吓"
+        nextScene: "结局-来自丧尸的惊吓"
       }
     ]
   },
