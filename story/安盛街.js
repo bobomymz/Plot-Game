@@ -101,7 +101,10 @@ Object.assign(storyData, {
 
   // ==================== 老头丧尸遭遇战 ====================
   "遭遇老头丧尸": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManZombie.png */,
+    image: function(vars) {
+      if(vars.weather == "雨") return "images/安盛街/老头丧尸-雨天.png";
+      return "images/安盛街/老头丧尸.png";
+    },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "遭遇老头丧尸-犹豫"
@@ -128,13 +131,13 @@ Object.assign(storyData, {
   },
 
   "结局-老头丧尸砸死你": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManKill.png */,
+    image: "images/zombieWaveSmashYouIntoPieces.png" /* TODO: images/anshengStreet/oldManKill.png */,
     text: "你冲上去的瞬间，老头丧尸举起拐杖狠狠砸了下来。\n它的力气大得惊人——你眼前一黑，倒在了冰冷的地面上。\n你为自己莽撞的攻击付出了代价。\n\n—— 结局：老头丧尸 ——"
   },
 
   "遭遇老头丧尸-犹豫": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManZombie.png */,
-    text: "你盯着老头丧尸犹豫要怎么处理它——但它没给你犹豫的时间。它举起拐杖，拖着步子加速朝你冲了过来。\n你只能仓促应对。",
+    image: "images/placeholder.png",
+    text: "你盯着老头丧尸犹豫要怎么对付它——但它没给你犹豫的时间。它举起拐杖，拖着步子加速朝你冲了过来。\n你只能仓促应对。",
     choices: [
       {
         text: "侧身闪开，从旁边绕过去",
