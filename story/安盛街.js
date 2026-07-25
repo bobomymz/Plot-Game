@@ -153,7 +153,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-踹倒老头丧尸": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManFall.png */,
+    image: "images/安盛街/踹倒老头丧尸.png",
     onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true } }),
     text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。",
     choices: [
