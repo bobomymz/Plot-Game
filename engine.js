@@ -220,7 +220,7 @@ function clearMemoryFlash() {
   const overlay = document.getElementById("screen-effect-overlay");
   if (overlay) {
     overlay.style.background = 'transparent';
-    overlay.style.display = 'none';
+    // 不再设置 display，交给 applyScreenEffects 统一管理
   }
 }
 
@@ -243,7 +243,7 @@ function applyMemoryFlash(vars) {
   function flash(index) {
     if (index >= seq.length) {
       overlay.style.background = 'transparent';
-      overlay.style.display = 'none';
+      applyScreenEffects();  // 闪色结束后恢复屏幕特效（暗角/雨滴等），不再硬编码 display:none
       vars._seqPlayed = true;
       vars._currentSeq = [];  // 释放内存
       return;

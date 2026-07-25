@@ -324,12 +324,16 @@ html, body {
   }
 }
 
-/* ===== 雨滴叠加（放在遮罩层上，不阻挡操作） ===== */
-#screen-effect-overlay.weather-rain {
+/* ===== 雨滴叠加（::before 伪元素，不干扰暗角/其他背景） ===== */
+#screen-effect-overlay.weather-rain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background-image: url('images/rain-overlay.png');
   background-repeat: repeat;
   opacity: 0.45;
   animation: rain-fall 1s linear infinite;
+  pointer-events: none;
 }
 @keyframes rain-fall {
   from { background-position: 0 0; }

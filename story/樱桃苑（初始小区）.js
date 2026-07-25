@@ -11,7 +11,7 @@ Object.assign(storyData, {
       midnight: "images/home/bedroom-midnight.png"
     }),
     onEnter: {
-      set: { currentPlace: "初始小区", currentPos: "我家" }
+      set: { currentPlace: "初始小区", currentPos: "我家", weather: "雨", showRain: true }
     },
     text: function(vars) {
       if(vars._visit["初始卧室"] === 1) {
