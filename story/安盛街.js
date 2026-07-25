@@ -76,7 +76,7 @@ Object.assign(storyData, {
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/东侧街面.png",
+        morning: "images/安盛街/东侧街面.jpg", // 原图格式JPG，修改后变为PNG
         evening: "images/安盛街/东侧街面-evening.png",
         night: "images/安盛街/东侧街面-night.png",
         midnight: "images/安盛街/东侧街面-midnight.png"
@@ -544,7 +544,7 @@ Object.assign(storyData, {
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/placeholder.png",
+        morning: "images/中段.jpg",
         evening: "images/placeholder.png",
         night: "images/placeholder.png",
         midnight: "images/placeholder.png"

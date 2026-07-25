@@ -27,7 +27,7 @@ Object.assign(storyData, {
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
+        morning: "images/新达汇/喷泉广场.png",
         evening: "images/新达汇/喷泉广场-evening.png",
         night: "images/新达汇/喷泉广场-night.png",
         midnight: "images/新达汇/喷泉广场-midnight.png"
