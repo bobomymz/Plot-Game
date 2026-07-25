@@ -17,7 +17,7 @@ Object.assign(storyData, {
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/东侧街面.png",
+        morning: "images/安盛街/东侧街面.jpg",
         evening: "images/安盛街/东侧街面-evening.png",
         night: "images/安盛街/东侧街面-night.png",
         midnight: "images/安盛街/东侧街面-midnight.png"
@@ -83,6 +83,10 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
+    qte: {
+      timeout: "10000 - chasedByZombies * 1000",
+      onTimeout: "结局-被丧尸扑倒咬死"
+    },
     onEnter: { add: { chasedByZombies: 1 } },
     text: "你在街口犹豫了一下——就是这一下，远处徘徊的那几只丧尸注意到了你。它们拖着步子朝你的方向聚拢过来。\n你不能再站在这里了。前方那个拄着拐杖的身影还在那里——但它只有一只，而朝你走来的远不止一只。",
     choices: [
@@ -102,8 +106,22 @@ Object.assign(storyData, {
   // ==================== 老头丧尸遭遇战 ====================
   "遭遇老头丧尸": {
     image: function(vars) {
-      if(vars.weather == "雨") return "images/安盛街/老头丧尸-雨天.png";
-      return "images/安盛街/老头丧尸.png";
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/安盛街/老头丧尸-雨天.png",
+          evening: "images/安盛街/老头丧尸-雨天.png",
+          night: "images/安盛街/老头丧尸-雨天-night.png",
+          midnight: "images/安盛街/老头丧尸-雨天-night.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安盛街/老头丧尸.png",
+        evening: "images/安盛街/老头丧尸.png",
+        night: "images/安盛街/老头丧尸-night.png",
+        midnight: "images/安盛街/老头丧尸-midnight.png"
+      });
+      return f(vars);
     },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
@@ -137,6 +155,7 @@ Object.assign(storyData, {
 
   "遭遇老头丧尸-犹豫": {
     image: "images/安盛街/老头丧尸袭来.png",
+    onEnter: { set: { showRain: true } },
     text: "你盯着老头丧尸犹豫要怎么对付它——但它没给你犹豫的时间。它举起拐杖，拖着步子加速朝你冲了过来。\n你只能仓促应对。",
     choices: [
       {
@@ -154,7 +173,7 @@ Object.assign(storyData, {
 
   "安盛街-踹倒老头丧尸": {
     image: "images/安盛街/踹倒老头丧尸.png",
-    onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true } }),
+    onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true, showRain: true } }),
     text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。",
     choices: [
       {
@@ -172,7 +191,7 @@ Object.assign(storyData, {
 
   "安盛街-获得拐杖": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/cane.png */,
-    onEnter: { set: { positionAfterOperation: "安盛街-获得拐杖" } },
+    onEnter: { set: { positionAfterOperation: "安盛街-获得拐杖", showRain: true } },
     text: "老头丧尸的拐杖掉在地上，是一根金属材质的——沉甸甸的，虽然不是什么神兵利器，但总比空手强。\n老头丧尸在地上扭动着，朝你发出嘶哑的吼声。该走了。",
     choices: [
       {
@@ -192,6 +211,7 @@ Object.assign(storyData, {
 
   "安盛街-物品栏满了": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManFall.png */,
+    onEnter: { set: { showRain: true } },
     text: "你想捡起拐杖，但身上东西已经太多了。你犹豫了一下，还是放下了拐杖。\n毕竟带着一堆东西逃命不是什么好事。",
     choices: [
       {
@@ -204,7 +224,7 @@ Object.assign(storyData, {
 
   "绕过老头丧尸": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/bypassOldMan.png */,
-    onEnter: updateTime(1, { set: { defeatedOldMan: true } }),
+    onEnter: updateTime(1, { set: { defeatedOldMan: true, showRain: true } }),
     text: "你侧身一闪，从老头丧尸的左边绕了过去。它挥舞拐杖试图够到你，但动作太慢了，你轻松躲开，头也不回地朝前走去。",
     choices: [
       {
@@ -486,9 +506,17 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-后巷 ====================
   "安盛街-后巷": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/backAlley.png */,
+    image: function(vars) {
+      var f = timeImage({
+        morning: "images/placeholder.png",
+        evening: "images/placeholder.png",
+        night: "images/placeholder.png",
+        midnight: "images/placeholder.png"
+      });
+      return f(vars);
+    }, /* TODO: images/安盛街/后巷*.png */
     onEnter: {
-      set: {hurtByZombie: true}
+      set: {hurtByZombie: true, showRain: true}
     },
     text: "你从后门钻出来，进入一条狭窄的后巷。这里堆满了垃圾桶和废弃的纸箱，空气里弥漫着垃圾的酸臭味。\n\
 你继续往前走去。          \n\
@@ -515,8 +543,14 @@ Object.assign(storyData, {
         });
         return f(vars);
       }
-      return "images/placeholder.png";
-    }, /* TODO: images/anshengStreet/midStreet.png */
+      var f = timeImage({
+        morning: "images/placeholder.png",
+        evening: "images/placeholder.png",
+        night: "images/placeholder.png",
+        midnight: "images/placeholder.png"
+      });
+      return f(vars);
+    }, /* TODO: images/安盛街/中段*.png */
     onEnter: function(vars) {
       vars.positionAfterOperation = "安盛街中段";
       vars.currentArea = "周边社区";
@@ -580,7 +614,24 @@ Object.assign(storyData, {
   },
 
   "安盛街中段-犹豫": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/midStreet.png */,
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/placeholder.png",
+        evening: "images/placeholder.png",
+        night: "images/placeholder.png",
+        midnight: "images/placeholder.png"
+      });
+      return f(vars);
+    }, /* TODO: images/安盛街/中段*.png（与安盛街中段共用同一套图） */
     onEnter: { add: { chasedByZombies: 1 } },
     text: "你在街中央站得太久了。丧尸从街道两端围拢过来，低吼声此起彼伏。你不能再犹豫了——必须立刻做出选择。",
     choices: [
@@ -599,7 +650,24 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-文具店 ====================
   "安盛街-文具店": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryShop.png */,
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/placeholder.png",
+        evening: "images/placeholder.png",
+        night: "images/placeholder.png",
+        midnight: "images/placeholder.png"
+      });
+      return f(vars);
+    }, /* TODO: images/安盛街/文具店*.png */
     text: "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n收银台后面有动静——像是什么东西在翻找东西。",
     choices: [
       {
@@ -800,6 +868,7 @@ Object.assign(storyData, {
 
   "安盛街-物品栏满了2": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
+    onEnter: { set: { showRain: true } },
     text: "你想再捡点东西，但身上已经满当当的了。\n少年丧尸似乎察觉到了什么，开始抬起头来。你当机立断——现在不走更待何时。",
     choices: [
       {
@@ -811,7 +880,24 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-服装店 ====================
   "安盛街-服装店": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/clothingStore.png */,
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/placeholder.png",
+        evening: "images/placeholder.png",
+        night: "images/placeholder.png",
+        midnight: "images/placeholder.png"
+      });
+      return f(vars);
+    }, /* TODO: images/安盛街/服装店*.png */
     text: "你走进服装店。模特假人歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。\n\
 这家店看起来已经被洗劫过了，货架被推得东倒西歪。",
     choices: [
@@ -939,7 +1025,24 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-食品批发部 ====================
   "安盛街-食品批发部": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceStore.png */,
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/placeholder.png",
+        evening: "images/placeholder.png",
+        night: "images/placeholder.png",
+        midnight: "images/placeholder.png"
+      });
+      return f(vars);
+    }, /* TODO: images/安盛街/食品批发部*.png */
     text: function(vars) {
       let desc = "这是一家临街的食品批发部，几箱饮料摞在门口，但胜在不起眼。玻璃门上贴满了促销海报，看不清里面的情况。";
       if (vars.chasedByZombies >= 3) {
@@ -1046,7 +1149,7 @@ Object.assign(storyData, {
   // ==================== 安盛街-尸潮遭遇战 ====================
   "安盛街-尸潮来袭": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/zombieWave.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
     text: "你正走着，突然听到身后传来一阵密集的脚步声。\n回头一看，一群丧尸从十字路口的方向涌了过来——至少二三十只，像潮水一样塞满了整条街道。它们看到了你，发出嘶哑的吼声，加快了速度。\n你必须马上决定往哪跑！",
     qte: {
       timeout: "7000 - chasedByZombies * 1500",
@@ -1078,7 +1181,7 @@ Object.assign(storyData, {
 
   "安盛街-逃往安居苑": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/runToAnJuYuan.png */,
-    onEnter: updateTime(2, { add: { chasedByZombies: 1 } }),
+    onEnter: updateTime(2, { set: { showRain: true }, add: { chasedByZombies: 1 } }),
     text: "你朝着老小区的方向拔腿狂奔。肺像被火烧一样，双腿酸软，但身后的脚步声越来越近——你不能停。\n\
 前方出现了三林安居苑的后门。门卫亭、几辆歪斜的电瓶车、一道半开的大铁门，在你看来简直是一道天然的防线。\n\
 你侧身挤过铁门，顺手把一辆电瓶车拖过来挡在门口。尸潮紧随其后撞了上来，但被这些障碍物暂时挡住了。\n\
@@ -1093,7 +1196,7 @@ Object.assign(storyData, {
 
   "安盛街-躲进店铺": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/hideInShop.png */,
-    onEnter: updateTime(5, { add: { chasedByZombies: -2 } }),
+    onEnter: updateTime(5, { set: { showRain: true }, add: { chasedByZombies: -2 } }),
     text: "你一头扎进路边一家不知名的店铺，蹲在柜台后面，用手捂住嘴巴。\n\
 外面的脚步声越来越近，越来越密。丧尸的嚎叫声此起彼伏，听得你头皮发麻。你甚至能闻到它们身上那股腐烂的臭味——它们就在门外。\n\
 但幸运的是，它们没有停下来。尸潮像一阵暴风，从店铺门口席卷而过，渐渐远去了。\n等了很久很久，你才敢探出头来。",
@@ -1107,7 +1210,7 @@ Object.assign(storyData, {
 
   "安盛街-逃回理发店": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/runToBarberShop.png */,
-    onEnter: updateTime(2),
+    onEnter: updateTime(2, { set: { showRain: true } }),
     text: "你转身就跑，沿着来时的路狂奔。理发店的灯箱是你唯一认得的坐标。\n你用尽全力拍打玻璃门：“周师傅！开门！是我！”\n门锁咔哒一声打开了，一只手把你拉了进去。周师傅迅速锁好门，拉上窗帘。外面传来杂乱的脚步声和低吼——但它们没有停留，直接从门前过去了。\n“你运气真是太好了，”周师傅擦着额头的汗，“下次可别引这么多回来。”",
     choices: [
       {
@@ -1120,7 +1223,7 @@ Object.assign(storyData, {
   // ==================== 安盛街-被包围 ====================
   "安盛街-被包围": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/surrounded.png */,
-    onEnter: { add: { chasedByZombies: 2 } },
+    onEnter: { set: { showRain: true }, add: { chasedByZombies: 2 } },
     text: "你走到一半，发现事情不太对——丧尸不只从后面来。\n前面、左边的小巷、右边的店铺里，都有丧尸在向你靠近。它们不知道什么时候绕到了你的前方，形成了一个松散的包围圈。\n留给你的时间不多了。",
     qte: {
       timeout: "6000 - chasedByZombies * 1200",
@@ -1144,7 +1247,7 @@ Object.assign(storyData, {
 
   "安盛街-破门逃生": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/breakDoor.png */,
-    onEnter: updateTime(2, { add: { strength: -1 } }),
+    onEnter: updateTime(2, { set: { showRain: true }, add: { strength: -1 } }),
     text: "你举起手中的家伙，对准店铺门的锁狠狠砸了下去。一下，两下——锁头终于崩开了。\n你踹开门冲了进去，反手把门顶上。外面传来丧尸撞门的声音，但这扇铁门足够结实。\n\
     你穿过黑漆漆的店铺，从另一侧的门钻了出来，发现自己到了安盛街的后巷。",
     choices: [
@@ -1157,7 +1260,7 @@ Object.assign(storyData, {
 
   "安盛街-冲出包围": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/breakThrough.png */,
-    onEnter: updateTime(2, { add: { strength: -1, chasedByZombies: 1 } }),
+    onEnter: updateTime(2, { set: { showRain: true }, add: { strength: -1, chasedByZombies: 1 } }),
     text: "你深吸一口气，朝着最薄弱的缺口猛冲过去。一只丧尸伸手抓向你的衣领，被你一肘击翻；另一只从侧面扑来，你侧身闪过。\n你的肺部在燃烧，腿像灌了铅一样沉重——但你不能停。\n终于，你冲出了包围圈。身后的丧尸群还在追，但你已经甩开了距离。前方就是安盛街西侧，视野开阔了很多。",
     choices: [
       {
@@ -1179,8 +1282,14 @@ Object.assign(storyData, {
         });
         return f(vars);
       }
-      return "images/placeholder.png";
-    }, /* TODO: images/anshengStreet/westStreet.png */
+      var f = timeImage({
+        morning: "images/placeholder.png",
+        evening: "images/placeholder.png",
+        night: "images/placeholder.png",
+        midnight: "images/placeholder.png"
+      });
+      return f(vars);
+    }, /* TODO: images/安盛街/西侧*.png */
     onEnter: function(vars) {
       vars.positionAfterOperation = "安盛街西侧";
       vars.currentArea = "周边社区";
@@ -1231,7 +1340,24 @@ Object.assign(storyData, {
   },
 
   "朝新达汇前进": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/toXindahui.png */,
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/placeholder.png",
+          evening: "images/placeholder.png",
+          night: "images/placeholder.png",
+          midnight: "images/placeholder.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/placeholder.png",
+        evening: "images/placeholder.png",
+        night: "images/placeholder.png",
+        midnight: "images/placeholder.png"
+      });
+      return f(vars);
+    }, /* TODO: images/安盛街/朝新达汇*.png */
     text: "你沿着大路向西走去。越往前走，街道越宽阔，路边出现了更多的商铺和写字楼。\n远处的天际线上，你能看到新达汇商场的大楼——玻璃幕墙反射着夕阳的余晖，像一个沉默的巨人。\n但路上并不太平。沿途的丧尸明显多了起来——毕竟是通往大型商场的主干道。",
     choices: [
       {

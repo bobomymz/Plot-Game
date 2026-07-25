@@ -62,6 +62,7 @@ const storyData = {
     hasBankSlip: false,        // 是否拿到银行存单
     _droneIntel: false,        // 是否获得无人机侦察情报（物业楼高锦睿）
     _committeeSearched: false,  // 是否搜过物业楼居委会办公室
+    showRain: false,           // 是否展示雨滴叠加特效（B类场景 onEnter 控制）
 
     // --- 物品状态 ---
     // 常规物品
@@ -217,7 +218,8 @@ const storyData = {
   // -------- 屏幕特效 --------
   _screenEffects: [
     { condition: "strength == 2", className: "vignette-warning" },
-    { condition: "strength <= 1", className: "vignette-danger" }
+    { condition: "strength <= 1", className: "vignette-danger" },
+    { condition: 'weather == "雨" && showRain', className: "weather-rain" }
     // 未来可扩展：
     // { condition: "sanity <= 2", className: "screen-wobble" },
     // { condition: "poisoned",    className: "screen-green-tint" },

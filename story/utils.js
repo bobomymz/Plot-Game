@@ -259,6 +259,7 @@ function hideOnLocation(image, failText, successText) {
   return {
     image: image,
     onEnter: function(vars) {
+      vars.showRain = true;  // 户外躲藏，雨天叠加雨滴
       updateTime(15 + Math.floor(Math.random() * 16))(vars);
       if (vars.chasedByZombies >= 4 && Math.random() < 0.4) {
         vars.strength = Math.max(0, vars.strength - 1);

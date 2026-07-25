@@ -875,6 +875,9 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     gameState._visit[sceneId] = (gameState._visit[sceneId] || 0) + 1;
   }
 
+  // 重置雨滴叠加——每个场景默认无雨，由 onEnter 选择开启
+  gameState.showRain = false;
+
   // 解析进入效果（支持函数模式）
   let enterEffect = scene.onEnter;
   if (typeof enterEffect === "function") {

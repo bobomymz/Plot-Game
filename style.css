@@ -324,6 +324,18 @@ html, body {
   }
 }
 
+/* ===== 雨滴叠加（放在遮罩层上，不阻挡操作） ===== */
+#screen-effect-overlay.weather-rain {
+  background-image: url('images/rain-overlay.png');
+  background-repeat: repeat;
+  opacity: 0.45;
+  animation: rain-fall 1s linear infinite;
+}
+@keyframes rain-fall {
+  from { background-position: 0 0; }
+  to   { background-position: 0 128px; }
+}
+
 /* ===== 预加载遮罩 ===== */
 #preload-overlay {
   position: fixed;
