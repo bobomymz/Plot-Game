@@ -136,7 +136,7 @@ Object.assign(storyData, {
   },
 
   "遭遇老头丧尸-犹豫": {
-    image: "images/placeholder.png",
+    image: "images/安盛街/老头丧尸袭来.png",
     text: "你盯着老头丧尸犹豫要怎么对付它——但它没给你犹豫的时间。它举起拐杖，拖着步子加速朝你冲了过来。\n你只能仓促应对。",
     choices: [
       {
