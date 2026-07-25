@@ -221,7 +221,24 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-理发店（安全屋入口） ====================
   "安盛街-理发店": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopOutside.png */,
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/安盛街/理发店门口-雨天.png",
+          evening: "images/安盛街/理发店门口-雨天-night.png",
+          night: "images/安盛街/理发店门口-雨天-night.png",
+          midnight: "images/安盛街/理发店门口-雨天-night.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安盛街/理发店门口.png",
+        evening: "images/安盛街/理发店门口-evening.png",
+        night: "images/安盛街/理发店门口-night.png",
+        midnight: "images/安盛街/理发店门口-midnight.png"
+      });
+      return f(vars);
+    },
     text: function(vars) {
       let basicDes = "";
       let isNight = vars.hh >= 19 || vars.hh <= 6;
