@@ -276,8 +276,7 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 理发店内部（入口，从街上进入时触发） ====================
-  "理发店内部": {
+  "理发店内部": {// 入口，从街上进入时触发
     image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     onEnter: { set: { currentPlace: "安盛街", currentPos: "理发店" } },
     text: function(vars) {
@@ -325,8 +324,7 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 理发店-店内（中枢，内部操作后回到这里） ====================
-  "理发店-店内": {
+  "理发店-店内": {//中枢，内部操作后回到这里
     image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     onEnter: { set: { currentPlace: "安盛街", currentPos: "理发店" } },
     text: function(vars) {
@@ -371,7 +369,6 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 理发店-交谈 ====================
   "理发店-交谈": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     onEnter: { set: { talkToBarber: true } },
@@ -397,8 +394,7 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 理发店-休息（晚上清零尸潮） ====================
-  "理发店-休息": {
+  "理发店-休息": {//（晚上清零尸潮）
     image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopRest.png */,
     text: function(vars) { // 历史遗留设计，现在晚上强制选择庇护所
       let isNight = vars.hh >= 19 || vars.hh <= 6; // 包含了timeImage的night和midnight
@@ -445,7 +441,6 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 理发店-观察 ====================
   "理发店-观察": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     text: function(vars) {
