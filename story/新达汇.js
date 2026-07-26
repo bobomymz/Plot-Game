@@ -69,7 +69,7 @@ Object.assign(storyData, {
 
   "新达汇-喷泉广场-高锦睿-帮忙": {
     image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
-    onEnter: initMemoryGame(["红","蓝","绿"], 4),
+    onEnter: function(vars) { vars.showRain = true; return initMemoryGame(["红","蓝","绿"], 4)(vars); },
     text: "你抄起地上一根歪倒的广告牌支架冲了上去。丧尸们被喷泉池底的水汽吸引——一只、两只、三只、四只，从水池边同时转过头来。\n高锦睿回头看见你，愣了一下：“诶？！”",
     choices: [
       {
@@ -89,7 +89,7 @@ Object.assign(storyData, {
 
   "新达汇-喷泉广场-高锦睿-被救": {
     image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
-    onEnter: { set: { hurtByZombie: true }, add: { strength: -2 } },
+    onEnter: { set: { hurtByZombie: true, showRain: true }, add: { strength: -2 } },
     text: "你记错了——一只丧尸从你侧面扑过来，你来不及反应。\n一根金属管从你耳边呼啸而过，咚地一声砸在丧尸脸上。那只丧尸踉跄着栽进了喷泉池里。\n高锦睿拽着你的衣领把你拉了起来：\
 ”别愣着啊！走吧！“\n你低头一看——手臂上多了一道抓痕。",
     choices: [
@@ -103,6 +103,7 @@ Object.assign(storyData, {
 
   "新达汇-喷泉广场-高锦睿-旁观": {
     image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
+    onEnter: { set: { showRain: true } },
     text: "你退后一步，藏在一根倒下的广告牌后面。\n高锦睿用那根金属管又抡倒了一只，然后一脚把最后一只踹进了喷泉池。水花溅了他一身。\n他喘着粗气，把金属管往地上一扔，抬头看到你从广告牌后面走出来。\n\
 “你就看着是吧？”他翻了个白眼，但嘴角还是翘了起来。",
     choices: [
@@ -116,7 +117,7 @@ Object.assign(storyData, {
 
   "新达汇-喷泉广场-高锦睿-聊": {
     image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
-    onEnter: { set: { _metGaoAtMall: true } },
+    onEnter: { set: { _metGaoAtMall: true, showRain: true } },
     text: "他擦了擦脸上的水，一屁股坐在喷泉池沿上。“我靠，你也来这儿了？”\n\
 他告诉你他是骑车过来的——变速器修好了，一路上东躲西藏，刚到这个广场就被水池边的丧尸围了。“这东西好像特别喜欢水，不知道什么毛病。”\n\
 他站起来拍了拍裤子，把金属管往肩上一扛。“我打算进去逛逛——这么大的商场，总不能什么都不剩吧。你看看有没有什么好东西，回头碰上了跟我说。”\n\
@@ -2639,6 +2640,7 @@ Object.assign(storyData, {
   },
   "新达汇-屋顶花园-看无人机": {
     image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    onEnter: { set: { showRain: true } },
     text: "白色的外卖无人机，货箱密封，侧面贴着二维码。你没有手机能扫它。",
     choices: [
       {
@@ -2650,6 +2652,7 @@ Object.assign(storyData, {
   },
   "新达汇-屋顶花园-扫码": {
     image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    onEnter: { set: { showRain: true } },
     text: function(vars) {
       var desc = "APP弹出对话框：**请验证取餐码**。\n";
       if (vars._powerOut && vars._droneBattery <= 0) return desc + "无人机指示灯已熄灭了。晚了。";
@@ -2678,6 +2681,7 @@ Object.assign(storyData, {
   },
   "新达汇-屋顶花园-输错码": {
     image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    onEnter: { set: { showRain: true } },
     text: "取餐码错误。",
     choices: [
       {
@@ -2689,6 +2693,7 @@ Object.assign(storyData, {
   },
   "新达汇-屋顶花园-没电": {
     image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    onEnter: { set: { showRain: true } },
     text: "无人机指示灯完全熄灭，看来是飞不起来了。",
     choices: [
       {
@@ -2699,6 +2704,7 @@ Object.assign(storyData, {
   },
   "新达汇-屋顶花园-起飞": {
     image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    onEnter: { set: { showRain: true } },
     text: "取餐码正确。货箱解锁。你爬进货箱，无人机缓缓升起。\n你飞越了新达汇的喷泉广场、三林路的十字路口，飞过华夏西路高架桥上的尸潮——飞向某个未知的方向。\n\
 <span style='color: #f8d305ff;'>—— 无人机的救赎 · 好结局 ——</span>",
     style: "text-align: center;",
@@ -2837,7 +2843,7 @@ Object.assign(storyData, {
   },
   "新达汇-东区2F平台": {
     image: "images/placeholder.png" /* TODO: images/新达汇/eastPlatform2f.png */,
-    onEnter: function(v) { transit(v, "东区-2F平台"); return {}; },
+    onEnter: function(v) { v.showRain = true; transit(v, "东区-2F平台"); return {}; },
     text: function(vars) { return "东区2F开放式平台，可以看到喷泉广场的全景。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -2854,7 +2860,7 @@ Object.assign(storyData, {
   },
   "新达汇-东区3F平台": {
     image: "images/placeholder.png" /* TODO: images/新达汇/eastPlatform3f.png */,
-    onEnter: function(v) { transit(v, "东区-3F平台"); return {}; },
+    onEnter: function(v) { v.showRain = true; transit(v, "东区-3F平台"); return {}; },
     text: function(vars) { return "东区3F平台。视野开阔，可以看到远处的屋顶花园。\n" + describeZombieWave(vars); },
     choices: [
       {

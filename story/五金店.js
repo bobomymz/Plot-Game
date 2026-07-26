@@ -169,7 +169,7 @@ Object.assign(storyData, {
   // ==================== 后巷路线 ====================
   "五金店-后巷": {
     image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStoreBack.png */,
-    onEnter: updateTime(2), // 花2分钟绕到后巷
+    onEnter: updateTime(2, { set: { showRain: true } }), // 花2分钟绕到后巷
     text: "你绕到五金店后面的小巷。后巷堆满了废弃的纸箱和空油桶，地面上有一层黏糊糊的黑色油渍。后门是一扇厚重的铁皮门，锁着——但锁看起来不太结实。\n铁皮门的门缝里透出一丝微弱的光线——里面有人？还是有别的什么东西？",
     choices: [
       {

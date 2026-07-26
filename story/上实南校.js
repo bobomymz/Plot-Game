@@ -1004,6 +1004,7 @@ Object.assign(storyData, {
   // ==================== 校园后院 ====================
   "上实南校-校园后院": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backyard.png */,
+    onEnter: { set: { showRain: true } },
     text: "你们站在校园后墙内侧的空地上。杂草丛生，地面上散落着几个被踩扁的易拉罐。\n\
 北侧不远处有一扇小铁门——刷着灰漆，不太显眼，但门锁看起来是那种老式密码锁。\n东侧靠近围墙根的地方，有一扇双开的大铁门——学校后门，从里面用一把大锁锁着，锁链有拇指粗。\n远处传来低沉的嘶吼声——不确定是从围墙外传来的，还是从前院方向飘过来的。",
     choices: [
@@ -1026,6 +1027,7 @@ Object.assign(storyData, {
   // ==================== 西侧小侧门 ====================
   "上实南校-侧门撤离": {
     image: "images/placeholder.png" /* TODO: images/上实南校/sideDoor.png */,
+    onEnter: { set: { showRain: true } },
     text: "你走到北侧的小铁门前。门上的密码锁落了一层灰，按键上的数字还依稀可辨。你输入0731。\n咔哒一声——锁开了。\n\
 你拉开铁门，外面是一条安静的支路——华夏西路的辅路，路边种着一排梧桐树。街上没有丧尸。\n“这边走！”你回头招呼同学们。\n\
 四个人鱼贯钻出侧门。你反手把门带上——锁舌咔哒一声又锁上了。\n你们站在了学校围墙外的一条安静小路上。",
@@ -1067,7 +1069,7 @@ Object.assign(storyData, {
 
   "上实南校-后门-盐酸开锁": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
-    onEnter: { set: { _hasAcid: false } },
+    onEnter: { set: { _hasAcid: false, showRain: true } },
     text: "你拧开瓶盖，把盐酸倒在锁链的薄弱处。铁链冒着白泡，发出滋滋的声响。几分钟后，锁环被腐蚀断了。\n你轻轻拉开门——铁链哗啦一声落在地上。\n值日教师被声音惊动，猛地转过头来。但它还没冲到门口，你们已经钻出门外，顺着窄巷跑了出去。它在后面追了几步，然后停住了。\n你们终于离开了学校。",
     choices: [
       {
@@ -1079,6 +1081,7 @@ Object.assign(storyData, {
 
   "上实南校-后门-无酸": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
+    onEnter: { set: { showRain: true } },
     text: "你没有任何东西能快速弄开这条锁链。值日教师就在外面徘徊——砸锁的声音一定会把它引过来。你决定还是换条路走。",
     choices: [
       {
@@ -1090,7 +1093,7 @@ Object.assign(storyData, {
 
   "上实南校-后门-砸锁": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
     text: function(vars) {
       let wpn = "手中的家伙";
       if (vars.hasIronPipe) wpn = "铁管";
@@ -1109,6 +1112,7 @@ Object.assign(storyData, {
 
   "上实南校-后门-无工具": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
+    onEnter: { set: { showRain: true } },
     text: "你看了看锁链——拇指粗的铁环，没有像样的工具根本弄不开。强行砸锁只会把手弄伤，还吸引丧尸。你摇了摇头，还是换条路吧。",
     choices: [
       {
@@ -1120,6 +1124,7 @@ Object.assign(storyData, {
 
   "上实南校-后门-潜行": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
+    onEnter: { set: { showRain: true } },
     text: "你把锁链轻轻搁在地上——尽量不发出声音——然后翻过铁门，落地时压低身形。\n值日教师背对着你。你贴着墙壁，一步一步往外挪。\n你已经走到窄巷的一半——还有几步就是街口。\n然后你踩到了一根树枝。\n咔嚓一声。值日教师猛地转过身来。",
     qte: {
       timeout: 3000,
@@ -1139,6 +1144,7 @@ Object.assign(storyData, {
 
   "上实南校-后门-潜行成功": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
+    onEnter: { set: { showRain: true } },
     text: "你撒腿就跑。值日教师追了几步——但同学们也翻过门跟了上来。大家一起跑，脚步声杂乱，它似乎迟疑了一下，然后被你们甩开了。\n你们跑出了窄巷，跑到了街上。回头看时，那只丧尸站在巷口，没有追出来。\n你们终于离开了学校。",
     choices: [
       {
@@ -1150,6 +1156,7 @@ Object.assign(storyData, {
 
   "上实南校-后门-潜行失败": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
+    onEnter: { set: { showRain: true } },
     text: "你躲到垃圾箱后面——但位置太窄了，你挤不进去。值日教师冲了过来，在你反应过来之前抓住了你的手臂。\n你挣开了它，但手臂上多了一道深深的血痕。同学们翻过门来帮你，小陆用拖把杆砸了它的头——你们趁这个机会一起跑了出去。\n有人受了伤，但大家都出来了。",
     choices: [
       {
@@ -1178,6 +1185,7 @@ Object.assign(storyData, {
 
   "上实南校-原路-潜行": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolGate.png */,
+    onEnter: { set: { showRain: true } },
     text: "你们压低身形，贴着校门边缘一个一个钻了出去。路上的丧尸没有注意到你们——它们正围着一辆翻倒的汽车打转。\n你们成功地穿过了东明路，拐进了路对面的一条小巷。回头看时，学校的大门在阴沉的天色下空荡荡地敞着。\n你们终于离开了学校。",
     choices: [
       {
@@ -1188,8 +1196,9 @@ Object.assign(storyData, {
   },
 
   "上实南校-原路-硬冲": {
-    image: "images/placeholder.png" /* TODO: images/上实南校/schoolGate.png */,
-    text: "“跑！”你一声令下，四个人一起冲了出去。\n路面的丧尸被脚步声惊动，纷纷转过头来。你们跑得很快——快到它们还没来得及围上来，你们已经穿过了马路。\n一只穿着保安服的丧尸从侧面的巷子里冲了出来，差点抓住跑在最后的小赵。你一棍子砸在它手上，它松开了。\n你们拐进对面的小巷，终于甩开了它们。\n你们终于离开了学校。",
+    image: “images/placeholder.png” /* TODO: images/上实南校/schoolGate.png */,
+    onEnter: { set: { showRain: true } },
+    text: “”跑！”你一声令下，四个人一起冲了出去。\n路面的丧尸被脚步声惊动，纷纷转过头来。你们跑得很快——快到它们还没来得及围上来，你们已经穿过了马路。\n一只穿着保安服的丧尸从侧面的巷子里冲了出来，差点抓住跑在最后的小赵。你一棍子砸在它手上，它松开了。\n你们拐进对面的小巷，终于甩开了它们。\n你们终于离开了学校。”,
     choices: [
       {
         text: "回到东明路",

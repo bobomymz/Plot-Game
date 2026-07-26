@@ -286,7 +286,7 @@ Object.assign(storyData, {
 
   "三林路-获得一辆轿车": {
     image: "images/placeholder.png" /* TODO: images/小区周边/轿车.png */,
-    onEnter: {set: {hasCar: true, hasEbike: false, hasRustyBike: false}, add:{chasedByZombies: -1}}, // 躲进车里稍微安全一点，尸潮减弱
+    onEnter: {set: {hasCar: true, hasEbike: false, hasRustyBike: false, showRain: true}, add:{chasedByZombies: -1}}, // 躲进车里稍微安全一点，尸潮减弱
     text: function(vars) {
       let basicDes = "你成功地获得了一辆丰田轿车，你可以使用它来快速前往其他地方，如果不堵车的话。\n";
       basicDes += describeZombieWave(vars);
@@ -302,7 +302,7 @@ Object.assign(storyData, {
 
   "三林路-轿车门锁了": {
     image: "images/placeholder.png" /* TODO: images/小区周边/轿车.png */,
-    onEnter: updateTime(2), 
+    onEnter: updateTime(2, { set: { showRain: true } }), 
     text: function(vars) {
       return "你走近那辆丰田的车，使劲拉了拉车门，它纹丝不动。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。\n" + describeZombieWave(vars);
     },

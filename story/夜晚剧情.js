@@ -154,6 +154,7 @@ Object.assign(storyData, {
   "过夜-前往理发店": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/nightRun.png */,
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.dd += 1;
       vars.hh = 7;
       vars.mm = 0;
@@ -258,6 +259,7 @@ Object.assign(storyData, {
   "过夜-车内": {
     image: "images/placeholder.png" /* TODO: images/highway/carSleep.png */,
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.dd += 1;
       vars.hh = 7;
       vars.mm = 0;
@@ -274,6 +276,7 @@ Object.assign(storyData, {
   "过夜-街头兜底": {
     image: "images/placeholder.png" /* TODO: images/小区周边/streetNight.png */,
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.dd += 1;
       vars.hh = 7;
       vars._travelMinutes = 0;

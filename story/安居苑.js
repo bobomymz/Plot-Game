@@ -64,7 +64,7 @@ Object.assign(storyData, {
 
   "三林安居苑-驱赶变异猫": {
     image: "images/placeholder.png" /* TODO: images/安居苑/mutantCat.png */,
-    onEnter: { add: { strength: -1 } },
+    onEnter: { set: { showRain: true }, add: { strength: -1 } },
     text: "你挥舞手中的家伙，朝那些变异猫大声吼叫。它们弓起背，发出愤怒的嘶吼，但并没有扑上来——它们似乎还保留着一丝对人类的畏惧。\n\
 对峙了几秒后，带头的那只大猫转身跑进了花坛深处，其他的也跟着散了。\n小区暂时安全了，至少入口是。",
     choices: [
@@ -220,7 +220,7 @@ Object.assign(storyData, {
 
   "三林安居苑-鹅卵石路": {
     image: "images/placeholder.png" /* TODO: images/安居苑/goldenE.png */,
-    onEnter: {set: {positionAfterOperation: "三林安居苑-小广场"}},
+    onEnter: {set: {positionAfterOperation: "三林安居苑-小广场", showRain: true}},
     text: function(vars) {
       let basicDes = "你走上了鹅卵石路。鹅卵石路是一条老路，上面的鹅卵石很老，但是很平滑。\n";
       if(!vars.findKey502) basicDes += "你走着走着，发现鹅卵石路的尽头是一个老式的自行车，车筐里塞着半袋没来得及拿上楼的菜。\n\
@@ -245,6 +245,7 @@ Object.assign(storyData, {
   // ========== 藤蔓丧尸（美工刀 + 地图） ==========
   "三林安居苑-藤蔓丧尸": {
     image: "images/placeholder.png" /* TODO: images/安居苑/vineZombie.png */,
+    onEnter: { set: { showRain: true } },
     text: function(vars) {
       var desc = "你走近长椅上的丧尸。它是个六十来岁的老头，穿着一件洗得发白的中山装，胸口口袋鼓鼓的——好像塞着什么东西。\n\
 藤蔓从长椅下方的花坛里疯长出来，把它整个下半身缠得严严实实。它只能扭动上半身，朝你张着黑洞洞的嘴，发出嗬嗬的气声。";
@@ -283,7 +284,7 @@ Object.assign(storyData, {
 
   "三林安居苑-割藤蔓": {
     image: "images/placeholder.png" /* TODO: images/安居苑/cutVines.png */,
-    onEnter: updateTime(2),
+    onEnter: updateTime(2, { set: { showRain: true } }),
     text: "你掏出美工刀，推出刀片，小心地靠近丧尸。它朝着你嗬嗬叫着，但够不到你——藤蔓把它的手臂也缠住了一部分。\n你一刀一刀地割下去。藤蔓又粗又韧，刀刃陷进去发出嘎吱嘎吱的声音。终于，最后一根最粗的藤被割断了。\n丧尸失去了束缚，整个身体从长椅上滑了下来，扑通一声摔在地上。它挣扎着想要站起来，那双灰白的眼睛死死盯着你。\n它的下半身因为长期被缠住已经萎缩了，爬行速度很慢——但你最好还是在它叫来同伴之前解决掉它。",
     choices: [
       {
@@ -314,6 +315,7 @@ Object.assign(storyData, {
 
   "三林安居苑-藤蔓丧尸-战斗": {
     image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieFight.png */,
+    onEnter: { set: { showRain: true } },
     text: "你用手中的家伙小心地拨开藤蔓。丧尸的手臂突然挣脱了一截，朝你猛地抓来——还好你早有准备，侧身闪开了。\n藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。\n不能让它继续叫下去了——附近的猫已经开始骚动了。",
     choices: [
       {
@@ -348,7 +350,7 @@ Object.assign(storyData, {
 
   "三林安居苑-藤蔓丧尸-击杀": {
     image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieDead.png */,
-    onEnter: { set: { positionAfterOperation: "三林安居苑-藤蔓丧尸-击杀" } },
+    onEnter: { set: { positionAfterOperation: "三林安居苑-藤蔓丧尸-击杀", showRain: true } },
     text: function(vars) {
       var desc = "丧尸终于不动了。你蹲下身，翻开它中山装胸口的口袋。\n里面掉出来一张折叠得整整齐齐的地图——是一张上海市浦东新区的交通图，上面用红笔圈出了几条主要的高架出口和加油站位置。背面还手写着几行小字：\n“沪芦高速 S2 → 临港方向可行”\n“外环 S20 浦东段多处拥堵，建议绕行”\n“加油站：杨高南路、秀浦路、申江路”\n<span style='color: #ffaa00;'>这是一张开车出城的路线图。有了它，你可以规划更远的行程了。</span>";
       if (vars.hasCarKey && !vars.hasCar) {
@@ -369,6 +371,7 @@ Object.assign(storyData, {
 
   "三林安居苑-藤蔓丧尸-被咬": {
     image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieBite.png */,
+    onEnter: { set: { showRain: true } },
     text: "你刚把手伸过去，丧尸猛地扭头，一口咬住了你的手腕。\n剧烈的疼痛让你惨叫出声。藤蔓在挣扎中崩断了几根——丧尸挣脱了束缚，而你捂着手腕跌坐在地上，鲜血从指缝间涌出。\n<span style='color: #ff4444;'>你被咬了。</span>",
     onEnter: updateTime(1, { set: { hurtByZombie: true }, add: { strength: -3 } }),
     choices: [
@@ -933,7 +936,8 @@ Object.assign(storyData, {
 
   "三林安居苑-自行车": {
     image: "images/placeholder.png" /* TODO: images/安居苑/rustyBike.png */,
-    text: "你走到那辆自行车前。这是一辆老式的永久牌自行车，链条看起来有点生锈了，轮胎也瘪了。\n不过，车身上贴着一张褪色的贴纸：“防锈润滑 WD-40 已保养”\
+    onEnter: { set: { showRain: true } },
+    text: "你走到那辆自行车前。这是一辆老式的永久牌自行车，链条看起来有点生锈了，轮胎也瘪了。\n不过，车身上贴着一张褪色的贴纸：”防锈润滑 WD-40 已保养”\
 ——日期是两周前，看来外表寒碜。",
     choices: [
       {
@@ -959,6 +963,7 @@ Object.assign(storyData, {
 
   "三林安居苑-喜提新车": {
     image: "images/placeholder.png" /* TODO: images/安居苑/gainNewBike.png */,
+    onEnter: { set: { showRain: true } },
     text: "你拿出润滑油擦拭了一下链条，骑上去试了试。嗯，手感还不错，看来可以加快点速度了",
     choices: [
       {
@@ -970,6 +975,7 @@ Object.assign(storyData, {
 
   "三林安居苑-骑车失败": {
     image: "images/placeholder.png" /* TODO: images/安居苑/rustyBike.png */,
+    onEnter: { set: { showRain: true } },
     text: "你跨上自行车，用力踩下踏板。链条发出刺耳的嘎吱声——车轮勉强转了一圈，然后卡住了。\n\
 链条锈得太厉害了，没有润滑油根本没法正常骑行。也许在什么地方能找到防锈液……你记得三林路那边好像有家五金店。",
     choices: [
