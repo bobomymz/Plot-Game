@@ -117,9 +117,9 @@ Object.assign(storyData, {
       }
       var f = timeImage({
         morning: "images/安盛街/老头丧尸.png",
-        evening: "images/安盛街/老头丧尸.png",
+        evening: "images/安盛街/老头丧尸-night.png",
         night: "images/安盛街/老头丧尸-night.png",
-        midnight: "images/安盛街/老头丧尸-midnight.png"
+        midnight: "images/安盛街/老头丧尸-night.png"
       });
       return f(vars);
     },
@@ -544,7 +544,7 @@ Object.assign(storyData, {
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/中段.jpg",
+        morning: "images/安盛街/中段.jpg",
         evening: "images/placeholder.png",
         night: "images/placeholder.png",
         midnight: "images/placeholder.png"
