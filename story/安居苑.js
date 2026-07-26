@@ -977,7 +977,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/安居苑/rustyBike.png */,
     onEnter: { set: { showRain: true } },
     text: "你跨上自行车，用力踩下踏板。链条发出刺耳的嘎吱声——车轮勉强转了一圈，然后卡住了。\n\
-链条锈得太厉害了，没有润滑油根本没法正常骑行。也许在什么地方能找到防锈液……你记得三林路那边好像有家五金店。",
+链条锈得太厉害了，没有润滑油根本没法正常骑行。也许在什么地方能找到防锈液……",
     choices: [
       {
         text: "继续",
