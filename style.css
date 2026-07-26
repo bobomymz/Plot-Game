@@ -329,8 +329,10 @@ html, body {
   content: '';
   position: absolute;
   inset: 0;
+  background-color: rgba(20, 35, 80, 0.15);
   background-image: url('images/rain-overlay.png');
-  background-repeat: repeat;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   opacity: 0.45;
   pointer-events: none;
 }
