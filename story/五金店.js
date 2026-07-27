@@ -8,12 +8,8 @@ Object.assign(storyData, {
   "五金店": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/placeholder.png";

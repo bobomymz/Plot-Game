@@ -5,12 +5,8 @@ Object.assign(storyData, {
   "小区东门-整装待发": { // 此时时间；Day1 12:00
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       var f = timeImage({
@@ -55,12 +51,8 @@ Object.assign(storyData, {
   "小区西门-整装待发": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       var f = timeImage({
@@ -85,12 +77,8 @@ Object.assign(storyData, {
   "三林路-环林东路 十字路口": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       var f = timeImage({
@@ -149,12 +137,8 @@ Object.assign(storyData, {
   "三林路": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/placeholder.png";
@@ -226,12 +210,8 @@ Object.assign(storyData, {
   "三林路-东明路 十字路口": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       var f = timeImage({
@@ -321,12 +301,8 @@ Object.assign(storyData, {
   "东明路-三林路": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/小区周边/东明路-三林路.png";

@@ -10,9 +10,7 @@ Object.assign(storyData, {
       if (vars.weather === "雨") {
         var f = timeImage({
           morning: "images/安盛街/东侧街面-雨天.png",
-          evening: "images/安盛街/东侧街面-雨天-night.png",
           night: "images/安盛街/东侧街面-雨天-night.png",
-          midnight: "images/安盛街/东侧街面-雨天-night.png"
         });
         return f(vars);
       }
@@ -69,9 +67,7 @@ Object.assign(storyData, {
       if (vars.weather === "雨") {
         var f = timeImage({
           morning: "images/安盛街/东侧街面-雨天.png",
-          evening: "images/安盛街/东侧街面-雨天-night.png",
           night: "images/安盛街/东侧街面-雨天-night.png",
-          midnight: "images/安盛街/东侧街面-雨天-night.png"
         });
         return f(vars);
       }
@@ -106,20 +102,9 @@ Object.assign(storyData, {
   // ==================== 老头丧尸遭遇战 ====================
   "遭遇老头丧尸": {
     image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/安盛街/老头丧尸-雨天.png",
-          evening: "images/安盛街/老头丧尸-雨天-night.jpg",
-          night: "images/安盛街/老头丧尸-雨天-night.jpg",
-          midnight: "images/安盛街/老头丧尸-雨天-night.jpg"
-        });
-        return f(vars);
-      }
       var f = timeImage({
         morning: "images/安盛街/老头丧尸.png",
-        evening: "images/安盛街/老头丧尸-night.jpg",
         night: "images/安盛街/老头丧尸-night.jpg",
-        midnight: "images/安盛街/老头丧尸-night.jpg"
       });
       return f(vars);
     },
@@ -127,6 +112,7 @@ Object.assign(storyData, {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "遭遇老头丧尸-犹豫"
     },
+    onEnter: {set: {showRain: true}},
     text: "没走几步，拐角处突然闪出一个佝偻的身影。那是一个拄着拐杖的老头丧尸，灰白的眼珠死死盯着你，嘴里发出含混的咯咯声，一步一步向你挪过来。\n它动作不快，但那根金属拐杖在阳光下闪着冷光——被敲一下可不是闹着玩的。",
     choices: [
       {
@@ -154,7 +140,13 @@ Object.assign(storyData, {
   },
 
   "遭遇老头丧尸-犹豫": {
-    image: "images/安盛街/老头丧尸袭来.png",
+    image: function(vars) {
+      var f = timeImage({
+        morning: "images/安盛街/老头丧尸袭来.png",
+        night: "images/安盛街/老头丧尸袭来-night.jpg",
+      });
+      return f(vars);
+    },
     onEnter: { set: { showRain: true } },
     text: "你盯着老头丧尸犹豫要怎么对付它——但它没给你犹豫的时间。它举起拐杖，拖着步子加速朝你冲了过来。\n你只能仓促应对。",
     choices: [
@@ -172,7 +164,10 @@ Object.assign(storyData, {
   },
 
   "安盛街-踹倒老头丧尸": {
-    image: "images/安盛街/踹倒老头丧尸.png",
+    image: timeImage({
+      morning: "images/安盛街/老头丧尸倒下.jpg",
+      night: "images/安盛街/老头丧尸倒下-night.jpg"
+    }),
     onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true, showRain: true } }),
     text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。",
     choices: [
@@ -245,9 +240,7 @@ Object.assign(storyData, {
       if (vars.weather === "雨") {
         var f = timeImage({
           morning: "images/安盛街/理发店门口-雨天.png",
-          evening: "images/安盛街/理发店门口-雨天-night.png",
           night: "images/安盛街/理发店门口-雨天-night.png",
-          midnight: "images/安盛街/理发店门口-雨天-night.png"
         });
         return f(vars);
       }
@@ -507,12 +500,8 @@ Object.assign(storyData, {
   // ==================== 安盛街-后巷 ====================
   "安盛街-后巷": {
     image: function(vars) {
-      var f = timeImage({
-        morning: "images/placeholder.png",
-        evening: "images/placeholder.png",
-        night: "images/placeholder.png",
-        midnight: "images/placeholder.png"
-      });
+      var f = timeImage({morning: "images/placeholder.png"
+});
       return f(vars);
     }, /* TODO: images/安盛街/后巷*.png */
     onEnter: {
@@ -535,19 +524,13 @@ Object.assign(storyData, {
   "安盛街中段": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       var f = timeImage({
         morning: "images/安盛街/中段.jpg",
-        evening: "images/placeholder.png",
         night: "images/placeholder.png",
-        midnight: "images/placeholder.png"
       });
       return f(vars);
     }, /* TODO: images/安盛街/中段*.png */
@@ -616,20 +599,12 @@ Object.assign(storyData, {
   "安盛街中段-犹豫": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
-      var f = timeImage({
-        morning: "images/placeholder.png",
-        evening: "images/placeholder.png",
-        night: "images/placeholder.png",
-        midnight: "images/placeholder.png"
-      });
+      var f = timeImage({morning: "images/placeholder.png"
+});
       return f(vars);
     }, /* TODO: images/安盛街/中段*.png（与安盛街中段共用同一套图） */
     onEnter: { add: { chasedByZombies: 1 } },
@@ -652,20 +627,12 @@ Object.assign(storyData, {
   "安盛街-文具店": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
-      var f = timeImage({
-        morning: "images/placeholder.png",
-        evening: "images/placeholder.png",
-        night: "images/placeholder.png",
-        midnight: "images/placeholder.png"
-      });
+      var f = timeImage({morning: "images/placeholder.png"
+});
       return f(vars);
     }, /* TODO: images/安盛街/文具店*.png */
     text: "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n收银台后面有动静——像是什么东西在翻找东西。",
@@ -882,20 +849,12 @@ Object.assign(storyData, {
   "安盛街-服装店": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
-      var f = timeImage({
-        morning: "images/placeholder.png",
-        evening: "images/placeholder.png",
-        night: "images/placeholder.png",
-        midnight: "images/placeholder.png"
-      });
+      var f = timeImage({morning: "images/placeholder.png"
+});
       return f(vars);
     }, /* TODO: images/安盛街/服装店*.png */
     text: "你走进服装店。模特假人歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。\n\
@@ -1027,20 +986,12 @@ Object.assign(storyData, {
   "安盛街-食品批发部": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
-      var f = timeImage({
-        morning: "images/placeholder.png",
-        evening: "images/placeholder.png",
-        night: "images/placeholder.png",
-        midnight: "images/placeholder.png"
-      });
+      var f = timeImage({morning: "images/placeholder.png"
+});
       return f(vars);
     }, /* TODO: images/安盛街/食品批发部*.png */
     text: function(vars) {
@@ -1274,20 +1225,12 @@ Object.assign(storyData, {
   "安盛街西侧": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
-      var f = timeImage({
-        morning: "images/placeholder.png",
-        evening: "images/placeholder.png",
-        night: "images/placeholder.png",
-        midnight: "images/placeholder.png"
-      });
+      var f = timeImage({morning: "images/placeholder.png"
+});
       return f(vars);
     }, /* TODO: images/安盛街/西侧*.png */
     onEnter: function(vars) {
@@ -1342,20 +1285,12 @@ Object.assign(storyData, {
   "朝新达汇前进": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
-      var f = timeImage({
-        morning: "images/placeholder.png",
-        evening: "images/placeholder.png",
-        night: "images/placeholder.png",
-        midnight: "images/placeholder.png"
-      });
+      var f = timeImage({morning: "images/placeholder.png"
+});
       return f(vars);
     }, /* TODO: images/安盛街/朝新达汇*.png */
     text: "你沿着大路向西走去。越往前走，街道越宽阔，路边出现了更多的商铺和写字楼。\n远处的天际线上，你能看到新达汇商场的大楼——玻璃幕墙反射着夕阳的余晖，像一个沉默的巨人。\n但路上并不太平。沿途的丧尸明显多了起来——毕竟是通往大型商场的主干道。",

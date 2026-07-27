@@ -9,9 +9,7 @@ Object.assign(storyData, {
       if (vars.weather === "雨") {
         var f = timeImage({ // evening ~ midnight 统一为 night
           morning: "images/安居苑/后门-雨天.png",
-          evening: "images/安居苑/后门-雨天-night.png",
           night: "images/安居苑/后门-雨天-night.png",
-          midnight: "images/安居苑/后门-雨天-night.png"
         });
         return f(vars);
       }
@@ -83,12 +81,8 @@ Object.assign(storyData, {
   "三林安居苑-小区内部": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/placeholder.png";
@@ -155,12 +149,8 @@ Object.assign(storyData, {
   "三林安居苑-小广场": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/placeholder.png";
@@ -988,12 +978,8 @@ Object.assign(storyData, {
   "安居苑前门": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/placeholder.png";

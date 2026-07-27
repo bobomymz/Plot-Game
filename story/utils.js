@@ -1,5 +1,5 @@
 // 根据游戏内时间返回对应时段的图片路径
-// map: { morning, evening, night, midnight } — morning 必填，其余可选（fallback 到 morning）
+// map: { morning, evening, night, midnight } — morning 必填；evening/midnight 缺省时 fallback 到 night，再 fallback 到 morning
 function timeImage(map) {
   return function(vars) {
     const hh = vars.hh;
@@ -8,7 +8,7 @@ function timeImage(map) {
     else if (hh >= 19 && hh <= 22) key = "night";
     else if (hh === 23 || (hh >= 0 && hh <= 6)) key = "midnight";
     else key = "morning";  // 7-15
-    return map[key] || map.morning;
+    return map[key] || map.night || map.morning;
   };
 }
 

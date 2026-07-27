@@ -18,12 +18,8 @@ Object.assign(storyData, {
   "新达汇-喷泉广场": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       var f = timeImage({
@@ -2568,12 +2564,8 @@ Object.assign(storyData, {
   "新达汇-屋顶花园": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/placeholder.png";
@@ -2693,12 +2685,8 @@ Object.assign(storyData, {
   "新达汇-东区天桥1": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/placeholder.png";
@@ -2732,12 +2720,8 @@ Object.assign(storyData, {
   "新达汇-东区天桥2": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
+        var f = timeImage({morning: "images/placeholder.png"
+});
         return f(vars);
       }
       return "images/placeholder.png";

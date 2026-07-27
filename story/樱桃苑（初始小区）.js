@@ -492,12 +492,8 @@ Object.assign(storyData, {
 
   "小区道路": {
     image: function(vars) {
-      var t = timeImage({
-        morning: vars.weather === "雨" ? "images/home/小区道路-雨天.png" : "images/home/小区道路.png",
-        evening: vars.weather === "雨" ? "images/home/小区道路-雨天.png" : "images/home/小区道路.png",
-        night: vars.weather === "雨" ? "images/home/小区道路-雨天.png" : "images/home/小区道路.png",
-        midnight: vars.weather === "雨" ? "images/home/小区道路-雨天.png" : "images/home/小区道路.png"
-      });
+      var t = timeImage({morning: vars.weather === "雨" ? "images/home/小区道路-雨天.png" : "images/home/小区道路.png"
+});
       return t(vars);
     },
     onEnter: function(vars) {
@@ -1597,9 +1593,7 @@ Object.assign(storyData, {
   "樱桃苑-5楼-501": {
     image: timeImage({ // 为了简便，此处用night指代evening+night+midnight
       morning: "images/home/501.jpg",
-      evening: "images/home/501-night.jpg",
-      night: "images/home/501-night.jpg",
-      midnight: "images/home/501-night.jpg",
+      night: "images/home/501-night.jpg"
     }),
     onEnter: { set: { currentPos: "501室" } },
     text: "门没锁。你轻轻一推，铰链发出干涩的吱呀声。\n客厅的光线很暗，窗帘只拉了一半。午后的光斜斜地打在老式藤椅上——藤椅上坐着一个短发老太太，头微微偏向一侧，像是午睡还没醒。\n\
@@ -1627,9 +1621,7 @@ Object.assign(storyData, {
   "樱桃苑-5楼-501-拿钥匙": {
     image: timeImage({// 为了简便，此处用night指代evening+night+midnight
       morning: "images/home/501的钥匙.jpg",
-      evening: "images/home/501的钥匙-night.jpg",
       night: "images/home/501的钥匙-night.jpg",
-      midnight: "images/home/501的钥匙-night.jpg"
     }),
     onEnter: { set: { positionAfterOperation: "樱桃苑-5楼" } },
     text: "你拿起那串钥匙。钥匙环上挂着三把——一把铜的、两把铝的，铜的那把已经磨得发亮。\n你看了藤椅上的老人最后一眼，轻轻带上了门。",
@@ -1662,12 +1654,8 @@ Object.assign(storyData, {
 
   "小区草地": {
     image: function(vars) {
-      var t = timeImage({
-        morning: vars.weather === "雨" ? "images/home/小区草地-雨天.jpg" : "images/home/小区草地.jpg",
-        evening: vars.weather === "雨" ? "images/home/小区草地-雨天.jpg" : "images/home/小区草地.jpg",
-        night: vars.weather === "雨" ? "images/home/小区草地-雨天.jpg" : "images/home/小区草地.jpg",
-        midnight: vars.weather === "雨" ? "images/home/小区草地-雨天.jpg" : "images/home/小区草地.jpg"
-      });
+      var t = timeImage({morning: vars.weather === "雨" ? "images/home/小区草地-雨天.jpg" : "images/home/小区草地.jpg"
+});
       return t(vars);
     },
     onEnter: function(vars) {
@@ -1767,9 +1755,7 @@ Object.assign(storyData, {
   "物业楼-居委会办公室": {
     image: timeImage({// 为了简便，此处用night指代evening+night+midnight
       morning: "images/home/居委会办公室.jpg",
-      evening: "images/home/居委会办公室-night.jpg",
       night: "images/home/居委会办公室-night.jpg",
-      midnight: "images/home/居委会办公室-night.jpg"
     }),
     onEnter: { set: { _committeeSearched: true } },
     text: "钥匙转动——门开了。里面是一间不大的办公室，靠墙一排铁皮档案柜，桌上摊着几本翻开的台账。空气里飘着淡淡的樟脑丸味道。\n\
