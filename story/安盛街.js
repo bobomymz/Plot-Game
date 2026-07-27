@@ -109,9 +109,9 @@ Object.assign(storyData, {
       if (vars.weather === "雨") {
         var f = timeImage({
           morning: "images/安盛街/老头丧尸-雨天.png",
-          evening: "images/安盛街/老头丧尸-雨天.png",
-          night: "images/安盛街/老头丧尸-雨天-night.png",
-          midnight: "images/安盛街/老头丧尸-雨天-night.png"
+          evening: "images/安盛街/老头丧尸-雨天-night.jpg",
+          night: "images/安盛街/老头丧尸-雨天-night.jpg",
+          midnight: "images/安盛街/老头丧尸-雨天-night.jpg"
         });
         return f(vars);
       }
