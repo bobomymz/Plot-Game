@@ -273,7 +273,7 @@ Object.assign(storyData, {
       },
       {
         text: "下楼到1楼",
-        nextScene: "1楼"
+        nextScene: "结局-1楼-party"
       },
       {
         text: "下楼到B1",
@@ -305,7 +305,7 @@ Object.assign(storyData, {
       },
       {
         text: "F1",
-        nextScene: "1楼",
+        nextScene: "结局-1楼-party",
         effect: updateTime(1) // 花1分钟到达1楼
       },
       {
@@ -404,9 +404,10 @@ Object.assign(storyData, {
 —— 结局：被丧尸扑倒咬死 ——"
   },// 会自动给出重新开始按钮
 
-  "1楼": {
+  "结局-1楼-party": {
     image: "images/home/1楼-party.png",
-    text: "你到了一楼大厅。一群丧尸正在开party，一看见你就<em><span style='color:red;'>非常热情</span></em>地围拢过来。"
+    text: "你到了一楼大厅。一群丧尸正在开party，一看见你就<em><span style='color:red;'>非常热情</span></em>地围拢过来。\n你甚至来不及尖叫。\n\n—— 结局：一楼派对 ——",
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "B1": {
