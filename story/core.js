@@ -202,7 +202,7 @@ const storyData = {
 
   // -------- 全局触发器 --------
   _globalTriggers: [
-    { condition: "strength <= 0", targetScene: "结局-体力耗尽", priority: 10 },
+    { condition: "strength <= 0.01", targetScene: "结局-体力耗尽", priority: 10 },
     { condition: "chasedByZombies >= 5", targetScene: "结局-尸潮撕碎了你", priority: 8 },
     { condition: "_backhallDead", targetScene: "结局-后勤通道被堵", priority: 7 },
     { condition: "hh >= 19", targetScene: "天黑必须过夜", priority: 5 },

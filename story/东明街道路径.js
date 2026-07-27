@@ -112,26 +112,28 @@ Object.assign(storyData, {
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了一个十字路口，你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+      return "你来到了一个十字路口，你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n"
+ + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
-        text: "左转",
+        text: "往东走",
         nextScene: "杨高南路高架",
         effect: updateTime(20)
       },
       {
-        text: "右转",
+        text: "往西走",
         nextScene: "三林路",
         effect: updateTime(10)
       },
       {
-        text: "直行",
+        text: "往南走",
         nextScene: "安盛街东侧",
         effect: updateTime(7)
       },
       {
-        text: "掉头回小区东门",
+        text: "往北走",
         nextScene: "小区东门-整装待发",
         effect: updateTime(5)
       },
@@ -252,26 +254,27 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你来到了一个十字路口。西边通向金谊广场，南边通向新达汇，它们都是大商场，可能有丰富的物资；北面是东明路，东面是三林路。\n你需要选择前进的方向。\n\
-快选哦，周围的丧尸就要围拢过来了。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+快选哦，周围的丧尸就要围拢过来了。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
-        text: "金谊广场",
+        text: "往西走",
         nextScene: "金谊广场-龙头区",
         effect: updateTime(30)
       },
       {
-        text: "新达汇",
-        nextScene: "新达汇-喷泉广场",
+        text: "往南走",
+        nextScene: "安盛街西侧",
         effect: updateTime(20)
       },
       {
-        text: "东明路",
+        text: "往北走",
         nextScene: "东明路-三林路",
         effect: updateTime(10)
       },
       {
-        text: "三林路",
+        text: "往东走",
         nextScene: "三林路",
         effect: updateTime(10)
       },

@@ -430,7 +430,7 @@ Object.assign(storyData, {
         basicDes = "你在理发椅上靠了一会儿。虽然只是短暂的小憩，但足够让酸痛的肌肉稍微放松一点。\n周师傅在门口望风，偶尔回头看你一眼。“别睡太久，天黑前最好有个打算。”";
         hint = "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
       }
-      else basicDes = "你在理发店休息。";
+      else basicDes = "你在理发店休息。<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n";
       return basicDes + hint + describeZombieWave(vars);
     },
     onEnter: function(vars) {
@@ -467,14 +467,14 @@ Object.assign(storyData, {
       let desc = "你环顾理发店。镜台上整齐地排列着剪刀、推子、梳子，墙上贴着几张褪色的发型海报。角落里堆着矿泉水和几箱方便面——周师傅囤了不少物资。\n\
 柜台后面有一台老式收音机，此刻正发出沙沙的静电声。周师傅说它已经两天没收到任何信号了。";
       if (!vars.hasMopHandle && vars.itemCount < vars.bagVolume) { // 如果背包已满，就不要强调这句话了
-        desc += "\n门后面立着一根备用的拖把杆——金属的，挺结实，可以当武器。";
+        desc += "\n门后面立着一根备用的拖把杆。"
       }
       return desc;
     },
     choices: [
       {
         showCondition: "!hasMopHandle && itemCount < bagVolume",
-        text: "拿走拖把杆",
+        text: "看看拖把杆",
         nextScene: "理发店-拿到拖把杆",
         effect: updateTime(1)
       },
