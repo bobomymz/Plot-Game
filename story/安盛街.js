@@ -172,7 +172,7 @@ Object.assign(storyData, {
     text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。",
     choices: [
       {
-        text: "捡起拐杖",
+        text: "看看拐杖",
         nextScene: "安盛街-获得拐杖",
         effect: updateTime(1)
       },
@@ -185,9 +185,12 @@ Object.assign(storyData, {
   },
 
   "安盛街-获得拐杖": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/cane.png */,
+    image: timeImage({
+      morning: "images/安盛街/老头丧尸倒下.jpg",
+      night: "images/安盛街/老头丧尸倒下-night.jpg"
+    }),
     onEnter: { set: { positionAfterOperation: "安盛街-获得拐杖", showRain: true } },
-    text: "老头丧尸的拐杖掉在地上，是一根金属材质的——沉甸甸的，虽然不是什么神兵利器，但总比空手强。\n老头丧尸在地上扭动着，朝你发出嘶哑的吼声。该走了。",
+    text: "老头丧尸的拐杖掉在地上，是一根金属材质的——沉甸甸的，虽然不是什么神兵利器，但总比空手强。\n老头丧尸在地上扭动着，朝你发出嘶哑的吼声。",
     choices: [
       {
         text: "捡起拐杖",
@@ -204,21 +207,8 @@ Object.assign(storyData, {
     ]
   },
 
-  "安盛街-物品栏满了": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/oldManFall.png */,
-    onEnter: { set: { showRain: true } },
-    text: "你想捡起拐杖，但身上东西已经太多了。你犹豫了一下，还是放下了拐杖。\n毕竟带着一堆东西逃命不是什么好事。",
-    choices: [
-      {
-        text: "继续往前",
-        nextScene: "安盛街-理发店",
-        effect: updateTime(1)
-      }
-    ]
-  },
-
   "绕过老头丧尸": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/bypassOldMan.png */,
+    image: "images/安盛街/绕过老头丧尸.jpg" /* TODO: images/anshengStreet/bypassOldMan.png */,
     onEnter: updateTime(1, { set: { defeatedOldMan: true, showRain: true } }),
     text: "你侧身一闪，从老头丧尸的左边绕了过去。它挥舞拐杖试图够到你，但动作太慢了，你轻松躲开，头也不回地朝前走去。",
     choices: [
