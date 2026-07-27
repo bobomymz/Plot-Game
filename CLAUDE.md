@@ -353,7 +353,7 @@ rules: [
   input: { placeholder: "例如：3红2蓝" },
   condition: checkFlashAnswer,   // utils.js 提供，比对 _input 与 _currentAnswer
   nextScene: "战斗胜利",
-  elseScene: "颜色记错了"
+  elseScene: "结局-..."//例如：结局-被丧尸扑倒咬死
 }
 
 // 3. 纯记录（存变量，后续场景使用）

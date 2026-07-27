@@ -1317,8 +1317,8 @@ Object.assign(storyData, {
       },
       {
         text: "继续往西，去新达汇方向",
-        nextScene: "朝新达汇前进",
-        effect: updateTime(30)
+        nextScene: "新达汇-喷泉广场",
+        effect: updateTime(10)
       },
       {
         text: "返回安盛街中段",

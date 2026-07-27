@@ -1544,7 +1544,8 @@ Object.assign(storyData, {
       },
       {
         text: "下楼到3楼",
-        nextScene: "家外楼梯间的抉择"
+        nextScene: "家外楼梯间的抉择",
+        effect: updateTime(1)
       }
     ]
   },

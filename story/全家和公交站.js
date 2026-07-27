@@ -339,7 +339,7 @@ Object.assign(storyData, {
     }, /* TODO: images/小区周边/全家和公交站/bus.png */
     onEnter: function(vars) {
       vars.positionAfterOperation = "三林路-环林东路 十字路口";
-      vars.currentPlace = "初始小区";
+      vars.currentPlace = "周边社区";
       vars.currentPos = "公交站";
       applyWeatherDrain(vars);
     },

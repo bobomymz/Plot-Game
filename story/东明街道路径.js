@@ -255,7 +255,8 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你来到了一个十字路口。西边通向金谊广场，南边通向新达汇，它们都是大商场，可能有丰富的物资；北面是东明路，东面是三林路。\n你需要选择前进的方向。\n\
 快选哦，周围的丧尸就要围拢过来了。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n"
+ + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -266,7 +267,7 @@ Object.assign(storyData, {
       {
         text: "往南走",
         nextScene: "安盛街西侧",
-        effect: updateTime(20)
+        effect: updateTime(10)
       },
       {
         text: "往北走",
@@ -362,7 +363,7 @@ Object.assign(storyData, {
       {
         text: "去地铁站",
         nextScene: "11号线-三林东路站",
-        effect: updateTime(10)
+        effect: updateTime(2)
       },
       {
         showCondition: "chasedByZombies > 1",
@@ -384,17 +385,8 @@ Object.assign(storyData, {
   // ==================== 建设银行 ====================
   "银行门口": {
     image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/placeholder.png",
-          evening: "images/placeholder.png",
-          night: "images/placeholder.png",
-          midnight: "images/placeholder.png"
-        });
-        return f(vars);
-      }
       var f = timeImage({
-        morning: "images/小区周边/银行/银行门口-morning.png",
+        morning: "images/小区周边/银行/银行门口.jpg",
         evening: "images/小区周边/银行/银行门口-evening.png",
         night: "images/小区周边/银行/银行门口-night.png",
         midnight: "images/小区周边/银行/银行门口-midnight.png",
@@ -404,6 +396,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.currentPlace = "三林路";
       vars.currentPos = "银行";
+      vars.showRain = true;
       applyWeatherDrain(vars);
     },
     text: function(vars) { return "你来到了建设银行门口。这是你办第一张储蓄卡的地方，你把自己的压岁钱存了2年定期，但是1年就取出来了，只有活期的利率。不过，本来也没多少钱。\n\

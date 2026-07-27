@@ -60,7 +60,7 @@ Object.assign(storyData, {
       cs.push({ text: "前往东区", nextScene: "新达汇-东区天桥1", effect: updateTime(4) });
       cs.push({ text: "离开新达汇，回十字路口",
         nextScene: "三林路-东明路 十字路口",
-        effect: updateTime(2) });
+        effect: updateTime(20) });
       return cs;
     }
   },
@@ -193,33 +193,6 @@ Object.assign(storyData, {
         text: "前往美食广场",
         nextScene: "新达汇-B1美食广场",
         effect: updateTime(2),
-      },
-    ]
-  },
-  "新达汇-B1停车场A区": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/b1ParkingA.png */,
-    text: "你来到停车场A区。一排排车辆整齐地停放着，车身上覆着一层薄灰。头顶的灯大部分不亮了，只有深处还有几盏在闪烁。",
-    choices: [
-      {
-        text: "往深处走——停车场B区",
-        nextScene: "新达汇-B1停车场B区",
-        effect: updateTime(3),
-      },
-      {
-        text: "前往走廊",
-        nextScene: "新达汇-B1走廊",
-        effect: updateTime(2),
-      },
-    ]
-  },
-  "新达汇-B1停车场B区": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/b1ParkingB.png */,
-    text: "你来到停车场深处。这里几乎完全黑暗。你注意到角落停着一辆黑色轿车，驾驶座的遮阳板半翻着。",
-    choices: [
-      {
-        text: "前往停车场A区",
-        nextScene: "新达汇-B1停车场A区",
-        effect: updateTime(3),
       },
     ]
   },

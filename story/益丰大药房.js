@@ -433,7 +433,7 @@ Object.assign(storyData,{
         nextScene: "益丰大药房-沟通躲开",
         effect: updateTime(2),
         timeout: 15000,
-        timeoutScene: "颜色记错了"
+        timeoutScene: "结局-被丧尸扑倒咬死"
       }
     ]
   },
@@ -681,7 +681,7 @@ Object.assign(storyData,{
       },
       {
         text: "按下把手",
-        nextScene: "益丰大药房-消防通道",
+        nextScene: "三林路",
       },
       {
         text: "直接撞门",
