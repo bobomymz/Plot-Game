@@ -338,6 +338,7 @@ Object.assign(storyData, {
       return f(vars);
     }, /* TODO: images/小区周边/全家和公交站/bus.png */
     onEnter: function(vars) {
+      vars.showZombies = true;
       vars.positionAfterOperation = "三林路-环林东路 十字路口";
       vars.currentPlace = "周边社区";
       vars.currentPos = "公交站";

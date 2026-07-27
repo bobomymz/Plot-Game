@@ -23,6 +23,7 @@ Object.assign(storyData, {
       return f(vars);
     }, 
     onEnter: function(vars) {
+      vars.showZombies = true;
       vars.currentPlace = "安盛街";
       vars.currentPos = "安盛街";
       applyWeatherDrain(vars);
@@ -83,7 +84,7 @@ Object.assign(storyData, {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "结局-被丧尸扑倒咬死"
     },
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { add: { chasedByZombies: 1 }, set: { showZombies: true } },
     text: "你在街口犹豫了一下——就是这一下，远处徘徊的那几只丧尸注意到了你。它们拖着步子朝你的方向聚拢过来。\n你不能再站在这里了。前方那个拄着拐杖的身影还在那里——但它只有一只，而朝你走来的远不止一只。",
     choices: [
       {
@@ -147,7 +148,7 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: { set: { showRain: true } },
+    onEnter: { set: { showRain: true, showZombies: true } },
     text: "你盯着老头丧尸犹豫要怎么对付它——但它没给你犹豫的时间。它举起拐杖，拖着步子加速朝你冲了过来。\n你只能仓促应对。",
     choices: [
       {
@@ -514,17 +515,24 @@ Object.assign(storyData, {
   "安盛街中段": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/安盛街/中段-雨天.jpg",
+          evening: "images/安盛街/中段-雨天-evening.jpg",
+          night:"images/安盛街/中段-雨天-night.jpg",
+          midnight:"images/安盛街/中段-雨天-midnight.jpg"
+        });
         return f(vars);
       }
       var f = timeImage({
         morning: "images/安盛街/中段.jpg",
-        night: "images/placeholder.png",
+        evening: "images/安盛街/中段-evening.jpg",
+        night:"images/安盛街/中段-night.jpg",
+        midnight:"images/安盛街/中段-midnight.png"
       });
       return f(vars);
     }, /* TODO: images/安盛街/中段*.png */
     onEnter: function(vars) {
+      vars.showZombies = true;
       vars.positionAfterOperation = "安盛街中段";
       vars.currentArea = "周边社区";
       vars.currentPlace = "安盛街";
@@ -597,7 +605,7 @@ Object.assign(storyData, {
 });
       return f(vars);
     }, /* TODO: images/安盛街/中段*.png（与安盛街中段共用同一套图） */
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { add: { chasedByZombies: 1 }, set: { showZombies: true } },
     text: "你在街中央站得太久了。丧尸从街道两端围拢过来，低吼声此起彼伏。你不能再犹豫了——必须立刻做出选择。",
     choices: [
       {
@@ -1224,6 +1232,7 @@ Object.assign(storyData, {
       return f(vars);
     }, /* TODO: images/安盛街/西侧*.png */
     onEnter: function(vars) {
+      vars.showZombies = true;
       vars.positionAfterOperation = "安盛街西侧";
       vars.currentArea = "周边社区";
       vars.currentPlace = "安盛街";
@@ -1268,34 +1277,7 @@ Object.assign(storyData, {
         text: "躲到广告牌后面",
         nextScene: "安盛街西侧-躲藏"
       },
-      sprintAway(["朝新达汇前进", "三林安居苑后门", "安盛街中段"])
-    ]
-  },
-
-  "朝新达汇前进": {
-    image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
-        return f(vars);
-      }
-      var f = timeImage({morning: "images/placeholder.png"
-});
-      return f(vars);
-    }, /* TODO: images/安盛街/朝新达汇*.png */
-    text: "你沿着大路向西走去。越往前走，街道越宽阔，路边出现了更多的商铺和写字楼。\n远处的天际线上，你能看到新达汇商场的大楼——玻璃幕墙反射着夕阳的余晖，像一个沉默的巨人。\n但路上并不太平。沿途的丧尸明显多了起来——毕竟是通往大型商场的主干道。",
-    choices: [
-      {
-        text: "继续前进",
-        nextScene: "新达汇-喷泉广场",
-        effect: updateTime(20)
-      },
-      {
-        text: "这条路太危险了，返回安盛街",
-        nextScene: "安盛街西侧",
-        effect: updateTime(10)
-      },
-      sprintAway(["新达汇-喷泉广场", "安盛街西侧"])
+      sprintAway(["新达汇-喷泉广场", "三林安居苑后门", "安盛街中段"])
     ]
   },
 

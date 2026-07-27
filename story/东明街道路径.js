@@ -17,7 +17,7 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: function(vars) { applyWeatherDrain(vars); },
+    onEnter: function(vars) { vars.showZombies = true; applyWeatherDrain(vars); },
     text: function(vars) {
       return "你四处张望。\n远处有不少丧尸在游荡。紧挨着小区的门是一个全家便利店，你经常在那里买早餐。\n\
 你向身旁看去，那里有一辆你初中时常坐的公交车，此刻就像一头休憩的野兽，静静蹲守在一个公交站台旁。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
@@ -63,7 +63,7 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: function(vars) { applyWeatherDrain(vars); },
+    onEnter: function(vars) { vars.showZombies = true; applyWeatherDrain(vars); },
     text: function(vars) { return "你整理好东西，准备出发了。" + describeWeather(vars); },
     choices: [
       {
@@ -90,6 +90,7 @@ Object.assign(storyData, {
       return f(vars);
     },
     onEnter: function(vars) {
+      vars.showZombies = true;
       vars.currentArea = "周边社区";
       vars.currentPlace = "十字路口";
       vars.currentPos = "十字路口";
@@ -144,6 +145,7 @@ Object.assign(storyData, {
       return "images/placeholder.png";
     }, /* TODO: images/小区周边/三林路.png */
     onEnter: function(vars) {
+      vars.showZombies = true;
       vars.currentPlace = "三林路";
       vars.currentPos = "三林路";
       applyWeatherDrain(vars);
@@ -223,6 +225,7 @@ Object.assign(storyData, {
       return f(vars);
     },
     onEnter: function(vars) {
+      vars.showZombies = true;
       vars.currentArea = "周边社区";
       vars.currentPlace = "十字路口";
       vars.currentPos = "十字路口";
@@ -270,7 +273,7 @@ Object.assign(storyData, {
 
   "三林路-获得一辆轿车": {
     image: "images/placeholder.png" /* TODO: images/小区周边/轿车.png */,
-    onEnter: {set: {hasCar: true, hasEbike: false, hasRustyBike: false, showRain: true}, add:{chasedByZombies: -1}}, // 躲进车里稍微安全一点，尸潮减弱
+    onEnter: {set: {hasCar: true, hasEbike: false, hasRustyBike: false, showRain: true, showZombies: true}, add:{chasedByZombies: -1}}, // 躲进车里稍微安全一点，尸潮减弱
     text: function(vars) {
       let basicDes = "你成功地获得了一辆丰田轿车，你可以使用它来快速前往其他地方，如果不堵车的话。\n";
       basicDes += describeZombieWave(vars);
@@ -286,7 +289,7 @@ Object.assign(storyData, {
 
   "三林路-轿车门锁了": {
     image: "images/placeholder.png" /* TODO: images/小区周边/轿车.png */,
-    onEnter: updateTime(2, { set: { showRain: true } }), 
+    onEnter: updateTime(2, { set: { showRain: true, showZombies: true } }),
     text: function(vars) {
       return "你走近那辆丰田的车，使劲拉了拉车门，它纹丝不动。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。\n" + describeZombieWave(vars);
     },
@@ -308,6 +311,7 @@ Object.assign(storyData, {
       return "images/小区周边/东明路-三林路.png";
     },
     onEnter: function(vars) {
+      vars.showZombies = true;
       vars.currentArea = "周边社区";
       vars.currentPlace = "东明路";
       vars.currentPos = "东明路";

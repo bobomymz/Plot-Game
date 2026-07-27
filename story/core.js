@@ -63,6 +63,7 @@ const storyData = {
     _droneIntel: false,        // 是否获得无人机侦察情报（物业楼高锦睿）
     _committeeSearched: false,  // 是否搜过物业楼居委会办公室
     showRain: false,           // 是否展示雨滴叠加特效（B类场景 onEnter 控制）
+    showZombies: false,        // 是否展示丧尸包围遮罩（路网节点 onEnter 控制）
 
     // --- 物品状态 ---
     // 常规物品
@@ -219,7 +220,8 @@ const storyData = {
   _screenEffects: [
     { condition: "strength == 2", className: "vignette-warning" },
     { condition: "strength <= 1", className: "vignette-danger" },
-    { condition: 'weather == "雨" && showRain', className: "weather-rain" }
+    { condition: 'weather == "雨" && showRain', className: "weather-rain" },
+    { condition: "chasedByZombies >= 2 && showZombies", className: "zombie-surround" }
     // 未来可扩展：
     // { condition: "sanity <= 2", className: "screen-wobble" },
     // { condition: "poisoned",    className: "screen-green-tint" },

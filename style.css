@@ -337,6 +337,18 @@ html, body {
   pointer-events: none;
 }
 
+/* ===== 丧尸包围遮罩（与雨滴不重叠，共用 ::before 无冲突） ===== */
+#screen-effect-overlay.zombie-surround::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('images/zombie-surround-overlay.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
 /* ===== 预加载遮罩 ===== */
 #preload-overlay {
   position: fixed;
