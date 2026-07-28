@@ -348,12 +348,6 @@ html, body {
   background-size: 100% 100%;
   pointer-events: none;
 }
-#screen-effect-overlay.zombie-surround-moderate::before {
-  opacity: 0.9;
-}
-#screen-effect-overlay.zombie-surround-heavy::before {
-  opacity: 0.9;
-}
 
 /* ===== 预加载遮罩 ===== */
 #preload-overlay {

@@ -248,6 +248,18 @@ images/             → 场景图（PNG/JPG），按区域存放
 
 每次效果后自动执行：钳位 → 响应式规则 → 再钳位。
 
+### 显示格式化（`_display`）
+
+`{变量名}` 插值时可通过 `_display` 映射表格式化显示值，不影响原始数据：
+
+```javascript
+_display: {
+  strength: function(v) { return Math.round(v); },  // 显示体力时取整，原值保留小数
+}
+```
+
+引擎在插值替换时查 `_display` 表，有则调用格式化函数，无则直接显示原值。这是一个通用机制，任何变量都可注册显示格式器。
+
 ### 时间系统
 
 `updateTime(addMinutes, extraEffect)` 是一个**高阶函数**：
@@ -456,10 +468,41 @@ rules: [
 
 ### 屏幕特效
 
-在 `_screenEffects` 中定义条件 CSS 类。当前效果：
+在 `_screenEffects` 中定义条件 CSS 类。引擎 `applyScreenEffects()` 在每次状态变更后自动检查所有条件，动态切换 `#screen-effect-overlay` 的 class。
 
-- `vignette-warning`（体力=2）、`vignette-danger`（体力<=1）
-- 引擎创建 `#screen-effect-overlay` 遮罩层，动态切换类名
+**条目格式：**
+```javascript
+{
+  condition: "表达式",             // 满足时激活（支持字符串表达式和函数）
+  className: "CSS-类名",           // 叠加到 overlay 上的类
+  onActivate: function(overlay) {},  // [可选] 从关→开时触发
+  onDeactivate: function(overlay) {} // [可选] 从开→关时触发
+}
+```
+
+`onActivate` / `onDeactivate` 让特效可以附带副作用（如随机选图、设 CSS 变量），引擎只负责 diff 调用，具体逻辑由数据层定义。
+
+**当前效果：**
+
+| 条件 | className | 效果 |
+|------|-----------|------|
+| `strength == 2` | `vignette-warning` | 轻微暗角 |
+| `strength <= 1` | `vignette-danger` | 重度暗角 + 脉冲呼吸感 |
+| `weather == "雨" && showRain` | `weather-rain` | 雨滴遮罩（静态 PNG + 蓝调） |
+| `ch >= 1 && ch <= 2 && showZombies` | `zombie-surround-moderate` | PVZ 风格丧尸剪影 ×3 随机，45% |
+| `ch >= 3 && showZombies` | `zombie-surround-heavy` | PVZ 风格丧尸剪影 ×3 随机，65% |
+
+**雨滴叠加：**
+- CSS `::before` 伪元素渲染，独立于 vignette 的 `background`
+- 图片路径 `images/rain-overlay.png`，半透明蓝调滤镜
+- 由 `showRain` 变量控制开关（B 类户外动作节点 `onEnter` 中置 `true`，引擎每场景重置为 `false`）
+
+**丧尸包围遮罩：**
+- 同样使用 `::before` 伪元素，通过 `--zombie-bg` CSS 自定义属性动态指定图片
+- `onActivate` 时从图池中随机选一张，同等级内不重复随机（引擎 diff 确保只在等级切换时重新选取）
+- 由 `showZombies` 变量控制开关（路网节点 `onEnter` 中置 `true`，引擎每场景重置为 `false`）
+- 图片分布在 `images/zombie-surround-m1~3.png`（轻度）和 `images/zombie-surround-h1~3.png`（重度）
+- 轻度 2~3 只丧尸剪影、颜色较浅；重度 4~5 只、颜色更深、密度更大
 
 ### 疲劳系统
 

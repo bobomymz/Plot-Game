@@ -206,41 +206,24 @@ function applyScreenEffects() {
     }
   }
 
-  // 一次性替换类名（清掉旧特效）
-  overlay.className = activeClasses.join(' ');
-
-  // ---- 丧尸包围特效：随机选图 + 按等级区分 ----
-  const ZOMBIE_IMAGES = {
-    moderate: [
-      "images/zombie-surround-m1.png",
-      "images/zombie-surround-m2.png",
-      "images/zombie-surround-m3.png"
-    ],
-    heavy: [
-      "images/zombie-surround-h1.png",
-      "images/zombie-surround-h2.png",
-      "images/zombie-surround-h3.png"
-    ]
-  };
-  const newLevel = activeClasses.includes("zombie-surround-heavy") ? "heavy"
-    : activeClasses.includes("zombie-surround-moderate") ? "moderate"
-    : null;
-
-  if (newLevel) {
-    // 等级切换时才重新随机（避免每帧换图闪烁）
-    if (overlay.dataset.zombieLevel !== newLevel || !overlay.dataset.zombiePick) {
-      const pool = ZOMBIE_IMAGES[newLevel];
-      const pick = pool[Math.floor(Math.random() * pool.length)];
-      overlay.dataset.zombieLevel = newLevel;
-      overlay.dataset.zombiePick = pick;
+  // diff 新旧类名，触发生命周期钩子
+  const oldClasses = overlay.className;
+  const newClasses = activeClasses.join(' ');
+  if (oldClasses !== newClasses) {
+    for (const effect of effects) {
+      const wasActive = oldClasses.indexOf(effect.className) >= 0;
+      const nowActive = newClasses.indexOf(effect.className) >= 0;
+      if (wasActive && !nowActive && effect.onDeactivate) {
+        effect.onDeactivate(overlay);
+      }
+      if (!wasActive && nowActive && effect.onActivate) {
+        effect.onActivate(overlay);
+      }
     }
-    overlay.style.setProperty('--zombie-bg', "url('" + overlay.dataset.zombiePick + "')");
-  } else {
-    // 清掉上次的残留
-    delete overlay.dataset.zombieLevel;
-    delete overlay.dataset.zombiePick;
-    overlay.style.removeProperty('--zombie-bg');
   }
+
+  // 替换类名
+  overlay.className = newClasses;
 
   // 无特效时完全隐藏，避免空层干扰
   overlay.style.display = activeClasses.length === 0 ? 'none' : '';
@@ -963,8 +946,12 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   }
   displayText = displayText.replace(/\{(\w+)\}/g, (match, key) => {
     var val = gameState[key];
-    if (key === 'strength' && typeof val === 'number') val = Math.round(val);
-    return val !== undefined ? val : match;
+    if (val !== undefined) {
+      var fmt = storyData._display && storyData._display[key];
+      if (fmt) val = fmt(val);
+      return val;
+    }
+    return match;
   });
 
   sceneText.style.cssText = '';

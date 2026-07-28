@@ -123,6 +123,11 @@ const storyData = {
     // bagVolume:{ min: 1, max: 20 },
   },
 
+  // --- 显示格式化：{变量名} 插值时调用，不影响原值 ---
+  _display: {
+    strength: function(v) { return Math.round(v); },
+  },
+
   // story-core.js 中，放在 _caps 和 _globalTriggers 之间
 
   // -------- 响应式规则 --------
@@ -221,8 +226,36 @@ const storyData = {
     { condition: "strength == 2", className: "vignette-warning" },
     { condition: "strength <= 1", className: "vignette-danger" },
     { condition: 'weather == "雨" && showRain', className: "weather-rain" },
-    { condition: "chasedByZombies >= 1 && chasedByZombies <= 2 && showZombies", className: "zombie-surround-moderate" },
-    { condition: "chasedByZombies >= 3 && showZombies", className: "zombie-surround-heavy" }
+    {
+      condition: "chasedByZombies >= 1 && chasedByZombies <= 2 && showZombies",
+      className: "zombie-surround-moderate",
+      onActivate: function(overlay) {
+        var pool = [
+          "images/zombie-surround-m1.png",
+          "images/zombie-surround-m2.png",
+          "images/zombie-surround-m3.png"
+        ];
+        overlay.style.setProperty('--zombie-bg', "url('" + pool[Math.floor(Math.random() * pool.length)] + "')");
+      },
+      onDeactivate: function(overlay) {
+        overlay.style.removeProperty('--zombie-bg');
+      }
+    },
+    {
+      condition: "chasedByZombies >= 3 && showZombies",
+      className: "zombie-surround-heavy",
+      onActivate: function(overlay) {
+        var pool = [
+          "images/zombie-surround-h1.png",
+          "images/zombie-surround-h2.png",
+          "images/zombie-surround-h3.png"
+        ];
+        overlay.style.setProperty('--zombie-bg', "url('" + pool[Math.floor(Math.random() * pool.length)] + "')");
+      },
+      onDeactivate: function(overlay) {
+        overlay.style.removeProperty('--zombie-bg');
+      }
+    }
     // 未来可扩展：
     // { condition: "sanity <= 2", className: "screen-wobble" },
     // { condition: "poisoned",    className: "screen-green-tint" },
