@@ -529,7 +529,7 @@ function renderChoices(scene, sceneId) {
         transform: translateX(-50%);
         width: 88%;
         max-width: 640px;
-        z-index: 2;
+        z-index: 150;
         padding: 12px 18px;
         background: rgba(0, 0, 0, 0.75);
         backdrop-filter: blur(8px);
@@ -779,7 +779,7 @@ function renderChoices(scene, sceneId) {
         transform: translateX(-50%);
         width: 88%;
         max-width: 640px;
-        z-index: 2;
+        z-index: 150;
         padding: 12px 18px;
         background: rgba(0, 0, 0, 0.75);
         backdrop-filter: blur(8px);

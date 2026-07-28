@@ -39,7 +39,7 @@ html, body {
 /* ========== 剧情文字：向上贴住图片底部（毛玻璃） ========== */
 #text-area {
   position: relative;
-  z-index: 2;
+  z-index: 60;
   width: 88%;
   max-width: 1200px;
   max-height: 100px;        /* 根据你期望的区域大小调整 */
@@ -119,6 +119,8 @@ html, body {
 
 /* ========== 选项区域（文字下方，需下滑查看） ========== */
 #choices-area {
+  position: relative;
+  z-index: 60;
   width: 88%;
   max-width: 1000px;
   margin: 20px auto 40px;    /* 与文字保持间距，底部留空 */
@@ -156,7 +158,7 @@ html, body {
 
 /* ===== 输入框选项 ===== */
 .choice-input-container {
-  z-index: 999;
+  z-index: 200;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -227,7 +229,7 @@ html, body {
   position: fixed;
   top: 15px;
   right: 20px;
-  z-index: 100;
+  z-index: 120;
 }
 
 #restart-btn {

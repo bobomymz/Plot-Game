@@ -504,6 +504,22 @@ rules: [
 - 图片分布在 `images/zombie-surround-m1~3.png`（轻度）和 `images/zombie-surround-h1~3.png`（重度）
 - 轻度 2~3 只丧尸剪影、颜色较浅；重度 4~5 只、颜色更深、密度更大
 
+### 层叠顺序（z-index）
+
+所有定位元素的堆叠层级如下（从低到高）：
+
+| z-index | 元素 | 定位 | 说明 |
+|:-------:|------|:----:|------|
+| 50 | `#screen-effect-overlay` | fixed | 屏幕特效（暗角/雨滴/丧尸遮罩）+ 记忆闪色 |
+| 60 | `#text-area` | relative | 剧情文本 |
+| 60 | `#choices-area` | relative | 选项按钮 |
+| 100 | `#text-area.text-expanded` | fixed | 展开后的文本区 |
+| 101 | `#choices-area.text-expanded` | fixed | 展开后的选项区 |
+| 120 | `#status-bar` | fixed | 重启/回溯按钮（右上角） |
+| 150 | `#qte-timer` | fixed | QTE 倒计时条（引擎内联 style） |
+| 200 | `.choice-input-container` | static | 输入框组件 |
+| 9999 | `#preload-overlay` | fixed | 加载遮罩（预加载时覆盖一切） |
+
 ### 疲劳系统
 
 `updateTime(addMinutes)` 中，当 `addMinutes > 6` 时自动累加到 `_travelMinutes`。雨天走路慢 30%，同段路程更快触发疲劳。
