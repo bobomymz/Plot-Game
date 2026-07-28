@@ -337,16 +337,22 @@ html, body {
   pointer-events: none;
 }
 
-/* ===== 丧尸包围遮罩（与雨滴不重叠，共用 ::before 无冲突） ===== */
-#screen-effect-overlay.zombie-surround::before {
+/* ===== 丧尸包围遮罩（两档：轻度 ch≤2 / 重度 ch≥3，通过 --zombie-bg 动态指定图片） ===== */
+#screen-effect-overlay.zombie-surround-moderate::before,
+#screen-effect-overlay.zombie-surround-heavy::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('images/zombie-surround-overlay.png');
+  background-image: var(--zombie-bg);
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  opacity: 0.55;
   pointer-events: none;
+}
+#screen-effect-overlay.zombie-surround-moderate::before {
+  opacity: 0.9;
+}
+#screen-effect-overlay.zombie-surround-heavy::before {
+  opacity: 0.9;
 }
 
 /* ===== 预加载遮罩 ===== */

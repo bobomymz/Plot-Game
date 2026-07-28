@@ -221,7 +221,8 @@ const storyData = {
     { condition: "strength == 2", className: "vignette-warning" },
     { condition: "strength <= 1", className: "vignette-danger" },
     { condition: 'weather == "雨" && showRain', className: "weather-rain" },
-    { condition: "chasedByZombies >= 2 && showZombies", className: "zombie-surround" }
+    { condition: "chasedByZombies >= 1 && chasedByZombies <= 2 && showZombies", className: "zombie-surround-moderate" },
+    { condition: "chasedByZombies >= 3 && showZombies", className: "zombie-surround-heavy" }
     // 未来可扩展：
     // { condition: "sanity <= 2", className: "screen-wobble" },
     // { condition: "poisoned",    className: "screen-green-tint" },

@@ -597,14 +597,22 @@ Object.assign(storyData, {
   "安盛街中段-犹豫": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/安盛街/中段-雨天.jpg",
+          evening: "images/安盛街/中段-雨天-evening.jpg",
+          night:"images/安盛街/中段-雨天-night.jpg",
+          midnight:"images/安盛街/中段-雨天-midnight.jpg"
+        });
         return f(vars);
       }
-      var f = timeImage({morning: "images/placeholder.png"
-});
+      var f = timeImage({
+        morning: "images/安盛街/中段.jpg",
+        evening: "images/安盛街/中段-evening.jpg",
+        night:"images/安盛街/中段-night.jpg",
+        midnight:"images/安盛街/中段-midnight.png"
+      });
       return f(vars);
-    }, /* TODO: images/安盛街/中段*.png（与安盛街中段共用同一套图） */
+    }, 
     onEnter: { add: { chasedByZombies: 1 }, set: { showZombies: true } },
     text: "你在街中央站得太久了。丧尸从街道两端围拢过来，低吼声此起彼伏。你不能再犹豫了——必须立刻做出选择。",
     choices: [

@@ -333,7 +333,7 @@ Object.assign(storyData, {
         morning: "images/小区周边/全家和公交站/公交车站.png",
         evening: "images/小区周边/全家和公交站/公交车站-evening.png",
         night: "images/小区周边/全家和公交站/公交车站-night.jpg",
-        midnight: "images/小区周边/全家和公交站/公交车站-midnight.png"
+        midnight: "images/小区周边/全家和公交站/公交车站-midnight.jpg"
       });
       return f(vars);
     }, /* TODO: images/小区周边/全家和公交站/bus.png */

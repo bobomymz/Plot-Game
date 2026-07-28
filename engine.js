@@ -209,6 +209,39 @@ function applyScreenEffects() {
   // 一次性替换类名（清掉旧特效）
   overlay.className = activeClasses.join(' ');
 
+  // ---- 丧尸包围特效：随机选图 + 按等级区分 ----
+  const ZOMBIE_IMAGES = {
+    moderate: [
+      "images/zombie-surround-m1.png",
+      "images/zombie-surround-m2.png",
+      "images/zombie-surround-m3.png"
+    ],
+    heavy: [
+      "images/zombie-surround-h1.png",
+      "images/zombie-surround-h2.png",
+      "images/zombie-surround-h3.png"
+    ]
+  };
+  const newLevel = activeClasses.includes("zombie-surround-heavy") ? "heavy"
+    : activeClasses.includes("zombie-surround-moderate") ? "moderate"
+    : null;
+
+  if (newLevel) {
+    // 等级切换时才重新随机（避免每帧换图闪烁）
+    if (overlay.dataset.zombieLevel !== newLevel || !overlay.dataset.zombiePick) {
+      const pool = ZOMBIE_IMAGES[newLevel];
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      overlay.dataset.zombieLevel = newLevel;
+      overlay.dataset.zombiePick = pick;
+    }
+    overlay.style.setProperty('--zombie-bg', "url('" + overlay.dataset.zombiePick + "')");
+  } else {
+    // 清掉上次的残留
+    delete overlay.dataset.zombieLevel;
+    delete overlay.dataset.zombiePick;
+    overlay.style.removeProperty('--zombie-bg');
+  }
+
   // 无特效时完全隐藏，避免空层干扰
   overlay.style.display = activeClasses.length === 0 ? 'none' : '';
 }
@@ -929,7 +962,9 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     displayText = scene.text || "";
   }
   displayText = displayText.replace(/\{(\w+)\}/g, (match, key) => {
-    return gameState[key] !== undefined ? gameState[key] : match;
+    var val = gameState[key];
+    if (key === 'strength' && typeof val === 'number') val = Math.round(val);
+    return val !== undefined ? val : match;
   });
 
   sceneText.style.cssText = '';
@@ -955,11 +990,7 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   const hasQte = typeof scene.qte === 'function' ? scene.qte(gameState) : scene.qte;
   if (hasQte) {
     // QTE 场景直接显示文字，跳过打字机效果
-    if (typingIsHtml) {
-      sceneText.innerHTML = displayText;
-    } else {
-      sceneText.textContent = displayText;
-    }
+    sceneText.innerHTML = displayText;
     sceneText.classList.remove("typing");
     renderChoices(scene, sceneId);  // renderChoices 内部会启动倒计时
   } else {
