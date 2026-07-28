@@ -634,28 +634,40 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/晨光文具店-雨天.jpg",
-          night: "images/安盛街/晨光文具店-雨天-night.jpg"
+          morning: "images/安盛街/晨光文具店/晨光文具店-雨天.jpg",
+          night: "images/安盛街/晨光文具店/晨光文具店-雨天-night.png"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/晨光文具店.png",
-        night: "images/安盛街/晨光文具店-night.jpg"
+        morning: "images/安盛街/晨光文具店/晨光文具店.png",
+        night: "images/安盛街/晨光文具店/晨光文具店-night.jpg"
       });
       return f(vars);
     }, /* TODO: images/安盛街/文具店*.png */
-    text: "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n收银台后面有动静——像是什么东西在翻找东西。",
+    onEnter: function(vars) { vars.currentPlace = "安盛街"; vars.currentPos = "文具店"; },
+    text: function(vars) {
+      if (vars._stationeryZombieDead) return "你推开吱呀作响的玻璃门，走进文具店。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
+      return "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n收银台后面有动静——像是什么东西在翻找东西。";
+    },
     choices: [
       {
         text: "悄悄靠近查看",
-        nextScene: "安盛街-文具店的丧尸",
+        showCondition: "!_stationeryZombieDead",
+        nextScene: "安盛街-收银台",
+        effect: updateTime(1)
+      },
+      {
+        text: "看看收银台后面",
+        showCondition: "_stationeryZombieDead",
+        nextScene: "安盛街-收银台",
         effect: updateTime(1)
       },
       {
         text: "在门口搜刮一下就走",
         nextScene: "安盛街-文具店搜刮",
-        effect: updateTime(2)
+        effect: updateTime(2),
+        showCondition: "!_visit['安盛街-文具店搜刮']"
       },
       {
         text: "离开文具店",
@@ -664,12 +676,18 @@ Object.assign(storyData, {
     ]
   },
 
-  "安盛街-文具店的丧尸": {
-    image: "images/安盛街/晨光文具店内部-有丧尸.jpg" /* TODO: images/anshengStreet/stationeryZombie.png */,
-    text: "你蹑手蹑脚地靠近收银台。一个穿校服的少年丧尸正蹲在地上，专心致志地啃咬一盒水彩笔，五颜六色的颜料糊了它一脸。\n它似乎还没发现你——但只要你发出一点声音……",
+  "安盛街-收银台": {
+    image: function(vars) {
+      if(vars._stationeryZombieDead) return "images/安盛街/晨光文具店/晨光文具店内部.png";
+      return "images/安盛街/晨光文具店/晨光文具店内部-有丧尸.jpg";
+    },
+    text: function(vars) {
+      if (vars._stationeryZombieDead) return "收银台后面空空荡荡，只有地上残留的水彩笔印证明这里曾经有过什么。";
+      return "你蹑手蹑脚地靠近收银台。一个穿校服的少年丧尸正蹲在地上，专心致志地啃咬一盒水彩笔，五颜六色的颜料糊了它一脸。\n它似乎还没发现你——但只要你发出一点声音……";
+    },
     choices: [
       {
-        text: "悄悄退出去",
+        text: "离开",
         nextScene: "安盛街中段",
         effect: updateTime(1)
       },
@@ -689,21 +707,22 @@ Object.assign(storyData, {
       },
       {
         text: "仔细查看一下周围",
-        showCondition: "!raidStationeryShop",
-        nextScene: "安盛街-文具店搜刮",
+        showCondition: "!_visit['安盛街-文具店搜刮']",
+        nextScene: "安盛街-文具店搜刮-仔细",
         effect: updateTime(1)
       }
     ]
   },
 
   "安盛街-文具店击杀": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryKill.png */,
-    onEnter: { add: { strength: -1 } },
+    image: "images/安盛街/晨光文具店/丧尸被砸倒.png" /* TODO: images/anshengStreet/stationeryKill.png */,
+    onEnter: { add: { strength: -1 }, set: { _stationeryZombieDead: true } },
     text: function(vars) {
       let weaponDesc = "你举起手中的家伙";
       if (vars.hasCane) weaponDesc = "你抡起金属拐杖";
       else if (vars.hasMopHandle) weaponDesc = "你抄起拖把杆";
-      return weaponDesc + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n你补了几下，确定它不会再动了。收银台后面的员工通道看起来通往更里面——也许仓库里还有什么有用的东西。";
+      return weaponDesc + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n\
+你补了几下，确定它不会再动了。收银台后面的小门看起来通往更里面——也许仓库里还有什么有用的东西————或者是更多丧尸。";
     },
     choices: [
       {
@@ -712,20 +731,21 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "见好就收，离开这里",
+        text: "离开这里",
         nextScene: "安盛街中段"
       }
     ]
   },
 
   "结局-安盛街-文具店被反杀": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
-    text: "你举起手中的家伙，但它太重了，你的手臂发软，这一击只擦过了丧尸的肩膀。\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n你太虚弱了，根本无力招架。\n\n—— 结局：文具店被反杀 ——"
+    image: "images/zombieKnockYouDown.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
+    text: "你举起手中的家伙，但它太重了，你的手臂发软，这一击只擦过了丧尸的肩膀。\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
+你太虚弱了，根本无力招架。\n\
+—— 结局：文具店被反杀 ——"
   },
 
   "安盛街-文具店搜刮": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLoot.png */,
-    onEnter: { set: { raidStationeryShop: true } }, // 标记为已搜刮过文具店的物品
     text: "你看着门口附近凌乱的货架。铅笔橡皮撒了一地，收银台下面似乎有什么东西在闪光。",
     choices: [
       {
@@ -745,7 +765,7 @@ Object.assign(storyData, {
   "安盛街-文具店搜刮-快速": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLoot.png */,
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-快速" } },
-    text: "你弯腰捡起柜台下面那把美工刀，揣进口袋就走了。店里太安静了，待久了总觉得不太安全。\n也许有些藏在角落的东西没来得及看，但命更重要。",
+    text: "你扫了一眼没用的橡皮和铅笔，弯腰捡起货架下面那把美工刀，揣进口袋就走了。店里太安静了，待久了总觉得不太安全。\n也许有些藏在角落的东西没来得及看，但命更重要。",
     choices: [
       {
         text: "拿上美工刀离开",

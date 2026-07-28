@@ -57,7 +57,7 @@ const storyData = {
     turnDiaryPages: 0,         // 翻页次数
     repeatedClickTimes: 0,     // 点击重复次数，可以用来设置连点环节
     fightWithVineZombie: false,// 是否与被藤蔓缠绕的丧尸打过
-    raidStationeryShop: false, // 是否搜刮过文具店的物品（不论是粗略还是仔细，只有一次机会）
+    _stationeryZombieDead: false, // 安盛街文具店少年丧尸是否已被击杀
     findKey502: false,         // 是否找到502钥匙
     hasBankSlip: false,        // 是否拿到银行存单
     _droneIntel: false,        // 是否获得无人机侦察情报（物业楼高锦睿）
