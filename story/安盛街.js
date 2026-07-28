@@ -545,7 +545,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       let desc = "你来到街上。街道两旁的店铺大多紧闭着门，有几家的橱窗被砸碎了，玻璃渣洒了一地。\n\
-前方可以看到几家还开着门的店铺：一家文具店，一家服装店，还有一家食品批发部。北边是安居苑的后门。\n";
+前方可以看到几家还开着门的店铺：一家文具店，一家服装店，还有一家食品店。北边是安居苑的后门。\n";
       let zombieDes = describeZombieWave(vars);
       return desc + describeWeather(vars) + zombieDes;
     },
@@ -561,8 +561,8 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "去批发部",
-        nextScene: "安盛街-食品批发部",
+        text: "去食品店",
+        nextScene: "安盛街-食品店",
         effect: updateTime(2)
       },
       {
@@ -590,7 +590,7 @@ Object.assign(storyData, {
         text: "先整理一下东西",
         nextScene: "整理整理"
       },
-      sprintAway(["安盛街-文具店", "安盛街-服装店", "安盛街-食品批发部", "安盛街-理发店", "安盛街西侧", "安盛街东侧", "三林安居苑后门"])
+      sprintAway(["安盛街-文具店", "安盛街-服装店", "安盛街-食品店", "安盛街-理发店", "安盛街西侧", "安盛街东侧", "三林安居苑后门"])
     ]
   },
 
@@ -988,8 +988,8 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 安盛街-食品批发部 ====================
-  "安盛街-食品批发部": {
+  // ==================== 安盛街-食品店 ====================
+  "安盛街-食品店": {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({morning: "images/placeholder.png"
@@ -999,9 +999,9 @@ Object.assign(storyData, {
       var f = timeImage({morning: "images/placeholder.png"
 });
       return f(vars);
-    }, /* TODO: images/安盛街/食品批发部*.png */
+    }, /* TODO: images/安盛街/食品店*.png */
     text: function(vars) {
-      let desc = "这是一家临街的食品批发部，几箱饮料摞在门口，但胜在不起眼。玻璃门上贴满了促销海报，看不清里面的情况。";
+      let desc = "这是一家临街的食品店，几箱饮料摞在门口，但胜在不起眼。玻璃门上贴满了促销海报，看不清里面的情况。";
       if (vars.chasedByZombies >= 3) {
         desc += "\n<span style='color: #ff4444;'>远处的尸群正在逼近，你没有太多时间在这里逗留。</span>";
       }
@@ -1010,7 +1010,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "推门进去",
-        nextScene: "安盛街-食品批发部内部",
+        nextScene: "安盛街-食品店内部",
         effect: updateTime(1)
       },
       {
@@ -1020,33 +1020,33 @@ Object.assign(storyData, {
     ]
   },
 
-  "安盛街-食品批发部内部": {
+  "安盛街-食品店内部": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceStoreInside.png */,
     text: "你推开门，门上的风铃发出清脆的响声。\n货架上的东西不多，但还剩一些：几瓶矿泉水、几包饼干、两罐午餐肉。柜台后面的冰柜已经不制冷了，柜门没有关严，里面的东西表面长出了灰绿色的霉斑。\n正当你准备搜刮时，柜台后面站起来一个人——不，一只穿着店员制服的丧尸。它似乎刚才在柜台下面“休息”。",
     qte: {
       timeout: "8000 - chasedByZombies * 1500",
-      onTimeout: "结局-安盛街-食品批发部被咬"
+      onTimeout: "结局-安盛街-食品店被咬"
     },
     choices: [
       {
         showCondition: "dd <= 2 && !hasBiscuit", // 还没有被拿光（周围可能有别的幸存者，到Day3就没有水和饼干了）
         text: "快拿一瓶水和一包饼干",
-        nextScene: "安盛街-食品批发部得手",
+        nextScene: "安盛街-食品店得手",
         effect: updateTime(3)
       },
       {
         showCondition: "hasCane || hasMopHandle || hasIronPipe",
         text: "抄家伙打它",
-        nextScene: "安盛街-食品批发部战斗"
+        nextScene: "安盛街-食品店战斗"
       },
       {
         text: "赶紧跑",
-        nextScene: "安盛街-食品批发部逃跑"
+        nextScene: "安盛街-食品店逃跑"
       }
     ]
   },
 
-  "安盛街-食品批发部得手": { // 一个有时限的无限补给点，可供玩家不断补给
+  "安盛街-食品店得手": { // 一个有时限的无限补给点，可供玩家不断补给
     image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceLoot.png */,
     onEnter: updateTime(1, { add: { strength: 1 } }),
     text: "你飞快地抓起离你最近的一瓶水和一包饼干，转身就跑。店员丧尸慢悠悠地从柜台后面绕出来，但你已经在门外了。\n你拧开瓶盖灌了几口水，体力恢复了一些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
@@ -1061,20 +1061,20 @@ Object.assign(storyData, {
     ]
   },
 
-  "安盛街-食品批发部战斗": {
+  "安盛街-食品店战斗": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceFight.png */,
     onEnter: { add: { strength: -1 } },
     text: "你举起手中的家伙，一棍子把店员丧尸打翻在地。它挣扎了几下，不动了。\n你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。",
     choices: [
       {
         text: "吃喝补充体力",
-        nextScene: "安盛街-食品批发部战斗-吃喝",
+        nextScene: "安盛街-食品店战斗-吃喝",
         effect: updateTime(5)
       }
     ]
   },
 
-  "安盛街-食品批发部战斗-吃喝": {
+  "安盛街-食品店战斗-吃喝": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceFight.png */,
     onEnter: { add: { strength: 2 } },
     text: "你拧开一瓶水，就着饼干和午餐肉吃了一顿。虽然冷了点，但能填饱肚子就是好事。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
@@ -1086,7 +1086,7 @@ Object.assign(storyData, {
     ]
   },
 
-  "安盛街-食品批发部逃跑": {
+  "安盛街-食品店逃跑": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceEscape.png */,
     onEnter: updateTime(1),
     text: "你转身就跑，店员丧尸慢吞吞地跟在后面，但还没追到门口就放弃了——它似乎被什么东西绊倒了，哗啦一声撞在冰柜上。\n管他呢，跑就对了。",
@@ -1098,9 +1098,9 @@ Object.assign(storyData, {
     ]
   },
 
-  "结局-安盛街-食品批发部被咬": {
+  "结局-安盛街-食品店被咬": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceStoreInside.png */,
-    text: "你在货架前犹豫了太久。店员丧尸悄无声息地走到了你身后——\n等你察觉到脖子上传来的凉意时，已经太晚了。\n\n—— 结局：批发部被咬 ——"
+    text: "你在货架前犹豫了太久。店员丧尸悄无声息地走到了你身后——\n等你察觉到脖子上传来的凉意时，已经太晚了。\n\n—— 结局：食品店被咬 ——"
   },
 
   // ==================== 安盛街-尸潮遭遇战 ====================
