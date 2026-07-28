@@ -633,12 +633,16 @@ Object.assign(storyData, {
   "安盛街-文具店": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/安盛街/晨光文具店-雨天.jpg",
+          night: "images/安盛街/晨光文具店-雨天-night.jpg"
+        });
         return f(vars);
       }
-      var f = timeImage({morning: "images/placeholder.png"
-});
+      var f = timeImage({
+        morning: "images/安盛街/晨光文具店.png",
+        night: "images/安盛街/晨光文具店-night.jpg"
+      });
       return f(vars);
     }, /* TODO: images/安盛街/文具店*.png */
     text: "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n收银台后面有动静——像是什么东西在翻找东西。",
@@ -661,7 +665,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店的丧尸": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
+    image: "images/安盛街/晨光文具店内部-有丧尸.jpg" /* TODO: images/anshengStreet/stationeryZombie.png */,
     text: "你蹑手蹑脚地靠近收银台。一个穿校服的少年丧尸正蹲在地上，专心致志地啃咬一盒水彩笔，五颜六色的颜料糊了它一脸。\n它似乎还没发现你——但只要你发出一点声音……",
     choices: [
       {
@@ -989,15 +993,19 @@ Object.assign(storyData, {
   },
 
   // ==================== 安盛街-食品店 ====================
-  "安盛街-食品店": {
+  "安盛街-食品店": { // 全称：清美生鲜
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/安盛街/清美生鲜门口-雨天.jpg",
+          night: "images/安盛街/清美生鲜门口-雨天-night.jpg"
+        });
         return f(vars);
       }
-      var f = timeImage({morning: "images/placeholder.png"
-});
+      var f = timeImage({
+        morning: "images/安盛街/清美生鲜门口.jpg",
+        night: "images/安盛街/清美生鲜门口-night.png"
+      });
       return f(vars);
     }, /* TODO: images/安盛街/食品店*.png */
     text: function(vars) {
