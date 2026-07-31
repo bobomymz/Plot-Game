@@ -554,7 +554,7 @@ Object.assign(storyData, {
         desc += "你把玩着手里的美工刀，刀刃咔嗒咔嗒地弹出又收起——手里有家伙，心里踏实了不少。\n";
       } else if (vars._lastScene === "安盛街-文具店搜刮-仔细" && (vars.hasCutter || vars.hasCrumpledLeaflet)) {
         if (vars.hasCutter && vars.hasCrumpledLeaflet) {
-          desc += "美工刀和那张揉皱的传单都收进包里了——这趟没白跑。\n";
+          desc += "美工刀和那张揉皱的传单都在身上——这趟没白跑。\n";
         } else if (vars.hasCutter) {
           desc += "那把崭新的美工刀沉甸甸地贴着腿——带着总比空手强。\n";
         } else {
@@ -776,9 +776,13 @@ Object.assign(storyData, {
   "安盛街-文具店搜刮-快速": {
     image: "images/安盛街/晨光文具店/发现美工刀.jpg",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-快速" } },
-    text: "你在笔和本子堆里找到了一把美工刀，或许可以防身？",
+    text: function(vars) {
+      if (vars.hasCutter) return "你在笔和本子堆里又翻到了那把美工刀——但你口袋里已经有一把了，没必要再带一把占地方。";
+      return "你在笔和本子堆里找到了一把美工刀，或许可以防身？";
+    },
     choices: [
       {
+        showCondition: "!hasCutter",
         text: "拿上美工刀离开",
         condition: "itemCount < bagVolume",
         nextScene: "安盛街中段",
@@ -786,19 +790,37 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
+        showCondition: "!hasCutter",
         text: "空手走人",
+        nextScene: "安盛街中段"
+      },
+      {
+        showCondition: "hasCutter",
+        text: "已经有美工刀了，不拿",
         nextScene: "安盛街中段"
       }
     ]
   },
 
   "安盛街-文具店搜刮-仔细": {
-    image: "images/placeholder.png",
+    image: "images/安盛街/晨光文具店/发现美工刀.jpg",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-仔细" } },
-    text: "你蹲下身，从货架底层开始一排一排地翻。铅笔、橡皮、尺子——都不是你要的。但收银台下面的抽屉里有一把崭新的美工刀，还有一整盒备用刀片。\n\
-你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，里面是半包饼干和一张皱巴巴的传单。",
+    text: function(vars) {
+      var desc = "你蹲下身，从货架底层开始一排一排地翻。铅笔、橡皮、尺子——都不是你要的。";
+      if (!vars.hasCutter) {
+        desc += "但收银台下面的抽屉里有一把崭新的美工刀，还有一整盒备用刀片。";
+      }
+      if (!vars.hasCrumpledLeaflet) {
+        desc += "\n你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，里面是半包饼干和一张皱巴巴的传单。";
+      }
+      if (vars.hasCutter && vars.hasCrumpledLeaflet) {
+        desc += "\n剩下的东西你都已经有了，没再重复拿。";
+      }
+      return desc;
+    },
     choices: [
       {
+        showCondition: "!hasCutter && !hasCrumpledLeaflet",
         text: "都拿走",
         condition: "itemCount + 2 <= bagVolume",
         nextScene: "安盛街中段",
@@ -806,6 +828,7 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
+        showCondition: "!hasCutter",
         text: "只拿美工刀，离开",
         condition: "itemCount + 1 <= bagVolume",
         nextScene: "安盛街中段",
@@ -813,6 +836,7 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
+        showCondition: "!hasCrumpledLeaflet",
         text: "只拿传单，离开",
         condition: "itemCount + 1 <= bagVolume",
         nextScene: "安盛街中段",
@@ -820,7 +844,13 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
+        showCondition: "!hasCutter || !hasCrumpledLeaflet",
         text: "背包满了，算了",
+        nextScene: "安盛街中段"
+      },
+      {
+        showCondition: "hasCutter && hasCrumpledLeaflet",
+        text: "都拿过了，离开",
         nextScene: "安盛街中段"
       }
     ]
@@ -850,7 +880,10 @@ Object.assign(storyData, {
   "安盛街-文具店铁柜": {
     image: "images/placeholder.png",
     onEnter: {set: {positionAfterOperation: "安盛街-文具店铁柜"}},
-    text: "你打开铁柜，里面放着一个帆布袋、半包饼干、一瓶没开过的矿泉水。",
+    text: function(vars) {
+      if (vars.hasBag) return "你打开铁柜。帆布袋已经被你拿走了，柜子里只剩那半包饼干和一瓶没开过的矿泉水。";
+      return "你打开铁柜，里面放着一个帆布袋、半包饼干、一瓶没开过的矿泉水。";
+    },
     choices: [
       {
         text: "吃掉饼干和水",
@@ -920,8 +953,71 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
+        showCondition: "hasCrumpledLeaflet",
+        text: "想起传单上印的“304柜”，去男装区找找",
+        nextScene: "安盛街-服装店-304柜",
+        effect: updateTime(1, { set: { hasCrumpledLeaflet: false }, add: { itemCount: -1 } })
+      },
+      {
         text: "感觉不太对，离开这里",
         nextScene: "安盛街中段"
+      }
+    ]
+  },
+
+  "安盛街-服装店-304柜": {
+    image: "images/placeholder.png" /* TODO: images/安盛街/服装店-304柜.png */,
+    onEnter: { set: { positionAfterOperation: "安盛街-服装店-304柜" } },
+    text: function(vars) {
+      if (vars._visit['安盛街-服装店-304柜-换衣']) {
+        return "你回到304柜前。柜门敞着，那叠新衣服里少了一件深蓝夹克——已经穿在你身上了。柜里还压着那张纸条。";
+      }
+      return "你绕过被推倒的模特，走到男装区最里侧。货架角落立着一组半人高的展示柜，柜角贴着一张泛黄的标签——\"304\"。\n柜门没锁，轻轻一拉就开了。里面整整齐齐码着一叠没拆吊牌的新衣服：深蓝夹克、灰格衬衫、一件小号的牛仔外套。最上面压着一张纸条，字迹潦草，像是仓促间写下的。";
+    },
+    choices: [
+      {
+        showCondition: "!_visit['安盛街-服装店-304柜-换衣']",
+        text: "换上一件干净衣服",
+        nextScene: "安盛街-服装店-304柜-换衣"
+      },
+      {
+        text: "看看那张纸条",
+        nextScene: "安盛街-服装店-304柜-纸条"
+      },
+      {
+        text: "离开",
+        nextScene: "安盛街-服装店"
+      }
+    ]
+  },
+
+  "安盛街-服装店-304柜-换衣": {
+    image: "images/placeholder.png" /* TODO: images/安盛街/服装店-304柜.png */,
+    onEnter: { add: { strength: 1 } },
+    text: "你脱下半路上沾了灰的外套，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    choices: [
+      {
+        text: "继续看看304柜",
+        nextScene: "安盛街-服装店-304柜"
+      },
+      {
+        text: "离开",
+        nextScene: "安盛街-服装店"
+      }
+    ]
+  },
+
+  "安盛街-服装店-304柜-纸条": {
+    image: "images/placeholder.png" /* TODO: images/安盛街/服装店-304柜.png */,
+    text: "你拿起那张纸条。边缘已经卷起，字迹有些模糊：\n<em>“东明路那边有家图书馆，里面有人在守着，有水有吃的，我去看看。”</em>\n落款处没有名字。",
+    choices: [
+      {
+        text: "放回纸条",
+        nextScene: "安盛街-服装店-304柜"
+      },
+      {
+        text: "离开",
+        nextScene: "安盛街-服装店"
       }
     ]
   },

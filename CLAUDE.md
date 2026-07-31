@@ -420,6 +420,29 @@ rules: [
 | **记忆系统** | | |
 | `gameMemorySet` / `personalMemorySet` | `Set` | 已收集的记忆，`gameMemoryThres`（10）为结局阈值 |
 
+### `_lastScene`：引擎自动记录的上一个场景
+
+引擎在每次渲染场景前，自动把"上一个渲染过的场景 ID"写入 `gameState._lastScene`（初始 `""`）。剧情作者可在目标场景的 `text` 函数里用它写差异化承接句——尤其是**拾取物品后跳转离开场景**时，不想加中间节点，就用它补一句"确认拿到"：
+
+```javascript
+"安盛街中段": {
+  text: function(vars) {
+    var desc = "你走在街上。……";
+    if (vars._lastScene === "安盛街-文具店搜刮-快速" && vars.hasCutter) {
+      desc += "\n你掂了掂手里的美工刀——带着总比空手强。";
+    }
+    return desc;
+  }
+}
+```
+
+**使用要点：**
+
+- 必须配合物品 flag 做守卫（如 `&& vars.hasCutter`），因为"空手走人 / 背包满了算了"等选项也会以同样的 `_lastScene` 到达目标场景，但没拿东西。
+- 每条 `_lastScene` 分支只在"直接从对应场景过来"时触发，反复进出不会重复刷屏（前提是不回头走原路）。
+- 回溯、QTE 超时、全局触发器跳转同样会更新 `_lastScene`（取真实离开的那个场景）。
+- 引擎不参与业务逻辑，只负责记账；接不承接、承接什么完全由剧情数据决定。
+
 ### 物品管理
 
 物品相关的 flag 变量（`hasBroom` 等）和 `itemCount` 计数是**手动维护**的——效果中没有自动管理计数的逻辑。
@@ -428,6 +451,33 @@ rules: [
 
 - `set: { hasXxx: true }`
 - `add: { itemCount: 1 }`
+
+### 全图唯一物品（同种物品多点可拿）
+
+`hasXxx` 布尔决定了同一物品全图只有一份——任何地点拿到后，其他地方就不该再给同一份（否则 `itemCount` 虚增、道具无限刷）。**同种物品出现在 2+ 地点时，每个地点必须同时满足：**
+
+1. 拾取选项加 `showCondition: "!hasX"`（拿到就消失），或 `condition: "!hasX"` + elseScene。
+2. `text` 写成函数，`hasX` 为 true 时承接"已被拿走"状态：
+   - **风格 A**：这处本来就没有——"这里已经空了 / 被洗劫过"。最省文本。
+   - **风格 B**：这处有货，但你已经有了一把——选项换成"你已经有了，不拿"，不给 `itemCount`。适合工具类小件。
+3. ⚠️ **不要用 `_visit` 或一次性 flag 守卫同种物品**——它们挡得住"本点只进一次"，挡不住"另一处先拿到、再回这里"的顺序。
+
+风格 B 写法示例：
+
+```javascript
+"某地点": {
+  text: function(vars) {
+    var desc = "……货架上还有一罐润滑油。";
+    if (vars.hasLubricant) desc += "\n你已经有一罐了，没必要再拿。";
+    return desc;
+  },
+  choices: [
+    { showCondition: "!hasLubricant", text: "拿起润滑油", condition: "itemCount < bagVolume",
+      nextScene: "……", effect: { set: { hasLubricant: true }, add: { itemCount: 1 } }, elseScene: "整理整理" },
+    { showCondition: "hasLubricant", text: "已经有润滑油了，不拿", nextScene: "……" }
+  ]
+}
+```
 
 ### 记忆闪色（Memory Flash）
 

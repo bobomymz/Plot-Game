@@ -648,11 +648,18 @@ Object.assign(storyData, {
   "三林安居苑-204室-防毒面具": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
     onEnter: { set: { _foundHongMask: true } },
-    text: "你拿起那只防毒面具。是上海“新星”牌的过滤式面具，面罩上落了灰，但橡胶没有老化开裂——保养得还行。你翻过来看了看滤罐——标签上的有效期是2024年12月。过期一年多了。\n\
+    text: function(vars) {
+      var desc = "你拿起那只防毒面具。是上海“新星”牌的过滤式面具，面罩上落了灰，但橡胶没有老化开裂——保养得还行。你翻过来看了看滤罐——标签上的有效期是2024年12月。过期一年多了。\n\
 \n\
-过期滤罐的过滤效率会下降，但对付一般的刺激性气体可能还能撑一阵——如果运气好的话。你把面具放回桌上。",
+过期滤罐的过滤效率会下降，但对付一般的刺激性气体可能还能撑一阵——如果运气好的话。你把面具放回桌上。";
+      if (vars.hasGasMask) {
+        desc += "\n你身上已经带着一只防毒面具了，没必要再带一只。";
+      }
+      return desc;
+    },
     choices: [
       {
+        showCondition: "!hasGasMask",
         text: "拿上防毒面具",
         condition: "itemCount < bagVolume",
         nextScene: "三林安居苑-204室",
@@ -660,7 +667,13 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
+        showCondition: "!hasGasMask",
         text: "算了，不拿",
+        nextScene: "三林安居苑-204室"
+      },
+      {
+        showCondition: "hasGasMask",
+        text: "已经有面具了，离开",
         nextScene: "三林安居苑-204室"
       }
     ]

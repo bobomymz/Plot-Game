@@ -3257,14 +3257,18 @@ Object.assign(storyData, {
   "新达汇-3F通风机房-铁架": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall3f.png */,
     text: function(vars) {
-      if(vars._visit['新达汇-3F通风机房-铁架'] > 1) return "你走到铁架旁翻找，但没找到什么好东西";
-      return "你走到铁架旁翻找。扳手——用不上。手套——破了一个洞。角落里还有一罐WD-40防锈润滑剂，罐身上沾着油渍和灰尘。\
-看样子是维修工保养风机轴承时剩下的。";
+      var desc = "你走到铁架旁翻找。扳手——用不上。手套——破了一个洞。";
+      if (vars.hasLubricant) {
+        desc += "角落里那罐WD-40防锈润滑剂你已经有了一罐，没必要再拿。";
+      } else {
+        desc += "角落里还有一罐WD-40防锈润滑剂，罐身上沾着油渍和灰尘。看样子是维修工保养风机轴承时剩下的。";
+      }
+      return desc;
     },
     onEnter: { set: { positionAfterOperation: "新达汇-3F通风机房" } },
     choices: [
       {
-        showCondition: "!vars._visit['新达汇-3F通风机房-铁架']",
+        showCondition: "!hasLubricant",
         text: "拿起润滑油",
         nextScene: "新达汇-3F通风机房",
         effect: { set: { hasLubricant: true }, add: { itemCount: 1 } },
