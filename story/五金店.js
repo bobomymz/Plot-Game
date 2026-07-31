@@ -298,13 +298,13 @@ WD-40 防锈润滑剂。";
     choices: [
       {
         text: "拿上润滑油",
-        condition: "itemCount < bagVolume",
+        condition: "itemCount < bagVolume && !hasLubricant",
         nextScene: "五金店-暗道-返回",
         effect: { set: { hasLubricant: true, _supermarketCompromised: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
-        text: "离开",
+        text: "不要，离开",
         nextScene: "五金店-暗道-返回",
         effect: updateTime(1)
       }
@@ -314,8 +314,11 @@ WD-40 防锈润滑剂。";
   "五金店-暗道-返回": {
     image: "images/placeholder.png" /* TODO: images/小区周边/supermarketBasement.png */,
     onEnter: updateTime(4, { add: { strength: -1 } }), // 花4分钟原路返回，来回一趟体力消耗不小
-    text: "你原路返回，穿过暗道，爬回联华超市的地下室。铁栅栏门的锁环还断在那里——你没有把它修好，也不可能修好。\n\
-你拍了拍口袋里的润滑油罐子。这趟损失了一根铁管，希望这个东西有用。",
+    text: function(vars) {
+      let basicDes = "你原路返回，穿过暗道，爬回联华超市的地下室。铁栅栏门的锁环还断在那里——你没有把它修好，也不可能修好。";
+      if(vars.hasLubricant) basicDes += "\n你拍了拍口袋里的润滑油罐子。这趟损失了一根铁管，希望这个东西有用。";
+      return basicDes;
+    },
     choices: [
       {
         text: "离开地下室",

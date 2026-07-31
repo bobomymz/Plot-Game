@@ -738,14 +738,14 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-文具店被反杀": {
-    image: "images/zombieKnockYouDown.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
+    image: "images/zombieKnockYouDown.png",
     text: "你举起手中的家伙，但它太重了，你的手臂发软，这一击只擦过了丧尸的肩膀。\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
 你太虚弱了，根本无力招架。\n\
 —— 结局：文具店被反杀 ——"
   },
 
   "安盛街-文具店搜刮": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLoot.png */,
+    image: "images/安盛街/晨光文具店/发现美工刀.jpg",
     text: "你看着门口附近凌乱的货架。铅笔橡皮撒了一地，收银台下面似乎有什么东西在闪光。",
     choices: [
       {
@@ -763,9 +763,9 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店搜刮-快速": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLoot.png */,
+    image: "images/安盛街/晨光文具店/发现美工刀.jpg",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-快速" } },
-    text: "你扫了一眼没用的橡皮和铅笔，弯腰捡起货架下面那把美工刀，揣进口袋就走了。店里太安静了，待久了总觉得不太安全。\n也许有些藏在角落的东西没来得及看，但命更重要。",
+    text: "你在笔和本子堆里找到了一把美工刀，或许可以防身？",
     choices: [
       {
         text: "拿上美工刀离开",
@@ -782,7 +782,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店搜刮-仔细": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLoot.png */,
+    image: "images/placeholder.png",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-仔细" } },
     text: "你蹲下身，从货架底层开始一排一排地翻。铅笔、橡皮、尺子——都不是你要的。但收银台下面的抽屉里有一把崭新的美工刀，还有一整盒备用刀片。\n\
 你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，里面是半包饼干和一张皱巴巴的传单。",
@@ -795,10 +795,17 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
-        text: "只拿美工刀",
+        text: "只拿美工刀，离开",
         condition: "itemCount + 1 <= bagVolume",
         nextScene: "安盛街中段",
         effect: updateTime(1, { set: { hasCutter: true }, add: { itemCount: 1 } }),
+        elseScene: "整理整理"
+      },
+      {
+        text: "只拿传单，离开",
+        condition: "itemCount + 1 <= bagVolume",
+        nextScene: "安盛街中段",
+        effect: updateTime(1, { set: { hasCrumpledLeaflet: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
@@ -830,7 +837,8 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLocker.png */,
+    image: "images/placeholder.png",
+    onEnter: {set: {positionAfterOperation: "安盛街-文具店铁柜"}},
     text: "你打开铁柜，里面放着一个帆布袋、半包饼干、一瓶没开过的矿泉水。",
     choices: [
       {
@@ -858,18 +866,6 @@ Object.assign(storyData, {
     choices: [
       {
         text: "离开",
-        nextScene: "安盛街中段"
-      }
-    ]
-  },
-
-  "安盛街-物品栏满了2": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryZombie.png */,
-    onEnter: { set: { showRain: true } },
-    text: "你想再捡点东西，但身上已经满当当的了。\n少年丧尸似乎察觉到了什么，开始抬起头来。你当机立断——现在不走更待何时。",
-    choices: [
-      {
-        text: "闪人",
         nextScene: "安盛街中段"
       }
     ]

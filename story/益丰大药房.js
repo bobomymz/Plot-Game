@@ -172,6 +172,7 @@ Object.assign(storyData,{
     image: "images/小区周边/益丰大药房/找到医用石蜡油.png",
     onEnter: { set: { positionAfterOperation: "益丰大药房-库房" } },
     text: function(vars) {
+      if(vars.hasLiquidParaffin) return "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱，但没再找到什么好东西。";
       let basicDes = "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱。\n\
 正准备放弃时，你在角落里发现了一瓶医用石蜡油。标签如下：\n\
 医用石蜡油\n\

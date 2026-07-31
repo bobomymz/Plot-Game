@@ -1066,7 +1066,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "拿上防毒面具",
-        condition: "itemCount < bagVolume",
+        condition: "itemCount < bagVolume && !hasGasMask",
         nextScene: "物资区的丧尸",
         effect: { set: { hasGasMask: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
@@ -1587,23 +1587,30 @@ Object.assign(storyData, {
       night: "images/home/501-night.jpg"
     }),
     onEnter: { set: { currentPos: "501室" } },
-    text: "门没锁。你轻轻一推，铰链发出干涩的吱呀声。\n客厅的光线很暗，窗帘只拉了一半。午后的光斜斜地打在老式藤椅上——藤椅上坐着一个短发老太太，头微微偏向一侧，像是午睡还没醒。\n\
+    text: function(vars) {
+      if(vars.hasCommitteeKey)
+        return "你轻轻一推，铰链发出干涩的吱呀声。\n客厅的光线很暗，窗帘只拉了一半。午后的光斜斜地打在老太太的尸体上。\n\
+茶几上放着一只老式闹钟，停在11:47。旁边摊着一本翻到一半的电话簿，圆珠笔还夹在她指间，笔尖已经干了。\n\
+茶几的塑料标签上写着“居委会”三个字，用透明胶缠了好几圈。\n\
+墙上挂着一张泛黄的合影。"
+      return "门没锁。你轻轻一推，铰链发出干涩的吱呀声。\n客厅的光线很暗，窗帘只拉了一半。午后的光斜斜地打在老式藤椅上——藤椅上坐着一个短发老太太，头微微偏向一侧，像是午睡还没醒。\n\
 但她不会再醒了。\n茶几上放着一只老式闹钟，停在11:47。旁边摊着一本翻到一半的电话簿，圆珠笔还夹在她指间，笔尖已经干了。电话簿下面压着一张手写的小区住户去向表：\n\
 301 小两口 回娘家了（她妈妈在周浦）\n402 老周 我让他躲地下室了\n502 —（空了半年）\n503 小刘 电话没打通\n601 老徐家 门锁着，敲了没人应\n\
 字迹从工整到潦草，最后一行几乎辨认不清：\n\
 <em>我腿走不动了，不拖累你们。</em>\n\
 茶几角上放着一串钥匙，塑料标签上写着“居委会”三个字，用透明胶缠了好几圈。\n\
-墙上挂着一张泛黄的合影——她戴着红袖章站在小区花坛前，背后拉着横幅“欢迎新住户入住樱桃苑”。照片里的她笑得眼睛眯成两条缝。",
+墙上挂着一张泛黄的合影——她戴着红袖章站在小区花坛前，背后拉着横幅“欢迎新住户入住樱桃苑”。照片里的她笑得眼睛眯成两条缝。";
+    },
     choices: [
       {
         text: "拿起居委会钥匙",
-        condition: "itemCount < bagVolume",
+        condition: "itemCount < bagVolume && !hasCommitteeKey",
         nextScene: "樱桃苑-5楼-501-拿钥匙",
         effect: { set: { hasCommitteeKey: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
-        text: "放下钥匙，离开",
+        text: "离开",
         nextScene: "樱桃苑-5楼"
       }
     ]
