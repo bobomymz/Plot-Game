@@ -803,24 +803,24 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店搜刮-仔细": {
-    image: "images/安盛街/晨光文具店/发现美工刀.jpg",
+    image: "images/安盛街/晨光文具店/美工刀+传单.jpg",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-仔细" } },
     text: function(vars) {
       var desc = "你蹲下身，从货架底层开始一排一排地翻。铅笔、橡皮、尺子——都不是你要的。";
       if (!vars.hasCutter) {
         desc += "但收银台下面的抽屉里有一把崭新的美工刀，还有一整盒备用刀片。";
       }
-      if (!vars.hasCrumpledLeaflet) {
-        desc += "\n你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，里面是半包饼干和一张皱巴巴的传单。";
+      if (!vars.hasCrumpledLeaflet && !vars._leafletUsed) {
+        desc += "\n你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，里面是半包饼干和一张皱巴巴的传单，传单上写着一行潦草的字迹”304柜 新到男装“。";
       }
-      if (vars.hasCutter && vars.hasCrumpledLeaflet) {
+      if (vars.hasCutter && (vars.hasCrumpledLeaflet || vars._leafletUsed)) {
         desc += "\n剩下的东西你都已经有了，没再重复拿。";
       }
       return desc;
     },
     choices: [
       {
-        showCondition: "!hasCutter && !hasCrumpledLeaflet",
+        showCondition: "!hasCutter && !hasCrumpledLeaflet && !_leafletUsed",
         text: "都拿走",
         condition: "itemCount + 2 <= bagVolume",
         nextScene: "安盛街中段",
@@ -836,7 +836,7 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
-        showCondition: "!hasCrumpledLeaflet",
+        showCondition: "!hasCrumpledLeaflet && !_leafletUsed",
         text: "只拿传单，离开",
         condition: "itemCount + 1 <= bagVolume",
         nextScene: "安盛街中段",
@@ -844,13 +844,18 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
-        showCondition: "!hasCutter || !hasCrumpledLeaflet",
+        showCondition: "!hasCutter || (!hasCrumpledLeaflet && !_leafletUsed)",
         text: "背包满了，算了",
         nextScene: "安盛街中段"
       },
       {
         showCondition: "hasCutter && hasCrumpledLeaflet",
         text: "都拿过了，离开",
+        nextScene: "安盛街中段"
+      },
+      {
+        showCondition: "hasCutter && _leafletUsed",
+        text: "没什么要拿的了，离开",
         nextScene: "安盛街中段"
       }
     ]
@@ -956,7 +961,13 @@ Object.assign(storyData, {
         showCondition: "hasCrumpledLeaflet",
         text: "想起传单上印的“304柜”，去男装区找找",
         nextScene: "安盛街-服装店-304柜",
-        effect: updateTime(1, { set: { hasCrumpledLeaflet: false }, add: { itemCount: -1 } })
+        effect: updateTime(1, { set: { hasCrumpledLeaflet: false, _leafletUsed: true }, add: { itemCount: -1 } })
+      },
+      {
+        showCondition: "_visit['安盛街-服装店-304柜'] > 0",
+        text: "再去男装区看看那个304柜",
+        nextScene: "安盛街-服装店-304柜",
+        effect: updateTime(1)
       },
       {
         text: "感觉不太对，离开这里",
@@ -966,13 +977,14 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店-304柜": {
-    image: "images/placeholder.png" /* TODO: images/安盛街/服装店-304柜.png */,
+    image: "images/安盛街/服装店/304柜.jpg" /* TODO: images/安盛街/服装店-304柜.png */,
     onEnter: { set: { positionAfterOperation: "安盛街-服装店-304柜" } },
     text: function(vars) {
       if (vars._visit['安盛街-服装店-304柜-换衣']) {
-        return "你回到304柜前。柜门敞着，那叠新衣服里少了一件深蓝夹克——已经穿在你身上了。柜里还压着那张纸条。";
+        return "你回到304柜前。柜门敞着，柜里还压着那张纸条。";
       }
-      return "你绕过被推倒的模特，走到男装区最里侧。货架角落立着一组半人高的展示柜，柜角贴着一张泛黄的标签——\"304\"。\n柜门没锁，轻轻一拉就开了。里面整整齐齐码着一叠没拆吊牌的新衣服：深蓝夹克、灰格衬衫、一件小号的牛仔外套。最上面压着一张纸条，字迹潦草，像是仓促间写下的。";
+      return "你绕过被推倒的模特，走到男装区最里侧。货架角落立着一组半人高的展示柜，柜角贴着一张泛黄的标签——\"304\"。\n\
+柜门没锁，轻轻一拉就开了。里面整整齐齐码着一叠没拆吊牌的新衣服：深蓝夹克、灰格衬衫、一件小号的牛仔外套。最上面压着一张纸条，字迹潦草，像是仓促间写下的。";
     },
     choices: [
       {
@@ -1103,7 +1115,7 @@ Object.assign(storyData, {
     onEnter: { set: { positionAfterOperation: "安盛街-服装店收银台-仔细" } },
     text: function(vars) {
       let basicDes = "你把抽屉整个拉了出来，把里面的东西倒在地上。一堆过期的会员卡、几张外卖单、半管护手霜";
-      if(vars.hasCrumpledLeaflet) { // 如果已经拿到传单
+      if(vars.hasCrumpledLeaflet || vars._leafletUsed) { // 已经拿到或用掉传单
         basicDes += "。";
       }
       else {
@@ -1113,7 +1125,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!hasCrumpledLeaflet", // 只有在没有拿到传单时才显示
+        showCondition: "!hasCrumpledLeaflet && !_leafletUsed", // 没拿过、也没用掉传单时才显示
         text: "拿走传单",
         condition: "itemCount < bagVolume",
         nextScene: "安盛街中段",

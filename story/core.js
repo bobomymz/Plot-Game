@@ -81,6 +81,7 @@ const storyData = {
     hasMap: false,             // 是否有交通地图（三林安居苑藤蔓丧尸）
     hasLubricant: false,       // 是否有润滑油（五金店仓库，可带到安居苑修车）
     hasCrumpledLeaflet: false, // 是否有揉皱的传单
+    _leafletUsed: false,       // 是否已用传单打开过服装店304柜（传单使命完成）
     hasPhone: false,           // 是否找到华为店展示机
     hasLiquidParaffin: false,  // 是否有医用石蜡油（益丰大药房左边货架）
     hasBottle: false,          // 是否有水瓶
