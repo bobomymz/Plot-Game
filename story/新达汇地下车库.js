@@ -30,6 +30,9 @@ Object.assign(storyData, {
       } else {
         desc += "\n你只能靠手机的微弱光线和摸索前进。前方是一条黑暗的通道，左侧有一扇防火门的轮廓，右侧隐约有一条岔路。";
       }
+      if (vars._lastScene === "新达汇-B1停车场-拿钥匙") {
+        desc += "\n你按了按外套内袋——丰田车钥匙的棱角硌着手心。";
+      }
       return desc;
     },
     choices: [

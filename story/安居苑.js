@@ -162,8 +162,12 @@ Object.assign(storyData, {
       applyWeatherDrain(vars);
     },
     text: function(vars) {
-      return "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。小广场一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
-再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。\n" + describeWeather(vars);
+      var desc = "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。小广场一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
+再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。";
+      if (vars._lastScene === "三林安居苑-鹅卵石路" && vars.hasKey502) {
+        desc += "\n你捏了捏口袋里那枚钥匙——上面写着“402”，不知道对应哪扇门。";
+      }
+      return desc + "\n" + describeWeather(vars);
     },
     choices: [
       {
@@ -213,8 +217,8 @@ Object.assign(storyData, {
     onEnter: {set: {positionAfterOperation: "三林安居苑-小广场", showRain: true}},
     text: function(vars) {
       let basicDes = "你走上了鹅卵石路。鹅卵石路是一条老路，上面的鹅卵石很老，但是很平滑。\n";
-      if(!vars.findKey502) basicDes += "你走着走着，发现鹅卵石路的尽头是一个老式的自行车，车筐里塞着半袋没来得及拿上楼的菜。\n\
-你骑上去试了试。很可惜，这个自行车上锁了。车篮里有一把钥匙，但不是车锁的钥匙，上面写着“402”。"
+      if(!vars.hasKey502) basicDes += "你走着走着，发现鹅卵石路的尽头是一个老式的自行车，车筐里塞着半袋没来得及拿上楼的菜。\n\
+你骑上去试了试。很可惜，这个自行车上锁了。车篮里有一把钥匙，但不是车锁的钥匙，上面写着“502”。"
     },
     choices: [
       {
@@ -406,7 +410,7 @@ Object.assign(storyData, {
   "三林安居苑-居民楼-1楼": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBuilding.png */,
     text: function(vars) {
-      if(vars._visit["三林安居苑-居民楼-1楼"] > 1) return "客厅的茶几上还放着半杯凉掉的茶，厨房传来断断续续的刮擦声。";
+      if(vars._visit["三林安居苑-居民楼-1楼"] > 1) return "你来到这户人家的客厅，茶几上还放着半杯凉掉的茶，厨房传来断断续续的刮擦声。";
       return "你轻轻推开门。这是一户普通的人家——玄关摆着鞋柜，客厅的茶几上还放着半杯凉掉的茶。\n\
 厨房方向传来刮擦声，像是有人在用指甲挠墙。你探头一看：一只老年丧尸正趴在厨房地上，不知道在啃什么。\n\
 它的腿似乎断了，无法站立，但双手依然有力。听到脚步声，它转头看向你，呲着牙发出威胁的低吼。\n卧室的门关着——不知道里面有什么。";
@@ -716,7 +720,7 @@ Object.assign(storyData, {
         text: "试着打开502的门",
         condition: "hasKey502",
         nextScene: "三林安居苑-502",
-        effect: updateTime(1, { set: { findKey502: true } }),
+        effect: updateTime(1),
         elseScene: "三林安居苑-5楼-门锁了"
       },
       {
@@ -852,7 +856,7 @@ Object.assign(storyData, {
       },
       {
         text: "不拿了，离开",
-        nextScene: "三林安居苑-小区内部"
+        nextScene: "三林安居苑-居民楼-1楼"
       }
     ]
   },
@@ -860,19 +864,19 @@ Object.assign(storyData, {
   "三林安居苑-卧室-快速": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBedroom.png */,
     onEnter: { set: { positionAfterOperation: "三林安居苑-卧室-快速" } },
-    text: "你拉开书桌的抽屉——一个应急手电筒，还有电。你抓起来塞进口袋，转身就走。衣柜里似乎还有东西，但你不想在这个房间里多待了。",
+    text: "你拉开书桌的抽屉——一个应急手电筒，还有电。衣柜里似乎还有东西，但你不想在这个房间里多待了。",
     choices: [
       {
         showCondition: "!hasTorch",
         text: "拿上手电筒离开",
         condition: "itemCount < bagVolume",
-        nextScene: "三林安居苑-小区内部",
+        nextScene: "三林安居苑-居民楼-1楼",
         effect: updateTime(1, { set: { hasTorch: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
         text: "算了，空手走",
-        nextScene: "三林安居苑-小区内部"
+        nextScene: "三林安居苑-居民楼-1楼"
       }
     ]
   },
@@ -886,19 +890,19 @@ Object.assign(storyData, {
         showCondition: "!hasTorch",
         text: "拿上手电筒",
         condition: "itemCount < bagVolume",
-        nextScene: "三林安居苑-卧室-仔细",
+        nextScene: "三林安居苑-居民楼-1楼",
         effect: updateTime(1, { set: { hasTorch: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
         showCondition: "!hasBag",
         text: "拿上帆布包",
-        nextScene: "三林安居苑-卧室-仔细",
+        nextScene: "三林安居苑-居民楼-1楼",
         effect: {set: {hasBag: true}, add: {bagVolume: 1}}
       },
       {
         text: "离开",
-        nextScene: "三林安居苑-小区内部"
+        nextScene: "三林安居苑-离开卧室"
       }
     ]
   },

@@ -342,6 +342,9 @@ Object.assign(storyData, {
       if (isNight && vars.chasedByZombies > 0) {
         desc += "\n<span style='color: #ffaa00;'>窗外的低吼声时远时近——今晚在这里过夜应该能甩掉它们。</span>";
       }
+      if (vars._lastScene === "理发店-拿到拖把杆" && vars.hasMopHandle) {
+        desc += "\n你掂了掂手里的拖把杆——拆下来后比想象中趁手，棍身上还带着没擦干净的拖布头。";
+      }
       return desc;
     },
     choices: [
@@ -546,6 +549,20 @@ Object.assign(storyData, {
     text: function(vars) {
       let desc = "你来到街上。街道两旁的店铺大多紧闭着门，有几家的橱窗被砸碎了，玻璃渣洒了一地。\n\
 前方可以看到几家还开着门的店铺：一家文具店，一家服装店，还有一家食品店。北边是安居苑的后门。\n";
+      // 承接刚从店铺带出来的东西（_lastScene 由引擎自动记录）
+      if (vars._lastScene === "安盛街-文具店搜刮-快速" && vars.hasCutter) {
+        desc += "你把玩着手里的美工刀，刀刃咔嗒咔嗒地弹出又收起——手里有家伙，心里踏实了不少。\n";
+      } else if (vars._lastScene === "安盛街-文具店搜刮-仔细" && (vars.hasCutter || vars.hasCrumpledLeaflet)) {
+        if (vars.hasCutter && vars.hasCrumpledLeaflet) {
+          desc += "美工刀和那张揉皱的传单都收进包里了——这趟没白跑。\n";
+        } else if (vars.hasCutter) {
+          desc += "那把崭新的美工刀沉甸甸地贴着腿——带着总比空手强。\n";
+        } else {
+          desc += "那张揉皱的传单被折好收在口袋里——“304柜 新到男装”，没准哪天用得上。\n";
+        }
+      } else if (vars._lastScene === "安盛街-服装店收银台-仔细" && vars.hasCrumpledLeaflet) {
+        desc += "你把那张揉皱的传单折好塞进口袋——“304柜 新到男装”，没准哪天用得上。\n";
+      }
       let zombieDes = describeZombieWave(vars);
       return desc + describeWeather(vars) + zombieDes;
     },
@@ -683,7 +700,8 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if (vars._stationeryZombieDead) return "收银台后面空空荡荡，只有地上残留的水彩笔印证明这里曾经有过什么。";
-      return "你蹑手蹑脚地靠近收银台。一个穿校服的少年丧尸正蹲在地上，专心致志地啃咬一盒水彩笔，五颜六色的颜料糊了它一脸。\n它似乎还没发现你——但只要你发出一点声音……";
+      return "你蹑手蹑脚地靠近收银台。一个穿校服的少年丧尸正蹲在地上，专心致志地啃咬一盒水彩笔，五颜六色的颜料糊了它一脸。\n\
+它似乎还没发现你——但只要你发出一点声音……";
     },
     choices: [
       {
@@ -704,12 +722,6 @@ Object.assign(storyData, {
         nextScene: "安盛街-文具店击杀",
         condition: "strength >= 3",
         elseScene: "结局-安盛街-文具店被反杀"
-      },
-      {
-        text: "仔细查看一下周围",
-        showCondition: "!_visit['安盛街-文具店搜刮']",
-        nextScene: "安盛街-文具店搜刮-仔细",
-        effect: updateTime(1)
       }
     ]
   },
@@ -744,7 +756,7 @@ Object.assign(storyData, {
 —— 结局：文具店被反杀 ——"
   },
 
-  "安盛街-文具店搜刮": {
+  "安盛街-文具店搜刮": { // 本节点限进入一次
     image: "images/安盛街/晨光文具店/发现美工刀.jpg",
     text: "你看着门口附近凌乱的货架。铅笔橡皮撒了一地，收银台下面似乎有什么东西在闪光。",
     choices: [
@@ -756,8 +768,7 @@ Object.assign(storyData, {
       {
         text: "蹲下来仔细翻找",
         effect: updateTime(15),
-        nextScene: "安盛街-文具店搜刮-仔细",
-        elseScene: "安盛街-文具店搜刮-仔细"
+        nextScene: "安盛街-文具店搜刮-仔细"
       }
     ]
   },
@@ -849,7 +860,7 @@ Object.assign(storyData, {
       {
         showCondition: "!hasBag",
         text: "拿走帆布袋",
-        nextScene: "安盛街中段",
+        nextScene: "安盛街-文具店铁柜-拿走帆布袋",
         effect: updateTime(15, { set: { hasBag: true }, add: { bagVolume: 1} } )
       },
       {
@@ -866,6 +877,18 @@ Object.assign(storyData, {
     choices: [
       {
         text: "离开",
+        nextScene: "安盛街中段"
+      }
+    ]
+  },
+
+  "安盛街-文具店铁柜-拿走帆布袋": {
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLocker.png */,
+    onEnter: { set: { positionAfterOperation: "安盛街中段" } },
+    text: "你提起那只帆布袋，掸了掸上面的灰。帆布厚实，肩带完好，袋口还有一根抽绳——比空手强多了。\n你把它斜挎在肩上，腾出手来。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】背包容量+1，当前容量：{bagVolume}。</span>",
+    choices: [
+      {
+        text: "离开文具店",
         nextScene: "安盛街中段"
       }
     ]

@@ -19,8 +19,12 @@ Object.assign(storyData, {
     },
     onEnter: function(vars) { vars.showZombies = true; applyWeatherDrain(vars); },
     text: function(vars) {
-      return "你四处张望。\n远处有不少丧尸在游荡。紧挨着小区的门是一个全家便利店，你经常在那里买早餐。\n\
-你向身旁看去，那里有一辆你初中时常坐的公交车，此刻就像一头休憩的野兽，静静蹲守在一个公交站台旁。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+      var desc = "你四处张望。\n远处有不少丧尸在游荡。紧挨着小区的门是一个全家便利店，你经常在那里买早餐。\n\
+你向身旁看去，那里有一辆你初中时常坐的公交车，此刻就像一头休憩的野兽，静静蹲守在一个公交站台旁。\n";
+      if (vars._lastScene === "全家便利店-员工通道" && vars.hasDoorKey1) {
+        desc += "你掂了掂口袋里的那把钥匙——还闹不清是开哪扇门的，先收着再说。\n";
+      }
+      return desc + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
 // 真实地名为环林东路樱桃苑东门
     choices: [

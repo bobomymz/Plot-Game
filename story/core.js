@@ -58,12 +58,12 @@ const storyData = {
     repeatedClickTimes: 0,     // 点击重复次数，可以用来设置连点环节
     fightWithVineZombie: false,// 是否与被藤蔓缠绕的丧尸打过
     _stationeryZombieDead: false, // 安盛街文具店少年丧尸是否已被击杀
-    findKey502: false,         // 是否找到502钥匙
     hasBankSlip: false,        // 是否拿到银行存单
     _droneIntel: false,        // 是否获得无人机侦察情报（物业楼高锦睿）
     _committeeSearched: false,  // 是否搜过物业楼居委会办公室
     showRain: false,           // 是否展示雨滴叠加特效（B类场景 onEnter 控制）
     showZombies: false,        // 是否展示丧尸包围遮罩（路网节点 onEnter 控制）
+    _lastScene: "",            // 引擎自动记录的上一个场景ID（目标场景 text 用于差异化承接）
 
     // --- 物品状态 ---
     // 常规物品

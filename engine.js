@@ -10,6 +10,7 @@ const backtrackBtn = document.getElementById("backtrack-btn");
 
 // --- 游戏运行状态 ---
 let currentScene = "start";
+let lastRenderedScene = "";   // 上一次成功渲染的场景ID（用于记录 _lastScene）
 let gameState = {};
 let historyStack = [];   // 回溯历史 [{ sceneId, gameState }]
 // ====== QTE 相关 ======
@@ -885,6 +886,10 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     return;
   }
 
+  // 记录上一个场景ID（供目标场景 text 用 _lastScene 差异化承接拾取/事件）
+  gameState._lastScene = lastRenderedScene;
+  lastRenderedScene = sceneId;
+
   // 自动记录场景访问次数（回溯时跳过），在onEnter执行之前记录
   if (!skipOnEnter) {
     gameState._visit = gameState._visit || {};
@@ -996,6 +1001,7 @@ restartBtn.addEventListener("click", () => {
   historyStack = [];          // 清空历史
   backtrackBtn.style.display = 'none';  // 隐藏回溯
   initGameState();
+  lastRenderedScene = "";     // 重置上一场景记录，避免旧场景串场
   applyScreenEffects();   // ← 新增：重置特效
   clearMemoryFlash();     // 终止记忆闪色动画
   currentScene = "start";
