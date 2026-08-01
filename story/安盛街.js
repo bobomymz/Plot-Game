@@ -1041,7 +1041,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店试衣间": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/fittingRoom.png */,
+    image: "images/安盛街/服装店/试衣间的丧尸.jpg",
     qte: {
       timeout: 5000,
       onTimeout: "结局-安盛街-试衣间丧尸扑脸"
@@ -1067,7 +1067,7 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-试衣间丧尸扑脸": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/zombieInFittingRoom.png */,
+    image: "images/zombieKnockYouDown.png",
     text: "丧尸猛地扑到你身上，你失去平衡仰面摔倒。\n还没来得及挣扎，它已经咬了下来。\n\n—— 结局：试衣间丧尸 ——"
   },
 
