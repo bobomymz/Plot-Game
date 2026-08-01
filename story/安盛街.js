@@ -1006,7 +1006,7 @@ Object.assign(storyData, {
   "安盛街-服装店-304柜-换衣": {
     image: "images/placeholder.png" /* TODO: images/安盛街/服装店-304柜.png */,
     onEnter: { add: { strength: 1 } },
-    text: "你脱下半路上沾了灰的外套，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: "你脱下半路上沾了灰的衣服，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续看看304柜",
