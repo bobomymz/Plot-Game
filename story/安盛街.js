@@ -1072,7 +1072,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店反击": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/fittingRoomFight.png */,
+    image: "images/安盛街/服装店/试衣间反击.jpg",
     onEnter: { add: { strength: -1 } },
     text: "你一脚正中丧尸的胸口，它被踹回了试衣间，撞在墙上发出沉闷的声响。\n趁它还没爬起来，你头也不回地冲出了服装店。",
     choices: [
@@ -1084,7 +1084,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店逃出": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/clothingStoreExit.png */,
+    image: "images/安盛街/服装店/门口.png",
     onEnter: updateTime(1),
     text: "你猛地拉上帘子，转身就跑。身后传来丧尸撞破帘子的声音，但你已经在店门外了。\n心跳得厉害。你靠在墙上喘了几口气，确定它没有追出来。",
     choices: [
