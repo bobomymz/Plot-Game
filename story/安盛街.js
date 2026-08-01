@@ -1004,7 +1004,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店-304柜-换衣": {
-    image: "images/placeholder.png" /* TODO: images/安盛街/服装店-304柜.png */,
+    image: "images/安盛街/服装店/换新衣.jpg",
     onEnter: { add: { strength: 1 } },
     text: "你脱下半路上沾了灰的衣服，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
@@ -1020,8 +1020,14 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店-304柜-纸条": {
-    image: "images/placeholder.png" /* TODO: images/安盛街/服装店-304柜.png */,
-    text: "你拿起那张纸条。边缘已经卷起，字迹有些模糊：\n<em>“东明路那边有家图书馆，里面有人在守着，有水有吃的，我去看看。”</em>\n落款处没有名字。",
+    image: function(vars) {
+      if (vars._visit['安盛街-服装店-304柜-换衣']) {
+        return "images/安盛街/服装店/看纸条-已换新衣.jpg";
+      }
+      return "images/安盛街/服装店/看纸条.jpg";
+    },
+    text: "你拿起那张纸条。边缘已经卷起，字迹有些模糊：\n<em>“东明路那边有家图书馆，里面有人在守着，有水有吃的，我去看看。”</em>\n\
+落款处没有名字。",
     choices: [
       {
         text: "放回纸条",
