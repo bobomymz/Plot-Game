@@ -935,15 +935,15 @@ Object.assign(storyData, {
   // ==================== 安盛街-服装店 ====================
   "安盛街-服装店": {
     image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
-        return f(vars);
+      if (vars.weather == "雨") {
+        return "images/安盛街/服装店/门口-雨天.jpg";
       }
-      var f = timeImage({morning: "images/placeholder.png"
-});
+      var f = timeImage({
+        morning: "images/安盛街/服装店/门口.jpg",
+        night: "images/安盛街/服装店/门口-night.jpg"
+      });
       return f(vars);
-    }, /* TODO: images/安盛街/服装店*.png */
+    }, 
     text: "你走进服装店。这家小店叫做珍奥，平时只是路过，从来没进去看过。模特假人歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。\n\
 这家店看起来已经被洗劫过了，货架被推得东倒西歪。",
     choices: [
@@ -977,7 +977,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店-304柜": {
-    image: "images/安盛街/服装店/304柜.jpg" /* TODO: images/安盛街/服装店-304柜.png */,
+    image: "images/安盛街/服装店/304柜.jpg",
     onEnter: { set: { positionAfterOperation: "安盛街-服装店-304柜" } },
     text: function(vars) {
       if (vars._visit['安盛街-服装店-304柜-换衣']) {
@@ -1105,7 +1105,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店收银台": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/clothingCounter.png */,
+    image: "images/安盛街/服装店/收银台.jpg",
     text: "你翻找收银台。收银机已经被撬开了，里面一分钱都没有——但这年头钱也没什么用。柜台下面的抽屉半开着，里面塞着一堆票据和杂物。",
     choices: [
       {
