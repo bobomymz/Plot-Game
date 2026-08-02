@@ -1126,7 +1126,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店收银台-仔细": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/clothingCounter.png */,
+    image: "images/安盛街/服装店/收银台.jpg",
     onEnter: { set: { positionAfterOperation: "安盛街-服装店收银台-仔细" } },
     text: function(vars) {
       let basicDes = "你把抽屉整个拉了出来，把里面的东西倒在地上。一堆过期的会员卡、几张外卖单、半管护手霜";
@@ -1159,14 +1159,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/清美生鲜门口-雨天.jpg",
-          night: "images/安盛街/清美生鲜门口-雨天-night.jpg"
+          morning: "images/安盛街/食品店/清美生鲜门口-雨天.jpg",
+          night: "images/安盛街/食品店/清美生鲜门口-雨天-night.jpg"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/清美生鲜门口.jpg",
-        night: "images/安盛街/清美生鲜门口-night.png"
+        morning: "images/安盛街/食品店/清美生鲜门口.jpg",
+        night: "images/安盛街/食品店/清美生鲜门口-night.png"
       });
       return f(vars);
     }, /* TODO: images/安盛街/食品店*.png */
