@@ -944,7 +944,7 @@ Object.assign(storyData, {
 });
       return f(vars);
     }, /* TODO: images/安盛街/服装店*.png */
-    text: "你走进服装店。模特假人歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。\n\
+    text: "你走进服装店。这家小店叫做珍奥，平时只是路过，从来没进去看过。模特假人歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。\n\
 这家店看起来已经被洗劫过了，货架被推得东倒西歪。",
     choices: [
       {
@@ -1084,7 +1084,16 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店逃出": {
-    image: "images/安盛街/服装店/门口.png",
+    image: function(vars) {
+      if (vars.weather == "雨") {
+        return "images/安盛街/服装店/门口-雨天.jpg";
+      }
+      var f = timeImage({
+        morning: "images/安盛街/服装店/门口.jpg",
+        night: "images/安盛街/服装店/门口-night.jpg"
+      });
+      return f(vars);
+    },
     onEnter: updateTime(1),
     text: "你猛地拉上帘子，转身就跑。身后传来丧尸撞破帘子的声音，但你已经在店门外了。\n心跳得厉害。你靠在墙上喘了几口气，确定它没有追出来。",
     choices: [
