@@ -919,7 +919,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜-吃喝": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLocker.png */,
+    image: "images/安盛街/晨光文具店/仓库吃补给.jpg",
     onEnter: { add: { strength: 2 } },
     text: "你拧开矿泉水瓶盖，咕嘟咕嘟喝了几大口，又撕开饼干包装吃了两块。虽然不是什么美餐，但足够补充体力了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
