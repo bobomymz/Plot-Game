@@ -136,7 +136,7 @@ Object.assign(storyData, {
   },
 
   "结局-老头丧尸砸死你": {
-    image: "images/zombieWaveSmashYouIntoPieces.png" /* TODO: images/anshengStreet/oldManKill.png */,
+    image: "images/zombieWaveSmashYouIntoPieces.png",
     text: "你冲上去的瞬间，老头丧尸举起拐杖狠狠砸了下来。\n它的力气大得惊人——你眼前一黑，倒在了冰冷的地面上。\n你为自己莽撞的攻击付出了代价。\n\n—— 结局：老头丧尸 ——"
   },
 
@@ -209,7 +209,7 @@ Object.assign(storyData, {
   },
 
   "绕过老头丧尸": {
-    image: "images/安盛街/绕过老头丧尸.jpg" /* TODO: images/anshengStreet/bypassOldMan.png */,
+    image: "images/安盛街/绕过老头丧尸.jpg",
     onEnter: updateTime(1, { set: { defeatedOldMan: true, showRain: true } }),
     text: "你侧身一闪，从老头丧尸的左边绕了过去。它挥舞拐杖试图够到你，但动作太慢了，你轻松躲开，头也不回地朝前走去。",
     choices: [
@@ -494,10 +494,19 @@ Object.assign(storyData, {
   // ==================== 安盛街-后巷 ====================
   "安盛街-后巷": {
     image: function(vars) {
-      var f = timeImage({morning: "images/placeholder.png"
-});
+      if(vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/安盛街/后巷-雨天.jpg",
+          night: "images/安盛街/后巷-雨天-night.jpg",
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安盛街/后巷.jpg",
+        night: "images/安盛街/后巷-night.jpg",
+      });
       return f(vars);
-    }, /* TODO: images/安盛街/后巷*.png */
+    },
     onEnter: {
       set: {hurtByZombie: true, showRain: true}
     },
@@ -533,7 +542,7 @@ Object.assign(storyData, {
         midnight:"images/安盛街/中段-midnight.png"
       });
       return f(vars);
-    }, /* TODO: images/安盛街/中段*.png */
+    },
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.positionAfterOperation = "安盛街中段";
@@ -661,7 +670,7 @@ Object.assign(storyData, {
         night: "images/安盛街/晨光文具店/晨光文具店-night.jpg"
       });
       return f(vars);
-    }, /* TODO: images/安盛街/文具店*.png */
+    },
     onEnter: function(vars) { vars.currentPlace = "安盛街"; vars.currentPos = "文具店"; },
     text: function(vars) {
       if (vars._stationeryZombieDead) return "你推开吱呀作响的玻璃门，走进文具店。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
@@ -727,7 +736,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店击杀": {
-    image: "images/安盛街/晨光文具店/丧尸被砸倒.png" /* TODO: images/anshengStreet/stationeryKill.png */,
+    image: "images/安盛街/晨光文具店/丧尸被砸倒.jpg",
     onEnter: { add: { strength: -1 }, set: { _stationeryZombieDead: true } },
     text: function(vars) {
       let weaponDesc = "你举起手中的家伙";
@@ -863,7 +872,8 @@ Object.assign(storyData, {
 
   "安盛街-文具店仓库": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryWarehouse.png */,
-    text: "你推开吱嘎作响的铁门，走进文具店后面的小仓库。货架上堆满了各种文具和办公用品，墙角有几箱没拆封的打印纸。\n你的目光落在角落的一个铁柜上——上面贴着“员工物品”的标签，柜门虚掩着。",
+    text: "你推开吱嘎作响的铁门，走进文具店后面的小仓库。货架上堆满了各种文具和办公用品，墙角有几箱没拆封的打印纸。\n\
+你的目光落在角落的一个铁柜上——上面贴着“员工物品”的标签，柜门虚掩着。",
     choices: [
       {
         text: "快速扫一眼就走",

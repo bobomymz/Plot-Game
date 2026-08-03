@@ -790,12 +790,18 @@ Object.assign(storyData, {
   },
 
   "西出口": {
-    image: timeImage({
-      morning: "images/home/西出口.png",
-      evening: "images/home/西出口-evening.png",
-      night: "images/home/西出口-night.png",
-      midnight: "images/home/西出口-midnight.png"
-    }),
+    image: function(vars) {
+      if(vars.weather === "雨") {
+        return timeImage({
+          morning: "images/home/西出口-雨天.png",
+          night: "images/home/西出口-雨天-night.png",
+        });
+      }
+      return timeImage({
+        morning: "images/home/西出口.png",
+        night: "images/home/西出口-night.png",
+      });
+    },
     text: "你来到了西出口，成功逃出了车库。",
     choices: [
       {
