@@ -1231,9 +1231,10 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       {
-        showCondition: "hasCane || hasMopHandle || hasIronPipe",
         text: "抄家伙打它",
-        nextScene: "安盛街-食品店战斗"
+        condition: "hasCane || hasMopHandle || hasIronPipe",
+        nextScene: "安盛街-食品店战斗",
+        elseScene: "结局-被丧尸扑倒咬死"
       },
       {
         text: "赶紧跑",
@@ -1263,9 +1264,9 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品店战斗": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceFight.png */,
+    image: "images/安盛街/食品店/丧尸被打倒.png" /* TODO: images/anshengStreet/convenienceFight.png */,
     onEnter: { add: { strength: -1 } },
-    text: "你举起手中的家伙，一棍子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
+    text: "你举起手中的家伙，一下子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
 你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。",
     choices: [
       {
