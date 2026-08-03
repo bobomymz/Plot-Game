@@ -1231,21 +1231,11 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品店得手": { // 一个有时限的无限补给点，可供玩家不断补给
-    image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/安盛街/食品店/清美生鲜门口-雨天.jpg",
-          night: "images/安盛街/食品店/清美生鲜门口-雨天-night.jpg"
-        });
-        return f(vars);
-      }
-      var f = timeImage({
+    image: timeImage({
         morning: "images/安盛街/食品店/清美生鲜门口.jpg",
         night: "images/安盛街/食品店/清美生鲜门口-night.png"
-      });
-      return f(vars);
-    },
-    onEnter: updateTime(1, { add: { strength: 1 } }),
+    }),
+    onEnter: updateTime(1, { add: { strength: 1 }, set: {showRain: true} }),
     text: "你飞快地抓起离你最近的一瓶水和一包饼干，转身就跑。店员丧尸慢悠悠地从柜台后面绕出来，但你已经在门外了。\n\
 你拧开瓶盖灌了几口水，体力恢复了一些。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
