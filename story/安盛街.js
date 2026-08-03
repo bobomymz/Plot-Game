@@ -871,7 +871,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店仓库": {
-    image: "images/晨光文具店/仓库.jpg",
+    image: "images/安盛街/晨光文具店/仓库.jpg",
     text: "你推开吱嘎作响的铁门，走进文具店后面的小仓库。货架上堆满了各种文具和办公用品，墙角有几箱没拆封的打印纸。\n\
 你的目光落在角落的一个铁柜上——上面贴着“员工物品”的标签，柜门虚掩着。",
     choices: [
@@ -919,7 +919,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜-吃喝": {
-    image: "images/安盛街/晨光文具店/仓库吃补给.jpg",
+    image: "images/安盛街/晨光文具店/仓库吃补给.png",
     onEnter: { add: { strength: 2 } },
     text: "你拧开矿泉水瓶盖，咕嘟咕嘟喝了几大口，又撕开饼干包装吃了两块。虽然不是什么美餐，但足够补充体力了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
@@ -1203,50 +1203,67 @@ Object.assign(storyData, {
 
   "安盛街-食品店内部": {
     image: function(vars){
+      // 击杀过店员丧尸后，店里已经没有丧尸了
       if(vars._visit['安盛街-食品店战斗']) {
         var f = timeImage({
-          morning: "images/安盛街/食品店/进门景象-有丧尸.png",
-          night: "images/安盛街/食品店/进门景象-有丧尸-night.png"
+          morning: "images/安盛街/食品店/进门景象.jpg",
+          night: "images/安盛街/食品店/进门景象-night.jpg"
         });
         return f(vars);
       }
+      // 丧尸还在店里
       var f = timeImage({
-        morning: "images/安盛街/食品店/进门景象.jpg",
-        night: "images/安盛街/食品店/进门景象-night.jpg"
+        morning: "images/安盛街/食品店/进门景象-有丧尸.png",
+        night: "images/安盛街/食品店/进门景象-有丧尸-night.png"
       });
       return f(vars);
     },
-    text: "你推开门，门上的风铃发出清脆的响声。\n\
+    text: function(vars) {
+      if(vars._visit['安盛街-食品店战斗']) {
+        return "你推开门，门上的风铃发出清脆的响声。\n货架已经空了——你上次把这里扫荡了一遍，柜台前面还留着店员丧尸被打翻在地的痕迹，冰柜里的霉味比上次更浓了。没什么值得拿的了。";
+      }
+      return "你推开门，门上的风铃发出清脆的响声。\n\
 货架上的东西不多，但还剩一些：几瓶矿泉水、几包饼干、两罐午餐肉。柜台后面的冰柜已经不制冷了，柜门没有关严，里面的东西表面长出了灰绿色的霉斑。\n\
-正当你准备搜刮时，柜台后面站起来一个人——不，一只穿着店员制服的丧尸。它似乎刚才在柜台下面“休息”。",
-    qte: {
-      timeout: "8000 - chasedByZombies * 1500",
-      onTimeout: "结局-安盛街-食品店被咬"
+正当你准备搜刮时，柜台后面站起来一个人——不，一只穿着店员制服的丧尸。它似乎刚才在柜台下面“休息”。";
+    },
+    qte: function(vars) {
+      if(vars._visit['安盛街-食品店战斗']) return null; // 丧尸已死，没有QTE
+      return {
+        timeout: "8000 - chasedByZombies * 1500",
+        onTimeout: "结局-安盛街-食品店被咬"
+      };
     },
     choices: [
       {
-        showCondition: "dd <= 2 && !hasBiscuit", // 还没有被拿光（周围可能有别的幸存者，到Day3就没有水和饼干了）
+        showCondition: "dd <= 2 && !hasBiscuit && !_visit['安盛街-食品店战斗']", // 没被拿光；击杀丧尸后货架已被扫荡
         text: "快拿一瓶水和一包饼干",
         nextScene: "安盛街-食品店得手",
         effect: updateTime(3)
       },
       {
+        showCondition: "!_visit['安盛街-食品店战斗']",
         text: "抄家伙打它",
         condition: "hasCane || hasMopHandle || hasIronPipe",
         nextScene: "安盛街-食品店战斗",
         elseScene: "结局-被丧尸扑倒咬死"
       },
       {
+        showCondition: "!_visit['安盛街-食品店战斗']",
         text: "赶紧跑",
         nextScene: "安盛街-食品店逃跑"
+      },
+      {
+        showCondition: "_visit['安盛街-食品店战斗'] > 0",
+        text: "没什么可拿的了，离开",
+        nextScene: "安盛街中段"
       }
     ]
   },
 
   "安盛街-食品店得手": { // 一个有时限的无限补给点，可供玩家不断补给
     image: timeImage({
-        morning: "images/安盛街/食品店/清美生鲜门口.jpg",
-        night: "images/安盛街/食品店/清美生鲜门口-night.png"
+        morning: "images/安盛街/食品店/门口喝水.png",
+        night: "images/安盛街/食品店/门口喝水-night.png"
     }),
     onEnter: updateTime(1, { add: { strength: 1 }, set: {showRain: true} }),
     text: "你飞快地抓起离你最近的一瓶水和一包饼干，转身就跑。店员丧尸慢悠悠地从柜台后面绕出来，但你已经在门外了。\n\
@@ -1278,9 +1295,13 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品店战斗-吃喝": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceFight.png */,
+    image: timeImage({
+      morning: "images/安盛街/食品店/门口喝水-没丧尸.png",
+      night: "images/安盛街/食品店/门口喝水-没丧尸-night.png"
+    }),
     onEnter: { add: { strength: 2 } },
-    text: "你拧开一瓶水，就着饼干和午餐肉吃了一顿。虽然冷了点，但能填饱肚子就是好事。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
+    text: "你拧开一瓶水，就着饼干和午餐肉吃了一顿。虽然冷了点，但能填饱肚子就是好事。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
