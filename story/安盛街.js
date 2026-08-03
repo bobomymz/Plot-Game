@@ -930,10 +930,11 @@ Object.assign(storyData, {
     ]
   },
 
-  "安盛街-文具店铁柜-拿走帆布袋": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryLocker.png */,
+  "安盛街-文-拿走帆-拿走帆布袋": {
+    image: "images/安盛街/晨光文具店/仓库拿帆布袋.png",
     onEnter: { set: { positionAfterOperation: "安盛街中段" } },
-    text: "你提起那只帆布袋，掸了掸上面的灰。帆布厚实，肩带完好，袋口还有一根抽绳——比空手强多了。\n你把它斜挎在肩上，腾出手来。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】背包容量+1，当前容量：{bagVolume}。</span>",
+    text: "你提起那只帆布袋，掸了掸上面的灰。帆布厚实，肩带完好，袋口还有一根抽绳——比空手强多了。\n你把它斜挎在肩上，腾出手来。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】背包容量+1，当前容量：{bagVolume}。</span>",
     choices: [
       {
         text: "离开文具店",
@@ -1179,7 +1180,7 @@ Object.assign(storyData, {
         night: "images/安盛街/食品店/清美生鲜门口-night.png"
       });
       return f(vars);
-    }, /* TODO: images/安盛街/食品店*.png */
+    }, 
     text: function(vars) {
       let desc = "这是一家临街的食品店，几箱饮料摞在门口，但胜在不起眼。玻璃门上贴满了促销海报，看不清里面的情况。";
       if (vars.chasedByZombies >= 3) {
@@ -1230,9 +1231,24 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品店得手": { // 一个有时限的无限补给点，可供玩家不断补给
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceLoot.png */,
+    image: function(vars) {
+      if (vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/安盛街/食品店/清美生鲜门口-雨天.jpg",
+          night: "images/安盛街/食品店/清美生鲜门口-雨天-night.jpg"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安盛街/食品店/清美生鲜门口.jpg",
+        night: "images/安盛街/食品店/清美生鲜门口-night.png"
+      });
+      return f(vars);
+    },
     onEnter: updateTime(1, { add: { strength: 1 } }),
-    text: "你飞快地抓起离你最近的一瓶水和一包饼干，转身就跑。店员丧尸慢悠悠地从柜台后面绕出来，但你已经在门外了。\n你拧开瓶盖灌了几口水，体力恢复了一些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: "你飞快地抓起离你最近的一瓶水和一包饼干，转身就跑。店员丧尸慢悠悠地从柜台后面绕出来，但你已经在门外了。\n\
+你拧开瓶盖灌了几口水，体力恢复了一些。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "把饼干塞进口袋",
