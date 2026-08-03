@@ -1202,11 +1202,23 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品店内部": {
-    image: timeImage({
-      morning: "images/安盛街/食品店/进门景象.jpg",
-      night: "images/安盛街/食品店/进门景象-night.jpg"
-    }),
-    text: "你推开门，门上的风铃发出清脆的响声。\n货架上的东西不多，但还剩一些：几瓶矿泉水、几包饼干、两罐午餐肉。柜台后面的冰柜已经不制冷了，柜门没有关严，里面的东西表面长出了灰绿色的霉斑。\n正当你准备搜刮时，柜台后面站起来一个人——不，一只穿着店员制服的丧尸。它似乎刚才在柜台下面“休息”。",
+    image: function(vars){
+      if(vars._visit['安盛街-食品店战斗']) {
+        var f = timeImage({
+          morning: "images/安盛街/食品店/进门景象-有丧尸.png",
+          night: "images/安盛街/食品店/进门景象-有丧尸-night.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安盛街/食品店/进门景象.jpg",
+        night: "images/安盛街/食品店/进门景象-night.jpg"
+      });
+      return f(vars);
+    },
+    text: "你推开门，门上的风铃发出清脆的响声。\n\
+货架上的东西不多，但还剩一些：几瓶矿泉水、几包饼干、两罐午餐肉。柜台后面的冰柜已经不制冷了，柜门没有关严，里面的东西表面长出了灰绿色的霉斑。\n\
+正当你准备搜刮时，柜台后面站起来一个人——不，一只穿着店员制服的丧尸。它似乎刚才在柜台下面“休息”。",
     qte: {
       timeout: "8000 - chasedByZombies * 1500",
       onTimeout: "结局-安盛街-食品店被咬"
@@ -1253,7 +1265,8 @@ Object.assign(storyData, {
   "安盛街-食品店战斗": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceFight.png */,
     onEnter: { add: { strength: -1 } },
-    text: "你举起手中的家伙，一棍子把店员丧尸打翻在地。它挣扎了几下，不动了。\n你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。",
+    text: "你举起手中的家伙，一棍子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
+你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。",
     choices: [
       {
         text: "吃喝补充体力",
