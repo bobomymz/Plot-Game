@@ -893,7 +893,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜": {
-    image: "images/placeholder.png",
+    image: "images/安盛街/晨光文具店/仓库的铁柜.jpg",
     onEnter: {set: {positionAfterOperation: "安盛街-文具店铁柜"}},
     text: function(vars) {
       if (vars.hasBag) return "你打开铁柜。帆布袋已经被你拿走了，柜子里只剩那半包饼干和一瓶没开过的矿泉水。";
