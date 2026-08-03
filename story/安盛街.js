@@ -871,7 +871,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店仓库": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/stationeryWarehouse.png */,
+    image: "images/晨光文具店/仓库.jpg",
     text: "你推开吱嘎作响的铁门，走进文具店后面的小仓库。货架上堆满了各种文具和办公用品，墙角有几箱没拆封的打印纸。\n\
 你的目光落在角落的一个铁柜上——上面贴着“员工物品”的标签，柜门虚掩着。",
     choices: [
