@@ -1481,12 +1481,18 @@ Object.assign(storyData, {
   "安盛街西侧": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/安盛街/西侧-雨天.jpg",
+          night: "images/安盛街/西侧-雨天-night.jpg",
+        });
         return f(vars);
       }
-      var f = timeImage({morning: "images/placeholder.png"
-});
+      var f = timeImage({
+        morning: "images/安盛街/西侧.jpg",
+        evening: "images/安盛街/西侧-evening.jpg",
+        night: "images/安盛街/西侧-night.jpg",
+        midnight: "images/安盛街/西侧-midnight.jpg",
+      });
       return f(vars);
     }, /* TODO: images/安盛街/西侧*.png */
     onEnter: function(vars) {
