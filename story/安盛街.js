@@ -1376,7 +1376,10 @@ Object.assign(storyData, {
   },
 
   "安盛街-躲进店铺": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/hideInShop.png */,
+    image: timeImage({
+      morning: "images/安盛街/躲在小店.jpg",
+      night: "images/安盛街/躲在小店-night.jpg"
+    }),
     onEnter: updateTime(5, { set: { showRain: true }, add: { chasedByZombies: -2 } }),
     text: "你一头扎进路边一家不知名的店铺，蹲在柜台后面，用手捂住嘴巴。\n\
 外面的脚步声越来越近，越来越密。丧尸的嚎叫声此起彼伏，听得你头皮发麻。你甚至能闻到它们身上那股腐烂的臭味——它们就在门外。\n\
@@ -1392,7 +1395,11 @@ Object.assign(storyData, {
   "安盛街-逃回理发店": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/runToBarberShop.png */,
     onEnter: updateTime(2, { set: { showRain: true } }),
-    text: "你转身就跑，沿着来时的路狂奔。理发店的灯箱是你唯一认得的坐标。\n你用尽全力拍打玻璃门：“周师傅！开门！是我！”\n门锁咔哒一声打开了，一只手把你拉了进去。周师傅迅速锁好门，拉上窗帘。外面传来杂乱的脚步声和低吼——但它们没有停留，直接从门前过去了。\n“你运气真是太好了，”周师傅擦着额头的汗，“下次可别引这么多回来。”",
+    text: "你转身就跑，沿着来时的路狂奔。理发店的灯箱是你唯一认得的坐标。\n\
+你用尽全力拍打玻璃门：“周师傅！开门！是我！”\n\
+门锁咔哒一声打开了，一只手把你拉了进去。周师傅迅速锁好门，拉上窗帘。\
+外面传来杂乱的脚步声和低吼——但它们没有停留，直接从门前过去了。\n\
+“你运气真是太好了，”周师傅擦着额头的汗，“下次可别引这么多回来。”",
     choices: [
       {
         text: "喘口气",
@@ -1403,9 +1410,11 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-被包围 ====================
   "安盛街-被包围": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/surrounded.png */,
+    image: "images/youMeetZombies.png",
     onEnter: { set: { showRain: true }, add: { chasedByZombies: 2 } },
-    text: "你走到一半，发现事情不太对——丧尸不只从后面来。\n前面、左边的小巷、右边的店铺里，都有丧尸在向你靠近。它们不知道什么时候绕到了你的前方，形成了一个松散的包围圈。\n留给你的时间不多了。",
+    text: "你走到一半，发现事情不太对——丧尸不只从后面来。\n\
+前面、左边的小巷、右边的店铺里，都有丧尸在向你靠近。它们不知道什么时候绕到了你的前方，形成了一个松散的包围圈。\n\
+留给你的时间不多了。",
     qte: {
       timeout: "6000 - chasedByZombies * 1200",
       onTimeout: "结局-安盛街-被尸潮吞没"
@@ -1427,10 +1436,25 @@ Object.assign(storyData, {
   },
 
   "安盛街-破门逃生": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/breakDoor.png */,
-    onEnter: updateTime(2, { set: { showRain: true }, add: { strength: -1 } }),
-    text: "你举起手中的家伙，对准店铺门的锁狠狠砸了下去。一下，两下——锁头终于崩开了。\n你踹开门冲了进去，反手把门顶上。外面传来丧尸撞门的声音，但这扇铁门足够结实。\n\
-    你穿过黑漆漆的店铺，从另一侧的门钻了出来，发现自己到了安盛街的后巷。",
+    image: function(vars) {
+      if(vars.weather === "雨") {
+        var f = timeImage({
+          morning: "images/安盛街/后巷-雨天.jpg",
+          night: "images/安盛街/后巷-雨天-night.jpg",
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安盛街/后巷.jpg",
+        night: "images/安盛街/后巷-night.jpg",
+      });
+      return f(vars);
+    },
+    onEnter: updateTime(2, { add: { strength: -1 } }),
+    text: "你举起手中的家伙，对准店铺门的锁狠狠砸了下去。一下，两下——锁头终于崩开了。\n\
+你踹开门冲了进去，反手把门顶上。\
+外面传来丧尸撞门的声音，但这扇铁门足够结实。\n\
+你穿过黑漆漆的店铺，从另一侧的门钻了出来，发现自己到了安盛街的后巷。",
     choices: [
       {
         text: "继续前进",
@@ -1442,7 +1466,9 @@ Object.assign(storyData, {
   "安盛街-冲出包围": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/breakThrough.png */,
     onEnter: updateTime(2, { set: { showRain: true }, add: { strength: -1, chasedByZombies: 1 } }),
-    text: "你深吸一口气，朝着最薄弱的缺口猛冲过去。一只丧尸伸手抓向你的衣领，被你一肘击翻；另一只从侧面扑来，你侧身闪过。\n你的肺部在燃烧，腿像灌了铅一样沉重——但你不能停。\n终于，你冲出了包围圈。身后的丧尸群还在追，但你已经甩开了距离。前方就是安盛街西侧，视野开阔了很多。",
+    text: "你深吸一口气，朝着最薄弱的缺口猛冲过去。一只丧尸伸手抓向你的衣领，被你一肘击翻；另一只从侧面扑来，你侧身闪过。\n\
+你的肺部在燃烧，腿像灌了铅一样沉重——但你不能停。\n\
+终于，你冲出了包围圈。身后的丧尸群还在追，但你已经甩开了距离。前方就是安盛街西侧，视野开阔了很多。",
     choices: [
       {
         text: "继续往前",
