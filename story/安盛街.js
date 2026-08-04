@@ -1311,9 +1311,9 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品店逃跑": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceEscape.png */,
+    image: "images/安盛街/食品店/逃跑.jpg",
     onEnter: updateTime(1),
-    text: "你转身就跑，店员丧尸慢吞吞地跟在后面，但还没追到门口就放弃了——它似乎被什么东西绊倒了，哗啦一声撞在冰柜上。\n管他呢，跑就对了。",
+    text: "你转身就跑，店员丧尸慢吞吞地跟在后面，但还没追到门口就放弃了——它似乎被什么东西绊倒了，哗啦一声摔在地上。\n管他呢，跑就对了。",
     choices: [
       {
         text: "继续",
