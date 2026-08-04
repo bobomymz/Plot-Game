@@ -1323,13 +1323,13 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-食品店被咬": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/convenienceStoreInside.png */,
+    image: "images/zombieKnockYouDown.png",
     text: "你在货架前犹豫了太久。店员丧尸悄无声息地走到了你身后——\n等你察觉到脖子上传来的凉意时，已经太晚了。\n\n—— 结局：食品店被咬 ——"
   },
 
   // ==================== 安盛街-尸潮遭遇战 ====================
   "安盛街-尸潮来袭": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/zombieWave.png */,
+    image: "images/youMeetZombies.png",
     onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
     text: "你正走着，突然听到身后传来一阵密集的脚步声。\n回头一看，一群丧尸从十字路口的方向涌了过来——至少二三十只，像潮水一样塞满了整条街道。它们看到了你，发出嘶哑的吼声，加快了速度。\n你必须马上决定往哪跑！",
     qte: {
@@ -1356,7 +1356,7 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-被尸潮吞没": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/zombieWaveSwallow.png */,
+    image: "images/zombiesBeatYou.png",
     text: "你在街道中央犹豫了太久。\n尸潮像一面墙一样压了过来，无数双手抓住了你的衣服、手臂、脖子……\n你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\n—— 结局：被尸潮吞没 ——"
   },
 
