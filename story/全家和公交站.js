@@ -3,8 +3,8 @@
 Object.assign(storyData, {
   "全家便利店（环林东路）": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/小区周边/全家和公交站/全家便利店门口-night.png";
-      return "images/小区周边/全家和公交站/全家便利店门口.png";
+      if (vars.weather === "雨") return "images/小区周边/全家和公交站/全家便利店门口-night.jpg";
+      return "images/小区周边/全家和公交站/全家便利店门口.jpg";
     },
     onEnter: function(vars) {
       vars.currentPlace = "初始小区";
@@ -28,7 +28,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店内部": {
-    image: "images/小区周边/全家和公交站/全家便利店内部.png",
+    image: "images/小区周边/全家和公交站/全家便利店内部.jpg",
     text: function(vars) {
       var base = "你走进熟悉又陌生的便利店。\n\
 前面的冷藏区放着一些牛奶、鲜肉盒、饮料，以及你常买来作为早餐的饭团。\n\
@@ -209,7 +209,7 @@ Object.assign(storyData, {
   },
 
   "日记本的提示-迅捷丧尸": {
-    image: "images/小区周边/全家和公交站/diary-fastZombie.png",
+    image: "images/小区周边/全家和公交站/日记本.jpg",
     text: "你打开了日记本，上面赫然多了一页日记：\n\
 7/15 傍晚 空气里有股腥臭味\n\
 今晚八点零三分，我躲在一栋单单元门里。\n\
