@@ -297,7 +297,7 @@ Object.assign(storyData, {
   },
 
   "全家-吃饭团": {
-    image: "images/小区周边/全家和公交站/饭团.png",
+    image: "images/小区周边/全家和公交站/饭团.jpg",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些饭团，感觉肚子有了一些能量。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
