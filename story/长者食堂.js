@@ -14,7 +14,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "离开",
-        nextScene: "东明路-三林路 十字路口",
+        nextScene: "三林路-东明路 十字路口",
         effect: updateTime(1)
       },
       {
@@ -31,7 +31,7 @@ Object.assign(storyData, {
   },
 
   "结局-闭目养神": {
-    image: "images/zombiePounceOnYou.png",
+    image: "images/zombiePounceOnYou.jpg",
     text: "你闭目养神，休息了一会儿。门外的雨声淅沥淅沥，在这末世下似乎是唯一的慰藉。\n\
 你感觉到一丝不安。\n\
 睁开眼，一只红眼的丧尸向你扑了过来。\n\
@@ -115,7 +115,7 @@ Object.assign(storyData, {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
         condition: checkFlashAnswer,
-        nextScene: "东明路-三林路 十字路口",
+        nextScene: "三林路-东明路 十字路口",
         elseScene: "结局-被丧尸扑倒咬死",
         timeout: 15000,
         timeoutScene: "结局-被丧尸扑倒咬死"
@@ -148,8 +148,20 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "看看收银台后面的小办公室",
+        text: "看看办公室",
         nextScene: "长者食堂-办公室",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "长者食堂-后厨": {
+    image: "images/小区周边/长者食堂/后厨.png",
+    text: "你在长者食堂的后厨。",
+    choices: [
+      {
+        text: "离开后厨",
+        nextScene: "长者食堂-内部",
         effect: updateTime(1)
       }
     ]
@@ -212,7 +224,7 @@ Object.assign(storyData, {
   "长者食堂-办公室": {
     image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/办公室.png */,
     text: function(vars) {
-      var desc = "收银台后面有一扇半掩的门，里面是间不到五平米的小办公室。桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。\n";
+      var desc = "你穿过用餐区往深处走去，后面有一扇半掩的门，里面是间不到五平米的小办公室。桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。\n";
       if (!vars._cafeteriaWifiOn) {
         desc += "桌角的路由器指示灯灭着。你凑近看了看——电源线还插着，但开关被按掉了。插座旁边贴着一张褪色的标签：“省电，走时关路由器。重开按背后小黑钮三秒。”";
       } else {
