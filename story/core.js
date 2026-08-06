@@ -88,6 +88,7 @@ const storyData = {
     hasBottle: false,          // 是否有水瓶
     bottleWater: 0,            // 水瓶还有几口水（0=空瓶，1=有水；饮水机可反复打满）
     _waterDispenserUses: 0,    // 饮水机已使用次数（最多10次）
+    _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
@@ -337,6 +338,12 @@ const storyData = {
         text: "喝水（体力+1）",
         effect: updateTime(1, { add: { strength: 1, bottleWater: -1 } }),
         nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasPhone && _cafeteriaWifiOn",
+        text: "用手机看看有什么消息",
+        nextScene: "长者食堂-手机信息",
+        effect: function(v) { v.positionAfterOperation = v.positionAfterOperation || "长者食堂-内部"; return {}; }
       },
       {
         showCondition: "hasEbikeKey",

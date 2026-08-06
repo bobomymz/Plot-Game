@@ -1464,7 +1464,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-冲出包围": {
-    image: "images/冲出包围圈.jpg",
+    image: "images/安盛街/冲出包围圈.jpg",
     onEnter: updateTime(2, { set: { showRain: true }, add: { strength: -1, chasedByZombies: 1 } }),
     text: "你深吸一口气，朝着最薄弱的缺口猛冲过去。一只丧尸伸手抓向你的衣领，被你一肘击翻；另一只从侧面扑来，你侧身闪过。\n\
 你的肺部在燃烧，腿像灌了铅一样沉重——但你不能停。\n\

@@ -60,7 +60,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-关门": {
-    image: "images/小区周边/长者食堂/门口.png",
+    image: "images/小区周边/长者食堂/内部.png",
     text: "你关上了门。店里的椅子东倒西歪，打饭区好像没有剩下什么食物。你摇了摇头，看向旁边的墙壁。\n\
 “扫码注册充值，即可享用美食。”\n\
 砰砰砰————！\n\
@@ -146,6 +146,11 @@ Object.assign(storyData, {
         text: "看看后厨",
         nextScene: "长者食堂-后厨",
         effect: updateTime(1)
+      },
+      {
+        text: "看看收银台后面的小办公室",
+        nextScene: "长者食堂-办公室",
+        effect: updateTime(1)
       }
     ]
   },
@@ -174,6 +179,111 @@ Object.assign(storyData, {
       {
         text: "离开饮水机",
         nextScene: "长者食堂-内部"
+      }
+    ]
+  },
+
+  "长者食堂-窗口": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/取汤窗口.png */,
+    text: function(vars) {
+      if (vars.dd > 1) {
+        return "供汤窗口的保温桶已经断电了。你掀开桶盖——里面的紫菜蛋花汤已经凉透，表面凝了一层灰白的油膜，散发着一股馊掉的酸味。\n不能喝了。";
+      }
+      return "供汤窗口的不锈钢台面上放着一只保温桶，电磁炉还在低功率保温。你掀开桶盖——小半桶紫菜蛋花汤，热气扑在脸上，带着紫菜和蛋花的咸香。\n\
+旁边摞着一叠不锈钢碗，食堂的标准配置。";
+    },
+    choices: function(vars) {
+      var opts = [];
+      if (vars.dd == 1) {
+        opts.push({
+          text: "趁热喝掉",
+          nextScene: "长者食堂-窗口",
+          effect: updateTime(2, { add: { strength: 2 } })
+        });
+      }
+      opts.push({
+        text: "离开窗口",
+        nextScene: "长者食堂-内部"
+      });
+      return opts;
+    }
+  },
+
+  "长者食堂-办公室": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/办公室.png */,
+    text: function(vars) {
+      var desc = "收银台后面有一扇半掩的门，里面是间不到五平米的小办公室。桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。\n";
+      if (!vars._cafeteriaWifiOn) {
+        desc += "桌角的路由器指示灯灭着。你凑近看了看——电源线还插着，但开关被按掉了。插座旁边贴着一张褪色的标签：“省电，走时关路由器。重开按背后小黑钮三秒。”";
+      } else {
+        desc += "路由器指示灯闪着规律的绿光。";
+      }
+      desc += "\n桌面上摊着一本翻开的签到本。";
+      return desc;
+    },
+    choices: function(vars) {
+      var opts = [];
+      if (!vars._cafeteriaWifiOn) {
+        opts.push({
+          text: "按住路由器背后的小黑钮三秒",
+          nextScene: "长者食堂-办公室",
+          effect: updateTime(1, { set: { _cafeteriaWifiOn: true } })
+        });
+      }
+      opts.push({
+        text: "翻看签到本",
+        nextScene: "长者食堂-签到本"
+      });
+      opts.push({
+        text: "离开办公室",
+        nextScene: "长者食堂-内部"
+      });
+      return opts;
+    }
+  },
+
+  "长者食堂-签到本": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/办公室.png */,
+    text: "你拿起桌上的签到本。封面印着“东明社区食堂 就餐登记表”，纸质已经有些起皱。\n\
+翻到最后一页有字迹的地方——\n\
+  6月25日（晴）\n\
+  洪德胜  11:30  番茄炒蛋+饭+汤  已结\n\
+  周建国  11:35  红烧大排+饭    已结\n\
+  6月26日（阴）\n\
+  周建国  11:20  青菜+饭        已结\n\
+  6月27日\n\
+  （这一页是空白的）\n\
+你合上了签到本。上面的名字有些你认识，有些不认识——但以后大概不会再有新的名字写在这本簿子上了。",
+    choices: [
+      {
+        text: "放下签到本",
+        nextScene: "长者食堂-办公室"
+      }
+    ]
+  },
+
+  "长者食堂-手机信息": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/手机信息.png */,
+    text: "你连上了食堂的WiFi。手机震动了一下——\n\
+信号很弱，但还能用。大部分网站已经打不开了——服务器大概早就断了电。\n\
+只有几个页面还能加载出来：\n\
+【上海应急广播 — 最后更新 6月28日 14:32】\n\
+“全市已启动一级应急响应。请市民留在室内，关好门窗，等待进一步通知。\n\
+临时避难所已启用：\n\
+浦东图书馆（锦绣路）\n\
+源深体育中心（张杨路）\n\
+三林体育中心（齐河路）……”\n\
+【新民晚报 — 6月27日 电子版（缓存）】\n\
+头版：《我市启动突发公共卫生事件应急预案》\n\
+末版一则短讯：\n\
+“东明路街道各社区已组织志愿者分发物资。”\n\
+你关掉了屏幕。\n\
+这些页面大概是这座城市还能对外说话的最后几个小时里留下的。\n\
+新民晚报大概不会有下一期了。",
+    choices: [
+      {
+        text: "放下手机",
+        nextScene: "长者食堂-办公室"
       }
     ]
   }
