@@ -40,15 +40,30 @@ Object.assign(storyData, {
 
   "长者食堂-休息": {
     image: "images/小区周边/长者食堂/坐在地上.png",
-    onEnter: updateTime(10,{add: { strength: 1 }}),
-    text: "你走向椅子堆，上面沾了些脏东西。你觉得不干净，于是决定就坐在地上。"
+    onEnter: updateTime(5,{add: { strength: 1 }}),
+    text: function(vars) {
+        if(vars._visit["长者食堂-休息"] > 1) return "你决定继续休息一会儿。" + describeWeather(vars);
+        return "你走向椅子堆，上面沾了些脏东西。你觉得不干净，于是决定就坐在地上休息一会儿……";
+    },
+    choices: [
+      {
+        text: "继续休息",
+        nextScene: "长者食堂-休息",
+        effect: updateTime(1)
+      },
+      {
+        text: "往里面走",
+        nextScene: "长者食堂-内部",
+        effect: updateTime(1)
+      }
+    ]
   },
 
   "长者食堂-关门": {
     image: "images/小区周边/长者食堂/门口.png",
     text: "你关上了门。店里的椅子东倒西歪，打饭区好像没有剩下什么食物。你摇了摇头，看向旁边的墙壁。\n\
 “扫码注册充值，即可享用美食。”\n\
-砰砰砰————\n\
+砰砰砰————！\n\
 你吓了一大跳，回头一看，是一只丧尸，它正趴在门上试图进来。幸好刚才把门关了。\n\
 这里丧尸可能越聚越多，最好早点走。",
     choices: [
@@ -83,7 +98,7 @@ Object.assign(storyData, {
         extraEffect = { add: { chasedByZombies: 2 } };
       }
 
-      return initMemoryGame(["红","蓝","绿","黄","紫"], len, extraEffect)(vars);
+      return initMemoryGame(["红","蓝","绿"], len, extraEffect)(vars);
     },
     text: function(vars) {
       var desc = "你推门出去，门外的丧尸立刻朝你扑了过来！它已经凑到了你的面前——集中注意力，看清它的动作轨迹！";
@@ -131,6 +146,34 @@ Object.assign(storyData, {
         text: "看看后厨",
         nextScene: "长者食堂-后厨",
         effect: updateTime(1)
+      }
+    ]
+  },
+
+  "长者食堂-饮水机": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/饮水机.png */,
+    text: function(vars) {
+      if (!vars.hasBottle) {
+        return "饮水机还在运行，滤芯指示灯闪着绿光。不锈钢水槽里积着浅浅一层水渍——之前应该有不少人来这里打过水。\n但你没有容器。嘴对嘴喝的话，你的脖子大概要扭到断掉的程度。";
+      }
+      if (vars.bottleWater > 0) {
+        return "你的水瓶里还有水。饮水机还在嗡嗡作响，但暂时用不上。";
+      }
+      if (vars._waterDispenserUses >= 10) {
+        return "你按下出水键，但只流出几滴——饮水机的水箱已经空了。滤芯指示灯不知什么时候变成了红色。";
+      }
+      return "饮水机还在运行。\n你把空水瓶放到出水口下面，按下出水键——清亮的水哗哗地灌进瓶口，几秒钟就装满了。";
+    },
+    choices: [
+      {
+        showCondition: "hasBottle && bottleWater == 0 && _waterDispenserUses < 10",
+        text: "接水",
+        effect: updateTime(2, { add: { _waterDispenserUses: 1, bottleWater: 1 } }),
+        nextScene: "长者食堂-饮水机"
+      },
+      {
+        text: "离开饮水机",
+        nextScene: "长者食堂-内部"
       }
     ]
   }

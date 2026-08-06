@@ -7,14 +7,14 @@ Object.assign(storyData, {
   // ==================== 五金店入口（三林路） ====================
   "五金店": {
     image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/小区周边/五金店/门口.jpg",
+          night: "images/小区周边/五金店/门口-night.jpg"
+        });
         return f(vars);
-      }
-      return "images/placeholder.png";
     }, /* TODO: images/小区周边/hardwareStore.png */
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.currentPlace = "三林路";
       vars.currentPos = "五金店";
       applyWeatherDrain(vars);

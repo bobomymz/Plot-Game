@@ -548,7 +548,7 @@ Object.assign(storyData, {
         });
       }
 
-      if (!vars._foundHongBottle) {
+      if (!vars.hasBottle) {
         opts.push({
           text: "捡起地上的空水瓶",
           nextScene: "三林安居苑-204室-空水瓶",
@@ -606,14 +606,22 @@ Object.assign(storyData, {
 
   "三林安居苑-204室-空水瓶": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
-    onEnter: { set: { _foundHongBottle: true } },
+    onEnter: { set: { positionAfterOperation: "三林安居苑-204室" } },
     text: "你捡起那只空矿泉水瓶。普通的农夫山泉瓶，水早就喝干了，瓶底只剩一小洼浑浊的水垢。\n\
 瓶身上的标签被人用圆珠笔写了一行字——字迹有点抖，但很用力：\n\
 \n\
 <em>“芜湖 6.25”</em>\n\
 \n\
-芜湖。他在6月25日去过芜湖。这瓶水是从芜湖带回来的。",
+芜湖。他在6月25日去过芜湖。这瓶水是从芜湖带回来的。\n\
+空瓶子本身也有用——如果能找到饮水机，就能打满它。",
     choices: [
+      {
+        text: "拿走空水瓶",
+        condition: "itemCount < bagVolume",
+        nextScene: "三林安居苑-204室",
+        effect: { set: { hasBottle: true, bottleWater: 0 }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      },
       {
         text: "放下瓶子",
         nextScene: "三林安居苑-204室"

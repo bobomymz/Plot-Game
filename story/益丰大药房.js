@@ -371,8 +371,8 @@ Object.assign(storyData,{
         });
       }
 
-      // 给水选项（有水瓶、未给水、未杀）
-      if (vars.hasBottle && !vars.pharmacyApprenticeWatered && !vars.pharmacyApprenticeKilled) {
+      // 给水选项（有水瓶且瓶中有水、未给水、未杀）
+      if (vars.hasBottle && vars.bottleWater > 0 && !vars.pharmacyApprenticeWatered && !vars.pharmacyApprenticeKilled) {
         opts.push({
           text: "拧开瓶盖，把水瓶放在地上推过去",
           nextScene: "益丰大药房-喂水",
@@ -469,7 +469,7 @@ Object.assign(storyData,{
   // ===== 给水支线 =====
   "益丰大药房-喂水": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/背后偷袭的丧尸.png */,
-    onEnter: { set: { pharmacyApprenticeWatered: true } },
+    onEnter: { set: { pharmacyApprenticeWatered: true, hasBottle: false, bottleWater: 0 }, add: { itemCount: -1 } },
     text: "你拧开瓶盖，把水瓶放在地上推了过去。\n她盯着水瓶看了好几秒，才颤抖着蹲下来捡起它。水洒了一半，但她喝到了。\n几口下去，她的呼吸明显平稳了一些。她抬起头，用非常慢的动作——像在克服什么巨大的阻力——抬手指向走廊深处。那里有一扇不太起眼的门。",
     choices: [
       {

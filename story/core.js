@@ -86,6 +86,8 @@ const storyData = {
     hasPhone: false,           // 是否找到华为店展示机
     hasLiquidParaffin: false,  // 是否有医用石蜡油（益丰大药房左边货架）
     hasBottle: false,          // 是否有水瓶
+    bottleWater: 0,            // 水瓶还有几口水（0=空瓶，1=有水；饮水机可反复打满）
+    _waterDispenserUses: 0,    // 饮水机已使用次数（最多10次）
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
@@ -327,7 +329,13 @@ const storyData = {
       {
         showCondition: "hasBottle",
         text: "丢下水瓶",
-        effect: updateTime(1, { set : { hasBottle: false }, add: { itemCount: -1 } }),
+        effect: updateTime(1, { set : { hasBottle: false, bottleWater: 0 }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasBottle && bottleWater > 0",
+        text: "喝水（体力+1）",
+        effect: updateTime(1, { add: { strength: 1, bottleWater: -1 } }),
         nextScene: "整理整理"
       },
       {
