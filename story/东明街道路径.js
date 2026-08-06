@@ -272,7 +272,7 @@ Object.assign(storyData, {
       },
       {
         text: "去食堂",
-        nextScene: "东明社区食堂"
+        nextScene: "长者食堂"
       },
       {
         showCondition: "chasedByZombies > 1",
