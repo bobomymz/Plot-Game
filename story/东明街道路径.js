@@ -81,8 +81,10 @@ Object.assign(storyData, {
   "三林路-环林东路 十字路口": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/小区周边/十字路口-雨天.png",
+          night: "images/小区周边/十字路口-雨天-night.png"
+        });
         return f(vars);
       }
       var f = timeImage({
@@ -216,8 +218,10 @@ Object.assign(storyData, {
   "三林路-东明路 十字路口": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/小区周边/十字路口2-雨天.png",
+          night: "images/小区周边/十字路口2-雨天-night.png"
+        });
         return f(vars);
       }
       var f = timeImage({
@@ -240,8 +244,8 @@ Object.assign(storyData, {
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了一个十字路口。西边通向金谊广场，南边通向新达汇，它们都是大商场，可能有丰富的物资；北面是东明路，东面是三林路。\n你需要选择前进的方向。\n\
-快选哦，周围的丧尸就要围拢过来了。\n\
+      return "你来到了一个十字路口。西边通向金谊广场，南边通向新达汇，它们都是大商场，可能有丰富的物资；北面是东明路，东面是三林路，住宅楼的阴影下还有一个长者食堂。\n\
+你需要选择前进的方向。\n快选哦，周围的丧尸就要围拢过来了。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n"
  + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
@@ -267,6 +271,10 @@ Object.assign(storyData, {
         effect: updateTime(10)
       },
       {
+        text: "去食堂",
+        nextScene: "东明社区食堂"
+      },
+      {
         showCondition: "chasedByZombies > 1",
         text: "躲到配电箱后面",
         nextScene: "三林路-东明路十字路口-躲藏"
@@ -274,6 +282,8 @@ Object.assign(storyData, {
       sprintAway(["东明路-三林路", "三林路"])
     ]
   },
+
+
 
   "三林路-获得一辆轿车": {
     image: "images/placeholder.png" /* TODO: images/小区周边/轿车.png */,
