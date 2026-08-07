@@ -177,7 +177,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-吃饭": {
-    image: "images/小区周边/长者食堂/吃饭.png",
+    image: "images/小区周边/长者食堂/吃饭.jpg",
     onEnter: {add: {strength: -1}},
     text: "你感觉有点饿，把剩余的一点食物一扫而空。过了一会儿，肚子便疼了起来。\n\
 可恶，这些食物已经不新鲜了。",
@@ -192,7 +192,10 @@ Object.assign(storyData, {
 
   "长者食堂-后厨": {
     image: "images/小区周边/长者食堂/后厨.png",
-    text: "你在长者食堂的后厨。",
+    text: "你在长者食堂的后厨。呃，这里真是一团糟。\n\
+墙上写着标语：厨房重地，闲人免入。\n\
+你翻找了一圈，没发现什么有用的东西，连吃的也没有。\n\
+蝉鸣声隐约从窗外传来。",
     choices: [
       {
         text: "离开后厨",
@@ -203,7 +206,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-饮水机": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/饮水机.png */,
+    image: "images/小区周边/长者食堂/饮水机.jpg",
     text: function(vars) {
       if (!vars.hasBottle) {
         return "饮水机还在运行，滤芯指示灯闪着绿光。不锈钢水槽里积着浅浅一层水渍——之前应该有不少人来这里打过水。\n但你没有容器。嘴对嘴喝的话，你的脖子大概要扭到断掉的程度。";
