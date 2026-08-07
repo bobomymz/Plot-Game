@@ -155,6 +155,41 @@ Object.assign(storyData, {
     ]
   },
 
+  "长者食堂-打饭区": {
+    image: "images/小区周边/长者食堂/打饭区.jpg",
+    text: function(vars) {
+      if (vars._visit['长者食堂-吃饭'] > 1) return "你在长者食堂的打饭区，这里没有食物了。";
+      return "你在长者食堂的打饭区。看起来还有些剩余的食物，但闻起来有点奇怪，你要吃吗？";
+    },
+    choices: [
+      {
+        showCondition: "!_visit['长者食堂-吃饭']",
+        text: "吃",
+        nextScene: "长者食堂-吃饭",
+        effect: updateTime(1)
+      },
+      {
+        text: "不吃",
+        nextScene: "长者食堂-内部",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "长者食堂-吃饭": {
+    image: "images/小区周边/长者食堂/吃饭.png",
+    onEnter: {add: {strength: -1}},
+    text: "你感觉有点饿，把剩余的一点食物一扫而空。过了一会儿，肚子便疼了起来。\n\
+可恶，这些食物已经不新鲜了。",
+    choices: [
+        {
+            text: "呸呸呸",
+            nextScene: "长者食堂-内部",
+            effect: updateTime(1)
+        }
+    ]
+  },
+
   "长者食堂-后厨": {
     image: "images/小区周边/长者食堂/后厨.png",
     text: "你在长者食堂的后厨。",
@@ -196,7 +231,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-窗口": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/取汤窗口.png */,
+    image: "images/小区周边/长者食堂/窗口.png",
     text: function(vars) {
       if (vars.dd > 1) {
         return "供汤窗口的保温桶已经断电了。你掀开桶盖——里面的紫菜蛋花汤已经凉透，表面凝了一层灰白的油膜，散发着一股馊掉的酸味。\n不能喝了。";
