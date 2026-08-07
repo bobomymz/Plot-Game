@@ -227,7 +227,7 @@ Object.assign(storyData, {
         nextScene: "长者食堂-饮水机"
       },
       {
-        text: "离开饮水机",
+        text: "离开",
         nextScene: "长者食堂-内部"
       }
     ]
