@@ -6,7 +6,10 @@ Object.assign(storyData, {
     }),
     onEnter: function(vars) {
       vars.showRain = true;
-      vars._cafeteriaEnterMinute = vars.gameMinutes; // 记录进入食堂的时间（用于计时难度）
+      // 只在首次进入时记录计时起点，避免回到门口重设计时
+      if (vars._cafeteriaEnterMinute === -1) {
+        vars._cafeteriaEnterMinute = vars.gameMinutes;
+      }
     },
     text: function(vars) {
       return "你来到了东明社区食堂。平时偶尔回来这里吃一次，饭菜也挺好的，经常能看到老年人来吃。现在这里已经空了。" + describeWeather(vars);
@@ -40,7 +43,7 @@ Object.assign(storyData, {
 
   "长者食堂-休息": {
     image: "images/小区周边/长者食堂/坐在地上.png",
-    onEnter: updateTime(5,{add: { strength: 1 }}),
+    onEnter: updateTime(5, { add: { strength: 1 }, set: { _travelMinutes: 0 } }),
     text: function(vars) {
         if(vars._visit["长者食堂-休息"] > 1) return "你决定继续休息一会儿。" + describeWeather(vars);
         return "你走向椅子堆，上面沾了些脏东西。你觉得不干净，于是决定就坐在地上休息一会儿……";
@@ -158,7 +161,7 @@ Object.assign(storyData, {
   "长者食堂-打饭区": {
     image: "images/小区周边/长者食堂/打饭区.jpg",
     text: function(vars) {
-      if (vars._visit['长者食堂-吃饭'] > 1) return "你在长者食堂的打饭区，这里没有食物了。";
+      if (vars._visit['长者食堂-吃饭'] > 0) return "你在长者食堂的打饭区，这里没有食物了。";
       return "你在长者食堂的打饭区。看起来还有些剩余的食物，但闻起来有点奇怪，你要吃吗？";
     },
     choices: [
@@ -192,9 +195,9 @@ Object.assign(storyData, {
 
   "长者食堂-后厨": {
     image: "images/小区周边/长者食堂/后厨.png",
-    text: "你在长者食堂的后厨。呃，这里真是一团糟。\n\
+    text: "你在长者食堂的后厨。灶台上的锅具东倒西歪，几口炒锅里残留着干涸的菜汤，案板上还搁着半棵蔫了的白菜。\n\
 墙上写着标语：厨房重地，闲人免入。\n\
-你翻找了一圈，没发现什么有用的东西，连吃的也没有。\n\
+你翻找了一圈——调味料倒是齐全，但带不走也煮不了。冷藏室的门虚掩着，门缝里飘出一股冷气和一丝说不清的甜味。\n\
 蝉鸣声隐约从窗外传来。",
     choices: [
       {
@@ -242,21 +245,18 @@ Object.assign(storyData, {
       return "供汤窗口的不锈钢台面上放着一只保温桶，电磁炉还在低功率保温。你掀开桶盖——小半桶紫菜蛋花汤，热气扑在脸上，带着紫菜和蛋花的咸香。\n\
 旁边摞着一叠不锈钢碗，食堂的标准配置。";
     },
-    choices: function(vars) {
-      var opts = [];
-      if (vars.dd == 1) {
-        opts.push({
-          text: "趁热喝掉",
-          nextScene: "长者食堂-窗口",
-          effect: updateTime(2, { add: { strength: 2 } })
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "dd == 1",
+        text: "趁热喝掉",
+        nextScene: "长者食堂-窗口",
+        effect: updateTime(2, { add: { strength: 2 } })
+      },
+      {
         text: "离开窗口",
         nextScene: "长者食堂-内部"
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "长者食堂-办公室": {
@@ -271,25 +271,22 @@ Object.assign(storyData, {
       desc += "\n桌面上摊着一本翻开的签到本。";
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars._cafeteriaWifiOn) {
-        opts.push({
-          text: "按住路由器背后的小黑钮三秒",
-          nextScene: "长者食堂-办公室",
-          effect: updateTime(1, { set: { _cafeteriaWifiOn: true } })
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "!_cafeteriaWifiOn",
+        text: "按住路由器背后的小黑钮三秒",
+        nextScene: "长者食堂-办公室",
+        effect: updateTime(1, { set: { _cafeteriaWifiOn: true } })
+      },
+      {
         text: "翻看签到本",
         nextScene: "长者食堂-签到本"
-      });
-      opts.push({
+      },
+      {
         text: "离开办公室",
         nextScene: "长者食堂-内部"
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "长者食堂-签到本": {
@@ -333,7 +330,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "放下手机",
-        nextScene: "长者食堂-办公室"
+        nextScene: "{positionAfterOperation}"
       }
     ]
   }
