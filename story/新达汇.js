@@ -37,7 +37,8 @@ Object.assign(storyData, {
       applyWeatherDrain(vars);
     },
     text: function(vars) {
-      var desc = "新达汇·三林的主入口广场。中央的喷泉停着，池底浅浅一层积水漂着落叶。广场上零散地倒着几个歪斜的广告牌和废弃的购物车。\n正前方是商场西区的主入口，玻璃门敞开着；东侧能看到东区的开放式街区；地面有一个通往B1下沉广场的阶梯入口。\n";
+      var desc = "新达汇·三林的主入口广场。中央的喷泉停着，池底浅浅一层积水漂着落叶。广场上零散地倒着几个歪斜的广告牌和废弃的购物车。\n\
+正前方是商场西区的主入口，玻璃门敞开着，地面有一个通往B1下沉广场的阶梯入口。\n";
       if (!vars._metGaoAtMall && vars.dd <= 3 && vars.hh >= 10 && vars.hh <= 14) {
         desc += "喷泉边上停着一辆红色山地车，车架上贴着几张没撕干净的卡通贴纸。靠商场入口那一侧——一个锅盖头少年正被好几只丧尸围着。他攥着一根从旁边广告牌上拆下来的金属管，边退边打，嘴上还在骂骂咧咧。";
       } else if (vars._metGaoAtMall) {
@@ -54,6 +55,7 @@ Object.assign(storyData, {
       cs.push({ text: "进入西区1F中庭", nextScene: "新达汇-1F中庭", effect: updateTime(1) });
       cs.push({ text: "走下阶梯到B1下沉广场", nextScene: "新达汇-B1下沉广场入口", effect: updateTime(2) });
       cs.push({ text: "前往东区", nextScene: "新达汇-东区天桥1", effect: updateTime(4) });
+      cs.push({ text: "绕到商场背后的车库出口", nextScene: "新达汇车库出口", effect: updateTime(3) });
       cs.push({ text: "离开新达汇，回十字路口",
         nextScene: "三林路-东明路 十字路口",
         effect: updateTime(20) });

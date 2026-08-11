@@ -14,6 +14,7 @@ Object.assign(storyData, {
       { text: "沿着主通道往前走", nextScene: "新达汇-B1停车场B区", effect: updateTime(2) },
       { text: "左拐进西侧通道", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
       { text: "右拐到拐角处看看", nextScene: "新达汇-B1停车场H区", effect: updateTime(1) },
+      { text: "从坡道出去", nextScene: "新达汇车库出口", effect: updateTime(2) },
       { text: "返回B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(2) }
     ]
   },
@@ -265,7 +266,6 @@ Object.assign(storyData, {
         showCondition: "_garageOps >= 5"
       },
       { text: "继续探索", nextScene: "新达汇-B1停车场B区", showCondition: "_garageOps < 5" },
-      { text: "回车库入口", nextScene: "新达汇-B1停车场A区", showCondition: "_garageOps < 5" },
       { text: "离开车库", nextScene: "新达汇-B1走廊", showCondition: "_garageOps < 5" }
     ]
   },
@@ -290,4 +290,20 @@ Object.assign(storyData, {
   },
 
   // ==================== H区 · 死胡同（环境叙事） ====================
+
+  "新达汇车库出口": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/garageExit.png */,
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPlace = "新达汇";
+      vars.currentPos = "车库出口";
+    },
+    text: "你来到新达汇商场背后的一条辅路。旁边是地下车库的出口坡道，铁栅栏半开着，收费亭被撞歪了斜在一边。\n辅路往东通向安盛街和环林东路方向，往西的路牌指向金谊广场——但距离不近，大概要走半小时。\n绕回商场正面的喷泉广场只要几分钟。",
+    choices: [
+      { text: "回喷泉广场", nextScene: "新达汇-喷泉广场", effect: updateTime(3) },
+      { text: "往西去金谊广场", nextScene: "金谊广场地面入口", effect: updateTime(30) },
+      { text: "退回车库", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
+    ]
+  },
+
 });

@@ -95,6 +95,7 @@ const storyData = {
     _jinyiSurvivorsFed: false,  // 是否给长廊幸存者送了食物
     _jinyiSurvivorsRobbed: false, // 是否被长廊幸存者抢了
     _jinyiB2GasWarned: false,   // B2毒气是否已预警过
+    _jinyiAlcoholUsed: false,   // KTV酒精是否已用于消毒
     hasMercuryPill: false,      // 是否有甲基汞抑制剂（童涵春堂无标签药丸）
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
