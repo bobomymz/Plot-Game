@@ -21,7 +21,11 @@ Object.assign(storyData, {
           desc += "\n<span style='color: #ff4444;'>你意识到这片区域已经不再安全了——丧尸越来越多，你能感觉到它们在向这里聚集。留在这里过夜无异于等死。</span>";
         }
       } else if (vars.currentArea === "初始小区") {
-        desc += "你所在的地方已经空无一人，能听到的只有风声和远处丧尸的低吼。这时候在外面游荡无异于送死。";
+        if (vars.currentPos === "我家") {
+          desc += "窗外偶尔传来丧尸的嚎叫声，在夜色中此起彼伏。房间里很暗——你没有开灯，你不想引起任何注意。\n今晚不能睡在外面，但你至少还有一个屋顶。";
+        } else {
+          desc += "你所在的地方已经空无一人，能听到的只有风声和远处丧尸的低吼。这时候在外面游荡无异于送死。";
+        }
       } else if (vars.currentArea === "高架") {
         desc += "高架上的风很大，刮得路牌吱嘎作响。黑暗中你只能看到远处城市的轮廓和零星的火光。这里完全暴露在外，没有任何遮蔽。";
       } else {
@@ -39,7 +43,7 @@ Object.assign(storyData, {
         elseScene: "结局-过夜-自己家不再安全"
       },
       {
-        showCondition: "currentArea == '初始小区'",
+        showCondition: "currentArea == '初始小区' && currentPos != '我家'",
         text: "躲进楼道角落",
         nextScene: "结局-过夜-街头死亡"
       },
@@ -140,11 +144,10 @@ Object.assign(storyData, {
       vars.hh = 7;
       vars.mm = 0;
       vars._travelMinutes = 0;
-      vars.restAtBarber = true;
       vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
       return {};
     },
-    text: "你拉好窗帘，把门锁上。周师傅递给你一条毯子，指了指墙角的折叠床。\n“今晚就安心睡吧。”他说着在门口的理发椅上坐下，手里握着一把剪刀。\n你躺在折叠床上，听着窗外丧尸的嚎叫声，竟出奇地睡着了。\n第二天醒来，阳光透过窗帘缝隙洒在地板上。周师傅已经在收拾东西了。“醒了？外面的东西散了，不过……估计今晚还会更多。”",
+    text: "你拉好窗帘，把门锁上。周师傅递给你一条毯子，指了指墙角的折叠床。\n“今晚就安心睡吧。”他说着在门口的理发椅上坐下，手里握着一把剪刀。\n你躺在折叠床上，听着窗外丧尸的嚎叫声，竟出奇地睡着了。\n第二天醒来，阳光透过窗帘缝隙洒在地板上。周师傅已经在收拾东西了。“醒了？外面的东西散了，不过……估计今晚还会更多。",
     choices: [
       { text: "继续", nextScene: "理发店-店内" }
     ]
@@ -159,7 +162,6 @@ Object.assign(storyData, {
       vars.hh = 7;
       vars.mm = 0;
       vars._travelMinutes = 0;
-      vars.restAtBarber = true;
       vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
       vars.strength = Math.max(0, vars.strength - 1);
       return {};
@@ -247,6 +249,7 @@ Object.assign(storyData, {
       vars._travelMinutes = 0;
       vars.mm = 0;
       vars.strength = Math.min(10, vars.strength + 2);
+      vars.positionAfterOperation = "初始卧室";
       return {};
     },
     text: "你跑回了自己家。锁好门，拉好窗帘。房间里的一切都还是你离开时的样子。\n你躺在床上，盯着天花板。妈妈还没回来——也许她永远不会回来了。\n你闭上眼睛，在熟悉的气味中沉沉睡去。\n第二天早上，你被门外低沉的撞击声惊醒。有人在撞门——不，是丧尸。你从猫眼往外看，一张灰白的脸正贴在门上。\n你不能再待在这里了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
@@ -287,7 +290,14 @@ Object.assign(storyData, {
     },
     text: "你找不到更好的地方了。你蜷缩在一处墙角，用废弃的纸板和塑料袋盖住自己，祈祷没有丧尸发现你。\n这一夜是你人生中最漫长的一夜。\n丧尸的脚步声无数次从你身边经过，你甚至能闻到它们身上的腐臭味。你全程屏住呼吸，一动也不敢动。\n当第一缕晨光照进街道时，你几乎不敢相信自己还活着。你浑身发抖，手臂上不知道什么时候多了一道抓痕在隐隐作痛。",
     choices: [
-      { text: "继续前进", nextScene: "整理整理" }
+      {
+        text: "继续前进",
+        nextScene: function(vars) {
+          if (vars.currentArea === "高架") return "杨高南路高架";
+          if (vars.currentArea === "周边社区") return "三林路";
+          return "小区道路";
+        }
+      }
     ]
   },
 
