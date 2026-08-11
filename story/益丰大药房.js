@@ -454,7 +454,7 @@ Object.assign(storyData,{
 
   "益丰大药房-被咬到了": {
     image: "images/zombieKnockYouDown.png",
-    onEnter: { add: { strength: -1 }, set: { hurtByZombie: true } },
+    onEnter: { add: { strength: -1, mercuryLoad: 10 }, set: { hurtByZombie: true } },
     text: "你慢了半拍，她的牙齿咬进了你的小臂。你痛呼一声甩开她，鲜血顺着手臂往下淌。她嘴角沾着血，又退回了阴影里。\n\
 <span style='color: #ff4444; font-style: italic;'>【系统提示】你被咬伤了！体力 -1，当前体力：{strength}。</span>",
     choices: [
@@ -657,7 +657,7 @@ Object.assign(storyData,{
 
   "益丰大药房-丧尸偷袭，仓皇逃窜": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/丧尸偷袭，仓皇逃窜.png */,
-    onEnter: {set: {hurtByZombie: true}},
+    onEnter: {set: {hurtByZombie: true}, add: {mercuryLoad: 10}},
     text: "你穿过走廊，从库房走出。和阳光一起洒入药房的，还有无数丧尸的嘶吼。你仓皇逃出药房，还被抓了好几下。",
     choices: [
       {

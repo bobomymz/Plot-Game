@@ -396,7 +396,7 @@ Object.assign(storyData, {
 
   "上实南校-化学实验室-憋气": {
     image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
-    onEnter: { add: { strength: -3 }, set: { hurtByZombie: true } },
+    onEnter: { add: { strength: -3, mercuryLoad: 10 }, set: { hurtByZombie: true } },
     text: "你深吸一口气，屏住呼吸冲了进去。气体刺激着你的眼睛和皮肤，但你忍着痛在实验台上摸索。\n你抓到了最近的一样东西——酒精灯。你转身冲了出来，扶着墙大口喘气。\n你的手和脸火辣辣地疼，但至少拿到了东西。",
     choices: [
       {
@@ -974,7 +974,7 @@ Object.assign(storyData, {
 
   "上实南校-翻窗摔伤": {
     image: "images/placeholder.png" /* TODO: images/上实南校/windowClimb.png */,
-    onEnter: { add: { strength: -2 }, set: { hurtByZombie: true } },
+    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
     text: "你手上的力气不够。管道在你手中滑脱——你从两层楼高的位置摔了下去。落地时脚踝传来一阵剧痛，你蜷缩在地上。\n\
 “你没事吧？！”小陆紧跟着跳了下来，扶你起来。你试着站了站——能站，但每走一步都钻心地疼。\n同学们也陆续爬了下来。你们站在了校园后院的空地上。",
     choices: [
@@ -1158,7 +1158,7 @@ Object.assign(storyData, {
       {
         text: "回到东明路",
         nextScene: "上实南校-撤离成功",
-        effect: { set: { hurtByZombie: true } }
+        effect: { set: { hurtByZombie: true }, add: { mercuryLoad: 10 } }
       }
     ]
   },

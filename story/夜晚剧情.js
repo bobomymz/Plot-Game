@@ -182,6 +182,7 @@ Object.assign(storyData, {
       vars.hh = 7;
       vars.mm = 0;
       vars.hurtByZombie = true;
+      vars.mercuryLoad = Math.min(100, vars.mercuryLoad + 10);
       vars.strength = Math.max(0, vars.strength - 2);
       vars.chasedByZombies = Math.min(5, vars.chasedByZombies + 1);
       return {};
@@ -286,6 +287,7 @@ Object.assign(storyData, {
       vars.mm = 0;
       vars.strength = Math.max(0, vars.strength - 2);
       vars.hurtByZombie = true;
+      vars.mercuryLoad = Math.min(100, vars.mercuryLoad + 10);
       return {};
     },
     text: "你找不到更好的地方了。你蜷缩在一处墙角，用废弃的纸板和塑料袋盖住自己，祈祷没有丧尸发现你。\n这一夜是你人生中最漫长的一夜。\n丧尸的脚步声无数次从你身边经过，你甚至能闻到它们身上的腐臭味。你全程屏住呼吸，一动也不敢动。\n当第一缕晨光照进街道时，你几乎不敢相信自己还活着。你浑身发抖，手臂上不知道什么时候多了一道抓痕在隐隐作痛。",

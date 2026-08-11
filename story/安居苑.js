@@ -366,7 +366,7 @@ Object.assign(storyData, {
   "三林安居苑-藤蔓丧尸-被咬": {
     image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieBite.png */,
     text: "你刚把手伸过去，丧尸猛地扭头，一口咬住了你的手腕。\n剧烈的疼痛让你惨叫出声。藤蔓在挣扎中崩断了几根——丧尸挣脱了束缚，而你捂着手腕跌坐在地上，鲜血从指缝间涌出。\n<span style='color: #ff4444;'>你被咬了。</span>",
-    onEnter: updateTime(1, { set: { hurtByZombie: true, showRain: true }, add: { strength: -3 } }),
+    onEnter: updateTime(1, { set: { hurtByZombie: true, showRain: true }, add: { strength: -3, mercuryLoad: 10 } }),
     choices: [
       {
         text: "快走！",
@@ -945,7 +945,7 @@ Object.assign(storyData, {
   "三林安居苑-厨房危险": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchenDanger.png */,
     text: "你小心翼翼地靠近厨房。地上那只丧尸看到你，猛地一扑——它的手臂比你想象中要长。\n你躲闪不及，被它抓住了脚踝。你奋力挣扎，但它咬住了你的小腿。\n剧烈的疼痛让你惨叫出声，而你的叫声又引来了小区里其他潜伏的东西……",
-    onEnter: { set: { hurtByZombie: true }, add: { strength: -3 } }
+    onEnter: { set: { hurtByZombie: true }, add: { strength: -3, mercuryLoad: 10 } }
   },
 
   "三林安居苑-自行车": {

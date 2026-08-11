@@ -508,7 +508,7 @@ Object.assign(storyData, {
       return f(vars);
     },
     onEnter: {
-      set: {hurtByZombie: true, showRain: true}
+      set: {hurtByZombie: true, showRain: true}, add: {mercuryLoad: 10}
     },
     text: "你从后门钻出来，进入一条狭窄的后巷。这里堆满了垃圾桶和废弃的纸箱，空气里弥漫着垃圾的酸臭味。\n\
 你继续往前走去。          \n\
@@ -1016,8 +1016,8 @@ Object.assign(storyData, {
 
   "安盛街-服装店-304柜-换衣": {
     image: "images/安盛街/服装店/换新衣.jpg",
-    onEnter: { add: { strength: 1 } },
-    text: "你脱下半路上沾了灰的衣服，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    onEnter: { add: { strength: 1 }, set: { shirt: "深蓝夹克" } },
+    text: "你脱下半路上沾了灰的衣服，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。已换上：{shirt}。</span>",
     choices: [
       {
         text: "继续看看304柜",

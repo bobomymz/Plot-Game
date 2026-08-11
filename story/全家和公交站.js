@@ -145,7 +145,7 @@ Object.assign(storyData, {
 
   "被丧尸咬": {
     image: "images/placeholder.png" /* TODO: images/grappleWithZombie.png */,
-    onEnter: updateTime(1, { set : { hurtByZombie: true, FamilymartHasZombie: false } }),
+    onEnter: updateTime(1, { set : { hurtByZombie: true, FamilymartHasZombie: false }, add: { mercuryLoad: 10 } }),
     text: "你狠狠揍了丧尸几拳，它掐住你的脖子，和你纠缠在地上。你努力控住它的嘴，砰！砰！砰！终于，它倒下了，但你身上多了不少抓痕和咬痕，不知道有没有受伤。",
     choices: [
       {

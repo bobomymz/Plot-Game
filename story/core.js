@@ -13,6 +13,7 @@ const storyData = {
     mm: 0,                     // 当前时间，初始为0，单位为分钟
     // 时间格式：天数-小时-分钟，从玩家醒来当天零点开始计算，玩家醒来时间为Day1 8:00（2026/6/29）
     hurtByZombie: false,       // 是否被丧尸咬（后续未找到医疗物资会感染）
+    mercuryLoad: 0,            // 汞负荷 0-100，隐藏变量（设计细节 §三）
 
     // --- 天气 ---
     weather: "晴",             // "晴" / "阴" / "雨"
@@ -89,6 +90,12 @@ const storyData = {
     bottleWater: 0,            // 水瓶还有几口水（0=空瓶，1=有水；饮水机可反复打满）
     _waterDispenserUses: 0,    // 饮水机已使用次数（最多10次）
     _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启
+    // 金谊广场
+    _chenmoRescued: false,      // 是否在停车场救了陈默
+    _jinyiSurvivorsFed: false,  // 是否给长廊幸存者送了食物
+    _jinyiSurvivorsRobbed: false, // 是否被长廊幸存者抢了
+    _jinyiB2GasWarned: false,   // B2毒气是否已预警过
+    hasMercuryPill: false,      // 是否有甲基汞抑制剂（童涵春堂无标签药丸）
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
@@ -109,6 +116,11 @@ const storyData = {
     personalMemoryThres: 10,    // 解锁B结局所需个人记忆的个数
     personalMemorySet: new Set(),     // 目前已获得的个人记忆集合
     mixedMemorySet: new Set(),        // 目前已获得的混合记忆集合
+
+    // 穿搭（字符型变量，换装仅限安全场景）
+    shirt: "普通T恤",            // 上衣
+    pants: "牛仔裤",             // 裤子
+    shoes: "运动鞋",             // 鞋子
 
     // 位置描述变量
     positionAfterOperation: "",            // 下一步跳转的位置，用于跳到某些统筹节点再回来
@@ -214,6 +226,7 @@ const storyData = {
   // -------- 全局触发器 --------
   _globalTriggers: [
     { condition: "strength <= 0.01", targetScene: "结局-体力耗尽", priority: 10 },
+    { condition: "mercuryLoad >= 70", targetScene: "结局-汞中毒尸变", priority: 9 },
     { condition: "chasedByZombies >= 5", targetScene: "结局-尸潮撕碎了你", priority: 8 },
     { condition: "_backhallDead", targetScene: "结局-后勤通道被堵", priority: 7 },
     { condition: "hh >= 19", targetScene: "天黑必须过夜", priority: 5 },
@@ -473,5 +486,10 @@ const storyData = {
         //nextScene: "{positionAfterOperation}"//"初始卧室"
       }
     ]
+  },
+
+  "结局-汞中毒尸变": {
+    image: "images/zombiePounceOnYou.jpg",
+    text: "你的手开始不受控制地颤抖。视野边缘在变暗，像有人从四周慢慢拉上帷幕。\n最后的清醒时刻，你低头看向自己的手——皮肤已经变成了暗灰色，在日光下泛着诡异的金属光泽。\n你张开嘴想喊什么，但喉咙里只发出了一声低沉的喉音。\n—— 结局：汞中毒尸变 ——"
   },
 };
