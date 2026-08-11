@@ -729,7 +729,7 @@ function renderChoices(scene, sceneId) {
   }
   } else {
     const endMsg = document.createElement("p");
-    endMsg.textContent = "— 剧 终 —";
+    endMsg.textContent = "剧 终";
     choicesArea.appendChild(endMsg);
     appendBacktrackToChoices(scene);
   }
