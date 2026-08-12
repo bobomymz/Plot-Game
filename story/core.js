@@ -94,6 +94,7 @@ const storyData = {
     _chenmoRescued: false,      // 是否在停车场救了陈默
     _jinyiSurvivorsFed: false,  // 是否给长廊幸存者送了食物
     _jinyiSurvivorsRobbed: false, // 是否被长廊幸存者抢了
+    _jinyiHasFoodForSurvivors: false, // 是否从B1奥乐齐带了食物给长廊幸存者
     _jinyiB2GasWarned: false,   // B2毒气是否已预警过
     _jinyiAlcoholUsed: false,   // KTV酒精是否已用于消毒
     hasMercuryPill: false,      // 是否有甲基汞抑制剂（童涵春堂无标签药丸）
@@ -435,6 +436,23 @@ const storyData = {
         showCondition: "hasLiquidParaffin",
         text: "丢下石蜡油小瓶子",
         effect: updateTime(1, { set : { hasLiquidParaffin: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasMercuryPill && mercuryLoad > 0",
+        text: "服用无标签药丸（降低汞负荷20点）",
+        effect: function(vars) {
+          vars.mercuryLoad = Math.max(0, vars.mercuryLoad - 20);
+          vars.hasMercuryPill = false;
+          vars.itemCount -= 1;
+          return updateTime(1)(vars);
+        },
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasMercuryPill",
+        text: "丢下无标签药丸",
+        effect: updateTime(1, { set : { hasMercuryPill: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {

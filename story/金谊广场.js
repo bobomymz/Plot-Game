@@ -16,6 +16,7 @@ Object.assign(storyData, {
       vars.currentArea = "周边社区";
       vars.currentPlace = "金谊广场";
       vars.currentPos = "龙头区";
+      return {};
     },
     text: function(vars) {
       var desc = "你来到了金谊广场的龙头区。这里和新达汇不一样——头顶有挑高的玻璃顶棚，阳光从缝隙里漏下来，在地上投出斑驳的光影。风是通的，穿过架空的天桥和半开放的走廊，吹得地上的碎纸屑轻轻打转。\n";
@@ -97,8 +98,8 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/龙头区长廊.jpg */,
     onEnter: function(vars) {
       vars.showRain = true;
-      // 从奥乐齐回来时触发交付判定
-      if (vars._visit['金谊广场-B1奥乐齐'] > 0 && !vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed) {
+      // 从奥乐齐带食物回来时触发交付判定（不清除标记，留给 text 展示交付瞬间）
+      if (vars._jinyiHasFoodForSurvivors && !vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed) {
         if (vars.hurtByZombie) {
           vars._jinyiSurvivorsRobbed = true;
           return { add: { strength: -1 } };
@@ -111,22 +112,24 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       var desc = "你走向龙头区的长廊。这是一条有顶的走廊，跨过小河通向商场3F。\n";
-      if (vars._jinyiSurvivorsFed) {
-        desc += "上次你带回的食物让幸存者们放了行。他们还记得你——有人冲你点了点头。长廊的门为你开着。";
-      } else if (vars._jinyiSurvivorsRobbed) {
-        desc += "你想起上次的情景，手臂上的伤还在隐隐作痛。长廊的门依然关着，但你知道——不止这一条路能进商场。";
-      } else if (vars._visit['金谊广场-B1奥乐齐'] > 0) {
+      if (vars._jinyiHasFoodForSurvivors) {
+        // 交付瞬间——展示食物交付的剧情，然后清除标记
         desc += "你带着从B1奥乐齐找到的食物回到长廊。那个中年男人看到你手里的东西，眼睛亮了一下。\n";
         if (vars.hurtByZombie) {
           desc += "他打量了你一眼——目光在你手臂的伤口上停了一下。然后他的表情变了。\n";
-          desc += "“你受伤了。”他说，语气不再是刚才的平淡。他身后几个人也站了起来。\n";
+          desc += ""你受伤了。"他说，语气不再是刚才的平淡。他身后几个人也站了起来。\n";
           desc += "你还没反应过来，他们就把你手里的食物抢了过去。有人推了你一把，你踉跄着退出了长廊。\n";
-          desc += "“对不起。”那个中年男人说，但他没有看你。他已经在分食物了。\n";
+          desc += ""对不起。"那个中年男人说，但他没有看你。他已经在分食物了。\n";
           desc += "长廊的门在你面前关上了。";
         } else {
-          desc += "“好。”他点了点头，跟身后的人打了个手势。货架被挪开了一条缝，刚好够一个人侧身通过。\n";
-          desc += "“说话算话。你过去吧。”\n他把食物接过去，冲你点了点头。这一次，点头里有一点温度。\n长廊的门为你打开了。";
+          desc += ""好。"他点了点头，跟身后的人打了个手势。货架被挪开了一条缝，刚好够一个人侧身通过。\n";
+          desc += ""说话算话。你过去吧。"\n他把食物接过去，冲你点了点头。这一次，点头里有一点温度。\n长廊的门为你打开了。";
         }
+        vars._jinyiHasFoodForSurvivors = false; // 交付剧情已展示，清除标记
+      } else if (vars._jinyiSurvivorsFed) {
+        desc += "上次你带回的食物让幸存者们放了行。他们还记得你——有人冲你点了点头。长廊的门为你开着。";
+      } else if (vars._jinyiSurvivorsRobbed) {
+        desc += “你想起上次的情景，手臂上的伤还在隐隐作痛。长廊的门依然关着，但你知道——不止这一条路能进商场。”;
       } else {
         desc += "长廊的入口被超市货架和几张倒放的桌子堵死了，只留了一条窄缝。货架后面能看到人影在走动——有人在守着。\n";
         desc += "你走近时，一个中年男人从货架后面探出头来，上下打量了你一眼。\n";
@@ -140,7 +143,7 @@ Object.assign(storyData, {
       if (vars._jinyiSurvivorsFed) {
         choices.push({ text: "穿过长廊去3F", nextScene: "金谊广场-3F", effect: updateTime(2) });
       }
-      if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed && vars._visit['金谊广场-B1奥乐齐'] == null) {
+      if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed && !vars._jinyiHasFoodForSurvivors) {
         choices.push({ text: "去B1奥乐齐找食物", nextScene: "金谊广场-龙头区", effect: updateTime(1) });
       }
       if (vars._jinyiSurvivorsRobbed) {
@@ -204,7 +207,23 @@ Object.assign(storyData, {
 
   "金谊广场-吉祥馄饨-聊": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/吉祥馄饨.jpg */,
-    text: "陈默从纸箱里翻出一个防水袋，里面装着一把旧菜刀和几包密封的调料。他把菜刀别在腰上，调料塞进背包。\n“你还能找到这里，说明你还没死。”他看了你一眼。“那就继续活着。”\n他告诉你，金谊广场周边他跑了五年外卖——哪条路能走、哪条路堵了、哪条路有丧尸，他比导航还清楚。\n“龙头区那边有一群幸存者，堵在长廊里。他们不坏，但也不傻——想过去，就得拿东西换。”\n他顿了顿。“停车场那边别去。河边全是丧尸，比你想象的多。”\n他把背包拉链拉上，站了起来。“我要去取点东西。你要是没事，可以跟我来。”",
+    text: function(vars) {
+      var desc = "陈默从纸箱里翻出一个防水袋，里面装着一把旧菜刀和几包密封的调料。他把菜刀别在腰上，调料塞进背包。\n";
+      desc += "“你还能找到这里，说明你还没死。”他看了你一眼。“那就继续活着。”\n";
+      desc += "他告诉你，金谊广场周边他跑了五年外卖——哪条路能走、哪条路堵了、哪条路有丧尸，他比导航还清楚。\n";
+      desc += "“龙头区那边有一群幸存者，堵在长廊里。他们不坏，但也不傻——想过去，就得拿东西换。”\n";
+      desc += "他顿了顿。“停车场那边别去。河边全是丧尸，比你想象的多。”\n";
+      if (vars._jinyiSurvivorsRobbed) {
+        desc += "\n他看了一眼你手臂上的伤——目光停了一下。\n";
+        desc += "“你手上的伤……是长廊那群人？”他的语气变了，比刚才冷了一点。\n";
+        desc += "你没说话，但沉默本身就是回答。\n";
+        desc += "他把菜刀插回腰间，动作很慢。“我早跟你说过停车场那边别去。但我没跟你说——这些人不值得你同情。”\n";
+        desc += "他顿了顿。“高青路那边，有人偷了我藏在地板下面的东西。我救过那个人。”\n";
+        desc += "他没有继续往下说。但你听懂了。";
+      }
+      desc += "\n他把背包拉链拉上，站了起来。“我要去取点东西。你要是没事，可以跟我来。”";
+      return desc;
+    },
     choices: [
       {
         text: "跟着陈默",
@@ -300,9 +319,13 @@ Object.assign(storyData, {
 
   "金谊广场-停车场-搜刮": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.jpg */,
-    text: "你在车辆之间穿梭，试着拉了几扇车门。大部分都锁着，只有一辆老款桑塔纳的后备箱没锁——里面只有半瓶冻成冰的矿泉水和一件发霉的雨衣。\n你抬头看了看河边的丧尸群——它们还在往水边挤。你不想在这里多待。",
+    text: function(vars) {
+      if (vars._visit['金谊广场-停车场-搜刮'] > 1) {
+        return "你又绕着停车场走了一圈。能拉的车门都拉过了——除了那辆老桑塔纳，其余的全锁着。\n河边丧尸的喉音似乎比刚才更近了。你不想在这里多待。";
+      }
+      return "你在车辆之间穿梭，试着拉了几扇车门。大部分都锁着，只有一辆老款桑塔纳的后备箱没锁——里面只有半瓶冻成冰的矿泉水和一件发霉的雨衣。\n你抬头看了看河边的丧尸群——它们还在往水边挤。你不想在这里多待。";
+    },
     choices: [
-      { text: "继续搜刮", nextScene: "金谊广场-停车场-搜刮", effect: updateTime(2) },
       { text: "退回龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) }
     ]
   },
@@ -350,7 +373,7 @@ Object.assign(storyData, {
   // --- 正门硬闯（记忆闪色，高难度） ---
   "金谊广场-正门硬闯": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/正门硬闯.jpg */,
-    onEnter: initMemoryGame(["红","蓝","绿","黄","白","黑","紫"], 9, { add: { chasedByZombies: 1 } }),
+    onEnter: initMemoryGame(["红","蓝","绿","黄","白"], 9, { add: { chasedByZombies: 1 } }),
     text: function(vars) {
       var desc = "你推着旋转门的扇格，从尸体和门框之间的缝隙挤了进去。\n";
       desc += "门内的丧尸听到了动静——它们从几个方向同时朝你围过来。中庭的空间很大，但你的退路只有身后那扇卡着尸体的旋转门。\n";
@@ -400,9 +423,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B2车库-dark.jpg */,
     text: function(vars) {
       if (vars.hasTorch) {
-        return "你推开门，发现消防通道的楼梯被坍塌的水泥块堵死了。只能原路返回。";
+        return "你推开门，手电筒的光束照亮了前方——消防通道的楼梯被坍塌的水泥块堵得严严实实，钢筋从碎块里戳出来，像一丛扭曲的枯枝。灰尘在光束里缓缓飘浮。\n只能原路返回。";
       }
-      return "你摸到了一堵冰冷的混凝土墙。顺着墙摸了一圈——死路。你花了一些时间才摸回车库入口。";
+      return "你摸到了一堵冰冷的混凝土墙——墙面粗糙，指尖划过时能感觉到裸露的钢筋茬。顺着墙摸了一圈，尽头是一堆坍塌的碎石，手掌按上去，细碎的沙粒簌簌往下掉。\n死路。空气中那股甜味似乎更浓了。你花了一些时间才摸回车库入口。";
     },
     choices: [
       { text: "返回", nextScene: "金谊广场-B2车库入口", effect: updateTime(1) }
@@ -426,6 +449,7 @@ Object.assign(storyData, {
       if (vars.hasGasMask && vars.maskRemainingUses > 0) {
         return [
           { text: "坐货梯上1F", nextScene: "金谊广场-1F 门面层", effect: updateTime(2, { add: { maskRemainingUses: -1 } }) },
+          { text: "深入B2车库探索", nextScene: "金谊广场-B2 地下车库", effect: updateTime(2) },
           { text: "退回车库入口", nextScene: "金谊广场-B2车库入口", effect: updateTime(2) }
         ];
       } else {
@@ -504,15 +528,25 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/1F肯德基.jpg */,
     text: function(vars) {
       var desc = "你走进肯德基。餐厅里一片狼藉——托盘和纸杯散落一地，点餐屏幕早就黑了。冰柜的门开着，化冻的水淌了一地，混着打翻的番茄酱，看起来像稀释的血。\n";
-      desc += "你推开后厨的门。炸锅里的油已经凝固成一层白膜，但架子上还有几包密封的番茄酱和两盒未开封的鸡块——冷冻的，还没坏。\n";
-      if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed && vars._visit['金谊广场-B1奥乐齐'] == null) {
-        desc += "\n这些食物够长廊那些幸存者撑几天了。不过你答应他们的是奥乐齐的东西——最好还是去B1拿。";
+      desc += "你推开后厨的门。炸锅里的油已经凝固成一层白膜。\n";
+      if (vars._visit['金谊广场-1F肯德基'] > 1) {
+        desc += "架子上只剩几包番茄酱——鸡块已经吃完了。光吃番茄酱可撑不了多久。";
+      } else {
+        desc += "架子上还有几包密封的番茄酱和两盒未开封的鸡块——冷冻的，还没坏。";
+        if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed && vars._visit['金谊广场-B1奥乐齐'] == null) {
+          desc += "\n这些食物够长廊那些幸存者撑几天了。不过你答应他们的是奥乐齐的东西——最好还是去B1拿。";
+        }
       }
       return desc;
     },
-    choices: [
-      { text: "离开肯德基", nextScene: "金谊广场-1F 门面层", effect: updateTime(1) }
-    ]
+    choices: function(vars) {
+      var choices = [];
+      if (vars._visit['金谊广场-1F肯德基'] <= 1) {
+        choices.push({ text: "吃点鸡块补充体力", nextScene: "金谊广场-1F肯德基", effect: updateTime(3, { add: { strength: 1 } }) });
+      }
+      choices.push({ text: "离开肯德基", nextScene: "金谊广场-1F 门面层", effect: updateTime(1) });
+      return choices;
+    }
   },
 
   // --- 2F 服装层 ---
@@ -550,7 +584,7 @@ Object.assign(storyData, {
       {
         text: "继续休息",
         nextScene: "金谊广场-2F-休息",
-        effect: updateTime(5, { add: { strength: 1 }, set: { _travelMinutes: 0 } })
+        effect: updateTime(30, { add: { strength: 1 }, set: { _travelMinutes: 0 } })
       },
       {
         text: "起来继续探索",
@@ -619,16 +653,94 @@ Object.assign(storyData, {
     ]
   },
 
-  // 预留：3F落单幸存者（具体剧情待展开）
-  "金谊广场-3F-幸存者": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/3F幸存者.jpg */,
-    text: "你循着声音走进一家日料店。板前座位后面，一个年轻男人蹲在吧台下面，双手抱着一把日式菜刀。\n他看到你，先是缩了一下，然后慢慢放松了肩膀。\n“你是……活人？”他的声音沙哑，像是很久没跟人说过话了。\n他没有加入长廊那群人——他说他不信任人多的地方。“人多的地方，最后都会出事。”\n（具体对话和分支待后续展开）",
-    choices: [
-      {
-        text: "离开",
-        nextScene: "金谊广场-3F",
-        effect: updateTime(1)
+  // 3F落单幸存者——小林
+  “金谊广场-3F-幸存者”: {
+    image: “images/placeholder.png” /* TODO: images/金谊广场/3F幸存者.jpg */,
+    text: function(vars) {
+      if (vars._visit['金谊广场-3F-幸存者'] > 1) {
+        var short = “小林还蹲在吧台下面。他看到是你，眼神没那么紧张了，只是点了点头。\n”;
+        if (vars._visit['金谊广场-3F-幸存者-分食物']) {
+          short += “他手里还攥着你上次给的压缩饼干包装袋——大概舍不得扔。”;
+        } else if (vars._jinyiSurvivorsRobbed) {
+          short += ““长廊那群人……”他欲言又止。“你还能站在这里，已经比大多数人强了。””;
+        } else {
+          short += ““上次说的那些……你自己小心吧。”他顿了顿。“如果有吃的，记得我。””;
+        }
+        return short;
       }
+      var desc = “你循着声音走进一家日料店。板前座位后面，一个年轻男人蹲在吧台下面，双手抱着一把日式菜刀。\n”;
+      desc += “他看到你，先是缩了一下，然后慢慢放松了肩膀。\n”;
+      desc += ““你是……活人？”他的声音沙哑，像是很久没跟人说过话了。\n”;
+      desc += “他叫小林——二十四五岁，原来在隔壁京东电器做销售。疫情爆发那天他正在日料店吃午饭，然后就再也没出去过。\n”;
+      desc += “他没有加入长廊那群人。他说他不信任人多的地方。\n”;
+      desc += ““人多的地方，最后都会出事。”他把菜刀放在膝盖上，手指无意识地敲着刀柄。”;
+      return desc;
+    },
+    choices: function(vars) {
+      var choices = [];
+      // 各对话分支独立判断，每个只能触发一次
+      if (!vars._visit['金谊广场-3F-幸存者-聊长廊']) {
+        choices.push({ text: “跟他聊聊长廊的事”, nextScene: “金谊广场-3F-幸存者-聊长廊”, effect: updateTime(2) });
+      }
+      if (vars._visit['金谊广场-B1奥乐齐-搜刮'] > 0 && !vars._visit['金谊广场-3F-幸存者-分食物']) {
+        choices.push({ text: “分他一点食物”, nextScene: “金谊广场-3F-幸存者-分食物”, effect: updateTime(2) });
+      }
+      if (vars._chenmoRescued && !vars._visit['金谊广场-3F-幸存者-停车场']) {
+        choices.push({ text: “告诉他地面停车场比较安全”, nextScene: “金谊广场-3F-幸存者-停车场”, effect: updateTime(2) });
+      }
+      choices.push({ text: “离开”, nextScene: “金谊广场-3F”, effect: updateTime(1) });
+      return choices;
+    }
+  },
+
+  “金谊广场-3F-幸存者-聊长廊”: {
+    image: “images/placeholder.png” /* TODO: images/金谊广场/3F幸存者.jpg */,
+    text: function(vars) {
+      var desc = “你靠着吧台坐下来，问起长廊那群人的事。\n”;
+      desc += “小林沉默了一会儿。\n”;
+      desc += ““那个领头的叫老周——以前是奥乐齐的仓库主管。人不坏，但太软了。他谁都不得罪，结果谁都管不住。”\n”;
+      desc += ““里面有个戴眼镜的，以前在松月楼当领班。他最狠——不是那种拿刀砍人的狠，是那种饿急了的狠。你要小心他。”\n”;
+      if (vars._jinyiSurvivorsRobbed) {
+        desc += “他看了你一眼。“你手臂上的伤……是不是他们干的？”\n你点了点头。\n”;
+        desc += ““我就知道。”他把菜刀握紧了。“老周不会动手，但那个戴眼镜的——他不会让你白拿东西走。你受伤了，他就觉得你好欺负。”\n”;
+        desc += “他顿了顿。“我离开长廊，就是因为那个人。””;
+      } else {
+        desc += ““我离开长廊，就是因为那个人。”小林把菜刀在膝盖上转了一圈。“老周说人人平等，但那个戴眼镜的不这么想。他觉得自己比别人更有资格活下去。你知道这种人最可怕的是什么吗——他们没错。从某种角度来说，他们确实更适合活到最后。””;
+      }
+      desc += “\n\n他苦笑了一下。“所以我宁愿一个人待着。至少死的时候，不用看别人的脸色。””;
+      return desc;
+    },
+    choices: [
+      { text: “继续”, nextScene: “金谊广场-3F-幸存者”, effect: updateTime(1) }
+    ]
+  },
+
+  “金谊广场-3F-幸存者-分食物”: {
+    image: “images/placeholder.png” /* TODO: images/金谊广场/3F幸存者.jpg */,
+    onEnter: { add: { strength: -1 } },
+    text: function(vars) {
+      var desc = “你从口袋里掏出半包压缩饼干，放在吧台上推了过去。\n”;
+      desc += “小林看着那包饼干，愣了好几秒。然后他伸手拿起来，拆开包装，吃了一块。嚼得很慢。\n”;
+      desc += ““谢了。”他说。就两个字，但语气和刚才不一样了。\n”;
+      desc += “他想了想，从吧台底下摸出一个皱巴巴的笔记本，翻到其中一页。\n”;
+      desc += ““B1那个童涵春堂——我在 outbreak 之前看到有人进去过。一个穿白大褂的，从柜台后面拿了一个白色塑料瓶。他没付钱，直接就走了。那个瓶子上的标签他撕掉了，但我看到他塞进口袋之前，瓶身上写着——Hg。”\n”;
+      desc += “他抬头看你。“我不知道那是什么。但那个人看起来很紧张。像是……在抢时间。”\n”;
+      if (!vars.hasMercuryPill) {
+        desc += “\n“药房应该还有。如果你要下去，顺便看一眼。””;
+      }
+      desc += “\n\n他把剩下的饼干小心地包好，塞进胸口的口袋里。”;
+      return desc;
+    },
+    choices: [
+      { text: “继续”, nextScene: “金谊广场-3F-幸存者”, effect: updateTime(1) }
+    ]
+  },
+
+  “金谊广场-3F-幸存者-停车场”: {
+    image: “images/placeholder.png” /* TODO: images/金谊广场/3F幸存者.jpg */,
+    text: “你告诉他，地面停车场那边虽然丧尸多，但只要避开河岸，贴着建筑外墙走，就能安全进出。\n小林认真地听着，然后点了点头。\n”我一直以为河边更危险——那些丧尸全挤在水边，我从来没敢靠近过。”\n他想了想。”如果停车场能走，那从停车场旁边的消防梯可以直接下到B2。B2有个货梯，能到1F。”\n他顿了顿。”不过B2的空气有问题——我下去过一次，差点没上来。如果你要去，最好有防毒面具。”\n\n他站了起来，把菜刀别在腰后。”谢谢你告诉我这些。也许……也许我不该一直躲在这里。””,
+    choices: [
+      { text: “继续”, nextScene: “金谊广场-3F-幸存者”, effect: updateTime(1) }
     ]
   },
 
@@ -723,8 +835,22 @@ Object.assign(storyData, {
 
   "金谊广场-5F-酒精消毒": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/5F KTV.jpg */,
-    onEnter: { set: { hurtByZombie: false, _jinyiAlcoholUsed: true } },
-    text: "你拿起那半瓶威士忌，拧开盖子。酒味很冲。\n你咬紧牙关，把酒倒在手臂的伤口上——一阵剧烈的刺痛从伤口蔓延到整个手臂，你差点叫出声来。\n刺痛过后，伤口周围的皮肤泛着红，但看起来干净了不少。\n至少，伤口不会再继续恶化了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，感染风险降低。但已进入体内的汞不会因此消失。</span>",
+    onEnter: function(vars) {
+      vars._jinyiAlcoholUsed = true;
+      if (Math.random() < 0.5) {
+        vars.hurtByZombie = false;
+      }
+      return {};
+    },
+    text: function(vars) {
+      var desc = "你拿起那半瓶威士忌，拧开盖子。酒味很冲。\n你咬紧牙关，把酒倒在手臂的伤口上——一阵剧烈的刺痛从伤口蔓延到整个手臂，你差点叫出声来。\n";
+      if (!vars.hurtByZombie) {
+        desc += "刺痛过后，伤口周围的皮肤泛着红，但看起来干净了不少。\n至少，伤口不会再继续恶化了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，感染风险降低。但已进入体内的汞不会因此消失。</span>";
+      } else {
+        desc += "但刺痛过后，伤口看起来并没有好转——反而更红了。酒精杀死了表面的细菌，但病毒已经太深了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】酒精消毒未能清除感染。伤口仍在恶化。</span>";
+      }
+      return desc;
+    },
     choices: [
       { text: "继续", nextScene: "金谊广场-5F", effect: updateTime(1) }
     ]
@@ -781,7 +907,10 @@ Object.assign(storyData, {
         choices.push({
           text: "拿上食物和水，带回长廊",
           nextScene: "金谊广场-龙头区长廊",
-          effect: updateTime(5)
+          effect: function(vars) {
+            vars._jinyiHasFoodForSurvivors = true;
+            return updateTime(5)(vars);
+          }
         });
       }
       choices.push({ text: "搜刮一些自己用的补给", nextScene: "金谊广场-B1奥乐齐-搜刮", effect: updateTime(3, { add: { strength: 1 } }) });
@@ -792,19 +921,29 @@ Object.assign(storyData, {
 
   "金谊广场-B1奥乐齐-搜刮": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
-    text: "你在货架之间穿行，挑了一些还能吃的东西——几包压缩饼干、一罐午餐肉、一瓶矿泉水。\n你坐在收银台旁边吃了起来。在这末世里，能有东西吃已经是一种奢侈了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
-    choices: [
-      {
-        text: "继续搜刮",
-        nextScene: "金谊广场-B1奥乐齐-搜刮",
-        effect: updateTime(3, { add: { strength: 1 } })
-      },
-      {
+    text: function(vars) {
+      var desc = "你在货架之间穿行，挑了一些还能吃的东西——几包压缩饼干、一罐午餐肉、一瓶矿泉水。\n你坐在收银台旁边吃了起来。在这末世里，能有东西吃已经是一种奢侈了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+      if (vars._visit['金谊广场-B1奥乐齐-搜刮'] >= 3) {
+        desc += "\n你在货架间又转了一圈——能直接吃的东西已经拿得差不多了。剩下的不是需要烹饪的生食，就是已经开封变质的。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var choices = [];
+      if (vars._visit['金谊广场-B1奥乐齐-搜刮'] <= 3) {
+        choices.push({
+          text: "继续搜刮",
+          nextScene: "金谊广场-B1奥乐齐-搜刮",
+          effect: updateTime(3, { add: { strength: 1 } })
+        });
+      }
+      choices.push({
         text: "回到超市门口",
         nextScene: "金谊广场-B1奥乐齐",
         effect: updateTime(1)
-      }
-    ]
+      });
+      return choices;
+    }
   },
 
   // --- B1 童涵春堂药房 ---
