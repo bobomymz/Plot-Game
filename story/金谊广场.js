@@ -46,11 +46,6 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "去吉祥馄饨",
-        nextScene: "金谊广场-吉祥馄饨",
-        effect: updateTime(1)
-      },
-      {
         text: "去地面停车场",
         nextScene: "金谊广场-地面停车场",
         effect: updateTime(2)
@@ -200,11 +195,11 @@ Object.assign(storyData, {
         return [
           { text: "跟他聊聊", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(3) },
           { text: "看看店里", nextScene: "金谊广场-吉祥馄饨-看", effect: updateTime(2) },
-          { text: "离开", nextScene: "金谊广场-龙头区", effect: updateTime(1) }
+          { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
         ];
       } else {
         return [
-          { text: "离开", nextScene: "金谊广场-龙头区", effect: updateTime(1) }
+          { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
         ];
       }
     }
@@ -237,7 +232,7 @@ Object.assign(storyData, {
       },
       {
         text: "我自己再看看",
-        nextScene: "金谊广场-龙头区",
+        nextScene: "金谊广场-地面停车场",
         effect: updateTime(1)
       }
     ]
@@ -248,7 +243,7 @@ Object.assign(storyData, {
     text: "你在店里转了转。收银台的抽屉开着，里面只有几张皱巴巴的外卖小票——日期停在2020年4月。\n厨房的灶台上，排烟罩的边缘还挂着一层陈年油垢——是那种天天开火才会积出来的厚度。\n角落里放着一个保温杯，杯身上印的字已经磨得快看不清了——只剩一个模糊的“加油”和一颗褪色的红心。\n这是一家曾经有人认真经营过的店。",
     choices: [
       { text: "回去找陈默", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(1) },
-      { text: "离开", nextScene: "金谊广场-龙头区", effect: updateTime(1) }
+      { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
     ]
   },
 
@@ -280,6 +275,7 @@ Object.assign(storyData, {
         });
       }
       choices.push({ text: "搜刮车辆", nextScene: "金谊广场-停车场-搜刮", effect: updateTime(3) });
+      choices.push({ text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) });
       choices.push({ text: "退回龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) });
       return choices;
     }
