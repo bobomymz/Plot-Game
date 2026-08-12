@@ -183,22 +183,31 @@ Object.assign(storyData, {
       if (vars.dd == 1) {
         var desc = "你推开吉祥馄饨半掩的卷帘门。店里不大——四张桌子、一个收银台、开放式厨房的灶台上还留着经年累月的油渍。\n";
         desc += "墙上贴着一张褪色的价目表，最下面一行用圆珠笔加了一行字——“荠菜鲜肉（新品）”。笔迹和价目表上印的字不一样，是一个人手写的。\n";
-        desc += "陈默蹲在厨房角落，正在翻一个旧纸箱。听到脚步声，他头也没抬。\n";
-        desc += "“你来了。”他说。语气很淡，但不算冷——像是早就知道你会找到这里。";
+        desc += "一个戴着鸭舌帽的黑衣人蹲在厨房角落，正在翻一个旧纸箱。听到脚步声，他吓得一激灵，转过身警惕地看着你。\n";
+        if (vars._chenmoRescued) {
+          desc += "\n他嘴角微微动了一下——上次你帮他杀出停车场之后，他对你的态度明显不一样了。”好兄弟，你来啦？“";
+        }
+        else desc += "”呦，竟然是个活人。“";
         return desc;
       } else {
-        return "吉祥馄饨的卷帘门锁死了。你透过门缝往里看——桌椅还在，灶台还在，墙上的价目表还在。但厨房角落那个旧纸箱不见了。\n地上只剩一层薄灰，和几个模糊的脚印。\n陈默来过，然后走了。";
+        return "吉祥馄饨的卷帘门锁死了。你透过门缝往里看——桌椅还在，灶台还在，墙上的价目表还在。但厨房角落那个旧纸箱不见了。\n地上只剩一层薄灰，和几个模糊的脚印。\n有人来过，然后走了。";
       }
     },
     choices: function(vars) {
       if (vars.dd == 1) {
+        var cs = [
+          { text: "跟他聊聊", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(3) },
+          { text: "看看店里", nextScene: "金谊广场-吉祥馄饨-看", effect: updateTime(2) }
+        ];
+        if (vars._visit['金谊广场-吉祥馄饨-聊'] > 0 && !vars._chenmoRescued) {
+          cs.push({ text: "带他杀出停车场", nextScene: "金谊广场-吉祥馄饨-杀出去", effect: updateTime(2) });
+        }
+        cs.push({ text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) });
+        return cs;
+      } else {
         return [
           { text: "跟他聊聊", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(3) },
           { text: "看看店里", nextScene: "金谊广场-吉祥馄饨-看", effect: updateTime(2) },
-          { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
-        ];
-      } else {
-        return [
           { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
         ];
       }
@@ -208,43 +217,62 @@ Object.assign(storyData, {
   "金谊广场-吉祥馄饨-聊": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/吉祥馄饨.jpg */,
     text: function(vars) {
-      var desc = "陈默从纸箱里翻出一个防水袋，里面装着一把旧菜刀和几包密封的调料。他把菜刀别在腰上，调料塞进背包。\n";
-      desc += "“你还能找到这里，说明你还没死。”他看了你一眼。“那就继续活着。”\n";
-      desc += "他告诉你，金谊广场周边他跑了五年外卖——哪条路能走、哪条路堵了、哪条路有丧尸，他比导航还清楚。\n";
+      var desc = "他从纸箱里翻出一个防水袋，里面装着一把旧菜刀和几包密封的调料。他把菜刀别在腰上，调料塞进背包。\n";
+      desc += "“你还能找到这里，”他看了你一眼。“那就继续活下去吧。”\n";
+      desc += "他把背包拉链拉上，站起来，这才正眼看了看你。\n";
+      desc += "“我叫陈默。”他说。就三个字，没有握手，没有寒暄——像是觉得名字就够了。\n";
+      desc += "他告诉你，这家馄饨店是他以前开的，后来倒闭了。他在这附近跑了五年外卖，哪条路能走、哪条路堵了、哪条路有丧尸，他比导航还清楚。\n";
       desc += "“龙头区那边有一群幸存者，堵在长廊里。他们不坏，但也不傻——想过去，就得拿东西换。”\n";
-      desc += "他顿了顿。“停车场那边别去。河边全是丧尸，比你想象的多。”\n";
+      desc += "他瞥了一眼门外——停车场方向的丧尸还在河岸边挤作一团。\n";
+      if (vars._visit['初遇陈默']) {
+        desc += "”有长进了嘛，之前你差点在家门口被干掉。搭把手，咱一起出去？”\n";
+      }
+      else {
+        desc += "“外面那些东西，我一个人冲不出去，我手伤了。你能杀进来，说明你有点本事。”他顿了顿，把菜刀握紧了些。\n";
+        desc += "“帮我冲出去，我欠你一个人情。”\n";
+      }
       if (vars._jinyiSurvivorsRobbed) {
         desc += "\n他看了一眼你手臂上的伤——目光停了一下。\n";
         desc += "“你手上的伤……是长廊那群人？”他的语气变了，比刚才冷了一点。\n";
         desc += "你没说话，但沉默本身就是回答。\n";
-        desc += "他把菜刀插回腰间，动作很慢。“我早跟你说过停车场那边别去。但我没跟你说——这些人不值得你同情。”\n";
-        desc += "他顿了顿。“高青路那边，有人偷了我藏在地板下面的东西。我救过那个人。”\n";
-        desc += "他没有继续往下说。但你听懂了。";
+        desc += "他把菜刀插回腰间，动作很慢。“停车场那边别去，——这些，幸存者，不值得你同情。”\n";
+        desc += "他顿了顿。“高青路那边，有人偷了我的东西，我带在电动车上的救命物资。我救过那个人。我他妈……”\n";
+        desc += "他没有继续往下说。";
       }
-      desc += "\n他把背包拉链拉上，站了起来。“我要去取点东西。你要是没事，可以跟我来。”";
       return desc;
     },
     choices: [
       {
-        text: "跟着陈默",
-        nextScene: "金谊广场-地面停车场",
+        showCondition: "!vars._chenmoRescued",
+        text: "带他杀出停车场",
+        nextScene: "金谊广场-吉祥馄饨-杀出去",
         effect: updateTime(2)
       },
       {
-        text: "我自己再看看",
+        text: "我还是自己走吧",
         nextScene: "金谊广场-地面停车场",
         effect: updateTime(1)
-      }
+      },
+      {
+        text: "看看店里",
+        nextScene: "金谊广场-吉祥馄饨-看",
+        effect: updateTime(2)
+      },
     ]
   },
 
   "金谊广场-吉祥馄饨-看": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/吉祥馄饨.jpg */,
-    text: "你在店里转了转。收银台的抽屉开着，里面只有几张皱巴巴的外卖小票——日期停在2020年4月。\n厨房的灶台上，排烟罩的边缘还挂着一层陈年油垢——是那种天天开火才会积出来的厚度。\n角落里放着一个保温杯，杯身上印的字已经磨得快看不清了——只剩一个模糊的“加油”和一颗褪色的红心。\n这是一家曾经有人认真经营过的店。",
-    choices: [
-      { text: "回去找陈默", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(1) },
-      { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
-    ]
+    text: "你在店里转了转。收银台的抽屉开着，里面只有几张皱巴巴的外卖小票——日期停在2020年4月。\n\
+厨房的灶台上，排烟罩的边缘还挂着一层陈年油垢——是那种天天开火才会积出来的厚度。\n\
+角落里放着一个保温杯，杯身上印的字已经磨得快看不清了——只剩一个模糊的“加油”和一颗褪色的红心。\n这是一家曾经有人认真经营过的店。",
+    choices: function(vars) {
+      var label = vars._visit['金谊广场-吉祥馄饨-聊'] > 0 ? "回去找陈默" : "回去找他";
+      return [
+        { text: label, nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(1) },
+        { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
+      ];
+    }
   },
 
   // --- 地面停车场（陈默被困） ---
@@ -258,35 +286,24 @@ Object.assign(storyData, {
       var desc = "你走进地面停车场。这里紧邻小河，空气中弥漫着潮湿的水汽和一股淡淡的腥味。\n";
       desc += "车辆成片停着，有几辆的轮胎已经泡在水里——河水漫过了堤岸的低处。\n";
       desc += "丧尸比你能想到的要多。它们沿着河岸挤在一起，有些半个身子浸在水里，朝着河水的方向缓缓挪动，像是在朝圣。\n";
-      desc += "你突然明白了——它们被水吸引。河岸是它们的走廊。\n";
-      if (vars.dd == 1 && !vars._chenmoRescued) {
-        desc += "\n在停车场边缘，你看到了陈默。他被几只丧尸堵在了吉祥馄饨后门和一辆报废面包车之间的窄缝里——他一只手撑着墙，另一只手握着菜刀，正在找机会突围。";
-      }
+      desc += "它们被水吸引。河岸是它们的走廊。\n";
+      desc += "停车场尽头，吉祥馄饨的招牌歪歪斜斜地挂在墙上。卷帘门半拉着，里面透出一点微光。";
       desc += "\n" + describeWeather(vars);
       return desc;
     },
-    choices: function(vars) {
-      var choices = [];
-      if (vars.dd == 1 && !vars._chenmoRescued) {
-        choices.push({
-          text: "冲过去帮陈默解围",
-          nextScene: "金谊广场-停车场-救陈默",
-          effect: updateTime(2)
-        });
-      }
-      choices.push({ text: "搜刮车辆", nextScene: "金谊广场-停车场-搜刮", effect: updateTime(3) });
-      choices.push({ text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) });
-      choices.push({ text: "退回龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) });
-      return choices;
-    }
+    choices: [
+      { text: "搜刮车辆", nextScene: "金谊广场-停车场-搜刮", effect: updateTime(3) },
+      { text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) },
+      { text: "去龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) }
+    ]
   },
 
-  "金谊广场-停车场-救陈默": {
+  "金谊广场-吉祥馄饨-杀出去": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场-战斗.jpg */,
     onEnter: initMemoryGame(["红","蓝","绿","黄","白"], 7, { set: { _chenmoRescued: true }, add: { strength: -1 } }),
     text: function(vars) {
-      var desc = "你冲了过去。陈默看到你，愣了一下——然后迅速把菜刀换到左手，给你腾出了空间。\n";
-      desc += "丧尸们被你的动静吸引了，有几只从河边转过身来。集中注意力——看清它们的动作轨迹！";
+      var desc = "陈默——现在你知道他的名字了——把菜刀换到左手，给你腾出了空间。\n";
+      desc += "你们一起从吉祥馄饨的卷帘门里冲了出来。停车场的丧尸被你们的动静吸引，有几只从河边转过身来。\n集中注意力——看清它们的动作轨迹！";
       return desc;
     },
     choices: [
@@ -314,7 +331,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
-      { text: "继续", nextScene: "金谊广场-龙头区", effect: updateTime(2) }
+      { text: "继续", nextScene: "金谊广场-地面停车场", effect: updateTime(2) }
     ]
   },
 
@@ -327,7 +344,7 @@ Object.assign(storyData, {
       return "你在车辆之间穿梭，试着拉了几扇车门。大部分都锁着，只有一辆老款桑塔纳的后备箱没锁——里面只有半瓶冻成冰的矿泉水和一件发霉的雨衣。\n你抬头看了看河边的丧尸群——它们还在往水边挤。你不想在这里多待。";
     },
     choices: [
-      { text: "退回龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) }
+      { text: "去龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) }
     ]
   },
 
@@ -399,9 +416,11 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B2车库入口.jpg */,
     text: function(vars) {
       if (vars.hasTorch) {
-        return "你找到了地下车库的入口。坡道向下延伸，越往里越黑。\n你打开手电筒——光束劈开黑暗，照亮了前方的岔路：左边是货梯间的方向，右边似乎是通往更深处的车道，正前方是一扇半开的消防门。\n空气中有一股淡淡的甜味——像是劣质口香糖和铜钱混在一起的味道。";
+        return "你找到了地下车库的入口。坡道向下延伸，越往里越黑。\n\
+你打开手电筒——光束劈开黑暗，照亮了前方的岔路：左边是货梯间的方向，右边似乎是通往更深处的车道，正前方是一扇半开的消防门。";
       }
-      return "你找到了地下车库的入口。坡道向下延伸，里面一片漆黑——伸手不见五指。\n你只能摸着墙壁慢慢往前走。脚下的地面湿漉漉的，踩上去有细碎的回声。\n黑暗中你摸到了岔路——但完全看不清哪条通向哪里。\n空气中有一股淡淡的甜味，说不清来源。";
+      return "你找到了地下车库的入口。坡道向下延伸，里面一片漆黑——伸手不见五指。\n\
+你只能摸着墙壁慢慢往前走。脚下的地面湿漉漉的，踩上去有细碎的回声。\n黑暗中你摸到了岔路——但完全看不清哪条通向哪里。";
     },
     choices: function(vars) {
       if (vars.hasTorch) {
@@ -414,7 +433,7 @@ Object.assign(storyData, {
         return [
           { text: "???", nextScene: "金谊广场-B2货梯间", effect: updateTime(2) },
           { text: "???", nextScene: "金谊广场-B2摸到死路", effect: updateTime(1) },
-          { text: "???", nextScene: "金谊广场-B2摸到死路", effect: updateTime(1) }
+          { text: "退回地面", nextScene: "金谊广场地面入口", effect: updateTime(2) }
         ];
       }
     }
@@ -426,7 +445,8 @@ Object.assign(storyData, {
       if (vars.hasTorch) {
         return "你推开门，手电筒的光束照亮了前方——消防通道的楼梯被坍塌的水泥块堵得严严实实，钢筋从碎块里戳出来，像一丛扭曲的枯枝。灰尘在光束里缓缓飘浮。\n只能原路返回。";
       }
-      return "你摸到了一堵冰冷的混凝土墙——墙面粗糙，指尖划过时能感觉到裸露的钢筋茬。顺着墙摸了一圈，尽头是一堆坍塌的碎石，手掌按上去，细碎的沙粒簌簌往下掉。\n死路。空气中那股甜味似乎更浓了。你花了一些时间才摸回车库入口。";
+      return "你摸到了一堵冰冷的混凝土墙——墙面粗糙，指尖划过时能感觉到裸露的钢筋茬。顺着墙摸了一圈，尽头是一堆坍塌的碎石，手掌按上去，细碎的沙粒簌簌往下掉。\n\
+死路。空气中那股甜味似乎更浓了。你花了一些时间才摸回车库入口。";
     },
     choices: [
       { text: "返回", nextScene: "金谊广场-B2车库入口", effect: updateTime(1) }
@@ -437,7 +457,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B2货梯间.jpg */,
     text: function(vars) {
       var desc = "你找到了货梯间。货梯的门开着，轿厢里的应急灯还亮着——发出微弱的黄光。\n";
-      desc += "空气中那股甜腻的味道更浓了。你注意到货梯间角落的通风口附近，有一层淡淡的白雾在缓缓飘动。\n";
+      desc += "你注意到货梯间角落的通风口附近，有一层淡淡的白雾在缓缓飘动。\n";
       if (vars.hasGasMask && vars.maskRemainingUses > 0) {
         desc += "你戴上了防毒面具——活性炭滤层隔绝了那股甜味，呼吸变得安全了。\n货梯的按钮还亮着，似乎还能用。";
       } else {
@@ -810,9 +830,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/4F后厨.jpg */,
     text: function(vars) {
       var desc = "你推开松月楼后厨的门。灶台上还放着几笼没蒸完的包子，已经发霉长毛了。\n";
-      desc += "水槽里积着半池浑浊的水，表面漂着一层油光。你拧开水龙头——水还在流，但有一股说不清的甜腥味。\n";
+      desc += "水槽里积着半池浑浊的水，表面漂着一层油光。你拧开水龙头，哗啦哗啦。\n";
       if (vars.hasBottle && vars.bottleWater == 0) {
-        desc += "\n你可以用空水瓶在这里接水——但你不太确定这水能不能喝。";
+        desc += "\n你可以用空水瓶在这里接水。";
       }
       return desc;
     },
@@ -820,7 +840,7 @@ Object.assign(storyData, {
       var choices = [];
       if (vars.hasBottle && vars.bottleWater == 0) {
         choices.push({
-          text: "接水（警告：水可能有毒）",
+          text: "接水",
           nextScene: "金谊广场-4F",
           effect: { set: { bottleWater: 1 }, add: { mercuryLoad: 10 } }
         });
@@ -910,7 +930,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "退回地铁站",
+        text: "去地铁站",
         nextScene: "金谊广场-地铁站厅",
         effect: updateTime(2)
       }
@@ -969,7 +989,7 @@ Object.assign(storyData, {
   "金谊广场-B1童涵春堂": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1童涵春堂.jpg */,
     text: function(vars) {
-      var desc = "你推开童涵春堂的玻璃门。药房里弥漫着中药的苦香味——和外面的甜腻气味形成了奇怪的对比。\n";
+      var desc = "你推开童涵春堂的玻璃门。药房里弥漫着中药的苦香味。\n";
       desc += "中药柜的抽屉被拉开了一大半，草药撒了一地。西药区的货架倒是整齐——大概没人觉得中药铺里有西药。\n";
       if (!vars.hasMercuryPill) {
         desc += "\n你在柜台后面的一个小抽屉里发现了一个白色塑料瓶。没有标签，瓶身上用记号笔写着一个模糊的化学符号——Hg。\n里面装着几十粒淡黄色的药丸，没有任何说明。";
@@ -998,7 +1018,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "你走进B2地下车库。这里比上面更暗，只有几盏应急灯在远处的柱子上发出微弱的黄光。\n";
       desc += "车库里的空气很闷，带着一股说不清的甜腻味——和货梯间闻到的一样。\n";
-      desc += "地面上散落着几具丧尸的尸体——它们的皮肤不是普通的灰白，而是暗沉的黑色，像是被什么东西从内部染过。\n";
+      desc += "地面上散落着几具丧尸的尸体——它们的皮肤不是普通的灰白，而是暗沉的黑色。\n";
       desc += "这些丧尸不是被杀的——它们是被毒气熏死的。这座车库里最大的威胁不是丧尸，是空气本身。\n";
       if (!vars.hasGasMask || vars.maskRemainingUses <= 0) {
         desc += "\n你感到喉咙发紧，视野开始模糊——那股甜味越来越浓了。";
@@ -1028,11 +1048,12 @@ Object.assign(storyData, {
 
   "金谊广场-B2-搜刮": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B2地下车库.jpg */,
-    text: "你戴紧面具，在车库里搜索。大部分车的车门都锁着，但有一辆SUV的后备箱没关——里面放着一个急救箱和一个备用轮胎。\n急救箱里有绷带、碘伏和几片止痛药。\n你在车库的角落里还看到一只黑皮丧尸——它靠在柱子上，一动不动。它的皮肤像干涸的沥青一样漆黑发亮，在应急灯下泛着诡异的光泽。\n它已经死了——被这座车库里无孔不入的毒气熏死的。",
+    text: "你戴紧面具，在车库里搜索。大部分车的车门都锁着，但有一辆SUV的后备箱没关——里面放着一个急救箱和一个备用轮胎。\n\
+急救箱里有绷带、碘伏和几片止痛药。\n你在车库的角落里还看到一只黑皮丧尸——它靠在柱子上，一动不动。它的皮肤像干涸的沥青一样漆黑发亮，在应急灯下泛着诡异的光泽。\n\
+它已经死了——被这座车库里无孔不入的毒气熏死的。",
     choices: [
       { text: "继续搜索其他车辆", nextScene: "金谊广场-B2-搜刮-搜完", effect: updateTime(3) },
-      { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(1) },
-      { text: "退回", nextScene: "金谊广场-1F 门面层", effect: updateTime(2) }
+      { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(1) }
     ]
   },
 
@@ -1047,8 +1068,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "继续搜索", nextScene: "金谊广场-B2-搜刮-搜完", effect: updateTime(3) },
-      { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(1) },
-      { text: "退回", nextScene: "金谊广场-1F 门面层", effect: updateTime(2) }
+      { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(1) }
     ]
   },
 
