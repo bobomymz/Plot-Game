@@ -97,7 +97,7 @@ Object.assign(storyData, {
   },
 
   "五金店-工具区": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStoreInside.png */,
+    image: "images/小区周边/五金店/丧尸扑下来.jpg",
     qte: {
       timeout: 10000,
       onTimeOut: "结局-五金店-迅捷"
