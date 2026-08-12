@@ -224,6 +224,13 @@ html, body {
   margin: 0 auto;
 }
 
+/* 结局屏的"— 剧 终 —"占满一行，让按钮换到下一行 */
+#choices-area p.end-msg {
+  flex-basis: 100%;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
 /* ========== 重新开始按钮（固定右上角） ========== */
 #status-bar {
   position: fixed;

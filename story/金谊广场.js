@@ -19,7 +19,12 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      var desc = "你来到了金谊广场的龙头区。这里和新达汇不一样——头顶有挑高的玻璃顶棚，阳光从缝隙里漏下来，在地上投出斑驳的光影。风是通的，穿过架空的天桥和半开放的走廊，吹得地上的碎纸屑轻轻打转。\n";
+      var desc = "你来到了金谊广场的龙头区。";
+      if (vars._visit['新达汇-喷泉广场'] > 0) {
+        desc += "这里和新达汇不一样——头顶有挑高的玻璃顶棚，阳光从缝隙里漏下来，在地上投出斑驳的光影。风是通的，穿过架空的天桥和半开放的走廊，吹得地上的碎纸屑轻轻打转。\n";
+      } else {
+        desc += "头顶有挑高的玻璃顶棚，阳光从缝隙里漏下来，在地上投出斑驳的光影。风是通的，穿过架空的天桥和半开放的走廊，吹得地上的碎纸屑轻轻打转。\n";
+      }
       desc += "远远能听到小河流水的声音——那条河把龙头区和商场主体隔开了。河对岸的商场大楼沉默地矗立着，玻璃幕墙反射着苍白的天光。";
       desc += "\n" + describeWeather(vars);
       return desc;
@@ -351,7 +356,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "绕到地下车库入口",
+        text: "左转去地下车库入口",
         nextScene: "金谊广场-B2车库入口",
         effect: updateTime(3)
       },
@@ -398,9 +403,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B2车库入口.jpg */,
     text: function(vars) {
       if (vars.hasTorch) {
-        return "你绕到商场侧面，找到了地下车库的入口。坡道向下延伸，越往里越黑。\n你打开手电筒——光束劈开黑暗，照亮了前方的岔路：左边是货梯间的方向，右边似乎是通往更深处的车道，正前方是一扇半开的消防门。\n空气中有一股淡淡的甜味——像是劣质口香糖和铜钱混在一起的味道。";
+        return "你找到了地下车库的入口。坡道向下延伸，越往里越黑。\n你打开手电筒——光束劈开黑暗，照亮了前方的岔路：左边是货梯间的方向，右边似乎是通往更深处的车道，正前方是一扇半开的消防门。\n空气中有一股淡淡的甜味——像是劣质口香糖和铜钱混在一起的味道。";
       }
-      return "你绕到商场侧面，找到了地下车库的入口。坡道向下延伸，里面一片漆黑——伸手不见五指。\n你只能摸着墙壁慢慢往前走。脚下的地面湿漉漉的，踩上去有细碎的回声。\n黑暗中你摸到了岔路——但完全看不清哪条通向哪里。\n空气中有一股淡淡的甜味，说不清来源。";
+      return "你找到了地下车库的入口。坡道向下延伸，里面一片漆黑——伸手不见五指。\n你只能摸着墙壁慢慢往前走。脚下的地面湿漉漉的，踩上去有细碎的回声。\n黑暗中你摸到了岔路——但完全看不清哪条通向哪里。\n空气中有一股淡淡的甜味，说不清来源。";
     },
     choices: function(vars) {
       if (vars.hasTorch) {
@@ -529,24 +534,30 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "你走进肯德基。餐厅里一片狼藉——托盘和纸杯散落一地，点餐屏幕早就黑了。冰柜的门开着，化冻的水淌了一地，混着打翻的番茄酱，看起来像稀释的血。\n";
       desc += "你推开后厨的门。炸锅里的油已经凝固成一层白膜。\n";
-      if (vars._visit['金谊广场-1F肯德基'] > 1) {
+      if (vars._visit['金谊广场-1F肯德基-吃鸡块'] > 0) {
         desc += "架子上只剩几包番茄酱——鸡块已经吃完了。光吃番茄酱可撑不了多久。";
       } else {
         desc += "架子上还有几包密封的番茄酱和两盒未开封的鸡块——冷冻的，还没坏。";
-        if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed && vars._visit['金谊广场-B1奥乐齐'] == null) {
-          desc += "\n这些食物够长廊那些幸存者撑几天了。不过你答应他们的是奥乐齐的东西——最好还是去B1拿。";
-        }
       }
       return desc;
     },
     choices: function(vars) {
       var choices = [];
-      if (vars._visit['金谊广场-1F肯德基'] <= 1) {
-        choices.push({ text: "吃点鸡块补充体力", nextScene: "金谊广场-1F肯德基", effect: updateTime(3, { add: { strength: 1 } }) });
+      if (!vars._visit['金谊广场-1F肯德基-吃鸡块']) {
+        choices.push({ text: "吃点鸡块补充体力", nextScene: "金谊广场-1F肯德基-吃鸡块", effect: updateTime(3) });
       }
       choices.push({ text: "离开肯德基", nextScene: "金谊广场-1F 门面层", effect: updateTime(1) });
       return choices;
     }
+  },
+
+  "金谊广场-1F肯德基-吃鸡块": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/1F肯德基-吃鸡块.jpg */,
+    onEnter: { add: { strength: 1 } },
+    text: "你拆开一盒鸡块，撕开番茄酱的小包。\n冷掉了，但还能吃。你坐在油腻的地板上，把两盒鸡块一扫而光。\n胃里终于有了点实在的东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "金谊广场-1F肯德基", effect: updateTime(1) }
+    ]
   },
 
   // --- 2F 服装层 ---
@@ -583,8 +594,25 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续休息",
-        nextScene: "金谊广场-2F-休息",
-        effect: updateTime(30, { add: { strength: 1 }, set: { _travelMinutes: 0 } })
+        nextScene: "金谊广场-2F-休息-休息完",
+        effect: updateTime(30)
+      },
+      {
+        text: "起来继续探索",
+        nextScene: "金谊广场-2F"
+      }
+    ]
+  },
+
+  "金谊广场-2F-休息-休息完": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/2F家具店.jpg */,
+    onEnter: { add: { strength: 1 }, set: { _travelMinutes: 0 } },
+    text: "你在沙发上闭着眼睛躺了很久。不记得自己什么时候睡着的——也许只是一小会儿。\n当你睁开眼时，窗外透进来的光已经变了颜色。你活动了一下肩膀，站起来。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      {
+        text: "继续休息",
+        nextScene: "金谊广场-2F-休息-休息完",
+        effect: updateTime(30)
       },
       {
         text: "起来继续探索",
@@ -860,7 +888,11 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1心谊如意街.jpg */,
     text: function(vars) {
       var desc = "你走下楼梯，来到B1心谊如意街。这是一条地下商业街，两侧是各种店铺——京东电器、肯德基、松月楼……\n";
-      desc += "走廊尽头是通往三林路地铁站的通道——你刚才就是从那边过来的。\n";
+      if (vars._lastScene === '金谊广场-地铁站厅' || vars._lastScene === '金谊广场-地铁站厅-失败') {
+        desc += "走廊尽头是通往三林路地铁站的通道——你刚才就是从那边过来的。\n";
+      } else {
+        desc += "走廊尽头是通往三林路地铁站的通道，黑洞洞的，偶尔传出丧尸的喉音。\n";
+      }
       desc += "走廊里散落着一些被踩碎的货物和几滩干涸的暗色液体。远处传来丧尸的喉音——它们在黑暗中缓慢移动，像潮水一样沿着走廊的潮湿侧涌动。\n";
       desc += "前方左手边是奥乐齐大超市，右手边是童涵春堂药房。";
       return desc;
@@ -920,29 +952,21 @@ Object.assign(storyData, {
 
   "金谊广场-B1奥乐齐-搜刮": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
-    text: function(vars) {
-      var desc = "你在货架之间穿行，挑了一些还能吃的东西——几包压缩饼干、一罐午餐肉、一瓶矿泉水。\n你坐在收银台旁边吃了起来。在这末世里，能有东西吃已经是一种奢侈了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
-      if (vars._visit['金谊广场-B1奥乐齐-搜刮'] >= 3) {
-        desc += "\n你在货架间又转了一圈——能直接吃的东西已经拿得差不多了。剩下的不是需要烹饪的生食，就是已经开封变质的。";
-      }
-      return desc;
-    },
-    choices: function(vars) {
-      var choices = [];
-      if (vars._visit['金谊广场-B1奥乐齐-搜刮'] <= 3) {
-        choices.push({
-          text: "继续搜刮",
-          nextScene: "金谊广场-B1奥乐齐-搜刮",
-          effect: updateTime(3, { add: { strength: 1 } })
-        });
-      }
-      choices.push({
-        text: "回到超市门口",
-        nextScene: "金谊广场-B1奥乐齐",
-        effect: updateTime(1)
-      });
-      return choices;
-    }
+    text: "你走进货架之间。奥乐齐的货物还算齐全——罐头区几乎没被动过，饮料区还有整箱的矿泉水，零食区的薯片和饼干撒了一地但还有整袋的。\n你挑了一些还能直接吃的东西——几包压缩饼干、一罐午餐肉、一瓶矿泉水。",
+    choices: [
+      { text: "坐下来吃点东西", nextScene: "金谊广场-B1奥乐齐-搜刮-吃完", effect: updateTime(1) },
+      { text: "直接带点东西走", nextScene: "金谊广场-B1奥乐齐", effect: updateTime(1) }
+    ]
+  },
+
+  "金谊广场-B1奥乐齐-搜刮-吃完": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
+    onEnter: { add: { strength: 1 } },
+    text: "你坐在收银台旁边，打开压缩饼干和午餐肉，狼吞虎咽地吃了起来。在这末世里，能有东西吃已经是一种奢侈了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续搜刮", nextScene: "金谊广场-B1奥乐齐-搜刮", effect: updateTime(3) },
+      { text: "回到超市门口", nextScene: "金谊广场-B1奥乐齐", effect: updateTime(1) }
+    ]
   },
 
   // --- B1 童涵春堂药房 ---
@@ -1010,7 +1034,23 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B2地下车库.jpg */,
     text: "你戴紧面具，在车库里搜索。大部分车的车门都锁着，但有一辆SUV的后备箱没关——里面放着一个急救箱和一个备用轮胎。\n急救箱里有绷带、碘伏和几片止痛药。\n你在车库的角落里还看到一只黑皮丧尸——它靠在柱子上，一动不动。它的皮肤像干涸的沥青一样漆黑发亮，在应急灯下泛着诡异的光泽。\n它已经死了——被这座车库里无孔不入的毒气熏死的。",
     choices: [
-      { text: "继续搜索", nextScene: "金谊广场-B2-搜刮", effect: updateTime(3, { add: { maskRemainingUses: -1 } }) },
+      { text: "继续搜索其他车辆", nextScene: "金谊广场-B2-搜刮-搜完", effect: updateTime(3) },
+      { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(1) },
+      { text: "退回", nextScene: "金谊广场-1F 门面层", effect: updateTime(2) }
+    ]
+  },
+
+  "金谊广场-B2-搜刮-搜完": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/B2地下车库.jpg */,
+    onEnter: { add: { maskRemainingUses: -1 } },
+    text: function(vars) {
+      if (vars.maskRemainingUses <= 0) {
+        return "你又撬开了几辆车的车门，搜刮了一些杂物。\n面罩的滤层开始发涩——活性炭快到极限了。你得赶紧离开这里。\n<span style='color: #ff4444;'>【警告】防毒面具滤层已耗尽。</span>";
+      }
+      return "你又撬开了几辆车的车门，搜刮了一些杂物。\n防毒面具的滤层微微发涩——还能撑一会儿，但别在这里待太久。";
+    },
+    choices: [
+      { text: "继续搜索", nextScene: "金谊广场-B2-搜刮-搜完", effect: updateTime(3) },
       { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(1) },
       { text: "退回", nextScene: "金谊广场-1F 门面层", effect: updateTime(2) }
     ]
