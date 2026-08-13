@@ -6,13 +6,10 @@ Object.assign(storyData, {
 
   // ==================== 五金店入口（三林路） ====================
   "五金店": {
-    image: function(vars) {
-        var f = timeImage({
-          morning: "images/小区周边/五金店/门口.jpg",
-          night: "images/小区周边/五金店/门口-night.jpg"
-        });
-        return f(vars);
-    }, /* TODO: images/小区周边/hardwareStore.png */
+    image: timeImage({
+      morning: "images/小区周边/五金店/门口.jpg",
+      night: "images/小区周边/五金店/门口-night.jpg"
+    }),
     onEnter: function(vars) {
       vars.showRain = true;
       vars.currentPlace = "三林路";
@@ -134,9 +131,13 @@ Object.assign(storyData, {
 
   // ==================== 侧窗路线 ====================
   "五金店-侧窗": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStoreSide.png */,
+    image: timeImage({
+      morning: "images/小区周边/五金店/侧窗.jpg",
+      night: "images/小区周边/五金店/侧窗-night.jpg"
+    }),
     onEnter: updateTime(3), // 花3分钟绕到侧面+翻窗
-    text: "你绕到五金店侧面。那扇破窗开在离地面大约一米五的高度，窗框上还残留着几片碎玻璃。里面看起来是工具区——墙上挂着各种工具，地上堆着一些纸箱。\n你小心地爬了进去，没有发出太大声音。你安全地落在了工具区的地面上。",
+    text: "你绕到五金店侧面。那扇破窗开在离地面大约一米五的高度，窗框上还残留着几片碎玻璃。里面看起来是工具区——墙上挂着各种工具，地上堆着一些纸箱。\n\
+  你小心地爬了进去，没有发出太大声音。你安全地落在了工具区的地面上。",
     choices: [
       {
         text: "先看看墙上挂着什么工具",
