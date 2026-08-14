@@ -552,7 +552,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "联华超市-仓库": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/supermarketWarehouse.png */,
+    image: "images/小区周边/联华超市/仓库.jpg" /* TODO: images/小区周边/supermarketWarehouse.png */,
     text: function(vars) {
       var desc = "仓库里堆着几箱饮料和一些滞销的零食。角落里有一扇活板门。";
       if (vars._supermarketCompromised) desc += "铁栓已经被撬开了，门板歪在一边——下面的地下室已经暴露了，不再安全。";
