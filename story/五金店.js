@@ -16,7 +16,10 @@ Object.assign(storyData, {
       vars.currentPos = "五金店";
       applyWeatherDrain(vars);
     },
-    text: function(vars) { return "你来到三林路上那家老五金店。卷帘门半开着，里面黑漆漆的，看不清有什么。门缝里传出隐约的风声，像是空气在空旷的货架间穿行。\n你注意到侧面的窗户破了一扇，后巷也能绕过去。" + describeWeather(vars); },
+    text: function(vars) { 
+      if(vars._visit["五金店"] > 1) return "你又来到了五金店门口。" + describeWeather(vars);
+      return "你来到三林路上那家老五金店。卷帘门半开着，里面黑漆漆的，看不清有什么。门缝里传出隐约的风声，像是空气在空旷的货架间穿行。\n你注意到侧面的窗户破了一扇，后巷也能绕过去。" + describeWeather(vars);
+     },
     choices: [
       {
         text: "从正门钻进去",
@@ -187,18 +190,21 @@ Object.assign(storyData, {
       night: "images/小区周边/五金店/后巷-night.jpg"
     }),
     onEnter: updateTime(2, { set: { showRain: true } }), // 花2分钟绕到后巷
-    text: "你绕到五金店后面的小巷。后巷堆满了废弃的纸箱和空油桶，地面上有一层黏糊糊的黑色油渍。后门是一扇厚重的铁皮门，锁着——但锁看起来不太结实。\n\
+    text: "你绕到五金店后面的小巷。后巷堆满了废弃的纸箱和空油桶，地面上有一层黏糊糊的黑色油渍。这里有两扇门，都是厚重的铁皮门，右边那扇锁着——但锁看起来不太结实，另一扇没有锁。\n\
 铁皮门的门缝里透出一丝微弱的光线——里面有人？还是有别的什么东西？",
     choices: [
       {
-        text: "掏出铁棍撬锁",
-        nextScene: "五金店-后巷-撬锁",
-        condition: "hasIronPipe",
-        elseScene: "五金店-后巷-偷看"
+        showCondition: "hasIronPipe",
+        text: "掏出铁棍撬右门",
+        nextScene: "五金店-后巷-撬锁"
       },
       {
-        text: "趴下来从门缝里往里看",
-        nextScene: "五金店-后巷-偷看"
+        text: "趴下来从右门里往里看",
+        nextScene: "五金店-后巷-偷看右门"
+      },
+      {
+        text: "趴下来从左门里往里看",
+        nextScene: "五金店-后巷-偷看左门"
       },
       {
         text: "算了，回到店门口",
@@ -207,11 +213,12 @@ Object.assign(storyData, {
     ]
   },
 
+
   "五金店-后巷-撬锁": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStoreBack.png */,
+    image: "images/小区周边/五金店/后门的丧尸.jpg",
     onEnter: updateTime(5), // 花5分钟撬锁
     text: "你把铁棍插进门缝，用力一撬。锁头发出一声闷响，弹开了。\n\
-你拉开铁皮门——门后站着一个人。一个女人。不，一只穿着店员围裙的女丧尸，就贴在门后站着，像是早就知道你会从这里进来。\n\
+你推开铁皮门——门后站着一个人。一个女人。不，一只穿着店员围裙的女丧尸，就贴在门后站着，像是早就知道你会从这里进来。\n\
 它张开了嘴。你闻到了一股熟悉的、甜腻的气味——从它的嘴里呼出的气体。",
     choices: [
       {
@@ -226,21 +233,42 @@ Object.assign(storyData, {
     text: "它离你太近了——不到一个手臂的距离。你屏住呼吸想要后退，但它伸出双臂抱住了你，像一个僵硬而冰冷的拥抱。\n它的嘴贴着你的脸，呼出的气体直接喷在你的口鼻上。你只撑了不到五秒，意识就像被关掉的灯一样熄灭了。\n—— 结局：五金店开门杀 ——"
   },
 
-  "五金店-后巷-偷看": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStoreBack.png */,
-    onEnter: updateTime(2), // 花2分钟趴下+调整角度偷看
-    text: "你趴下身子，把眼睛凑到门缝处。\n一开始你什么都看不到——太暗了。然后你看到里面有什么东西在动，一个模糊的轮廓正在店里缓缓移动。\n你调整了一下角度，想看清楚——然后你看到了一只眼睛。就在门缝的另一侧，也在看着你。\n你僵住了。它也僵住了。\n然后门被猛地拉开了。",
+  "五金店-后巷-偷看左门": {
+    image: "images/placeholder.png",
+    text: "里面一片漆黑，什么也看不见",
     choices: [
       {
-        text: "快跑——但已经来不及了",
+        text: "看看另一扇门",
+        nextScene: "五金店-后巷-偷看右门"
+      },
+      {
+        text: "回到正门",
+        nextScene: "五金店"
+      }
+    ]
+  },
+
+  "五金店-后巷-偷看右门": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStoreBack.png */,
+    onEnter: updateTime(2), // 花2分钟趴下+调整角度偷看
+    text: function(vars) {
+      let basicText = "";
+      if(vars._lastScene == "五金店-后巷-偷看左门") basicText = "你转身走到右边那扇门，门确实打不开。";
+      basicText += "你趴下身子，把眼睛凑到门缝处。\n一开始你什么都看不到——太暗了。然后你看到里面有什么东西在动，一个模糊的轮廓正在门后面缓缓移动。\n\
+      你调整了一下角度，想看清楚——然后你看到了一只眼睛。就在门缝的另一侧，也在看着你。\n你僵住了。它也僵住了。\n然后门被猛地拉开了。"; 
+    },
+    choices: [
+      {
+        text: "快跑",
         nextScene: "结局-五金店-对视"
       }
     ]
   },
 
   "结局-五金店-对视": {
-    image: "images/zombieKnockYouDown.png",
-    text: "一只手从门后猛地伸出来，抓住了你的衣领，把你整个人拽了进去。你摔在冰冷的水泥地上，翻滚了两圈才停下来。当你抬起头时，它已经站在了你面前——那只店员丧尸，围裙上沾满了机油和暗褐色的污渍。\n它的速度快得惊人。你听到的最后声音是你自己的颈椎断裂的声音。\n—— 结局：五金店对视 ——"
+    image: "images/小区周边/五金店/丧尸的俯视.jpg",
+    text: "一只手从门后猛地伸出来，抓住了你的衣领，把你整个人拽了进去。你摔在冰冷的水泥地上，翻滚了两圈才停下来。当你抬起头时，它已经站在了你面前——那只丧尸，围裙上沾满了机油和暗褐色的污渍。\n\
+它的速度快得惊人。你听到的最后声音是你自己的颈椎断裂的声音。\n—— 结局：五金店对视 ——"
   },
 
   // ==================== 联华超市地下室 → 暗道 → 五金店仓库（唯一生路） ====================
