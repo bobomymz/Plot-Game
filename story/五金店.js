@@ -325,7 +325,12 @@ Object.assign(storyData, {
   },
 
   "五金店-暗道-仓库": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStoreStorage.png */,
+    image: function(vars) {
+      if(vars.hasLubricant) {
+        return "images/小区周边/五金店/仓库.jpg";
+      }
+      return "images/小区周边/五金店/仓库-没有润滑油.jpg";
+    },
     onEnter: function(vars) {
       vars.positionAfterOperation = "五金店-暗道-仓库";
       return updateTime(3, { add: { strength: -1 } })(vars);
@@ -345,7 +350,7 @@ WD-40 防锈润滑剂。";
         text: "拿上润滑油",
         condition: "itemCount < bagVolume && !hasLubricant",
         nextScene: "五金店-暗道-返回",
-        effect: { set: { hasLubricant: true, _supermarketCompromised: true }, add: { itemCount: 1 } },
+        effect: { set: { hasLubricant: true}, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
@@ -357,7 +362,7 @@ WD-40 防锈润滑剂。";
   },
 
   "五金店-暗道-返回": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/supermarketBasement.png */,
+    image: "images/小区周边/联华超市/地下室.jpg" /* TODO: images/小区周边/supermarketBasement.png */,
     onEnter: updateTime(4, { add: { strength: -1 } }), // 花4分钟原路返回，来回一趟体力消耗不小
     text: function(vars) {
       let basicDes = "你原路返回，穿过暗道，爬回联华超市的地下室。铁栅栏门的锁环还断在那里——你没有把它修好，也不可能修好。";
