@@ -273,7 +273,7 @@ Object.assign(storyData, {
 
   // ==================== 联华超市地下室 → 暗道 → 五金店仓库（唯一生路） ====================
   "联华超市-地下室-撬锁": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/supermarketBasement.png */,
+    image: "images/小区周边/五金店/地下室.png",
     onEnter: updateTime(5, { add: { strength: -1 } }), // 花5分钟撬铁栅栏门，很费体力
     text: function(vars) {
       var breakChance = 0.5 - (vars.strength - 5) * 0.05;
@@ -299,38 +299,29 @@ Object.assign(storyData, {
   },
 
   "五金店-暗道": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/darkPassage.png */,
+    image: "images/小区周边/五金店/暗道.jpg",
     onEnter: updateTime(1), // 花1分钟走暗道+观察岔路
     text: "你钻过铁栅栏门，进入一条狭窄的房间。墙壁是粗糙的水泥，头顶有管道穿过，偶尔传来水管里咕噜噜的水声。脚下能踩到细碎的砂石，发出沙沙的声响。\n\
 前方出现了一个岔路。右边的通道更宽一些，能隐约听到风声——好像通向外面。左边的楼梯不知道通向什么房间。",
     choices: [
       {
         text: "走右边——看看通向哪里",
-        nextScene: "五金店-暗道-地铁隧道"
+        nextScene: "结局-五金店-地铁"
       },
       {
-        text: "走左边——钻进那个房间",
+        text: "走前面——上楼梯",
         nextScene: "五金店-暗道-仓库"
       }
     ]
   },
 
-  "五金店-暗道-地铁隧道": {
-    image: "images/placeholder.png" /* TODO: images/metro/trainTunnel.png */,
-    onEnter: updateTime(5), // 花5分钟走到地铁隧道
-    text: "你沿着左边的通道走了一段。通道越来越宽，墙上的管道越来越粗。空气变得潮湿而阴冷。\n\
-前方出现了亮光——不是日光，是一种昏黄的灯光。你走过去，发现通道尽头是一个检修口，通向一条宽阔的隧道。轨道。\n是地铁隧道。\n你刚刚意识到这一点时，隧道深处传来一阵越来越响的轰鸣声。地面开始震动。一束刺眼的灯光从黑暗的隧道深处直射而来。\n你转身想跑——但来不及了。",
-    choices: [
-      {
-        text: "……",
-        nextScene: "结局-五金店-地铁"
-      }
-    ]
-  },
-
   "结局-五金店-地铁": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/tunnelCrash.png */,
-    text: "列车以不可阻挡的速度碾过。在最后的一瞬间，你想到的是——这条线路居然还在运行？\n—— 结局：五金店地铁 ——"
+    image: "images/小区周边/五金店/地铁撞来.png",
+    onEnter: updateTime(5), // 花5分钟走到地铁隧道
+    text: "你沿着右边的通道走了一段。通道越来越宽，墙上的管道越来越粗。空气变得潮湿而阴冷。\n\
+前方出现了亮光——不是日光，是一种昏黄的灯光。你走过去，发现通道尽头是一个检修口，通向一条宽阔的隧道。轨道。\n是地铁隧道。\n\
+你刚刚意识到这一点时，隧道深处传来一阵越来越响的轰鸣声。地面开始震动。一束刺眼的灯光从黑暗的隧道深处直射而来。\n你转身想跑——但来不及了。\n\
+列车以不可阻挡的速度碾过。在最后的一瞬间，你想到的是——这条线路居然还在运行？\n—— 结局：五金店地铁 ——"
   },
 
   "五金店-暗道-仓库": {
