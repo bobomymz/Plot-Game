@@ -12,6 +12,15 @@ Object.assign(storyData, {
         });
         return f(vars);
       }
+      else if (vars.weather === "阴") {
+        var f = timeImage({
+          morning: "images/home/小区东门-阴天.jpg",
+          evening: "images/home/小区东门-阴天-evening.jpg",
+          night: "images/home/小区东门-阴天-night.png", // 晚上分不清晴天和阴天，索性复用了
+          midnight: "images/home/小区东门-midnight.png"// 晚上分不清晴天和阴天，索性复用了
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/home/小区东门.png",
         evening: "images/home/小区东门-evening.png",
@@ -66,9 +75,18 @@ Object.assign(storyData, {
         });
         return f(vars);
       }
+      else if (vars.weather === "阴") {
+        var f = timeImage({
+          morning: "images/home/小区西门-阴天.jpg",
+          evening: "images/home/小区西门-阴天-evening.jpg",
+          night: "images/home/小区西门-night.png", // 晚上分不清晴天和阴天，索性复用了
+          midnight: "images/home/小区西门-midnight.png" // 晚上分不清晴天和阴天，索性复用了
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/home/小区西门.png",
-        evening: "images/home/小区西门-evening.png",
+        evening: "images/home/小区西门-evening.jpg",
         night: "images/home/小区西门-night.png",
         midnight: "images/home/小区西门-midnight.png"
       });
