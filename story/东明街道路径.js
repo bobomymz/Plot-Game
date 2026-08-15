@@ -88,7 +88,7 @@ Object.assign(storyData, {
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/小区周边/十字路口.png",
+        morning: "images/小区周边/十字路口.jpg",
         evening: "images/小区周边/十字路口-evening.png",
         night: "images/小区周边/十字路口-night.png",
         midnight: "images/小区周边/十字路口-midnight.png"
