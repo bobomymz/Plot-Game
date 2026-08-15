@@ -1729,16 +1729,21 @@ Object.assign(storyData, {
   },
 
   "物业楼": {
-    image: "images/placeholder.png",
+    image: function(vars) {
+      if (vars.dd == 1 && vars.hh < 12) {
+        return "images/home/物业楼-有高锦睿.jpg";
+      }
+      return "images/home/物业楼.jpg";
+    },
     onEnter: { set: { currentPos: "物业楼" } },
     text: function(vars) {
       if (vars.dd == 1 && vars.hh < 12) {
         return "物业楼不大，靠墙立着几排档案柜，中间一张旧办公桌上摊着半张小区平面图，被茶杯印子洇了一圈褐色的环。空气里混着机油和自行车链条的金属味。\n\
 一个锅盖头少年正蹲在地上捣鼓一辆红色山地车——变速器拆了一半，零件散了一地。他嘴里咬着一根不知道从哪找到的扎带，抬头看到你，愣了一秒，然后把扎带从嘴里拿出来：\n\
-<em>“我靠，你还没死啊？”</em>";
+“我靠，你还没死啊？“";
       }
       return "物业楼里空荡荡的。办公桌还在，半张小区平面图已经被风吹到了地上。地上散落着几个拧废的螺丝和半截断掉的自行车链条。\n\
-墙上有人用记号笔歪歪扭扭写了一行字：\n<em>去南边了——高 6/29</em>";
+墙上有人用记号笔歪歪扭扭写了一行字：\n<em>高某到此一游。下一站，新达汇。</em>";
     },
     choices: [
       {
@@ -1800,7 +1805,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿": {
-    image: "images/placeholder.png",
+    image: "images/home/物业楼和高锦睿聊天.png",
     onEnter: { set: { currentPos: "物业楼" } },
     text: "高锦睿——你的初中同桌，万年不变的锅盖头，深色卫衣配运动短裤，脚上一双标签掉了一半的假Yeezy。他跟以前一模一样，好像外面世界末日了也跟他没什么关系。\n\
 他正在修他的红色美利达山地车，变速器卡了好几天了。旁边地上放着一个鼓鼓的背包，拉链半开着，能看到里面塞了半包辣条和一台大疆无人机。",
@@ -1826,7 +1831,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿-聊": {
-    image: "images/placeholder.png",
+    image: "images/物业楼和高锦睿聊天.png",
     text: function(vars) {
       var desc = "“在家待了一天一夜，坐不住了——”他边拧螺丝边说，头也没抬。“反正待着也是待着，出去看看外面成啥样了。”\n\
 他告诉你他爸妈6/28出门后没回来。说这话的时候他手上的活没停，语气轻得像在说昨天食堂的饭不好吃。\n\
