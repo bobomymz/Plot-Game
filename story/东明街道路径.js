@@ -168,9 +168,13 @@ Object.assign(storyData, {
   "三林路": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
+        var f = timeImage({
+          morning: "images/placeholder.png"
         });
         return f(vars);
+      }
+      if (vars.weather === "阴") {
+        return "images/placeholder.png";
       }
       return "images/placeholder.png";
     }, /* TODO: images/小区周边/三林路.png */

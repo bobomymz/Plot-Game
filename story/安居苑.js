@@ -1003,11 +1003,26 @@ Object.assign(storyData, {
   "安居苑前门": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/安居苑/前门-雨.jpg",
+          night: "images/安居苑/前门-雨-night.jpg"
+        });
         return f(vars);
       }
-      return "images/placeholder.png";
+      if (vars.weather === "阴") {
+        var f = timeImage({
+          morning: "images/安居苑/前门-阴.jpg",
+          night: "images/安居苑/前门-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安居苑/前门.jpg",
+        evening: "images/安居苑/前门-evening.jpg",
+        night: "images/安居苑/前门-night.jpg"
+        // midnight省略不写了
+      });
+      return f(vars);
     }, /* TODO: images/安居苑/anjuyuanFrontDoor.png */
     onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) { return "你来到了安居苑的前门\n" + describeWeather(vars); },
