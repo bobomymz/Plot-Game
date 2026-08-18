@@ -259,7 +259,7 @@ Object.assign(storyData, {
   },
 
   "五金店-后巷-偷看右门": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/hardwareStoreBack.png */,
+    image: "images/小区周边/五金店/看看门缝.png",
     onEnter: updateTime(2), // 花2分钟趴下+调整角度偷看
     text: function(vars) {
       let basicText = "";
@@ -372,7 +372,7 @@ WD-40 防锈润滑剂。";
   },
 
   "五金店-暗道-返回": {
-    image: "images/小区周边/联华超市/地下室.jpg" /* TODO: images/小区周边/supermarketBasement.png */,
+    image: "images/小区周边/联华超市/地下室.jpg",
     onEnter: updateTime(4, { add: { strength: -1 } }), // 花4分钟原路返回，来回一趟体力消耗不小
     text: function(vars) {
       let basicDes = "你原路返回，穿过暗道，爬回联华超市的地下室。铁栅栏门的锁环还断在那里——你没有把它修好，也不可能修好。";

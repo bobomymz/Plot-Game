@@ -1733,7 +1733,7 @@ Object.assign(storyData, {
       if (vars.dd == 1 && vars.hh < 12) {
         return "images/home/物业楼-有高锦睿.jpg";
       }
-      return "images/home/物业楼.jpg";
+      return "images/home/物业楼.png";
     },
     onEnter: { set: { currentPos: "物业楼" } },
     text: function(vars) {
@@ -1831,7 +1831,7 @@ Object.assign(storyData, {
   },
 
   "物业楼-高锦睿-聊": {
-    image: "images/物业楼和高锦睿聊天.png",
+    image: "images/home/物业楼和高锦睿聊天.png",
     text: function(vars) {
       var desc = "“在家待了一天一夜，坐不住了——”他边拧螺丝边说，头也没抬。“反正待着也是待着，出去看看外面成啥样了。”\n\
 他告诉你他爸妈6/28出门后没回来。说这话的时候他手上的活没停，语气轻得像在说昨天食堂的饭不好吃。\n\
