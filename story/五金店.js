@@ -234,9 +234,13 @@ Object.assign(storyData, {
   },
 
   "五金店-后巷-偷看左门": {
-    image: "images/placeholder.png",
+    image: "images/小区周边/五金店/看看门缝.png",
     text: "里面一片漆黑，什么也看不见",
     choices: [
+      {
+        text: "开门进去",
+        nextScene: "结局-配电房"
+      },
       {
         text: "看看另一扇门",
         nextScene: "五金店-后巷-偷看右门"
@@ -246,6 +250,12 @@ Object.assign(storyData, {
         nextScene: "五金店"
       }
     ]
+  },
+
+  "结局-配电房": {
+    image: "images/小区周边/五金店/配电房.jpg",
+    text: "你打开门，里面乱七八糟有一堆电线。突然，头顶一根电线掉了下来，滋滋冒着黄色的火花。你被电穿了。\n\
+—— 结局：配电房 ——"
   },
 
   "五金店-后巷-偷看右门": {
