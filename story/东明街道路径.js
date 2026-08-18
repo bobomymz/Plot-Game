@@ -169,14 +169,25 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/placeholder.png"
+          morning: "images/小区周边/三林路-西-雨.jpg",
+          night: "images/小区周边/三林路-西-雨-night.jpg"
         });
         return f(vars);
       }
       if (vars.weather === "阴") {
-        return "images/placeholder.png";
+        var f = timeImage({
+          morning: "images/小区周边/三林路-西-阴.jpg",
+          night: "images/小区周边/三林路-西-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+        });
+        return f(vars);
       }
-      return "images/placeholder.png";
+      var f = timeImage({
+        morning: "images/小区周边/三林路-西.jpg",
+        evening: "images/小区周边/三林路-西-evening.jpg",
+        night: "images/小区周边/三林路-西-night.jpg"
+        // midnight省略不写了
+      });
+      return f(vars);
     }, /* TODO: images/小区周边/三林路.png */
     onEnter: function(vars) {
       vars.showZombies = true;
@@ -315,10 +326,13 @@ Object.assign(storyData, {
 
 
   "三林路-获得一辆轿车": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/轿车.png */,
+    image: timeImage({
+      morning: "images/小区周边/路边的车.png",
+      night: "images/小区周边/路边的车-night.png"
+    }),
     onEnter: {set: {hasCar: true, hasEbike: false, hasRustyBike: false, showRain: true, showZombies: true}, add:{chasedByZombies: -1}}, // 躲进车里稍微安全一点，尸潮减弱
     text: function(vars) {
-      let basicDes = "你成功地获得了一辆丰田轿车，你可以使用它来快速前往其他地方，如果不堵车的话。\n";
+      let basicDes = "你成功地获得了一辆荣威轿车，你可以使用它来快速前往其他地方，如果不堵车的话。\n";
       basicDes += describeZombieWave(vars);
       if(vars.hasEbike) basicDes += "你放弃了电瓶车，快速坐上了驾驶座。";
       if(vars.hasRustyBike) basicDes += "你放弃了自行车，快速坐上了驾驶座";

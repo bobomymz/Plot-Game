@@ -32,7 +32,7 @@ Object.assign(storyData, {
         desc += "\n你只能靠手机的微弱光线和摸索前进。前方是一条黑暗的通道，左侧有一扇防火门的轮廓，右侧隐约有一条岔路。";
       }
       if (vars._lastScene === "新达汇-B1停车场-拿钥匙") {
-        desc += "\n你按了按外套内袋——丰田车钥匙的棱角硌着手心。";
+        desc += "\n你按了按外套内袋——荣威车钥匙的棱角硌着手心。";
       }
       return desc;
     },
@@ -188,7 +188,7 @@ Object.assign(storyData, {
   "新达汇-B1停车场-拿钥匙": {
     image: "images/placeholder.png" /* TODO: images/xindahui/carKey.png */,
     onEnter: { add: { _garageOps: 1 }, set: { positionAfterOperation: "新达汇-B1停车场-拿钥匙" } },
-    text: "你坐进车里，翻开遮阳板——一把车钥匙掉在你手里。\n钥匙上贴着丰田的标志。\n如果能找到这辆车，也许能早点离开东明街道。",
+    text: "你坐进车里，翻开遮阳板——一把车钥匙掉在你手里。\n钥匙上贴着荣威的标志————不是这辆车的。\n如果能找到那辆车，也许能早点离开东明街道。",
     choices: [
       {
         text: "收好钥匙",
