@@ -327,8 +327,8 @@ Object.assign(storyData, {
 
   "三林路-获得一辆轿车": {
     image: timeImage({
-      morning: "images/小区周边/路边的车.png",
-      night: "images/小区周边/路边的车-night.png"
+      morning: "images/小区周边/路边的车.jpg",
+      night: "images/小区周边/路边的车-night.jpg"
     }),
     onEnter: {set: {hasCar: true, hasEbike: false, hasRustyBike: false, showRain: true, showZombies: true}, add:{chasedByZombies: -1}}, // 躲进车里稍微安全一点，尸潮减弱
     text: function(vars) {
