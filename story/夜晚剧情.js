@@ -253,7 +253,15 @@ Object.assign(storyData, {
       vars.positionAfterOperation = "初始卧室";
       return {};
     },
-    text: "你跑回了自己家。锁好门，拉好窗帘。房间里的一切都还是你离开时的样子。\n你躺在床上，盯着天花板。妈妈还没回来——也许她永远不会回来了。\n你闭上眼睛，在熟悉的气味中沉沉睡去。\n第二天早上，你被门外低沉的撞击声惊醒。有人在撞门——不，是丧尸。你从猫眼往外看，一张灰白的脸正贴在门上。\n你不能再待在这里了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
+    text: function(vars) {
+      if(vars.currentPos != '我家')
+        return "你锁好门，拉好窗帘，躺在床上，盯着天花板。妈妈还没回来——也许她永远不会回来了。\n\
+        你闭上眼睛，在熟悉的气味中沉沉睡去。\n第二天早上，你被门外低沉的撞击声惊醒。有人在撞门——不，是丧尸。你从猫眼往外看，一张灰白的脸正贴在门上。\n\
+        你不能再待在这里了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>";
+      return "你跑回了自己家。锁好门，拉好窗帘。房间里的一切都还是你离开时的样子。\n你躺在床上，盯着天花板。妈妈还没回来——也许她永远不会回来了。\n\
+      你闭上眼睛，在熟悉的气味中沉沉睡去。\n第二天早上，你被门外低沉的撞击声惊醒。有人在撞门——不，是丧尸。你从猫眼往外看，一张灰白的脸正贴在门上。\n\
+      你不能再待在这里了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>";
+    },
     choices: [
       { text: "收拾东西离开", nextScene: "整理整理" }
     ]

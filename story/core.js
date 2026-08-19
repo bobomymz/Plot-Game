@@ -64,7 +64,15 @@ const storyData = {
     _committeeSearched: false,  // 是否搜过物业楼居委会办公室
     showRain: false,           // 是否展示雨滴叠加特效（B类场景 onEnter 控制）
     showZombies: false,        // 是否展示丧尸包围遮罩（路网节点 onEnter 控制）
+    wangGiveKey: false,        // 王老师是否给了钥匙
     _lastScene: "",            // 引擎自动记录的上一个场景ID（目标场景 text 用于差异化承接）
+    // 金谊广场
+    _chenmoRescued: false,      // 是否在停车场救了陈默
+    _jinyiSurvivorsFed: false,  // 是否给长廊幸存者送了食物
+    _jinyiSurvivorsRobbed: false, // 是否被长廊幸存者抢了
+    _jinyiHasFoodForSurvivors: false, // 是否从B1奥乐齐带了食物给长廊幸存者
+    _jinyiB2GasWarned: false,   // B2毒气是否已预警过
+    _jinyiAlcoholUsed: false,   // KTV酒精是否已用于消毒
 
     // --- 物品状态 ---
     // 常规物品
@@ -94,14 +102,6 @@ const storyData = {
     supermarketWaterLeft: 12,  // 联华超市仓库瓶装水剩余（瓶）
     teacherStudentsDead: false, // 给王老师毒水后学生变丧尸的死局标记
     _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启
-    // 金谊广场
-    _chenmoRescued: false,      // 是否在停车场救了陈默
-    _jinyiSurvivorsFed: false,  // 是否给长廊幸存者送了食物
-    _jinyiSurvivorsRobbed: false, // 是否被长廊幸存者抢了
-    _jinyiHasFoodForSurvivors: false, // 是否从B1奥乐齐带了食物给长廊幸存者
-    _jinyiB2GasWarned: false,   // B2毒气是否已预警过
-    _jinyiAlcoholUsed: false,   // KTV酒精是否已用于消毒
-    hasMercuryPill: false,      // 是否有甲基汞抑制剂（童涵春堂无标签药丸）
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
@@ -116,6 +116,7 @@ const storyData = {
     hasRustyBike: false,       // 是否有锈蚀的自行车
     // 特殊道具（不占背包）
     hasBag: false,             // 是否有背包（bagVolume+1）
+    hasMercuryPill: false,      // 是否有甲基汞抑制剂（童涵春堂无标签药丸）
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
     gameMemorySet: new Set(),         // 目前已获得的游戏记忆集合
@@ -350,14 +351,21 @@ const storyData = {
       {
         showCondition: "hasBottle",
         text: "丢下水瓶",
-        effect: updateTime(1, { set : { hasBottle: false, bottleWater: 0 }, add: { itemCount: -1 } }),
+        effect: updateTime(1, { set : { hasBottle: false, bottleWater: 0, waterToxic: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {
         showCondition: "hasBottle && bottleWater > 0",
         text: "喝水（体力+1）",
-        effect: updateTime(1, { add: { strength: 1, bottleWater: -1 } }),
-        nextScene: "整理整理"
+        nextScene: "整理整理",
+        effect: function(vars) {
+          // 喝毒水时静默增加汞负荷（慢性毒，无提示）
+          if (vars.waterToxic) vars.mercuryLoad = (vars.mercuryLoad || 0) + 10;
+          vars.bottleWater = Math.max(0, vars.bottleWater - 1);
+          vars.strength = Math.min(10, vars.strength + 1);
+          vars.waterToxic = false;
+          return {};
+        }
       },
       {
         showCondition: "hasPhone && _cafeteriaWifiOn",

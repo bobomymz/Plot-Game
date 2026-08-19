@@ -652,6 +652,7 @@ Object.assign(storyData, {
   "上实南校-图书馆": {
     image: "images/placeholder.png" /* TODO: images/上实南校/library.png */,
     text: function(vars) {
+      if (vars.teacherStudentsDead) return "你再次来到图书馆。门还是那样被书架堵着，但你感觉不对劲——里面太安静了，安静得不像是有一群孩子的地方。";
       if (vars._visit["上实南校-图书馆"] > 1) return "图书馆里还是老样子。书架堵着门窗，几个孩子缩在阅览室的角落。王老师听到动静探出头来——看到是你，松了口气。她把手指竖在嘴边，示意你小声点——有孩子在睡觉。";
       return "你推开图书馆的门——准确地说，是推开了一道缝，另外半边门被书架从里面堵死了。你侧身挤了进去。\n\
 “别动。”\n\
@@ -664,16 +665,17 @@ Object.assign(storyData, {
 “你……你是初三（3）班的那个？……你还活着？”\n\
 她的声音在发抖。不是害怕——是绷了太久终于松下来一点的那种抖。";
     },
-    choices: [
-      {
-        text: "“王老师，是我。你还好吗？”",
-        nextScene: "上实南校-图书馆-对话"
-      },
-      {
-        text: "离开图书馆",
-        nextScene: "上实南校-复合楼入口"
+    choices: function(vars) {
+      if (vars.teacherStudentsDead) {
+        return [
+          { text: "推开门进去", nextScene: "上实南校-图书馆-全灭" }
+        ];
       }
-    ]
+      return [
+        { text: "“王老师，是我。你还好吗？”", nextScene: "上实南校-图书馆-对话" },
+        { text: "离开图书馆", nextScene: "上实南校-复合楼入口" }
+      ];
+    }
   },
 
   "上实南校-图书馆-对话": {
@@ -695,6 +697,11 @@ Object.assign(storyData, {
         showCondition: "hasFood",
         text: "“我身上还有点吃的，先给你们。”",
         nextScene: "上实南校-图书馆-给食物"
+      },
+      {
+        showCondition: "hasBottle && bottleWater > 0 && !teacherStudentsDead && waterGivenToTeacher < 15",
+        text: "“我水瓶里有水，你们先喝。”",
+        nextScene: "上实南校-图书馆-给水"
       },
       {
         text: "离开这里",
@@ -768,6 +775,71 @@ Object.assign(storyData, {
       {
         text: "离开图书馆",
         nextScene: "上实南校-复合楼入口"
+      }
+    ]
+  },
+
+  // ===== 给水系统（信任累积） =====
+  "上实南校-图书馆-给水": {
+    image: "images/placeholder.png" /* TODO: images/上实南校/library.png */,
+    onEnter: function(vars) {
+      var wasToxic = vars.waterToxic;
+      vars.waterGivenToTeacher = (vars.waterGivenToTeacher || 0) + 1;
+      if (vars.waterGivenToTeacher >= 15) vars.hasCarKey = true; // 15次信任达成，王老师给车钥匙
+      vars.hasBottle = false;
+      vars.bottleWater = 0;
+      vars.waterToxic = false;
+      vars.itemCount = Math.max(0, vars.itemCount - 1);
+      vars._travelMinutes = 0;
+      vars.mm += 10;
+      vars.hh += Math.floor(vars.mm / 60);
+      vars.mm %= 60;
+      vars.dd += Math.floor(vars.hh / 24);
+      vars.hh %= 24;
+      if (wasToxic) vars.teacherStudentsDead = true;
+      return {};
+    },
+    text: function(vars) {
+      var n = vars.waterGivenToTeacher;
+      if (vars.teacherStudentsDead) {
+        return "你把水瓶递给她。王老师接过去，分给了孩子们。\n她喝了一口水，又递给旁边那个最小的女孩。女孩咕咚咕咚灌了几口，抹了抹嘴，冲你笑了一下。\n王老师看着你，嘴唇动了动——你读不懂她眼里的神情。她没说什么。\n你转身离开的时候，身后传来孩子们细碎的喝水声。";
+      }
+      if (n >= 15) {
+        vars.wangGiveKey = true;
+        return "你再次把水瓶递给她——这是第十五次了。\n王老师怔怔地看着你手里的水瓶，没有接。\n片刻后，她笑了一下，眼眶有些发红。\n“十五次。”她低声说，“我记得我教过的每一个学生，但我从没想过有一天，会有一个学生这样一次次地给我送水。”\n\
+她接过水，却没有喝——而是转身走到书架边，从最底层的夹层里摸出一串钥匙。\n“我本来想，也许用不上了。”她把钥匙放在你手心，“我车就停在附近——三林路边那辆，树荫底下。钥匙给你。你比我们更需要它。”\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得[轿车钥匙]，可以在三林路解锁那辆轿车。</span>\
+“那你们怎么办？”“我们？听天由命吧。你快走吧，不需要在我们这些砧板上的鱼肉身上再浪费时间了……";
+      }
+      if (n >= 10) return "你把手里的水瓶递过去。王老师接过，没有立刻分——她先自己拧开瓶盖喝了一口，才转身分给孩子们。\n她回来时，声音里多了一丝你能察觉的柔软：“第" + n + "瓶了。孩子们现在能记住你的样子了——他们说，‘那个哥哥又来送水了’。”";
+      if (n >= 5) return "你把手里的水瓶递过去。王老师接过，道了声谢，转身分给孩子们。\n“第" + n + "瓶了。”她回来时低声说，声音里带着一丝疲惫，也带着一丝没有明说的感激。“水……比什么都重要。孩子们离不开这个。”";
+      return "你把手里的水瓶递过去。王老师接过，道了声谢，转身分给孩子们。\n她回来时，你看到她的眼眶有些发红。“你……不用每次都跑这么远的。”她顿了顿，把一句更软的话咽了回去，“谢谢。”";
+    },
+    choices: function(vars) {
+      if (vars.teacherStudentsDead) {
+        return [{ text: "走出图书馆", nextScene: "上实南校-图书馆-给水后" }];
+      }
+      return [{ text: "离开图书馆", nextScene: "上实南校-复合楼入口" }];
+    }
+  },
+
+  // 给毒水后的下一次进入——死局
+  "上实南校-图书馆-全灭": {
+    image: "images/placeholder.png" /* TODO: images/上实南校/library.png */,
+    text: "你推开门。\n书架还在，堵着门窗。但阅览室里空荡荡的——那些本该缩在角落的孩子不见了。\n长桌旁坐着一个身影，背对着你。\n“……王老师？”\n她没有动。\n\
+你往前走了一步，脚下踩到了什么——低头一看，是一滩水，旁边滚落着一只空水瓶。就是你上次给她的那一只。\n她缓缓转过头来。\n\
+那张脸曾经是王老师——银框眼镜，乱糟糟的马尾。但现在眼镜歪着，马尾散了一半，皮肤泛着一层不健康的灰青色，眼珠浑浊，泛着幽幽的绿光。\n她张了张嘴，喉咙里挤出一声含混的嘶吼。\n\
+身后，书架缝隙里，一张张小小的灰白面孔正缓缓转过来——十五双绿幽幽的眼睛，在昏暗的图书馆里齐刷刷地盯着你。\n\n—— 结局：杯水车薪 ——"
+  },
+
+  "上实南校-图书馆-给水后": {
+    image: "images/placeholder.png" /* TODO: images/上实南校/library.png */,
+    text: "你走出图书馆，反手把门带上。\n身后没有声音。\n你站在门外，忽然觉得有点冷。风从走廊尽头灌进来，带着一股淡淡的、说不清道不明的腥味。\n\
+你回头看了一眼那扇被书架堵死的门。\n里面安静极了。",
+    choices: [
+      {
+        text: "离开学校",
+        nextScene: "东明路-三林路"
       }
     ]
   },

@@ -326,13 +326,23 @@ Object.assign(storyData, {
 
 
   "三林路-获得一辆轿车": {
-    image: timeImage({
-      morning: "images/小区周边/路边的车.jpg",
-      night: "images/小区周边/路边的车-night.jpg"
-    }),
+    image: function(vars) {
+      if(vars.wangGiveKey) {
+        var f = timeImage({
+          morning: "images/小区周边/路边的车-银色速腾.png",
+          night: "images/小区周边/路边的车-银色速腾-night.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/小区周边/路边的车.jpg",
+        night: "images/小区周边/路边的车-night.jpg"
+      });
+      return f(vars);
+    },
     onEnter: {set: {hasCar: true, hasEbike: false, hasRustyBike: false, showRain: true, showZombies: true}, add:{chasedByZombies: -1}}, // 躲进车里稍微安全一点，尸潮减弱
     text: function(vars) {
-      let basicDes = "你成功地获得了一辆荣威轿车，你可以使用它来快速前往其他地方，如果不堵车的话。\n";
+      let basicDes = "你成功地获得了一辆轿车，你可以使用它来快速前往其他地方，如果不堵车的话。\n";
       basicDes += describeZombieWave(vars);
       if(vars.hasEbike) basicDes += "你放弃了电瓶车，快速坐上了驾驶座。";
       if(vars.hasRustyBike) basicDes += "你放弃了自行车，快速坐上了驾驶座";
@@ -597,19 +607,52 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     image: "images/小区周边/联华超市/仓库.jpg" /* TODO: images/小区周边/supermarketWarehouse.png */,
     text: function(vars) {
       var desc = "仓库里堆着几箱饮料和一些滞销的零食。角落里有一扇活板门。";
-      if (vars._supermarketCompromised) desc += "铁栓已经被撬开了，门板歪在一边——下面的地下室已经暴露了，不再安全。";
-      else desc += "上面焊着一根铁栓——通往地下室。这是个干燥隐蔽的空间，万一晚上没地方去，这里也许能凑合一晚。";
+      if (vars.supermarketWaterLeft > 0) desc += "\n货架深处靠墙放着一箱没开封的瓶装水——数了数，还有" + vars.supermarketWaterLeft + "瓶。";
+      else desc += "\n货架深处那个装水的纸箱已经空了——里面的瓶装水都被你拿走了。";
+      if (vars._supermarketCompromised) desc += "活板门的铁栓已经被撬开了，门板歪在一边——下面的地下室已经暴露了，不再安全。";
+      else desc += "活板门上面焊着一根铁栓——通往地下室。这是个干燥隐蔽的空间，万一晚上没地方去，这里也许能凑合一晚。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars.hasBottle && vars.bottleWater == 0 && vars.supermarketWaterLeft > 0) {
+        cs.push({
+          text: "从箱子里拿一瓶水，灌进空瓶",
+          nextScene: "联华超市-仓库-拿水",
+          effect: updateTime(2)
+        });
+      }
+      cs.push({
+        text: "记下这个位置，离开",
+        nextScene: "三林路"
+      });
+      if (vars.hasIronPipe) {
+        cs.push({
+          text: "用手电筒照了照角落，发现一扇锈蚀的铁栅栏门——用铁管试试能不能撬开",
+          nextScene: "联华超市-地下室-撬锁"
+        });
+      }
+      return cs;
+    }
+  },
+
+  "联华超市-仓库-拿水": {
+    image: "images/小区周边/联华超市/仓库.jpg" /* TODO: images/小区周边/supermarketWarehouse.png */,
+    onEnter: function(vars) {
+      vars.bottleWater = 1;
+      vars.waterToxic = false;
+      vars.supermarketWaterLeft = Math.max(0, vars.supermarketWaterLeft - 1);
+      return {};
+    },
+    text: function(vars) {
+      var desc = "你蹲下来，从纸箱里抽出一瓶水，拧开瓶盖倒进自己的空瓶里。瓶装水还带着出厂时的密封感——生产日期是六月下旬，应该是安全的。\n你把空瓶子灌满了，拧紧瓶盖。";
+      if (vars.supermarketWaterLeft > 0) desc += "\n箱子里还剩" + vars.supermarketWaterLeft + "瓶。";
       return desc;
     },
     choices: [
       {
-        text: "记下这个位置，离开",
+        text: "离开仓库",
         nextScene: "三林路"
-      },
-      {
-        showCondition: "hasIronPipe",
-        text: "用手电筒照了照角落，发现一扇锈蚀的铁栅栏门——用铁管试试能不能撬开",
-        nextScene: "联华超市-地下室-撬锁"
       }
     ]
   },
