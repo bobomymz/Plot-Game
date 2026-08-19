@@ -283,6 +283,37 @@ _globalTriggers: [
 ]
 ```
 
+### 派生变量（`_reactive.computed`）
+
+`computed` 是**只读派生变量**：每次状态变更后（`applyEffect` 末尾），引擎把所有 computed 键重新求值并直接写入 `gameState`，供后续使用。
+
+```javascript
+computed: {
+  // 字符串表达式（推荐，只依赖 _variables 基础变量）
+  gameMinutes: "((dd - 1) * 1440 + (hh - 8) * 60 + mm)",
+  isNight:     "hh >= 19 || hh < 6",
+  // 函数形式（v 是 gameState，可调用 utils.js 里的全局工具函数）
+  hasNoTransportation: function(v) { return hasNoTransportation(v); }
+}
+```
+
+**与 `_variables` 的区别：**
+
+| <br /> | `_variables` | `computed` |
+|---|---|---|
+| 是否注册初始值 | ✅ 必须 | ❌ 不需要（注册了也会被覆盖）|
+| `condition`/`text` 插值能否使用 | ✅ | ✅ 完全相同 |
+| 能否被 `effect.set/add` 修改 | ✅ | ⚠️ 能写但**立刻被重算覆盖**，禁止 |
+| 存持久状态 | ✅ | ❌ 每次状态变更都重算 |
+
+**使用要点：**
+
+- `condition` 字符串表达式、`text` 插值 `{变量名}`、`showCondition`、`triggerKey` 都能直接用 computed 变量——因为求值和插值都查 `gameState`，而 computed 已写入其中。
+- **绝不要用 `effect.set/add` 改 computed 变量**——它是按公式派生的，改完立刻被 `applyReactive` 重算覆盖。要存持久值，用 `_variables` 里的普通变量。
+- computed **不需要（也不能）** 在 `_variables` 里注册初始值。`gameState` 初始没有这些键，第一次 `applyReactive()` 才写入（正常游玩中每次状态变更都会重算，所以一定存在）。
+- 函数形式 `function(v) { return canSee(v); }` 中 `v` 是 `gameState`，可直接调用 `story/utils.js` 里定义的全局工具函数。
+- ⚠️ **computed 之间不要互相依赖**——求值按对象字面量顺序，A 依赖 B 而 B 在后面时，A 读到的是旧值。只依赖 `_variables` 基础变量最安全。
+
 ### 响应式规则（`_reactive.rules`）
 
 ```javascript

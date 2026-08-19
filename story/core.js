@@ -165,6 +165,7 @@ const storyData = {
       minutesBetweenReduceStrength: "hurtByZombie ? 20 - strength : 60", // 若被丧尸抓伤，体力下降会更快
       canSee: function(v) { return canSee(v); },
       hasFood: function(v) { return hasFood(v); }, // 是否有食物
+      zombieAtHomeDoor: function(v) { return zombieAtHomeDoor(v); }, // 丧尸还在门口
       hasNoTransportation: function(v) { return hasNoTransportation(v); } // 是否没有交通工具
       // 也支持函数（复杂逻辑）
       // fatigue: function(v) { return Math.max(0, 10 - v.strength); }

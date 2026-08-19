@@ -286,3 +286,7 @@ function hideOnLocation(image, failText, successText) {
 function hasFood(vars) {
   return vars.hasBiscuit; // 后续补充
 }
+
+function zombieAtHomeDoor(vars) { // 丧尸还在家门口
+  return vars.dd == 1 && vars.hh < 10;
+}
