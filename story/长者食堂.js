@@ -226,7 +226,7 @@ Object.assign(storyData, {
       {
         showCondition: "hasBottle && bottleWater == 0 && _waterDispenserUses < 10",
         text: "接水",
-        effect: updateTime(2, { add: { _waterDispenserUses: 1, bottleWater: 1 } }),
+        effect: updateTime(2, { add: { _waterDispenserUses: 1, bottleWater: 1 }, set: { waterToxic: false } }),
         nextScene: "长者食堂-饮水机"
       },
       {

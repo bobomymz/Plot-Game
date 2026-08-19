@@ -88,7 +88,11 @@ const storyData = {
     hasLiquidParaffin: false,  // 是否有医用石蜡油（益丰大药房左边货架）
     hasBottle: false,          // 是否有水瓶
     bottleWater: 0,            // 水瓶还有几口水（0=空瓶，1=有水；饮水机可反复打满）
+    waterToxic: false,         // 瓶里的水是否被甲基汞污染（金谊广场后厨接水为毒水）
     _waterDispenserUses: 0,    // 饮水机已使用次数（最多10次）
+    waterGivenToTeacher: 0,    // 给王老师的水次数（0→15，满15次信任达成）
+    supermarketWaterLeft: 12,  // 联华超市仓库瓶装水剩余（瓶）
+    teacherStudentsDead: false, // 给王老师毒水后学生变丧尸的死局标记
     _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启
     // 金谊广场
     _chenmoRescued: false,      // 是否在停车场救了陈默

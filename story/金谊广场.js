@@ -850,7 +850,7 @@ Object.assign(storyData, {
         choices.push({
           text: "接水",
           nextScene: "金谊广场-4F",
-          effect: { set: { bottleWater: 1}}
+          effect: { set: { bottleWater: 1, waterToxic: true }}
         });
       }
       choices.push({ text: "离开后厨", nextScene: "金谊广场-4F", effect: updateTime(1) });
