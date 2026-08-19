@@ -7,6 +7,21 @@ Object.assign(storyData, {
   // ==================== 入口：安盛街东侧 ====================
   "安盛街东侧": {
     image: function(vars) {
+      if(vars._lastScene === "三林路-环林东路 十字路口") {
+        if (vars.weather === "雨") {
+          var f = timeImage({
+            morning: "images/安盛街/东侧入口-雨.jpg",
+            night: "images/安盛街/东侧入口-雨-night.jpg",
+          });
+          return f(vars);
+        }
+        var f = timeImage({
+          morning: "images/安盛街/东侧入口.jpg",
+          evening: "images/安盛街/东侧入口-evening.jpg",
+          night: "images/安盛街/东侧入口-night.jpg"
+        });
+        return f(vars);
+      }
       if (vars.weather === "雨") {
         var f = timeImage({
           morning: "images/安盛街/东侧街面-雨天.png",
