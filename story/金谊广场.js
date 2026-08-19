@@ -850,7 +850,7 @@ Object.assign(storyData, {
         choices.push({
           text: "接水",
           nextScene: "金谊广场-4F",
-          effect: { set: { bottleWater: 1 }, add: { mercuryLoad: 10 } }
+          effect: { set: { bottleWater: 1}}
         });
       }
       choices.push({ text: "离开后厨", nextScene: "金谊广场-4F", effect: updateTime(1) });
@@ -976,7 +976,7 @@ Object.assign(storyData, {
 
   "金谊广场-B1奥乐齐-搜刮": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
-    text: "你走进货架之间。奥乐齐的货物还算齐全——罐头区几乎没被动过，饮料区还有整箱的矿泉水，零食区的薯片和饼干撒了一地但还有整袋的。\n你挑了一些还能直接吃的东西——几包压缩饼干、一罐午餐肉、一瓶矿泉水。",
+    text: "你走进货架之间，挑了一些还能直接吃的东西——几包压缩饼干、一罐午餐肉、一瓶矿泉水。",
     choices: [
       { text: "坐下来吃点东西", nextScene: "金谊广场-B1奥乐齐-搜刮-吃完", effect: updateTime(1) },
       { text: "直接带点东西走", nextScene: "金谊广场-B1奥乐齐", effect: updateTime(1) }

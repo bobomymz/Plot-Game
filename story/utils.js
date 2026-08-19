@@ -282,3 +282,7 @@ function hideOnLocation(image, failText, successText) {
         }
   };
 }
+
+function hasFood(vars) {
+  return vars.hasBiscuit; // 后续补充
+}
