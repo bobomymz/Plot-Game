@@ -675,7 +675,8 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPlace = "安盛街"; vars.currentPos = "文具店"; },
     text: function(vars) {
       if (vars._stationeryZombieDead) return "你推开吱呀作响的玻璃门，走进文具店。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
-      return "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n收银台后面有动静——像是什么东西在翻找东西。";
+      return "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n\
+收银台后面有动静——像是什么东西在翻找东西。";
     },
     choices: [
       {

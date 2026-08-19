@@ -167,26 +167,50 @@ Object.assign(storyData, {
 
   "三林路": {
     image: function(vars) {
-      if (vars.weather === "雨") {
+      if (vars._lastScene == "三林路-环林东路 十字路口") {
+        if (vars.weather === "雨") {
+          var f = timeImage({
+            morning: "images/小区周边/三林路-西-雨.jpg",
+            night: "images/小区周边/三林路-西-雨-night.jpg"
+          });
+          return f(vars);
+        }
+        if (vars.weather === "阴") {
+          var f = timeImage({
+            morning: "images/小区周边/三林路-西-阴.jpg",
+            night: "images/小区周边/三林路-西-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+          });
+          return f(vars);
+        }
         var f = timeImage({
-          morning: "images/小区周边/三林路-西-雨.jpg",
-          night: "images/小区周边/三林路-西-雨-night.jpg"
+          morning: "images/小区周边/三林路-西.jpg",
+          evening: "images/小区周边/三林路-西-evening.jpg",
+          night: "images/小区周边/三林路-西-night.jpg"
+          // midnight省略不写了
         });
-        return f(vars);
       }
-      if (vars.weather === "阴") {
+      else {
+        if (vars.weather === "雨") {
+          var f = timeImage({
+            morning: "images/小区周边/三林路-东-雨.jpg",
+            night: "images/小区周边/三林路-东-雨-night.jpg"
+          });
+          return f(vars);
+        }
+        if (vars.weather === "阴") {
+          var f = timeImage({
+            morning: "images/小区周边/三林路-东-阴.jpg",
+            night: "images/小区周边/三林路-东-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+          });
+          return f(vars);
+        }
         var f = timeImage({
-          morning: "images/小区周边/三林路-西-阴.jpg",
-          night: "images/小区周边/三林路-西-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+          morning: "images/小区周边/三林路-东.jpg",
+          evening: "images/小区周边/三林路-东-evening.jpg",
+          night: "images/小区周边/三林路-东-night.jpg"
+          // midnight省略不写了
         });
-        return f(vars);
       }
-      var f = timeImage({
-        morning: "images/小区周边/三林路-西.jpg",
-        evening: "images/小区周边/三林路-西-evening.jpg",
-        night: "images/小区周边/三林路-西-night.jpg"
-        // midnight省略不写了
-      });
       return f(vars);
     }, /* TODO: images/小区周边/三林路.png */
     onEnter: function(vars) {
