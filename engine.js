@@ -1032,6 +1032,9 @@ function collectImagePaths(storyData) {
     { currentArea: "临港" }
   ];
 
+  // 天气采样：部分 image 函数会按 weather 分支返回不同路径（如雨天变体）
+  const weatherValues = ["晴", "阴", "雨"];
+
   for (const [sceneId, scene] of Object.entries(storyData)) {
     if (!scene || !scene.image) continue;
 
@@ -1039,16 +1042,19 @@ function collectImagePaths(storyData) {
       // 静态字符串 → 直接加入
       paths.add(scene.image);
     } else if (typeof scene.image === "function") {
-      // 函数 → 用多组采样值尝试解析
-      const samples = sceneId === "天黑必须过夜" ? nightSamples : timeSamples;
-      for (const sampleVars of samples) {
-        try {
-          const result = scene.image(sampleVars);
-          if (result && typeof result === "string") {
-            paths.add(result);
+      // 函数 → 用多组采样值尝试解析（时间 × 天气，确保覆盖雨天分支）
+      const baseSamples = sceneId === "天黑必须过夜" ? nightSamples : timeSamples;
+      for (const base of baseSamples) {
+        for (const w of weatherValues) {
+          try {
+            const sampleVars = Object.assign({}, base, { weather: w });
+            const result = scene.image(sampleVars);
+            if (result && typeof result === "string") {
+              paths.add(result);
+            }
+          } catch (e) {
+            // 采样值不兼容则跳过
           }
-        } catch (e) {
-          // 采样值不兼容则跳过
         }
       }
     }
@@ -1071,13 +1077,18 @@ function preloadImages(onProgress, onComplete) {
 
   for (const path of paths) {
     const img = new Image();
-    img.onload = img.onerror = function () {
+    const onDone = function () {
       loaded++;
       if (onProgress) onProgress(loaded, total);
       if (loaded >= total) {
         console.log("【预加载】完成，" + total + " 张图片已缓存。");
         if (onComplete) onComplete();
       }
+    };
+    img.onload = onDone;
+    img.onerror = function () {
+      console.warn("【预加载】图片加载失败（可能是路径错误）: " + path);
+      onDone();
     };
     img.src = path;
   }

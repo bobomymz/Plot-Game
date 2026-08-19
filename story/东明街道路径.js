@@ -16,7 +16,7 @@ Object.assign(storyData, {
         var f = timeImage({
           morning: "images/home/小区东门-阴天.jpg",
           evening: "images/home/小区东门-阴天-evening.jpg",
-          night: "images/home/小区东门-阴天-night.png", // 晚上分不清晴天和阴天，索性复用了
+          night: "images/home/小区东门-night.png", // 晚上分不清晴天和阴天，索性复用了
           midnight: "images/home/小区东门-midnight.png"// 晚上分不清晴天和阴天，索性复用了
         });
         return f(vars);
@@ -70,7 +70,7 @@ Object.assign(storyData, {
         var f = timeImage({
           morning: "images/home/小区西门-雨天.png",
           evening: "images/home/小区西门-雨天-evening.png",
-          night: "images/home/小区西门-雨天-night.png",
+          night: "images/home/小区西门-night-雨天.png",
           midnight: "images/home/小区西门-雨天-midnight.png"
         });
         return f(vars);
@@ -258,8 +258,8 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/小区周边/十字路口2-雨天.png",
-          night: "images/小区周边/十字路口2-雨天-night.png"
+          morning: "images/小区周边/十字路口2-雨天.jpg",
+          night: "images/小区周边/十字路口2-雨天-night.jpg"
         });
         return f(vars);
       }
@@ -330,7 +330,7 @@ Object.assign(storyData, {
       if(vars.wangGiveKey) {
         var f = timeImage({
           morning: "images/小区周边/路边的车-银色速腾.png",
-          night: "images/小区周边/路边的车-银色速腾-night.png"
+          night: "images/小区周边/路边的车-night-银色速腾.png"
         });
         return f(vars);
       }
@@ -593,11 +593,12 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   "联华超市-补给": {
     image: "images/placeholder.png" /* TODO: images/小区周边/lianhuaSupermarket.png */,
     onEnter: { add: { strength: 1 }, set: { _supermarketSuppliesTaken: true } },
-    text: "你撕开一包饼干，就着矿泉水吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: "你撕开一包饼干，就着矿泉水吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
-        nextScene: "三林路",
+        nextScene: "小超市",
         effect: updateTime(5)
       }
     ]

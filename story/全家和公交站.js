@@ -320,15 +320,6 @@ Object.assign(storyData, {
 
   "公交车站（环林东路）": {
     image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({
-        morning: "images/小区周边/全家和公交站/公交车站-雨天.png",
-        evening: "images/小区周边/全家和公交站/公交车站-雨天-evening.png",
-        night: "images/小区周边/全家和公交站/公交车站-雨天-night.png",
-        midnight: "images/小区周边/全家和公交站/公交车站-雨天-midnight.png"
-        });
-        return f(vars);
-      }
       var f = timeImage({
         morning: "images/小区周边/全家和公交站/公交车站.png",
         evening: "images/小区周边/全家和公交站/公交车站-evening.png",
@@ -338,7 +329,7 @@ Object.assign(storyData, {
       return f(vars);
     }, /* TODO: images/小区周边/全家和公交站/bus.png */
     onEnter: function(vars) {
-      vars.showZombies = true;
+      vars.showRain = true;
       vars.positionAfterOperation = "三林路-环林东路 十字路口";
       vars.currentPlace = "周边社区";
       vars.currentPos = "公交站";

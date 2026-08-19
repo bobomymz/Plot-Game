@@ -78,9 +78,13 @@ Object.assign(storyData, {
   "玄关": {
     image: "images/home/foyer.png",
     onEnter: updateTime(1), // 花1分钟走到玄关
-    text: "你走到家门前。\n\
+    text: function(vars) {
+      if(vars._visit["家门外的丧尸"] > 1) return "呼，好险呐，那是什么东西？\n\
+门外传来砰砰砰的声音，那只东西在撞门。不行，得想个办法出去，困在这里必死无疑。";
+      return "你走到家门前。\n\
 这是一扇棕色木门，不锈钢门锁，上面有些许划痕。猫眼早就模糊不清了，透过它只能看见一团扭曲的暗色，也许下个月会换掉吧。\n\
-这时，有人敲响了门。是妈妈？还是查水表的？想起来我们家好像经常忘交水费，哈哈。",
+这时，有人敲响了门。是妈妈？还是查水表的？想起来我们家好像经常忘交水费，哈哈。";
+    },
     choices: [
       {
         text: "开门",
@@ -88,7 +92,7 @@ Object.assign(storyData, {
       },
       {
         text: "趴下来从门缝往外看",
-        nextScene: "丧尸的凝视",
+        nextScene: "结局-丧尸的凝视",
       },
       {
         text: "返回卧室",
@@ -207,8 +211,8 @@ Object.assign(storyData, {
         nextScene: "教程-识别颜色躲丧尸"
       },
       {
-        text: "躲在家里，从门缝看",
-        nextScene: "结局-丧尸的凝视"
+        text: "快关上门",
+        nextScene: "玄关"
       }
     ]
   },
@@ -795,13 +799,13 @@ Object.assign(storyData, {
     image: function(vars) {
       if(vars.weather === "雨") {
         return timeImage({
-          morning: "images/home/西出口-雨天.png",
-          night: "images/home/西出口-雨天-night.png",
+          morning: "images/home/西出口-雨天.jpg",
+          night: "images/home/西出口-雨天-night.jpg",
         });
       }
       return timeImage({
-        morning: "images/home/西出口.png",
-        night: "images/home/西出口-night.png",
+        morning: "images/home/西出口.jpg",
+        night: "images/home/西出口-night.jpg",
       });
     },
     text: "你来到了西出口，成功逃出了车库。",
@@ -1373,9 +1377,9 @@ Object.assign(storyData, {
       if (vars.weather === "雨") {
         var rf = timeImage({
         morning: "images/home/小区东门-雨天.png",
-        evening: "images/home/小区东门-evening-雨天.png",
-        night: "images/home/小区东门-night-雨天.png",
-        midnight: "images/home/小区东门-midnight-雨天.png"
+        evening: "images/home/小区东门-雨天-evening.png",
+        night: "images/home/小区东门-雨天-night.png",
+        midnight: "images/home/小区东门-雨天-night.png"
         });
         return rf(vars);
       }
@@ -1418,9 +1422,9 @@ Object.assign(storyData, {
       if (vars.weather === "雨") {
         var rf = timeImage({
         morning: "images/home/小区西门-雨天.png",
-        evening: "images/home/小区西门-evening-雨天.png",
+        evening: "images/home/小区西门-雨天-evening.png",
         night: "images/home/小区西门-night-雨天.png",
-        midnight: "images/home/小区西门-midnight-雨天.png"
+        midnight: "images/home/小区西门-雨天-midnight.png"
         });
         return rf(vars);
       }
@@ -1641,7 +1645,7 @@ Object.assign(storyData, {
 
   "樱桃苑-5楼-门锁了": {
     image: function(vars) {
-      if (vars._tryDoor === "502") return "images/home/502.jpg";
+      if (vars._tryDoor === "502") return "images/home/502.png";
       return "images/home/503的传单.jpg";
     },
     text: function(vars) {
@@ -1731,7 +1735,7 @@ Object.assign(storyData, {
   "物业楼": {
     image: function(vars) {
       if (vars.dd == 1 && vars.hh < 12) {
-        return "images/home/物业楼-有高锦睿.jpg";
+        return "images/home/物业楼-有高锦睿.png";
       }
       return "images/home/物业楼.png";
     },
