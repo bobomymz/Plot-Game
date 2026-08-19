@@ -311,7 +311,7 @@ Object.assign(storyData, {
       },
       {
         text: "去食堂",
-        nextScene: "长者食堂-门口",
+        nextScene: "长者食堂",
         effect: updateTime(2)
       },
       {
