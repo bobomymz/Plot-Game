@@ -199,7 +199,7 @@ Object.assign(storyData, {
         }
         if (vars.weather === "阴") {
           var f = timeImage({
-            morning: "images/小区周边/三林路-东-阴.jpg",
+            morning: "images/小区周边/三林路-东-阴.png",
             night: "images/小区周边/三林路-东-night.jpg" // 晚上看不出阴天，直接复用晴天图片
           });
           return f(vars);
