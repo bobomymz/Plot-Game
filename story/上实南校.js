@@ -45,7 +45,7 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       {
-        text: "不太对劲，退回去",
+        text: "离开这里吧",
         nextScene: "东明路-三林路"
       }
     ]
@@ -127,8 +127,8 @@ Object.assign(storyData, {
         nextScene: "上实南校-天桥-硬砸"
       },
       {
-        text: "算了，撤回去",
-        nextScene: "东明路-三林路"
+        text: "算了，离开这里吧",
+        nextScene: "上实南校门口"
       }
     ]
   },
