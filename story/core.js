@@ -369,7 +369,7 @@ const storyData = {
         }
       },
       {
-        showCondition: "hasPhone && _cafeteriaWifiOn",
+        showCondition: "hasPhone && _cafeteriaWifiOn && currentPlace == '长者食堂'",
         text: "用手机看看有什么消息",
         nextScene: "长者食堂-手机信息",
         effect: function(v) { v.positionAfterOperation = v.positionAfterOperation || "长者食堂-内部"; return {}; }

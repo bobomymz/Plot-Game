@@ -6,10 +6,12 @@ Object.assign(storyData, {
     }),
     onEnter: function(vars) {
       vars.showRain = true;
+      vars.currentPlace = "长者食堂"; // 记录当前位置，用于限制某些选项的触发地点（如食堂WiFi看消息）
       // 只在首次进入时记录计时起点，避免回到门口重设计时
       if (vars._cafeteriaEnterMinute === -1) {
         vars._cafeteriaEnterMinute = vars.gameMinutes;
       }
+      return {};
     },
     text: function(vars) {
       return "你来到了东明社区食堂。平时偶尔回来这里吃一次，饭菜也挺好的，经常能看到老年人来吃。现在这里已经空了。" + describeWeather(vars);
@@ -29,6 +31,11 @@ Object.assign(storyData, {
         condition: "weather == '雨'", // 只有在雨天休息才会挂
         nextScene: "结局-闭目养神",
         elseScene: "长者食堂-休息"
+      },
+      {
+        text: "看看门口那台刷脸签到机",
+        nextScene: "长者食堂-签到机",
+        effect: updateTime(1)
       }
     ]
   },
@@ -154,6 +161,12 @@ Object.assign(storyData, {
         text: "看看办公室",
         nextScene: "长者食堂-办公室",
         effect: updateTime(1)
+      },
+      {
+        text: "整理一下身上的东西",
+        nextScene: "整理整理",
+        effect: updateTime(1),
+        effect: {set: {positionAfterOperation: "长者食堂-内部"}}
       }
     ]
   },
@@ -260,7 +273,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-办公室": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/办公室.png */,
+    image: "images/小区周边/长者食堂/办公室.jpg",
     text: function(vars) {
       var desc = "你穿过用餐区往深处走去，后面有一扇半掩的门，里面是间不到五平米的小办公室。桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。\n";
       if(vars._visit['长者食堂-办公室']) desc = "办公室桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。";
@@ -270,7 +283,6 @@ Object.assign(storyData, {
       } else {
         desc += "路由器指示灯闪着规律的绿光。";
       }
-      desc += "桌面上摊着一本翻开的签到本。";
       return desc;
     },
     choices: [
@@ -281,10 +293,6 @@ Object.assign(storyData, {
         effect: updateTime(1, { set: { _cafeteriaWifiOn: true } })
       },
       {
-        text: "翻看签到本",
-        nextScene: "长者食堂-签到本"
-      },
-      {
         text: "离开办公室",
         nextScene: "长者食堂-内部"
       }
@@ -292,7 +300,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-打开路由器": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/打开路由器.png */,
+    image: "images/小区周边/长者食堂/打开路由器.jpg",
     text: "你按住了路由器背后的小黑钮三秒，路由器指示灯开始闪着规律的绿光。",
     choices: [
       {
@@ -323,7 +331,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-手机信息": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/长者食堂/手机信息.png */,
+    image: "images/小区周边/长者食堂/手机信息.png",
     text: "你连上了食堂的WiFi。手机震动了一下——\n\
 信号很弱，但还能用。大部分网站已经打不开了——服务器大概早就断了电。\n\
 只有几个页面还能加载出来：\n\
