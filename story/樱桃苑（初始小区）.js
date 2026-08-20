@@ -92,7 +92,9 @@ Object.assign(storyData, {
     choices: [
       {
         text: "开门",
-        nextScene: "家门外"
+        condition: "zombieAtHomeDoor",
+        nextScene: "家门外的丧尸",
+        elseScene: "家门外"
       },
       {
         showCondition: "zombieAtHomeDoor",
