@@ -439,7 +439,7 @@ Object.assign(storyData, {
         elseScene: "结局-员工通道-迅捷丧尸咬死",
         effect: updateTime(2, { add: { strength: -1 } }),
         nextScene: "全家便利店-员工通道-踢飞丧尸",
-        timeout: 10000,
+        timeout: 15000,                     // 9色闪完约7秒，留约8秒输入（原10000只剩3秒，太紧）
         timeoutScene: "结局-员工通道-迅捷丧尸咬死"
       },
       {

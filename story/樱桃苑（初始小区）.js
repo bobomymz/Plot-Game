@@ -818,15 +818,17 @@ Object.assign(storyData, {
   "西出口": {
     image: function(vars) {
       if(vars.weather === "雨") {
-        return timeImage({
+        var f = timeImage({
           morning: "images/home/西出口-雨天.jpg",
           night: "images/home/西出口-雨天-night.jpg",
         });
+        return f(vars);
       }
-      return timeImage({
+      var f = timeImage({
         morning: "images/home/西出口.jpg",
         night: "images/home/西出口-night.jpg",
       });
+      return f(vars);
     },
     text: "你来到了西出口，成功逃出了车库。",
     choices: [
@@ -1539,15 +1541,13 @@ Object.assign(storyData, {
     choices: [
       {
         text: "输入你看到的颜色分布",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：2红1蓝1绿",
-          wrongScene: "樱桃苑-4楼-失败"
-        },
+        input: { placeholder: "例如：2红1蓝1绿" },
+        condition: checkFlashAnswer,
         nextScene: "樱桃苑-4楼-胜利",
-        effect: updateTime(3, { add: { strength: -1 } })
+        elseScene: "樱桃苑-4楼-失败",
+        effect: updateTime(3, { add: { strength: -1 } }),
+        timeout: 10000,                     // ← 10秒倒计时（4色闪完约3秒，留约7秒输入）
+        timeoutScene: "樱桃苑-4楼-失败"       // ← 超时=反应太慢，被抓伤但逃脱
       }
     ]
   },

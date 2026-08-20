@@ -72,15 +72,13 @@ Object.assign(storyData, {
     choices: [
       {
         text: "输入你看到的颜色分布",
-        input: {
-          match: function(vars, input) {
-            return normalizeColorAnswer(input) === normalizeColorAnswer(vars._currentAnswer);
-          },
-          placeholder: "例如：2红1蓝1绿",
-          wrongScene: "新达汇-喷泉广场-高锦睿-被救"
-        },
+        input: { placeholder: "例如：2红1蓝1绿" },
+        condition: checkFlashAnswer,
         nextScene: "新达汇-喷泉广场-高锦睿-聊",
-        effect: updateTime(2, { add: { strength: -1 } })
+        elseScene: "新达汇-喷泉广场-高锦睿-被救",
+        effect: updateTime(2, { add: { strength: -1 } }),
+        timeout: 10000,                     // ← 10秒倒计时（4色闪完约3秒，留约7秒输入）
+        timeoutScene: "新达汇-喷泉广场-高锦睿-被救"
       }
     ]
   },
