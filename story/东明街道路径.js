@@ -602,7 +602,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "银行-存款凭条": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/银行/constructionBank.png */,
+    image: "images/小区周边/银行/存款凭条.jpg",
     onEnter: { set: { hasBankSlip: true }, add: { itemCount: 1 } },
     text: "你蹲下来，从满地的宣传单页和碎纸中捡起一张还算完整的单据。\n\
 是一张建设银行的存款凭条——大概是6月28日上午柜台上还没来得及收起来的。\n\
