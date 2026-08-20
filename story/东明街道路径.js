@@ -521,27 +521,24 @@ Object.assign(storyData, {
 
   "银行内部": {
     image: "images/小区周边/银行/银行内部.png",
-    onEnter: { set: { currentPlace: "三林路", currentPos: "银行" } },
+    onEnter: { set: { currentPlace: "三林路", currentPos: "银行", positionAfterOperation: "银行内部" } },
     text: "你推开银行的玻璃门。大厅里一片狼藉——叫号机倒在地上，宣传单页撒了一地，几盆绿植被打翻，泥土和碎瓷片混合在一起。\n\
 ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没什么用了，为什么有人会抢呢？他们真觉得自己能逃出上海啊。\n\
 保安室的门半开着，里面黑洞洞的，似乎有什么东西在动……好像是错觉。",
     choices: [
       {
+        showCondition: "!_visit['银行-保安室']",
         text: "查看保安室",
         nextScene: "银行-保安室",
         effect: updateTime(1)
       },
       {
-        text: "查看金库",
-        nextScene: "银行-金库",
-        effect: updateTime(1)
-      },
-      {
         text: "翻看地上散落的单据",
-        condition: "!hasBankSlip",
+        showCondition: "!hasBankSlip",
+        condition: "itemCount < bagVolume",
         nextScene: "银行-存款凭条",
         effect: updateTime(1),
-        elseScene: "地上剩下的单据都已经被踩烂了，什么也看不清。"
+        elseScene: "整理整理"
       },
       {
         text: "没什么值得留的，离开",
@@ -552,7 +549,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 
   "银行-保安室": {
     image: "images/小区周边/银行/保安室.jpg",
-    text: "你打开灯，探头往保安室里看。一个穿着保安制服的丧尸被卡在办公椅和墙壁之间，一条腿被椅腿别住了，正徒劳地蹬着地面，发出吱——吱——的摩擦声。它看到你，伸出手臂徒劳地抓挠，但够不到你。\n\
+    text: "你打开灯，探头往保安室里看。一个穿着保安制服的丧尸被卡在办公椅下面，正徒劳地蹬着地面，发出吱——吱——的摩擦声。它看到你，伸出手臂徒劳地抓挠，但够不到你。\n\
 办公桌上有一瓶没开封的矿泉水，在日光灯下反射着微光。",
     choices: [
       {
@@ -561,46 +558,55 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         effect: updateTime(2)
       },
       {
+        showCondition: "!_visit['银行-金库']",
+        text: "看看旁边的门",
+        nextScene: "银行-金库",
+        effect: updateTime(1)
+      },
+      {
         text: "太危险了，走吧",
-        nextScene: "三林路"
+        nextScene: "银行内部"
       }
     ]
   },
 
   "银行-拿水": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/银行/bankSecurityRoom.png */,
+    image: "images/小区周边/银行/拿到矿泉水瓶.jpg",
     onEnter: { add: { strength: 1 } },
-    text: "你贴着墙壁，小心翼翼地绕到办公桌旁。保安丧尸在你身后徒劳地嘶吼着，但你够到了那瓶水。\n\
+    text: "你贴着墙壁，翻过柜子，小心翼翼地绕到办公桌旁。保安丧尸在你身后徒劳地嘶吼着，但你够到了那瓶水。\n\
+你赶忙翻回来，大松一口气坐在椅子上，椅背嘎吱作响。\n\
 拧开瓶盖灌了几口，清凉的液体顺着喉咙滑下去——在这种天气里，一瓶干净的水比什么都珍贵。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
-你转头看向那只丧尸，它正努力地向你移动。“你叫什么名字啊？”耳边只传来虚弱的嘶吼声。”知道你不会说话。好吧，拜拜了。“\n\
-你绕过挣扎的保安，退出了银行。",
+你低头，嘲讽地看向那只丧尸，它正努力地向你移动。“你叫什么名字啊？”耳边只传来虚弱的嘶吼声。”知道你不会说话。好吧，拜拜了。“\n\
+你绕过挣扎的保安，回到了门厅。",
     choices: [
       {
         text: "继续",
-        nextScene: "三林路",
+        nextScene: "银行内部",
         effect: updateTime(3)
       }
     ]
   },
 
   "银行-金库": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/银行/bankVault.png */,
-    text: "你走到银行深处。一道巨大的金库门矗立在面前，银灰色的金属表面反射着冰冷的光。\n门上的电子锁显示屏是暗的——没电了。你把耳朵贴到门上听了听，里面没有任何声音。\n你用力拉了拉把手，纹丝不动。这种级别的金库，没有专业设备根本打不开。不过……如果哪天能通上电，也许还能回来试试。\n你在心里记下了这个位置。",
+    image: "images/小区周边/银行/金库大门.jpg",
+    text: "你走到门前，这是金库的门，银灰色的金属表面反射着冰冷的光。\n\
+你把耳朵贴到门上听了听，里面没有任何声音。\n\
+你用力拉了拉把手，纹丝不动。这种级别的金库，没有专业设备根本打不开。不过……如果哪天能通上电，也许还能回来试试。\n你在心里记下了这个位置。",
     choices: [
       {
         text: "回去",
-        nextScene: "三林路"
+        nextScene: "银行内部"
       }
     ]
   },
 
   "银行-存款凭条": {
     image: "images/placeholder.png" /* TODO: images/小区周边/银行/constructionBank.png */,
-    onEnter: { set: { hasBankSlip: true } },
+    onEnter: { set: { hasBankSlip: true }, add: { itemCount: 1 } },
     text: "你蹲下来，从满地的宣传单页和碎纸中捡起一张还算完整的单据。\n\
-是一张建设银行的存款凭条——大概是6月28日上午柜台上还没来得及收起来的。\n\n\
-<div style=“border-left: 3px solid #8B7355; padding-left: 14px; margin: 14px 0; font-family: 'Courier New', monospace; color: #c0c0c0; font-size: 14px; line-height: 1.8;”>\n\
+是一张建设银行的存款凭条——大概是6月28日上午柜台上还没来得及收起来的。\n\
+<div style=\"border-left: 3px solid #8B7355; padding-left: 14px; margin: 14px 0; font-family: 'Courier New', monospace; color: #c0c0c0; font-size: 14px; line-height: 1.8;\">\n\
 ━━━ 中国建设银行 · 存款凭条 ━━━<br>\n\
 <br>\n\
 网点：环林东路支行<br>\n\
@@ -609,17 +615,13 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 户名：周启明<br>\n\
 金额：¥860.00<br>\n\
 ━━━━━━━━━━━━━━━━━━<br>\n\
-</div>\n\n\
+</div>\n\
 860块——大概是一个小店主三四天的流水。\n\
 你把凭条叠好塞进口袋，虽然也不知道留着还有什么用。",
     choices: [
       {
         text: "继续探索银行",
         nextScene: "银行内部"
-      },
-      {
-        text: "离开银行",
-        nextScene: "三林路"
       }
     ]
   },
@@ -687,7 +689,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
       });
       if (vars.hasIronPipe) {
         cs.push({
-          text: "用手电筒照了照角落，发现一扇锈蚀的铁栅栏门——用铁管试试能不能撬开",
+          text: "用铁管撬开仓库角落那扇锈蚀的铁栅栏门",
           nextScene: "联华超市-地下室-撬锁"
         });
       }
