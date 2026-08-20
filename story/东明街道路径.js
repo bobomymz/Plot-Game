@@ -287,6 +287,13 @@ Object.assign(storyData, {
         });
         return f(vars);
       }
+      if (vars.weather === "阴") {
+        var f = timeImage({
+          morning: "images/小区周边/十字路口2-阴天.jpg",
+          night: "images/小区周边/十字路口2-night.png" // 晚上看不出阴天，直接复用晴天图片
+        });
+        return f(vars);
+      }
       var f = timeImage({
         morning: "images/小区周边/十字路口2.png",
         evening: "images/小区周边/十字路口2-evening.png",
@@ -408,11 +415,25 @@ Object.assign(storyData, {
   "东明路-三林路": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/小区周边/东明路-三林路-雨.jpg",
+          night: "images/小区周边/东明路-三林路-雨-night.jpg"
+        });
         return f(vars);
       }
-      return "images/小区周边/东明路-三林路.png";
+      if (vars.weather === "阴") {
+        var f = timeImage({
+          morning: "images/小区周边/东明路-三林路-阴.png",
+          night: "images/小区周边/东明路-三林路-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/小区周边/东明路-三林路.jpg",
+        evening: "images/小区周边/东明路-三林路-evening.jpg",
+        night: "images/小区周边/东明路-三林路-night.jpg"
+        // midnight省略不写了
+      });
     },
     onEnter: function(vars) {
       vars.showZombies = true;
