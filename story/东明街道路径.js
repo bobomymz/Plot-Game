@@ -379,7 +379,20 @@ Object.assign(storyData, {
   },
 
   "三林路-轿车门锁了": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/轿车.png */,
+    image: function(vars) {
+      if(vars.wangGiveKey) {
+        var f = timeImage({
+          morning: "images/小区周边/路边的车-银色速腾.png",
+          night: "images/小区周边/路边的车-night-银色速腾.png"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/小区周边/路边的车.jpg",
+        night: "images/小区周边/路边的车-night.jpg"
+      });
+      return f(vars);
+    },
     onEnter: updateTime(2, { set: { showRain: true, showZombies: true } }),
     text: function(vars) {
       return "你走近那辆丰田的车，使劲拉了拉车门，它纹丝不动。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。\n" + describeZombieWave(vars);
