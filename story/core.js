@@ -86,6 +86,10 @@ const storyData = {
     hasCane: false,            // 是否有拐杖（安盛街老头丧尸）
     hasMopHandle: false,       // 是否有拖把杆（理发店）
     hasCutter: false,          // 是否有美工刀
+    hasAxe: false,             // 是否有斧头（警察局）
+    hasGun: false,             // 是否有手枪（警察局）
+    hasDagger: false,          // 是否有匕首（警察局）
+    hasFireAxe: false,         // 是否有消防斧（初始小区1楼消防箱）
     hasBiscuit: false,         // 是否有饼干（安盛街便利店）
     hasMap: false,             // 是否有交通地图（三林安居苑藤蔓丧尸）
     hasLubricant: false,       // 是否有润滑油（五金店仓库，可带到安居苑修车）
@@ -112,6 +116,7 @@ const storyData = {
     hasCatSnack: false,        // 是否有脆脆炒米（新达汇4F大渝火锅门口，猫零食）
     hasKey502: false,          // 是否有502钥匙（鹅卵石路自行车）
     hasCommitteeKey: false,    // 是否有居委会钥匙（樱桃苑5楼孙阿姨）
+    hasRenjiCard: false,       // 是否有仁济检验科门禁卡（安居苑203室双肩包夹层，钥匙类）
     // 交通工具（不占背包）
     hasCar: false,             // 是否有轿车
     hasEbike:  false,          // 是否有电瓶车（地下车库非机动车区域）

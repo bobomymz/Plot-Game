@@ -503,6 +503,85 @@ Object.assign(storyData, {
       {
         text: "回到B1",
         nextScene: "B1"
+      },
+      {
+        text: "看看电梯厅",
+        nextScene: "1楼-电梯厅"
+      }
+    ]
+  },
+
+  "1楼-电梯厅": {
+    image: "images/placeholder.png" /* TODO: images/home/1楼电梯厅.png */,
+    text: "大厅的一侧是电梯厅。两部电梯的门都开着，轿厢停在1楼，空荡荡的，只有低沉的嗡鸣声。\n\
+靠墙立着一个红色的消防箱，箱门的玻璃蒙着灰，但没碎。",
+    choices: [
+      {
+        text: "坐电梯",
+        nextScene: "电梯"
+      },
+      {
+        showCondition: "!hasFireAxe",
+        text: "打开消防箱",
+        nextScene: "1楼-消防箱"
+      },
+      {
+        text: "离开电梯厅",
+        nextScene: "1楼-安全"
+      }
+    ]
+  },
+
+  "1楼-消防箱": {
+    image: "images/placeholder.png" /* TODO: images/home/消防箱.png */,
+    onEnter: { set: { positionAfterOperation: "1楼-电梯厅" } },
+    text: "你打开消防箱。里面是一把红色的消防斧，挂在卡扣上，斧刃锃亮，一看就是没怎么用过的。\n\
+箱壁上贴着一张检查卡，最近的检查日期是6月中旬。\n\
+消防斧比普通的家伙结实得多——撬门、破门、劈丧尸都够用了。",
+    choices: [
+      {
+        text: "拿走消防斧",
+        condition: "itemCount < bagVolume",
+        nextScene: "1楼-电梯厅",
+        effect: { set: { hasFireAxe: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      },
+      {
+        text: "算了，不拿",
+        nextScene: "1楼-电梯厅"
+      }
+    ]
+  },
+
+  "电梯": {
+    image: "images/home/lift.jpg",
+    text: "你走进电梯。轿厢的灯忽明忽暗，按钮面板上还有几层的灯亮着。\n\
+F2 的按钮早就被撬掉了——不知道是谁干的。",
+    choices: [
+      {
+        text: "去2楼（家）",
+        nextScene: "家门外",
+        effect: updateTime(1)
+      },
+      {
+        text: "去3楼",
+        nextScene: "3楼-安全",
+        effect: updateTime(1)
+      },
+      {
+        text: "去4楼",
+        nextScene: "樱桃苑-4楼",
+        effect: updateTime(1)
+      },
+      {
+        text: "去B1",
+        nextScene: "B1",
+        effect: updateTime(1)
+      },
+      {
+        text: "回1楼",
+        nextScene: "1楼-安全",
+        effect: updateTime(1)
       }
     ]
   },

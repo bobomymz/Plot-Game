@@ -47,6 +47,11 @@ Object.assign(storyData, {
       {
         text: "离开这里吧",
         nextScene: "东明路-三林路"
+      },
+      {
+        text: "沿东明路向北去警察局",
+        nextScene: "警察局",
+        effect: updateTime(15)
       }
     ]
   },

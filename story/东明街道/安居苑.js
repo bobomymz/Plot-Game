@@ -99,7 +99,7 @@ Object.assign(storyData, {
 你看向西边那栋楼，一楼的几户人家门窗紧闭，有一家的门虚掩着。";
       if (!vars.hasRustyBike) basicDes += "门口还停着一辆老式自行车，车筐里塞着半袋没来得及拿上楼的菜。";
       basicDes += "\n\
-东边那栋的门牌上写着“8号楼”——二楼靠东的窗户开着一道缝，像是被人推开后就没关回去。窗台上搁着一只白色的搪瓷缸，上面印着褪了色的红字。风大的时候，能听到什么东西在啪嗒啪嗒地响。"
+东边那栋的门牌上写着“8号楼”——二楼靠东的窗户开着一道缝，像是被人推开后就没关回去。窗台上搁着一只白色的搪瓷缸。风大的时候，能听到什么东西在啪嗒啪嗒地响。"
       // 安居苑北门是前门，面向三林路，南门是后门，面向安盛街中段
       return basicDes + "\n" + describeWeather(vars);
     },
@@ -110,7 +110,7 @@ Object.assign(storyData, {
         effect: updateTime(4)
       },
       {
-        text: "往东走去8号楼",
+        text: "看看东边那栋楼",
         nextScene: "三林安居苑-8号楼",
         effect: updateTime(4)
       },
@@ -485,13 +485,138 @@ Object.assign(storyData, {
   "三林安居苑-203室": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
     onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-2楼" } },
-    text: "203的门没锁——你轻轻一拧就开了。\n\
-这是一间普通的一室户。客厅不大，但收拾得很干净。书桌上摊着几本翻开的专业书，页边夹着彩色便签。一台笔记本电脑合着放在桌角，电源指示灯早就暗了。\n\
+    text: function(vars) {
+      var desc = "203的门没锁——你轻轻一拧就开了。\n\
+这是一间普通的一室户。客厅不大，但收拾得很干净。书桌上摊着几本翻开的专业书，页边夹着彩色便签，桌角一台笔记本电脑合着，电源指示灯早就暗了。\n\
 \n\
 地上有一个敞开的双肩包，旁边散落着几根便携采样管和一支记号笔——像是有人匆忙收拾了东西出门，还没来得及拉上拉链。\n\
 厨房的水槽里放着一只倒扣的马克杯，杯底残留着一圈干透的咖啡渍。\n\
 \n\
-人不在。不知道是出去了，还是不会再回来了。",
+人不在。";
+      if (vars._foundHongNotebook) {
+        desc += "\n你想起204那本笔记本上写的——对门的小王，是搞水质检测的。说的就是这间屋子的人吗？";
+      }
+      return desc;
+    },
+    choices: [
+      {
+        text: "查看书桌",
+        nextScene: "三林安居苑-203室-书桌",
+        effect: updateTime(1)
+      },
+      {
+        text: "翻看桌上那张纸",
+        nextScene: "三林安居苑-203室-草稿",
+        effect: updateTime(1)
+      },
+      {
+        text: "检查地上的双肩包",
+        nextScene: "三林安居苑-203室-双肩包",
+        effect: updateTime(1)
+      },
+      {
+        text: "查看笔记本电脑",
+        nextScene: "三林安居苑-203室-笔记本",
+        effect: updateTime(1)
+      },
+      {
+        text: "离开203",
+        nextScene: "三林安居苑-8号楼-2楼",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "三林安居苑-203室-书桌": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-203室" } },
+    text: "书桌上摊着一本《环境毒理学》，页边夹着彩色便签，其中一页折了角。便签上写着两句潦草的笔记：“样本浓度异常，需复测”“联系谁？”\n\
+\n\
+桌角压着一张工作证——复旦大学环境科学与工程系，姓名：王知筠，研究员。证件照里她戴着一副银框圆眼镜，没笑。\n\
+工作证下面压着一张纸，折痕很深，像是被人匆忙带回来又随手放下的：\n\
+——仁济医院南院 检验科访客登记——\n\
+姓名：王知筠　事由：检验科　日期：6月28日 18:30\n\
+\n\
+王知筠。她6月28日傍晚，去过仁济医院的检验科。",
+    choices: [
+      {
+        text: "放下工作证",
+        nextScene: "三林安居苑-203室",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "三林安居苑-203室-草稿": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-203室" } },
+    text: "你拿起桌上那张纸——是一份实验记录草稿，笔迹很急，像是赶着记下来的：\n\
+\n\
+“黄浦江 PM2 采样，甲基汞 2.4ng/L，较基线高出约 40 倍。复测一致。\n\
+……\n\
+联系仁济检验科方瑜，帮我留一份那些患者的脑脊液样本。\n\
+别发B站——上次那条已经被限流了。”\n\
+\n\
+仁济检验科的方瑜。她认识仁济检验科的人，还专门托对方留样本。",
+    choices: [
+      {
+        text: "放下草稿",
+        nextScene: "三林安居苑-203室",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "三林安居苑-203室-双肩包": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-203室" } },
+    text: function(vars) {
+      var desc = "你蹲下来翻看那只敞开的双肩包。里面有几根封着口的便携采样管、一支记号笔、一包没拆封的口罩——显然是带着采样工具出门的。\n\
+你往内侧夹层里摸了摸，指尖触到一张硬卡。你抽出来一看：白色门禁卡，正面印着仁济医院的标志和“检验科”三个字，背面贴着一张姓名标签，但被人用记号笔涂掉了。\n\
+门禁卡的主人显然常去仁济检验科——甚至把卡随手放在包里，没想过要拿走。";
+      return desc;
+    },
+    choices: function(vars) {
+      var opts = [];
+      if (!vars.hasRenjiCard) {
+        opts.push({
+          text: "拿走这张门禁卡",
+          nextScene: "三林安居苑-203室-门禁卡",
+          effect: updateTime(1)
+        });
+      } else {
+        opts.push({
+          text: "门禁卡你已经拿过了",
+          nextScene: "三林安居苑-203室"
+        });
+      }
+      opts.push({
+        text: "放回包里",
+        nextScene: "三林安居苑-203室"
+      });
+      return opts;
+    }
+  },
+
+  "三林安居苑-203室-门禁卡": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    onEnter: { set: { hasRenjiCard: true } },
+    text: function(vars) {
+      var seenDesk = vars._visit["三林安居苑-203室-书桌"] > 0;
+      var seenDraft = vars._visit["三林安居苑-203室-草稿"] > 0;
+      if (seenDesk && seenDraft) {
+        return "你把门禁卡收进口袋。\n\
+工作证上的“王知筠”、访客单上“仁济医院检验科 6月28日”、草稿里“联系仁济检验科方瑜”——三样东西在你脑子里拼在了一起：\n\
+老洪的对门邻居王知筠，是个做水质检测的复旦学者。6月28日傍晚，她带着采样工具去了仁济检验科，验证一件她早就怀疑的事。\n\
+这张卡，能刷开仁济检验科的门。你打算去看看——也许她还留在那里，也许留下了什么。";
+      } else if (seenDesk || seenDraft) {
+        return "你把门禁卡收进口袋。仁济医院检验科的卡。你想起书桌上那张访客单——6月28日有人登记去过检验科，也许和这间屋子的主人有关。";
+      } else if (vars._foundHongNotebook) {
+        return "你把门禁卡收进口袋。仁济医院检验科的卡。你想起204那个老人笔记本里写的——对门小王是搞水质检测的。这张卡，该不会是小王的吧？";
+      } else {
+        return "你把门禁卡收进口袋。一张仁济医院检验科的门禁卡。你想不通它为什么会在背包内侧的夹层里，但你感觉它有用——先收着。";
+      }
+    },
     choices: [
       {
         text: "离开203",
@@ -501,13 +626,28 @@ Object.assign(storyData, {
     ]
   },
 
+  "三林安居苑-203室-笔记本": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-203室" } },
+    text: "你按了按笔记本的电源键——屏幕毫无反应。电源指示灯早就暗了，充电口周围积了一层薄灰。\n\
+你把电脑翻过来，A面贴着一张卡通贴纸：一只戴着博士帽的蚯蚓，下面手写着“Dr. Earthworm”。\n\
+\n\
+没有电。你合上电脑，想着哪天找到电源了，再来看看里面有什么。",
+    choices: [
+      {
+        text: "放下笔记本",
+        nextScene: "三林安居苑-203室",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
   // ===== 204室——老洪 =====
 
   "三林安居苑-204室": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBuilding.png */,
-    onEnter: {set: { _enteredHong204: true }},
     text: function(vars) {
-      if (!vars._enteredHong204) {
+      if (vars._visit['三林安居苑-204室'] == 1) {
         return "你轻轻推开门。一股甜腻的、让人不太舒服的气味飘了出来——不是腐败的臭味，而是一种说不清的、带着湿气的甜味。\n\
 玄关的鞋柜上放着一串钥匙和一副老花镜。客厅里的家具很简单：一张旧沙发，一个茶几，茶几上放着半杯凉掉的茶。茶几下面的报纸是摊开的——6月27日的《新民晚报》。\n\
 \n\
@@ -634,17 +774,12 @@ Object.assign(storyData, {
     onEnter: { set: { _foundHongNotebook: true } },
     text: "你翻开那本笔记本。封面是深蓝色的硬壳，边角已经磨得发白。前半本记的是些零碎的巡检记录和阀门编号——“3号碱液泵异响，已报修”“东区蒸汽管道保温层脱落”——后半本的内容变了。\n\
 字迹从工整变得潦草，像是人在激动或焦虑时写下的：\n\
-\n\
-<em>“6/25 封存区被人剪开了。旧电解槽车间门开着，含汞污泥桶泡在水里。地上的水是灰色的，往老排水沟的方向渗。那片沟直通长江。”以后统一处理“——他妈的都十几年了。”</em>\n\
-\n\
-<em>“6/26 回上海了。自来水味道不对。太像了。”</em>\n\
-\n\
-<em>“6/27 把接的水放了一夜——水面上有油光。跟当年废水池里那层膜一模一样。不是错觉。”</em>\n\
-\n\
-<em>“6/28 上午 敲了对门小王的门。她是搞水质检测的。她把那瓶水测了。超标。”</em>\n\
-\n\
-后面还有一行，字迹明显更抖：\n\
-<em>“我早上喝了。”</em>",
+<em>“6/25 封存区被人剪开了。旧电解槽车间门开着。地上的水是灰色的，往老排水沟的方向渗。”以后统一处理“——他妈的都十几年了。”</em>\n\
+<em>“6/26 回上海了。”</em>\n\
+<em>“6/27 把接的水放了一夜——水面上有油光，泛着彩色。”</em>\n\
+<em>“6/28 上午 敲了对门小王的门。她是搞水质检测的。她把那瓶水拿去测了。”</em>\n\
+后面还有一行，字迹有点模糊：\n\
+<em>“我他妈早上喝了。**含量超标。”</em>",
     choices: [
       {
         text: "合上笔记本",

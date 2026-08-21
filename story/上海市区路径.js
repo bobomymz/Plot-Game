@@ -24,6 +24,13 @@ Object.assign(storyData, {
         condition: "!hasNoTransportation",
         nextScene: "三条出城线的抉择",
         elseScene: "结局-累死我了"
+      },
+      {
+        text: "前往济阳路跨线桥",
+        condition: "!hasNoTransportation",
+        nextScene: "济阳路跨线桥",
+        effect: updateTime(10),
+        elseScene: "结局-累死我了"
       }
     ]
   },
@@ -58,6 +65,27 @@ Object.assign(storyData, {
   "结局-被丧尸围殴致死" : {
     image: "images/zombiesBeatYou.png",
     text: "你并没有想象中那么灵活，被丧尸围殴至死。\n—— 结局：被丧尸围殴致死 ——"
+  },
+
+  "济阳路跨线桥": {
+    image: "images/placeholder.png" /* TODO: images/highway/jiyangOverpass.png */,
+    onEnter: function(vars) { vars.showZombies = true; },
+    text: "高架在济阳路跨线桥处分叉。桥下往西北方向的道路，通向仁济医院那一带。\n\
+如果你不下高架继续往前，前方的高架被废弃车辆堵得严严实实，看不到尽头。",
+    choices: [
+      {
+        text: "下高架，前往仁济南院",
+        condition: "!hasNoTransportation",
+        nextScene: "仁济南院-浦锦路",
+        effect: updateTime(10),
+        elseScene: "结局-累死我了"
+      },
+      {
+        text: "返回杨高南路立交桥",
+        nextScene: "杨高南路高架",
+        effect: updateTime(10)
+      }
+    ]
   }
 
 });
