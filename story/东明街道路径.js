@@ -628,10 +628,10 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 
   // ==================== 联华超市 ====================
   "小超市": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/lianhuaSupermarket.png */,
+    image: "images/小区周边/联华超市/内部.jpg",
     onEnter: { set: { currentPlace: "三林路", currentPos: "联华超市" } },
     text: "你走进联华超市。货架上东西不多，但比起那些被扫荡一空的店铺，这里还算有些存货——几包方便面、几瓶矿泉水、几袋饼干散落在货架上。\n\
-超市不大，一眼就能看到头。后面有一个挂着“仓库重地”牌子的门，门虚掩着。",
+超市不大也不小，几排货架后面有什么，你也不清楚。",
     choices: [
       {
         text: "吃点东西补充体力",
@@ -640,7 +640,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         effect: updateTime(5)
       },
       {
-        text: "推开仓库的门看看",
+        text: "往深处走",
         nextScene: "联华超市-仓库",
         effect: updateTime(1)
       },
@@ -652,9 +652,10 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "联华超市-补给": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/lianhuaSupermarket.png */,
+    image: "images/小区周边/联华超市/吃雪饼喝脉动.jpg",
     onEnter: { add: { strength: 1 }, set: { _supermarketSuppliesTaken: true } },
-    text: "你撕开一包饼干，就着矿泉水吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n\
+    text: "你撕开一包旺旺雪饼，就着一瓶脉动吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n\
+旺旺雪饼熟悉的味道在空气中弥漫开，又迅速散去。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       {
@@ -666,9 +667,9 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "联华超市-仓库": {
-    image: "images/小区周边/联华超市/仓库.jpg" /* TODO: images/小区周边/supermarketWarehouse.png */,
+    image: "images/小区周边/联华超市/仓库.jpg",
     text: function(vars) {
-      var desc = "仓库里堆着几箱饮料和一些滞销的零食。角落里有一扇活板门。";
+      var desc = "你来到了超市仓库。仓库里堆着几箱饮料和一些滞销的零食。角落里有一扇活板门。";
       if (vars.supermarketWaterLeft > 0) desc += "\n货架深处靠墙放着一箱没开封的瓶装水——数了数，还有" + vars.supermarketWaterLeft + "瓶。";
       else desc += "\n货架深处那个装水的纸箱已经空了——里面的瓶装水都被你拿走了。";
       if (vars._supermarketCompromised) desc += "活板门的铁栓已经被撬开了，门板歪在一边——下面的地下室已经暴露了，不再安全。";

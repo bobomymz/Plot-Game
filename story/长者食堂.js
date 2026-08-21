@@ -217,6 +217,11 @@ Object.assign(storyData, {
         text: "离开后厨",
         nextScene: "长者食堂-内部",
         effect: updateTime(1)
+      },
+      {
+        text: "推开冷藏室的门",
+        nextScene: "菜市场-员工通道",
+        effect: updateTime(1)
       }
     ]
   },

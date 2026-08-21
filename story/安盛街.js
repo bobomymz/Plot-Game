@@ -1544,6 +1544,11 @@ Object.assign(storyData, {
         effect: updateTime(10)
       },
       {
+        text: "钻进路边那家菜市场的卷帘门",
+        nextScene: "菜市场-大厅",
+        effect: updateTime(2)
+      },
+      {
         text: "返回安盛街中段",
         nextScene: "安盛街中段",
         effect: updateTime(6)

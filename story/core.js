@@ -102,6 +102,9 @@ const storyData = {
     supermarketWaterLeft: 12,  // 联华超市仓库瓶装水剩余（瓶）
     teacherStudentsDead: false, // 给王老师毒水后学生变丧尸的死局标记
     _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启
+    fangTradeCount: 0,         // 方姐交易次数（上限3，满3次后她尸变，再进冷库深处即死）
+    hasFrozenMeat: false,      // 是否有冻肉（菜市场方姐换的，体力回满，占1格）
+    _marketHallCleared: false, // 菜市场大厅的丧尸是否已清理
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
@@ -369,6 +372,17 @@ const storyData = {
         }
       },
       {
+        showCondition: "hasFrozenMeat",
+        text: "吃掉冻肉（体力回满）",
+        nextScene: "整理整理",
+        effect: function(vars) {
+          vars.strength = 10;
+          vars.hasFrozenMeat = false;
+          vars.itemCount = Math.max(0, vars.itemCount - 1);
+          return {};
+        }
+      },
+      {
         showCondition: "hasPhone && _cafeteriaWifiOn && currentPlace == '长者食堂'",
         text: "用手机看看有什么消息",
         nextScene: "长者食堂-手机信息",
@@ -454,7 +468,7 @@ const storyData = {
       },
       {
         showCondition: "hasMercuryPill && mercuryLoad > 0",
-        text: "服用无标签药丸（降低汞负荷20点）",
+        text: "服用无标签药丸（作用未知）",
         effect: function(vars) {
           vars.mercuryLoad = Math.max(0, vars.mercuryLoad - 20);
           vars.hasMercuryPill = false;
