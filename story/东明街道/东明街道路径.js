@@ -378,21 +378,14 @@ Object.assign(storyData, {
       if(vars.hasEbike) basicDes += "你放弃了电瓶车，快速坐上了驾驶座。";
       if(vars.hasRustyBike) basicDes += "你放弃了自行车，快速坐上了驾驶座";
       // 拿到轿车自动放弃其他交通工具，包括电瓶车和自行车
-      basicDes += "你想去哪里呢？";
       return basicDes;
     },
     choices: [
       {
-        text: "上高速",
+        text: "继续",
         nextScene: "三林路",
-        effect: updateTime(5)
-      },
-      {
-        text: "前往警察局（3公里）",
-        nextScene: "警察局",
         effect: updateTime(10)
-      },
-      // 选择前往的地点，但需要地图才能解锁较远的地方，不然会被丧尸包围
+      }
     ]
   },
 
