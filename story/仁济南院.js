@@ -39,8 +39,10 @@ Object.assign(storyData, {
       },
       {
         text: "回高架",
+        condition: "chasedByZombies < 4",
         nextScene: "杨高南路高架",
-        effect: updateTime(15)
+        effect: updateTime(15),
+        elseScene: "结局-仁济-尸潮围困"
       }
     ]
   },
@@ -292,6 +294,11 @@ Object.assign(storyData, {
         effect: updateTime(2)
       });
       opts.push({
+        text: "去门诊大厅",
+        nextScene: "仁济南院-门诊大厅",
+        effect: updateTime(2)
+      });
+      opts.push({
         text: "去检验科",
         nextScene: "仁济南院-检验科",
         effect: updateTime(2)
@@ -300,6 +307,11 @@ Object.assign(storyData, {
         text: "去住院部",
         nextScene: "仁济南院-住院部走廊",
         effect: updateTime(3)
+      });
+      opts.push({
+        text: "去急诊观察室（上二楼）",
+        nextScene: "仁济南院-急诊观察室",
+        effect: updateTime(2)
       });
       opts.push({
         text: "看看楼层导览图",
@@ -891,6 +903,16 @@ Object.assign(storyData, {
         });
       }
       opts.push({
+        text: "去护士站",
+        nextScene: "仁济南院-护士站",
+        effect: updateTime(1)
+      });
+      opts.push({
+        text: "去特需病房（上十一楼）",
+        nextScene: "仁济南院-特需病房",
+        effect: updateTime(3)
+      });
+      opts.push({
         text: "返回",
         nextScene: function(vars) { return vars._lastScene === "仁济南院-检验科后门" ? "仁济南院-检验科后门" : "仁济南院-急诊大厅"; },
         effect: updateTime(3)
@@ -1203,6 +1225,15 @@ Object.assign(storyData, {
     ]
   },
 
+  "结局-仁济-尸潮围困": {
+    image: "images/zombieWaveSmashYouIntoPieces.png",
+    text: "你朝着高架的方向冲去，想要离开这家医院。\n\
+但外面的尸潮比你想象中更密。你刚冲出浦锦路，就被从四面八方涌来的丧尸吞没——它们早已把这家医院围得水泄不通，就等着有人从里面出来。\n\
+你在震耳欲聋的嘶吼声中被撕碎。\n\
+\n—— 结局：仁济围困 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
   "仁济南院-太平间-报告": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
     onEnter: function(vars) {
@@ -1217,11 +1248,162 @@ Object.assign(storyData, {
 \n\
 “脑脊液 甲基汞浓度：正常值上限的 40 倍。结论：急性甲基汞中毒。”\n\
 \n\
-报告的一角有一个手写的批注，字迹和王知筠实验记录本上的一模一样：“实锤。”",
+报告的一角有一个手写的批注，字迹潦草，只有三个字：“实锤。”",
     choices: [
       {
         text: "收起报告",
         nextScene: "仁济南院-太平间"
+      }
+    ]
+  },
+
+  // ==================== 冗余探索区（环境叙事 · 不承载关键剧情） ====================
+
+  "仁济南院-门诊大厅": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiHall.png */,
+    onEnter: function(vars) { vars.currentPos = "门诊大厅"; return {}; },
+    text: "门诊楼的大厅比急诊还要空旷。挂号机全部黑屏，排队用的伸缩栏杆东倒西歪，地上散落着病历本、医保卡和几张撕碎的处方单。\n\
+缴费窗口的玻璃碎了一角，里面搁着一张没坐过人的转椅。\n\
+墙上贴着褪色的科室索引——内科、外科、妇产科、中医科……大部分科室的门都锁着。",
+    choices: [
+      {
+        text: "去影像科",
+        nextScene: "仁济南院-影像科",
+        effect: updateTime(1)
+      },
+      {
+        text: "去输液大厅（上二楼）",
+        nextScene: "仁济南院-输液大厅",
+        effect: updateTime(2)
+      },
+      {
+        text: "返回急诊大厅",
+        nextScene: "仁济南院-急诊大厅",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  "仁济南院-影像科": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiRadiology.png */,
+    onEnter: function(vars) { vars.currentPos = "影像科"; return {}; },
+    text: "影像科的门半掩着。CT室的金属门虚掩，门缝里透出一点微光。X光片散落在地上，踩上去嘎吱作响。\n\
+操作台旁瘫着一个穿白大褂的人，已经死了——胸口还别着放射科的胸牌。\n\
+墙上贴着一张辐射警告标志，红色的三叶形图案在昏暗里格外醒目。",
+    choices: [
+      {
+        text: "返回门诊大厅",
+        nextScene: "仁济南院-门诊大厅",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "仁济南院-输液大厅": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiInfusion.png */,
+    onEnter: function(vars) { vars.currentPos = "输液大厅"; return {}; },
+    text: "二楼的输液大厅里，成排的输液椅还保持着原样，吊瓶架倒了一地，药液早已干涸。\n\
+地上散落着几样小东西——一个塑料小汽车、一只掉了鞋带的小鞋。\n\
+天花板的吊扇还在慢慢转，发出有节奏的吱呀声，像是什么东西在一下一下地敲着。",
+    choices: [
+      {
+        text: "去中医科（上四楼）",
+        nextScene: "仁济南院-中医科",
+        effect: updateTime(2)
+      },
+      {
+        text: "返回门诊大厅（下楼）",
+        nextScene: "仁济南院-门诊大厅",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  "仁济南院-中医科": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiTCM.png */,
+    onEnter: function(vars) { vars.currentPos = "中医科"; return {}; },
+    text: function(vars) {
+      var desc = "四楼的中医科弥漫着一股陈年的草药味。中药柜的抽屉半开着，里面的草药散落一地，有的已经发了霉。\n\
+墙上挂着一幅针灸穴位图，几根银针还插在图上的穴位上。\n";
+      if (!vars._renjiHerbalTaken) {
+        desc += "柜台的角落里有一包没拆封的花茶，包装上印着“清肝明目”。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var opts = [];
+      if (!vars._renjiHerbalTaken) {
+        opts.push({
+          text: "泡一壶花茶喝下（体力+1）",
+          nextScene: "仁济南院-中医科",
+          effect: { set: { _renjiHerbalTaken: true }, add: { strength: 1 } }
+        });
+      }
+      opts.push({
+        text: "返回输液大厅",
+        nextScene: "仁济南院-输液大厅",
+        effect: updateTime(2)
+      });
+      return opts;
+    }
+  },
+
+  "仁济南院-急诊观察室": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiObservation.png */,
+    onEnter: function(vars) { vars.currentPos = "急诊观察室"; return {}; },
+    text: "急诊大厅楼上是一间观察室。几张观察床上的被子凌乱，输液架上还挂着半空的药瓶。\n\
+一台监护仪的屏幕裂了，但电源灯还在一闪一闪。\n\
+床头柜上放着半瓶没喝完的水，瓶身上蒙着一层薄灰。",
+    choices: [
+      {
+        text: "返回急诊大厅",
+        nextScene: "仁济南院-急诊大厅",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  "仁济南院-护士站": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiNurseStation.png */,
+    onEnter: function(vars) { vars.currentPos = "护士站"; return {}; },
+    text: function(vars) {
+      var desc = "护士站的台面一片狼藉，电脑黑着屏，病历架倒了一排，散落的病历纸被踩得脏兮兮。\n\
+墙上那块交班的白板上还留着字——“6/28 夜班 3人”，字迹歪歪扭扭。\n";
+      if (!vars._renjiGlucoseTaken) {
+        desc += "台子下面的小冰箱半开着，里面躺着一瓶没拆封的葡萄糖。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var opts = [];
+      if (!vars._renjiGlucoseTaken) {
+        opts.push({
+          text: "喝掉那瓶葡萄糖（体力+1）",
+          nextScene: "仁济南院-护士站",
+          effect: { set: { _renjiGlucoseTaken: true }, add: { strength: 1 } }
+        });
+      }
+      opts.push({
+        text: "返回住院部走廊",
+        nextScene: "仁济南院-住院部走廊",
+        effect: updateTime(1)
+      });
+      return opts;
+    }
+  },
+
+  "仁济南院-特需病房": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    onEnter: function(vars) { vars.currentPos = "特需病房"; return {}; },
+    text: "你上了十一楼。这里是特需病房，走廊比普通病区宽敞，墙面上是暖色调的护墙板。\n\
+你推开一间没上锁的病房——独立卫浴，窗明几净，床头柜上放着一个相框，照片里一家三口笑得正开心。\n\
+窗外的城市灰蒙蒙一片，远处高架的轮廓在暮色里若隐若现。\n\
+床头的抽屉里有一封没写完的信，只写了个开头：“亲爱的，如果你们能收到这封信……”",
+    choices: [
+      {
+        text: "返回住院部走廊",
+        nextScene: "仁济南院-住院部走廊",
+        effect: updateTime(3)
       }
     ]
   }

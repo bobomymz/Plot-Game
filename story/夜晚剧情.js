@@ -28,6 +28,12 @@ Object.assign(storyData, {
         }
       } else if (vars.currentArea === "高架") {
         desc += "高架上的风很大，刮得路牌吱嘎作响。黑暗中你只能看到远处城市的轮廓和零星的火光。这里完全暴露在外，没有任何遮蔽。";
+      } else if (vars.currentArea === "仁济南院") {
+        if (vars.chasedByZombies >= 4) {
+          desc += "医院外的脚步声越来越密集——尸潮已经把整座医院围住了。借着应急灯微弱的光，你能看到急诊大楼的玻璃门在剧烈地震动。\n它们知道你在里面。今晚，你哪儿也去不了。";
+        } else {
+          desc += "医院的走廊在夜色里更加阴森。应急灯把影子拉得老长，消毒水的气味里混着一丝若有若无的尸臭。这里比外面安全——但只是暂时的。";
+        }
       } else {
         desc += "四周一片漆黑，你必须找个地方过夜。";
       }
@@ -122,14 +128,49 @@ Object.assign(storyData, {
         nextScene: "结局-过夜-街头死亡"
       },
 
-      // ===== 兜底（始终可用） =====
+      // ===== 仁济南院 =====
       {
-        showCondition: "dd < 3",
+        showCondition: "currentArea == '仁济南院' && _renjiLabCleared && !_renjiNoise",
+        text: "躲在检验科过夜",
+        nextScene: "过夜-仁济-检验科"
+      },
+      {
+        showCondition: "currentArea == '仁济南院' && _renjiLabCleared && _renjiNoise",
+        text: "躲在检验科过夜（但门锁已经坏了）",
+        nextScene: "结局-仁济-检验科失守"
+      },
+      {
+        showCondition: "currentArea == '仁济南院'",
+        text: "躲在门诊药房过夜",
+        nextScene: "过夜-仁济-药房"
+      },
+      {
+        showCondition: "currentArea == '仁济南院' && _renjiWardCleared && dd < 8",
+        text: "躲在住院部病房过夜",
+        nextScene: "过夜-仁济-病房"
+      },
+      {
+        showCondition: "currentArea == '仁济南院' && chasedByZombies < 4",
+        text: "冒险摸黑离开医院",
+        nextScene: function(vars) {
+          var failProb = 0.2 + vars.chasedByZombies * 0.15;   // ch 越高越容易在夜逃中被追上
+          return Math.random() < failProb ? "结局-仁济-摸黑离开失败" : "过夜-仁济-摸黑离开";
+        }
+      },
+      {
+        showCondition: "currentArea == '仁济南院' && chasedByZombies >= 4",
+        text: "强行冲出医院",
+        nextScene: "结局-仁济-尸潮围困"
+      },
+
+      // ===== 兜底（始终可用，排除医院） =====
+      {
+        showCondition: "dd < 3 && currentArea != '仁济南院'",
         text: "冒险在街头找地方躲一晚",
         nextScene: "过夜-街头兜底"
       },
       {
-        showCondition: "dd >= 3",
+        showCondition: "dd >= 3 && currentArea != '仁济南院'",
         text: "在街头寻找掩体",
         nextScene: "结局-过夜-街头死亡"
       }
@@ -419,6 +460,114 @@ Object.assign(storyData, {
   "结局-过夜-深夜食堂上锁": {
     image: "images/placeholder.png" /* TODO: images/xindahui/eastBridge.png */,
     text: "你穿过东区天桥，来到哥哥的深夜食堂门口。\nU型锁还挂在那里。你没有钥匙。\n你用力拉了拉门，纹丝不动。\n身后的天桥入口传来拖沓的脚步声——几只丧尸正朝你走来。你无处可退，被困在了天桥上。\n夜晚的寒风裹着腐臭味，成了你最后记忆里的全部。\n\n—— 结局：深夜食堂上锁 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
+  // ==================== 安全屋 - 仁济检验科 ====================
+  "过夜-仁济-检验科": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLabNight.png */,
+    onEnter: function(vars) {
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 2);
+      vars.currentArea = "仁济南院";
+      vars.currentPos = "检验科";
+      return {};
+    },
+    text: "你锁好检验科的门，在操作台旁的椅子上坐下。应急灯的微光下，那些离心机、试剂架的轮廓影影绰绰。\n\
+这里不久前还有人工作过——没来得及收拾的试剂、摊在台面上的记录，都还保持着最后的样子。\n\
+你尽量不往那个方向想。可越是安静，那些散落的东西越让你心里发毛。\n\
+你就这样半睡半醒地熬到了天亮。",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-检验科-内部" }
+    ]
+  },
+
+  // ==================== 安全屋 - 仁济门诊药房 ====================
+  "过夜-仁济-药房": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPharmacyNight.png */,
+    onEnter: function(vars) {
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      vars.currentArea = "仁济南院";
+      vars.currentPos = "门诊药房";
+      return {};
+    },
+    text: "你躲进门诊药房，用几个货架把门顶住。药房的门结实，窗户也小，是医院里难得的封闭空间。\n\
+你借着应急灯翻找，在柜台下面摸出几盒没被扫荡干净的药片。\n\
+第二天醒来，你把搜到的东西收好。外面的尸潮似乎散了一些。",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-门诊药房" }
+    ]
+  },
+
+  // ==================== 安全屋 - 仁济住院部病房 ====================
+  "过夜-仁济-病房": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiWardNight.png */,
+    onEnter: function(vars) {
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      vars.strength = Math.min(10, vars.strength + 2);
+      vars.currentArea = "仁济南院";
+      vars.currentPos = "住院部";
+      return {};
+    },
+    text: "你溜进住院部的一间空病房，把门反锁，用床抵住。\n\
+病房里有床——真正的床。你躺上去的那一刻，浑身的疲惫像潮水一样涌了上来。\n\
+这一觉睡得意外地沉。第二天醒来时，你感觉体力恢复了不少。",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-住院部走廊" }
+    ]
+  },
+
+  // ==================== 摸黑离开医院 ====================
+  "过夜-仁济-摸黑离开": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiNightRun.png */,
+    onEnter: function(vars) {
+      vars.showRain = true;
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      vars.strength = Math.max(0, vars.strength - 1);
+      return {};
+    },
+    text: "你压低身子，从医院侧门溜了出去。夜色浓得化不开，你只能凭着记忆往高架的方向摸。\n\
+一路上你几次差点撞上游荡的丧尸，心脏狂跳。\n\
+直到天边泛起鱼肚白，你才终于甩开了身后的尸潮。",
+    choices: [
+      {
+        text: "继续前进",
+        nextScene: function(vars) { return vars.hasCar ? "杨高南路高架" : "三林路"; }
+      }
+    ]
+  },
+
+  // ==================== 死亡 - 摸黑离开失败 ====================
+  "结局-仁济-摸黑离开失败": {
+    image: "images/zombieKnockYouDown.png",
+    text: "你压低身子从医院侧门溜了出去，试图在夜色里甩开身后的尸潮。\n\
+但你没走多远，一只丧尸就从暗处扑了出来，把你按倒在地。\n\
+更多的脚步声从四面八方围了过来。\n\n—— 结局：夜逃失败 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
+  // ==================== 死亡 - 检验科门锁被砸坏 ====================
+  "结局-仁济-检验科失守": {
+    image: "images/zombieKnockYouDown.png",
+    text: "你锁上检验科的门，靠在门边喘气。\n\
+但门锁已经坏了——白天你强行破门的时候，就把这扇门彻底毁了。\n\
+半夜，你被一阵拖沓的脚步声惊醒。门被推开了一条缝，几双灰白的手从门缝里伸了进来。\n\
+你没有地方可逃了。\n\n—— 结局：检验科失守 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
 

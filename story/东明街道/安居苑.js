@@ -80,26 +80,25 @@ Object.assign(storyData, {
 
   "三林安居苑-小区内部": {
     image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
+        var f = timeImage({
+          morning: "images/安居苑/小区内部.jpg",
+        });
         return f(vars);
-      }
-      return "images/placeholder.png";
     }, /* TODO: images/安居苑/anJuYuanInside.png */
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.currentPlace = "安居苑";
       vars.currentPos = "安居苑";
       applyWeatherDrain(vars);
     },
     text: function(vars) {
-      let basicDes = "你走在三林安居苑的一条小道上。老小区的布局很简单：中间是一个小花园，围绕着几栋六层居民楼。旁边还有一个下沉式小广场，你以前经常在这里玩滑板车。\n"
+      let basicDes = "你走在三林安居苑的一条小道上。印象中，老小区的布局很简单：中间是一个小花园，围绕着几排六层居民楼。旁边还有一个下沉式小广场，你以前经常在这里玩滑板车。\n"
       if(!vars.fightWithVineZombie) basicDes += "花园里的长椅上躺着一个老人，已经变成丧尸了——它的身体被藤蔓缠住，动弹不得，只能发出微弱的嗬嗬声。\n"
       basicDes += "小区南侧有一扇通往安盛街的后门。\n\
-你看向西边那栋楼，一楼的几户人家门窗紧闭，有一家的门虚掩着。";
+你看向面前那栋楼，铁门敞开着，似乎在风中摇摆。";
       if (!vars.hasRustyBike) basicDes += "门口还停着一辆老式自行车，车筐里塞着半袋没来得及拿上楼的菜。";
       basicDes += "\n\
-东边那栋的门牌上写着“8号楼”——二楼靠东的窗户开着一道缝，像是被人推开后就没关回去。窗台上搁着一只白色的搪瓷缸。风大的时候，能听到什么东西在啪嗒啪嗒地响。"
+西边那栋的门牌上写着“8号楼”——二楼靠东的窗户开着一道缝，像是被人推开后就没关回去。窗台上搁着一只白色的搪瓷缸。风大的时候，能听到什么东西在啪嗒啪嗒地响。"
       // 安居苑北门是前门，面向三林路，南门是后门，面向安盛街中段
       return basicDes + "\n" + describeWeather(vars);
     },
@@ -110,7 +109,7 @@ Object.assign(storyData, {
         effect: updateTime(4)
       },
       {
-        text: "看看东边那栋楼",
+        text: "看看西边那栋楼",
         nextScene: "三林安居苑-8号楼",
         effect: updateTime(4)
       },
@@ -1157,10 +1156,10 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   // ========== 躲藏场景（安居苑区域） ==========
 
-  "三林安居苑-躲藏": hideOnLocation("images/placeholder.png" /* TODO: images/安居苑/anJuYuan.png */,
+  "三林安居苑-躲藏": hideOnLocation("images/躲藏.jpg",
     "你绕到门卫亭的窗台下蹲着，但一只丧尸慢悠悠地踱了过来——它似乎对墙角感兴趣。它看到了你，扑了过来。你侧身躲开，头也不回地跑了。",
     "你绕到门卫亭的窗台下，蹲在死角里。铁皮墙壁隔音效果不错，外面的声音变得闷闷的。你蜷缩着，等那些拖沓的脚步声都走远了，才站起来。"),
-  "三林安居苑-小区内部-躲藏": hideOnLocation("images/placeholder.png" /* TODO: images/安居苑/anJuYuanInside.png */,
+  "三林安居苑-小区内部-躲藏": hideOnLocation("images/躲藏.jpg",
     "你钻进花坛的灌木丛深处。但枝条沙沙作响——一只变异猫正在灌木丛里穿梭。它没发现你，但它的动静引得一只丧尸朝这边走来。你只能从另一侧钻出来，换了个地方。",
     "你钻进花坛的灌木丛深处。枝条和叶片把你完全遮住了。透过叶缝你能看到丧尸在小区里游荡，但它们没有注意到这片浓密的绿植。等小区重新安静下来，你才从灌木中钻出。"),
 });

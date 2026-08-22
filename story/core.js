@@ -148,6 +148,8 @@ const storyData = {
     _morgueCleared: false,      // 太平间黑皮丧尸是否处理
     _morgueVentOn: false,       // 太平间通风是否打开
     _renjiNoise: false,         // 是否破门制造过噪音（影响后续风险）
+    _renjiHerbalTaken: false,   // 中医科草药是否已拿（一次性+1体力）
+    _renjiGlucoseTaken: false,  // 护士站葡萄糖是否已喝（一次性+1体力）
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
     gameMemorySet: new Set(),         // 目前已获得的游戏记忆集合
@@ -256,6 +258,19 @@ const storyData = {
         effect: function(v) {
           if (Math.random() < 0.25) {
             v.chasedByZombies = Math.min(5, v.chasedByZombies + 1);
+          }
+        }
+      },
+
+      // --- 仁济医院尸潮围拢：逗留越久，外面尸潮越多（封顶4，离开才死） ---
+      {
+        id: "renji-siege",
+        condition:  "currentArea == '仁济南院'",
+        triggerKey: "Math.floor(gameMinutes / 4)",
+        effect: function(v) {
+          var prob = v._renjiNoise ? 0.4 : 0.2;   // 破门噪音后概率翻倍
+          if (Math.random() < prob) {
+            v.chasedByZombies = Math.min(4, v.chasedByZombies + 1);
           }
         }
       },

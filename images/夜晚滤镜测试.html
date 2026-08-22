@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>夜晚效果预览</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #0b0f15;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .night-container {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            filter: brightness(0.28) contrast(1.4) saturate(0.7) hue-rotate(185deg);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+        }
+        .night-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .night-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 30%, rgba(30, 60, 90, 0.2) 0%, rgba(5, 10, 20, 0.85) 80%);
+            mix-blend-mode: multiply;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="night-container">
+        <!-- 如果图片和html在同级目录下，确保文件名和路径正确 -->
+        <img src="小区内部.jpg" alt="夜晚丧尸街道">
+    </div>
+</body>
+</html>
