@@ -249,7 +249,10 @@ Object.assign(storyData, {
 
   // ========== 藤蔓丧尸（美工刀 + 地图） ==========
   "三林安居苑-藤蔓丧尸": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/vineZombie.png */,
+    image: timeImage({
+      morning: "images/安居苑/藤蔓丧尸-morning.jpg",
+      night: "images/安居苑/藤蔓丧尸-night.jpg"
+    }),
     onEnter: { set: { showRain: true } },
     text: function(vars) {
       var desc = "你走近长椅上的丧尸。它是个六十来岁的老头，穿着一件洗得发白的中山装，胸口口袋鼓鼓的——好像塞着什么东西。\n\
