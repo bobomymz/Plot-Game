@@ -211,7 +211,20 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-鹅卵石路": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/goldenE.png */,
+    image: function(vars) {
+      if(!vars.hasKey502) {
+        var f = timeImage({
+          morning: "images/安居苑/自行车.jpg",
+          night: "images/安居苑/自行车-night.jpg"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/安居苑/鹅卵石路.jpg",
+        night: "images/安居苑/鹅卵石路-night.jpg"
+      });
+      return f(vars);
+    },
     onEnter: {set: {positionAfterOperation: "三林安居苑-小广场", showRain: true}},
     text: function(vars) {
       let basicDes = "你走上了鹅卵石路。鹅卵石路是一条老路，上面的鹅卵石很老，但是很平滑。\n";
