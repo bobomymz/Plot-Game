@@ -521,7 +521,7 @@ Object.assign(storyData, {
         nextScene: "电梯"
       },
       {
-        showCondition: "!hasFireAxe",
+        showCondition: "!hasAxe",
         text: "打开消防箱",
         nextScene: "1楼-消防箱"
       },
@@ -543,7 +543,7 @@ Object.assign(storyData, {
         text: "拿走消防斧",
         condition: "itemCount < bagVolume",
         nextScene: "1楼-电梯厅",
-        effect: { set: { hasFireAxe: true }, add: { itemCount: 1 } },
+        effect: { set: { hasAxe: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {

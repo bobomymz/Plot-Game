@@ -86,10 +86,10 @@ const storyData = {
     hasCane: false,            // 是否有拐杖（安盛街老头丧尸）
     hasMopHandle: false,       // 是否有拖把杆（理发店）
     hasCutter: false,          // 是否有美工刀
-    hasAxe: false,             // 是否有斧头（警察局）
+    hasAxe: false,             // 是否有斧头（警察局警用斧 / 初始小区1楼消防箱，统一为斧头）
     hasGun: false,             // 是否有手枪（警察局）
     hasDagger: false,          // 是否有匕首（警察局）
-    hasFireAxe: false,         // 是否有消防斧（初始小区1楼消防箱）
+    hasCharger: false,         // 是否有充电器（图书馆藏书区，解锁王知筠笔记本）
     hasBiscuit: false,         // 是否有饼干（安盛街便利店）
     hasMap: false,             // 是否有交通地图（三林安居苑藤蔓丧尸）
     hasLubricant: false,       // 是否有润滑油（五金店仓库，可带到安居苑修车）
@@ -427,6 +427,30 @@ const storyData = {
         showCondition: "hasCutter",
         text: "丢下美工刀",
         effect: updateTime(1, { set : { hasCutter: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasAxe",
+        text: "丢下斧头",
+        effect: updateTime(1, { set : { hasAxe: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasGun",
+        text: "丢下手枪",
+        effect: updateTime(1, { set : { hasGun: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasDagger",
+        text: "丢下匕首",
+        effect: updateTime(1, { set : { hasDagger: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasCharger",
+        text: "丢下充电器",
+        effect: updateTime(1, { set : { hasCharger: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {

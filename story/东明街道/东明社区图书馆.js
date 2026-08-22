@@ -515,5 +515,45 @@ Object.assign(storyData, {
         effect: updateTime(10)
       }
     ]
+  },
+
+  // ==================== 藏书区（清场后自由探索 · 充电器） ====================
+  "图书馆-藏书区": {
+    image: "images/placeholder.png" /* TODO: images/library/libraryShelves.png */,
+    text: function(vars) {
+      var desc = "你走进藏书区。清场后的图书馆安静得有些空旷，两排高耸的书架之间是一条通道，书架上的书东倒西歪，地上散落着几本被踩过的书。\n\
+靠窗的一张长桌上摊着一本翻开的《上海地图册》，旁边放着一根充电线，一头连着墙上的插座，另一头随意搭在桌沿。";
+      if (vars.hasCharger) desc += "\n充电器你已经拿走了。";
+      return desc;
+    },
+    choices: function(vars) {
+      var opts = [];
+      if (!vars.hasCharger) {
+        opts.push({
+          text: "拿走充电器",
+          condition: "itemCount < bagVolume",
+          nextScene: "图书馆-藏书区-拿充电器",
+          elseScene: "整理整理"
+        });
+      }
+      opts.push({
+        text: "返回大厅",
+        nextScene: "图书馆大厅"
+      });
+      return opts;
+    }
+  },
+
+  "图书馆-藏书区-拿充电器": {
+    image: "images/placeholder.png" /* TODO: images/library/libraryShelves.png */,
+    onEnter: { set: { hasCharger: true, positionAfterOperation: "图书馆-藏书区" }, add: { itemCount: 1 } },
+    text: "你拔下充电器，收进口袋。普通的 USB-C 充电线，插头是两孔的，去哪都能找着插座。\n\
+虽然不知道这年头还有哪里有电——但总比没有强。",
+    choices: [
+      {
+        text: "收好充电器",
+        nextScene: "图书馆-藏书区"
+      }
+    ]
   }
 });

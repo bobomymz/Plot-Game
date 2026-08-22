@@ -284,14 +284,14 @@ Object.assign(storyData, {
   },
 
   "全家-吃面包": {
-    image: "images/小区周边/全家和公交站/面包.png",
+    image: "images/小区周边/全家和公交站/面包.jpg",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些面包，感觉肚子有了一些能量。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
     choices: [
       {
-        text: "回小区门口",
-        nextScene: "小区东门-整装待发"
+        text: "继续",
+        nextScene: "全家便利店内部"
       }
     ]
   },
@@ -303,8 +303,8 @@ Object.assign(storyData, {
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
     choices: [
       {
-        text: "回小区门口",
-        nextScene: "小区东门-整装待发"
+        text: "继续",
+        nextScene: "全家便利店内部"
       }
     ]
   },
