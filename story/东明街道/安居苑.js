@@ -82,6 +82,9 @@ Object.assign(storyData, {
     image: function(vars) {
         var f = timeImage({
           morning: "images/安居苑/小区内部.jpg",
+          evening: "images/安居苑/小区内部-evening.jpg",
+          night: "images/安居苑/小区内部-night.jpg"
+          // midnight直接复用night图片
         });
         return f(vars);
     }, /* TODO: images/安居苑/anJuYuanInside.png */
@@ -150,6 +153,7 @@ Object.assign(storyData, {
       return "images/placeholder.png";
     }, /* TODO: images/安居苑/smallSquare.png */
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.currentPlace = "安居苑";
       vars.currentPos = "小广场";
       vars.positionAfterOperation = "三林安居苑-滑板车";
