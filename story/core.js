@@ -125,6 +125,29 @@ const storyData = {
     // 特殊道具（不占背包）
     hasBag: false,             // 是否有背包（bagVolume+1）
     hasMercuryPill: false,      // 是否有甲基汞抑制剂（童涵春堂无标签药丸）
+    // 仁济医院 - 医疗物资（占背包，全图唯一）
+    hasAntibiotic: false,   // 抗生素（仁济门诊药房）
+    hasPainkiller: false,   // 止痛药（仁济门诊药房）
+    hasBandage: false,      // 绷带（仁济大门）
+    hasIodine: false,       // 碘伏（仁济检验科）
+    hasAlcohol: false,      // 医用酒精（仁济门诊药房，可消毒伤口）
+    hasSutureKit: false,    // 缝合包（仁济手术供应室）
+    hasTourniquet: false,   // 止血带（仁济手术供应室）
+    hasAnesthetic: false,   // 麻醉剂（仁济手术供应室）
+    // 仁济医院 - 真相线索（占背包）
+    hasWangPhone: false,    // 王知筠手机（仁济检验科）
+    hasWangNotebook: false, // 王知筠实验记录本（仁济检验科）
+    hasMercuryReport: false,// 检测报告备份（仁济太平间）
+    wangPhoneBattery: 0,    // 王知筠手机剩余电量（捡到时按 dd 计算）
+    // 仁济医院 - 状态
+    _renjiERCleared: false,     // 急诊大厅丧尸是否清除
+    _renjiLabCleared: false,    // 检验科守卫丧尸是否清除
+    _renjiWardCleared: false,   // 住院部丧尸是否清除
+    _renjiSurvivorSaved: false, // 住院部幸存者是否救出
+    _fangyuFound: false,        // 方瑜痕迹是否发现
+    _morgueCleared: false,      // 太平间黑皮丧尸是否处理
+    _morgueVentOn: false,       // 太平间通风是否打开
+    _renjiNoise: false,         // 是否破门制造过噪音（影响后续风险）
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
     gameMemorySet: new Set(),         // 目前已获得的游戏记忆集合
@@ -518,6 +541,66 @@ const storyData = {
         effect: updateTime(1, { set : { hasCrumpledLeaflet: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
+      {
+        showCondition: "hasAlcohol && hurtByZombie",
+        text: "用医用酒精消毒伤口",
+        effect: function(vars) {
+          vars.hurtByZombie = false;
+          vars.hasAlcohol = false;
+          vars.itemCount = Math.max(0, vars.itemCount - 1);
+          return updateTime(1)(vars);
+        },
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasAntibiotic",
+        text: "丢下抗生素",
+        effect: updateTime(1, { set : { hasAntibiotic: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasPainkiller",
+        text: "丢下止痛药",
+        effect: updateTime(1, { set : { hasPainkiller: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasBandage",
+        text: "丢下绷带",
+        effect: updateTime(1, { set : { hasBandage: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasIodine",
+        text: "丢下碘伏",
+        effect: updateTime(1, { set : { hasIodine: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasAlcohol",
+        text: "丢下医用酒精",
+        effect: updateTime(1, { set : { hasAlcohol: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasSutureKit",
+        text: "丢下缝合包",
+        effect: updateTime(1, { set : { hasSutureKit: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasTourniquet",
+        text: "丢下止血带",
+        effect: updateTime(1, { set : { hasTourniquet: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasAnesthetic",
+        text: "丢下麻醉剂",
+        effect: updateTime(1, { set : { hasAnesthetic: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      // 王知筠手机/实验记录本/检测报告备份为真相线索，不占背包，不可丢弃
       {
         showCondition: "hasPhone",
         text: "丢下手机",
