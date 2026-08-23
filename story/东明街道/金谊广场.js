@@ -175,6 +175,8 @@ Object.assign(storyData, {
         if (vars._visit['金谊广场-吉祥馄饨-聊'] > 0 && !vars._chenmoRescued) {
           cs.push({ text: "带他杀出停车场", nextScene: "金谊广场-吉祥馄饨-杀出去", effect: updateTime(2) });
         }
+        var wontonLabel = vars._visit['金谊广场-吉祥馄饨-聊'] > 0 ? "让陈默煮碗馄饨" : "让他帮忙煮碗馄饨";
+        cs.push({ text: wontonLabel, nextScene: "金谊广场-吉祥馄饨-吃馄饨", effect: updateTime(2), showCondition: "!_visit['金谊广场-吉祥馄饨-吃馄饨']" });
         cs.push({ text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) });
         return cs;
       } else {
@@ -246,6 +248,20 @@ Object.assign(storyData, {
         { text: "继续", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) }
       ];
     }
+  },
+
+  "金谊广场-吉祥馄饨-吃馄饨": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/吉祥馄饨.jpg */,
+    onEnter: updateTime(15, { add: { strength: 2 } }),
+    text: function(vars) {
+      if (vars._visit['金谊广场-吉祥馄饨-聊'] > 0) {
+        return "你指了指灶台。“饿了，帮我煮碗馄饨？”陈默愣了一下，显然没想到你会在这种时候提这种要求。他沉默了两秒，还是走过去掀开冰柜——里面居然还有半袋冷冻的荠菜鲜肉馄饨。\n灶火重新点起来，热汤翻滚。他把一碗馄饨推到你面前，自己没动筷子。“我不饿，你吃。”\n你埋头吃了起来。荠菜的清香混着肉味，热汤顺着喉咙暖到胃里。这是末世里难得的一顿正经饭。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>";
+      }
+      return "你指了指灶台，比划了一下煮馄饨的动作。那个戴鸭舌帽的黑衣人看了你一眼，没有拒绝——他走过去掀开冰柜，里面居然还有半袋冷冻的荠菜鲜肉馄饨。\n他沉默地生火、煮水、下馄饨，全程没说一句话。一碗热腾腾的馄饨端到你面前，他退开两步，继续蹲回角落翻他的旧纸箱。\n荠菜的清香混着肉味，热汤顺着喉咙暖到胃里。虽然对方态度冷淡，但这碗馄饨是真的。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>";
+    },
+    choices: [
+      { text: "继续", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) }
+    ]
   },
 
   // --- 地面停车场（陈默被困） ---
@@ -799,7 +815,17 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/4F影院大厅.jpg */,
     text: "你走进影院大厅。爆米花机早就凉了，玻璃柜里还剩下半锅焦糖色的爆米花——硬得像石头。\n售票台上放着一杯没喝完的可乐，吸管上印着一个模糊的口红印。\n放映厅里，银幕还在亮着——循环播放着某部电影的片尾字幕。座椅上的尸体安静地坐着，像是在等彩蛋。\n你不知道他们死前在看什么电影。但你知道，他们没有等到彩蛋。",
     choices: [
+      { text: "啃几颗硬爆米花垫垫肚子", nextScene: "金谊广场-4F-影院-吃爆米花", effect: updateTime(1), showCondition: "!_visit['金谊广场-4F-影院-吃爆米花']" },
       { text: "离开影院", nextScene: "金谊广场-4F", effect: updateTime(1) }
+    ]
+  },
+
+  "金谊广场-4F-影院-吃爆米花": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/4F影院大厅.jpg */,
+    onEnter: updateTime(2, { add: { strength: 1 } }),
+    text: "你抓起一把爆米花放进嘴里——硬得像石头，嚼得腮帮子发酸。焦糖味早就散尽了，只剩一股放久了的甜腻。\n你费了好大劲才咽下去几颗，胃里总算有了点东西垫底。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "金谊广场-4F-影院", effect: updateTime(1) }
     ]
   },
 

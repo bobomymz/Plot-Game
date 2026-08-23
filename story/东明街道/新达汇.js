@@ -2052,10 +2052,24 @@ Object.assign(storyData, {
     text: "门口堆满了等位椅。透过缝隙能看到白绿配色的装潢，暖木色桌椅，透明厨房隔断上贴着“现炒现做”。保温台上的菜盘已经凉透了。",
     choices: [
       {
+        text: "刮点保温台的剩菜吃",
+        nextScene: "新达汇-4F大米先生-吃剩菜",
+        effect: updateTime(1),
+        showCondition: "!_visit['新达汇-4F大米先生-吃剩菜']",
+      },
+      {
         text: "离开",
         nextScene: "新达汇-4F北走廊西",
         effect: updateTime(1),
       },
+    ]
+  },
+  "新达汇-4F大米先生-吃剩菜": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/riceRestaurant.png */,
+    onEnter: updateTime(5, { add: { strength: 2 } }),
+    text: "你绕过保温台，掀开菜盘的盖子。红烧肉、番茄炒蛋、炒青菜——都凉透了，油脂凝固成一层白膜，但好在还没有馊味。\n你挑了几样看着还能吃的，就着凉米饭扒了几口。末世里能吃上一口“凉乎的”剩菜，已经算走运了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "新达汇-4F大米先生", effect: updateTime(1) }
     ]
   },
   "新达汇-4F日料店": {
@@ -2080,6 +2094,12 @@ Object.assign(storyData, {
         showCondition: "chasedByZombies <= 1",
       },
       {
+        text: "翻翻冷藏柜找点还能吃的",
+        nextScene: "新达汇-4F日料店-找吃的",
+        effect: updateTime(1),
+        showCondition: "!_visit['新达汇-4F日料店-找吃的']",
+      },
+      {
         text: "推开后厨的防火门",
         nextScene: "新达汇-4F厨房后勤走廊",
         effect: updateTime(1),
@@ -2089,6 +2109,14 @@ Object.assign(storyData, {
         nextScene: "新达汇-4F南走廊西",
         effect: updateTime(1),
       },
+    ]
+  },
+  "新达汇-4F日料店-找吃的": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/japaneseRestaurant.png */,
+    onEnter: updateTime(5, { add: { strength: 2 } }),
+    text: "你踮着脚绕过满地的碎玻璃和酒液，掀开后厨冷藏柜的盖子。里面躺着几盒密封的寿司拼盘和饭团——贴着当天的标签，冰袋还没完全化。\n你拆开一盒，就着冰凉的米饭吞下去。三文鱼已经不新鲜了，但你告诉自己至少没馊。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "新达汇-4F日料店", effect: updateTime(1) }
     ]
   },
   "新达汇-4F日料店-陷阱": {
@@ -2407,6 +2435,12 @@ Object.assign(storyData, {
     text: "石物恋·烧肉。电圈烤炉摆在桌上，冷藏柜门开着，里面的肉已经不冰了。地上有脚印。",
     choices: [
       {
+        text: "开烤炉烤几片肉",
+        nextScene: "新达汇-5F食物恋-烤肉",
+        effect: updateTime(1),
+        showCondition: "!_visit['新达汇-5F食物恋-烤肉']",
+      },
+      {
         text: "推开后厨门",
         nextScene: "新达汇-5F后勤走廊",
         effect: updateTime(1),
@@ -2416,6 +2450,14 @@ Object.assign(storyData, {
         nextScene: "新达汇-5F北走廊西",
         effect: updateTime(1),
       },
+    ]
+  },
+  "新达汇-5F食物恋-烤肉": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/bbqRestaurant.png */,
+    onEnter: updateTime(20, { add: { strength: 3 } }),
+    text: "你拉开椅子坐下，打开电圈烤炉。肉虽然已经不冰了，但还没完全坏——你挑了几片看着新鲜的，铺在烤盘上。\n油脂在电圈上滋滋作响，肉香飘散开来。你夹起一片，蘸了点干料，咬下去——虽然没什么配菜，但这是末世以来你吃过最像样的一顿。\n你警惕地看了一眼门口。香味也许会把什么引来……但管不了那么多了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "新达汇-5F食物恋", effect: updateTime(1) }
     ]
   },
   "新达汇-5F左庭右院": {
@@ -2448,8 +2490,13 @@ Object.assign(storyData, {
   "新达汇-5F左庭右院-取外卖": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant2.png */,
     onEnter: { set: { _deliveryCode: "473829" } }, // 只读取取餐码线索，不占背包容量
-    text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：“北青公路某号某室”。",
+    text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：“北青公路某号某室”。\n你撕开包裹——里面是一份盖浇饭，凉了，但还完整。",
     choices: [
+      {
+        text: "吃掉那份外卖",
+        nextScene: "新达汇-5F左庭右院",
+        effect: updateTime(3, { add: { strength: 2 } }),
+      },
       {
         text: "回到走廊",
         nextScene: "新达汇-5F北走廊中",
