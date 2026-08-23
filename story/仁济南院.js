@@ -28,12 +28,12 @@ Object.assign(storyData, {
         effect: updateTime(5)
       },
       {
-        text: "绕到救护车通道",
+        text: "绕到侧面看看",
         nextScene: "仁济南院-救护车通道",
         effect: updateTime(8)
       },
       {
-        text: "从地下停车场入口进",
+        text: "进入地下停车场",
         nextScene: "仁济南院-地下停车场",
         effect: updateTime(6)
       },
@@ -59,28 +59,24 @@ Object.assign(storyData, {
       }
       return desc + "\n" + describeZombieWave(vars);
     },
-    choices: function(vars) {
-      var opts = [];
-      if (vars.dd < 6) {
-        opts.push({
-          text: "冲向急诊大门",
-          nextScene: "仁济南院-大门-记忆闪色"
-        });
-      }
-      if (!vars.hasBandage) {
-        opts.push({
-          text: "翻看门口那具医护人员的遗体",
-          nextScene: "仁济南院-大门-绷带",
-          effect: updateTime(2)
-        });
-      }
-      opts.push({
-        text: "退回浦锦路",
+    choices: [
+      {
+        showCondition: "dd < 6",
+        text: "冲向急诊大门",
+        nextScene: "仁济南院-大门-记忆闪色"
+      },
+      {
+        showCondition: "!hasBandage",
+        text: "翻看门口那具医护人员的遗体",
+        nextScene: "仁济南院-大门-绷带",
+        effect: updateTime(2)
+      },
+      {
+        text: "去浦锦路",
         nextScene: "仁济南院-浦锦路",
         effect: updateTime(5)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-大门-绷带": {
@@ -146,7 +142,7 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       {
-        text: "退回浦锦路",
+        text: "去浦锦路",
         nextScene: "仁济南院-浦锦路",
         effect: updateTime(8)
       }
@@ -158,29 +154,28 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
       var desc = "地下停车场的入口坡道黑黢黢的，往下看不到底。入口处横着一辆失控的轿车，挡风玻璃碎了一半。\n";
-      if (vars.hasTorch || vars.hasPhone) {
+      if (vars.hasTorch) {
         desc += "你打开照明，光线勉强能照清前方几米——这条潜行路线通向医院的后勤区。";
+      } else if(vars.hasPhone) {
+        desc += "你打开手机，光线勉强能照清前方几米——这条潜行路线通向医院的后勤区。";
       } else {
         desc += "里面比外面暗得多——没有照明的话，进去什么都看不见，只会撞上不知道什么东西。";
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (vars.hasTorch || vars.hasPhone) {
-        opts.push({
-          text: "摸黑进入地下停车场",
-          nextScene: "仁济南院-后勤通道",
-          effect: updateTime(5)
-        });
-      }
-      opts.push({
-        text: "退回浦锦路",
+    choices: [
+      {
+        condition: "hasTorch || hasPhone",
+        text: "进去看看",
+        nextScene: "仁济南院-后勤通道",
+        effect: updateTime(5)
+      },
+      {
+        text: "去浦锦路",
         nextScene: "仁济南院-浦锦路",
         effect: updateTime(6)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-后勤通道": {
@@ -190,7 +185,7 @@ Object.assign(storyData, {
 通道尽头是一扇写着“检验科”的门，门旁有一条更窄的走道，通往住院部方向。",
     choices: [
       {
-        text: "前往检验科后门",
+        text: "看看这扇门",
         nextScene: "仁济南院-检验科后门",
         effect: updateTime(2)
       },
@@ -200,7 +195,7 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       {
-        text: "退回地下停车场",
+        text: "去地下停车场",
         nextScene: "仁济南院-地下停车场",
         effect: updateTime(5)
       }
@@ -221,27 +216,19 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars._fangyuFound) {
-        opts.push({
-          text: "查看那个人的工牌",
-          nextScene: "仁济南院-检验科后门-方瑜",
-          effect: updateTime(1)
-        });
-      }
-      opts.push({
-        text: "从后门进入检验科",
-        nextScene: "仁济南院-检验科",
+    choices: [
+      {
+        showCondition: "!_fangyuFound",
+        text: "查看那个人的工牌",
+        nextScene: "仁济南院-检验科后门-方瑜",
         effect: updateTime(1)
-      });
-      opts.push({
-        text: "退回后勤通道",
+      },
+      {
+        text: "去后勤通道",
         nextScene: "仁济南院-后勤通道",
         effect: updateTime(2)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-检验科后门-方瑜": {
@@ -288,41 +275,38 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars._renjiERCleared) {
-        opts.push({
-          text: "迎战那只丧尸",
-          nextScene: "仁济南院-急诊大厅-战斗"
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "!_renjiERCleared",
+        text: "迎战那只丧尸",
+        nextScene: "仁济南院-急诊大厅-战斗"
+      },
+      {
         text: "往大厅深处走",
         nextScene: "仁济南院-检验科",
         effect: updateTime(2)
-      });
-      opts.push({
+      },
+      {
         text: "上楼",
         nextScene: "仁济南院-楼梯-急诊楼",
         effect: updateTime(1)
-      });
-      opts.push({
+      },
+      {
         text: "穿过连廊去另一栋楼",
         nextScene: "仁济南院-门诊大厅",
         effect: updateTime(2)
-      });
-      opts.push({
+      },
+      {
         text: "去住院大楼",
         nextScene: "仁济南院-住院部走廊",
         effect: updateTime(3)
-      });
-      opts.push({
+      },
+      {
         text: "从正门离开",
         nextScene: "仁济南院-大门",
         effect: updateTime(3)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-急诊大厅-战斗": {
@@ -374,43 +358,42 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPharmacy.png */,
     onEnter: { set: { positionAfterOperation: "仁济南院-门诊大厅" } },
     text: function(vars) {
-      var desc = "门诊药房的玻璃窗被砸开了一个口子，货架上的药盒散落一地，大部分已经被翻得七零八落。\n\
-柜台后面的处方药架倒还整齐，几瓶没拆封的抗生素和止痛药还好好地摆在原处。墙角的小推车上，放着一瓶医用酒精。";
+      var desc = "门诊药房的玻璃窗被砸开了一个口子，货架上的药盒散落一地，大部分已经被翻得七零八落。\n";
+      if (vars.hasAntibiotic && vars.hasPainkiller && vars.hasAlcohol) {
+        desc += "处方药架上该拿的都拿了，只剩下些散落的空药盒。";
+      } else {
+        desc += "柜台后面的处方药架倒还整齐，几瓶没拆封的药还好好地摆在原处。墙角的小推车上，放着一瓶医用酒精。";
+      }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars.hasAntibiotic) {
-        opts.push({
-          text: "拿一盒抗生素",
-          condition: "itemCount < bagVolume",
-          nextScene: "仁济南院-门诊药房-抗生素",
-          elseScene: "整理整理"
-        });
-      }
-      if (!vars.hasPainkiller) {
-        opts.push({
-          text: "拿一瓶止痛药",
-          condition: "itemCount < bagVolume",
-          nextScene: "仁济南院-门诊药房-止痛药",
-          elseScene: "整理整理"
-        });
-      }
-      if (!vars.hasAlcohol) {
-        opts.push({
-          text: "拿医用酒精",
-          condition: "itemCount < bagVolume",
-          nextScene: "仁济南院-门诊药房-酒精",
-          elseScene: "整理整理"
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "!hasAntibiotic",
+        text: "拿一盒抗生素",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-门诊药房-抗生素",
+        elseScene: "整理整理"
+      },
+      {
+        showCondition: "!hasPainkiller",
+        text: "拿一瓶止痛药",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-门诊药房-止痛药",
+        elseScene: "整理整理"
+      },
+      {
+        showCondition: "!hasAlcohol",
+        text: "拿医用酒精",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-门诊药房-酒精",
+        elseScene: "整理整理"
+      },
+      {
         text: "离开药房",
         nextScene: "仁济南院-门诊大厅",
         effect: updateTime(1)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-门诊药房-抗生素": {
@@ -449,60 +432,51 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
     onEnter: function(vars) { vars.currentPos = "检验科"; return {}; },
     text: function(vars) {
-      var fromBack = vars._lastScene === "仁济南院-检验科后门";
       var desc = "";
-      if (fromBack) {
-        desc += "你从后门摸进检验科。\n";
-      } else {
-        desc += "检验科的大门紧闭着，门上的电子锁亮着微弱的红灯。门上贴着一张褪色的“检验科”标识。\n";
-      }
       if (vars._renjiLabCleared) {
-        desc += "检验科里的动静已经平息了。你上次来过这里。";
+        desc += "检验科的门虚掩着——你上次来的时候已经把它打开了。\n检验科里的动静已经平息了。";
       } else {
-        desc += "门里传来一阵轻微的、金属摩擦的声音——像是有什么东西在里面走动。";
+        desc += "检验科的大门紧闭着，门上的电子锁亮着微弱的红灯。门上贴着一张褪色的“检验科”标识。\n门里传来一阵轻微的、金属摩擦的声音——像是有什么东西在里面走动。";
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (vars._renjiLabCleared) {
-        opts.push({
-          text: "进入检验科",
-          nextScene: "仁济南院-检验科-内部",
-          effect: updateTime(1)
-        });
-      } else if (vars.hasRenjiCard) {
-        opts.push({
-          text: "用门禁卡刷卡开门",
-          nextScene: "仁济南院-检验科-进入",
-          effect: updateTime(1)
-        });
-      } else if (vars.hasAxe) {
-        opts.push({
-          text: "用斧头破门",
-          nextScene: "仁济南院-检验科-破门",
-          effect: updateTime(2)
-        });
-      } else if (vars.hasIronPipe) {
-        opts.push({
-          text: "用铁棍撬门",
-          nextScene: "仁济南院-检验科-撬门",
-          effect: updateTime(2)
-        });
-      } else {
-        opts.push({
-          text: "试着推门（门锁着）",
-          nextScene: "仁济南院-检验科-锁着",
-          effect: updateTime(1)
-        });
-      }
-      opts.push({
-        text: "返回",
-        nextScene: function(vars) { return vars._lastScene === "仁济南院-检验科后门" ? "仁济南院-检验科后门" : "仁济南院-急诊大厅"; },
+    choices: [
+      {
+        showCondition: "_renjiLabCleared",
+        text: "进入检验科",
+        nextScene: "仁济南院-检验科-内部",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "!_renjiLabCleared && hasRenjiCard",
+        text: "用门禁卡刷卡开门",
+        nextScene: "仁济南院-检验科-进入",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "!_renjiLabCleared && !hasRenjiCard && hasAxe",
+        text: "用斧头破门",
+        nextScene: "仁济南院-检验科-破门",
         effect: updateTime(2)
-      });
-      return opts;
-    }
+      },
+      {
+        showCondition: "!_renjiLabCleared && !hasRenjiCard && !hasAxe && hasIronPipe",
+        text: "用铁棍撬门",
+        nextScene: "仁济南院-检验科-撬门",
+        effect: updateTime(2)
+      },
+      {
+        showCondition: "!_renjiLabCleared && !hasRenjiCard && !hasAxe && !hasIronPipe",
+        text: "试着推门（门锁着）",
+        nextScene: "仁济南院-检验科-锁着",
+        effect: updateTime(1)
+      },
+      {
+        text: "去急诊大厅",
+        nextScene: "仁济南院-急诊大厅",
+        effect: updateTime(2)
+      }
+    ]
   },
 
   "仁济南院-检验科-锁着": {
@@ -512,7 +486,7 @@ Object.assign(storyData, {
 门上没有密码键盘，只有一个刷卡槽。你得找一张门禁卡，或者用点更粗暴的办法。",
     choices: [
       {
-        text: "退回",
+        text: "去急诊大厅",
         nextScene: "仁济南院-急诊大厅",
         effect: updateTime(2)
       }
@@ -644,53 +618,53 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLabInside.png */,
     onEnter: function(vars) { vars.currentPos = "检验科"; return {}; },
     text: function(vars) {
-      var desc = "检验科的灯还亮着，应急电源嗡嗡作响。离心机、试剂架、培养皿散乱地摆在操作台上——这里的主人离开得很匆忙，又很平静。\n\
-操作台的一角，放着一部手机和一本牛皮纸封面的笔记本。手机屏幕暗着，笔记本的封面上写着“2026 实验记录”。\n";
-      if (vars.hasWangPhone && vars.hasWangNotebook && vars.hasIodine) {
-        desc += "\n该拿的都拿了。";
+      var desc = "检验科的灯还亮着，应急电源嗡嗡作响。离心机、试剂架、培养皿散乱地摆在操作台上——这里的主人离开得很匆忙，又很平静。\n";
+      if (!vars.hasWangPhone && !vars.hasWangNotebook) {
+        desc += "操作台的一角，放着一部手机和一本牛皮纸封面的笔记本。手机屏幕暗着，笔记本的封面上写着“2026 实验记录”。";
+      } else if (!vars.hasWangPhone) {
+        desc += "操作台的一角还放着一部手机，屏幕暗着。";
+      } else if (!vars.hasWangNotebook) {
+        desc += "操作台的一角还放着一本牛皮纸封面的笔记本，封面写着“2026 实验记录”。";
+      } else {
+        desc += "操作台上该拿的都拿了。";
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars.hasWangPhone) {
-        opts.push({
-          text: "拿起那部手机",
-          nextScene: "仁济南院-检验科-手机",
-          effect: updateTime(1)
-        });
-      }
-      if (!vars.hasWangNotebook) {
-        opts.push({
-          text: "拿起实验记录本",
-          nextScene: "仁济南院-检验科-记录本",
-          effect: updateTime(1)
-        });
-      }
-      if (!vars.hasIodine) {
-        opts.push({
-          text: "翻看试剂架",
-          nextScene: "仁济南院-检验科-碘伏",
-          effect: updateTime(1)
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "!hasWangPhone",
+        text: "拿起那部手机",
+        nextScene: "仁济南院-检验科-手机",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "!hasWangNotebook",
+        text: "拿起实验记录本",
+        nextScene: "仁济南院-检验科-记录本",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "!hasIodine",
+        text: "翻看试剂架",
+        nextScene: "仁济南院-检验科-碘伏",
+        effect: updateTime(1)
+      },
+      {
         text: "去手术供应室",
         nextScene: "仁济南院-手术供应室",
         effect: updateTime(2)
-      });
-      opts.push({
+      },
+      {
         text: "去太平间",
         nextScene: "仁济南院-太平间",
         effect: updateTime(3)
-      });
-      opts.push({
+      },
+      {
         text: "离开检验科",
         nextScene: "仁济南院-检验科",
         effect: updateTime(1)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-检验科-手机": {
@@ -719,33 +693,24 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (vars.wangPhoneBattery >= 6) {
-        opts.push({
-          text: "播放相册里的视频",
-          nextScene: "仁济南院-检验科-手机-视频",
-          effect: updateTime(7)
-        });
-      } else if (vars.wangPhoneBattery >= 1 && vars.hasCharger) {
-        opts.push({
-          text: "用充电器给手机充电",
-          nextScene: "仁济南院-检验科-手机-充电",
-          effect: updateTime(3)
-        });
-      } else if (vars.wangPhoneBattery <= 0 && vars.hasCharger) {
-        opts.push({
-          text: "用充电器给手机充电",
-          nextScene: "仁济南院-检验科-手机-充电",
-          effect: updateTime(3)
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "wangPhoneBattery >= 6",
+        text: "播放相册里的视频",
+        nextScene: "仁济南院-检验科-手机-视频",
+        effect: updateTime(7)
+      },
+      {
+        showCondition: "wangPhoneBattery < 6 && hasCharger",
+        text: "用充电器给手机充电",
+        nextScene: "仁济南院-检验科-手机-充电",
+        effect: updateTime(3)
+      },
+      {
         text: "收起手机",
         nextScene: "仁济南院-检验科-内部"
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-检验科-手机-充电": {
@@ -859,46 +824,36 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (vars.dd >= 8) {
-        opts.push({
-          text: "退回",
-          nextScene: function(vars) { return vars._lastScene === "仁济南院-检验科后门" ? "仁济南院-检验科后门" : "仁济南院-急诊大厅"; },
-          effect: updateTime(3)
-        });
-        return opts;
-      }
-      if (!vars._renjiWardCleared) {
-        opts.push({
-          text: "悄悄摸过去解决它",
-          nextScene: "仁济南院-住院部走廊-战斗"
-        });
-      }
-      if (!vars._renjiSurvivorSaved) {
-        opts.push({
-          text: "查看走廊尽头的病房",
-          nextScene: "仁济南院-住院部走廊-幸存者",
-          effect: updateTime(1)
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "dd < 8 && !_renjiWardCleared",
+        text: "悄悄摸过去解决它",
+        nextScene: "仁济南院-住院部走廊-战斗"
+      },
+      {
+        showCondition: "dd < 8 && !_renjiSurvivorSaved",
+        text: "查看走廊尽头的病房",
+        nextScene: "仁济南院-住院部走廊-幸存者",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "dd < 8",
         text: "去护士站",
         nextScene: "仁济南院-护士站",
         effect: updateTime(1)
-      });
-      opts.push({
+      },
+      {
+        showCondition: "dd < 8",
         text: "去特需病房（上十一楼）",
         nextScene: "仁济南院-特需病房",
         effect: updateTime(3)
-      });
-      opts.push({
-        text: "返回",
-        nextScene: function(vars) { return vars._lastScene === "仁济南院-检验科后门" ? "仁济南院-检验科后门" : "仁济南院-急诊大厅"; },
+      },
+      {
+        text: "离开",
+        nextScene: function(vars) { return vars._lastScene === "仁济南院-后勤通道" ? "仁济南院-后勤通道" : "仁济南院-急诊大厅"; },
         effect: updateTime(3)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-住院部走廊-战斗": {
@@ -956,21 +911,18 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars._renjiSurvivorSaved) {
-        opts.push({
-          text: "告诉他你没事，问他的情况",
-          nextScene: "仁济南院-住院部走廊-幸存者-救"
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "!_renjiSurvivorSaved",
+        text: "告诉他你没事，问他的情况",
+        nextScene: "仁济南院-住院部走廊-幸存者-救"
+      },
+      {
         text: "离开病房",
         nextScene: "仁济南院-住院部走廊",
         effect: updateTime(1)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-住院部走廊-幸存者-救": {
@@ -996,43 +948,42 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiSupply.png */,
     onEnter: { set: { positionAfterOperation: "仁济南院-检验科-内部" } },
     text: function(vars) {
-      var desc = "你来到手术供应室。这里的器械柜大多还锁着，但有几个抽屉被人撬开了。\n\
-无菌柜里整整齐齐地摆着几个密封的医疗包。";
+      var desc = "你来到手术供应室。这里的器械柜大多还锁着，但有几个抽屉被人撬开了。\n";
+      if (vars.hasSutureKit && vars.hasTourniquet && vars.hasAnesthetic) {
+        desc += "无菌柜里该拿的都拿了。";
+      } else {
+        desc += "无菌柜里整整齐齐地摆着几个密封的医疗包。";
+      }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars.hasSutureKit) {
-        opts.push({
-          text: "拿一个缝合包",
-          condition: "itemCount < bagVolume",
-          nextScene: "仁济南院-手术供应室-缝合包",
-          elseScene: "整理整理"
-        });
-      }
-      if (!vars.hasTourniquet) {
-        opts.push({
-          text: "拿一根止血带",
-          condition: "itemCount < bagVolume",
-          nextScene: "仁济南院-手术供应室-止血带",
-          elseScene: "整理整理"
-        });
-      }
-      if (!vars.hasAnesthetic) {
-        opts.push({
-          text: "拿一支麻醉剂",
-          condition: "itemCount < bagVolume",
-          nextScene: "仁济南院-手术供应室-麻醉剂",
-          elseScene: "整理整理"
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "!hasSutureKit",
+        text: "拿一个缝合包",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-手术供应室-缝合包",
+        elseScene: "整理整理"
+      },
+      {
+        showCondition: "!hasTourniquet",
+        text: "拿一根止血带",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-手术供应室-止血带",
+        elseScene: "整理整理"
+      },
+      {
+        showCondition: "!hasAnesthetic",
+        text: "拿一支麻醉剂",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-手术供应室-麻醉剂",
+        elseScene: "整理整理"
+      },
+      {
         text: "离开",
         nextScene: "仁济南院-检验科-内部",
         effect: updateTime(2)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-手术供应室-缝合包": {
@@ -1080,42 +1031,36 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars._morgueCleared) {
-        if (vars._morgueVentOn) {
-          opts.push({
-            text: "等气味散尽，进去处理那只丧尸",
-            nextScene: "仁济南院-太平间-黑皮丧尸"
-          });
-        } else if (vars.hasGasMask && vars.maskRemainingUses > 0) {
-          opts.push({
-            text: "戴上防毒面具进去",
-            nextScene: "仁济南院-太平间-戴面具",
-            effect: updateTime(1)
-          });
-        } else {
-          opts.push({
-            text: "靠近那边的墙看看",
-            nextScene: "仁济南院-太平间-通风",
-            effect: updateTime(1)
-          });
-        }
-      }
-      if (!vars.hasMercuryReport) {
-        opts.push({
-          text: "翻找角落的柜子",
-          nextScene: "仁济南院-太平间-报告",
-          effect: updateTime(2)
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "!_morgueCleared && _morgueVentOn",
+        text: "等气味散尽，进去处理那只丧尸",
+        nextScene: "仁济南院-太平间-黑皮丧尸"
+      },
+      {
+        showCondition: "!_morgueCleared && !_morgueVentOn && hasGasMask && maskRemainingUses > 0",
+        text: "戴上防毒面具进去",
+        nextScene: "仁济南院-太平间-戴面具",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "!_morgueCleared && !_morgueVentOn && (!hasGasMask || maskRemainingUses <= 0)",
+        text: "靠近那边的墙看看",
+        nextScene: "仁济南院-太平间-通风",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "!hasMercuryReport",
+        text: "翻找角落的柜子",
+        nextScene: "仁济南院-太平间-报告",
+        effect: updateTime(2)
+      },
+      {
         text: "离开太平间",
         nextScene: "仁济南院-检验科-内部",
         effect: updateTime(3)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-太平间-通风": {
@@ -1129,7 +1074,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "不按，退回去",
+        text: "不按了",
         nextScene: "仁济南院-太平间"
       }
     ]
@@ -1263,7 +1208,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "返回急诊大厅",
+        text: "去急诊大厅",
         nextScene: "仁济南院-急诊大厅",
         effect: updateTime(2)
       }
@@ -1278,7 +1223,7 @@ Object.assign(storyData, {
 墙上贴着一张辐射警告标志，红色的三叶形图案在昏暗里格外醒目。",
     choices: [
       {
-        text: "返回门诊大厅",
+        text: "去门诊大厅",
         nextScene: "仁济南院-门诊大厅",
         effect: updateTime(1)
       }
@@ -1316,22 +1261,19 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars._renjiHerbalTaken) {
-        opts.push({
-          text: "泡一壶花茶喝下（体力+1）",
-          nextScene: "仁济南院-中医科",
-          effect: { set: { _renjiHerbalTaken: true }, add: { strength: 1 } }
-        });
-      }
-      opts.push({
+    choices: [
+      {
+        showCondition: "!_renjiHerbalTaken",
+        text: "泡一壶花茶喝下（体力+1）",
+        nextScene: "仁济南院-中医科",
+        effect: { set: { _renjiHerbalTaken: true }, add: { strength: 1 } }
+      },
+      {
         text: "下楼",
         nextScene: "仁济南院-楼梯-门诊楼高",
         effect: updateTime(1)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-急诊观察室": {
@@ -1360,22 +1302,19 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: function(vars) {
-      var opts = [];
-      if (!vars._renjiGlucoseTaken) {
-        opts.push({
-          text: "喝掉那瓶葡萄糖（体力+1）",
-          nextScene: "仁济南院-护士站",
-          effect: { set: { _renjiGlucoseTaken: true }, add: { strength: 1 } }
-        });
-      }
-      opts.push({
-        text: "返回住院部走廊",
+    choices: [
+      {
+        showCondition: "!_renjiGlucoseTaken",
+        text: "喝掉那瓶葡萄糖（体力+1）",
+        nextScene: "仁济南院-护士站",
+        effect: { set: { _renjiGlucoseTaken: true }, add: { strength: 1 } }
+      },
+      {
+        text: "去住院部走廊",
         nextScene: "仁济南院-住院部走廊",
         effect: updateTime(1)
-      });
-      return opts;
-    }
+      }
+    ]
   },
 
   "仁济南院-特需病房": {
@@ -1387,7 +1326,7 @@ Object.assign(storyData, {
 床头的抽屉里有一封没写完的信，只写了个开头：“亲爱的，如果你们能收到这封信……”",
     choices: [
       {
-        text: "返回住院部走廊",
+        text: "去住院部走廊",
         nextScene: "仁济南院-住院部走廊",
         effect: updateTime(3)
       }
@@ -1435,7 +1374,7 @@ Object.assign(storyData, {
   "仁济南院-楼梯-门诊楼高": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
     onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
-    text: "你继续往上走。楼梯间越往上越暗，灯管有一截没一截地亮着。往上走两层是四楼。",
+    text: "你继续往上走。楼梯间越往上越暗，灯管有一截没一截地亮着。往上走两层是四楼。三楼的路被堵住了。",
     choices: [
       {
         text: "上楼",

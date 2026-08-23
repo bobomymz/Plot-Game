@@ -49,6 +49,7 @@ const storyData = {
     _3f_darkZoneDone: false,   // 3F黑暗段是否已安全通过
     _deliveryCode: "",         // 外卖取餐码（拿到外卖时记录）
     _droneBattery: 30,         // 无人机剩余电量(分钟)，断电后消耗
+    _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
 
     // --- 操作状态 ---
     visitExitTimes: 0,         // 访问小区出口次数，达到2自动放行

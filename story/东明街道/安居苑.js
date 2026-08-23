@@ -250,7 +250,7 @@ Object.assign(storyData, {
   // ========== 藤蔓丧尸（美工刀 + 地图） ==========
   "三林安居苑-藤蔓丧尸": {
     image: timeImage({
-      morning: "images/安居苑/藤蔓丧尸-morning.jpg",
+      morning: "images/安居苑/藤蔓丧尸.jpg",
       night: "images/安居苑/藤蔓丧尸-night.jpg"
     }),
     onEnter: { set: { showRain: true } },
