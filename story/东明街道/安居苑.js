@@ -93,7 +93,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       let basicDes = "你走在三林安居苑的一条小道上。印象中，老小区的布局很简单：中间是一个小花园，围绕着几排六层居民楼。旁边还有一个下沉式小广场，你以前经常在这里玩滑板车。\n"
-      if(!vars.fightWithVineZombie) basicDes += "花园里的长椅上躺着一个老人，已经变成丧尸了——它的身体被藤蔓缠住，动弹不得，只能发出微弱的嗬嗬声。\n"
+
       basicDes += "小区南侧有一扇通往安盛街的后门。\n\
 你看向面前那栋楼，铁门敞开着，似乎在风中摇摆。";
       if (!vars.hasRustyBike) basicDes += "门口还停着一辆老式自行车，车筐里塞着半袋没来得及拿上楼的菜。";
@@ -112,12 +112,6 @@ Object.assign(storyData, {
         text: "看看西边那栋楼",
         nextScene: "三林安居苑-8号楼",
         effect: updateTime(4)
-      },
-      {
-        showCondition: "!fightWithVineZombie",
-        text: "查看被藤蔓缠住的丧尸",
-        nextScene: "三林安居苑-藤蔓丧尸",
-        effect: updateTime(2)
       },
       {
         showCondition: "bikeInAnjuyuan",
@@ -156,7 +150,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       var desc = "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。小广场一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
-再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。";
+再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。";      
       if (vars._lastScene === "三林安居苑-鹅卵石路" && vars.hasKey502) {
         desc += "\n你捏了捏口袋里那枚钥匙——上面写着“402”，不知道对应哪扇门。";
       }
@@ -181,7 +175,13 @@ Object.assign(storyData, {
       {
         text: "去长亭走走鹅卵石路",
         nextScene: "三林安居苑-鹅卵石路"
-      }
+      },
+      {
+        showCondition: "!fightWithVineZombie",
+        text: "看看旁边的健身区",
+        nextScene: "三林安居苑-藤蔓丧尸",
+        effect: updateTime(2)
+      },
     ]
   },
 
@@ -255,7 +255,7 @@ Object.assign(storyData, {
     }),
     onEnter: { set: { showRain: true } },
     text: function(vars) {
-      var desc = "你走近长椅上的丧尸。它是个六十来岁的老头，穿着一件洗得发白的中山装，胸口口袋鼓鼓的——好像塞着什么东西。\n\
+      var desc = "你走近健身区，发现长椅上坐着一个丧尸。它是个六十来岁的老头，穿着一件洗得发白的中山装，胸口口袋鼓鼓的——好像塞着什么东西。\n\
 藤蔓从长椅下方的花坛里疯长出来，把它整个下半身缠得严严实实。它只能扭动上半身，朝你张着黑洞洞的嘴，发出嗬嗬的气声。";
       if (vars.hasCutter) {
         desc += "\n<span style='color: #ffaa00;'>口袋里的美工刀正好可以用来割断这些藤蔓。</span>";
@@ -305,36 +305,25 @@ Object.assign(storyData, {
     text: "你掏出美工刀，推出刀片，小心地靠近丧尸。它朝着你嗬嗬叫着，但够不到你——藤蔓把它的手臂也缠住了一部分。\n\
 你一刀一刀地割下去。藤蔓又粗又韧，刀刃陷进去发出嘎吱嘎吱的声音。终于，最后一根最粗的藤被割断了。\n\
 丧尸失去了束缚，整个身体从长椅上滑了下来，扑通一声摔在地上。它挣扎着想要站起来，那双灰白的眼睛死死盯着你。\n\
-它爬行速度很慢——但你最好还是在它叫来同伴之前解决掉它。",
+然后，它转身爬走了。回头又看了一眼你，像是感激，又像是……\n\
+你准备离开时，风吹来了一张纸，捡起来看了看————\n\
+是一张上海市浦东新区的交通图，上面用红笔圈出了几条主要的高架出口和加油站位置。背面还手写着几行小字：\n\
+  “沪芦高速 S2 → 临港方向可行”\n“外环 S20 浦东段多处拥堵，建议绕行”\n“加油站：杨高南路、秀浦路、申江路”\n……\n\
+  <span style='color: #ffaa00;'>这是一张开车出城的路线图。有了它，你可以规划更远的行程了。</span>\n\
+再次抬头，那只老头已经消失在了灌木丛里。",
     choices: [
       {
-        showCondition: "hasIronPipe",
-        text: "铁管砸头，一击毙命",
-        nextScene: "三林安居苑-藤蔓丧尸-击杀",
-        effect: updateTime(1, { add: { strength: -1 } })
-      },
-      {
-        showCondition: "hasCane && !hasIronPipe",
-        text: "抡起拐杖，狠狠敲下去",
-        nextScene: "三林安居苑-藤蔓丧尸-击杀",
-        effect: updateTime(1, { add: { strength: -1 } })
-      },
-      {
-        showCondition: "hasMopHandle && !hasIronPipe",
-        text: "抄起拖把杆，猛地砸过去",
-        nextScene: "三林安居苑-藤蔓丧尸-击杀",
-        effect: updateTime(1, { add: { strength: -1 } })
-      },
-      {
-        text: "徒手解决",
-        nextScene: "三林安居苑-藤蔓丧尸-击杀",
-        effect: updateTime(2, { add: { strength: -2 } })
+        text: "继续",
+        nextScene: "三林安居苑-小区内部"
       }
     ]
   },
 
   "三林安居苑-藤蔓丧尸-战斗": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieFight.png */,
+    image: timeImage({
+      morning: "images/安居苑/藤蔓丧尸扑来.jpg",
+      night: "images/安居苑/藤蔓丧尸扑来-night.jpg"
+    }),
     onEnter: { set: { showRain: true } },
     text: "你用手中的家伙小心地拨开藤蔓。丧尸的手臂突然挣脱了一截，朝你猛地抓来——还好你早有准备，侧身闪开了。\n\
 藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。",
@@ -373,7 +362,10 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieDead.png */,
     onEnter: { set: { positionAfterOperation: "三林安居苑-藤蔓丧尸-击杀", showRain: true } },
     text: function(vars) {
-      var desc = "丧尸终于不动了。你蹲下身，翻开它中山装胸口的口袋。\n里面掉出来一张折叠得整整齐齐的地图——是一张上海市浦东新区的交通图，上面用红笔圈出了几条主要的高架出口和加油站位置。背面还手写着几行小字：\n“沪芦高速 S2 → 临港方向可行”\n“外环 S20 浦东段多处拥堵，建议绕行”\n“加油站：杨高南路、秀浦路、申江路”\n<span style='color: #ffaa00;'>这是一张开车出城的路线图。有了它，你可以规划更远的行程了。</span>";
+      var desc = "丧尸终于不动了。你蹲下身，翻开它中山装胸口的口袋。\n\
+  里面掉出来一张折叠得整整齐齐的地图——是一张上海市浦东新区的交通图，上面用红笔圈出了几条主要的高架出口和加油站位置。背面还手写着几行小字：\n\
+  “沪芦高速 S2 → 临港方向可行”\n“外环 S20 浦东段多处拥堵，建议绕行”\n“加油站：杨高南路、秀浦路、申江路”\n\
+  <span style='color: #ffaa00;'>这是一张开车出城的路线图。有了它，你可以规划更远的行程了。</span>";
       if (vars.hasCarKey && !vars.hasCar) {
         desc += "\n你摸了摸口袋里的车钥匙。B12停车位，丰田，沪C·8236K——现在你有了地图，可以试试去找那辆车了。";
       }
