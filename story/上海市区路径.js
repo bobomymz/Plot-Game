@@ -74,11 +74,16 @@ Object.assign(storyData, {
 如果你不下高架继续往前，前方的高架被废弃车辆堵得严严实实，看不到尽头。",
     choices: [
       {
-        text: "下高架，前往仁济南院",
+        text: "下高架",
         condition: "!hasNoTransportation",
         nextScene: "仁济南院-浦锦路",
         effect: updateTime(10),
         elseScene: "结局-累死我了"
+      },
+      {
+        text: "继续前进",
+        nextScene: "上海交通大学",
+        effect: updateTime(10)
       },
       {
         text: "返回杨高南路立交桥",

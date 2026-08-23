@@ -271,10 +271,18 @@ Object.assign(storyData, {
       vars.currentPos = "急诊大厅";
       return {};
     },
+    qte: function(vars) {
+      if (vars._renjiERCleared) return null;
+      return {
+        timeout: "10000 - chasedByZombies * 1000",
+        onTimeout: "仁济南院-急诊大厅-战斗"
+      };
+    },
     text: function(vars) {
-      var desc = "急诊大厅里一片狼藉。翻倒的轮椅、散落的病历、踩碎的药瓶。挂号台后面倒着两个人，穿着白大褂。墙上的楼层导览图还亮着，但屏幕已经裂了大半。\n";
+      var desc = "急诊大厅里一片狼藉。翻倒的轮椅、散落的病历、踩碎的药瓶。挂号台后面倒着两个人，穿着白大褂。墙上的楼层导览图还亮着，但屏幕已经裂了大半。\n\
+大厅深处有一扇门，门上的灯牌还亮着；一侧的连廊通往另一栋楼；楼梯间在大厅的另一头。\n";
       if (!vars._renjiERCleared) {
-        desc += "大厅中央，一只穿着病号服的丧尸正缓缓转过身来——它发现了你。";
+        desc += "大厅中央，一只穿着病号服的丧尸正缓缓转过身来——它发现了你。\n<span style='color: #ffaa00;'>【提示】别愣着，它不会一直等你。</span>";
       } else {
         desc += "大厅里的丧尸已经被你解决了。这里暂时安静了下来。";
       }
@@ -289,34 +297,24 @@ Object.assign(storyData, {
         });
       }
       opts.push({
-        text: "去门诊药房",
-        nextScene: "仁济南院-门诊药房",
-        effect: updateTime(2)
-      });
-      opts.push({
-        text: "去门诊大厅",
-        nextScene: "仁济南院-门诊大厅",
-        effect: updateTime(2)
-      });
-      opts.push({
-        text: "去检验科",
+        text: "往大厅深处走",
         nextScene: "仁济南院-检验科",
         effect: updateTime(2)
       });
       opts.push({
-        text: "去住院部",
-        nextScene: "仁济南院-住院部走廊",
-        effect: updateTime(3)
+        text: "上楼",
+        nextScene: "仁济南院-楼梯-急诊楼",
+        effect: updateTime(1)
       });
       opts.push({
-        text: "去急诊观察室（上二楼）",
-        nextScene: "仁济南院-急诊观察室",
+        text: "穿过连廊去另一栋楼",
+        nextScene: "仁济南院-门诊大厅",
         effect: updateTime(2)
       });
       opts.push({
-        text: "看看楼层导览图",
-        nextScene: "仁济南院-急诊大厅-导览图",
-        effect: updateTime(1)
+        text: "去住院大楼",
+        nextScene: "仁济南院-住院部走廊",
+        effect: updateTime(3)
       });
       opts.push({
         text: "从正门离开",
@@ -370,29 +368,11 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-急诊大厅-导览图": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMap.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-急诊大厅" } },
-    text: "你凑到那张裂开的导览图前。上面标注着：\n\
-急诊医技楼一层：急诊大厅、检验科。\n\
-门诊楼：药房（一层）、手术供应室（五层）。\n\
-住院大楼：病房、太平间（地下一层）。\n\
-\n\
-图上的部分楼层标记已经褪色，但大致能看清。检验科就在急诊大厅同一层，往里走就是。",
-    choices: [
-      {
-        text: "记住布局，离开",
-        nextScene: "仁济南院-急诊大厅",
-        effect: updateTime(1)
-      }
-    ]
-  },
-
   // ==================== 门诊药房 ====================
 
   "仁济南院-门诊药房": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPharmacy.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-急诊大厅" } },
+    onEnter: { set: { positionAfterOperation: "仁济南院-门诊大厅" } },
     text: function(vars) {
       var desc = "门诊药房的玻璃窗被砸开了一个口子，货架上的药盒散落一地，大部分已经被翻得七零八落。\n\
 柜台后面的处方药架倒还整齐，几瓶没拆封的抗生素和止痛药还好好地摆在原处。墙角的小推车上，放着一瓶医用酒精。";
@@ -426,8 +406,8 @@ Object.assign(storyData, {
       }
       opts.push({
         text: "离开药房",
-        nextScene: "仁济南院-急诊大厅",
-        effect: updateTime(2)
+        nextScene: "仁济南院-门诊大厅",
+        effect: updateTime(1)
       });
       return opts;
     }
@@ -1264,17 +1244,23 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "门诊大厅"; return {}; },
     text: "门诊楼的大厅比急诊还要空旷。挂号机全部黑屏，排队用的伸缩栏杆东倒西歪，地上散落着病历本、医保卡和几张撕碎的处方单。\n\
 缴费窗口的玻璃碎了一角，里面搁着一张没坐过人的转椅。\n\
-墙上贴着褪色的科室索引——内科、外科、妇产科、中医科……大部分科室的门都锁着。",
+大厅一侧有个带玻璃窗口的房间，玻璃上贴着价目表；另一侧有扇门半掩着，门边贴着黄色的警告标志。\n\
+墙上贴着褪色的科室索引——大部分科室的门都锁着。",
     choices: [
       {
-        text: "去影像科",
+        text: "看看那个有玻璃窗口的房间",
+        nextScene: "仁济南院-门诊药房",
+        effect: updateTime(1)
+      },
+      {
+        text: "看看那扇贴着警告标志的门",
         nextScene: "仁济南院-影像科",
         effect: updateTime(1)
       },
       {
-        text: "去输液大厅（上二楼）",
-        nextScene: "仁济南院-输液大厅",
-        effect: updateTime(2)
+        text: "上楼",
+        nextScene: "仁济南院-楼梯-门诊楼低",
+        effect: updateTime(1)
       },
       {
         text: "返回急诊大厅",
@@ -1307,14 +1293,14 @@ Object.assign(storyData, {
 天花板的吊扇还在慢慢转，发出有节奏的吱呀声，像是什么东西在一下一下地敲着。",
     choices: [
       {
-        text: "去中医科（上四楼）",
-        nextScene: "仁济南院-中医科",
-        effect: updateTime(2)
+        text: "上楼",
+        nextScene: "仁济南院-楼梯-门诊楼高",
+        effect: updateTime(1)
       },
       {
-        text: "返回门诊大厅（下楼）",
-        nextScene: "仁济南院-门诊大厅",
-        effect: updateTime(2)
+        text: "下楼",
+        nextScene: "仁济南院-楼梯-门诊楼低",
+        effect: updateTime(1)
       }
     ]
   },
@@ -1340,9 +1326,9 @@ Object.assign(storyData, {
         });
       }
       opts.push({
-        text: "返回输液大厅",
-        nextScene: "仁济南院-输液大厅",
-        effect: updateTime(2)
+        text: "下楼",
+        nextScene: "仁济南院-楼梯-门诊楼高",
+        effect: updateTime(1)
       });
       return opts;
     }
@@ -1356,9 +1342,9 @@ Object.assign(storyData, {
 床头柜上放着半瓶没喝完的水，瓶身上蒙着一层薄灰。",
     choices: [
       {
-        text: "返回急诊大厅",
-        nextScene: "仁济南院-急诊大厅",
-        effect: updateTime(2)
+        text: "下楼",
+        nextScene: "仁济南院-楼梯-急诊楼",
+        effect: updateTime(1)
       }
     ]
   },
@@ -1404,6 +1390,62 @@ Object.assign(storyData, {
         text: "返回住院部走廊",
         nextScene: "仁济南院-住院部走廊",
         effect: updateTime(3)
+      }
+    ]
+  },
+
+  // ==================== 楼梯间（连接楼层 · 可上可下） ====================
+
+  "仁济南院-楼梯-急诊楼": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
+    onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
+    text: "你来到急诊医技楼的楼梯间。水泥台阶上散落着碎玻璃和几团染血的纱布，墙角堆着几把扫帚。\n往上走一层是二楼，往下回到大厅。",
+    choices: [
+      {
+        text: "上楼",
+        nextScene: "仁济南院-急诊观察室",
+        effect: updateTime(1)
+      },
+      {
+        text: "下楼",
+        nextScene: "仁济南院-急诊大厅",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "仁济南院-楼梯-门诊楼低": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
+    onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
+    text: "你来到门诊楼的楼梯间。台阶很宽，扶手上积了一层灰。往上一层是二楼。",
+    choices: [
+      {
+        text: "上楼",
+        nextScene: "仁济南院-输液大厅",
+        effect: updateTime(1)
+      },
+      {
+        text: "下楼",
+        nextScene: "仁济南院-门诊大厅",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "仁济南院-楼梯-门诊楼高": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
+    onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
+    text: "你继续往上走。楼梯间越往上越暗，灯管有一截没一截地亮着。往上走两层是四楼。",
+    choices: [
+      {
+        text: "上楼",
+        nextScene: "仁济南院-中医科",
+        effect: updateTime(2)
+      },
+      {
+        text: "下楼",
+        nextScene: "仁济南院-输液大厅",
+        effect: updateTime(2)
       }
     ]
   }
