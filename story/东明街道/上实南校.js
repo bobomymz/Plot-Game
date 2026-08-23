@@ -401,7 +401,7 @@ Object.assign(storyData, {
 
   "上实南校-化学实验室-憋气": {
     image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
-    onEnter: { add: { strength: -3, mercuryLoad: 10 }, set: { hurtByZombie: true } },
+    onEnter: { add: { strength: -3, mercuryLoad: 10 } }, // 化学气体灼伤，非丧尸咬伤，不触发感染
     text: "你深吸一口气，屏住呼吸冲了进去。气体刺激着你的眼睛和皮肤，但你忍着痛在实验台上摸索。\n你抓到了最近的一样东西——酒精灯。你转身冲了出来，扶着墙大口喘气。\n你的手和脸火辣辣地疼，但至少拿到了东西。",
     choices: [
       {
@@ -1052,7 +1052,7 @@ Object.assign(storyData, {
 
   "上实南校-翻窗摔伤": {
     image: "images/placeholder.png" /* TODO: images/上实南校/windowClimb.png */,
-    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
+    onEnter: { add: { strength: -2 } }, // 摔伤，非咬伤也非中毒，与"翻窗跳下"一致
     text: "你手上的力气不够。管道在你手中滑脱——你从两层楼高的位置摔了下去。落地时脚踝传来一阵剧痛，你蜷缩在地上。\n\
 “你没事吧？！”小陆紧跟着跳了下来，扶你起来。你试着站了站——能站，但每走一步都钻心地疼。\n同学们也陆续爬了下来。你们站在了校园后院的空地上。",
     choices: [
@@ -1229,7 +1229,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-后门-潜行失败": {
-    image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
+    image: "images/hurtByzombie.png",
     onEnter: { set: { showRain: true } },
     text: "你躲到垃圾箱后面——但位置太窄了，你挤不进去。值日教师冲了过来，在你反应过来之前抓住了你的手臂。\n你挣开了它，但手臂上多了一道深深的血痕。同学们翻过门来帮你，小陆用拖把杆砸了它的头——你们趁这个机会一起跑了出去。\n有人受了伤，但大家都出来了。",
     choices: [

@@ -84,7 +84,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-喷泉广场-高锦睿-被救": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
+    image: "images/hurtByzombie.png",
     onEnter: { set: { hurtByZombie: true, showRain: true }, add: { strength: -2, mercuryLoad: 10 } },
     text: "你记错了——一只丧尸从你侧面扑过来，你来不及反应。\n一根金属管从你耳边呼啸而过，咚地一声砸在丧尸脸上。那只丧尸踉跄着栽进了喷泉池里。\n高锦睿拽着你的衣领把你拉了起来：\
 ”别愣着啊！走吧！“\n你低头一看——手臂上多了一道抓痕。",

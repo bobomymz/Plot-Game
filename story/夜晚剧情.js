@@ -217,7 +217,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 理发店特殊流浪结局 ====================
   "过夜-理发店流浪": {
-    image: "images/placeholder.png" /* TODO: images/anshengStreet/nightWander.png */,
+    image: "images/hurtByzombie.png",
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -327,7 +327,7 @@ Object.assign(storyData, {
 
   // ==================== 兜底 - 街头过夜 ====================
   "过夜-街头兜底": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/streetNight.png */,
+    image: "images/hurtByzombie.png",
     onEnter: function(vars) {
       vars.showRain = true;
       vars.dd += 1;

@@ -509,20 +509,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-后巷 ====================
   "安盛街-后巷": {
-    image: function(vars) {
-      if(vars.weather === "雨") {
-        var f = timeImage({
-          morning: "images/安盛街/后巷-雨天.jpg",
-          night: "images/安盛街/后巷-雨天-night.jpg",
-        });
-        return f(vars);
-      }
-      var f = timeImage({
-        morning: "images/安盛街/后巷.jpg",
-        night: "images/安盛街/后巷-night.jpg",
-      });
-      return f(vars);
-    },
+    image: "images/hurtByzombie.png",
     onEnter: {
       set: {hurtByZombie: true, showRain: true}, add: {mercuryLoad: 10}
     },

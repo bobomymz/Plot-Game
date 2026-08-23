@@ -298,7 +298,7 @@ Object.assign(storyData, {
 
   // ===== 硬冲 =====
   "地铁站-安检区-硬冲": {
-    image: "images/placeholder.png" /* TODO: images/地铁站/securityCheck.png */,
+    image: "images/hurtByzombie.png",
     onEnter: { add: { chasedByZombies: 2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
     text: "你深吸一口气，朝着楼梯口的方向猛冲过去。\n丧尸们被你突然的动作惊动，从几个方向同时朝你围拢。你撞开了一只挡路的，用肩膀顶开了另一只——但第三只还是抓到了你的手臂，袖子被撕开一道口子，皮肤火辣辣地疼。\n你甩开它，带着伤冲到了楼梯口。回头看时，丧尸群已经在你身后汇合了。",
     choices: [
@@ -340,7 +340,7 @@ Object.assign(storyData, {
   },
 
   "地铁站-楼梯-犹豫": {
-    image: "images/placeholder.png" /* TODO: images/地铁站/stairs.png */,
+    image: "images/hurtByzombie.png",
     text: "你在楼梯口犹豫了一瞬——就是这一瞬，身后的追兵已经赶到了。一只湿漉漉的手抓住了你的衣领，把你往后拽去。\n\
 你失去平衡，在台阶上滚了下去，撞翻了下方转角处的丧尸。你和两三只丧尸纠缠在一起滚到了楼梯底部。\n你浑身是伤地爬起来，跑到站台另一侧——楼梯虽然下来了，但你的体力已经消耗殆尽。",
     choices: [
@@ -418,9 +418,9 @@ Object.assign(storyData, {
   },
 
   "地铁站-楼梯-滑扶手-撞": {
-    image: "images/placeholder.png" /* TODO: images/地铁站/stairs.png */,
+    image: "images/hurtByzombie.png",
     onEnter: { add: { strength: -1, mercuryLoad: 10 }, set: { hurtByZombie: true } },
-    text: "你来不及调整，直接撞上了它。你和丧尸一起摔在台阶上，滚了两圈。你挣扎着推开它的手臂和嘴巴——它咬了你一口，但冬天的厚外套挡了一下，只擦破了皮。\n你终于把它踹开，爬起来一瘸一拐地冲进了站台。",
+    text: "你来不及调整，直接撞上了它。你和丧尸一起摔在台阶上，滚了两圈。你挣扎着推开它的手臂和嘴巴——它咬了你一口。\n你终于把它踹开，爬起来一瘸一拐地冲进了站台。",
     choices: [
       {
         text: "跑进站台",

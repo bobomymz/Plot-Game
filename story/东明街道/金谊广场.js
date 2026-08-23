@@ -501,7 +501,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-地铁站厅-失败": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/地铁站厅.jpg */,
+    image: "images/hurtByzombie.png",
     onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
     text: "你慢了半拍——丧尸从侧面撞上了你，你们一起摔在站厅的瓷砖地上。\n它的指甲划破了你的手臂，你忍着痛一脚踹开它，爬起来跌跌撞撞冲进了通往B1的通道。\n你靠着通道的墙壁大口喘气，手臂上的抓伤火辣辣地疼。",
     choices: [

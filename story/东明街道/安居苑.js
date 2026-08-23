@@ -301,7 +301,7 @@ Object.assign(storyData, {
       morning: "images/安居苑/割藤蔓.jpg",
       night: "images/安居苑/割藤蔓-night.jpg"
     }),
-    onEnter: updateTime(2, { set: { showRain: true } }),
+    onEnter: updateTime(2, { set: { showRain: true, positionAfterOperation: "三林安居苑-小区内部" } }),
     text: "你掏出美工刀，推出刀片，小心地靠近丧尸。它朝着你嗬嗬叫着，但够不到你——藤蔓把它的手臂也缠住了一部分。\n\
 你一刀一刀地割下去。藤蔓又粗又韧，刀刃陷进去发出嘎吱嘎吱的声音。终于，最后一根最粗的藤被割断了。\n\
 丧尸失去了束缚，整个身体从长椅上滑了下来，扑通一声摔在地上。它挣扎着想要站起来，那双灰白的眼睛死死盯着你。\n\
@@ -309,11 +309,17 @@ Object.assign(storyData, {
 你准备离开时，风吹来了一张纸，捡起来看了看————\n\
 是一张上海市浦东新区的交通图，上面用红笔圈出了几条主要的高架出口和加油站位置。背面还手写着几行小字：\n\
   “沪芦高速 S2 → 临港方向可行”\n“外环 S20 浦东段多处拥堵，建议绕行”\n“加油站：杨高南路、秀浦路、申江路”\n……\n\
-  <span style='color: #ffaa00;'>这是一张开车出城的路线图。有了它，你可以规划更远的行程了。</span>\n\
 再次抬头，那只老头已经消失在了灌木丛里。",
     choices: [
       {
-        text: "继续",
+        text: "收好地图",
+        condition: "itemCount < bagVolume",
+        nextScene: "三林安居苑-小区内部",
+        effect: { set: { hasMap: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      },
+      {
+        text: "直接离开",
         nextScene: "三林安居苑-小区内部"
       }
     ]
@@ -359,16 +365,16 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-藤蔓丧尸-击杀": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieDead.png */,
+    image: timeImage({
+      morning: "images/安居苑/击倒藤蔓丧尸.jpg",
+      night: "images/安居苑/击倒藤蔓丧尸-night.jpg"
+    }),
     onEnter: { set: { positionAfterOperation: "三林安居苑-藤蔓丧尸-击杀", showRain: true } },
     text: function(vars) {
       var desc = "丧尸终于不动了。你蹲下身，翻开它中山装胸口的口袋。\n\
   里面掉出来一张折叠得整整齐齐的地图——是一张上海市浦东新区的交通图，上面用红笔圈出了几条主要的高架出口和加油站位置。背面还手写着几行小字：\n\
   “沪芦高速 S2 → 临港方向可行”\n“外环 S20 浦东段多处拥堵，建议绕行”\n“加油站：杨高南路、秀浦路、申江路”\n\
   <span style='color: #ffaa00;'>这是一张开车出城的路线图。有了它，你可以规划更远的行程了。</span>";
-      if (vars.hasCarKey && !vars.hasCar) {
-        desc += "\n你摸了摸口袋里的车钥匙。B12停车位，丰田，沪C·8236K——现在你有了地图，可以试试去找那辆车了。";
-      }
       return desc;
     },
     choices: [
@@ -383,8 +389,9 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-藤蔓丧尸-被咬": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieBite.png */,
-    text: "你刚把手伸过去，丧尸猛地扭头，一口咬住了你的手腕。\n剧烈的疼痛让你惨叫出声。藤蔓在挣扎中崩断了几根——丧尸挣脱了束缚，而你捂着手腕跌坐在地上，鲜血从指缝间涌出。\n<span style='color: #ff4444;'>你被咬了。</span>",
+    image: "images/hurtByzombie.png" /* TODO: images/安居苑/vineZombieBite.png */,
+    text: "你刚把手伸过去，丧尸猛地扭头，一口咬住了你的手腕。\n剧烈的疼痛让你惨叫出声。藤蔓在挣扎中崩断了几根——丧尸挣脱了束缚，而你捂着手腕跌坐在地上，鲜血从指缝间涌出。\n\
+<span style='color: #ff4444;'>你被咬了。</span>",
     onEnter: updateTime(1, { set: { hurtByZombie: true, showRain: true }, add: { strength: -3, mercuryLoad: 10 } }),
     choices: [
       {
@@ -416,8 +423,8 @@ Object.assign(storyData, {
       },
       {
         text: "上楼看看",
-        nextScene: "三林安居苑-楼道",
-        effect: updateTime(3)
+        nextScene: "三林安居苑-楼道-2楼",
+        effect: updateTime(1)
       },
       {
         text: "退出去",
@@ -861,15 +868,42 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     ]
   },
 
-  "三林安居苑-楼道": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanStairs.png */,
-    onEnter: updateTime(2),
-    text: "你扶着锈迹斑斑的扶手往上走。楼梯间回荡着空洞的脚步声，每上一层，声控灯就啪地亮起，又在身后啪地熄灭。墙皮大片大片地剥落，露出里面发霉的水泥。\n墙上贴满了小广告——疏通下水道、高价回收旧家电、家教辅导……有些纸张已经发黄卷边，字迹模糊不清。\n二楼、三楼、四楼……你在五楼停下了脚步。",
+  "三林安居苑-楼道-2楼": {
+    image: "images/安居苑/anJuYuanStairs.png",
+    onEnter: updateTime(1),
+    text: "你扶着锈迹斑斑的扶手走上二楼。楼梯拐角靠着一辆儿童自行车，车筐里塞着几个空的饮料瓶。窗台上那盆绿萝早就枯萎了，干枯的藤蔓垂在窗沿。\n其中一户的门上贴着一张褪色的老照片——一家三口站在迪士尼城堡前，笑得没心没肺。照片已经泛黄卷边了。",
     choices: [
-      {
-        text: "继续",
-        nextScene: "三林安居苑-5楼"
-      }
+      { text: "继续上楼", nextScene: "三林安居苑-楼道-3楼", effect: updateTime(1) },
+      { text: "下楼", nextScene: "三林安居苑-居民楼", effect: updateTime(1) }
+    ]
+  },
+
+  "三林安居苑-楼道-3楼": {
+    image: "images/安居苑/anJuYuanStairs.png",
+    onEnter: updateTime(1),
+    text: "你走上三楼。一股馊掉的食物味从某扇门的门缝里飘出来，混杂着淡淡的腐臭——像是谁家的厨房再也没有人来收拾过。\n另一扇门虚掩着，门缝里一片漆黑。你听不见里面有声音，但也不想凑近去确认。",
+    choices: [
+      { text: "继续上楼", nextScene: "三林安居苑-楼道-4楼", effect: updateTime(1) },
+      { text: "下楼", nextScene: "三林安居苑-楼道-2楼", effect: updateTime(1) }
+    ]
+  },
+
+  "三林安居苑-楼道-4楼": {
+    image: "images/安居苑/anJuYuanStairs.png",
+    onEnter: updateTime(1),
+    text: "你走上四楼。走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，而且躲了很久。\n你在门口站了一会儿。里面没有任何动静。",
+    choices: [
+      { text: "继续上楼", nextScene: "三林安居苑-5楼", effect: updateTime(1) },
+      { text: "下楼", nextScene: "三林安居苑-楼道-3楼", effect: updateTime(1) }
+    ]
+  },
+
+  "三林安居苑-楼道-6楼": {
+    image: "images/安居苑/anJuYuanStairs.png",
+    onEnter: updateTime(1),
+    text: "你走上六楼——这栋楼的顶层。601的门锁着，门把手上落着一层薄灰，看起来很久没人碰过了。\n楼梯尽头的天台门被一根生锈的铁链拴得死死的，链子上挂着一把同样锈迹斑斑的挂锁。你试着拽了拽，纹丝不动。\n六楼到此为止，没有再往上的路了。",
+    choices: [
+      { text: "下楼", nextScene: "三林安居苑-5楼", effect: updateTime(1) }
     ]
   },
 
@@ -886,9 +920,14 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         elseScene: "三林安居苑-5楼-门锁了"
       },
       {
+        text: "继续上楼",
+        nextScene: "三林安居苑-楼道-6楼",
+        effect: updateTime(1)
+      },
+      {
         text: "下楼",
-        nextScene: "三林安居苑-楼道",
-        effect: updateTime(2)
+        nextScene: "三林安居苑-楼道-4楼",
+        effect: updateTime(1)
       }
     ]
   },
@@ -899,7 +938,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       {
         text: "下楼",
-        nextScene: "三林安居苑-楼道"
+        nextScene: "三林安居苑-楼道-4楼"
       }
     ]
   },
