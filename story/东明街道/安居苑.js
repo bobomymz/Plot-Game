@@ -4,7 +4,7 @@
 Object.assign(storyData, {
 
   // ==================== 三林安居苑（老小区） ====================
-  "三林安居苑后门": {
+  "安居苑后门": {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({ // evening ~ midnight 统一为 night
@@ -279,7 +279,13 @@ Object.assign(storyData, {
       },
       {
         showCondition: "hasCane || hasMopHandle || hasIronPipe",
-        text: "用武器拨开藤蔓",
+        text: function(vars) {
+          let wea = "";
+          if(vars.hasCane) wea = "拐杖";
+          else if(vars.hasMopHandle) wea = "拖把杆";
+          else if(vars.hasIronPipe) wea = "铁管";
+          return `用${wea}拨开藤蔓`;
+        },
         nextScene: "三林安居苑-藤蔓丧尸-战斗",
         effect: updateTime(1, {set: {fightWithVineZombie: true}})
       },
@@ -291,9 +297,15 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-割藤蔓": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/cutVines.png */,
+    image: timeImage({
+      morning: "images/安居苑/割藤蔓.jpg",
+      night: "images/安居苑/割藤蔓-night.jpg"
+    }),
     onEnter: updateTime(2, { set: { showRain: true } }),
-    text: "你掏出美工刀，推出刀片，小心地靠近丧尸。它朝着你嗬嗬叫着，但够不到你——藤蔓把它的手臂也缠住了一部分。\n你一刀一刀地割下去。藤蔓又粗又韧，刀刃陷进去发出嘎吱嘎吱的声音。终于，最后一根最粗的藤被割断了。\n丧尸失去了束缚，整个身体从长椅上滑了下来，扑通一声摔在地上。它挣扎着想要站起来，那双灰白的眼睛死死盯着你。\n它的下半身因为长期被缠住已经萎缩了，爬行速度很慢——但你最好还是在它叫来同伴之前解决掉它。",
+    text: "你掏出美工刀，推出刀片，小心地靠近丧尸。它朝着你嗬嗬叫着，但够不到你——藤蔓把它的手臂也缠住了一部分。\n\
+你一刀一刀地割下去。藤蔓又粗又韧，刀刃陷进去发出嘎吱嘎吱的声音。终于，最后一根最粗的藤被割断了。\n\
+丧尸失去了束缚，整个身体从长椅上滑了下来，扑通一声摔在地上。它挣扎着想要站起来，那双灰白的眼睛死死盯着你。\n\
+它爬行速度很慢——但你最好还是在它叫来同伴之前解决掉它。",
     choices: [
       {
         showCondition: "hasIronPipe",
@@ -324,7 +336,8 @@ Object.assign(storyData, {
   "三林安居苑-藤蔓丧尸-战斗": {
     image: "images/placeholder.png" /* TODO: images/安居苑/vineZombieFight.png */,
     onEnter: { set: { showRain: true } },
-    text: "你用手中的家伙小心地拨开藤蔓。丧尸的手臂突然挣脱了一截，朝你猛地抓来——还好你早有准备，侧身闪开了。\n藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。\n不能让它继续叫下去了——附近的猫已经开始骚动了。",
+    text: "你用手中的家伙小心地拨开藤蔓。丧尸的手臂突然挣脱了一截，朝你猛地抓来——还好你早有准备，侧身闪开了。\n\
+藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。",
     choices: [
       {
         showCondition: "hasIronPipe",

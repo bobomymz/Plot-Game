@@ -440,12 +440,12 @@ function clearQTE() {
 // ====== 解析跳转目标（支持函数、{变量}、普通字符串） ======
 function parseRedirectTarget(target, state) {
   if (typeof target === 'function') {
-    return target(state);
+    const result = target(state);
+    // 函数返回值也做 {变量} 插值，与字符串分支保持一致
+    return typeof result === "string" ? interpolateDisplay(result, state) : result;
   }
   if (typeof target === 'string') {
-    return target.replace(/\{(\w+)\}/g, (match, key) => {
-      return state[key] !== undefined ? state[key] : match;
-    });
+    return interpolateDisplay(target, state);
   }
   return target;
 }
@@ -475,6 +475,26 @@ function backtrack() {
 
   // 回溯时跳过 onEnter，避免效果重复触发
   renderScene(currentScene, true);   // skipOnEnter = true，depth 默认为 0
+}
+
+// 显示文本插值：把 {变量名} 替换为 gameState 当前值，并应用 _display 格式化
+// （场景 text 与选项 text 共用。parseRedirectTarget 面向场景ID跳转、不做 _display，故不通用）
+function interpolateDisplay(text, state) {
+  return text.replace(/\{(\w+)\}/g, (match, key) => {
+    var val = state[key];
+    if (val !== undefined) {
+      var fmt = storyData._display && storyData._display[key];
+      if (fmt) val = fmt(val);
+      return val;
+    }
+    return match;
+  });
+}
+
+// 解析选项文本：与场景 text 一致，支持 {变量名} 插值和函数形式（函数返回值同样会做插值）
+function resolveChoiceText(choice) {
+  var raw = typeof choice.text === "function" ? choice.text(gameState) : (choice.text || "");
+  return interpolateDisplay(raw, gameState);
 }
 
 // ====== 渲染选项 ======
@@ -594,7 +614,7 @@ function renderChoices(scene, sceneId) {
 
         const btn = document.createElement("button");
         btn.className = "choice-btn";
-        btn.textContent = choice.text;
+        btn.textContent = resolveChoiceText(choice);
 
         btn.addEventListener("click", () => {
           clearQTE();
@@ -652,7 +672,7 @@ function renderChoices(scene, sceneId) {
 
       const label = document.createElement("div");
       label.className = "choice-input-label";
-      label.textContent = choice.text;
+      label.textContent = resolveChoiceText(choice);
       container.appendChild(label);
 
       const row = document.createElement("div");
@@ -699,7 +719,7 @@ function renderChoices(scene, sceneId) {
 
     const btn = document.createElement("button");
     btn.className = "choice-btn";
-    btn.textContent = choice.text;
+    btn.textContent = resolveChoiceText(choice);
 
     btn.addEventListener("click", () => {
       clearQTE();   // 安全起见，也清理一下
@@ -950,15 +970,7 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   } else {
     displayText = scene.text || "";
   }
-  displayText = displayText.replace(/\{(\w+)\}/g, (match, key) => {
-    var val = gameState[key];
-    if (val !== undefined) {
-      var fmt = storyData._display && storyData._display[key];
-      if (fmt) val = fmt(val);
-      return val;
-    }
-    return match;
-  });
+  displayText = interpolateDisplay(displayText, gameState);
 
   sceneText.style.cssText = '';
   if (scene.style) {

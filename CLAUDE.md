@@ -66,12 +66,12 @@ images/             → 场景图（PNG/JPG），按区域存放
 | 字段                 | 纯字符串         | `{变量名}` 插值 | 函数 `(vars) =>` | 备注                                           |
 | ------------------ | ------------ | ---------- | -------------- | -------------------------------------------- |
 | `image`            | ✅            | ❌          | ✅ 返回路径字符串      | `timeImage({...})` 是工具函数，在 story 中静态求值       |
-| `text`             | ✅            | ✅          | ✅ 返回字符串        | 函数返回值不再做插值                                   |
+| `text`             | ✅            | ✅          | ✅ 返回字符串        | 函数返回值**仍会**做 `{变量名}` 插值（和静态字符串一致）      |
 | `style`            | ✅ 直接 CSS     | ❌          | ❌              | 也支持对象 `{fontSize:"18px"}`（camelCase→kebab）   |
 | `onEnter`          | ❌            | ❌          | ✅ 返回效果对象       | 也支持静态对象 `{set:{}, add:{}, mul:{}}`           |
 | `choices`          | ❌            | ❌          | ✅ 返回选项数组       | 函数形式可用于动态生成选项                                |
-| `qte`              | ❌            | ❌          | ✅ 返回 QTE 对象    | 很少用函数形式                                      |
-| 选项 `text`          | ✅            | ❌          | ❌              | 纯静态字符串，**不支持函数和插值**                          |
+| `qte`              | ❌            | ❌          | ✅ 返回 QTE 对象    | 支持静态对象 `{timeout, onTimeout, hidden}`，也支持函数 |
+| 选项 `text`          | ✅            | ✅          | ✅ 返回字符串      | 同剧情 `text`：函数返回值**仍会**做 `{变量名}` 插值            |
 | 选项 `nextScene`     | ✅            | ✅          | ✅ 返回场景 ID 字符串  | 三种形式都支持                                      |
 | 选项 `elseScene`     | ✅            | ✅          | ✅ 返回场景 ID 字符串  | 同 nextScene                                  |
 | 选项 `condition`     | ✅ 表达式        | ❌          | ✅ 返回 bool      | 也支持布尔值和比较对象（见条件系统）                           |
@@ -86,7 +86,7 @@ images/             → 场景图（PNG/JPG），按区域存放
 
 ```javascript
 {
-  text: "选项文字",               // 纯静态字符串，不支持函数或插值
+  text: "选项文字",               // 支持 {变量名} 插值，也支持函数 (vars) => 字符串
   nextScene: "目标场景ID",        // 字符串（支持{变量名}插值）、函数(vars) => string
   effect: { set: {...} },       // 静态对象或函数(vars) => 效果对象
   condition: "表达式",           // 见条件系统（可选）
@@ -104,6 +104,21 @@ images/             → 场景图（PNG/JPG），按区域存放
   timeout: 5000,                 // 倒计时(ms)，支持 JS 表达式字符串
   timeoutScene: "超时跳转"       // 同 nextScene
 },
+```
+
+**选项 `text` 的动态写法**（与剧情 `text` 一致，引擎 `resolveChoiceText` 支持）：
+
+```javascript
+// {变量名} 插值 —— 渲染时替换为 gameState 当前值（支持 _display 格式化）
+{ text: "继续（当前体力 {strength}）", nextScene: "xxx" }
+
+// 函数形式 —— 动态生成文字，返回值仍会做 {变量名} 插值
+{
+  text: function(vars) {
+    return vars._visit['某场景'] > 0 ? "再次查看（体力 {strength}）" : "第一次查看";
+  },
+  nextScene: "xxx"
+}
 ```
 
 ### 条件系统（`condition` / `showCondition`）
@@ -329,6 +344,44 @@ rules: [
 
 ### QTE（快速事件）
 
+QTE 有两种层级：**场景级**（整个节点倒计时）和**选项级**（单个选项倒计时）。两者字段名不同，**不要混淆**：
+
+| 层级 | 声明位置 | 超时跳转字段 | 隐藏进度条 |
+|------|---------|------------|-----------|
+| 场景级 `qte` | 场景对象上 | `onTimeout` | `hidden: true` |
+| 选项级 | 选项上 | `timeoutScene` | ❌ 不支持 |
+
+#### 场景级 QTE（`qte` 字段）
+
+直接写在场景对象上，**进入场景即开始倒计时**，超时自动跳转 `onTimeout`。如东明街道的十字路口节点：
+
+```javascript
+"东明路-三林路": {
+  qte: {
+    timeout: "8000 - chasedByZombies * 2000",  // 计时(ms)，支持 JS 表达式字符串
+    onTimeout: "结局-丧尸的围殴",               // 超时跳转的场景（支持 {变量名} 插值）
+    hidden: false                              // 可选：true 隐藏进度条（无声倒计时）
+  },
+  text: "……",
+  choices: [ ... ]
+}
+```
+
+| 字段 | 说明 |
+|------|------|
+| `timeout` | 倒计时时长(ms)。数字或 **JS 表达式字符串**（用 `new Function` 求值，如 `"8000 - chasedByZombies * 2000"`） |
+| `onTimeout` | **必填**。超时后跳转的场景 ID，支持 `{变量名}` 插值，同 `nextScene` |
+| `hidden` | 可选。`true` 时不渲染进度条，但倒计时照常生效——适合"悄无声息逼近的威胁" |
+
+行为特点：
+- 进入场景立即开始倒计时（跳过打字机效果，文字和选项直接显示）。
+- 玩家在超时前点击任意选项会取消倒计时（选项 click 内部调用 `clearQTE()`）。
+- 超时后自动 `pushHistory()` 并跳转 `onTimeout`。
+- **场景级 `qte` 与选项级 `timeout` 互斥**：存在 `scene.qte` 时选项级倒计时不会启动。
+- `qte` 也支持函数形式 `function(vars) { return { timeout, onTimeout, hidden }; }`，可动态生成。
+
+#### 选项级 QTE（`timeout` / `timeoutScene`）
+
 在选项中设置 `timeout` 即可激活倒计时条：
 
 ```javascript
@@ -341,6 +394,7 @@ rules: [
 ```
 
 引擎会在底部渲染进度条，倒计时归零自动跳转 `timeoutScene`。
+若只写 `timeout` 而不写 `timeoutScene`，超时后仅移除该选项、保留其他选项。
 
 ### 输入框选项（Input）
 
