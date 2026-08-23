@@ -25,14 +25,14 @@ Object.assign(storyData, {
       } else {
         desc += "头顶有挑高的玻璃顶棚，阳光从缝隙里漏下来，在地上投出斑驳的光影。风是通的，穿过架空的天桥和半开放的走廊，吹得地上的碎纸屑轻轻打转。\n";
       }
-      desc += "远远能听到小河流水的声音——那条河把龙头区和商场主体隔开了。河对岸的商场大楼沉默地矗立着，玻璃幕墙反射着苍白的天光。";
+      desc += "远远能听到小河流水的声音——那条河把龙头区和商场主体隔开了。河对岸的商场大楼沉默地矗立着，玻璃幕墙反射着苍白的天光。旁边地铁站的入口黑洞洞的，像怪兽的巨口。";
       desc += "\n" + describeWeather(vars);
       return desc;
     },
     choices: [
       {
-        text: "去龙形天桥",
-        nextScene: "金谊广场-龙形天桥",
+        text: "去地铁站",
+        nextScene: "金谊广场-地铁站厅",
         effect: updateTime(2)
       },
       {
@@ -59,36 +59,6 @@ Object.assign(storyData, {
         text: "离开金谊广场",
         nextScene: "三林路-东明路 十字路口",
         effect: updateTime(30)
-      }
-    ]
-  },
-
-  // --- 龙形天桥 ---
-  "金谊广场-龙形天桥": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/龙形天桥.jpg */,
-    onEnter: function(vars) {
-      vars.showZombies = true;
-    },
-    text: function(vars) {
-      var desc = "你走上龙形天桥。这是一条连接龙头区和11号线三林路地铁站的架空走廊，桥面很宽，两侧是落地的玻璃护栏。\n";
-      desc += "往西看——黄浦江方向的天际线在一片灰蒙蒙的雾霭中若隐若现。往东看——龙头区的人行道和河岸尽收眼底。\n";
-      desc += "天桥另一端通向地铁站厅。远远能看到入口处堆着坍塌的天花板和扭曲的金属框架——站厅已经被废墟堵死了。\n";
-      desc += "但废墟的缝隙里偶尔会传出低沉的喉音。";
-      if (vars.weather === "雨") {
-        desc += "\n雨水顺着碎裂的玻璃往下淌，打湿了桥面。";
-      }
-      return desc;
-    },
-    choices: [
-      {
-        text: "回到龙头区",
-        nextScene: "金谊广场-龙头区",
-        effect: updateTime(2)
-      },
-      {
-        text: "钻进地铁站废墟",
-        nextScene: "金谊广场-地铁站厅",
-        effect: updateTime(3)
       }
     ]
   },
@@ -246,7 +216,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!vars._chenmoRescued",
+        showCondition: "!_chenmoRescued",
         text: "带他杀出停车场",
         nextScene: "金谊广场-吉祥馄饨-杀出去",
         effect: updateTime(2)
@@ -577,8 +547,8 @@ Object.assign(storyData, {
 
   "金谊广场-1F肯德基-吃鸡块": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/1F肯德基-吃鸡块.jpg */,
-    onEnter: { add: { strength: 1 } },
-    text: "你拆开一盒鸡块，撕开番茄酱的小包。\n冷掉了，但还能吃。你坐在油腻的地板上，把两盒鸡块一扫而光。\n胃里终于有了点实在的东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    onEnter: { add: { strength: 3 } },
+    text: "你拆开一盒鸡块，撕开番茄酱的小包。\n冷掉了，但还能吃。你坐在油腻的地板上，把两盒鸡块一扫而光。\n胃里终于有了点实在的东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "金谊广场-1F肯德基", effect: updateTime(1) }
     ]
@@ -769,7 +739,6 @@ Object.assign(storyData, {
 
   "金谊广场-3F-幸存者-分食物": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/3F幸存者.jpg */,
-    onEnter: { add: { strength: -1 } },
     text: function(vars) {
       var desc = "你从口袋里掏出半包压缩饼干，放在吧台上推了过去。\n";
       desc += "小林看着那包饼干，愣了好几秒。然后他伸手拿起来，拆开包装，吃了一块。嚼得很慢。\n";

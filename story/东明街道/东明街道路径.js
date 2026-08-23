@@ -438,6 +438,7 @@ Object.assign(storyData, {
         night: "images/小区周边/东明路-三林路-night.jpg"
         // midnight省略不写了
       });
+      return f(vars); // ← 修复：晴天分支之前漏掉了 return，导致 image 函数返回 undefined，图片被引擎隐藏
     },
     onEnter: function(vars) {
       vars.showZombies = true;

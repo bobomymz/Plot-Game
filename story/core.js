@@ -196,7 +196,7 @@ const storyData = {
       // 支持字符串表达式（推荐，简洁）
       gameMinutes: "((dd - 1) * 1440 + (hh - 8) * 60 + mm)",
       isNight:     "hh >= 19 || hh < 6",
-      minutesBetweenReduceStrength: "hurtByZombie ? 20 - strength : 60", // 若被丧尸抓伤，体力下降会更快
+      minutesBetweenReduceStrength: "hurtByZombie ? 20 : 60", // 若被丧尸抓伤，体力下降会更快
       canSee: function(v) { return canSee(v); },
       hasFood: function(v) { return hasFood(v); }, // 是否有食物
       zombieAtHomeDoor: function(v) { return zombieAtHomeDoor(v); }, // 丧尸还在门口

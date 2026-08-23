@@ -265,7 +265,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "dd == 1",
+        showCondition: "dd == 1 && _visit['长者食堂-窗口'] == 1",
         text: "趁热喝掉",
         nextScene: "长者食堂-窗口",
         effect: updateTime(2, { add: { strength: 2 } })
