@@ -160,7 +160,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "推开工具区的门看看",
-        nextScene: "五金店-工具区门"
+        nextScene: "五金店-工具区"
       },
       {
         text: "躲进货架之间，从缝隙里观察",

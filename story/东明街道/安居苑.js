@@ -1072,15 +1072,15 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       {
-        text: "离开",
-        nextScene: "三林安居苑-小区内部"
+        text: "继续",
+        nextScene: "三林安居苑-居民楼-1楼"
       }
     ]
   },
 
   "三林安居苑-厨房危险": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchenDanger.png */,
-    text: "你小心翼翼地靠近厨房。地上那只丧尸看到你，猛地一扑——它的手臂比你想象中要长。\n你躲闪不及，被它抓住了脚踝。你奋力挣扎，但它咬住了你的小腿。\n剧烈的疼痛让你惨叫出声，而你的叫声又引来了小区里其他潜伏的东西……",
+    text: "你小心翼翼地靠近厨房。地上那只丧尸看到你，猛地一扑——它的手臂比你想象中要长。\n你躲闪不及，被它抓住了脚踝。你奋力挣扎，但它咬住了你的小腿。\n剧烈的疼痛让你惨叫出声，而你的叫声又引来了小区里其他潜伏的东西……\n黑暗里，无数只枯瘦的手从四面八方攥住了你。\n—— 结局：厨房危险 ——",
     onEnter: { set: { hurtByZombie: true }, add: { strength: -3, mercuryLoad: 10 } }
   },
 

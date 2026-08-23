@@ -692,7 +692,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
       }
       cs.push({
         text: "记下这个位置，离开",
-        nextScene: "三林路"
+        nextScene: "小超市"
       });
       if (vars.hasIronPipe) {
         cs.push({
@@ -719,8 +719,8 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     },
     choices: [
       {
-        text: "离开仓库",
-        nextScene: "三林路"
+        text: "继续",
+        nextScene: "联华超市-仓库"
       }
     ]
   },

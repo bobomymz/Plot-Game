@@ -315,7 +315,9 @@ Object.assign(storyData, {
     text: "你随手从冰柜里抓起一瓶冰凉的柠檬水，咕嘟咕嘟一饮而尽。片刻之后，你感觉胃部传来一阵绞痛。\n\
 ——你已经一个早上没吃饭了，现在这么快灌下去，怕是又要拉肚子了。\n\
 你窜出店找到一个小小的洗手间，打开门，\n\
-<span style='font-weight: bold;'>一只丧尸在盯着你。</span>"
+<span style='font-weight: bold;'>一只丧尸在盯着你。</span>\n\
+你还没来得及关门，它已经扑了上来。冰凉的味道在胃里翻涌，你的意识被黑暗吞没。\n\
+—— 结局：厕所惊魂 ——"
   },
 
   "公交车站（环林东路）": {
@@ -395,16 +397,16 @@ Object.assign(storyData, {
     choices: [
       {
         showCondition: "!hasDoorKey1",
-        text: "拿上钥匙",
+        text: "继续",
         condition: "itemCount < bagVolume",
-        nextScene: "小区东门-整装待发",
+        nextScene: "全家便利店内部",
         effect: updateTime(1, { set: { hasDoorKey1: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
         showCondition: "hasDoorKey1",
-        text: "已经有钥匙了，离开",
-        nextScene: "小区东门-整装待发"
+        text: "继续",
+        nextScene: "全家便利店内部"
       },
       {
         showCondition: "itemCount >= bagVolume",
@@ -456,8 +458,8 @@ Object.assign(storyData, {
     text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱哗啦啦地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n砰——门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。",
     choices: [
       {
-        text: "快离开这里",
-        nextScene: "全家便利店（环林东路）"
+        text: "继续",
+        nextScene: "全家便利店内部"
       }
     ]
   },

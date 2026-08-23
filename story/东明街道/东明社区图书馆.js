@@ -511,7 +511,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续",
-        nextScene: "图书馆",
+        nextScene: "图书馆-大厅",
         effect: updateTime(10)
       }
     ]
@@ -538,7 +538,7 @@ Object.assign(storyData, {
       }
       opts.push({
         text: "返回大厅",
-        nextScene: "图书馆大厅"
+        nextScene: "图书馆-大厅"
       });
       return opts;
     }

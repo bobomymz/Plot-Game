@@ -49,7 +49,7 @@ Object.assign(storyData,{
     choices: [
       {
         text: "到其他地方看看",
-        nextScene: "益丰大药房-柜台后-已清理",
+        nextScene: "益丰大药房",
         effect: updateTime(1)
       }
     ]
@@ -87,8 +87,8 @@ Object.assign(storyData,{
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       {
-        text: "收拾一下离开",
-        nextScene: "三林路",
+        text: "继续",
+        nextScene: "益丰大药房",
         effect: updateTime(1)
       },
       {
@@ -103,8 +103,8 @@ Object.assign(storyData,{
     text: "你绕过柜台，白大褂丧尸的尸体还静静趴在地上。上次从它身边搜刮的药箱已经空了，地上的血迹早已干涸发黑。\n你在柜台周围又翻了翻，确认没什么遗漏的东西。",
     choices: [
       {
-        text: "离开",
-        nextScene: "三林路",
+        text: "继续",
+        nextScene: "益丰大药房",
         effect: updateTime(1)
       }
     ]
@@ -115,8 +115,8 @@ Object.assign(storyData,{
     text: "你从白大衣的领口里取下了一张工牌。",
     choices: [
       {
-        text: "离开",
-        nextScene: "三林路",
+        text: "继续",
+        nextScene: "益丰大药房",
         effect: updateTime(5)
       }
     ]
@@ -131,8 +131,8 @@ Object.assign(storyData,{
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       {
-        text: "离开",
-        nextScene: "三林路",
+        text: "继续",
+        nextScene: "益丰大药房",
         effect: updateTime(5)
       }
     ]
@@ -630,8 +630,8 @@ Object.assign(storyData,{
 后会有期吧。”",
     choices: [
       {
-        text: "继续闲聊",
-        nextScene: "益丰大药房-办公室闲聊2",
+        text: "告辞，离开",
+        nextScene: "益丰大药房-选择离开的路",
         effect: updateTime(1)
       }
     ]

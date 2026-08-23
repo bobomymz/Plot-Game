@@ -731,8 +731,8 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "离开",
-        nextScene: "安盛街中段",
+        text: "继续",
+        nextScene: "安盛街-文具店",
         effect: updateTime(1)
       },
       {
@@ -769,8 +769,8 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "离开这里",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       }
     ]
   },
@@ -809,21 +809,21 @@ Object.assign(storyData, {
     choices: [
       {
         showCondition: "!hasCutter",
-        text: "拿上美工刀离开",
+        text: "拿上美工刀",
         condition: "itemCount < bagVolume",
-        nextScene: "安盛街中段",
+        nextScene: "安盛街-文具店",
         effect: { set: { hasCutter: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
         showCondition: "!hasCutter",
-        text: "空手走人",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       },
       {
         showCondition: "hasCutter",
-        text: "已经有美工刀了，不拿",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       }
     ]
   },
@@ -849,40 +849,40 @@ Object.assign(storyData, {
         showCondition: "!hasCutter && !hasCrumpledLeaflet && !_leafletUsed",
         text: "都拿走",
         condition: "itemCount + 2 <= bagVolume",
-        nextScene: "安盛街中段",
+        nextScene: "安盛街-文具店",
         effect: updateTime(1, { set: { hasCutter: true, hasCrumpledLeaflet: true }, add: { itemCount: 2 } }),
         elseScene: "整理整理"
       },
       {
         showCondition: "!hasCutter",
-        text: "只拿美工刀，离开",
+        text: "只拿美工刀",
         condition: "itemCount + 1 <= bagVolume",
-        nextScene: "安盛街中段",
+        nextScene: "安盛街-文具店",
         effect: updateTime(1, { set: { hasCutter: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
         showCondition: "!hasCrumpledLeaflet && !_leafletUsed",
-        text: "只拿传单，离开",
+        text: "只拿传单",
         condition: "itemCount + 1 <= bagVolume",
-        nextScene: "安盛街中段",
+        nextScene: "安盛街-文具店",
         effect: updateTime(1, { set: { hasCrumpledLeaflet: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
         showCondition: "!hasCutter || (!hasCrumpledLeaflet && !_leafletUsed)",
         text: "背包满了，算了",
-        nextScene: "安盛街中段"
+        nextScene: "安盛街-文具店"
       },
       {
         showCondition: "hasCutter && hasCrumpledLeaflet",
-        text: "都拿过了，离开",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       },
       {
         showCondition: "hasCutter && _leafletUsed",
-        text: "没什么要拿的了，离开",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       }
     ]
   },
@@ -893,9 +893,9 @@ Object.assign(storyData, {
 你的目光落在角落的一个铁柜上——上面贴着“员工物品”的标签，柜门虚掩着。",
     choices: [
       {
-        text: "快速扫一眼就走",
+        text: "快速扫一眼",
         effect: updateTime(3),
-        nextScene: "安盛街中段"
+        nextScene: "安盛街-文具店"
       },
       {
         text: "撬开铁柜看看",
@@ -903,8 +903,8 @@ Object.assign(storyData, {
         effect: updateTime(15)
       },
       {
-        text: "此地不宜久留",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       }
     ]
   },
@@ -929,8 +929,8 @@ Object.assign(storyData, {
         effect: updateTime(15, { set: { hasBag: true }, add: { bagVolume: 1} } )
       },
       {
-        text: "不管了，离开",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       }
     ]
   },
@@ -941,21 +941,21 @@ Object.assign(storyData, {
     text: "你拧开矿泉水瓶盖，咕嘟咕嘟喝了几大口，又撕开饼干包装吃了两块。虽然不是什么美餐，但足够补充体力了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
       {
-        text: "离开",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       }
     ]
   },
 
-  "安盛街-文-拿走帆-拿走帆布袋": {
+  "安盛街-文具店铁柜-拿走帆布袋": {
     image: "images/安盛街/晨光文具店/仓库拿帆布袋.png",
-    onEnter: { set: { positionAfterOperation: "安盛街中段" } },
+    onEnter: { set: { positionAfterOperation: "安盛街-文具店" } },
     text: "你提起那只帆布袋，掸了掸上面的灰。帆布厚实，肩带完好，袋口还有一根抽绳——比空手强多了。\n你把它斜挎在肩上，腾出手来。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】背包容量+1，当前容量：{bagVolume}。</span>",
     choices: [
       {
-        text: "离开文具店",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-文具店"
       }
     ]
   },
@@ -1139,7 +1139,7 @@ Object.assign(storyData, {
       {
         text: "快速扫一眼",
         effect: updateTime(3),
-        nextScene: "安盛街中段"
+        nextScene: "安盛街-服装店"
       },
       {
         text: "仔细翻找抽屉",
@@ -1147,8 +1147,8 @@ Object.assign(storyData, {
         nextScene: "安盛街-服装店收银台-仔细"
       },
       {
-        text: "没什么用，离开",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-服装店"
       }
     ]
   },
@@ -1171,13 +1171,13 @@ Object.assign(storyData, {
         showCondition: "!hasCrumpledLeaflet && !_leafletUsed", // 没拿过、也没用掉传单时才显示
         text: "拿走传单",
         condition: "itemCount < bagVolume",
-        nextScene: "安盛街中段",
+        nextScene: "安盛街-服装店",
         effect: updateTime(1, { set: { hasCrumpledLeaflet: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
-        text: "没用，走人",
-        nextScene: "安盛街中段"
+        text: "继续",
+        nextScene: "安盛街-服装店"
       }
     ]
   },
@@ -1322,7 +1322,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续",
-        nextScene: "安盛街中段"
+        nextScene: "安盛街-食品店内部"
       }
     ]
   },
@@ -1539,7 +1539,7 @@ Object.assign(storyData, {
         effect: updateTime(10)
       },
       {
-        text: "继续往西，去新达汇方向",
+        text: "去新达汇方向",
         nextScene: "新达汇-喷泉广场",
         effect: updateTime(10)
       },

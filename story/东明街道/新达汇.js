@@ -56,8 +56,8 @@ Object.assign(storyData, {
       cs.push({ text: "走下阶梯到B1下沉广场", nextScene: "新达汇-B1下沉广场入口", effect: updateTime(2) });
       cs.push({ text: "前往东区", nextScene: "新达汇-东区天桥1", effect: updateTime(4) });
       cs.push({ text: "绕到商场背后的车库出口", nextScene: "新达汇车库出口", effect: updateTime(3) });
-      cs.push({ text: "离开新达汇，回十字路口",
-        nextScene: "三林路-东明路 十字路口",
+      cs.push({ text: "往北走，去安盛街",
+        nextScene: "安盛街西侧",
         effect: updateTime(20) });
       return cs;
     }
@@ -114,7 +114,8 @@ Object.assign(storyData, {
   "新达汇-喷泉广场-高锦睿-聊": {
     image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
     onEnter: { set: { _metGaoAtMall: true, showRain: true } },
-    text: "他擦了擦脸上的水，一屁股坐在喷泉池沿上。“我靠，你也来这儿了？”\n\
+    text: "你三拳两脚把丧尸全部打倒，救下了高锦睿。\n\
+他擦了擦脸上的水，一屁股坐在喷泉池沿上。“我靠，你也来这儿了？”\n\
 他告诉你他是骑车过来的——变速器修好了，一路上东躲西藏，刚到这个广场就被水池边的丧尸围了。“这东西好像特别喜欢水，不知道什么毛病。”\n\
 他站起来拍了拍裤子，把金属管往肩上一扛。“我打算进去逛逛——这么大的商场，总不能什么都不剩吧。你看看有没有什么好东西，回头碰上了跟我说。”\n\
 山地车被他随手锁在了喷泉边的路灯杆上。“反正也没人偷。”",
@@ -135,6 +136,11 @@ Object.assign(storyData, {
       {
         text: "进入美食广场",
         nextScene: "新达汇-B1美食广场",
+        effect: updateTime(1),
+      },
+      {
+        text: "去喷泉广场",
+        nextScene: "新达汇-喷泉广场",
         effect: updateTime(1),
       },
     ]
@@ -159,7 +165,7 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "回到下沉广场",
+        text: "去下沉广场入口",
         nextScene: "新达汇-B1下沉广场入口",
         effect: updateTime(1),
       },
@@ -312,6 +318,7 @@ Object.assign(storyData, {
   // 1F 北走廊
   "新达汇-1F北走廊西": {
     image: "images/placeholder.png" /* TODO: images/新达汇/1fNorth.png */,
+    qte: mallQTE(10000, "结局-丧尸的围殴"),
     onEnter: function(v) { transit(v, "1F-北走廊西"); return {}; },
     text: function(vars) {
       var desc = "1F北走廊西段。走廊两侧是几家关了门的店铺，卷帘门拉着。其中有一家味千拉面，卷帘门的下沿有一道不起眼的缝隙——好像可以抬起来。";
@@ -475,7 +482,7 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "回到走廊",
+        text: "去商场走廊",
         nextScene: "新达汇-1F北走廊西",
         effect: updateTime(1),
       },
@@ -487,8 +494,8 @@ Object.assign(storyData, {
     text: "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n你靠墙休息了一会儿，外面的声音渐渐远去了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
     choices: [
       {
-        text: "回到走廊",
-        nextScene: "新达汇-1F北走廊西",
+        text: "继续",
+        nextScene: "新达汇-1F味千拉面",
         effect: updateTime(1),
       },
     ]
@@ -2010,8 +2017,8 @@ Object.assign(storyData, {
     text: "你涮了一片午餐肉——太久没吃辣，胃完全受不了。体力-1。",
     choices: [
       {
-        text: "缓一缓，离开",
-        nextScene: "新达汇-4F北走廊中",
+        text: "继续",
+        nextScene: "新达汇-4F大渝火锅",
         effect: updateTime(5),
       },
     ]
@@ -2022,8 +2029,8 @@ Object.assign(storyData, {
     text: "番茄锅底温和多了。吃了一顿饱饭。体力+1。",
     choices: [
       {
-        text: "吃饱了，离开",
-        nextScene: "新达汇-4F北走廊中",
+        text: "继续",
+        nextScene: "新达汇-4F大渝火锅",
         effect: updateTime(5),
       },
     ]
@@ -2034,8 +2041,8 @@ Object.assign(storyData, {
     text: "菌菇汤底鲜甜暖胃。体力+2。",
     choices: [
       {
-        text: "吃饱了，离开",
-        nextScene: "新达汇-4F北走廊中",
+        text: "继续",
+        nextScene: "新达汇-4F大渝火锅",
         effect: updateTime(5),
       },
     ]
@@ -2225,7 +2232,7 @@ Object.assign(storyData, {
   "新达汇-5F北走廊西": {
     image: "images/placeholder.png" /* TODO: images/新达汇/5fCorridor.png */,
     onEnter: function(v) { transit(v, "5F-北走廊西"); return {}; },
-    text: function(vars) { return "5F北走廊西段。走廊比下面几层窄一些，天花板也低了些。石物恋·烧肉和左庭右院就在前面。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "5F北走廊西段。走廊比下面几层窄一些，天花板也低了些。石物恋·烧肉就在前面。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "去石物恋·烧肉",
@@ -2244,7 +2251,7 @@ Object.assign(storyData, {
       },
       {
         text: "走扶梯下4F",
-        nextScene: "新达汇-5F扶庭组",
+        nextScene: "新达汇-5F扶梯组",
         effect: updateTime(2),
       },
       {
@@ -2440,7 +2447,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F左庭右院-取外卖": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant2.png */,
-    onEnter: { set: { _deliveryCode: "473829" }, add: { itemCount: 1 } },
+    onEnter: { set: { _deliveryCode: "473829" } }, // 只读取取餐码线索，不占背包容量
     text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：“北青公路某号某室”。",
     choices: [
       {
@@ -2795,8 +2802,8 @@ Object.assign(storyData, {
     text: "你在吧台前坐下，喝了一瓶饮料。这里很安静。",
     choices: [
       {
-        text: "前往天桥",
-        nextScene: "新达汇-东区天桥1",
+        text: "继续",
+        nextScene: "新达汇-哥哥的深夜食堂",
         effect: updateTime(5),
       },
     ]

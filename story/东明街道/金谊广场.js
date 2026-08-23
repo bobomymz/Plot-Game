@@ -243,7 +243,7 @@ Object.assign(storyData, {
       var label = vars._visit['金谊广场-吉祥馄饨-聊'] > 0 ? "回去找陈默" : "回去找他";
       return [
         { text: label, nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(1) },
-        { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
+        { text: "继续", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) }
       ];
     }
   },
@@ -322,7 +322,7 @@ Object.assign(storyData, {
       return "你在车辆之间穿梭，试着拉了几扇车门。大部分都锁着，只有一辆老款桑塔纳的后备箱没锁——里面只有半瓶冻成冰的矿泉水和一件发霉的雨衣。\n你抬头看了看河边的丧尸群——它们还在往水边挤。你不想在这里多待。";
     },
     choices: [
-      { text: "去龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) }
+      { text: "继续", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
     ]
   },
 
@@ -978,7 +978,7 @@ Object.assign(storyData, {
       if (!vars.hasMercuryPill) {
         choices.push({
           text: "拿走无标签药丸",
-          nextScene: "金谊广场-B1 心谊如意街",
+          nextScene: "金谊广场-B1童涵春堂",
           condition: "itemCount < bagVolume",
           effect: { set: { hasMercuryPill: true }, add: { itemCount: 1 } },
           elseScene: "整理整理"
