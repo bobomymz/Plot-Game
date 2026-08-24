@@ -1165,7 +1165,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-喜提新车": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/gainNewBike.png */,
+    image: "images/安居苑/骑上自行车.jpg",
     onEnter: { set: { showRain: true } },
     text: "你拿出润滑油擦拭了一下链条，骑上去试了试。嗯，手感还不错，看来可以加快点速度了",
     choices: [
@@ -1177,9 +1177,9 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-骑车失败": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/rustyBike.png */,
+    image: "images/安居苑/骑车失败.jpg",
     onEnter: { set: { showRain: true } },
-    text: "你跨上自行车，用力踩下踏板。链条发出刺耳的嘎吱声——车轮勉强转了一圈，然后卡住了。\n\
+    text: "你跨上自行车，用力踩下踏板。链条发出刺耳的嘎吱声——车轮勉强转了一圈，然后卡住了，害得你摔在地上\n\
 链条锈得太厉害了，没有润滑油根本没法正常骑行。也许在什么地方能找到防锈液……",
     choices: [
       {
