@@ -290,7 +290,9 @@ Object.assign(storyData, {
       },
       {
         text: "下楼到1楼",
-        nextScene: "结局-1楼-party"
+        condition: "dd == 2 || dd == 4 || hh % 2 == 1", // 仅第2天、第4天和特定时间段是没有丧尸堵在门口的
+        nextScene: "1楼-安全",
+        elseScene: "结局-1楼-party"
       },
       {
         text: "下楼到B1",
@@ -322,8 +324,9 @@ Object.assign(storyData, {
       },
       {
         text: "F1",
-        nextScene: "结局-1楼-party",
-        effect: updateTime(1) // 花1分钟到达1楼
+        condition: "dd == 2 || dd == 4 || hh % 2 == 1", // 仅第2天、第4天和特定时间段是没有丧尸堵在门口的
+        nextScene: "1楼-安全",
+        elseScene: "结局-1楼-party",
       },
       {
         text: "B1",
@@ -1886,7 +1889,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物业楼-居委会-给高锦睿": {
-    image: "images/home/高锦睿给的地图.png",
+    image: "images/home/高锦睿给的地图.jpg",
     onEnter: updateTime(2),
     text: "你把纸箱搬了过去，搁在高锦睿脚边。他低头看了一眼里面的东西，愣了一下。\n“不是吧——”他抓起那瓶链条油，摇了摇，眼里放光，“这东西我找了一上午了！”\n\
 他立刻拧开盖子往链条上滴了几滴，转动踏板——链条顺畅地滑过齿轮，那声难听的咔嗒咔嗒终于消失了。\n“谢了。”他把变干净的抹布往工具箱里一扔，拍了拍手，“对了——”他从背包侧兜翻出一张折叠的纸，递给你。\n\

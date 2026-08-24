@@ -1265,14 +1265,22 @@ Object.assign(storyData, {
       {
         showCondition: "!_renjiHerbalTaken",
         text: "泡一壶花茶喝下（体力+1）",
-        nextScene: "仁济南院-中医科",
-        effect: { set: { _renjiHerbalTaken: true }, add: { strength: 1 } }
+        nextScene: "仁济南院-中医科-喝花茶"
       },
       {
         text: "下楼",
         nextScene: "仁济南院-楼梯-门诊楼高",
         effect: updateTime(1)
       }
+    ]
+  },
+
+  "仁济南院-中医科-喝花茶": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiTCM.png */,
+    onEnter: { set: { _renjiHerbalTaken: true }, add: { strength: 1 } },
+    text: "你抓了一把花茶放进杯子里，接了点热水泡开。药香混着花香升腾起来，在空荡荡的中医科里显得格外安宁。你捧着杯子慢慢喝了几口，温热的茶水流进胃里，疲惫的身体舒缓了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-中医科" }
     ]
   },
 
@@ -1306,14 +1314,22 @@ Object.assign(storyData, {
       {
         showCondition: "!_renjiGlucoseTaken",
         text: "喝掉那瓶葡萄糖（体力+1）",
-        nextScene: "仁济南院-护士站",
-        effect: { set: { _renjiGlucoseTaken: true }, add: { strength: 1 } }
+        nextScene: "仁济南院-护士站-喝葡萄糖"
       },
       {
         text: "去住院部走廊",
         nextScene: "仁济南院-住院部走廊",
         effect: updateTime(1)
       }
+    ]
+  },
+
+  "仁济南院-护士站-喝葡萄糖": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiNurseStation.png */,
+    onEnter: { set: { _renjiGlucoseTaken: true }, add: { strength: 1 } },
+    text: "你拧开那瓶葡萄糖的铝盖，仰头灌了几口。甜腻的糖水顺着喉咙滑下去——太久没尝到甜味了，你几乎要被这熟悉的味道呛到。你靠在护士站台边缓了缓，感觉体力恢复了一些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-护士站" }
     ]
   },
 

@@ -49,12 +49,23 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       var weather = describeWeather(vars);
+      var desc = "";
       if (!vars._visit["理发店内部"]) {
-        return "你来到了安盛街东侧。小时候你经常来这里逛，那时人来人往、商铺林立。如今卷帘门半掩、招牌歪斜，街上只剩稀稀拉拉的几只丧尸在远处徘徊。\n你曾经理发的那个小店就在前面不远——希望那里还安全。\n" + weather;
+        desc = "你来到了安盛街东侧。小时候你经常来这里逛，那时人来人往、商铺林立。如今卷帘门半掩、招牌歪斜，街上只剩稀稀拉拉的几只丧尸在远处徘徊。\n路边有一家文具店，卷帘门半掩着。你曾经理发的那个小店就在前面不远——希望那里还安全。\n";
+      } else {
+        desc = "你再次回到安盛街东侧。街面上又多了一些血迹和碎玻璃，空气里的腐臭味比上次更重了。\n";
       }
-      return "你再次回到安盛街东侧。街面上又多了一些血迹和碎玻璃，空气里的腐臭味比上次更重了。\n" + weather;
+      if (vars._lastScene === "安盛街-文具店" && vars.hasCutter) {
+        desc += "你把玩着手里的美工刀，刀刃咔嗒咔嗒地弹出又收起——手里有家伙，心里踏实了不少。\n";
+      }
+      return desc + weather;
     },
     choices: [
+      {
+        text: "去文具店",
+        nextScene: "安盛街-文具店",
+        effect: updateTime(2)
+      },
       {
         text: "继续往前",
         nextScene: function(vars) { return vars.defeatedOldMan ? "安盛街-理发店" : "遭遇老头丧尸"; },
@@ -560,19 +571,9 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       let desc = "你来到街上。街道两旁的店铺大多紧闭着门，有几家的橱窗被砸碎了，玻璃渣洒了一地。\n\
-前方可以看到几家还开着门的店铺：一家文具店，一家服装店，还有一家食品店。北边是安居苑的后门。\n";
-      // 承接刚从店铺带出来的东西（_lastScene 由引擎自动记录）
-      if (vars._lastScene === "安盛街-文具店搜刮-快速" && vars.hasCutter) {
-        desc += "你把玩着手里的美工刀，刀刃咔嗒咔嗒地弹出又收起——手里有家伙，心里踏实了不少。\n";
-      } else if (vars._lastScene === "安盛街-文具店搜刮-仔细" && (vars.hasCutter || vars.hasCrumpledLeaflet)) {
-        if (vars.hasCutter && vars.hasCrumpledLeaflet) {
-          desc += "美工刀和那张揉皱的传单都在身上——这趟没白跑。\n";
-        } else if (vars.hasCutter) {
-          desc += "那把崭新的美工刀沉甸甸地贴着腿——带着总比空手强。\n";
-        } else {
-          desc += "那张揉皱的传单被折好收在口袋里——“304柜 新到男装”，没准哪天用得上。\n";
-        }
-      } else if (vars._lastScene === "安盛街-服装店收银台-仔细" && vars.hasCrumpledLeaflet) {
+前方可以看到一家还开着门的服装店，再过去是理发店。北边是安居苑的后门。往东走，路那边有一家文具店；往西走，还有一家食品店。\n";
+      // 承接刚从服装店带出来的东西（_lastScene 由引擎自动记录）
+      if (vars._lastScene === "安盛街-服装店收银台-仔细" && vars.hasCrumpledLeaflet) {
         desc += "你把那张揉皱的传单折好塞进口袋——“304柜 新到男装”，没准哪天用得上。\n";
       }
       let zombieDes = describeZombieWave(vars);
@@ -580,18 +581,8 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "去文具店",
-        nextScene: "安盛街-文具店",
-        effect: updateTime(2)
-      },
-      {
         text: "去服装店",
         nextScene: "安盛街-服装店",
-        effect: updateTime(2)
-      },
-      {
-        text: "去食品店",
-        nextScene: "安盛街-食品店",
         effect: updateTime(2)
       },
       {
@@ -619,7 +610,7 @@ Object.assign(storyData, {
         text: "先整理一下东西",
         nextScene: "整理整理"
       },
-      sprintAway(["安盛街-文具店", "安盛街-服装店", "安盛街-食品店", "安盛街-理发店", "安盛街西侧", "安盛街东侧", "安居苑后门"])
+      sprintAway(["安盛街-服装店", "安盛街-理发店", "安盛街西侧", "安盛街东侧", "安居苑后门"])
     ]
   },
 
@@ -701,7 +692,7 @@ Object.assign(storyData, {
       },
       {
         text: "离开文具店",
-        nextScene: "安盛街中段"
+        nextScene: "安盛街东侧"
       }
     ]
   },
@@ -1200,7 +1191,7 @@ Object.assign(storyData, {
       },
       {
         text: "没时间了，离开",
-        nextScene: "安盛街中段"
+        nextScene: "安盛街西侧"
       }
     ]
   },
@@ -1259,7 +1250,7 @@ Object.assign(storyData, {
       {
         showCondition: "_visit['安盛街-食品店战斗'] > 0",
         text: "没什么可拿的了，离开",
-        nextScene: "安盛街中段"
+        nextScene: "安盛街西侧"
       }
     ]
   },
@@ -1277,7 +1268,7 @@ Object.assign(storyData, {
       {
         text: "把饼干塞进口袋",
         condition: "itemCount < bagVolume",
-        nextScene: "安盛街中段",
+        nextScene: "安盛街西侧",
         effect: { set: { hasBiscuit: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       }
@@ -1321,7 +1312,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续",
-        nextScene: "安盛街中段"
+        nextScene: "安盛街西侧"
       }
     ]
   },
@@ -1509,7 +1500,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       let desc = "你来到了安盛街西侧。这里比东侧更加破败——路面上到处是斑斑点点的血迹，有些已经发暗，有些还泛着潮。几辆废弃的车辆歪停在路边。\n\
-  一块歪斜的路牌指向两个方向：右边是小区西门的方向，那里有个十字路口，左边沿大路一直走可以到新达汇商场。";
+路边有一家食品店，卷帘门半掩着。再过去是一块歪斜的路牌，指向两个方向：右边是小区西门的方向，那里有个十字路口，左边沿大路一直走可以到新达汇商场。";
       if (vars.chasedByZombies >= 3) {
         desc += "\n<span style='color: #ff4444;'>身后的丧尸越来越近了，你必须赶快决定去向。</span>";
       }
@@ -1536,6 +1527,11 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
+        text: "去食品店",
+        nextScene: "安盛街-食品店",
+        effect: updateTime(2)
+      },
+      {
         text: "返回安盛街中段",
         nextScene: "安盛街中段",
         effect: updateTime(6)
@@ -1550,7 +1546,7 @@ Object.assign(storyData, {
         text: "躲到广告牌后面",
         nextScene: "安盛街西侧-躲藏"
       },
-      sprintAway(["新达汇-喷泉广场", "安居苑后门", "安盛街中段"])
+      sprintAway(["新达汇-喷泉广场", "安盛街-食品店", "安盛街中段"])
     ]
   },
 

@@ -408,26 +408,12 @@ const storyData = {
       {
         showCondition: "hasBottle && bottleWater > 0",
         text: "喝水（体力+1）",
-        nextScene: "整理整理",
-        effect: function(vars) {
-          // 喝毒水时静默增加汞负荷（慢性毒，无提示）
-          if (vars.waterToxic) vars.mercuryLoad = (vars.mercuryLoad || 0) + 10;
-          vars.bottleWater = Math.max(0, vars.bottleWater - 1);
-          vars.strength = Math.min(10, vars.strength + 1);
-          vars.waterToxic = false;
-          return {};
-        }
+        nextScene: "整理整理-喝水"
       },
       {
         showCondition: "hasFrozenMeat",
         text: "吃掉冻肉（体力回满）",
-        nextScene: "整理整理",
-        effect: function(vars) {
-          vars.strength = 10;
-          vars.hasFrozenMeat = false;
-          vars.itemCount = Math.max(0, vars.itemCount - 1);
-          return {};
-        }
+        nextScene: "整理整理-吃冻肉"
       },
       {
         showCondition: "hasPhone && _cafeteriaWifiOn && currentPlace == '长者食堂'",
@@ -504,8 +490,7 @@ const storyData = {
       {
         showCondition: "hasBiscuit",
         text: "吃掉饼干（体力+1）",
-        effect: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasBiscuit: false } }),
-        nextScene: "整理整理"
+        nextScene: "整理整理-吃饼干"
       },
       {
         showCondition: "hasBiscuit",
@@ -540,13 +525,7 @@ const storyData = {
       {
         showCondition: "hasMercuryPill && mercuryLoad > 0",
         text: "服用无标签药丸（作用未知）",
-        effect: function(vars) {
-          vars.mercuryLoad = Math.max(0, vars.mercuryLoad - 20);
-          vars.hasMercuryPill = false;
-          vars.itemCount -= 1;
-          return updateTime(1)(vars);
-        },
-        nextScene: "整理整理"
+        nextScene: "整理整理-服药丸"
       },
       {
         showCondition: "hasMercuryPill",
@@ -652,6 +631,66 @@ const storyData = {
       }
     ]
   },
+
+  // ====== 整理整理-使用道具（独立描述节点） ======
+  "整理整理-喝水": {
+    image: "images/整理整理.png",
+    onEnter: function(vars) {
+      vars._drankToxicWater = !!vars.waterToxic; // 供 text 判断是否喝了毒水
+      if (vars.waterToxic) vars.mercuryLoad = (vars.mercuryLoad || 0) + 10;
+      vars.bottleWater = Math.max(0, vars.bottleWater - 1);
+      vars.strength = Math.min(10, vars.strength + 1);
+      vars.waterToxic = false;
+      return {};
+    },
+    text: function(vars) {
+      if (vars._drankToxicWater) {
+        return "你拧开瓶盖喝了几口。水面上浮着一层淡淡的油光，味道也说不上新鲜——你皱了皱眉，还是咽了下去。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+      }
+      return "你拧开瓶盖，仰头喝了几口。微凉的水顺着喉咙流下，干渴的身体舒服了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+    },
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃冻肉": {
+    image: "images/整理整理.png",
+    onEnter: function(vars) {
+      vars.strength = 10;
+      vars.hasFrozenMeat = false;
+      vars.itemCount = Math.max(0, vars.itemCount - 1);
+      return {};
+    },
+    text: "你撕开冻肉的包装，也顾不上它还没完全解冻，咬了一大口。冰碴混着肉香在嘴里化开——虽然凉得牙根发酸，但至少是真肉。你三两口把它吃完，感觉力气恢复了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力回满，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃饼干": {
+    image: "images/整理整理.png",
+    onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasBiscuit: false } }),
+    text: "你拆开包装袋，掰了一块压缩饼干放进嘴里。干巴巴的，嚼起来有点硬，但那股麦香让你想起还没出事时的日子。你就着水咽了下去，胃里终于有了点东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-服药丸": {
+    image: "images/整理整理.png",
+    onEnter: function(vars) {
+      vars.mercuryLoad = Math.max(0, vars.mercuryLoad - 20);
+      vars.hasMercuryPill = false;
+      vars.itemCount = Math.max(0, vars.itemCount - 1);
+      return updateTime(1)(vars);
+    },
+    text: "你抠出那粒无标签的淡黄色药丸，放在手心端详了一下，还是放进嘴里用水送了下去。药丸没有味道，说不上来是什么感觉——但你隐约觉得，身体里那股沉甸甸的压迫感好像减轻了一点。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你服下了那粒无标签的药丸。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
   "start": {
     image: "images/gameStart.jpg",
     text: "",
