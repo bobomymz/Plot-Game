@@ -31,6 +31,10 @@ Object.assign(storyData, {
         nextScene: "济阳路跨线桥",
         effect: updateTime(10),
         elseScene: "结局-累死我了"
+      },
+      {
+        text: "下高架",
+        nextScene: "三林路-环林东路 十字路口"
       }
     ]
   },
@@ -86,7 +90,7 @@ Object.assign(storyData, {
         effect: updateTime(10)
       },
       {
-        text: "返回杨高南路立交桥",
+        text: "返回杨高南路高架",
         nextScene: "杨高南路高架",
         effect: updateTime(10)
       }

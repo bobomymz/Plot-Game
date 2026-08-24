@@ -15,7 +15,7 @@ Object.assign(storyData, {
       { text: "左拐进西侧通道", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
       { text: "右拐到拐角处看看", nextScene: "新达汇-B1停车场H区", effect: updateTime(1) },
       { text: "从坡道出去", nextScene: "新达汇车库出口", effect: updateTime(2) },
-      { text: "返回B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(2) }
+      { text: "去B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(2) }
     ]
   },
 
@@ -40,7 +40,7 @@ Object.assign(storyData, {
       { text: "往前走——通到更深处", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
       { text: "左前方有扇防火门", nextScene: "新达汇-B1停车场C区", effect: updateTime(2) },
       { text: "右前方的通道", nextScene: "新达汇-B1停车场E区", effect: updateTime(2) },
-      { text: "往回走到A区", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
+      { text: "去A区", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
     ]
   },
 
@@ -59,7 +59,7 @@ Object.assign(storyData, {
         showCondition: "!_wiredCorrectly"
       },
       { text: "走下三级台阶到旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(1) },
-      { text: "退回B区主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) }
+      { text: "去B区主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) }
     ]
   },
 
@@ -302,7 +302,7 @@ Object.assign(storyData, {
     choices: [
       { text: "回喷泉广场", nextScene: "新达汇-喷泉广场", effect: updateTime(3) },
       { text: "往西去金谊广场", nextScene: "金谊广场地面入口", effect: updateTime(30) },
-      { text: "退回车库", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
+      { text: "进入车库", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
     ]
   },
 

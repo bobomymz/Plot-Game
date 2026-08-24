@@ -120,7 +120,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "撤回十字路口",
+        text: "去十字路口",
         nextScene: "三林路-环林东路 十字路口",
         effect: updateTime(3)
       }
@@ -316,8 +316,11 @@ Object.assign(storyData, {
         let desc = "你推开门走进理发店，门上的风铃发出熟悉的叮当声。\n空气里混合着洗发水和消毒水的气味。四把理发椅静静地立在镜子前，手推车上挂着各种剪刀和推子，储藏室里堆着几箱矿泉水和方便面——看来周师傅早有准备。";
         if (isNight) {
           desc += "\n周师傅迅速锁好门，拉紧窗帘。“这几天外面越来越不对劲了，”他边说边给你倒了杯水，“能活着走到这里，你小子运气不错。”";
-        } else {
+        } else if(!vars.hurtByZombie){
           desc += "\n周师傅看了你一眼，确定你没有受伤，才松了一口气。“你怎么还在外面乱跑？不知道现在什么情况吗？”他递给你一瓶水，“坐吧，休息一会儿。”";
+        }
+        else{
+          desc += "\n周师傅发现你受伤了，担心地说：“你怎么还在外面乱跑？不知道现在什么情况吗？”他拿绷带给你简单包扎了一下。递给你一瓶水，“坐吧，休息一会儿。药房可能有药品，但现在还不是去拿的时候。”";
         }
         if (isNight && vars.chasedByZombies > 0) {
           desc += "\n<span style='color: #ffaa00;'>外面丧尸的吼声此起彼伏——今晚在这里过夜应该能甩掉它们。</span>";
@@ -1532,7 +1535,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "返回安盛街中段",
+        text: "去安盛街中段",
         nextScene: "安盛街中段",
         effect: updateTime(6)
       },

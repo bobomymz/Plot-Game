@@ -373,7 +373,7 @@ Object.assign(storyData, {
         effect: updateTime(30)
       },
       {
-        text: "退回龙头区",
+        text: "去龙头区",
         nextScene: "金谊广场-龙头区",
         effect: updateTime(3)
       }

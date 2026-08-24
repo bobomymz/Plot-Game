@@ -176,7 +176,7 @@ Object.assign(storyData, {
       applyWeatherDrain(vars);
     },
     qte: {
-      timeout: "10000 - chasedByZombies * 2000", // 尸潮越猛，限时越短
+      timeout: "20000 - chasedByZombies * 2000", // 尸潮越猛，限时越短
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
@@ -202,7 +202,7 @@ Object.assign(storyData, {
       },
       {
         text: "往北走",
-        nextScene: "小区东门-整装待发",
+        nextScene: "公交车站（环林东路）",
         effect: updateTime(5)
       },
       {
@@ -473,7 +473,7 @@ Object.assign(storyData, {
       applyWeatherDrain(vars);
     },
     qte: {
-      timeout: "8000 - chasedByZombies * 2000",
+      timeout: "18000 - chasedByZombies * 2000",
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {

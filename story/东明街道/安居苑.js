@@ -38,7 +38,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "慢慢后退，不激怒它们",
-        nextScene: "安盛街西侧"
+        nextScene: "安盛街中段"
       },
       {
         text: "绕开猫，进入小区",
@@ -56,7 +56,7 @@ Object.assign(storyData, {
         text: "躲到门卫亭后面",
         nextScene: "三林安居苑-躲藏"
       },
-      sprintAway(["安盛街西侧", "三林安居苑-小区内部"])
+      sprintAway(["安盛街中段", "三林安居苑-小区内部"])
     ]
   },
 
@@ -73,7 +73,7 @@ Object.assign(storyData, {
       },
       {
         text: "不进小区，返回安盛街",
-        nextScene: "安盛街西侧"
+        nextScene: "安盛街中段"
       }
     ]
   },
