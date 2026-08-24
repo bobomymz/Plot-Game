@@ -110,6 +110,7 @@ const storyData = {
     fangTradeCount: 0,         // 方姐交易次数（上限3，满3次后她尸变，再进冷库深处即死）
     hasFrozenMeat: false,      // 是否有冻肉（菜市场方姐换的，体力回满，占1格）
     _marketHallCleared: false, // 菜市场大厅的丧尸是否已清理
+    _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）

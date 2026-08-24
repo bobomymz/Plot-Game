@@ -2494,7 +2494,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "吃掉那份外卖",
-        nextScene: "新达汇-5F左庭右院",
+        nextScene: "新达汇-5F左庭右院-吃外卖",
         effect: updateTime(3, { add: { strength: 2 } }),
       },
       {
@@ -2502,6 +2502,15 @@ Object.assign(storyData, {
         nextScene: "新达汇-5F北走廊中",
         effect: updateTime(1),
       },
+    ]
+  },
+  "新达汇-5F左庭右院-吃外卖": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant2.png */,
+    onEnter: { set: { _deliveryCode: "？？？？？" } }, // 只读取取餐码线索，不占背包容量
+    text: "外卖真好吃。\
+【系统提示】体力+2，当前体力：{strength}。",
+    choices: [
+      { text: "继续", nextScene: "新达汇-5F左庭右院", effect: updateTime(1) }
     ]
   },
   "新达汇-5F游戏厅": {
@@ -2803,7 +2812,8 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/izakaya.png */,
     text: function(vars) {
       if (vars._yorozuyaUnlocked) return "你在哥哥的深夜食堂里，门锁好了，很安静。";
-      return "门上一把U型锁。锁孔的形状跟你找到的那把钥匙好像匹配。";
+      if (vars.hasDoorKey1) return "门上一把U型锁。锁孔的形状跟你找到的那把钥匙好像匹配。";
+      return "门上一把U型锁，锁得死死的。你在身上翻了翻——没有一把钥匙对得上。\n你进不去。";
     },
     choices: [
       {

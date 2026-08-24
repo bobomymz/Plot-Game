@@ -476,26 +476,29 @@ Object.assign(storyData, {
     }
   },
 
-  // --- 地铁站厅（QTE 闪避） ---
+  // --- 地铁站厅（记忆闪色战斗） ---
   "金谊广场-地铁站厅": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/地铁站厅.jpg */,
+    onEnter: initMemoryGame(["红","蓝","绿"], 8),
     text: function(vars) {
       var desc = "你从废墟的缝隙钻进了三林路地铁站的站厅。天花板塌了一半，裸露的钢筋像断裂的肋骨一样垂下来。\n";
       desc += "应急灯还在闪烁，把站厅照得一明一暗。\n";
       desc += "站厅里的丧尸比外面少——大部分都挤在靠近排水沟的一侧，朝着潮湿的方向缓慢挪动。但剩下的几只，足够要你的命。\n";
       desc += "你看到前方不远处就是通往B1商业街的通道——只要能冲过去。\n";
-      desc += "左侧有动静——一只丧尸从售票机后面冲了出来！";
+      desc += "但站厅里剩下的丧尸已经察觉到了你——它们从售票机、安检口、楼梯口同时朝你围了过来。\n";
+      desc += "集中注意力——在它们合围之前，看清每一只的动作轨迹！";
       return desc;
-    },
-    qte: {
-      timeout: 5000,
-      onTimeout: "金谊广场-地铁站厅-失败"
     },
     choices: [
       {
-        text: "往右闪，冲向通道",
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：3红2蓝3绿" },
+        condition: checkFlashAnswer,
         nextScene: "金谊广场-B1 心谊如意街",
-        effect: updateTime(2)
+        elseScene: "金谊广场-地铁站厅-失败",
+        effect: updateTime(2),
+        timeout: 20000,
+        timeoutScene: "金谊广场-地铁站厅-失败"
       }
     ]
   },
@@ -931,11 +934,6 @@ Object.assign(storyData, {
         text: "上1F",
         nextScene: "金谊广场-1F 门面层",
         effect: updateTime(2)
-      },
-      {
-        text: "去地铁站",
-        nextScene: "金谊广场-地铁站厅",
-        effect: updateTime(2)
       }
     ]
   },
@@ -944,6 +942,7 @@ Object.assign(storyData, {
   "金谊广场-B1奥乐齐": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
     text: function(vars) {
+      if(vars._visit['金谊广场-B1奥乐齐'] > 3) return "你已经搜刮过奥乐齐好几遍了，没有新的东西了。";
       var desc = "你走进奥乐齐。超市很大——货架上的东西被翻过，但还剩下不少。罐头区几乎没被动过，饮料区的矿泉水还有好几箱，零食区的薯片和饼干撒了一地但还有整袋的。\n";
       desc += "冷柜早就停了，里面的冷冻食品已经变质发臭。但干货区、罐头区和饮料区依然有充足的补给。\n";
       if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed) {
@@ -953,29 +952,22 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var choices = [];
-      if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed) {
-        choices.push({
-          text: "拿上食物和水，带回长廊",
-          nextScene: "金谊广场-龙头区长廊",
-          effect: function(vars) {
-            vars._jinyiHasFoodForSurvivors = true;
-            return updateTime(5)(vars);
-          }
-        });
+      if(vars._visit['金谊广场-B1奥乐齐'] <= 3) {
+        if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed) {
+          choices.push({
+            text: "拿上食物和水，带回长廊",
+            nextScene: "金谊广场-龙头区长廊",
+            effect: function(vars) {
+              vars._jinyiHasFoodForSurvivors = true;
+              return updateTime(5)(vars);
+            }
+          });
+        }
+        choices.push({ text: "搜刮一些自己用的补给", nextScene: "金谊广场-B1奥乐齐-搜刮-吃完", effect: updateTime(3, { add: { strength: 1 } }) });
       }
-      choices.push({ text: "搜刮一些自己用的补给", nextScene: "金谊广场-B1奥乐齐-搜刮", effect: updateTime(3, { add: { strength: 1 } }) });
       choices.push({ text: "离开超市", nextScene: "金谊广场-B1 心谊如意街", effect: updateTime(1) });
       return choices;
     }
-  },
-
-  "金谊广场-B1奥乐齐-搜刮": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
-    text: "你走进货架之间，挑了一些还能直接吃的东西——几包压缩饼干、一罐午餐肉、一瓶矿泉水。",
-    choices: [
-      { text: "坐下来吃点东西", nextScene: "金谊广场-B1奥乐齐-搜刮-吃完", effect: updateTime(1) },
-      { text: "直接带点东西走", nextScene: "金谊广场-B1奥乐齐", effect: updateTime(1) }
-    ]
   },
 
   "金谊广场-B1奥乐齐-搜刮-吃完": {
@@ -983,8 +975,7 @@ Object.assign(storyData, {
     onEnter: { add: { strength: 1 } },
     text: "你坐在收银台旁边，打开压缩饼干和午餐肉，狼吞虎咽地吃了起来。在这末世里，能有东西吃已经是一种奢侈了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
-      { text: "继续搜刮", nextScene: "金谊广场-B1奥乐齐-搜刮", effect: updateTime(3) },
-      { text: "回到超市门口", nextScene: "金谊广场-B1奥乐齐", effect: updateTime(1) }
+      { text: "继续", nextScene: "金谊广场-B1奥乐齐", effect: updateTime(1) }
     ]
   },
 

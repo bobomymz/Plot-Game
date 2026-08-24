@@ -6,6 +6,20 @@
 Object.assign(storyData, {
 
   // ==================== 正门入口（安盛街西侧） ====================
+  "菜市场-卷帘门": {
+    image: "images/placeholder.png" /* TODO: images/菜市场/卷帘门.jpg */,
+    onEnter: function(vars) {
+      vars.currentPlace = "三林菜市场";
+      vars.currentPos = "菜市场卷帘门";
+      applyWeatherDrain(vars);
+    },
+    text: "你来到菜市场的卷帘门前。卷帘门只落下来一半，底部离地留着一道半人高的缝，刚好够一个人猫着腰钻进去。\n透过那道缝往里看，只有几排冰柜的黑影静悄悄地立在昏暗里，什么声音都没有——静得有点不真实。\n门缝里飘出一股鱼腥味，混着一丝若有若无的腐味。",
+    choices: [
+      { text: "从卷帘门下钻进去", nextScene: "菜市场-大厅", effect: updateTime(1) },
+      { text: "先不进去，退回安盛街", nextScene: "安盛街西侧", effect: updateTime(1) }
+    ]
+  },
+
   "菜市场-大厅": {
     image: function(vars) {
       if (vars.weather === "雨") return "images/placeholder.png"; /* TODO: images/菜市场/大厅-雨.jpg */
@@ -15,6 +29,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.currentPlace = "三林菜市场";
       vars.currentPos = "菜市场大厅";
+      vars._marketEntry = "大厅";
       applyWeatherDrain(vars);
     },
     text: function(vars) {
@@ -71,7 +86,7 @@ Object.assign(storyData, {
       if (vars.hasTorch || vars.hasPhone) return "images/placeholder.png"; /* TODO: images/菜市场/员工通道-亮.jpg */
       return "images/placeholder.png"; /* TODO: images/菜市场/员工通道-暗.jpg */
     },
-    onEnter: { set: { currentPlace: "三林菜市场", currentPos: "员工通道" } },
+    onEnter: { set: { currentPlace: "三林菜市场", currentPos: "员工通道", _marketEntry: "员工通道" } },
     text: function(vars) {
       if (vars.hasTorch || vars.hasPhone) {
         return "你穿过长者食堂后厨那道冷藏室的门，走进一条堆着空菜筐的过道。头顶的灯管蒙着灰，但借着你手里的光，通道里的情况还算看得清。\n前方分岔出三条通道——左边堆着几只倒扣的塑料周转箱，中间是一条直道，右边好像通向一个小房间。";
@@ -124,7 +139,8 @@ Object.assign(storyData, {
       return f(vars);
     },
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "冷库区" } },
-    text: "你走进冷库区。温度明显低了下来，墙角一排冷库门上结着白霜，其中一扇虚掩着，门缝里漏出微弱的昏黄灯光，还有一股柴油的味道。\n那就是发电机的声音——低沉的嗡嗡声，从虚掩的门后传出来。",
+    text: "你走进冷库区。温度明显低了下来，墙角一排冷库门上结着白霜，其中一扇虚掩着，门缝里漏出微弱的昏黄灯光，还有一股柴油的味道。\n\
+那就是发电机的声音——低沉的嗡嗡声，从虚掩的门后传出来。",
     choices: function(vars) {
       var cs = [];
       if (vars.fangTradeCount >= 3) {
@@ -136,8 +152,7 @@ Object.assign(storyData, {
         cs.push({ text: "推开门进去", nextScene: "菜市场-冷库区-闭门羹", effect: updateTime(1) });
       }
       cs.push({ text: "离开冷库区", nextScene: function(vars) {
-        var ls = vars._lastScene || "";
-        return ls.indexOf("菜市场-大厅") === 0 ? "菜市场-大厅" : "菜市场-员工通道";
+        return vars._marketEntry === "员工通道" ? "菜市场-员工通道" : "菜市场-大厅";
       }, effect: updateTime(2) });
       return cs;
     }
@@ -156,8 +171,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "离开冷库区", nextScene: function(vars) {
-        var ls = vars._lastScene || "";
-        return ls.indexOf("菜市场-大厅") === 0 ? "菜市场-大厅" : "菜市场-员工通道";
+        return vars._marketEntry === "员工通道" ? "菜市场-员工通道" : "菜市场-大厅";
       }, effect: updateTime(2) }
     ]
   },

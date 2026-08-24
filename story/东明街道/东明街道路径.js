@@ -223,7 +223,7 @@ Object.assign(storyData, {
       applyWeatherDrain(vars);
     },
     qte: {
-      timeout: "10000 - chasedByZombies * 1000",
+      timeout: "20000 - chasedByZombies * 1000",
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
@@ -266,7 +266,9 @@ Object.assign(storyData, {
       vars.currentPos = "三林路-北侧";
       applyWeatherDrain(vars);
     },
-    text: "你走在三林路北侧的人行道上。这一侧紧挨着建设银行和小超市，路边还停着一辆轿车。\n丧尸在马路对面游荡，暂时隔着一段距离。\n" + describeZombieWave(vars),
+    text: function(vars) {
+      return "你走在三林路北侧的人行道上。这一侧紧挨着建设银行和小超市，路边还停着一辆轿车。\n丧尸在马路对面游荡，暂时隔着一段距离。\n" + describeZombieWave(vars);
+    },
     choices: [
       { text: "去银行", nextScene: "银行门口", effect: updateTime(4) },
       {
@@ -290,7 +292,9 @@ Object.assign(storyData, {
       vars.currentPos = "三林路-南侧";
       applyWeatherDrain(vars);
     },
-    text: "你走在三林路南侧的人行道上。这一侧通向老小区入口、药房和五金店。\n丧尸在马路对面游荡，暂时隔着一段距离。\n" + describeZombieWave(vars),
+    text: function(vars) {
+      return "你走在三林路南侧的人行道上。这一侧通向老小区入口、药房和五金店。\n丧尸在马路对面游荡，暂时隔着一段距离。\n" + describeZombieWave(vars);
+    },
     choices: [
       { text: "去老小区", nextScene: "安居苑前门", effect: updateTime(4) },
       { text: "去药房", nextScene: "益丰大药房", effect: updateTime(6) },
@@ -312,15 +316,14 @@ Object.assign(storyData, {
       if (vars.weather === "阴") {
         var f = timeImage({
           morning: "images/小区周边/十字路口2-阴天.jpg",
-          night: "images/小区周边/十字路口2-night.png" // 晚上看不出阴天，直接复用晴天图片
+          night: "images/小区周边/十字路口2-night.jpg" // 晚上看不出阴天，直接复用晴天图片
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/小区周边/十字路口2.png",
-        evening: "images/小区周边/十字路口2-evening.png",
-        night: "images/小区周边/十字路口2-night.png",
-        midnight: "images/小区周边/十字路口2-midnight.png"
+        morning: "images/小区周边/十字路口2.jpg",
+        evening: "images/小区周边/十字路口2-evening.jpg",
+        night: "images/小区周边/十字路口2-night.jpg"
       });
       return f(vars);
     },
@@ -332,7 +335,7 @@ Object.assign(storyData, {
       applyWeatherDrain(vars);
     },
     qte: {
-      timeout: "8000 - chasedByZombies * 1000",
+      timeout: "18000 - chasedByZombies * 1000",
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {

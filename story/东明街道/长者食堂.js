@@ -167,7 +167,12 @@ Object.assign(storyData, {
         nextScene: "整理整理",
         effect: updateTime(1),
         effect: {set: {positionAfterOperation: "长者食堂-内部"}}
-      }
+      },
+      {
+        text: "从门口离开",
+        nextScene: "长者食堂-打门口丧尸",
+        effect: updateTime(1)
+      },
     ]
   },
 
@@ -267,12 +272,24 @@ Object.assign(storyData, {
       {
         showCondition: "dd == 1 && _visit['长者食堂-窗口'] == 1",
         text: "趁热喝掉",
-        nextScene: "长者食堂-窗口",
+        nextScene: "长者食堂-窗口-喝汤",
         effect: updateTime(2, { add: { strength: 2 } })
       },
       {
         text: "离开窗口",
         nextScene: "长者食堂-内部"
+      }
+    ]
+  },
+
+  "长者食堂-窗口-喝汤": {
+    image: "images/小区周边/长者食堂/窗口.jpg",
+    text: "你喝掉了紫菜蛋花汤。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+5，当前体力：{strength}。</span>",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "长者食堂-窗口"
       }
     ]
   },

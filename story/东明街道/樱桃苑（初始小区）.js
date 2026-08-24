@@ -501,10 +501,6 @@ Object.assign(storyData, {
         nextScene: "小区道路"
       },
       {
-        text: "回到B1",
-        nextScene: "B1"
-      },
-      {
         text: "看看电梯厅",
         nextScene: "1楼-电梯厅"
       }
@@ -556,7 +552,7 @@ Object.assign(storyData, {
   "电梯": {
     image: "images/home/lift.jpg",
     text: "你走进电梯。轿厢的灯忽明忽暗，按钮面板上还有几层的灯亮着。\n\
-F2 的按钮早就被撬掉了——不知道是谁干的。",
+F5的按钮早就被撬掉了——不知道是谁干的。",
     choices: [
       {
         text: "去2楼（家）",

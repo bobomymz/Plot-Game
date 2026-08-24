@@ -1531,8 +1531,8 @@ Object.assign(storyData, {
         effect: updateTime(10)
       },
       {
-        text: "钻进路边那家菜市场的卷帘门",
-        nextScene: "菜市场-大厅",
+        text: "走向路边那家菜市场的卷帘门",
+        nextScene: "菜市场-卷帘门",
         effect: updateTime(2)
       },
       {
