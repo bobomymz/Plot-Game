@@ -299,7 +299,7 @@ Object.assign(storyData, {
   "新达汇-1F公告屏": {
     image: "images/placeholder.png" /* TODO: images/新达汇/infoScreen.png */,
     text: "电子公告屏显示着停运前的楼层导览。\n\
-【1F】华为体验店 | 中庭\n【2F】Nike | 海澜之家 | 雅戈尔\n【3F】卡通尼乐园 | 金宝贝 | 爱婴室\n【4F】大渝火锅 | 大米先生 | 日料店 | CGV影城\n【5F】石物恋·烧肉 | 左庭右院 | 游戏厅\n\
+【1F】华为体验店 | 味千拉面\n【2F】Nike | 海澜之家 | 雅戈尔\n【3F】卡通尼乐园 | 金宝贝 | 爱婴室\n【4F】大渝火锅 | 大米先生 | 日料店 | CGV影城\n【5F】石物恋·烧肉 | 左庭右院 | 游戏厅\n\
 屏幕右下角贴着一张手写便签：“猫在3F，别喂它，它只认保安。——物业”",
     choices: [
       {
@@ -317,49 +317,10 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "1F北走廊西段。走廊两侧是几家关了门的店铺，卷帘门拉着。其中有一家味千拉面，卷帘门的下沿有一道不起眼的缝隙——好像可以抬起来。";
       if (!vars._backhallEntered) desc += "\n墙边有一扇白色的门，上面贴着“员工通道”的标签——门锁着，推不动。";
-      if (!vars._1f_wireFixed && !vars._powerOut) {
-        desc += "\n<span style='color: #ffaa00;'>前方地上有一根断裂的电线搭在积水里，噼啪地冒着火花——挡住了路。</span>";
-      } else if (!vars._1f_wireFixed && vars._powerOut) {
-        desc += "\n地上有一根断裂的电线横在面前——停电了，它现在无害，你可以直接跨过去。";
-      } else {
-        desc += "\n之前那根断裂的电线已经被你处理好了，走廊畅通。";
-      }
-      if (vars._lastScene === "新达汇-1F数码店-手机") {
-        desc += "\n那台华为展示机躺在你的口袋里，屏幕上的裂纹在灯下泛着微光。";
-      }
       desc += "\n" + describeZombieWave(vars);
       return desc;
     },
     choices: [
-      {
-        text: "去华为体验店",
-        nextScene: "新达汇-1F数码店",
-        effect: updateTime(1),
-      },
-      {
-        text: "用外套包着手拨开电线",
-        nextScene: "新达汇-1F北走廊西-电线-拨开",
-        effect: updateTime(2),
-        showCondition: "!_1f_wireFixed && !_powerOut",
-      },
-      {
-        text: "找根干木棍挑开电线",
-        nextScene: "新达汇-1F北走廊西-电线-木棍",
-        effect: updateTime(3),
-        showCondition: "!_1f_wireFixed && !_powerOut",
-      },
-      {
-        text: "小心从旁边绕过去",
-        nextScene: "新达汇-1F北走廊西-电线-绕行",
-        effect: updateTime(2),
-        showCondition: "!_1f_wireFixed && !_powerOut",
-      },
-      {
-        text: "直接跨过去",
-        nextScene: "新达汇-1F北走廊中",
-        effect: updateTime(1),
-        showCondition: "!_1f_wireFixed && _powerOut",
-      },
       // 味千拉面入口
       {
         text: "用铁管撬开味千拉面的卷帘门",
@@ -400,59 +361,53 @@ Object.assign(storyData, {
         text: "往东走",
         nextScene: "新达汇-1F北走廊中",
         effect: updateTime(1),
-        showCondition: "_1f_wireFixed",
       },
       {
         text: "去南走廊",
         nextScene: "新达汇-1F南走廊西",
         effect: updateTime(1),
-      },
-      {
-        text: "前往中庭",
-        nextScene: "新达汇-1F中庭",
-        effect: updateTime(1),
-      },
+      }
     ]
   },
 
-  "新达汇-1F北走廊西-电线-拨开": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/1fNorth.png */,
+  "新达汇-1F南走廊中-电线-拨开": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
     onEnter: { set: { _1f_wireFixed: true }, add: { chasedByZombies: 1 } },
     text: "你用外套裹住手，抓住电线头小心地拎到一边。外套是干的，没有导电。但拨开那一刻火花噼啪了两声，在安静的走廊里格外刺耳。",
     choices: [
       {
         text: "继续走",
-        nextScene: "新达汇-1F北走廊中",
+        nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1),
       },
     ]
   },
-  "新达汇-1F北走廊西-电线-木棍": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/1fNorth.png */,
+  "新达汇-1F南走廊中-电线-木棍": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
     onEnter: { set: { _1f_wireFixed: true } },
     text: "你在走廊角落找到一根废弃的拖把杆，用干的那一头把电线挑开了。安全，安静，但多花了些时间。",
     choices: [
       {
         text: "继续走",
-        nextScene: "新达汇-1F北走廊中",
+        nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1),
       },
     ]
   },
-  "新达汇-1F北走廊西-电线-绕行": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/1fNorth.png */,
+  "新达汇-1F南走廊中-电线-绕行": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
     onEnter: { add: { strength: -1 } },
     text: "你贴着墙壁试图绕过积水和电线——但落脚的地方太窄了，你一脚踩进了水里。电流穿过你的身体，一阵刺痛从脚底窜上来。好在电压不大，你只是麻了一下，裤腿湿透了。",
     choices: [
       {
         text: "咬牙继续走",
-        nextScene: "新达汇-1F北走廊中",
+        nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1),
       },
     ]
   },
   "新达汇-1F味千拉面": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/ramenShop.png */,
+    image: "images/新达汇/味千拉面.jpg",
     text: function(vars) {
       var desc = "你钻进卷帘门，来到味千拉面店内。\n灶台上的汤锅已经冷透了，汤面凝了一层白色的油脂。后厨的操作台上散落着几包未拆封的袋装拉面——不是店里的货，看起来是员工自己囤的。";
       if (vars._ramenVisited) desc += "\n你之前已经来过这里，卷帘门还维持着你离开时的样子。";
@@ -515,7 +470,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-1F北走廊中": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/1fNorth.png */,
+    image: "images/新达汇/1F北走廊中.png",
     onEnter: function(v) { transit(v, "1F-北走廊中"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "1F北走廊中段。从这里可以看到中庭的采光顶。走廊继续向前，右侧有一条通道通向中庭方向。\n" + describeZombieWave(vars); },
@@ -538,7 +493,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-1F北走廊东": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/1fNorth.png */,
+    image: "images/新达汇/1F北走廊东.png",
     onEnter: function(v) { transit(v, "1F-北走廊东"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "1F北走廊东端。走廊在这里到头，前方是消防通道。\n" + describeZombieWave(vars); },
@@ -588,12 +543,48 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
     onEnter: function(v) { transit(v, "1F-南走廊中"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
-    text: function(vars) { return "1F南走廊中段。这里有一片开放式休息区——几把椅子和枯死的绿植，落满了灰。\n" + describeZombieWave(vars); },
+    text: function(vars) {
+      var desc = "1F南走廊中段。这里有一片开放式休息区——几把椅子和枯死的绿植，落满了灰。";
+      if (!vars._1f_wireFixed && !vars._powerOut) {
+        desc += "\n<span style='color: #ffaa00;'>前方地上有一根断裂的电线搭在积水里，噼啪地冒着火花——挡住了路。</span>";
+      } else if (!vars._1f_wireFixed && vars._powerOut) {
+        desc += "\n地上有一根断裂的电线横在面前——停电了，它现在无害，你可以直接跨过去。";
+      } else {
+        desc += "\n之前那根断裂的电线已经被你处理好了，走廊畅通。";
+      }
+      desc += "\n" + describeZombieWave(vars);
+      return desc;
+    },
     choices: [
+      {
+        text: "用外套包着手拨开电线",
+        nextScene: "新达汇-1F南走廊中-电线-拨开",
+        effect: updateTime(2),
+        showCondition: "!_1f_wireFixed && !_powerOut",
+      },
+      {
+        text: "找根干木棍挑开电线",
+        nextScene: "新达汇-1F南走廊中-电线-木棍",
+        effect: updateTime(3),
+        showCondition: "!_1f_wireFixed && !_powerOut",
+      },
+      {
+        text: "小心从旁边绕过去",
+        nextScene: "新达汇-1F南走廊中-电线-绕行",
+        effect: updateTime(2),
+        showCondition: "!_1f_wireFixed && !_powerOut",
+      },
+      {
+        text: "直接跨过去",
+        nextScene: "新达汇-1F南走廊东",
+        effect: updateTime(1),
+        showCondition: "!_1f_wireFixed && _powerOut",
+      },
       {
         text: "往东走",
         nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1),
+        showCondition: "_1f_wireFixed",
       },
       {
         text: "穿过中庭去北走廊",
@@ -604,15 +595,28 @@ Object.assign(storyData, {
         text: "往西走",
         nextScene: "新达汇-1F南走廊西",
         effect: updateTime(1),
+        showCondition: "_1f_wireFixed",
       },
     ]
   },
   "新达汇-1F南走廊东": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
+    image: "images/新达汇/1F南走廊东.png",
     onEnter: function(v) { transit(v, "1F-南走廊东"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
-    text: function(vars) { return "1F南走廊东端。走廊尽头是电梯厅。\n" + describeZombieWave(vars); },
+    text: function(vars) {
+      var desc = "1F南走廊东端。走廊尽头是电梯厅。旁边有一家华为体验店，玻璃门半掩着。";
+      if (vars._lastScene === "新达汇-1F数码店-手机") {
+        desc += "\n那台华为展示机躺在你的口袋里，屏幕上的裂纹在灯下泛着微光。";
+      }
+      desc += "\n" + describeZombieWave(vars);
+      return desc;
+    },
     choices: [
+      {
+        text: "去华为体验店",
+        nextScene: "新达汇-1F数码店",
+        effect: updateTime(1),
+      },
       {
         text: "去电梯厅",
         condition: "chasedByZombies <= 3",
@@ -655,7 +659,7 @@ Object.assign(storyData, {
       // 有手机就不能再拿了
       {
         text: "回到走廊",
-        nextScene: "新达汇-1F北走廊西",
+        nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1),
       },
     ]
@@ -668,7 +672,7 @@ Object.assign(storyData, {
       {
         text: "收好手机",
         condition: "itemCount < bagVolume",
-        nextScene: "新达汇-1F北走廊西",
+        nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1, { set: { hasPhone: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
@@ -680,7 +684,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "回到走廊",
-        nextScene: "新达汇-1F北走廊西",
+        nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1),
       },
     ]
@@ -914,12 +918,7 @@ Object.assign(storyData, {
         elseScene: "结局-电梯厅被围",
         nextScene: "新达汇-2F电梯厅",
         effect: updateTime(1),
-      },
-      {
-        text: "走消防通道",
-        nextScene: "新达汇-2F消防通道",
-        effect: updateTime(1),
-      },
+      }
     ]
   },
   "新达汇-2F北走廊西": {
@@ -2330,8 +2329,8 @@ Object.assign(storyData, {
     choices: [
       {
         text: "走消防通道去屋顶",
-        nextScene: "新达汇-屋顶花园入口",
-        effect: updateTime(2),
+        nextScene: "新达汇-5F消防通道",
+        effect: updateTime(1),
       },
       {
         text: "走消防通道下楼",
