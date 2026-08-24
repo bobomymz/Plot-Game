@@ -105,12 +105,12 @@ Object.assign(storyData, {
     choices: [
       {
         text: "去那户虚掩着门的人家看看",
-        nextScene: "三林安居苑-居民楼-1楼",
+        nextScene: "三林安居苑-7号楼-1楼",
         effect: updateTime(4)
       },
       {
         text: "看看西边那栋楼",
-        nextScene: "三林安居苑-8号楼",
+        nextScene: "三林安居苑-8号楼-1楼",
         effect: updateTime(4)
       },
       {
@@ -128,7 +128,7 @@ Object.assign(storyData, {
         text: "躲进灌木丛",
         nextScene: "三林安居苑-小区内部-躲藏"
       },
-      sprintAway(["三林安居苑-居民楼-1楼", "三林安居苑-8号楼", "三林安居苑-小广场", "安居苑前门"])
+      sprintAway(["三林安居苑-7号楼-1楼", "三林安居苑-8号楼-1楼", "三林安居苑-小广场", "安居苑前门"])
     ]
   },
 
@@ -403,8 +403,8 @@ Object.assign(storyData, {
 
   // ========== 8号楼（老洪 & 王知筠） ==========
 
-  "三林安居苑-8号楼": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBuilding.png */,
+  "三林安居苑-8号楼-1楼": {
+    image: "images/安居苑/8号楼-1楼.jpg",
     onEnter: { set: { currentPos: "8号楼" } },
     text: "8号楼的单元门虚掩着——门锁不知什么时候被人撬坏了，锁孔边缘有几道新鲜的划痕。你推开门，楼道里光线昏暗，只有尽头窗户透进来的光照出一道斜长的影子。\n\
 左手边是锈蚀的信箱，其中一格上的住户标签已经缺失，看起来是204室。走廊尽头的楼梯拐角处散落着几张报纸，日期停在了6月27日。",
@@ -422,10 +422,10 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-8号楼-2楼": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan5F.png */,
+    image: "images/安居苑/8号楼-2楼.jpg",
     onEnter: { set: { currentPos: "8号楼2楼" } },
-    text: "你走上二楼。走廊里很安静，只有远处某扇没关好的窗户在风里一下一下地拍打着窗框。\n\
-两扇门并排对着：203和204。\n\
+    text: "你走上二楼。走廊里很安静，只有风一下一下地拍打着窗框。\n\
+两扇门在眼前：203和204。\n\
 203的门关着，门下缝隙透出的光线很暗——里面没人活动的迹象。门把手上落了一层薄灰。\n\
 204的门虚掩着，门缝里飘出一股淡淡的甜腻味——说不清是什么，但让你本能地不想多闻。",
     choices: [
@@ -441,7 +441,7 @@ Object.assign(storyData, {
       },
       {
         text: "下楼",
-        nextScene: "三林安居苑-8号楼",
+        nextScene: "三林安居苑-8号楼-1楼",
         effect: updateTime(1)
       }
     ]
@@ -450,11 +450,11 @@ Object.assign(storyData, {
   // ===== 203室——王知筠的家（空的） =====
 
   "三林安居苑-8号楼-203室": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    image: "images/安居苑/8号楼-203.jpg",
     onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-2楼" } },
     text: function(vars) {
       var desc = "203的门没锁——你轻轻一拧就开了。\n\
-这是一间普通的一室户。客厅不大，但收拾得很干净。书桌上摊着几本翻开的专业书，页边夹着彩色便签，桌角一台笔记本电脑合着，电源指示灯早就暗了。\n\
+这是一间普通的一室户。客厅不大，但收拾得很干净。书桌上摊着几本翻开的专业书，页边夹着彩色便签，一台笔记本电脑合着，电源指示灯早就暗了。\n\
 地上有一个敞开的双肩包，旁边散落着几根便携采样管和一支记号笔——像是有人匆忙收拾了东西出门，还没来得及拉上拉链。\n\
 厨房的水槽里放着一只倒扣的马克杯，杯底残留着一圈干透的咖啡渍。\n\
 人不在。";
@@ -467,11 +467,6 @@ Object.assign(storyData, {
       {
         text: "查看书桌",
         nextScene: "三林安居苑-8号楼-203室-书桌",
-        effect: updateTime(1)
-      },
-      {
-        text: "翻看桌上那张纸",
-        nextScene: "三林安居苑-8号楼-203室-草稿",
         effect: updateTime(1)
       },
       {
@@ -499,11 +494,17 @@ Object.assign(storyData, {
 桌角压着一张工作证——复旦大学环境科学与工程系，姓名：王知筠，研究员。证件照里她戴着一副银框圆眼镜，没笑。\n\
 工作证下面压着一张纸，折痕很深，像是被人匆忙带回来又随手放下的：\n\
 ——仁济医院南院 检验科临时访客登记——\n\
-姓名：王知筠　科室：检验科　日期：6月28日 18:30 事由：调用设备测脑脊液样本",
+姓名：王知筠　科室：检验科　日期：6月28日 18:30 事由：调用设备测脑脊液样本。\n\
+旁边还有一张草稿纸，字迹潦草。",
     choices: [
       {
         text: "放下工作证",
         nextScene: "三林安居苑-8号楼-203室",
+        effect: updateTime(1)
+      },
+      {
+        text: "翻看草稿纸",
+        nextScene: "三林安居苑-8号楼-203室-草稿",
         effect: updateTime(1)
       }
     ]
@@ -602,7 +603,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBuilding.png */,
     text: function(vars) {
       if (vars._visit['三林安居苑-204室'] == 1) {
-        return "你轻轻推开门。一股甜腻的、让人不太舒服的气味飘了出来——不是腐败的臭味，而是一种说不清的、带着湿气的甜味。\n\
+        return "你轻轻推开门。\n\
 玄关的鞋柜上放着一串钥匙和一副老花镜。客厅里的家具很简单：一张旧沙发，一个茶几，茶几上放着半杯凉掉的茶。茶几下面的报纸是摊开的——6月27日的《新民晚报》。\n\
 \n\
 厨房方向传来一声微弱的呻吟——不像攻击性的咆哮，更像是一个人在极度痛苦中无意识发出的声音。\n\
@@ -810,13 +811,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
   // ========== 居民楼 ==========
 
-  "三林安居苑-居民楼-1楼": {
+  "三林安居苑-7号楼-1楼": {
     image: "images/安居苑/居民楼1楼.jpg",
     onEnter: { set: { currentPos: "居民楼" } },
     text: function(vars) {
       var desc = "";
-      if (vars._visit["三林安居苑-居民楼-1楼"] <= 1) {
-        desc = "你走进居民楼的入口。";
+      if (vars._visit["三林安居苑-7号楼-1楼"] <= 1) {
+        desc = "你走进7号居民楼的入口。";
       }
       desc += "楼道里很暗，只有安全出口指示牌发出微弱的绿光。墙上一排信箱锈迹斑斑，好几格的盖子都掉了下来，里面塞着积了灰的广告传单和催缴单。\n\
 进去一看，一楼走道尽头有一户人家的门虚掩着，门缝里透出昏暗的光。楼梯间在右手边，铁扶手已经锈得发黑，墙上贴着褪色的楼层指示牌。";
@@ -825,12 +826,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       {
         text: "推开一楼那户虚掩的门",
-        nextScene: "三林安居苑-居民楼-1楼-某户",
+        nextScene: "三林安居苑-7号楼-1楼-某户",
         effect: updateTime(2)
       },
       {
         text: "上楼看看",
-        nextScene: "三林安居苑-楼道-2楼",
+        nextScene: "三林安居苑-7号楼-2楼",
         effect: updateTime(1)
       },
       {
@@ -840,10 +841,10 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     ]
   },
 
-  "三林安居苑-居民楼-1楼-某户": {
+  "三林安居苑-7号楼-1楼-某户": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBuilding.png */,
     text: function(vars) {
-      if(vars._visit["三林安居苑-居民楼-1楼-某户"] > 1) return "你来到这户人家的客厅，茶几上还放着半杯凉掉的茶，厨房传来断断续续的刮擦声。";
+      if(vars._visit["三林安居苑-7号楼-1楼-某户"] > 1) return "你来到这户人家的客厅，茶几上还放着半杯凉掉的茶，厨房传来断断续续的刮擦声。";
       return "你轻轻推开门。这是一户普通的人家——玄关摆着鞋柜，客厅的茶几上还放着半杯凉掉的茶。\n\
 厨房方向传来刮擦声，像是有人在用指甲挠墙。你探头一看：一只老年丧尸正趴在厨房地上，不知道在啃什么。\n\
 它的腿似乎断了，无法站立，但双手依然有力。听到脚步声，它转头看向你，呲着牙发出威胁的低吼。\n卧室的门关着——不知道里面有什么。";
@@ -862,43 +863,46 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       },
       {
         text: "不冒险了，退出去",
-        nextScene: "三林安居苑-居民楼-1楼"
+        nextScene: "三林安居苑-7号楼-1楼"
       }
     ]
   },
 
 
-  "三林安居苑-楼道-2楼": {
+  "三林安居苑-7号楼-2楼": {
     image: "images/placeholder.png",
     onEnter: updateTime(1),
-    text: "你扶着锈迹斑斑的扶手走上二楼。楼梯拐角靠着一辆儿童自行车，车筐里塞着几个空的饮料瓶。窗台上那盆绿萝早就枯萎了，干枯的藤蔓垂在窗沿。\n其中一户的门上贴着一张褪色的老照片——一家三口站在迪士尼城堡前，笑得没心没肺。照片已经泛黄卷边了。",
+    text: "你扶着锈迹斑斑的扶手走上二楼。楼梯拐角靠着一辆儿童自行车，车筐里塞着几个空的饮料瓶。窗台上那盆绿萝早就枯萎了，干枯的藤蔓垂在窗沿。\n\
+其中一户的门上贴着一张褪色的老照片——一家三口站在迪士尼城堡前，笑得没心没肺。",
     choices: [
-      { text: "继续上楼", nextScene: "三林安居苑-楼道-3楼", effect: updateTime(1) },
-      { text: "下楼", nextScene: "三林安居苑-居民楼-1楼", effect: updateTime(1) }
+      { text: "继续上楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) },
+      { text: "下楼", nextScene: "三林安居苑-7号楼-1楼", effect: updateTime(1) }
     ]
   },
 
-  "三林安居苑-楼道-3楼": {
+  "三林安居苑-7号楼-3楼": {
     image: "images/placeholder.png",
     onEnter: updateTime(1),
-    text: "你走上三楼。一股馊掉的食物味从某扇门的门缝里飘出来，混杂着淡淡的腐臭——像是谁家的厨房再也没有人来收拾过。\n另一扇门虚掩着，门缝里一片漆黑。你听不见里面有声音，但也不想凑近去确认。",
+    text: "你走上三楼。一股馊掉的食物味从某扇门的门缝里飘出来，混杂着淡淡的腐臭——像是谁家的厨房再也没有人来收拾过。\n\
+另一扇门虚掩着，门缝里一片漆黑。你听不见里面有声音，但也不想凑近去确认。",
     choices: [
-      { text: "继续上楼", nextScene: "三林安居苑-楼道-4楼", effect: updateTime(1) },
-      { text: "下楼", nextScene: "三林安居苑-楼道-2楼", effect: updateTime(1) }
+      { text: "继续上楼", nextScene: "三林安居苑-7号楼-4楼", effect: updateTime(1) },
+      { text: "下楼", nextScene: "三林安居苑-7号楼-2楼", effect: updateTime(1) }
     ]
   },
 
-  "三林安居苑-楼道-4楼": {
+  "三林安居苑-7号楼-4楼": {
     image: "images/placeholder.png",
     onEnter: updateTime(1),
-    text: "你走上四楼。走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，而且躲了很久。\n你在门口站了一会儿。里面没有任何动静。",
+    text: "你走上四楼。走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，而且躲了很久。\n\
+你在门口站了一会儿。里面没有任何动静。",
     choices: [
       { text: "继续上楼", nextScene: "三林安居苑-5楼", effect: updateTime(1) },
-      { text: "下楼", nextScene: "三林安居苑-楼道-3楼", effect: updateTime(1) }
+      { text: "下楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) }
     ]
   },
 
-  "三林安居苑-楼道-6楼": {
+  "三林安居苑-7号楼-6楼": {
     image: "images/placeholder.png",
     onEnter: updateTime(1),
     text: "你走上六楼——这栋楼的顶层。601的门锁着，门把手上落着一层薄灰，看起来很久没人碰过了。\n楼梯尽头的天台门被一根生锈的铁链拴得死死的，链子上挂着一把同样锈迹斑斑的挂锁。你试着拽了拽，纹丝不动。\n六楼到此为止，没有再往上的路了。",
@@ -921,12 +925,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       },
       {
         text: "继续上楼",
-        nextScene: "三林安居苑-楼道-6楼",
+        nextScene: "三林安居苑-7号楼-6楼",
         effect: updateTime(1)
       },
       {
         text: "下楼",
-        nextScene: "三林安居苑-楼道-4楼",
+        nextScene: "三林安居苑-7号楼-4楼",
         effect: updateTime(1)
       }
     ]
@@ -938,7 +942,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       {
         text: "下楼",
-        nextScene: "三林安居苑-楼道-4楼"
+        nextScene: "三林安居苑-7号楼-4楼"
       }
     ]
   },
@@ -1057,7 +1061,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       },
       {
         text: "不拿了，离开",
-        nextScene: "三林安居苑-居民楼-1楼-某户"
+        nextScene: "三林安居苑-7号楼-1楼-某户"
       }
     ]
   },
@@ -1071,13 +1075,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         showCondition: "!hasTorch",
         text: "拿上手电筒离开",
         condition: "itemCount < bagVolume",
-        nextScene: "三林安居苑-居民楼-1楼-某户",
+        nextScene: "三林安居苑-7号楼-1楼-某户",
         effect: updateTime(1, { set: { hasTorch: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
         text: "算了，空手走",
-        nextScene: "三林安居苑-居民楼-1楼-某户"
+        nextScene: "三林安居苑-7号楼-1楼-某户"
       }
     ]
   },
@@ -1091,14 +1095,14 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         showCondition: "!hasTorch",
         text: "拿上手电筒",
         condition: "itemCount < bagVolume",
-        nextScene: "三林安居苑-居民楼-1楼-某户",
+        nextScene: "三林安居苑-7号楼-1楼-某户",
         effect: updateTime(1, { set: { hasTorch: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
         showCondition: "!hasBag",
         text: "拿上帆布包",
-        nextScene: "三林安居苑-居民楼-1楼-某户",
+        nextScene: "三林安居苑-7号楼-1楼-某户",
         effect: {set: {hasBag: true}, add: {bagVolume: 1}}
       },
       {
@@ -1117,7 +1121,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       {
         text: "继续",
-        nextScene: "三林安居苑-居民楼-1楼-某户"
+        nextScene: "三林安居苑-7号楼-1楼-某户"
       }
     ]
   },
