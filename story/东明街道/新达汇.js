@@ -2542,7 +2542,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F游戏厅-躲藏": {
     image: "images/placeholder.png" /* TODO: images/新达汇/arcade.png */,
-    onEnter: updateTime(30, { add: { chasedByZombies: -1 } }),
+    onEnter: updateTime(30, { add: { chasedByZombies: -2 } }),
     text: function(vars) {
       var desc = "你绕到一排娃娃机后面，蹲下来缩在机器和墙壁之间的缝隙里。";
       if (vars._powerOut) {

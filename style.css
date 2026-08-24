@@ -358,6 +358,31 @@ html, body {
   pointer-events: none;
 }
 
+/* ===== 状态警告浮层（体力自动下降提示） ===== */
+#status-warning {
+  position: fixed;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  padding: 9px 22px;
+  background: rgba(96, 5, 5, 0.88);
+  color: #ffe1e1;
+  border: 1px solid rgba(255, 96, 96, 0.75);
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.55);
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+#status-warning.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* ===== 预加载遮罩 ===== */
 #preload-overlay {
   position: fixed;

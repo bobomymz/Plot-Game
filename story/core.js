@@ -213,7 +213,8 @@ const storyData = {
         id: "starvation",
         condition:  "gameMinutes > minutesBetweenReduceStrength",
         triggerKey: "Math.floor(gameMinutes / minutesBetweenReduceStrength)",
-        effect: { add: { strength: -1 } }   // 简单效果直接用对象
+        effect: { add: { strength: -1 } },   // 简单效果直接用对象
+        onTrigger: function(v) { flashStatusWarning("⚠ 体力 -1（饥饿）· 剩余 " + Math.round(v.strength)); }
       },
 
       // --- 连续移动疲劳（20/36/48/56/60五档，间隔递减，每档-1体力） ---
@@ -221,7 +222,8 @@ const storyData = {
         id: "travel-fatigue",
         condition:  "_travelMinutes >= 20",
         triggerKey: "_travelMinutes >= 60 ? 5 : (_travelMinutes >= 56 ? 4 : (_travelMinutes >= 48 ? 3 : (_travelMinutes >= 36 ? 2 : 1)))",
-        effect: { add: { strength: -1 } }
+        effect: { add: { strength: -1 } },
+        onTrigger: function(v) { flashStatusWarning("⚠ 体力 -1（疲劳）· 剩余 " + Math.round(v.strength)); }
       },
 
       // --- 体力低于 3 时进入虚弱状态 ---

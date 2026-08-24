@@ -1856,8 +1856,8 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         showCondition: "hasCommitteeKey && !_committeeSearched"
       },
       {
-        text: "退出去",
-        nextScene: "小区草地-安全"
+        text: "去小区东门",
+        nextScene: "小区东门"
       }
     ]
   },

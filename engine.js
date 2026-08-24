@@ -230,6 +230,27 @@ function applyScreenEffects() {
   overlay.style.display = activeClasses.length === 0 ? 'none' : '';
 }
 
+// ====== 状态警告浮层（体力自动下降等非剧情原因的提示） ======
+// 用法：在 reactive 规则的 onTrigger 里调用，如 flashStatusWarning("⚠ 体力 -1（饥饿）")
+function flashStatusWarning(message) {
+  let toast = document.getElementById("status-warning");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "status-warning";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  // 重启动画：先移除 show 再强制回流，最后重新加入，保证连续触发时动画也能重新播放
+  toast.classList.remove("show");
+  void toast.offsetWidth;
+  toast.classList.add("show");
+  // 自动隐藏
+  if (toast._hideTimer) clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(function () {
+    toast.classList.remove("show");
+  }, 2000);
+}
+
 // ====== 记忆闪色动画 ======
 function clearMemoryFlash() {
   _memFlashTimers.forEach(t => clearTimeout(t));
@@ -391,6 +412,11 @@ function applyReactive() {
             else gameState[k] *= rule.effect.mul[k];
           }
         }
+      }
+
+      // 触发回调：规则真正生效时调用，用于副作用（如"体力自动下降"的警告提示）
+      if (rule.onTrigger) {
+        rule.onTrigger(gameState, rule);
       }
     }
   }

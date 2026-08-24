@@ -284,6 +284,7 @@ Object.assign(storyData, {
 
   "长者食堂-窗口-喝汤": {
     image: "images/小区周边/长者食堂/窗口.jpg",
+    onEnter: {add: {strength: 5}},
     text: "你喝掉了紫菜蛋花汤。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+5，当前体力：{strength}。</span>",
     choices: [

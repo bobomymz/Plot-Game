@@ -73,6 +73,10 @@ Object.assign(storyData, {
         text: "摸黑探索员工通道",
         nextScene: "全家便利店-员工通道-摸黑",
         effect: updateTime(2)
+      },
+      {
+        text: "离开",
+        nextScene: "小区东门-整装待发"
       }
     ]
   },
@@ -96,7 +100,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "跑！",
-        nextScene: "你太慢啦"
+        nextScene: "结局-你太慢啦"
       },
       {
         text: "躲到货架后面",
