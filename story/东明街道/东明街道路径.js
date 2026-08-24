@@ -1,6 +1,55 @@
 ﻿// -------- 社区连接 --------
 // 主要记录小区附近街区各个场所的道路连接关系
 
+// 三林路共用图片：三林路（路口）/ 三林路-北侧 / 三林路-南侧
+function sanLinRoadImage(vars) {
+  if (vars._lastScene == "三林路-环林东路 十字路口") {
+    if (vars.weather === "雨") {
+      var f = timeImage({
+        morning: "images/小区周边/三林路-西-雨.jpg",
+        night: "images/小区周边/三林路-西-雨-night.jpg"
+      });
+      return f(vars);
+    }
+    if (vars.weather === "阴") {
+      var f = timeImage({
+        morning: "images/小区周边/三林路-西-阴.jpg",
+        night: "images/小区周边/三林路-西-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+      });
+      return f(vars);
+    }
+    var f = timeImage({
+      morning: "images/小区周边/三林路-西.jpg",
+      evening: "images/小区周边/三林路-西-evening.jpg",
+      night: "images/小区周边/三林路-西-night.jpg"
+      // midnight省略不写了
+    });
+  }
+  else {
+    if (vars.weather === "雨") {
+      var f = timeImage({
+        morning: "images/小区周边/三林路-东-雨.jpg",
+        night: "images/小区周边/三林路-东-雨-night.jpg"
+      });
+      return f(vars);
+    }
+    if (vars.weather === "阴") {
+      var f = timeImage({
+        morning: "images/小区周边/三林路-东-阴.png",
+        night: "images/小区周边/三林路-东-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+      });
+      return f(vars);
+    }
+    var f = timeImage({
+      morning: "images/小区周边/三林路-东.jpg",
+      evening: "images/小区周边/三林路-东-evening.jpg",
+      night: "images/小区周边/三林路-东-night.jpg"
+      // midnight省略不写了
+    });
+  }
+  return f(vars);
+}
+
 Object.assign(storyData, {
   "小区东门-整装待发": { // 此时时间；Day1 12:00
     image: function(vars) {
@@ -166,53 +215,7 @@ Object.assign(storyData, {
   },
 
   "三林路": {
-    image: function(vars) {
-      if (vars._lastScene == "三林路-环林东路 十字路口") {
-        if (vars.weather === "雨") {
-          var f = timeImage({
-            morning: "images/小区周边/三林路-西-雨.jpg",
-            night: "images/小区周边/三林路-西-雨-night.jpg"
-          });
-          return f(vars);
-        }
-        if (vars.weather === "阴") {
-          var f = timeImage({
-            morning: "images/小区周边/三林路-西-阴.jpg",
-            night: "images/小区周边/三林路-西-night.jpg" // 晚上看不出阴天，直接复用晴天图片
-          });
-          return f(vars);
-        }
-        var f = timeImage({
-          morning: "images/小区周边/三林路-西.jpg",
-          evening: "images/小区周边/三林路-西-evening.jpg",
-          night: "images/小区周边/三林路-西-night.jpg"
-          // midnight省略不写了
-        });
-      }
-      else {
-        if (vars.weather === "雨") {
-          var f = timeImage({
-            morning: "images/小区周边/三林路-东-雨.jpg",
-            night: "images/小区周边/三林路-东-雨-night.jpg"
-          });
-          return f(vars);
-        }
-        if (vars.weather === "阴") {
-          var f = timeImage({
-            morning: "images/小区周边/三林路-东-阴.png",
-            night: "images/小区周边/三林路-东-night.jpg" // 晚上看不出阴天，直接复用晴天图片
-          });
-          return f(vars);
-        }
-        var f = timeImage({
-          morning: "images/小区周边/三林路-东.jpg",
-          evening: "images/小区周边/三林路-东-evening.jpg",
-          night: "images/小区周边/三林路-东-night.jpg"
-          // midnight省略不写了
-        });
-      }
-      return f(vars);
-    }, /* TODO: images/小区周边/三林路.png */
+    image: sanLinRoadImage, /* TODO: images/小区周边/三林路.png */
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPlace = "三林路";
@@ -224,9 +227,24 @@ Object.assign(storyData, {
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了三林路。这里有你童年时住过的老小区，益丰大药房、建设银行、联华超市等。\n你需要选择去哪里。\n快选哦，周围的丧尸就要围拢过来了。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+      return "你来到了三林路。路北侧有银行、小超市和一辆轿车；南侧通向老小区、药房和五金店。\n你想走哪一侧的人行道？\n快选哦，周围的丧尸就要围拢过来了。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
+      {
+        text: "走北侧人行道",
+        nextScene: "三林路-北侧",
+        effect: updateTime(1)
+      },
+      {
+        text: "走南侧人行道",
+        nextScene: "三林路-南侧",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "chasedByZombies > 1",
+        text: "躲进路边门廊深处",
+        nextScene: "三林路-躲藏"
+      },
       {
         text: "往西走",
         nextScene: "三林路-东明路 十字路口",
@@ -236,45 +254,49 @@ Object.assign(storyData, {
         text: "往东走",
         nextScene: "三林路-环林东路 十字路口",
         effect: updateTime(10)
-      },
-      {
-        text: "去老小区",
-        nextScene: "安居苑前门",
-        effect: updateTime(4)
-      },
-      {
-        text: "去药店",
-        nextScene: "益丰大药房",
-        effect: updateTime(6)
-      },
-      {
-        text: "去银行",
-        nextScene: "银行门口",
-        effect: updateTime(4)
-      },
-      {
-        text: "去小超市",
-        nextScene: "小超市",
-        effect: updateTime(2)
-      },
-      {
-        text: "去五金店",
-        nextScene: "五金店",
-        effect: updateTime(4)
-      },
+      }
+    ]
+  },
+
+  "三林路-北侧": {
+    image: sanLinRoadImage,
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPlace = "三林路";
+      vars.currentPos = "三林路-北侧";
+      applyWeatherDrain(vars);
+    },
+    text: "你走在三林路北侧的人行道上。这一侧紧挨着建设银行和小超市，路边还停着一辆轿车。\n丧尸在马路对面游荡，暂时隔着一段距离。\n" + describeZombieWave(vars),
+    choices: [
+      { text: "去银行", nextScene: "银行门口", effect: updateTime(4) },
       {
         text: "查看旁边那辆轿车",
         condition: "hasCarKey",
-        nextScene: "三林路-获得一辆轿车", // 后续剧情：离开东明街道。不会反复来到这里，所以不需要前置showCondition
+        nextScene: "三林路-获得一辆轿车",
         effect: updateTime(1),
         elseScene: "三林路-轿车门锁了"
       },
-      {
-        showCondition: "chasedByZombies > 1",
-        text: "躲进路边门廊深处",
-        nextScene: "三林路-躲藏"
-      },
-      sprintAway(["三林路-环林东路 十字路口", "三林路-东明路 十字路口", "安居苑前门", "五金店"])
+      { text: "去小超市", nextScene: "小超市", effect: updateTime(2) },
+      { text: "横穿到南侧", nextScene: "三林路-南侧", effect: updateTime(1) },
+      { text: "回到路口", nextScene: "三林路", effect: updateTime(1) }
+    ]
+  },
+
+  "三林路-南侧": {
+    image: sanLinRoadImage,
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPlace = "三林路";
+      vars.currentPos = "三林路-南侧";
+      applyWeatherDrain(vars);
+    },
+    text: "你走在三林路南侧的人行道上。这一侧通向老小区入口、药房和五金店。\n丧尸在马路对面游荡，暂时隔着一段距离。\n" + describeZombieWave(vars),
+    choices: [
+      { text: "去老小区", nextScene: "安居苑前门", effect: updateTime(4) },
+      { text: "去药房", nextScene: "益丰大药房", effect: updateTime(6) },
+      { text: "去五金店", nextScene: "五金店", effect: updateTime(4) },
+      { text: "横穿到北侧", nextScene: "三林路-北侧", effect: updateTime(1) },
+      { text: "回到路口", nextScene: "三林路", effect: updateTime(1) }
     ]
   },
 
