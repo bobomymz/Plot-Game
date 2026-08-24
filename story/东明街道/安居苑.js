@@ -431,7 +431,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "推开204虚掩的门",
-        nextScene: "三林安居苑-204室",
+        nextScene: "三林安居苑-8号楼-204室",
         effect: updateTime(1)
       },
       {
@@ -599,13 +599,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   // ===== 204室——老洪 =====
 
-  "三林安居苑-204室": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBuilding.png */,
+  "三林安居苑-8号楼-204室": {
+    image: "images/安居苑/8号楼-204.jpg",
     text: function(vars) {
-      if (vars._visit['三林安居苑-204室'] == 1) {
+      if (vars._visit['三林安居苑-8号楼-204室'] == 1) {
         return "你轻轻推开门。\n\
 玄关的鞋柜上放着一串钥匙和一副老花镜。客厅里的家具很简单：一张旧沙发，一个茶几，茶几上放着半杯凉掉的茶。茶几下面的报纸是摊开的——6月27日的《新民晚报》。\n\
-\n\
 厨房方向传来一声微弱的呻吟——不像攻击性的咆哮，更像是一个人在极度痛苦中无意识发出的声音。\n\
 你探头往里看：一个穿着深蓝色工装外套的老人坐在地板上，后背靠着橱柜。他的头微微偏向一侧，脸上沾着灰，嘴唇干裂出了血口子。\n\
 他的右腿上缠着一根断掉的电线，另一端连在暖气片上——暖气片的金属表面有几道深深的划痕，像是被什么用力拉扯过。\n\
@@ -622,7 +621,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       if (!vars._enteredHong204) {
         opts.push({
           text: "蹲下来查看那个老人",
-          nextScene: "三林安居苑-204室-老洪",
+          nextScene: "三林安居苑-8号楼-204室-老洪",
           effect: updateTime(1)
         });
       }
@@ -630,7 +629,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       if (!vars._foundHongNotebook) {
         opts.push({
           text: "翻看桌上的笔记本",
-          nextScene: "三林安居苑-204室-笔记本",
+          nextScene: "三林安居苑-8号楼-204室-笔记本",
           effect: updateTime(3)
         });
       }
@@ -638,7 +637,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       if (!vars._foundHongMask) {
         opts.push({
           text: "检查那个旧防毒面具",
-          nextScene: "三林安居苑-204室-防毒面具",
+          nextScene: "三林安居苑-8号楼-204室-防毒面具",
           effect: updateTime(1)
         });
       }
@@ -646,7 +645,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       if (!vars.hasBottle) {
         opts.push({
           text: "捡起地上的空水瓶",
-          nextScene: "三林安居苑-204室-空水瓶",
+          nextScene: "三林安居苑-8号楼-204室-空水瓶",
           effect: updateTime(1)
         });
       }
@@ -654,7 +653,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       if (!vars._foundHongContact) {
         opts.push({
           text: "在屋里翻找一下",
-          nextScene: "三林安居苑-204室-翻找",
+          nextScene: "三林安居苑-8号楼-204室-翻找",
           effect: updateTime(4)
         });
       }
@@ -662,7 +661,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       // 每次都可以查看暖气片痕迹（环境叙事）
       opts.push({
         text: "查看暖气片上的电线痕迹",
-        nextScene: "三林安居苑-204室-电线",
+        nextScene: "三林安居苑-8号楼-204室-电线",
         effect: updateTime(1)
       });
 
@@ -676,32 +675,29 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     }
   },
 
-  "三林安居苑-204室-老洪": {
+  "三林安居苑-8号楼-204室-老洪": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
     onEnter: { add: { strength: -1 } },
     text: "你蹲下身，靠近他。他的眼睛半睁着，眼球在微微颤动——他还活着，但已经说不出完整的话了。\n\
 他感觉到有人靠近，嘴唇动了动，发出一串含混的气音。你把耳朵凑近，勉强辨认出几个字：\n\
-\n\
 <em>“水……别喝……”</em>\n\
 <em>“我的工作……”</em>\n\
 <em>“我要水……快给我水……水……”</em>\n\
-\n\
 他的头猛地向后仰了一下，喉咙里发出一阵咯咯声。他的眼神开始涣散——不是死亡，是那根弦彻底断了。\n\
 他挣了一下，脚踝上的电线在瓷砖地面上刮出一声刺耳的响。\n\
-\n\
 你后退了一步。他已经不再是他了。",
     choices: [
       {
         text: "离开厨房",
-        nextScene: "三林安居苑-204室",
+        nextScene: "三林安居苑-8号楼-204室",
         effect: updateTime(1)
       }
     ]
   },
 
-  "三林安居苑-204室-空水瓶": {
+  "三林安居苑-8号楼-204室-空水瓶": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
-    onEnter: { set: { positionAfterOperation: "三林安居苑-204室" } },
+    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-204室" } },
     text: "你捡起那只空矿泉水瓶。普通的农夫山泉瓶，水早就喝干了，瓶底只剩一小洼浑浊的水垢。\n\
 瓶身上的标签被人用圆珠笔写了一行字——字迹有点抖，但很用力：\n\
 \n\
@@ -713,18 +709,18 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       {
         text: "拿走空水瓶",
         condition: "itemCount < bagVolume",
-        nextScene: "三林安居苑-204室",
+        nextScene: "三林安居苑-8号楼-204室",
         effect: { set: { hasBottle: true, bottleWater: 0 }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
         text: "放下瓶子",
-        nextScene: "三林安居苑-204室"
+        nextScene: "三林安居苑-8号楼-204室"
       }
     ]
   },
 
-  "三林安居苑-204室-笔记本": {
+  "三林安居苑-8号楼-204室-笔记本": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
     onEnter: { set: { _foundHongNotebook: true } },
     text: "你翻开那本笔记本。封面是深蓝色的硬壳，边角已经磨得发白。前半本记的是些零碎的巡检记录和阀门编号——“3号碱液泵异响，已报修”“东区蒸汽管道保温层脱落”——后半本的内容变了。\n\
@@ -738,12 +734,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       {
         text: "合上笔记本",
-        nextScene: "三林安居苑-204室"
+        nextScene: "三林安居苑-8号楼-204室"
       }
     ]
   },
 
-  "三林安居苑-204室-防毒面具": {
+  "三林安居苑-8号楼-204室-防毒面具": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
     onEnter: { set: { _foundHongMask: true } },
     text: function(vars) {
@@ -760,24 +756,24 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         showCondition: "!hasGasMask",
         text: "拿上防毒面具",
         condition: "itemCount < bagVolume",
-        nextScene: "三林安居苑-204室",
+        nextScene: "三林安居苑-8号楼-204室",
         effect: { set: { hasGasMask: true, _foundHongMask: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
         showCondition: "!hasGasMask",
         text: "算了，不拿",
-        nextScene: "三林安居苑-204室"
+        nextScene: "三林安居苑-8号楼-204室"
       },
       {
         showCondition: "hasGasMask",
         text: "已经有面具了，离开",
-        nextScene: "三林安居苑-204室"
+        nextScene: "三林安居苑-8号楼-204室"
       }
     ]
   },
 
-  "三林安居苑-204室-翻找": {
+  "三林安居苑-8号楼-204室-翻找": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanBuilding.png */,
     onEnter: { set: { _foundHongContact: true } },
     text: "你在屋里翻了翻。衣柜里挂着几件洗得发白的工作服，抽屉里是些零碎物件——老花镜、布洛芬、半包润喉糖。\n\
@@ -791,12 +787,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       {
         text: "放下手机",
-        nextScene: "三林安居苑-204室"
+        nextScene: "三林安居苑-8号楼-204室"
       }
     ]
   },
 
-  "三林安居苑-204室-电线": {
+  "三林安居苑-8号楼-204室-电线": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
     text: "你低头看那根电线。是一段普通的铜芯电线，大约两米长，一端紧紧地系在暖气片的铸铁管上，缠了好几圈，打了个死结。另一端缠在他的右腿脚踝上——已经挣断了，断口的铜丝在光下微微反光。\n\
 暖气片表面有几道深深的划痕，是金属在金属上反复摩擦留下的。可以想象他在失控时用了多大的力气拉扯。\n\
@@ -805,7 +801,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       {
         text: "查看完毕",
-        nextScene: "三林安居苑-204室"
+        nextScene: "三林安居苑-8号楼-204室"
       }
     ]
   },
@@ -897,7 +893,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     text: "你走上四楼。走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，而且躲了很久。\n\
 你在门口站了一会儿。里面没有任何动静。",
     choices: [
-      { text: "继续上楼", nextScene: "三林安居苑-5楼", effect: updateTime(1) },
+      { text: "继续上楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) },
       { text: "下楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) }
     ]
   },
@@ -907,22 +903,25 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     onEnter: updateTime(1),
     text: "你走上六楼——这栋楼的顶层。601的门锁着，门把手上落着一层薄灰，看起来很久没人碰过了。\n楼梯尽头的天台门被一根生锈的铁链拴得死死的，链子上挂着一把同样锈迹斑斑的挂锁。你试着拽了拽，纹丝不动。\n六楼到此为止，没有再往上的路了。",
     choices: [
-      { text: "下楼", nextScene: "三林安居苑-5楼", effect: updateTime(1) }
+      { text: "下楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) }
     ]
   },
 
-  "三林安居苑-5楼": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan5F.png */,
+  "三林安居苑-7号楼-5楼": {
+    image: "images/安居苑/7号楼-5楼.jpg",
     onEnter: { set: { currentPos: "居民楼" } },
-    text: "五楼的走廊安静得有些压抑。地上铺着老式的黑白格子瓷砖，有几块已经裂成了蛛网状。并排三扇门：501、502、503，门牌号是那种老式的塑料字，502的“2”已经歪了。\n502的门上贴着一张褪色的福字，边缘翘起，纸面发脆。门把手上落了一层薄灰——这扇门很久没人动过了。",
+    text: "五楼的走廊安静得有些压抑。地上铺着老式瓷砖，有几块已经裂成了蛛网状。并排三扇门：501、502、503，门牌号是那种老式的塑料字，502的“2”已经歪了。\n\
+502的门上贴着一张褪色的福字，边缘翘起，纸面发脆。门都是锁死的。",
     choices: [
       {
-        text: "试着打开502的门",
+        text: "推开502的门",
         condition: "hasKey502",
         nextScene: "三林安居苑-502",
         effect: updateTime(1),
         elseScene: "三林安居苑-5楼-门锁了"
       },
+      { text: "推开501的门", nextScene: "三林安居苑-5楼-门锁了", effect: updateTime(1) },
+      { text: "推开503的门", nextScene: "三林安居苑-5楼-门锁了", effect: updateTime(1) },
       {
         text: "继续上楼",
         nextScene: "三林安居苑-7号楼-6楼",
@@ -937,7 +936,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-5楼-门锁了": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan5F.png */,
+    image: "images/安居苑/7号楼-5楼-门开不了.jpg",
     text: "你握住门把手用力拧了一下——锁死了，纹丝不动。看来需要找到钥匙才行。",
     choices: [
       {
@@ -950,9 +949,11 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   // ========== 502室内部 ==========
 
   "三林安居苑-502": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    image: "images/安居苑/7号楼-502.jpg",
     onEnter: { set: { currentPos: "502室" } },
-    text: "钥匙在锁孔里转动了一圈，咔嗒一声，门开了。\n屋里很暗，窗帘紧拉着，只有一道细缝透进外面昏黄的光线。这间屋子已经很久没人住过了。玄关的鞋架上还摆着几双拖鞋，整整齐齐，仿佛主人只是出了趟远门。地板积了一层薄灰，但墙角隐约可见几个小小的爪印——大概是老鼠留下的。\n客厅的窗帘紧紧拉着，只有一道细缝透进外面昏黄的光线。家具上盖着白布，在昏暗的光线里像几座沉默的雕塑。",
+    text: "钥匙在锁孔里转动了一圈，咔嗒一声，门开了。\n\
+屋里很暗，窗帘紧拉着，只有一道细缝透进外面昏黄的光线。这间屋子看起来就像很久没人住过一样。玄关的鞋架上还摆着几双拖鞋，整整齐齐，仿佛主人只是出了趟远门。\n\
+地板积了一层薄灰，但墙角隐约可见几个小小的爪印——大概是老鼠留下的。\n客厅的窗帘紧紧拉着，只有一道细缝透进外面昏黄的光线。家具上盖着白布，在昏暗的光线里像几座沉默的雕塑。",
     choices: [
       {
         text: "去厨房",
@@ -976,14 +977,16 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       },
       {
         text: "离开502",
-        nextScene: "三林安居苑-5楼"
+        nextScene: "三林安居苑-7号楼-5楼"
       }
     ]
   },
 
   "三林安居苑-502-厨房": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502Kitchen.png */,
-    text: "厨房不大，但收拾得很整齐。灶台上盖着一层塑料布，掀开一看，下面的煤气灶还是老式双头灶，打火旋钮已经有些松了。\n橱柜里基本空了，只剩几包过期的盐、一瓶结了块的酱油，还有半袋早已硬成石头的白砂糖。冰箱的门虚掩着，里面黑漆漆的，门缝里渗出一阵冰凉的冷气——你赶紧把门关上了。\n水槽上方的窗户正对着小区花园。透过玻璃，你能看到那几只变异猫还在花坛边踱来踱去，眼睛里泛着幽幽的绿光。",
+    text: "厨房不大，但收拾得很整齐。灶台上盖着一层塑料布，掀开一看，下面的煤气灶还是老式双头灶，打火旋钮已经有些松了。\n\
+橱柜里基本空了，只剩一瓶结了块的酱油，还有半袋早已硬成石头的白砂糖。冰箱的门虚掩着，里面黑漆漆的，门缝里渗出一阵冰凉的冷气——你赶紧把门关上了。\n\
+水槽上方的窗户正对着小区小广场。",
     choices: [
       {
         text: "回到走廊",
@@ -994,7 +997,9 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   "三林安居苑-502-客厅": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502Livingroom.png */,
-    text: "客厅不算大，沙发和茶几都被白布盖着，像几座沉默的雕塑。墙角立着一台老式显像管电视机，屏幕上的灰厚得能写字。电视柜的抽屉拉开了一半，里面散落着几盘VCD——《大话西游》《少林足球》，都是零几年的老片子。\n茶几上放着一个玻璃烟灰缸，里面的烟蒂早已干透发黄。墙上挂着一幅泛黄的十字绣，红线绣着“家和万事兴”，左下角还绣了一行小字：“2008.5.1 妈妈”。\n沙发旁的边几上立着一个木质相框，照片里是一对中年夫妻和一个小男孩，在天安门前笑得灿烂。",
+    text: "客厅不算大，沙发和茶几都被白布盖着，像几座沉默的雕塑。\n\
+墙角立着一台老式显像管电视机，屏幕上的灰厚得能写字。电视柜的抽屉拉开了一半，里面散落着几盘VCD——《大话西游》《少林足球》，都是零几年的老片子。\n\
+茶几上放着一个玻璃烟灰缸，里面的烟蒂早已干透发黄。墙上挂着一幅泛黄的十字绣，红线绣着“家和万事兴”，左下角还绣了一行小字：“2008.5.1 妈妈”。\n沙发旁的边几上立着一个木质相框，照片里是一对中年夫妻和一个小男孩，在天安门前笑得灿烂。",
     choices: [
       {
         text: "回到走廊",
@@ -1133,9 +1138,9 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-自行车": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/rustyBike.png */,
+    image: "images/安居苑/修饰的自行车.jpg",
     onEnter: { set: { showRain: true } },
-    text: "你走到那辆自行车前。这是一辆老式的永久牌自行车，链条看起来有点生锈了，轮胎也瘪了。\n不过，车身上贴着一张褪色的贴纸：”防锈润滑 WD-40 已保养”\
+    text: "你走到那辆自行车前。这是一辆老式的永久牌自行车，链条看起来有点生锈了。\n车身上贴着一张褪色的贴纸：”防锈润滑 WD-40 已保养”\
 ——日期是两周前，看来外表寒碜。",
     choices: [
       {
