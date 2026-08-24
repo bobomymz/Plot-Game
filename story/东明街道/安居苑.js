@@ -72,7 +72,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "不进小区，返回安盛街",
+        text: "返回安盛街中段",
         nextScene: "安盛街中段"
       }
     ]

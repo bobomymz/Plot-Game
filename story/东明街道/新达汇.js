@@ -17,11 +17,6 @@ Object.assign(storyData, {
 
   "新达汇-喷泉广场": {
     image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
-        return f(vars);
-      }
       var f = timeImage({
         morning: "images/新达汇/喷泉广场.png",
         evening: "images/新达汇/喷泉广场-evening.png",
@@ -31,6 +26,7 @@ Object.assign(storyData, {
       return f(vars);
     },
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.currentPlace = "新达汇";
       vars.currentArea = "周边社区";
       vars.currentPos = "新达汇";
@@ -52,13 +48,15 @@ Object.assign(storyData, {
         cs.push({ text: "冲上去帮忙", nextScene: "新达汇-喷泉广场-高锦睿-帮忙", effect: updateTime(2) });
         cs.push({ text: "先看看情况", nextScene: "新达汇-喷泉广场-高锦睿-旁观", effect: updateTime(1) });
       }
-      cs.push({ text: "进入西区1F中庭", nextScene: "新达汇-1F中庭", effect: updateTime(1) });
-      cs.push({ text: "走下阶梯到B1下沉广场", nextScene: "新达汇-B1下沉广场入口", effect: updateTime(2) });
-      cs.push({ text: "前往东区", nextScene: "新达汇-东区天桥1", effect: updateTime(4) });
-      cs.push({ text: "绕到商场背后的车库出口", nextScene: "新达汇车库出口", effect: updateTime(3) });
-      cs.push({ text: "往北走，去安盛街",
-        nextScene: "安盛街西侧",
-        effect: updateTime(20) });
+      else {
+        cs.push({ text: "进入西区1F中庭", nextScene: "新达汇-1F中庭", effect: updateTime(1) });
+        cs.push({ text: "走下阶梯到B1下沉广场", nextScene: "新达汇-B1下沉广场入口", effect: updateTime(2) });
+        cs.push({ text: "前往东区", nextScene: "新达汇-东区天桥1", effect: updateTime(4) });
+        cs.push({ text: "绕到商场背后的车库出口", nextScene: "新达汇车库出口", effect: updateTime(3) });
+        cs.push({ text: "离开，去安盛街",
+          nextScene: "安盛街西侧",
+          effect: updateTime(20) });
+      }
       return cs;
     }
   },
