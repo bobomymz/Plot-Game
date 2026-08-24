@@ -263,13 +263,13 @@ Object.assign(storyData, {
  + describeZombieWave(vars); },
     choices: [
       {
-        text: "去北走廊西侧逛逛",
-        nextScene: "新达汇-1F北走廊西",
+        text: "去北走廊中段逛逛",
+        nextScene: "新达汇-1F北走廊中",
         effect: updateTime(1),
       },
       {
-        text: "去南走廊西侧逛逛",
-        nextScene: "新达汇-1F南走廊西",
+        text: "去南走廊中段逛逛",
+        nextScene: "新达汇-1F南走廊中",
         effect: updateTime(1),
       },
       {
@@ -476,13 +476,13 @@ Object.assign(storyData, {
     text: function(vars) { return "1F北走廊中段。从这里可以看到中庭的采光顶。走廊继续向前，右侧有一条通道通向中庭方向。\n" + describeZombieWave(vars); },
     choices: [
       {
-        text: "往东走",
-        nextScene: "新达汇-1F北走廊东",
+        text: "前往中庭",
+        nextScene: "新达汇-1F中庭",
         effect: updateTime(1),
       },
       {
-        text: "穿过中庭去南走廊",
-        nextScene: "新达汇-1F南走廊中",
+        text: "往东走",
+        nextScene: "新达汇-1F北走廊东",
         effect: updateTime(1),
       },
       {
@@ -528,13 +528,8 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "穿过中庭去北走廊",
+        text: "绕到北走廊西",
         nextScene: "新达汇-1F北走廊西",
-        effect: updateTime(1),
-      },
-      {
-        text: "前往中庭",
-        nextScene: "新达汇-1F中庭",
         effect: updateTime(1),
       },
     ]
@@ -556,6 +551,11 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
+      {
+        text: "前往中庭",
+        nextScene: "新达汇-1F中庭",
+        effect: updateTime(1),
+      },
       {
         text: "用外套包着手拨开电线",
         nextScene: "新达汇-1F南走廊中-电线-拨开",
@@ -585,11 +585,6 @@ Object.assign(storyData, {
         nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1),
         showCondition: "_1f_wireFixed",
-      },
-      {
-        text: "穿过中庭去北走廊",
-        nextScene: "新达汇-1F北走廊中",
-        effect: updateTime(1),
       },
       {
         text: "往西走",
@@ -892,19 +887,19 @@ Object.assign(storyData, {
 
   // ==================== 2F 零售层（日字型走廊） ====================
   "新达汇-2F中庭环廊": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/2fRing.png */,
+    image: "images/新达汇/2F中庭.png",
     onEnter: function(v) { transit(v, "2F-中庭环廊"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F中庭环廊。玻璃围栏让人能直接看到1F中庭。环形走廊两侧是各种零售店铺。\n" + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声在回荡。</span>\n" : "") + describeZombieWave(vars); },
     choices: [
       {
-        text: "去北走廊西侧",
-        nextScene: "新达汇-2F北走廊西",
+        text: "去北走廊中段",
+        nextScene: "新达汇-2F北走廊中",
         effect: updateTime(1),
       },
       {
-        text: "去南走廊西侧",
-        nextScene: "新达汇-2F南走廊西",
+        text: "去南走廊中段",
+        nextScene: "新达汇-2F南走廊中",
         effect: updateTime(1),
       },
       {
@@ -922,7 +917,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F北走廊西": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
+    image: "images/新达汇/2F北走廊西.png",
     onEnter: function(v) { transit(v, "2F-北走廊西"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F北走廊西段。这里有一家Nike体验店，大门被撞碎。\n" + describeZombieWave(vars); },
@@ -940,11 +935,6 @@ Object.assign(storyData, {
       {
         text: "去南走廊西侧",
         nextScene: "新达汇-2F南走廊西",
-        effect: updateTime(1),
-      },
-      {
-        text: "前往环廊",
-        nextScene: "新达汇-2F中庭环廊",
         effect: updateTime(1),
       },
     ]
@@ -967,9 +957,15 @@ Object.assign(storyData, {
     },
     choices: [
       {
+        text: "前往中庭",
+        nextScene: "新达汇-2F中庭环廊",
+        effect: updateTime(1),
+      },
+      {
         text: "去海澜之家看看",
         nextScene: "新达汇-2F服装店",
         effect: updateTime(1),
+        showCondition: "_2f_chairsCleared",
       },
       {
         text: "一把一把搬开椅子（安静但慢）",
@@ -996,14 +992,10 @@ Object.assign(storyData, {
         showCondition: "_2f_chairsCleared && canSee",
       },
       {
-        text: "穿过中庭去南走廊",
-        nextScene: "新达汇-2F南走廊中",
-        effect: updateTime(1),
-      },
-      {
         text: "往西走",
         nextScene: "新达汇-2F北走廊西",
         effect: updateTime(1),
+        showCondition: "_2f_chairsCleared",
       },
     ]
   },
@@ -1014,8 +1006,8 @@ Object.assign(storyData, {
     text: "你一把一把地把椅子搬到旁边。塑料椅腿碰在一起发出轻微的咔嗒声，但整体还算安静。花了些时间，但路通了。",
     choices: [
       {
-        text: "继续走",
-        nextScene: "新达汇-2F北走廊东",
+        text: "继续",
+        nextScene: "新达汇-2F北走廊中",
         effect: updateTime(1),
       },
     ]
@@ -1093,11 +1085,6 @@ Object.assign(storyData, {
         nextScene: "新达汇-2F北走廊西",
         effect: updateTime(1),
       },
-      {
-        text: "前往环廊",
-        nextScene: "新达汇-2F中庭环廊",
-        effect: updateTime(1),
-      },
     ]
   },
   "新达汇-2F南走廊中": {
@@ -1107,6 +1094,11 @@ Object.assign(storyData, {
     text: function(vars) { return "2F南走廊中段。雅戈尔深色木纹的门面就在走廊旁。\n" + describeZombieWave(vars); },
     choices: [
       {
+        text: "前往中庭",
+        nextScene: "新达汇-2F中庭环廊",
+        effect: updateTime(1),
+      },
+      {
         text: "去雅戈尔看看",
         nextScene: "新达汇-2F服装店",
         effect: updateTime(1),
@@ -1114,11 +1106,6 @@ Object.assign(storyData, {
       {
         text: "往东走",
         nextScene: "新达汇-2F南走廊东",
-        effect: updateTime(1),
-      },
-      {
-        text: "穿过中庭去北走廊",
-        nextScene: "新达汇-2F北走廊中",
         effect: updateTime(1),
       },
       {
@@ -1300,20 +1287,20 @@ Object.assign(storyData, {
 
   // ==================== 3F 亲子层（日字型走廊） ====================
   "新达汇-3F中庭环廊": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/3fRing.png */,
+    image: "images/新达汇/3F中庭.png",
     onEnter: function(v) { transit(v, "3F-中庭环廊"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "这里是3F中庭，墙上有彩色的卡通墙绘，天花板上挂着落了一半的气球。\n"
        + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声就在这一层。</span>\n" : "") + describeZombieWave(vars); },
     choices: [
       {
-        text: "去北走廊西侧",
-        nextScene: "新达汇-3F北走廊西",
+        text: "去北走廊中段",
+        nextScene: "新达汇-3F北走廊中",
         effect: updateTime(1),
       },
       {
-        text: "去南走廊西侧",
-        nextScene: "新达汇-3F南走廊西",
+        text: "去南走廊中段",
+        nextScene: "新达汇-3F南走廊中",
         effect: updateTime(1),
       },
       {
@@ -1361,11 +1348,6 @@ Object.assign(storyData, {
         nextScene: "新达汇-3F南走廊西",
         effect: updateTime(1),
       },
-      {
-        text: "前往环廊",
-        nextScene: "新达汇-3F中庭环廊",
-        effect: updateTime(1),
-      },
     ]
   },
   "新达汇-3F北走廊中": {
@@ -1374,6 +1356,11 @@ Object.assign(storyData, {
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "3F北走廊中段。一家关了门的童装店，货架已经搬空了，橱窗里落满灰。\n" + describeZombieWave(vars); },
     choices: [
+      {
+        text: "前往中庭",
+        nextScene: "新达汇-3F中庭环廊",
+        effect: updateTime(1),
+      },
       {
         text: "躲进童装店，在空货架后面藏一会儿",
         nextScene: "新达汇-3F童装店-躲藏",
@@ -1387,11 +1374,6 @@ Object.assign(storyData, {
       {
         text: "继续到北走廊尽头",
         nextScene: "新达汇-3F北走廊东",
-        effect: updateTime(1),
-      },
-      {
-        text: "穿过中庭去南走廊中段",
-        nextScene: "新达汇-3F南走廊中",
         effect: updateTime(1),
       },
       {
@@ -1465,11 +1447,6 @@ Object.assign(storyData, {
         nextScene: "新达汇-3F北走廊西",
         effect: updateTime(1),
       },
-      {
-        text: "前往环廊",
-        nextScene: "新达汇-3F中庭环廊",
-        effect: updateTime(1),
-      },
     ]
   },
   "新达汇-3F南走廊中": {
@@ -1484,6 +1461,11 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
+      {
+        text: "前往中庭",
+        nextScene: "新达汇-3F中庭环廊",
+        effect: updateTime(1),
+      },
       {
         text: "继续到南走廊尽头",
         nextScene: "新达汇-3F南走廊东",
@@ -1507,11 +1489,6 @@ Object.assign(storyData, {
         nextScene: "新达汇-3F南走廊西",
         effect: updateTime(1),
         showCondition: "!_3f_darkZoneDone && !hasTorch",
-      },
-      {
-        text: "穿过中庭去北走廊中段",
-        nextScene: "新达汇-3F北走廊中",
-        effect: updateTime(1),
       },
       {
         text: "往西走",
@@ -1732,18 +1709,18 @@ Object.assign(storyData, {
 
   // ==================== 4F 餐饮+影院层（日字型走廊） ====================
   "新达汇-4F中庭环廊": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/4fRing.png */,
+    image: "images/新达汇/4F中庭.png",
     onEnter: function(v) { transit(v, "4F-中庭环廊"); return {}; },
-    text: function(vars) { return "4F，中庭顶部近在咫尺。空气里飘着油烟和酸馊味。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "4F，中庭顶部近在咫尺。空气里飘着油烟和酸味。\n" + describeZombieWave(vars); },
     choices: [
       {
-        text: "去北走廊西侧",
-        nextScene: "新达汇-4F北走廊西",
+        text: "去北走廊中段",
+        nextScene: "新达汇-4F北走廊中",
         effect: updateTime(1),
       },
       {
-        text: "去南走廊西侧",
-        nextScene: "新达汇-4F南走廊西",
+        text: "去南走廊中段",
+        nextScene: "新达汇-4F南走廊中",
         effect: updateTime(1),
       },
       {
@@ -1785,11 +1762,6 @@ Object.assign(storyData, {
         nextScene: "新达汇-4F南走廊西",
         effect: updateTime(1),
       },
-      {
-        text: "前往环廊",
-        nextScene: "新达汇-4F中庭环廊",
-        effect: updateTime(1),
-      },
     ]
   },
   "新达汇-4F北走廊中": {
@@ -1798,6 +1770,11 @@ Object.assign(storyData, {
     text: function(vars) { return "4F北走廊中段。油烟味很重——大渝火锅的排风扇上挂着一层油脂。\n" + describeZombieWave(vars); },
     choices: [
       {
+        text: "前往中庭",
+        nextScene: "新达汇-4F中庭环廊",
+        effect: updateTime(1),
+      },
+      {
         text: "去大渝火锅看看",
         nextScene: "新达汇-4F大渝火锅",
         effect: updateTime(1),
@@ -1805,11 +1782,6 @@ Object.assign(storyData, {
       {
         text: "继续到北走廊尽头",
         nextScene: "新达汇-4F北走廊东",
-        effect: updateTime(1),
-      },
-      {
-        text: "穿过中庭去南走廊",
-        nextScene: "新达汇-4F南走廊中",
         effect: updateTime(1),
       },
       {
@@ -1861,11 +1833,6 @@ Object.assign(storyData, {
         nextScene: "新达汇-4F北走廊西",
         effect: updateTime(1),
       },
-      {
-        text: "前往环廊",
-        nextScene: "新达汇-4F中庭环廊",
-        effect: updateTime(1),
-      },
     ]
   },
   "新达汇-4F南走廊中": {
@@ -1874,6 +1841,11 @@ Object.assign(storyData, {
     text: function(vars) { return "4F南走廊中段。空气里飘着淡淡的爆米花味——CGV影城就在前面。\n" + describeZombieWave(vars); },
     choices: [
       {
+        text: "前往中庭",
+        nextScene: "新达汇-4F中庭环廊",
+        effect: updateTime(1),
+      },
+      {
         text: "去CGV影城",
         nextScene: "新达汇-4F电影院大厅",
         effect: updateTime(1),
@@ -1881,11 +1853,6 @@ Object.assign(storyData, {
       {
         text: "继续到南走廊尽头",
         nextScene: "新达汇-4F南走廊东",
-        effect: updateTime(1),
-      },
-      {
-        text: "穿过中庭去北走廊",
-        nextScene: "新达汇-4F北走廊中",
         effect: updateTime(1),
       },
       {
@@ -2244,6 +2211,36 @@ Object.assign(storyData, {
   },
 
   // ==================== 5F 特色餐饮层（日字型走廊） ====================
+  "新达汇-5F中庭环廊": {
+    image: "images/5F中庭.png",
+    onEnter: function(v) { transit(v, "5F-中庭环廊"); return {}; },
+    qte: mallQTE(20000, "结局-丧尸的围殴"),
+    text: function(vars) { return "5F中庭环廊。环形走廊到了最顶层，头顶就是采光穹顶——阳光从玻璃缝隙漏下来，在地板上投出斑驳的光影。从这里能看到整座商场在脚下层层展开。\n" + describeZombieWave(vars); },
+    choices: [
+      {
+        text: "去北走廊中段",
+        nextScene: "新达汇-5F北走廊中",
+        effect: updateTime(1),
+      },
+      {
+        text: "去南走廊中段",
+        nextScene: "新达汇-5F南走廊中",
+        effect: updateTime(1),
+      },
+      {
+        text: "走扶梯",
+        nextScene: "新达汇-5F扶梯组",
+        effect: updateTime(1),
+      },
+      {
+        text: "去电梯厅",
+        condition: "chasedByZombies <= 3",
+        elseScene: "结局-电梯厅被围",
+        nextScene: "新达汇-5F电梯厅",
+        effect: updateTime(1),
+      }
+    ]
+  },
   "新达汇-5F北走廊西": {
     image: "images/placeholder.png" /* TODO: images/新达汇/5fCorridor.png */,
     onEnter: function(v) { transit(v, "5F-北走廊西"); return {}; },
@@ -2264,18 +2261,6 @@ Object.assign(storyData, {
         nextScene: "新达汇-5F南走廊西",
         effect: updateTime(1),
       },
-      {
-        text: "走扶梯下4F",
-        nextScene: "新达汇-5F扶梯组",
-        effect: updateTime(2),
-      },
-      {
-        text: "去电梯厅",
-        condition: "chasedByZombies <= 3",
-        elseScene: "结局-电梯厅被围",
-        nextScene: "新达汇-5F电梯厅",
-        effect: updateTime(1),
-      },
     ]
   },
   "新达汇-5F扶梯组": {
@@ -2289,8 +2274,8 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到走廊",
-        nextScene: "新达汇-5F北走廊西",
+        text: "回到中庭",
+        nextScene: "新达汇-5F中庭环廊",
         effect: updateTime(1),
       },
     ]
@@ -2300,6 +2285,11 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "5F-北走廊中"); return {}; },
     text: function(vars) { return "5F北走廊中段。左庭右院的招牌在这里。\n" + describeZombieWave(vars); },
     choices: [
+      {
+        text: "前往中庭",
+        nextScene: "新达汇-5F中庭环廊",
+        effect: updateTime(1),
+      },
       {
         text: "去左庭右院",
         nextScene: "新达汇-5F左庭右院",
@@ -2376,6 +2366,11 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "5F-南走廊中"); return {}; },
     text: function(vars) { return "5F南走廊中段。走廊旁有一个小型展示区，摆着一些商场改造前的历史照片。\n" + describeZombieWave(vars); },
     choices: [
+      {
+        text: "前往中庭",
+        nextScene: "新达汇-5F中庭环廊",
+        effect: updateTime(1),
+      },
       {
         text: "往东走",
         nextScene: "新达汇-5F南走廊东",
@@ -2590,8 +2585,8 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "回到走廊",
-        nextScene: "新达汇-5F北走廊西",
+        text: "回到中庭",
+        nextScene: "新达汇-5F中庭环廊",
         effect: updateTime(1),
       },
       {
