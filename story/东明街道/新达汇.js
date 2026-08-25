@@ -613,13 +613,6 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "去电梯厅",
-        condition: "chasedByZombies <= 3",
-        elseScene: "结局-电梯厅被围",
-        nextScene: "新达汇-1F电梯厅",
-        effect: updateTime(1),
-      },
-      {
         text: "绕到北走廊东侧",
         nextScene: "新达汇-1F北走廊东",
         effect: updateTime(1),
@@ -1748,7 +1741,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F北走廊西": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/4fNorth.png */,
+    image: "images/新达汇/4F北走廊西.png",
     onEnter: function(v) { transit(v, "4F-北走廊西"); return {}; },
     text: function(vars) { return "4F北走廊西段。大米先生快餐店的门口堆满了等位椅。\n" + describeZombieWave(vars); },
     choices: [
@@ -1770,7 +1763,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F北走廊中": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/4fNorth.png */,
+    image: "images/新达汇/4F北走廊中.png",
     onEnter: function(v) { transit(v, "4F-北走廊中"); return {}; },
     text: function(vars) { return "4F北走廊中段。油烟味很重——大渝火锅的排风扇上挂着一层油脂。\n" + describeZombieWave(vars); },
     choices: [
@@ -1797,7 +1790,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F北走廊东": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/4fNorth.png */,
+    image: "images/新达汇/4F北走廊东.png",
     onEnter: function(v) { transit(v, "4F-北走廊东"); return {}; },
     text: function(vars) { return "4F北走廊东端。消防通道在这里。\n" + describeZombieWave(vars); },
     choices: [
@@ -1819,12 +1812,12 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F南走廊西": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/4fSouth.png */,
+    image: "images/新达汇/4F南走廊西.png",
     onEnter: function(v) { transit(v, "4F-南走廊西"); return {}; },
-    text: function(vars) { return "4F南走廊西段。墙上有老电影海报。日料店的吧台就在前面。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "4F南走廊西段。墙上有老电影海报。“争鲜”日料店的吧台就在前面。\n" + describeZombieWave(vars); },
     choices: [
       {
-        text: "去日料店看看",
+        text: "去争鲜看看",
         nextScene: "新达汇-4F日料店",
         effect: updateTime(1),
       },
@@ -1841,7 +1834,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F南走廊中": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/4fSouth.png */,
+    image: "images/新达汇/4F南走廊中.png",
     onEnter: function(v) { transit(v, "4F-南走廊中"); return {}; },
     text: function(vars) { return "4F南走廊中段。空气里飘着淡淡的爆米花味——CGV影城就在前面。\n" + describeZombieWave(vars); },
     choices: [
@@ -2251,7 +2244,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F北走廊西": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/5fCorridor.png */,
+    image: "images/新达汇/5F北走廊西.png",
     onEnter: function(v) { transit(v, "5F-北走廊西"); return {}; },
     text: function(vars) { return "5F北走廊西段。走廊比下面几层窄一些，天花板也低了些。石物恋·烧肉就在前面。\n" + describeZombieWave(vars); },
     choices: [
@@ -2290,7 +2283,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F北走廊中": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/5fCorridor.png */,
+    image: "images/新达汇/5F北走廊中.png",
     onEnter: function(v) { transit(v, "5F-北走廊中"); return {}; },
     text: function(vars) { return "5F北走廊中段。左庭右院的招牌在这里。\n" + describeZombieWave(vars); },
     choices: [
@@ -2322,17 +2315,12 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F北走廊东": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/5fCorridor.png */,
+    image: "images/新达汇/5F北走廊东.png",
     onEnter: function(v) { transit(v, "5F-北走廊东"); return {}; },
     text: function(vars) { return "5F北走廊东端。消防通道从这里上屋顶。\n" + describeZombieWave(vars); },
     choices: [
       {
-        text: "走消防通道去屋顶",
-        nextScene: "新达汇-5F消防通道",
-        effect: updateTime(1),
-      },
-      {
-        text: "走消防通道下楼",
+        text: "进消防通道",
         nextScene: "新达汇-5F消防通道",
         effect: updateTime(1),
       },
@@ -2349,7 +2337,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F南走廊西": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/5fCorridor.png */,
+    image: "images/新达汇/5F南走廊西.png",
     onEnter: function(v) { transit(v, "5F-南走廊西"); return {}; },
     text: function(vars) { return "5F南走廊西段。游戏厅的招牌灯还在闪烁。\n" + describeZombieWave(vars); },
     choices: [
@@ -2371,7 +2359,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F南走廊中": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/5fCorridor.png */,
+    image: "images/新达汇/5F南走廊中.png",
     onEnter: function(v) { transit(v, "5F-南走廊中"); return {}; },
     text: function(vars) { return "5F南走廊中段。走廊旁有一个小型展示区，摆着一些商场改造前的历史照片。\n" + describeZombieWave(vars); },
     choices: [
@@ -2398,17 +2386,10 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F南走廊东": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/5fCorridor.png */,
+    image: "images/新达汇/5F南走廊东.png",
     onEnter: function(v) { transit(v, "5F-南走廊东"); return {}; },
-    text: function(vars) { return "5F南走廊东端。电梯厅在这里。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "5F南走廊东端。\n" + describeZombieWave(vars); },
     choices: [
-      {
-        text: "去电梯厅",
-        condition: "chasedByZombies <= 3",
-        elseScene: "结局-电梯厅被围",
-        nextScene: "新达汇-5F电梯厅",
-        effect: updateTime(1),
-      },
       {
         text: "绕到北走廊东侧",
         nextScene: "新达汇-5F北走廊东",

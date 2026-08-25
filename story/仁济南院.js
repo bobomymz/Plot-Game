@@ -16,7 +16,7 @@ Object.assign(storyData, {
       applyWeatherDrain(vars);
     },
     text: function(vars) {
-      var desc = "你下了高架，沿着一条两侧种满香樟的路往前开。路边褪色的指示牌写着“仁济医院南院”，箭头指向路尽头的几栋白色建筑。\n\
+      var desc = "你下了高架，沿着一条两侧种满香樟的路前进。路边褪色的指示牌写着“仁济医院南院”，箭头指向路尽头的几栋白色建筑。\n\
 医院的轮廓安静得有些不真实。急诊楼前的通道上横七竖八地倒着几辆救护车和私家车，车门大开，路面上有干涸的暗红色痕迹。几个穿白大褂的身影瘫倒在草坪上，一动不动。\n\
 整座医院像一个被突然抽走了声音的蜂巢。";
       return desc + "\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
@@ -40,7 +40,7 @@ Object.assign(storyData, {
       {
         text: "回高架",
         condition: "chasedByZombies < 4",
-        nextScene: "杨高南路高架",
+        nextScene: "济阳路跨线桥",
         effect: updateTime(15),
         elseScene: "结局-仁济-尸潮围困"
       }
@@ -62,8 +62,10 @@ Object.assign(storyData, {
     choices: [
       {
         showCondition: "dd < 6",
-        text: "冲向急诊大门",
-        nextScene: "仁济南院-大门-记忆闪色"
+        text: "硬闯急诊大门",
+        condition: "!_renjiERCleared",
+        nextScene: "仁济南院-大门-记忆闪色",
+        elseScene: "仁济南院-急诊大厅"
       },
       {
         showCondition: "!hasBandage",
@@ -101,19 +103,31 @@ Object.assign(storyData, {
 
   "仁济南院-大门-记忆闪色": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
-    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 9),
-    text: "你压低身子，朝急诊大门冲过去。门口的丧尸被你的动静惊动，摇摇晃晃地围了过来。\n\
+    onEnter: initMemoryGame(["红", "蓝", "绿"], 9),
+    text: "你压低身子，朝急诊大厅冲过去。门口的丧尸被你的动静惊动，摇摇晃晃地围了过来。\n\
 你必须盯紧每一个扑上来的影子，记清它们的轮廓，才能从缝隙里钻过去。",
     choices: [
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝2绿2黄1白" },
         condition: checkFlashAnswer,
-        nextScene: "仁济南院-急诊大厅",
+        nextScene: "仁济南院-大门-记忆闪色-成功",
         effect: updateTime(3),
         elseScene: "仁济南院-大门-记忆闪色-失败",
-        timeout: 15000,
+        timeout: 20000,
         timeoutScene: "仁济南院-大门-记忆闪色-失败"
+      }
+    ]
+  },
+
+  "仁济南院-大门-记忆闪色-成功": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
+    onEnter: { set: { _renjiERCleared: true } },
+    text: "你一脚踹飞堵路的几只丧尸，成功地闯进了急诊大厅。",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "仁济南院-急诊大厅"
       }
     ]
   },
@@ -341,7 +355,7 @@ Object.assign(storyData, {
 
   "仁济南院-急诊大厅-受伤": {
     image: "images/hurtByzombie.png",
-    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
+    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiERCleared: true } },
     text: "它的爪子划过了你的肩膀。你踉跄着躲开，反手一击，终于把它打倒在地。\n\
 它不再动了，但你的肩膀火辣辣地疼。",
     choices: [
