@@ -393,8 +393,9 @@ function applyReactive() {
       }
 
       // 执行效果
+      let effectResult;
       if (typeof rule.effect === 'function') {
-        rule.effect(gameState);
+        effectResult = rule.effect(gameState);
       } else if (rule.effect) {
         // 对象形式的效果直接合并到 gameState
         if (rule.effect.set) {
@@ -415,8 +416,9 @@ function applyReactive() {
       }
 
       // 触发回调：规则真正生效时调用，用于副作用（如"体力自动下降"的警告提示）
+      // effectResult 为函数型 effect 的返回值（如"是否实际上升了追击等级"）
       if (rule.onTrigger) {
-        rule.onTrigger(gameState, rule);
+        rule.onTrigger(gameState, rule, effectResult);
       }
     }
   }
@@ -661,9 +663,12 @@ function renderChoices(scene, sceneId) {
     }
 
     if (!_choices || _choices.length === 0) {
-      const noChoiceMsg = document.createElement("p");
-      noChoiceMsg.textContent = "（倒计时中……）";
-      choicesArea.appendChild(noChoiceMsg);
+      // 过场动画（typewriter）纯自动播放，不显示"倒计时中"占位
+      if (!qte.typewriter) {
+        const noChoiceMsg = document.createElement("p");
+        noChoiceMsg.textContent = "（倒计时中……）";
+        choicesArea.appendChild(noChoiceMsg);
+      }
     }
 
     choicesArea.style.display = "flex";
@@ -1019,12 +1024,13 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   }
 
   const hasQte = typeof scene.qte === 'function' ? scene.qte(gameState) : scene.qte;
-  if (hasQte) {
+  if (hasQte && !hasQte.typewriter) {
     // QTE 场景直接显示文字，跳过打字机效果
     sceneText.innerHTML = displayText;
     sceneText.classList.remove("typing");
     renderChoices(scene, sceneId);  // renderChoices 内部会启动倒计时
   } else {
+    // 无 QTE，或 QTE 声明了 typewriter（过场动画）：走打字机，完成后渲染选项并启动倒计时
     typeText(sceneText, displayText, 80, () => {
       renderChoices(scene, sceneId);
       applyMemoryFlash(gameState);

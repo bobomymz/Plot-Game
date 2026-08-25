@@ -331,16 +331,59 @@ computed: {
 
 ### 响应式规则（`_reactive.rules`）
 
+规则字段：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `id` | string | 唯一 ID（必填，缺省报错） |
+| `condition` | 表达式/函数 | 满足时才可能触发 |
+| `triggerKey` | 表达式 | 节流：相同值不重复触发 |
+| `effect` | 对象/函数 | 触发时执行的效果。**函数形式可返回一个值**（见下） |
+| `onTrigger` | 函数 | [可选] 效果执行后调用的副作用回调，签名 `(gameState, rule, effectResult)` |
+
 ```javascript
 rules: [
   {
     id: "starvation",                     // 唯一ID
     condition: "gameMinutes > 0",
     triggerKey: "Math.floor(gameMinutes / 60)",  // 相同值不重复触发（节流）
-    effect: { add: { strength: -1 } }
+    effect: { add: { strength: -1 } },
+    onTrigger: function(v) { flashStatusWarning("⚠ 体力 -1（饥饿）· 剩余 " + Math.round(v.strength)); }
   }
 ]
 ```
+
+#### `onTrigger` 与 effect 返回值（概率性规则判断"是否真正生效"）
+
+`effect` 是**对象**时，触发即必然改状态，`onTrigger` 无条件提示即可。但 `effect` 是**函数**且内部有概率判断（如"25% 概率 +1 追击等级"）时，规则触发不一定真的改了状态——此时让 effect 函数**返回布尔值**表示"是否实际上升"，`onTrigger` 通过第三个参数 `effectResult` 判断是否提示：
+
+```javascript
+{
+  id: "cat-chase",
+  condition: "_catChasing && currentPlace.indexOf('新达汇') >= 0",
+  triggerKey: "Math.floor(gameMinutes / 3)",
+  effect: function(v) {
+    if (Math.random() < 0.25) {
+      v.chasedByZombies = Math.min(5, v.chasedByZombies + 1);
+      return true;   // 追击等级实际上升
+    }
+    return false;
+  },
+  onTrigger: function(v, rule, rose) {
+    if (rose) flashStatusWarning("⚠ 尸潮逼近 · 尸潮等级 " + v.chasedByZombies);
+  }
+}
+```
+
+- `onTrigger` 只在 `effect` 执行后调用（无论 effect 是否真的改了状态），是否提示由你在回调里自行判断。
+- 对象型 `effect` 的 `effectResult` 恒为 `undefined`（第三个参数无意义）。
+- 现有规则（`starvation` / `travel-fatigue` 等）的 `onTrigger` 只声明 `function(v)`，多传的参数被忽略，向后兼容。
+
+#### `flashStatusWarning`：非剧情自动变化的提示
+
+引擎内置全局函数 `flashStatusWarning(message)`，弹出顶部浮层 toast（约 2 秒后淡出，元素 `#status-warning`）。用于**非剧情原因**的自动状态变化提示——如"体力随时间下降"（饥饿/疲劳）和"尸潮等级自动上升"（变异猫追击/仁济医院尸潮围拢）。
+
+剧情原因（`choices`/`onEnter` 里的 effect）**不应**用它提示——玩家能从选项文字直接得知，重复提示反而烦人。
 
 ### QTE（快速事件）
 
@@ -372,13 +415,40 @@ QTE 有两种层级：**场景级**（整个节点倒计时）和**选项级**�
 | `timeout` | 倒计时时长(ms)。数字或 **JS 表达式字符串**（用 `new Function` 求值，如 `"8000 - chasedByZombies * 2000"`） |
 | `onTimeout` | **必填**。超时后跳转的场景 ID，支持 `{变量名}` 插值，同 `nextScene` |
 | `hidden` | 可选。`true` 时不渲染进度条，但倒计时照常生效——适合"悄无声息逼近的威胁" |
+| `typewriter` | 可选。`true` 时该 QTE 场景**保留打字机效果**（文字逐字显示，显示完才启动倒计时）。默认 `false`：跳过打字机、文字一次性全显 |
 
 行为特点：
-- 进入场景立即开始倒计时（跳过打字机效果，文字和选项直接显示）。
+- 进入场景立即开始倒计时（默认跳过打字机效果、文字和选项直接显示；若 `qte.typewriter` 为 `true` 则走打字机，显示完才启动倒计时）。
 - 玩家在超时前点击任意选项会取消倒计时（选项 click 内部调用 `clearQTE()`）。
 - 超时后自动 `pushHistory()` 并跳转 `onTimeout`。
 - **场景级 `qte` 与选项级 `timeout` 互斥**：存在 `scene.qte` 时选项级倒计时不会启动。
-- `qte` 也支持函数形式 `function(vars) { return { timeout, onTimeout, hidden }; }`，可动态生成。
+- `qte` 也支持函数形式 `function(vars) { return { timeout, onTimeout, hidden, typewriter }; }`，可动态生成。
+- **有 `qte` 的场景不是结局**：走 QTE 分支，即使不写 `choices` 也不会被当作"结局节点"（不会显示"剧终+回溯"）。`typewriter` 过场节点无选项时不显示任何占位，纯自动播放。
+
+#### 过场动画节点（`travelScene` 工厂函数）
+
+`utils.js` 提供了 `travelScene(text, nextScene, options)`，生成"过场动画"节点——文字逐字显示，显示完按字数停留，超时自动跳 `nextScene`。适合在长距离移动的起终点之间插入道路行走、时间流逝等过渡节点：
+
+```javascript
+Object.assign(storyData, {
+  "前往金谊广场-1": travelScene(
+    "你转身向西，沿着三林路朝金谊广场的方向走……",
+    "前往金谊广场-2",
+    { onEnter: { set: { showRain: true } } }   // 可选：户外场景可加特效/效果
+  ),
+});
+```
+
+| 参数 | 说明 |
+|------|------|
+| `text` | 过场文字（纯文本或带 HTML） |
+| `nextScene` | 显示完后自动跳转的场景 ID |
+| `options` | 可选。`{ image, onEnter }`：`image` 场景图；`onEnter` 为 effect 对象或函数（如 `{ set: { showRain: true } }`） |
+
+机制要点：
+- 内部用 `qte: { hidden: true, typewriter: true, onTimeout: nextScene }` 实现——隐藏进度条、保留打字机、超时自动前进。
+- 停留时长按字数估算：`Math.max(2000, 去 HTML 后字数 * 50)` ms。
+- **不生成 `choices` 按钮**，纯自动播放；玩家无法手动跳过（如需可跳过的过场，自行加 `choices`）。
 
 #### 选项级 QTE（`timeout` / `timeoutScene`）
 

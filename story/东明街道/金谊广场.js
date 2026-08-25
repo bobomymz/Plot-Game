@@ -836,7 +836,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/4F后厨.jpg */,
     text: function(vars) {
       var desc = "你推开松月楼后厨的门。灶台上还放着几笼没蒸完的包子，已经发霉长毛了。\n";
-      desc += "水槽里积着半池浑浊的水，表面漂着一层油光。你拧开水龙头，哗啦哗啦。\n";
+      desc += "水槽里积着半池浑浊的水，表面漂着一层油光。你拧开水龙头——自来水哗哗地流了出来，清亮得很，和灾前没什么两样。\n";
       if (vars.hasBottle && vars.bottleWater == 0) {
         desc += "\n你可以用空水瓶在这里接水。";
       }

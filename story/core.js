@@ -262,7 +262,12 @@ const storyData = {
         effect: function(v) {
           if (Math.random() < 0.25) {
             v.chasedByZombies = Math.min(5, v.chasedByZombies + 1);
+            return true;   // 追击等级实际上升
           }
+          return false;
+        },
+        onTrigger: function(v, rule, rose) {
+          if (rose) flashStatusWarning("⚠ 尸潮逼近 · 尸潮等级 " + v.chasedByZombies);
         }
       },
 
@@ -275,7 +280,12 @@ const storyData = {
           var prob = v._renjiNoise ? 0.4 : 0.2;   // 破门噪音后概率翻倍
           if (Math.random() < prob) {
             v.chasedByZombies = Math.min(4, v.chasedByZombies + 1);
+            return true;   // 追击等级实际上升
           }
+          return false;
+        },
+        onTrigger: function(v, rule, rose) {
+          if (rose) flashStatusWarning("⚠ 尸潮围拢 · 尸潮等级 " + v.chasedByZombies);
         }
       },
 

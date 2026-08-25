@@ -227,7 +227,8 @@ Object.assign(storyData, {
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了三林路。路北侧有银行、小超市和一辆轿车；南侧通向老小区、药房和五金店。\n你想走哪一侧的人行道？\n快选哦，周围的丧尸就要围拢过来了。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+      return "你来到了三林路。路北侧有银行、小超市和一辆轿车；南侧通向老小区、药房和五金店。\n你想走哪一侧的人行道？\n快选哦，周围的丧尸就要围拢过来了。\n\
+      " + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -246,13 +247,19 @@ Object.assign(storyData, {
         nextScene: "三林路-躲藏"
       },
       {
-        text: "往西走",
-        nextScene: "三林路-东明路 十字路口",
+        text: "往前走",
+        nextScene: function(vars) {
+          if(_lastScene == "三林路-环林东路 十字路口") return "三林路-东明路 十字路口";
+          return "三林路-环林东路 十字路口";
+        },
         effect: updateTime(10)
       },
       {
-        text: "往东走",
-        nextScene: "三林路-环林东路 十字路口",
+        text: "往后走",
+        nextScene: function(vars) {
+          if(_lastScene == "三林路-环林东路 十字路口") return "三林路-环林东路 十字路口";
+          return "三林路-东明路 十字路口";
+        },
         effect: updateTime(10)
       }
     ]
@@ -280,7 +287,7 @@ Object.assign(storyData, {
       },
       { text: "去小超市", nextScene: "小超市", effect: updateTime(2) },
       { text: "横穿到南侧", nextScene: "三林路-南侧", effect: updateTime(1) },
-      { text: "回到路口", nextScene: "三林路", effect: updateTime(1) }
+      { text: "回到路中央", nextScene: "三林路", effect: updateTime(1) }
     ]
   },
 
@@ -300,7 +307,7 @@ Object.assign(storyData, {
       { text: "去药房", nextScene: "益丰大药房", effect: updateTime(6) },
       { text: "去五金店", nextScene: "五金店", effect: updateTime(4) },
       { text: "横穿到北侧", nextScene: "三林路-北侧", effect: updateTime(1) },
-      { text: "回到路口", nextScene: "三林路", effect: updateTime(1) }
+      { text: "回到路中央", nextScene: "三林路", effect: updateTime(1) }
     ]
   },
 
@@ -347,7 +354,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "往西走",
-        nextScene: "金谊广场-龙头区",
+        nextScene: "前往金谊广场-1",
         effect: updateTime(30)
       },
       {
@@ -378,6 +385,18 @@ Object.assign(storyData, {
       sprintAway(["东明路-三林路", "三林路"])
     ]
   },
+
+  // ==================== 前往金谊广场（过场动画） ====================
+  "前往金谊广场-1": travelScene(
+    "你转身向西，沿着三林路朝金谊广场的方向走。身后十字路口那些丧尸的嚎叫渐渐远了，但路两侧歪斜的车辆和紧闭的卷帘门让你不敢掉以轻心。\n你尽量贴着墙根走，脚步放得很轻。",
+    "前往金谊广场-2",
+    { onEnter: { set: { showRain: true } } }
+  ),
+  "前往金谊广场-2": travelScene(
+    "走了快半小时，你远远看见了金谊广场那排低矮的沿街商铺——招牌歪斜，玻璃碎了一地。\n越往前走，那股属于大商场的、混杂着商品和人气的味道就越重，只是如今已经变了味。",
+    "金谊广场-龙头区",
+    { onEnter: { set: { showRain: true } } }
+  ),
 
 
 

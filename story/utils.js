@@ -290,3 +290,22 @@ function hasFood(vars) {
 function zombieAtHomeDoor(vars) { // 丧尸还在家门口
   return vars.dd == 1 && vars.hh < 10;
 }
+
+// ====== 过场动画节点工厂 ======
+// 文字逐字显示（打字机），显示完后按字数停留，超时自动前进到 nextScene。
+// qte.typewriter: true 让 QTE 场景保留打字机效果（默认 QTE 会跳过打字机、文字一次性全显）。
+// 过场节点不生成 choices 按钮——引擎将其识别为非结局节点（有 qte），纯自动播放，超时跳 nextScene。
+// options（可选）：{ image, onEnter }。onEnter 为 effect 对象或函数，如 { set: { showRain: true } }。
+// 用法：Object.assign(storyData, { "节点ID": travelScene("沿途文字……", "下一个场景ID", { onEnter: { set: { showRain: true } } }) })
+function travelScene(text, nextScene, options) {
+  options = options || {};
+  var plain = String(text).replace(/<[^>]*>/g, '');  // 去掉 HTML 标签算字数
+  var ms = Math.max(2000, plain.length * 50);         // 打字机显示完后额外停留时长（最短 2 秒）
+  var scene = {
+    image: options.image || "images/placeholder.png",
+    qte: { timeout: ms, hidden: true, typewriter: true, onTimeout: nextScene },
+    text: text
+  };
+  if (options.onEnter) scene.onEnter = options.onEnter;
+  return scene;
+}

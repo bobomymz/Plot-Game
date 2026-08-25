@@ -377,7 +377,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续走",
-        nextScene: "新达汇-1F南走廊东",
+        nextScene: "新达汇-1F南走廊中",
         effect: updateTime(1),
       },
     ]
@@ -389,7 +389,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续走",
-        nextScene: "新达汇-1F南走廊东",
+        nextScene: "新达汇-1F南走廊中",
         effect: updateTime(1),
       },
     ]
@@ -401,7 +401,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "咬牙继续走",
-        nextScene: "新达汇-1F南走廊东",
+        nextScene: "新达汇-1F南走廊中",
         effect: updateTime(1),
       },
     ]
@@ -940,18 +940,20 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F北走廊中": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
+    image: "images/新达汇/2F北走廊中.png",
     onEnter: function(v) { transit(v, "2F-北走廊中"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) {
-      var desc = "2F北走廊中段。海澜之家(HLA)白色的门头就在走廊边。";
+      var desc = "2F北走廊中段。";
       if(canSee(vars)) { // 看得见
+        desc += "海澜之家(HLA)白色的门头就在走廊边。"
         if (!vars._2f_chairsCleared) {
           desc += "\n走廊上堆着十几把等位椅，歪七扭八地挡住了去路。看起来是餐厅的人堆在这里的。";
         } else {
           desc += "\n之前堆在走廊上的椅子已经被你搬开了，畅通无阻。";
         }
       }
+      else desc += "你看不见旁边有什么店，不敢贸然行动。"
       desc += "\n" + describeZombieWave(vars);
       return desc;
     },
@@ -986,16 +988,14 @@ Object.assign(storyData, {
         showCondition: "!_2f_chairsCleared && canSee",
       },
       {
-        text: "继续到北走廊尽头",
+        text: "往东走",
         nextScene: "新达汇-2F北走廊东",
         effect: updateTime(1),
-        showCondition: "_2f_chairsCleared && canSee",
       },
       {
         text: "往西走",
         nextScene: "新达汇-2F北走廊西",
         effect: updateTime(1),
-        showCondition: "_2f_chairsCleared",
       },
     ]
   },
@@ -1019,7 +1019,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续走",
-        nextScene: "新达汇-2F北走廊东",
+        nextScene: "新达汇-2F北走廊中",
         effect: updateTime(1),
       },
     ]
@@ -1037,7 +1037,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F北走廊东": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
+    image: "images/新达汇/2F北走廊东.png",
     onEnter: function(v) { transit(v, "2F-北走廊东"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F北走廊东端。卫生间和消防通道在这里。\n" + describeZombieWave(vars); },
@@ -1199,13 +1199,37 @@ Object.assign(storyData, {
   },
   "新达汇-2F卫生间": {
     image: "images/placeholder.png" /* TODO: images/新达汇/toilet.png */,
-    text: "公用卫生间。水龙头没有水，发出嘶哑的空响。隔间的门大多关着。",
+    text: function(vars) {
+      var desc = "公用卫生间。洗手台上的镜子裂了一道，洗手池里积着陈年的水垢。隔间的门大多关着，空气里飘着一股潮闷的消毒水味。";
+      desc += "\n你拧开水龙头——自来水还在供应，清亮的水哗哗地流了出来，和灾前没什么两样。";
+      if (!vars.hasBottle) {
+        desc += "可惜你没有能装水的容器。";
+      } else if (vars.bottleWater == 0) {
+        desc += "你的水瓶是空的，可以接一点。";
+      } else {
+        desc += "你的水瓶里还有水，暂时不用接。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var choices = [];
+      if (vars.hasBottle && vars.bottleWater == 0) {
+        choices.push({
+          text: "接一瓶水",
+          nextScene: "新达汇-2F卫生间-接水",
+          effect: updateTime(2),
+        });
+      }
+      choices.push({ text: "回到走廊", nextScene: "新达汇-2F北走廊东", effect: updateTime(1) });
+      return choices;
+    }
+  },
+  "新达汇-2F卫生间-接水": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/toilet.png */,
+    onEnter: { set: { bottleWater: 1, waterToxic: true } },
+    text: "你拧开瓶盖，把瓶口凑到水龙头下。水哗哗地灌进瓶里，很快就装满了。\n你拧上瓶盖，把水瓶收好。",
     choices: [
-      {
-        text: "回到走廊",
-        nextScene: "新达汇-2F北走廊东",
-        effect: updateTime(1),
-      },
+      { text: "继续", nextScene: "新达汇-2F卫生间" }
     ]
   },
   "新达汇-2F扶梯组": {
@@ -1505,7 +1529,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续走",
-        nextScene: "新达汇-3F南走廊东",
+        nextScene: "新达汇-3F南走廊中",
         effect: updateTime(1),
       },
     ]
@@ -2212,7 +2236,7 @@ Object.assign(storyData, {
 
   // ==================== 5F 特色餐饮层（日字型走廊） ====================
   "新达汇-5F中庭环廊": {
-    image: "images/5F中庭.png",
+    image: "images/新达汇/5F中庭.png",
     onEnter: function(v) { transit(v, "5F-中庭环廊"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "5F中庭环廊。环形走廊到了最顶层，头顶就是采光穹顶——阳光从玻璃缝隙漏下来，在地板上投出斑驳的光影。从这里能看到整座商场在脚下层层展开。\n" + describeZombieWave(vars); },
