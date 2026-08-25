@@ -203,27 +203,27 @@ Object.assign(storyData, {
       {
         text: "坐货梯上1F",
         nextScene: "新达汇-货梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-1F中庭"; return updateTime(3)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-1F消防通道"; return updateTime(3)(v, ""); },
       },
       {
         text: "坐货梯上2F",
         nextScene: "新达汇-货梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-2F中庭环廊"; return updateTime(3)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-2F消防通道"; return updateTime(3)(v, ""); },
       },
       {
         text: "坐货梯上3F",
         nextScene: "新达汇-货梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-3F中庭环廊"; return updateTime(3)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-3F消防通道"; return updateTime(3)(v, ""); },
       },
       {
         text: "坐货梯上4F",
         nextScene: "新达汇-货梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-4F中庭环廊"; return updateTime(3)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-4F消防通道"; return updateTime(3)(v, ""); },
       },
       {
         text: "坐货梯上5F",
         nextScene: "新达汇-货梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-5F北走廊西"; return updateTime(3)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-5F消防通道"; return updateTime(3)(v, ""); },
       },
       {
         text: "前往B1走廊/美食广场",
@@ -737,7 +737,7 @@ Object.assign(storyData, {
       {
         text: "上5F",
         nextScene: "新达汇-电梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-5F北走廊西"; return updateTime(1)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-5F中庭环廊"; return updateTime(1)(v, ""); },
         showCondition: "!_powerOut",
       },
       {
@@ -1065,7 +1065,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F南走廊西": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/2fSouth.png */,
+    image: "images/新达汇/2F南走廊西.png",
     onEnter: function(v) { transit(v, "2F-南走廊西"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F南走廊西段。前方是通往东区的天桥入口。\n" + describeZombieWave(vars); },
@@ -1088,7 +1088,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F南走廊中": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/2fSouth.png */,
+    image: "images/新达汇/2F南走廊中.png",
     onEnter: function(v) { transit(v, "2F-南走廊中"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F南走廊中段。雅戈尔深色木纹的门面就在走廊旁。\n" + describeZombieWave(vars); },
@@ -1116,18 +1116,11 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F南走廊东": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/2fSouth.png */,
+    image: "images/新达汇/2F南走廊东.png",
     onEnter: function(v) { transit(v, "2F-南走廊东"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F南走廊东端。电梯厅在这里。\n" + describeZombieWave(vars); },
     choices: [
-      {
-        text: "去电梯厅",
-        condition: "chasedByZombies <= 3",
-        elseScene: "结局-电梯厅被围",
-        nextScene: "新达汇-2F电梯厅",
-        effect: updateTime(1),
-      },
       {
         text: "绕到北走廊东侧",
         nextScene: "新达汇-2F北走廊东",
@@ -1283,7 +1276,7 @@ Object.assign(storyData, {
       {
         text: "上5F",
         nextScene: "新达汇-电梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-5F北走廊西"; return updateTime(1)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-5F中庭环廊"; return updateTime(1)(v, ""); },
         showCondition: "!_powerOut",
       },
       {
@@ -1705,7 +1698,7 @@ Object.assign(storyData, {
       {
         text: "上5F",
         nextScene: "新达汇-电梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-5F北走廊西"; return updateTime(1)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-5F中庭环廊"; return updateTime(1)(v, ""); },
         showCondition: "!_powerOut",
       },
       {
@@ -2208,7 +2201,7 @@ Object.assign(storyData, {
       {
         text: "上5F",
         nextScene: "新达汇-电梯途中",
-        effect: function(v) { v._elevatorTarget = "新达汇-5F北走廊西"; return updateTime(1)(v, ""); },
+        effect: function(v) { v._elevatorTarget = "新达汇-5F中庭环廊"; return updateTime(1)(v, ""); },
         showCondition: "!_powerOut",
       },
       {
