@@ -705,7 +705,7 @@ const storyData = {
 
   "start": {
     image: "images/gameStart.jpg",
-    text: "",
+    text: "游玩者请注意，本游戏有轻微闪烁画面，心脏病患者请勿尝试。",
     choices: [
       {
         text: "开始游戏",

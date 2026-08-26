@@ -1966,7 +1966,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-麻辣": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
     onEnter: { add: { strength: -1 }, set: { _triedHotpot: true } },
-    text: "你涮了一片午餐肉——太久没吃辣，胃完全受不了。体力-1。",
+    text: "🌶麻辣锅底——你涮了一片午餐肉——太久没吃辣，胃完全受不了。体力-1。",
     choices: [
       {
         text: "继续",
@@ -1978,7 +1978,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-番茄": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
     onEnter: { add: { strength: 1 }, set: { _triedHotpot: true } },
-    text: "番茄锅底温和多了。吃了一顿饱饭。体力+1。",
+    text: "🍅番茄锅底温和多了。吃了一顿饱饭。体力+1。",
     choices: [
       {
         text: "继续",
@@ -1990,7 +1990,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-菌菇": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
     onEnter: { add: { strength: 2 }, set: { _triedHotpot: true } },
-    text: "菌菇汤底鲜甜暖胃。体力+2。",
+    text: "🍄菌菇汤底鲜甜暖胃。体力+2。",
     choices: [
       {
         text: "继续",
@@ -2000,8 +2000,8 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F大米先生": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/riceRestaurant.png */,
-    text: "门口堆满了等位椅。透过缝隙能看到白绿配色的装潢，暖木色桌椅，透明厨房隔断上贴着“现炒现做”。保温台上的菜盘已经凉透了。",
+    image: "images/新达汇/大米先生门口.jpg",
+    text: "门口堆满了等位椅。白绿配色的装潢，暖木色桌椅，透明厨房隔断上贴着“现炒现做”。保温台上的菜盘已经凉透了。",
     choices: [
       {
         text: "刮点保温台的剩菜吃",
@@ -2019,7 +2019,8 @@ Object.assign(storyData, {
   "新达汇-4F大米先生-吃剩菜": {
     image: "images/placeholder.png" /* TODO: images/新达汇/riceRestaurant.png */,
     onEnter: updateTime(5, { add: { strength: 2 } }),
-    text: "你绕过保温台，掀开菜盘的盖子。红烧肉、番茄炒蛋、炒青菜——都凉透了，油脂凝固成一层白膜，但好在还没有馊味。\n你挑了几样看着还能吃的，就着凉米饭扒了几口。末世里能吃上一口“凉乎的”剩菜，已经算走运了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    text: "你绕过保温台，掀开菜盘的盖子。红烧肉、番茄炒蛋、炒青菜——都凉透了，油脂凝固成一层白膜，但好在还没有馊味。\n\
+你挑了几样看着还能吃的，就着凉米饭扒了几口。末世里能吃上一口“凉乎的”剩菜，已经算走运了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-4F大米先生", effect: updateTime(1) }
     ]
@@ -2403,7 +2404,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F食物恋": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/bbqRestaurant.png */,
+    image: "images/新达汇/食物恋.jpg",
     text: "石物恋·烧肉。电圈烤炉摆在桌上，冷藏柜门开着，里面的肉已经不冰了。地上有脚印。",
     choices: [
       {
@@ -2425,15 +2426,21 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F食物恋-烤肉": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/bbqRestaurant.png */,
+    image: "images/新达汇/炭火烤肉.png" /* TODO: images/新达汇/bbqRestaurant.png */,
     onEnter: updateTime(20, { add: { strength: 3 } }),
-    text: "你拉开椅子坐下，打开电圈烤炉。肉虽然已经不冰了，但还没完全坏——你挑了几片看着新鲜的，铺在烤盘上。\n油脂在电圈上滋滋作响，肉香飘散开来。你夹起一片，蘸了点干料，咬下去——虽然没什么配菜，但这是末世以来你吃过最像样的一顿。\n你警惕地看了一眼门口。香味也许会把什么引来……但管不了那么多了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
+    text: "你拉开椅子坐下，打开电圈烤炉。肉虽然已经不冰了，但还没完全坏——你挑了几片看着新鲜的，铺在烤盘上。\n\
+油脂在电圈上滋滋作响，肉香飘散开来。你夹起一片，没蘸料————虽然你平时也不怎么蘸————咬下去。虽然没有配菜，这是末世以来你吃过最像样的一顿。\n\
+你警惕地看了一眼门口。香味也许会把什么引来……但管不了那么多了。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-5F食物恋", effect: updateTime(1) }
     ]
   },
   "新达汇-5F左庭右院": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant2.png */,
+    image: function(vars) {
+      if(vars._deliveryCode) return "images/新达汇/左庭右院-门口.jpg";
+      return "images/新达汇/左庭右院-门口-无外卖.jpg";
+    },
     text: function(vars){
       if (vars._deliveryCode) return "左庭右院里那份外卖你已经拿走了。";
       if (vars._powerOut) return "左庭右院的灯已经暗了，角落的打包台上放着一份外卖包裹。";
@@ -2460,7 +2467,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F左庭右院-取外卖": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant2.png */,
+    image: "images/新达汇/外卖.jpg",
     onEnter: { set: { _deliveryCode: "473829" } }, // 只读取取餐码线索，不占背包容量
     text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：“北青公路某号某室”。\n你撕开包裹——里面是一份盖浇饭，凉了，但还完整。",
     choices: [
@@ -2477,8 +2484,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F左庭右院-吃外卖": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant2.png */,
-    onEnter: { set: { _deliveryCode: "？？？？？" } }, // 只读取取餐码线索，不占背包容量
+    image: "images/新达汇/牛肉炒饭.jpg",
     text: "外卖真好吃。\
 【系统提示】体力+2，当前体力：{strength}。",
     choices: [

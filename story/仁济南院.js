@@ -38,7 +38,7 @@ Object.assign(storyData, {
         effect: updateTime(6)
       },
       {
-        text: "回高架",
+        text: "去高架",
         condition: "chasedByZombies < 4",
         nextScene: "济阳路跨线桥",
         effect: updateTime(15),
@@ -217,7 +217,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiBackhall.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: "你穿过地下停车场，摸到了医院的后勤通道。这里堆着手推车、氧气瓶和成箱的耗材，空气中弥漫着一股消毒水混合着霉味的气息。\n\
-通道尽头是一扇写着“检验科”的门，门旁有一条更窄的走道，通往住院部方向。",
+通道尽头是一扇写着“检验科”的门，门旁有一条更窄的走道，通往住院部方向。另一头的墙边，立着一扇沉重的铁门，上面贴着褪色的“太平间”标识。",
     choices: [
       {
         text: "看看这扇门",
@@ -227,6 +227,11 @@ Object.assign(storyData, {
       {
         text: "往住院部方向走",
         nextScene: "仁济南院-住院部走廊",
+        effect: updateTime(3)
+      },
+      {
+        text: "去太平间",
+        nextScene: "仁济南院-太平间",
         effect: updateTime(3)
       },
       {
@@ -1119,7 +1124,7 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       {
-        text: "回检验科",
+        text: "去检验科",
         nextScene: "仁济南院-检验科-内部",
         effect: updateTime(3)
       }
@@ -1305,7 +1310,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "回到门诊大厅",
+        text: "去门诊大厅",
         nextScene: "仁济南院-门诊大厅",
         effect: updateTime(1)
       }
@@ -1361,19 +1366,23 @@ Object.assign(storyData, {
   "仁济南院-中医科": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiTCM.png */,
     onEnter: function(vars) { vars.currentPos = "中医科"; return {}; },
-    text: function(vars) {
-      var desc = "四楼的中医科弥漫着一股陈年的草药味。中药柜的抽屉半开着，里面的草药散落一地，有的已经发了霉。\n\
-墙上挂着一幅针灸穴位图，几根银针还插在图上的穴位上。\n";
-      if (!vars._renjiHerbalTaken) {
-        desc += "柜台的角落里有一包没拆封的花茶，包装上印着“清肝明目”。";
-      }
-      return desc;
-    },
+    text: "四楼的中医坐诊区。墙上挂着一幅针灸穴位图，几根银针还插在图上的穴位上。诊桌上摊着几本翻开的病历，笔迹工整，像是坐诊的人走时很从容。\n\
+坐诊区两侧各有一扇门——一侧是针灸推拿室，一侧是中草药房。",
     choices: [
       {
-        showCondition: "!_renjiHerbalTaken",
-        text: "泡一壶花茶喝下（体力+1）",
-        nextScene: "仁济南院-中医科-喝花茶"
+        text: "去针灸推拿室",
+        nextScene: "仁济南院-针灸推拿",
+        effect: updateTime(1)
+      },
+      {
+        text: "去中草药房",
+        nextScene: "仁济南院-中草药房",
+        effect: updateTime(1)
+      },
+      {
+        text: "坐电梯下楼",
+        nextScene: "仁济南院-电梯厅",
+        effect: updateTime(2)
       },
       {
         text: "下楼",
@@ -1383,12 +1392,60 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-中医科-喝花茶": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiTCM.png */,
-    onEnter: { set: { _renjiHerbalTaken: true }, add: { strength: 1 } },
-    text: "你抓了一把花茶放进杯子里，接了点热水泡开。药香混着花香升腾起来，在空荡荡的中医科里显得格外安宁。你捧着杯子慢慢喝了几口，温热的茶水流进胃里，疲惫的身体舒缓了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+  "仁济南院-针灸推拿": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAcupuncture.png */,
+    onEnter: function(vars) { vars.currentPos = "针灸推拿"; return {}; },
+    text: "针灸推拿室里，几张治疗床并排摆着，床头柜上放着没拆封的银针盒和一排艾灸条。\n\
+空气里残留着一股淡淡的艾草焦香，像是有人在这里一直坐到很晚才离开。",
     choices: [
-      { text: "继续", nextScene: "仁济南院-中医科" }
+      {
+        text: "去中草药房",
+        nextScene: "仁济南院-中草药房",
+        effect: updateTime(1)
+      },
+      {
+        text: "去中医科",
+        nextScene: "仁济南院-中医科",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "仁济南院-中草药房": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiHerbalRoom.png */,
+    onEnter: function(vars) { vars.currentPos = "中草药房"; return {}; },
+    text: function(vars) {
+      var desc = "中草药房里，一整面墙的中药柜抽屉半开着，草药散落一地，有的已经发了霉。柜台上摆着一杆戥子和一个铜碾槽。\n";
+      if (!vars._renjiHerbalTaken) {
+        desc += "柜台角落里有一包没拆封的花茶，包装上印着“清肝明目”。";
+      }
+      return desc;
+    },
+    choices: [
+      {
+        showCondition: "!_renjiHerbalTaken",
+        text: "泡一壶花茶喝下（体力+1）",
+        nextScene: "仁济南院-中草药房-喝花茶"
+      },
+      {
+        text: "去中医科",
+        nextScene: "仁济南院-中医科",
+        effect: updateTime(1)
+      },
+      {
+        text: "去针灸推拿室",
+        nextScene: "仁济南院-针灸推拿",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "仁济南院-中草药房-喝花茶": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiHerbalRoom.png */,
+    onEnter: { set: { _renjiHerbalTaken: true }, add: { strength: 1 } },
+    text: "你抓了一把花茶放进杯子里，接了点热水泡开。药香混着花香升腾起来，在空荡荡的中草药房里显得格外安宁。你捧着杯子慢慢喝了几口，温热的茶水流进胃里，疲惫的身体舒缓了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-中草药房" }
     ]
   },
 
