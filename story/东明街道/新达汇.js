@@ -1911,7 +1911,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F大渝火锅": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
+    image: "images/新达汇/4F大渝火锅.jpg",
     text: function(vars) {
       if (vars._triedHotpot && !vars.hasCatSnack) return "大渝火锅的食材已经被你搜刮干净了。门口的零食台上倒还有几包小零食——但你已经拿过一包了。";
       if (vars._triedHotpot && vars.hasCatSnack) return "大渝火锅的食材已经被你搜刮干净了。";
