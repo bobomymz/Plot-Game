@@ -24,12 +24,12 @@ Object.assign(storyData, {
     choices: [
       {
         text: "从急诊正门进",
-        nextScene: "仁济南院-大门",
+        nextScene: "仁济南院-急诊大门",
         effect: updateTime(5)
       },
       {
         text: "绕到侧面看看",
-        nextScene: "仁济南院-救护车通道",
+        nextScene: "仁济南院-门诊大厅",
         effect: updateTime(8)
       },
       {
@@ -47,7 +47,7 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-大门": {
+  "仁济南院-急诊大门": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
@@ -83,20 +83,20 @@ Object.assign(storyData, {
 
   "仁济南院-大门-绷带": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-大门" } },
+    onEnter: { set: { positionAfterOperation: "仁济南院-急诊大门" } },
     text: "你蹲下来，翻看那具瘫倒在门口的遗体。是个年轻的护士，白大褂下摆沾满干涸的血。她的口袋里鼓鼓的——你摸出几卷还没拆封的绷带。\n\
 你轻声说了句抱歉，把绷带收好。",
     choices: [
       {
         text: "拿走绷带",
         condition: "itemCount < bagVolume",
-        nextScene: "仁济南院-大门",
+        nextScene: "仁济南院-急诊大门",
         effect: { set: { hasBandage: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
         text: "算了，不拿",
-        nextScene: "仁济南院-大门"
+        nextScene: "仁济南院-急诊大门"
       }
     ]
   },
@@ -144,10 +144,31 @@ Object.assign(storyData, {
     ]
   },
 
+  "仁济南院-门诊大门": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
+    onEnter: function(vars) { vars.showZombies = true; },
+    text: "你来到了门诊大门门口。这里遍地尸体，苍蝇在低空盘旋，但没看到有丧尸。\n\
+安静，太安静了。",
+    choices: [
+      {
+        text: "进去",
+        nextScene: "仁济南院-门诊大厅"
+      },
+      {
+        text: "往左走",
+        nextScene: "仁济南院-救护车通道"
+      },
+      {
+        text: "往右走",
+        nextScene: "仁济南院-急诊大门"
+      }
+    ]
+  },
+
   "仁济南院-救护车通道": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
     onEnter: function(vars) { vars.showZombies = true; },
-    text: "你绕到医院侧面。救护车通道的铁门半掩着，一辆救护车堵在门口，车门大开，车内的担架翻落在地。通道深处的应急灯一闪一闪，投下忽明忽暗的影子。\n\
+    text: "你来到了救护车通道门口。铁门半掩着，一辆救护车堵在门口，车门大开，车内的担架翻落在地。通道深处的应急灯一闪一闪，投下忽明忽暗的影子。\n\
 这里比正门安静一些，但前方仍有两三只丧尸在游荡。",
     choices: [
       {
@@ -222,7 +243,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiBackdoor.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
-      var desc = "检验科的后门虚掩着。门外的通道上，一个穿着检验科白大褂的人倒在墙边——已经没了呼吸。她的工牌挂在胸前，上面的照片和名字在昏暗的光线下模糊可辨。\n";
+      var desc = "检验科的后门关得严严实实——你推了推，纹丝不动，门是从里面反锁的。门上有一小块灰蒙蒙的玻璃观察窗。\n门外的通道上，一个穿着检验科白大褂的人倒在墙边——已经没了呼吸。她的工牌挂在胸前，上面的照片和名字在昏暗的光线下模糊可辨。\n";
       if (vars._fangyuFound) {
         desc += "你已经查看过她的工牌了。";
       } else {
@@ -238,9 +259,31 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
+        showCondition: "!_renjiPeeked",
+        text: "凑到玻璃窗前往里看",
+        nextScene: "仁济南院-检验科后门-窥视",
+        effect: updateTime(1)
+      },
+      {
         text: "去后勤通道",
         nextScene: "仁济南院-后勤通道",
         effect: updateTime(2)
+      }
+    ]
+  },
+
+  "仁济南院-检验科后门-窥视": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
+    onEnter: { set: { _renjiPeeked: true, positionAfterOperation: "仁济南院-检验科后门" } },
+    text: "你垫起脚，把脸凑到那块灰蒙蒙的玻璃窗前，屏住呼吸往里看。\n\
+检验科的应急灯还亮着，把操作台上的东西照得清清楚楚——离心机、试剂架、散落的培养皿。\n\
+操作台的一角，隐约放着一部手机和一本牛皮纸封面的笔记本。\n\
+这里显然有人工作过，而且走得很平静——连灯都没关。",
+    choices: [
+      {
+        text: "离开",
+        nextScene: "仁济南院-检验科后门",
+        effect: updateTime(1)
       }
     ]
   },
@@ -317,7 +360,7 @@ Object.assign(storyData, {
       },
       {
         text: "从正门离开",
-        nextScene: "仁济南院-大门",
+        nextScene: "仁济南院-急诊大门",
         effect: updateTime(3)
       }
     ]
@@ -1247,7 +1290,7 @@ Object.assign(storyData, {
   "仁济南院-输液大厅": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiInfusion.png */,
     onEnter: function(vars) { vars.currentPos = "输液大厅"; return {}; },
-    text: "二楼的输液大厅里，成排的输液椅还保持着原样，吊瓶架倒了一地，药液早已干涸。\n\
+    text: "二楼的输液大厅里，成排的输液椅还保持着原样，吊瓶架倒了一地，药液已经干涸。\n\
 地上散落着几样小东西——一个塑料小汽车、一只掉了鞋带的小鞋。\n\
 天花板的吊扇还在慢慢转，发出有节奏的吱呀声，像是什么东西在一下一下地敲着。",
     choices: [
@@ -1301,9 +1344,9 @@ Object.assign(storyData, {
   "仁济南院-急诊观察室": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiObservation.png */,
     onEnter: function(vars) { vars.currentPos = "急诊观察室"; return {}; },
-    text: "急诊大厅楼上是一间观察室。几张观察床上的被子凌乱，输液架上还挂着半空的药瓶。\n\
+    text: "2楼是一间观察室。几张观察床上的被子凌乱，输液架上还挂着半空的药瓶。\n\
 一台监护仪的屏幕裂了，但电源灯还在一闪一闪。\n\
-床头柜上放着半瓶没喝完的水，瓶身上蒙着一层薄灰。",
+床头柜上放着半瓶没喝完的水——应该是有人慌乱中留下的。",
     choices: [
       {
         text: "下楼",

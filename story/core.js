@@ -152,6 +152,7 @@ const storyData = {
     _renjiNoise: false,         // 是否破门制造过噪音（影响后续风险）
     _renjiHerbalTaken: false,   // 中医科草药是否已拿（一次性+1体力）
     _renjiGlucoseTaken: false,  // 护士站葡萄糖是否已喝（一次性+1体力）
+    _renjiPeeked: false,        // 是否透过检验科后门玻璃窗窥视过
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
     gameMemorySet: new Set(),         // 目前已获得的游戏记忆集合

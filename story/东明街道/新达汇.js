@@ -145,7 +145,7 @@ Object.assign(storyData, {
   },
   "新达汇-B1美食广场": {
     image: "images/placeholder.png" /* TODO: images/新达汇/b1FoodCourt.png */,
-    text: function(vars) { return "B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。地面上散落着打翻的餐盘和发霉的剩菜，苍蝇在上面嗡嗡地盘旋。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着“后勤通道 · 非工作人员勿入”的标签。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。地面上散落着打翻的餐盘和已经馊掉的剩菜，苍蝇在上面嗡嗡地盘旋。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着“后勤通道 · 非工作人员勿入”的标签。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "推开防火门进入后勤通道",
@@ -539,7 +539,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "1F-南走廊中"); return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) {
-      var desc = "1F南走廊中段。这里有一片开放式休息区——几把椅子和枯死的绿植，落满了灰。";
+      var desc = "1F南走廊中段。这里有一片开放式休息区——几把椅子歪斜地摆着，几盆绿植已经蔫了，叶片无精打采地垂着。";
       if (!vars._1f_wireFixed && !vars._powerOut) {
         desc += "\n<span style='color: #ffaa00;'>前方地上有一根断裂的电线搭在积水里，噼啪地冒着火花——挡住了路。</span>";
       } else if (!vars._1f_wireFixed && vars._powerOut) {

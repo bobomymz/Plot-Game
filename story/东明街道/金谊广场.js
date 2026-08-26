@@ -481,7 +481,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/地铁站厅.jpg */,
     onEnter: initMemoryGame(["红","蓝","绿"], 8),
     text: function(vars) {
-      var desc = "你从废墟的缝隙钻进了三林路地铁站的站厅。天花板塌了一半，裸露的钢筋像断裂的肋骨一样垂下来。\n";
+      var desc = "你从坍塌的吊顶缝隙钻进了三林路地铁站的站厅。大片吊顶塌了下来，裸露的线缆和通风管道垂在半空。\n";
       desc += "应急灯还在闪烁，把站厅照得一明一暗。\n";
       desc += "站厅里的丧尸比外面少——大部分都挤在靠近排水沟的一侧，朝着潮湿的方向缓慢挪动。但剩下的几只，足够要你的命。\n";
       desc += "你看到前方不远处就是通往B1商业街的通道——只要能冲过去。\n";
