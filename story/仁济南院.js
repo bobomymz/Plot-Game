@@ -901,9 +901,9 @@ Object.assign(storyData, {
       },
       {
         showCondition: "dd < 8",
-        text: "去特需病房（上十一楼）",
-        nextScene: "仁济南院-特需病房",
-        effect: updateTime(3)
+        text: "上楼",
+        nextScene: "仁济南院-楼梯-住院楼",
+        effect: updateTime(1)
       },
       {
         text: "离开",
@@ -1080,7 +1080,8 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "太平间"; return {}; },
     text: function(vars) {
       var desc = "太平间在地下，一进来就是一股浓重的、甜腻中带着腐臭的气息——比医院别处都更让人作呕。\n\
-冷藏柜的门大多敞着，几具尸体被拖出来横在地上。角落的阴影里，有什么东西在缓慢地挪动。\n";
+冷藏柜的门大多敞着，几具尸体被拖出来横在地上。角落的阴影里，有什么东西在缓慢地挪动。\n\
+太平间的另一头有一扇门，通向医院的后勤区。\n";
       if (vars._morgueCleared) {
         desc += "你上次来的时候，已经处理掉了这里的东西。";
       } else if (vars._morgueVentOn) {
@@ -1113,7 +1114,12 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "离开太平间",
+        text: "去后勤通道",
+        nextScene: "仁济南院-后勤通道",
+        effect: updateTime(3)
+      },
+      {
+        text: "回检验科",
         nextScene: "仁济南院-检验科-内部",
         effect: updateTime(3)
       }
@@ -1260,6 +1266,11 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
+        text: "去电梯厅",
+        nextScene: "仁济南院-电梯厅",
+        effect: updateTime(1)
+      },
+      {
         text: "上楼",
         nextScene: "仁济南院-楼梯-门诊楼低",
         effect: updateTime(1)
@@ -1268,6 +1279,35 @@ Object.assign(storyData, {
         text: "去急诊大厅",
         nextScene: "仁济南院-急诊大厅",
         effect: updateTime(2)
+      },
+      {
+        text: "从门口离开",
+        nextScene: "仁济南院-门诊大门",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "仁济南院-电梯厅": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiElevator.png */,
+    onEnter: function(vars) { vars.currentPos = "电梯厅"; return {}; },
+    text: "门诊楼的电梯厅里，两部电梯的门都开着，轿厢停在1楼。按钮面板上，几层楼的灯还亮着，只有5楼以上全灭了。\n\
+    你正要进去，头顶的应急灯闪了闪——这电梯也不知道还靠不靠得住。",
+    choices: [
+      {
+        text: "坐电梯去2楼（输液大厅）",
+        nextScene: "仁济南院-输液大厅",
+        effect: updateTime(1)
+      },
+      {
+        text: "坐电梯去4楼（中医科）",
+        nextScene: "仁济南院-中医科",
+        effect: updateTime(2)
+      },
+      {
+        text: "回到门诊大厅",
+        nextScene: "仁济南院-门诊大厅",
+        effect: updateTime(1)
       }
     ]
   },
@@ -1292,8 +1332,19 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "输液大厅"; return {}; },
     text: "二楼的输液大厅里，成排的输液椅还保持着原样，吊瓶架倒了一地，药液已经干涸。\n\
 地上散落着几样小东西——一个塑料小汽车、一只掉了鞋带的小鞋。\n\
-天花板的吊扇还在慢慢转，发出有节奏的吱呀声，像是什么东西在一下一下地敲着。",
+天花板的吊扇还在慢慢转，发出有节奏的吱呀声，像是什么东西在一下一下地敲着。\n\
+大厅一侧的连廊通向急诊医技楼。",
     choices: [
+      {
+        text: "穿过连廊去急诊楼",
+        nextScene: "仁济南院-急诊观察室",
+        effect: updateTime(2)
+      },
+      {
+        text: "坐电梯下楼",
+        nextScene: "仁济南院-电梯厅",
+        effect: updateTime(1)
+      },
       {
         text: "上楼",
         nextScene: "仁济南院-楼梯-门诊楼高",
@@ -1346,8 +1397,14 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "急诊观察室"; return {}; },
     text: "2楼是一间观察室。几张观察床上的被子凌乱，输液架上还挂着半空的药瓶。\n\
 一台监护仪的屏幕裂了，但电源灯还在一闪一闪。\n\
-床头柜上放着半瓶没喝完的水——应该是有人慌乱中留下的。",
+床头柜上放着半瓶没喝完的水——应该是有人慌乱中留下的。\n\
+观察室尽头有一条连廊，通向门诊楼的方向。",
     choices: [
+      {
+        text: "穿过连廊去门诊楼",
+        nextScene: "仁济南院-输液大厅",
+        effect: updateTime(2)
+      },
       {
         text: "下楼",
         nextScene: "仁济南院-楼梯-急诊楼",
@@ -1390,19 +1447,59 @@ Object.assign(storyData, {
     ]
   },
 
+  "仁济南院-楼梯-住院楼": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
+    onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
+    text: "你来到住院大楼的楼梯间。楼梯比门诊楼的窄，扶手上包着防滑胶垫，墙根有几道干涸的血迹。\n\
+往上走了几层，楼层指示灯早已熄灭，你只能靠数台阶来记层数。越往上，走廊越安静——上面是特需病区。",
+    choices: [
+      {
+        text: "上楼",
+        nextScene: "仁济南院-特需病房",
+        effect: updateTime(2)
+      },
+      {
+        text: "下楼",
+        nextScene: "仁济南院-住院部走廊",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
   "仁济南院-特需病房": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
     onEnter: function(vars) { vars.currentPos = "特需病房"; return {}; },
-    text: "你上了十一楼。这里是特需病房，走廊比普通病区宽敞，墙面上是暖色调的护墙板。\n\
+    text: function(vars) {
+      var desc = "这里是特需病房，走廊比普通病区宽敞，墙面上是暖色调的护墙板。\n\
 你推开一间没上锁的病房——独立卫浴，窗明几净，床头柜上放着一个相框，照片里一家三口笑得正开心。\n\
 窗外的城市灰蒙蒙一片，远处高架的轮廓在暮色里若隐若现。\n\
-床头的抽屉里有一封没写完的信，只写了个开头：“亲爱的，如果你们能收到这封信……”",
+床头的抽屉里有一封没写完的信，只写了个开头：“亲爱的，如果你们能收到这封信……”\n";
+      if (!vars._renjiDrinkTaken) {
+        desc += "床头柜的小冰箱里，还放着一瓶没开封的功能饮料——特需病房的待遇，连这种时候都透着讲究。";
+      }
+      return desc;
+    },
     choices: [
       {
-        text: "去住院部走廊",
-        nextScene: "仁济南院-住院部走廊",
-        effect: updateTime(3)
+        showCondition: "!_renjiDrinkTaken",
+        text: "喝掉那瓶功能饮料（体力+1）",
+        nextScene: "仁济南院-特需病房-功能饮料"
+      },
+      {
+        text: "下楼",
+        nextScene: "仁济南院-楼梯-住院楼",
+        effect: updateTime(2)
       }
+    ]
+  },
+
+  "仁济南院-特需病房-功能饮料": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    onEnter: { set: { _renjiDrinkTaken: true }, add: { strength: 1 } },
+    text: "你拧开那瓶功能饮料，喝了几口——冰凉的、带着人工甜味的液体顺着喉咙滑下去，是你这几天喝到的最像样的东西。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-特需病房" }
     ]
   },
 
