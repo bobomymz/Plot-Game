@@ -3,7 +3,7 @@
 
 
 Object.assign(storyData, {
-  "杨高南路高架": {
+  "杨高南路立交桥": {
     image: "images/placeholder.png" /* TODO: images/highway/highwayJam.png */,
     onEnter: function(vars) { 
       vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; 
@@ -85,13 +85,13 @@ Object.assign(storyData, {
         elseScene: "结局-累死我了"
       },
       {
-        text: "继续前进",
+        text: "上徐浦大桥",
         nextScene: "上海交通大学",
         effect: updateTime(10)
       },
       {
-        text: "返回杨高南路高架",
-        nextScene: "杨高南路高架",
+        text: "前往杨高南路立交桥",
+        nextScene: "杨高南路立交桥",
         effect: updateTime(10)
       }
     ]
