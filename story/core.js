@@ -157,6 +157,10 @@ const storyData = {
     // 建平中学 - 状态
     _frontGateCleared: false,   // 前门丧尸是否已清（记忆闪色，成功后一次性进出）
     _backGateOpened: false,     // 后门是否已开（开门引走丧尸，忻老师后门逃脱的铺垫）
+    _harshActive: false,        // Harsh（年级组长丧尸）是否被唤醒（坐电梯触发；追逐逻辑后续实现）
+    _yuanxiangWestStairCleared: false,  // 远翔楼西楼梯强丧尸是否已清
+    _zhizhenEastStairCleared: false,    // 致真楼东楼梯强丧尸是否已清
+    _yifen1FCleared: false,     // 挹芬楼1F丧尸是否已清（强制记忆闪色）
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
     gameMemorySet: new Set(),         // 目前已获得的游戏记忆集合
