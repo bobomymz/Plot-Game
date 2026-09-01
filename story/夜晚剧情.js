@@ -228,9 +228,9 @@ Object.assign(storyData, {
       vars.chasedByZombies = Math.min(5, vars.chasedByZombies + 1);
       return {};
     },
-    text: "你推开理发店的门，走进夜色中。\n周师傅在你身后喊了什么，但你已经听不进去了。街道比你能想象到的更加黑暗、更加危险。你跑了很久很久——不知道方向，不知道目的地，只知道身后一直有脚步声。\n当你终于停下来喘气时，东方的天空已经泛白。你发现自己站在——杨高南路高架的入口。\n你的衣服被扯破了，手臂上有一道深深的抓痕。你不记得是什么时候受的伤。",
+    text: "你推开理发店的门，走进夜色中。\n周师傅在你身后喊了什么，但你已经听不进去了。街道比你能想象到的更加黑暗、更加危险。你跑了很久很久——不知道方向，不知道目的地，只知道身后一直有脚步声。\n当你终于停下来喘气时，东方的天空已经泛白。你发现自己站在——杨高南路立交桥上。\n你的衣服被扯破了，手臂上有一道深深的抓痕。你不记得是什么时候受的伤。",
     choices: [
-      { text: "继续", nextScene: "杨高南路高架" }
+      { text: "继续", nextScene: "杨高南路立交桥" }
     ]
   },
 
@@ -321,7 +321,7 @@ Object.assign(storyData, {
     },
     text: "你锁好车门，把座椅放倒到一个勉强能躺的角度。高架上的风很大，车身在风中微微摇晃。\n远处有丧尸在游荡——但它们对一辆静止的车没有兴趣。\n你在狭窄的空间里辗转反侧，怎么也找不到舒服的姿势。但疲惫最终还是战胜了不适，你迷迷糊糊地睡着了。\n第二天醒来，你浑身僵硬，脖子酸痛。车窗外依然是无尽的高架和废弃的车辆。",
     choices: [
-      { text: "继续", nextScene: "杨高南路高架" }
+      { text: "继续", nextScene: "杨高南路立交桥" }
     ]
   },
 
@@ -344,7 +344,7 @@ Object.assign(storyData, {
       {
         text: "继续前进",
         nextScene: function(vars) {
-          if (vars.currentArea === "高架") return "杨高南路高架";
+          if (vars.currentArea === "高架") return "杨高南路立交桥";
           if (vars.currentArea === "周边社区") return "三林路";
           return "小区道路";
         }
@@ -547,7 +547,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续前进",
-        nextScene: function(vars) { return vars.hasCar ? "杨高南路高架" : "三林路"; }
+        nextScene: function(vars) { return vars.hasCar ? "杨高南路立交桥" : "三林路"; }
       }
     ]
   },

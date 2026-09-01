@@ -187,7 +187,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "往东走",
-        nextScene: "杨高南路高架",
+        nextScene: "杨高南路立交桥",
         effect: updateTime(20)
       },
       {

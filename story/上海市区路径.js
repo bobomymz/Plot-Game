@@ -33,6 +33,11 @@ Object.assign(storyData, {
         elseScene: "结局-累死我了"
       },
       {
+        text: "沿外环往东走",
+        nextScene: "外环罗山路立交桥",
+        effect: updateTime(30)
+      },
+      {
         text: "下高架",
         nextScene: "三林路-环林东路 十字路口"
       }
@@ -94,6 +99,42 @@ Object.assign(storyData, {
         nextScene: "杨高南路立交桥",
         effect: updateTime(10)
       }
+    ]
+  },
+
+  // ==================== 外环高架·北线（建平方向） ====================
+
+  "外环罗山路立交桥": {
+    image: "images/placeholder.png" /* TODO: images/highway/waijianLuoshan.png */,
+    onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
+    text: "你沿着外环高架一路向东。越往前，堵车带越稀疏，偶尔才有几辆撞毁的私家车横在路中央，有的引擎盖还在冒烟。\n\
+风从高处灌下来，吹得衣摆猎猎作响。高架桥下是成片灰扑扑的屋顶，再远一点，几栋高楼像墓碑一样立在天际线下。\n\
+这里难得空旷，你反而更不安了——太安静了。",
+    choices: [
+      { text: "继续沿外环往东", nextScene: "张江立交桥", effect: updateTime(20) },
+      { text: "往回走", nextScene: "杨高南路立交桥", effect: updateTime(30) }
+    ]
+  },
+
+  "张江立交桥": {
+    image: "images/placeholder.png" /* TODO: images/highway/zhangjiang.png */,
+    onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
+    text: "外环在这里与通往张江方向的匝道交汇。匝道下方灰蒙蒙的一片，是张江高科园区那些低矮的玻璃幕墙写字楼——曾经彻夜灯火通明，如今只剩几块残破的招牌在风里晃荡。\n\
+匝道口堵着几辆撞成一团的货车，货厢门敞开着，货物散了一地，早被人翻得乱七八糟。有几只丧尸蹲在车缝里，听到你的脚步声，慢慢抬起了头。",
+    choices: [
+      { text: "继续往东", nextScene: "罗山路立交桥下", effect: updateTime(20) },
+      { text: "往回走", nextScene: "外环罗山路立交桥", effect: updateTime(20) }
+    ]
+  },
+
+  "罗山路立交桥下": {
+    image: "images/placeholder.png" /* TODO: images/highway/luoshanExit.png */,
+    onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
+    text: "高架在这里缓缓下降，一个下高架的匝道口出现在右侧。匝道口没有堵死——只横着一辆侧翻的出租车，车头瘪进去一块，驾驶室的门大敞着，像是有人仓皇弃车而逃。\n\
+你贴着护栏往下望：这一片是宽阔的马路、成片的居民区，还有几所学校的操场。安静得让人心里发毛。",
+    choices: [
+      { text: "下高架", nextScene: "建平-校园门口", effect: updateTime(10) },
+      { text: "继续留在高架上", nextScene: "张江立交桥", effect: updateTime(20) }
     ]
   }
 

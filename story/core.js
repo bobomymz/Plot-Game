@@ -50,6 +50,8 @@ const storyData = {
     _deliveryCode: "",         // 外卖取餐码（拿到外卖时记录）
     _droneBattery: 30,         // 无人机剩余电量(分钟)，断电后消耗
     _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
+    _marketHallCleared: false, // 菜市场大厅的丧尸是否已清理
+    _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
 
     // --- 操作状态 ---
     visitExitTimes: 0,         // 访问小区出口次数，达到2自动放行
@@ -109,8 +111,6 @@ const storyData = {
     _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启
     fangTradeCount: 0,         // 方姐交易次数（上限3，满3次后她尸变，再进冷库深处即死）
     hasFrozenMeat: false,      // 是否有冻肉（菜市场方姐换的，体力回满，占1格）
-    _marketHallCleared: false, // 菜市场大厅的丧尸是否已清理
-    _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
