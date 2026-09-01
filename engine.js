@@ -583,17 +583,17 @@ function renderChoices(scene, sceneId) {
         background: rgba(0, 0, 0, 0.75);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 200, 50, 0.45);
+        border: 1px solid rgba(168, 212, 105, 0.35);
         border-radius: 10px;
         box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
       `;
       timerDiv.innerHTML = `
         <div style="display:flex;align-items:center;gap:10px;">
-          <span style="color:#ffcc00;font-weight:bold;white-space:nowrap;font-size:15px;">⚡ 快做决定！</span>
+          <span style="color:#cfc7b6;font-weight:bold;white-space:nowrap;font-size:15px;">⚡ 快做决定！</span>
           <div style="flex:1;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;min-width:60px;">
-            <div id="qte-progress" style="height:100%;width:100%;background:#ff4444;border-radius:5px;"></div>
+            <div id="qte-progress" style="height:100%;width:100%;background:#9e2a22;border-radius:5px;"></div>
           </div>
-          <span id="qte-countdown" style="color:#ffcc00;font-weight:bold;font-size:16px;min-width:42px;text-align:right;">${(timeout/1000).toFixed(1)}s</span>
+          <span id="qte-countdown" style="color:#cfc7b6;font-weight:bold;font-size:16px;min-width:42px;text-align:right;">${(timeout/1000).toFixed(1)}s</span>
         </div>
       `;
       document.body.appendChild(timerDiv);
@@ -612,8 +612,8 @@ function renderChoices(scene, sceneId) {
         countdownSpan.textContent = (remaining / 1000).toFixed(1) + "s";
 
         if (remaining < 1000) {
-          progressBar.style.background = "#ff0000";
-          countdownSpan.style.color = "#ff0000";
+          progressBar.style.background = "#7d1f1a";
+          countdownSpan.style.color = "#7d1f1a";
         }
       }, 100);
     }
@@ -837,17 +837,17 @@ function renderChoices(scene, sceneId) {
         background: rgba(0, 0, 0, 0.75);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 200, 50, 0.45);
+        border: 1px solid rgba(168, 212, 105, 0.35);
         border-radius: 10px;
         box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
       `;
       timerDiv.innerHTML = `
         <div style="display:flex;align-items:center;gap:10px;">
-          <span style="color:#ffcc00;font-weight:bold;white-space:nowrap;font-size:15px;">⚡ 快做决定！</span>
+          <span style="color:#cfc7b6;font-weight:bold;white-space:nowrap;font-size:15px;">⚡ 快做决定！</span>
           <div style="flex:1;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;min-width:60px;">
-            <div id="qte-progress" style="height:100%;width:100%;background:#ff4444;border-radius:5px;"></div>
+            <div id="qte-progress" style="height:100%;width:100%;background:#9e2a22;border-radius:5px;"></div>
           </div>
-          <span id="qte-countdown" style="color:#ffcc00;font-weight:bold;font-size:16px;min-width:42px;text-align:right;">${(timedTimeout/1000).toFixed(1)}s</span>
+          <span id="qte-countdown" style="color:#cfc7b6;font-weight:bold;font-size:16px;min-width:42px;text-align:right;">${(timedTimeout/1000).toFixed(1)}s</span>
         </div>
       `;
       document.body.appendChild(timerDiv);
@@ -864,8 +864,8 @@ function renderChoices(scene, sceneId) {
         progressBar.style.width = percent + "%";
         countdownSpan.textContent = (remaining / 1000).toFixed(1) + "s";
         if (remaining < 1000) {
-          progressBar.style.background = "#ff0000";
-          countdownSpan.style.color = "#ff0000";
+          progressBar.style.background = "#7d1f1a";
+          countdownSpan.style.color = "#7d1f1a";
         }
       }, 100);
 
