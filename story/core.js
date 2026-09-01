@@ -154,6 +154,9 @@ const storyData = {
     _renjiGlucoseTaken: false,  // 护士站葡萄糖是否已喝（一次性+1体力）
     _renjiPeeked: false,        // 是否透过检验科后门玻璃窗窥视过
     _renjiDrinkTaken: false,    // 特需病房功能饮料是否已喝（一次性+1体力）
+    // 建平中学 - 状态
+    _frontGateCleared: false,   // 前门丧尸是否已清（记忆闪色，成功后一次性进出）
+    _backGateOpened: false,     // 后门是否已开（开门引走丧尸，忻老师后门逃脱的铺垫）
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
     gameMemorySet: new Set(),         // 目前已获得的游戏记忆集合

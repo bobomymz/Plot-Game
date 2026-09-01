@@ -134,7 +134,7 @@ Object.assign(storyData, {
 你贴着护栏往下望：这一片是宽阔的马路、成片的居民区，还有几所学校的操场。安静得让人心里发毛。",
     choices: [
       { text: "下高架", nextScene: "建平-校园门口", effect: updateTime(10) },
-      { text: "继续留在高架上", nextScene: "张江立交桥", effect: updateTime(20) }
+      { text: "上高架", nextScene: "张江立交桥", effect: updateTime(20) }
     ]
   }
 
