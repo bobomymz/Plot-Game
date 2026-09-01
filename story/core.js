@@ -161,6 +161,20 @@ const storyData = {
     _yuanxiangWestStairCleared: false,  // 远翔楼西楼梯强丧尸是否已清
     _zhizhenEastStairCleared: false,    // 致真楼东楼梯强丧尸是否已清
     _yifen1FCleared: false,     // 挹芬楼1F丧尸是否已清（强制记忆闪色）
+    _teacherLeft: false,        // 忻老师是否已开车离开（跟去复旦后为 true）
+    hasMultimeter: false,       // 万用表（老吴杂物室，修14班电脑用）
+    _dormCleared: false,        // 建平宿舍丧尸是否已清理（记忆闪色，安全过夜前置）
+    _liuCorpse: false,          // 刘冠宇是否已死（锁存：在食堂观察到尸体后永久保持，关煤气阀不复活）
+    hasPipelineMap: false,      // 管线图（老吴杂物室，"水有毒"真相线索）
+    hasKeyRing: false,          // 钥匙串（老吴身上，开工具间/教室/水表井）
+    _laowuKilled: false,        // 老吴尸变后是否被击杀
+    _pengComputerFixed: false,  // 14班电脑是否修好（供电）
+    _pengGalCleared: false,     // 是否帮彭奕宸打完galgame
+    _pengNoodleShared: false,   // 14班方便面是否已分享（饭点一次性）
+    hasCanteenFood: false,      // 食堂干粮（占背包，一次性，吃+体力）
+    gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
+    _gasValveClosed: false,     // 食堂煤气阀是否关闭
+    _chefCleared: false,        // 厨师丧尸是否清除
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
     gameMemorySet: new Set(),         // 目前已获得的游戏记忆集合
@@ -304,6 +318,7 @@ const storyData = {
   // -------- 全局触发器 --------
   _globalTriggers: [
     { condition: "strength <= 0.01", targetScene: "结局-体力耗尽", priority: 10 },
+    { condition: "gasIndex >= 100", targetScene: "结局-煤气中毒", priority: 5 },
     { condition: "mercuryLoad >= 70", targetScene: "结局-汞中毒尸变", priority: 9 },
     { condition: "chasedByZombies >= 5", targetScene: "结局-尸潮撕碎了你", priority: 8 },
     { condition: "_backhallDead", targetScene: "结局-后勤通道被堵", priority: 7 },

@@ -97,6 +97,11 @@ function jpRoom(label, backScene) {
   };
 }
 
+// 饭点判断：午餐 11-13、晚餐 17-19（彭奕宸/蔡镜晓的移动时间）
+function jpIsMealTime(vars) {
+  return (vars.hh >= 11 && vars.hh <= 13) || (vars.hh >= 17 && vars.hh <= 19);
+}
+
 Object.assign(storyData, {
 
   // ==================== 校园门口（到达中转节点） ====================
@@ -185,12 +190,10 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (vars._backGateOpened) {
-        cs.push({ text: "从后门进去（食堂方向）", nextScene: "建平-食堂", effect: updateTime(2) });
-      } else {
+      if (!vars._backGateOpened) {
         cs.push({ text: "打开后门", nextScene: "建平-后门-开门", effect: updateTime(1) });
       }
-      cs.push({ text: "沿辅路去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) });
+      cs.push({ text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) });
       cs.push({ text: "退回校园门口", nextScene: "建平-校园门口", effect: updateTime(10) });
       return cs;
     }
@@ -220,7 +223,7 @@ Object.assign(storyData, {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
         condition: checkFlashAnswer,
-        nextScene: "建平-食堂",
+        nextScene: "建平-后门辅路",
         elseScene: "结局-后门失守"
       }
     ]
@@ -231,11 +234,52 @@ Object.assign(storyData, {
     text: "你在丧尸群里乱了阵脚——它们扑上来，把你撕成了碎片。\n—— 结局：后门失守 ——"
   },
 
+  "建平-后门辅路": {
+    image: "images/placeholder.png" /* TODO: images/jianping/backAuxRoad.png */,
+    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "后门辅路"; },
+    text: function(vars) {
+      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft) {
+        return "你沿着后门辅路走。\n一辆轿车亮着车灯停在不远处——是忻老师。他摇下车窗，朝你招了招手。\n\"上车，我带你一程。\"";
+      }
+      return "后门辅路。一条通往食堂的窄路，路旁的围墙根长满了杂草。" + describeZombieWave(vars);
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft) {
+        cs.push({ text: "跟忻老师上车（去复旦）", nextScene: "建平-前往复旦", effect: function(v) { v._teacherLeft = true; v.hasCar = false; v.hasEbike = false; v.hasRustyBike = false; v.hasScooter = false; return {}; } });
+        cs.push({ text: "算了，我还有事", nextScene: "建平-食堂", effect: updateTime(2) });
+      }
+      cs.push({ text: "去后门", nextScene: "建平-后门", effect: updateTime(2) });
+      cs.push({ text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) });
+      cs.push({ text: "沿辅路去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) });
+      return cs;
+    }
+  },
+
+  "建平-前往复旦": {
+    image: "images/placeholder.png" /* TODO: images/jianping/leavingCar.png */,
+    onEnter: function(vars) { vars.currentArea = "复旦"; vars.currentPlace = "复旦"; vars.currentPos = "车上"; },
+    text: "你钻进副驾驶座，忻老师发动了车。\n车轮碾过满地的碎玻璃，缓缓驶离了后门。后视镜里，建平中学的轮廓越来越远，越来越小。\n忻老师把着方向盘，目不转睛地盯着前方的路。",
+    choices: [
+      { text: "继续", nextScene: "复旦江湾-305", effect: updateTime(30) }
+    ]
+  },
+
+  "复旦江湾-305": {
+    image: "images/placeholder.png",
+    text: "忻老师把车停在了一栋实验楼前。\n\"到了，复旦江湾，305 实验室。我那个熟人——王知筠，就在这儿做研究。\"\n\n（复旦江湾 · 王知筠实验室剧情尚未实装）"
+  },
+
   // ==================== 户外 ====================
 
   "建平-金苹果广场": {
     image: "images/placeholder.png" /* TODO: images/jianping/goldenApplePlaza.png */,
-    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "金苹果广场"; return { add: { chasedByZombies: 1 } }; },
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPos = "金苹果广场";
+      if (!vars._frontGateCleared) return { add: { chasedByZombies: 1 } };   // 前门清空后广场不再反复加追兵
+      return {};
+    },
     text: function(vars) { return "金苹果广场。" + describeZombieWave(vars); },
     choices: [
       { text: "去前门", nextScene: "建平-前门", effect: updateTime(2) },
@@ -257,7 +301,7 @@ Object.assign(storyData, {
       { text: "去济美楼", nextScene: "建平-济美楼-1F", effect: updateTime(2) },
       { text: "去操场", nextScene: "建平-操场", effect: updateTime(3) },
       { text: "去水池", nextScene: "建平-水池", effect: updateTime(3) },
-      { text: "去后门（辅路）", nextScene: "建平-后门", effect: updateTime(3) }
+      { text: "去后门（辅路）", nextScene: "建平-后门辅路", effect: updateTime(3) }
     ]
   },
 
@@ -541,10 +585,126 @@ Object.assign(storyData, {
   "建平-致真楼-1F-老吴杂物室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "致真楼1F老吴杂物室"; },
-    text: "致真楼 1 楼 · 老吴杂物室。",
+    text: function(vars) {
+      var desc = "老吴的杂物室，也是他的总务处工具间。货架上堆满了学校物资——成箱的打印纸、劳技课材料、灯泡电线。";
+      if (vars.dd >= 3 && !vars._laowuKilled) {
+        desc += "\n\n角落里，老吴趴在地上，一动不动，像是睡着了。";
+      } else if (vars.dd < 3) {
+        desc += "\n\n角落里，老吴趴在地上，一动不动。空气里有股淡淡的血腥味。";
+      } else {
+        desc += "\n\n角落里，老吴的尸体还趴在那里——已经被你处理过了。";
+      }
+      return desc;
+    },
     choices: [
+      { text: "翻找货架", nextScene: "建平-致真楼-1F-老吴杂物室-翻货架", effect: updateTime(2) },
+      { text: "查看老吴", nextScene: "建平-致真楼-1F-老吴杂物室-查看老吴", effect: updateTime(1) },
       { text: "回 1 楼", nextScene: "建平-致真楼-1F", effect: updateTime(1) }
     ]
+  },
+
+  "建平-致真楼-1F-老吴杂物室-翻货架": {
+    image: "images/placeholder.png",
+    text: function(vars) {
+      if (vars.hasMultimeter) return "你在货架间又翻了一遍，除了打印纸和劳技课材料，没什么有用的了。";
+      return "你在货架间翻找。打印纸、劳技课材料、灯泡、电线……最后，你在一个工具柜的底层翻出一个工具箱。";
+    },
+    choices: function(vars) {
+      if (vars.hasMultimeter) {
+        return [{ text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }];
+      }
+      return [
+        { text: "打开工具箱", nextScene: "建平-致真楼-1F-老吴杂物室-万用表", effect: updateTime(2) },
+        { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
+      ];
+    }
+  },
+
+  "建平-致真楼-1F-老吴杂物室-万用表": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasMultimeter: true }, add: { itemCount: 1 } },
+    text: "你打开工具箱——里面躺着一只万用表，还有几把螺丝刀、一卷电工胶带。\n万用表的表盘上贴着一小条胶布，用圆珠笔写着\"吴\"字。这是老吴的家伙什。",
+    choices: [
+      { text: "收好万用表", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-致真楼-1F-老吴杂物室-查看老吴": {
+    image: "images/placeholder.png",
+    text: function(vars) {
+      if (vars.dd >= 3 && !vars._laowuKilled) {
+        return "你走近老吴，蹲下身想看看情况。\n就在你伸手的一瞬间——那具\"尸体\"突然抽搐了一下，猛地抬起头，露出一张灰白扭曲的脸！\n它诈尸了！";
+      }
+      if (vars._laowuKilled) {
+        return "老吴的尸体趴在那里，已经被你处理过了。";
+      }
+      return "老吴趴在地上，早已没了气息。他的手里还攥着一串钥匙，身旁的地上散落着一张折皱的图纸。";
+    },
+    choices: function(vars) {
+      if (vars.dd >= 3 && !vars._laowuKilled) {
+        return [
+          { text: "战斗！", nextScene: "建平-致真楼-1F-老吴杂物室-战斗" },
+          { text: "逃离", nextScene: "建平-致真楼-1F", effect: function(v) { v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return updateTime(1)(v); } },
+          { text: "趁机抢走管线图", nextScene: "建平-致真楼-1F-老吴杂物室-抢管线图" }
+        ];
+      }
+      if (!vars.hasKeyRing || !vars.hasPipelineMap) {
+        return [
+          { text: "搜尸体", nextScene: "建平-致真楼-1F-老吴杂物室-搜尸体", effect: updateTime(2) },
+          { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
+        ];
+      }
+      return [
+        { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
+      ];
+    }
+  },
+
+  "建平-致真楼-1F-老吴杂物室-搜尸体": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasKeyRing: true, hasPipelineMap: true }, add: { itemCount: 1 } },
+    text: "你小心翼翼地把老吴翻过来。他手里那串钥匙被你取了下来——上面挂着好几把钥匙。\n你又捡起地上那张图纸：是一张供水管线图，旁边用红笔潦草地写着几个字——\"水有毒，别喝\"。",
+    choices: [
+      { text: "收好，回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-致真楼-1F-老吴杂物室-战斗": {
+    image: "images/placeholder.png",
+    onEnter: initMemoryGame(["红","蓝","绿"], 5, { set: { currentPos: "致真楼1F老吴杂物室" } }),
+    text: "老吴的丧尸扑了过来！\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：3红2蓝" },
+        condition: checkFlashAnswer,
+        nextScene: "建平-致真楼-1F-老吴杂物室-击杀",
+        elseScene: "结局-被老吴咬死"
+      }
+    ]
+  },
+
+  "建平-致真楼-1F-老吴杂物室-击杀": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _laowuKilled: true, hasKeyRing: true, hasPipelineMap: true }, add: { itemCount: 1 } },
+    text: "你终于把老吴的丧尸制服了。它不再动弹。\n你从他身上取下钥匙串，又捡起地上那张管线图——\"水有毒，别喝\"。",
+    choices: [
+      { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-致真楼-1F-老吴杂物室-抢管线图": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasPipelineMap: true, hurtByZombie: true }, add: { itemCount: 1, mercuryLoad: 10 } },
+    text: "你伸手去抢那张管线图。\n丧尸猛地挥爪，在你的手臂上抓出一道血淋淋的口子。你忍着剧痛抢到了图纸，踉跄着退开。",
+    choices: [
+      { text: "逃出杂物室", nextScene: "建平-致真楼-1F", effect: function(v) { v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return updateTime(1)(v); } }
+    ]
+  },
+
+  "结局-被老吴咬死": {
+    image: "images/zombieKnockYouDown.png",
+    text: "你没能招架住老吴的丧尸——它把你扑倒在地，一口咬在喉咙上。\n—— 结局：被老吴咬死 ——"
   },
 
   "建平-致真楼-2F-化学实验室": {
@@ -630,7 +790,22 @@ Object.assign(storyData, {
   "建平-远翔楼-3F-物理办公室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "远翔楼3F物理办公室"; },
-    text: "远翔楼 3 楼 · 物理办公室。",
+    text: function(vars) {
+      var desc;
+      if (!vars._visit["建平-远翔楼-3F-物理办公室"] || vars._visit["建平-远翔楼-3F-物理办公室"] <= 1) {
+        desc = "你推开物理办公室的门。\n忻老师——你的物理老师——正坐在办公桌前，手边摊着一沓批了一半的试卷。看到你，他先是一愣，随即露出一个复杂的笑容。\n\"是你啊。没想到还能在这儿见到你。\"\n";
+      } else {
+        desc = "物理办公室。忻老师还在这里。\n";
+      }
+      if (!vars._backGateOpened) {
+        desc += "忻老师压低声音：\"我的车就停在后门附近，被一群丧尸团团围住了。得先把后门那些东西引开、或者解决掉，我才能开车冲出去。你去后门看看。\"";
+      } else if (vars.hh < 19) {
+        desc += "忻老师点点头：\"后门清了，好样的。我这就收拾东西开车走。你要是想离开这鬼地方，天黑前来后门辅路找我——我带你一程，去复旦那边。我在江湾有个熟人，是搞实验室的，说不定能帮上忙。\"";
+      } else {
+        desc += "忻老师看了看窗外：\"天已经黑了。今晚走不了了，等天亮再说吧。\"";
+      }
+      return desc;
+    },
     choices: [
       { text: "回 3 楼", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
     ]
@@ -639,9 +814,99 @@ Object.assign(storyData, {
   "建平-远翔楼-4F-高三14班": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "远翔楼4F高三14班"; },
-    text: "远翔楼 4 楼 · 高三14班教室。",
+    text: function(vars) {
+      var desc = "高三 14 班教室，你曾经的班级。课桌还摆成原来的样子，黑板上留着没擦掉的粉笔字。";
+      if (jpIsMealTime(vars)) {
+        desc += "\n\n彭奕宸正坐在自己的座位上，从书包柜里掏出一包方便面。";
+      } else if (vars._pengGalCleared) {
+        desc += "\n\n彭奕宸不在——电脑还亮着，课桌上摊着本翻开的漫画。他大概又溜去音乐教室或者图书馆了。这家伙，在教室里永远待不住。";
+      } else if (vars._pengComputerFixed) {
+        desc += "\n\n彭奕宸坐在靠窗的位子，盯着电脑屏幕，一脸跃跃欲试。";
+      } else {
+        desc += "\n\n彭奕宸坐在靠窗的位子，盯着那台时不时开不了机的电脑，一脸烦躁。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (jpIsMealTime(vars) && !vars._pengNoodleShared) {
+        cs.push({ text: "跟彭奕宸分着吃点方便面", nextScene: "建平-远翔楼-4F-高三14班-方便面" });
+      }
+      if (!vars._pengComputerFixed) {
+        if (vars.hasMultimeter) {
+          cs.push({ text: "用万用表检查教室供电", nextScene: "建平-远翔楼-4F-高三14班-修电脑" });
+        } else {
+          cs.push({ text: "看看那台电脑", nextScene: "建平-远翔楼-4F-高三14班-电脑坏" });
+        }
+      } else if (!vars._pengGalCleared) {
+        cs.push({ text: "帮彭奕宸打galgame", nextScene: "建平-远翔楼-4F-高三14班-galgame" });
+      }
+      cs.push({ text: "回 4 楼", nextScene: "建平-远翔楼-4F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-远翔楼-4F-高三14班-电脑坏": {
+    image: "images/placeholder.png",
+    text: "彭奕宸指着那台电脑抱怨：\"这破电脑，动不动就开不了机。我按了半天开机键，屏幕就是黑。\"\n你蹲下来看了看主机，又看了看墙上的插座——插头松垮垮的，插座面板都有点烧焦的痕迹。\n你隐约觉得，问题可能不在电脑本身，而在供电。但要确认，得有个万用表测一测电压。",
     choices: [
-      { text: "回 4 楼", nextScene: "建平-远翔楼-4F", effect: updateTime(1) }
+      { text: "想起老吴杂物室有万用表", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-修电脑": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _pengComputerFixed: true } },
+    text: "你拿出万用表，测了测墙上的插座。\n果然——电压忽高忽低，明显不稳。你又顺着电线查到讲台下方，发现一个插座的接线松了。\n你拧开面板，重新接好线。\"啪\"的一声，电脑屏幕亮了起来。\n彭奕宸眼睛一亮：\"卧槽，你真行！我之前换电源、换硬盘都没用，原来问题出在插座上！\"",
+    choices: [
+      { text: "看看彭奕宸要干什么", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(2) }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-galgame": {
+    image: "images/placeholder.png",
+    text: "电脑修好了，彭奕宸迫不及待地打开一个galgame。\n\"帮我打一关，我要拿那个隐藏结局。\"\n屏幕上的女主角歪着头，问男主角：\"周末……你想带我去哪儿呀？\"",
+    choices: [
+      { text: "游乐园", nextScene: "建平-远翔楼-4F-高三14班-galgame-2" },
+      { text: "图书馆", nextScene: "建平-远翔楼-4F-高三14班-galgame-2" },
+      { text: "电影院", nextScene: "建平-远翔楼-4F-高三14班-galgame-2" }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-galgame-2": {
+    image: "images/placeholder.png",
+    text: "女主角笑了，接着问：\"那……走累的时候，你想牵我的手吗？\"\n彭奕宸在旁边紧张地盯着屏幕。",
+    choices: [
+      { text: "牵", nextScene: "建平-远翔楼-4F-高三14班-galgame-完成" },
+      { text: "不牵，保持距离", nextScene: "建平-远翔楼-4F-高三14班-galgame-完成" }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-galgame-完成": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _pengGalCleared: true } },
+    text: "结局动画放完了。彭奕宸一拍大腿：\"爽！这隐藏结局我等了好久！\"\n他心情大好，扭头对你说：\"对了，你想不想看点好东西？B站上有个视频，叫《腐烂尸城》，我收藏了好久。\"",
+    choices: [
+      { text: "看看那个视频", nextScene: "建平-远翔楼-4F-高三14班-看B站" },
+      { text: "下次吧", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-看B站": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.mixedMemorySet.add("腐烂尸城"); return {}; },
+    text: "彭奕宸点开视频。《腐烂尸城》——一个互动视频，讲一座城市被尸潮吞没，幸存者们在废墟中挣扎求生。\n画面里的丧尸、逃命的人群、绝望的呐喊……和你这些天的经历，是那么相似。\n你看着看着，仿佛自己也置身其中。\n<span style='color:#ffaa00;'>【记忆】你获得了一段混合记忆：腐烂尸城。</span>",
+    choices: [
+      { text: "关掉视频", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-方便面": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _pengNoodleShared: true }, add: { strength: 1 } },
+    text: "彭奕宸把方便面掰成两半，递给你一半。\n就着没喝完的水，你们俩蹲在教室里，一人半包方便面。\n谈不上多好吃，但在这种时候，能和旧同桌分着吃口热乎的，比什么都强。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
     ]
   },
 
@@ -649,36 +914,184 @@ Object.assign(storyData, {
 
   "建平-食堂": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "食堂"; },
-    text: function(vars) { return "食堂。" + describeZombieWave(vars); },
+    onEnter: function(vars) {
+      vars.currentPos = "食堂";
+      // 死亡锁存：Day 3 且阀门未关时刘冠宇已煤气中毒死亡；一旦在食堂观察到（锁存），
+      // 之后即使关掉煤气阀也永久保持死亡，不复活。
+      if (vars.dd >= 3 && !vars._gasValveClosed) {
+        vars._liuCorpse = true;
+      }
+      return {};
+    },
+    text: function(vars) {
+      var desc = "食堂。";
+      if (vars._liuCorpse) {
+        desc += "\n靠墙的长椅上，刘冠宇蜷缩着，一动不动。";
+      } else {
+        desc += "\n刘冠宇坐在靠墙的长椅上，一条腿翘着，腿上缠着绷带。";
+      }
+      return desc + describeZombieWave(vars);
+    },
     choices: [
       { text: "去金苹果大道（正门）", nextScene: "建平-金苹果大道", effect: updateTime(2) },
-      { text: "去后门（辅路）", nextScene: "建平-后门", effect: updateTime(2) },
+      { text: "去后门（辅路）", nextScene: "建平-后门辅路", effect: updateTime(2) },
       { text: "去操场（侧门）", nextScene: "建平-操场", effect: updateTime(2) },
       { text: "去宿舍", nextScene: "建平-宿舍", effect: updateTime(2) },
-      { text: "去后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) }
+      { text: "去后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) },
+      { text: "看看刘冠宇", nextScene: "建平-食堂-刘冠宇", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-食堂-刘冠宇": {
+    image: "images/placeholder.png",
+    text: function(vars) {
+      if (vars._liuCorpse) {
+        return "你走到刘冠宇身边。\n他蜷缩在长椅上，脸色铁青，已经没了呼吸。\n煤气中毒。你来得太晚了。";
+      }
+      if (vars._gasValveClosed) {
+        return "刘冠宇冲你点点头：\"煤气阀关上了？谢了。我说怎么后厨那股味儿一直不散。我这腿伤还没好利索，就不跟你走了，先在这儿待着。\"";
+      }
+      if (vars.dd >= 2) {
+        return "刘冠宇皱着眉，压低声音：\"后厨那边是不是在漏煤气？味儿越来越冲，我这腿又走不了，可别把我熏死在这儿。你要是能去把阀门关了，我这条命算欠你的。\"";
+      }
+      return "刘冠宇苦着脸：\"我暑假回学校看看，结果撞上这档子事，腿还被门夹了。还好食堂有吃的，不然早饿死了。\"";
+    },
+    choices: [
+      { text: "回食堂", nextScene: "建平-食堂", effect: updateTime(1) }
     ]
   },
 
   "建平-食堂-后厨": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "食堂后厨"; },
-    text: "食堂后厨。",
+    onEnter: function(vars) {
+      vars.currentPos = "食堂后厨";
+      if (vars.dd >= 2 && !vars._gasValveClosed) {
+        vars.gasIndex = Math.min(100, vars.gasIndex + 20);
+      }
+      return {};
+    },
+    text: function(vars) {
+      if (vars.dd < 2) {
+        if (vars._visit['建平-弘渊楼-4F-电脑区-蔡镜晓'] > 0) {
+          return "后厨。灶台、冰柜、货架。蔡镜晓说的没错，这里确实还藏着不少吃的。";
+        }
+        return "后厨。灶台、冰柜、货架，堆着些没来得及处理的食材。";
+      }
+      if (vars._gasValveClosed) {
+        return "后厨。煤气阀已经关上了，空气清爽了不少。";
+      }
+      return "后厨。一股浓重的煤气味扑面而来，呛得你直咳嗽。地上横七竖八地躺着几具尸体。\n<span style='color:#ffaa00;'>【警告】煤气正在泄漏，你感到一阵眩晕。</span>";
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars.dd >= 2 && !vars._gasValveClosed) {
+        cs.push({ text: "去关煤气阀", nextScene: "建平-食堂-煤气阀", effect: updateTime(1) });
+      }
+      if ((vars.dd < 2 || vars._gasValveClosed) && !vars.hasCanteenFood) {
+        cs.push({ text: "找食物", nextScene: "建平-食堂-后厨-找食物" });
+      }
+      cs.push({ text: "回食堂", nextScene: "建平-食堂", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-食堂-后厨-找食物": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasCanteenFood: true }, add: { itemCount: 1 } },
+    text: "你在货架和冰柜里翻找，找到几罐没开封的罐头和一些干粮。\n这些够你撑一阵子了。",
     choices: [
-      { text: "回食堂", nextScene: "建平-食堂", effect: updateTime(1) }
+      { text: "收好食物", nextScene: "建平-食堂-后厨", effect: updateTime(2) }
     ]
+  },
+
+  "建平-食堂-煤气阀": {
+    image: "images/placeholder.png",
+    text: "你摸到后厨的小隔间，找到了煤气阀。\n但几只穿着厨师服的丧尸堵在阀门前面——正是它们搞坏了煤气。",
+    choices: [
+      { text: "战斗！", nextScene: "建平-食堂-煤气阀-战斗" },
+      { text: "退回后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-食堂-煤气阀-战斗": {
+    image: "images/placeholder.png",
+    onEnter: initMemoryGame(["红","蓝","绿"], 5, { set: { currentPos: "食堂后厨" } }),
+    text: "厨师丧尸扑了过来！\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：3红2蓝" },
+        condition: checkFlashAnswer,
+        nextScene: "建平-食堂-煤气阀-关阀",
+        elseScene: "结局-煤气中毒"
+      }
+    ]
+  },
+
+  "建平-食堂-煤气阀-关阀": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _gasValveClosed: true, _chefCleared: true } },
+    text: "你解决了厨师丧尸，冲到煤气阀前，用力拧紧了阀门。\n\"嘶——\"漏气声渐渐停息。空气里那股煤气味淡了下去。",
+    choices: [
+      { text: "回后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) }
+    ]
+  },
+
+  "结局-煤气中毒": {
+    image: "images/placeholder.png",
+    text: "你吸入的煤气越来越多，眼前发黑，双腿发软……\n你栽倒在后厨的地上，再也没有起来。\n—— 结局：煤气中毒 ——"
   },
 
   // ==================== 宿舍楼（单节点 · 简化） ====================
 
   "建平-宿舍": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "宿舍"; },
-    text: function(vars) { return "宿舍。" + describeZombieWave(vars); },
+    onEnter: function(vars) {
+      vars.currentPos = "宿舍";
+      if (!vars._dormCleared) {
+        var seq = randSeq(["红","蓝","绿"], 5);
+        vars._currentSeq = seq;
+        vars._currentAnswer = seqToAnswer(seq);
+        vars._seqPlayed = false;
+        return { add: { chasedByZombies: 1 } };
+      }
+      return {};
+    },
+    text: function(vars) {
+      if (vars._dormCleared) {
+        return "宿舍。丧尸已经被你清理干净了，走廊安静了下来。这里可以安心休息，甚至过夜。" + describeZombieWave(vars);
+      }
+      return "宿舍楼里挤着不少丧尸，在走廊里漫无目的地游荡。想在这里安身，得先把它们清掉。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+    },
+    choices: function(vars) {
+      if (!vars._dormCleared) {
+        return [
+          {
+            text: "输入你看到的颜色分布",
+            input: { placeholder: "例如：3红2蓝" },
+            condition: checkFlashAnswer,
+            nextScene: "建平-宿舍-清场",
+            elseScene: "结局-宿舍失守"
+          }
+        ];
+      }
+      return [
+        { text: "去操场", nextScene: "建平-操场", effect: updateTime(2) },
+        { text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) }
+      ];
+    }
+  },
+  "建平-宿舍-清场": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _dormCleared: true, currentPos: "宿舍" } },
+    text: "你清掉了宿舍里的丧尸。走廊安静了下来，这里终于能安身了。",
     choices: [
-      { text: "去操场", nextScene: "建平-操场", effect: updateTime(2) },
-      { text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) }
+      { text: "继续", nextScene: "建平-宿舍", effect: updateTime(1) }
     ]
+  },
+  "结局-宿舍失守": {
+    image: "images/zombieKnockYouDown.png",
+    text: "你记错了颜色的顺序——宿舍里的丧尸扑了上来，把你堵在了墙角。\n—— 结局：宿舍失守 ——"
   },
 
   // ==================== 弘渊楼 / 图书馆（4 层 · 1 楼梯 · 3 入口） ====================
@@ -726,9 +1139,41 @@ Object.assign(storyData, {
   "建平-弘渊楼-4F-电脑区": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "弘渊楼4F电脑区"; },
-    text: "弘渊楼 4 楼 · 电脑区。",
+    text: function(vars) {
+      var desc = "图书馆 4 楼的电脑区。一排排电脑黑着屏幕，只有角落里一台亮着。";
+      if (jpIsMealTime(vars)) {
+        desc += "\n\n蔡镜晓不在——这个点他应该去食堂后厨找吃的了。";
+      } else {
+        desc += "\n\n蔡镜晓坐在那台亮着的电脑前，戴着耳机打明日方舟，屏幕上闪烁着作战画面。";
+        if (vars._pengGalCleared) {
+          desc += "\n\n彭奕宸也占了旁边一台电脑，玩得正起劲——这俩家伙，一个图书馆一个教室，满学校乱窜。";
+        }
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!jpIsMealTime(vars)) {
+        cs.push({ text: "跟蔡镜晓搭话", nextScene: "建平-弘渊楼-4F-电脑区-蔡镜晓" });
+      }
+      cs.push({ text: "回 4 楼", nextScene: "建平-弘渊楼-4F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-弘渊楼-4F-电脑区-蔡镜晓": {
+    image: "images/placeholder.png",
+    text: function(vars) {
+      var desc = "你拍了拍蔡镜晓的肩膀，他摘下耳机：\"哟，你还活着啊。\"\n";
+      if (vars.dd < 2) {
+        desc += "\n\"食堂后厨还有不少吃的，就是刘冠宇那家伙腿受伤了，一直赖在食堂。你饭点来找我，我带你去后厨翻吃的。\"";
+      } else {
+        desc += "\n\"食堂后厨的煤气漏了，现在那边呛得要死，我都不敢去了。得先把煤气阀关了才行——那玩意儿在后厨的小隔间里，好像还有几只厨师的丧尸堵在那儿。\"";
+      }
+      return desc;
+    },
     choices: [
-      { text: "回 4 楼", nextScene: "建平-弘渊楼-4F", effect: updateTime(1) }
+      { text: "回电脑区", nextScene: "建平-弘渊楼-4F-电脑区", effect: updateTime(1) }
     ]
   },
 
@@ -792,7 +1237,12 @@ Object.assign(storyData, {
   "建平-济美楼-4F-音乐教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼4F音乐教室"; },
-    text: "济美楼 4 楼 · 音乐教室。",
+    text: function(vars) {
+      if (vars._pengGalCleared) {
+        return "济美楼 4 楼 · 音乐教室。\n彭奕宸正靠着钢琴翻手机，看见你，咧嘴一笑：\"哟，来了。刚才那隐藏结局，谢了啊。\"\n他拍了拍身边的凳子示意你坐，又自顾自念叨着——这家伙果然满学校乱窜，教室、图书馆、这儿，没个准点。";
+      }
+      return "济美楼 4 楼 · 音乐教室。一架旧钢琴蒙着灰，谱架上的乐谱被风吹乱了几页。";
+    },
     choices: [
       { text: "回 4 楼", nextScene: "建平-济美楼-4F", effect: updateTime(1) }
     ]

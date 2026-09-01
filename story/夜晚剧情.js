@@ -34,6 +34,8 @@ Object.assign(storyData, {
         } else {
           desc += "医院的走廊在夜色里更加阴森。应急灯把影子拉得老长，消毒水的气味里混着一丝若有若无的尸臭。这里比外面安全——但只是暂时的。";
         }
+      } else if (vars.currentArea === "建平中学") {
+        desc += "校园在夜色里格外安静——只有风穿过空荡荡的教学楼发出的呜咽声。远处偶尔传来几声丧尸的拖步声。\n你必须找个地方熬过今晚。";
       } else {
         desc += "四周一片漆黑，你必须找个地方过夜。";
       }
@@ -163,14 +165,36 @@ Object.assign(storyData, {
         nextScene: "结局-仁济-尸潮围困"
       },
 
-      // ===== 兜底（始终可用，排除医院） =====
+      // ===== 建平中学 =====
       {
-        showCondition: "dd < 3 && currentArea != '仁济南院'",
+        showCondition: "currentArea == '建平中学'",
+        text: "挑间教室过夜",
+        nextScene: "结局-过夜-建平教室"
+      },
+      {
+        showCondition: "currentArea == '建平中学'",
+        text: "在街上找地方过夜",
+        nextScene: "结局-过夜-建平街头"
+      },
+      {
+        showCondition: "currentArea == '建平中学' && _dormCleared",
+        text: "去宿舍过夜",
+        nextScene: "过夜-建平宿舍"
+      },
+      {
+        showCondition: "currentArea == '建平中学' && !_dormCleared",
+        text: "去宿舍过夜（没清理过）",
+        nextScene: "结局-过夜-建平宿舍遇袭"
+      },
+
+      // ===== 兜底（始终可用，排除医院/建平） =====
+      {
+        showCondition: "dd < 3 && currentArea != '仁济南院' && currentArea != '建平中学'",
         text: "冒险在街头找地方躲一晚",
         nextScene: "过夜-街头兜底"
       },
       {
-        showCondition: "dd >= 3 && currentArea != '仁济南院'",
+        showCondition: "dd >= 3 && currentArea != '仁济南院' && currentArea != '建平中学'",
         text: "在街头寻找掩体",
         nextScene: "结局-过夜-街头死亡"
       }
@@ -568,6 +592,54 @@ Object.assign(storyData, {
 但门锁已经坏了——白天你强行破门的时候，就把这扇门彻底毁了。\n\
 半夜，你被一阵拖沓的脚步声惊醒。门被推开了一条缝，几双灰白的手从门缝里伸了进来。\n\
 你没有地方可逃了。\n\n—— 结局：检验科失守 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
+  // ==================== 安全屋 - 建平宿舍（仅清理后可过夜） ====================
+  "过夜-建平宿舍": {
+    image: "images/placeholder.png" /* TODO: images/jianping/dormNight.png */,
+    onEnter: function(vars) {
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      return {};
+    },
+    text: "你钻进宿舍，把门闩好，又从里面堆了几把椅子抵住。\n\
+这里刚被你清理过，走廊里空荡荡的，安静得能听见自己的心跳。\n\
+你挑了张下铺躺下，拉过被子——虽然蒙着灰，但总比露天强。\n\
+第二天醒来，阳光从窗户照进来。你在母校的宿舍里，睡得竟然格外安稳。",
+    choices: [
+      { text: "继续", nextScene: "建平-宿舍" }
+    ]
+  },
+
+  // ==================== 死亡 - 建平教室过夜 ====================
+  "结局-过夜-建平教室": {
+    image: "images/zombieKnockYouDown.png",
+    text: "你挑了间教室，把桌椅推到门口堵住。\n\
+后半夜，丧尸的嘶吼声越来越近——它们在走廊里徘徊，似乎嗅到了你的气味。\n\
+砰——门被撞开了。桌椅根本挡不住它们。\n\
+你被堵在了墙角。\n\n—— 结局：教室里的一夜 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
+  // ==================== 死亡 - 建平街头过夜 ====================
+  "结局-过夜-建平街头": {
+    image: "images/zombieKnockYouDown.png",
+    text: "你在校园的墙根下蜷缩着，用落叶和破布盖住自己。\n\
+凌晨的雾气里，一只丧尸发现了你——它没有嘶吼，只是安静地靠近。\n\
+等你察觉时，周围已经围满了。\n\n—— 结局：建平之夜 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
+  // ==================== 死亡 - 建平宿舍未清理遇袭 ====================
+  "结局-过夜-建平宿舍遇袭": {
+    image: "images/zombieKnockYouDown.png",
+    text: "你摸黑进了宿舍，随便找了张床躺下，打算先凑合一晚。\n\
+深夜，走廊里传来拖沓的脚步声——你这才想起来，这栋楼的丧尸根本没清干净。\n\
+等你惊醒时，一张灰白的脸已经凑到了床边。\n\n—— 结局：宿舍惊魂 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
 

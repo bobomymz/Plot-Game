@@ -438,7 +438,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-1F味千拉面-休息": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/ramenShop.png */,
+    image: "images/新达汇/味千后厨.jpg", 
     onEnter: updateTime(30, { add: { strength: 1, chasedByZombies: -1 } }),
     text: "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n你靠墙休息了一会儿，外面的声音渐渐远去了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
     choices: [
@@ -625,7 +625,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-1F数码店": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/digitalStore.png */,
+    image: "images/新达汇/华为体验店.jpg",
     onEnter: { add: { chasedByZombies: 1 } },
     text: function(vars) {
       if (vars._metGaoAtMall) {
@@ -1127,7 +1127,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F-Nike店": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/nikeStore.png */,
+    image: "images/新达汇/Nike店.jpg",
     text: "Nike体验店。大门被撞碎，展示架东倒西歪，场景化陈列被翻得面目全非。运动鞋和衣服散落一地。",
     choices: [
       {
@@ -1138,7 +1138,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F服装店": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/clothingStore.png */,
+    image: "images/新达汇/服装店.jpg",
     onEnter: { add: { chasedByZombies: 1 } },
     text: function(vars) { return "你刚靠近海澜之家的玻璃门，感应器就发出一声短促的电子提示音，门缓缓滑开。声音不大，但在安静的走廊里足够传到很远。\n\
 海澜之家和雅戈尔面对面开着。海澜之家白色装修，冷淡简约；雅戈尔深色木纹更显沉稳。试衣间的门关着。雅戈尔那边的收银台后面有一扇门，贴着“员工间”的标签。\n" + describeZombieWave(vars); },
@@ -1154,7 +1154,7 @@ Object.assign(storyData, {
         showCondition: "chasedByZombies <= 1",
       },
       {
-        text: "推开员工间的门——好像通到后面",
+        text: "推开员工间的门",
         nextScene: "新达汇-2F后勤走廊",
         effect: updateTime(1),
       },
@@ -1539,7 +1539,10 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-3F大型综合儿童乐园": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/kidsPlayArea.png */,
+    image: function(vars) {
+      if(vars._powerOut) return "images/新达汇/卡通尼小猫-断电.jpg";
+      return "images/新达汇/卡通尼小猫.jpg";
+    },
     text: function(vars) {
       if (vars._powerOut) {
         if (canSee(vars))
