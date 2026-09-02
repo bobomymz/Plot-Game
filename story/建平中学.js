@@ -279,7 +279,8 @@ Object.assign(storyData, {
       }
       cs.push({ text: "去后门", nextScene: "建平-后门", effect: updateTime(2) });
       cs.push({ text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) });
-      cs.push({ text: "沿辅路去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) });
+      cs.push({ text: "去远翔楼", nextScene: "建平-远翔楼-1F", effect: updateTime(2) });
+      cs.push({ text: "去致真楼", nextScene: "建平-致真楼-1F", effect: updateTime(2) });
       return cs;
     }
   },
@@ -348,7 +349,6 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "操场"; },
     text: function(vars) { return "操场。" + describeZombieWave(vars); },
     choices: [
-      { text: "去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) },
       { text: "去食堂（侧门）", nextScene: "建平-食堂", effect: updateTime(2) },
       { text: "去弘渊楼（后门）", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
       { text: "去宿舍", nextScene: "建平-宿舍", effect: updateTime(2) },
@@ -604,6 +604,7 @@ Object.assign(storyData, {
     text: function(vars) { return "致真楼 1 楼。" + describeZombieWave(vars); },
     choices: [
       { text: "出门（金苹果广场）", nextScene: "建平-金苹果广场", effect: updateTime(2) },
+      { text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) },
       { text: "去东楼梯", nextScene: "建平-致真楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-致真楼-西楼梯", effect: updateTime(1) },
       { text: "去电梯", nextScene: "建平-致真楼-电梯", effect: updateTime(0) },
@@ -805,6 +806,7 @@ Object.assign(storyData, {
     text: function(vars) { return "远翔楼 1 楼。" + describeZombieWave(vars); },
     choices: [
       { text: "出门（金苹果大道）", nextScene: "建平-金苹果大道", effect: updateTime(2) },
+      { text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) },
       { text: "去东楼梯", nextScene: "建平-远翔楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-远翔楼-西楼梯", effect: updateTime(1) },
       { text: "去医务室", nextScene: "建平-远翔楼-1F-医务室", effect: updateTime(1) },
@@ -1035,15 +1037,16 @@ Object.assign(storyData, {
         return "你走到刘冠宇身边。\n他蜷缩在长椅上，脸色铁青，已经没了呼吸。\n煤气中毒。你来得太晚了。";
       }
       if (vars._gasValveClosed) {
-        return "刘冠宇冲你点点头：\"煤气阀关上了？谢了。我说怎么后厨那股味儿一直不散。我这腿伤还没好利索，就不跟你走了，先在这儿待着。\"";
+        return "刘冠宇冲你点点头：\"煤气阀关上了？谢了。我说怎么后厨那股味儿一直不散，估计是哪个丧尸搞得鬼吧。我这腿伤还没好利索，就不跟你走了，先在这儿待着。\"";
       }
       if (vars.dd >= 2) {
-        return "刘冠宇皱着眉，压低声音：\"后厨那边是不是在漏煤气？味儿越来越冲，我这腿又走不了，可别把我熏死在这儿。你要是能去把阀门关了，我这条命算欠你的。\"";
+        return "你走到刘冠宇旁边。突然，你意识到空气的味道似乎有点不对……一股臭鸡蛋味。你感觉呼吸变得急促起来。\n\
+刘冠宇皱着眉，压低声音：\"你也闻到了吧————这是煤气泄漏的味道。我要不行了，快走，别把自己搭上。\"";
       }
       return "刘冠宇苦着脸：\"我暑假回学校看看，结果撞上这档子事，腿还被门夹了。还好食堂有吃的，不然早饿死了。\"";
     },
     choices: [
-      { text: "回食堂", nextScene: "建平-食堂", effect: updateTime(1) }
+      { text: "继续食堂", nextScene: "建平-食堂", effect: updateTime(1) }
     ]
   },
 
