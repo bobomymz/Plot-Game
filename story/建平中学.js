@@ -1416,7 +1416,7 @@ Object.assign(storyData, {
   "建平-济美楼-1F-心理教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼1F心理教室"; },
-    text: "济美楼 1 楼 · 心理教室。",
+    text: "心理教室。靠墙摆着一排放松椅，角落里有个沙盘，里面堆着没来得及收的小摆件。墙上的「心情晴雨表」还贴着几张便利贴，最后一张的日期，停在出事的那天。",
     choices: [
       { text: "回 1 楼走廊", nextScene: "建平-济美楼-1F", effect: updateTime(1) }
     ]
@@ -1599,21 +1599,126 @@ Object.assign(storyData, {
 
   // ==================== 房间（环境叙事占位） ====================
 
-  "建平-致真楼-3F-科创实验室": jpRoom("致真楼 3 楼 · 科创实验室", "建平-致真楼-3F"),
-  "建平-致真楼-4F-生物实验室": jpRoom("致真楼 4 楼 · 生物实验室", "建平-致真楼-4F"),
-  "建平-致真楼-5F-物理实验室": jpRoom("致真楼 5 楼 · 物理实验室", "建平-致真楼-5F"),
-  "建平-远翔楼-1F-圆厅": jpRoom("远翔楼 1 楼 · 圆厅", "建平-远翔楼-1F"),
-  "建平-远翔楼-2F-高三教室": jpRoom("远翔楼 2 楼 · 高三教室", "建平-远翔楼-2F"),
-  "建平-远翔楼-3F-高三教室": jpRoom("远翔楼 3 楼 · 高三教室", "建平-远翔楼-3F"),
-  "建平-远翔楼-4F-高三13班": jpRoom("远翔楼 4 楼 · 高三13班教室", "建平-远翔楼-4F"),
-  "建平-远翔楼-5F-杂物教室": jpRoom("远翔楼 5 楼 · 空置教室", "建平-远翔楼-5F"),
-  "建平-弘渊楼-2F-藏书区": jpRoom("弘渊楼 2 楼 · 藏书区", "建平-弘渊楼-2F"),
-  "建平-弘渊楼-3F-阅览区": jpRoom("弘渊楼 3 楼 · 自习阅览区", "建平-弘渊楼-3F"),
-  "建平-济美楼-1F-饮料机": jpRoom("济美楼 1 楼 · 饮料机", "建平-济美楼-1F"),
-  "建平-济美楼-2F-美术教室": jpRoom("济美楼 2 楼 · 美术教室", "建平-济美楼-2F"),
-  "建平-济美楼-3F-JTV办公室": jpRoom("济美楼 3 楼 · JTV办公室", "建平-济美楼-3F"),
-  "建平-挹芬楼-1F-公开课教室": jpRoom("挹芬楼 1 楼 · 公开课教室", "建平-挹芬楼-1F-西侧走廊"),
-  "建平-挹芬楼-1F-饮料机": jpRoom("挹芬楼 1 楼 · 饮料机", "建平-挹芬楼-1F-休息区"),
+  "建平-致真楼-3F-科创实验室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "致真楼3F科创实验室"; },
+    text: "科创实验室。墙角一台 3D 打印机半开着，喷头还悬在一个没打完的模型上，机器人的零件散了一桌子。墙上贴满了历届科创比赛的奖状，如今都蒙上了一层灰。",
+    choices: [
+      { text: "离开", nextScene: "建平-致真楼-3F", effect: updateTime(1) }
+    ]
+  },
+  "建平-致真楼-4F-生物实验室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "致真楼4F生物实验室"; },
+    text: "生物实验室。培养皿里的培养基早就干了，几瓶标本泡在浑浊的福尔马林里，玻璃缸里的青蛙标本睁着灰白的眼睛。实验台上还摊着一本没合上的观察记录。",
+    choices: [
+      { text: "离开", nextScene: "建平-致真楼-4F", effect: updateTime(1) }
+    ]
+  },
+  "建平-致真楼-5F-物理实验室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "致真楼5F物理实验室"; },
+    text: "物理实验室。光学仪器东倒西歪，示波器的屏幕黑着，地上散落着一把把螺丝刀和导线。黑板上的电路图画到一半，旁边用红笔打了个大大的问号。",
+    choices: [
+      { text: "离开", nextScene: "建平-致真楼-5F", effect: updateTime(1) }
+    ]
+  },
+  "建平-远翔楼-1F-圆厅": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "远翔楼1F圆厅"; },
+    text: "圆厅。这个半圆形的小礼堂曾经是集会、颁奖、文艺汇演的地方，舞台上的幕布垂下半截。如今观众席空无一人，只有几把翻倒的椅子，和一地没人收的节目单。",
+    choices: [
+      { text: "离开", nextScene: "建平-远翔楼-1F", effect: updateTime(1) }
+    ]
+  },
+  "建平-远翔楼-2F-高三教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "远翔楼2F高三教室"; },
+    text: "高三教室。课桌上摞着半人高的复习资料，黑板上还留着没擦完的倒计时——「距离高考还有 8 天」。谁也没想到，那场考试再也不会来了。",
+    choices: [
+      { text: "离开", nextScene: "建平-远翔楼-2F", effect: updateTime(1) }
+    ]
+  },
+  "建平-远翔楼-3F-高三教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "远翔楼3F高三教室"; },
+    text: "高三教室。走廊这侧的几间教室门都敞着，书包散落在地上，饮水机的水桶已经空了。有人把几张课桌拼在一起，像是在这里睡过。",
+    choices: [
+      { text: "离开", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
+    ]
+  },
+  "建平-远翔楼-4F-高三13班": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "远翔楼4F高三13班"; },
+    text: "高三 13 班教室，就在你曾经的 14 班隔壁。门上还贴着值日表，粉笔字写着一个熟悉的名字。教室里桌椅凌乱，靠墙那排柜子的门都开着。",
+    choices: [
+      { text: "离开", nextScene: "建平-远翔楼-4F", effect: updateTime(1) }
+    ]
+  },
+  "建平-远翔楼-5F-杂物教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "远翔楼5F杂物教室"; },
+    text: "这层楼像是被废弃了很久。几间空教室堆着旧桌椅、坏掉的黑板和成箱的废纸，空气里一股潮气。偶尔有风从破窗灌进来，吹得地上的废纸沙沙作响。",
+    choices: [
+      { text: "离开", nextScene: "建平-远翔楼-5F", effect: updateTime(1) }
+    ]
+  },
+  "建平-弘渊楼-2F-藏书区": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "弘渊楼2F藏书区"; },
+    text: "藏书区。一排排书架静默地立着，书脊上积了薄薄一层灰。几本书被抽出来丢在地上，翻开的书页被踩满了脚印——像是有人在这里匆忙地找过什么。",
+    choices: [
+      { text: "离开", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+  "建平-弘渊楼-3F-阅览区": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "弘渊楼3F阅览区"; },
+    text: "自习阅览区。长条书桌上摊着几本翻了一半的习题集，水杯、耳机、充电线散落各处。靠窗的位置视野很好，能望见操场，只是如今那里也空无一人。",
+    choices: [
+      { text: "离开", nextScene: "建平-弘渊楼-3F", effect: updateTime(1) }
+    ]
+  },
+  "建平-济美楼-1F-饮料机": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "济美楼1F饮料机"; },
+    text: "一台饮料机立在大厅一角，屏幕还亮着微弱的待机光。货道里卡着几瓶饮料，投币口下面掉着一枚一元硬币。也许还投得出来？",
+    choices: [
+      { text: "离开", nextScene: "建平-济美楼-1F", effect: updateTime(1) }
+    ]
+  },
+  "建平-济美楼-2F-美术教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "济美楼2F美术教室"; },
+    text: "美术教室。画架七倒八歪，石膏像碎了一地，几幅画到一半的水彩在窗边被风吹得哗哗响。颜料挤得到处都是，调色盘上的颜色已经干裂。",
+    choices: [
+      { text: "离开", nextScene: "建平-济美楼-2F", effect: updateTime(1) }
+    ]
+  },
+  "建平-济美楼-3F-JTV办公室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "济美楼3FJTV办公室"; },
+    text: "金苹果电视台的办公室。墙上贴着往期节目的海报，一台摄像机还架在角落，绿幕皱巴巴地垂着。剪辑台的电脑屏幕裂了一道，导播台上一片狼藉。",
+    choices: [
+      { text: "离开", nextScene: "建平-济美楼-3F", effect: updateTime(1) }
+    ]
+  },
+  "建平-挹芬楼-1F-公开课教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼1F公开课教室"; },
+    text: "公开课教室。这种教室总是布置得整整齐齐，白板、投影、录播设备一应俱全。如今白板上还留着一行没擦的字：「欢迎各位老师莅临指导」——像一句不合时宜的玩笑。",
+    choices: [
+      { text: "离开", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
+    ]
+  },
+  "建平-挹芬楼-1F-饮料机": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼1F饮料机"; },
+    text: "休息区旁的饮料机。机身被人砸过几下，玻璃面板裂成蛛网，但里面的饮料还在。地上滚着几个空罐子。",
+    choices: [
+      { text: "离开", nextScene: "建平-挹芬楼-1F-休息区", effect: updateTime(1) }
+    ]
+  },
   "建平-挹芬楼-2F-高一教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼2F高一教室"; },
@@ -1668,7 +1773,14 @@ Object.assign(storyData, {
       { text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) }
     ]
   },
-  "建平-挹芬楼-4F-高二教室": jpRoom("挹芬楼 4 楼 · 高二教室", "建平-挹芬楼-4F"),
+  "建平-挹芬楼-4F-高二教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼4F高二教室"; },
+    text: "高二教室。和楼下的高一教室一样凌乱，课桌间的过道上丢着校服外套和水瓶。黑板角落有人用粉笔写了几个字，又慌忙擦掉了大半。",
+    choices: [
+      { text: "离开", nextScene: "建平-挹芬楼-4F", effect: updateTime(1) }
+    ]
+  },
   "建平-挹芬楼-4F-机房": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼4F机房"; },
@@ -1723,7 +1835,14 @@ Object.assign(storyData, {
       { text: "继续", nextScene: "建平-挹芬楼-6F-自习教室", effect: updateTime(2) }
     ]
   },
-  "建平-行政楼-1F-教学处": jpRoom("行政楼 1 楼 · 教学处", "建平-行政楼-1F"),
+  "建平-行政楼-1F-教学处": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "行政楼1F教学处"; },
+    text: "教学处。几张办公桌拼成一排，桌上堆着花名册、课程表和一台台电脑。墙上的值班表停在某一天，日历再也没人翻过。文件柜敞着，纸张撒了一地。",
+    choices: [
+      { text: "离开", nextScene: "建平-行政楼-1F", effect: updateTime(1) }
+    ]
+  },
   "建平-行政楼-2F-文印室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "行政楼2F文印室"; },
@@ -1750,7 +1869,14 @@ Object.assign(storyData, {
       { text: "收好", nextScene: "建平-行政楼-2F-文印室", effect: updateTime(1) }
     ]
   },
-  "建平-行政楼-3F-公开课教室": jpRoom("行政楼 3 楼 · 公开课教室", "建平-行政楼-3F"),
+  "建平-行政楼-3F-公开课教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "行政楼3F公开课教室"; },
+    text: "公开课教室。阶梯状的座位面向讲台，多媒体屏幕黑着。讲台上还立着一杯没喝完的茶，杯壁上的水渍已经干涸发黄。",
+    choices: [
+      { text: "离开", nextScene: "建平-行政楼-3F", effect: updateTime(1) }
+    ]
+  },
   "建平-废弃小楼-1F-纸箱": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "废弃小楼1F纸箱"; },
@@ -1777,7 +1903,14 @@ Object.assign(storyData, {
       { text: "收好", nextScene: "建平-废弃小楼-1F-纸箱", effect: updateTime(1) }
     ]
   },
-  "建平-废弃小楼-2F-活动室": jpRoom("废弃小楼 2 楼 · 活动室", "建平-废弃小楼-2F"),
+  "建平-废弃小楼-2F-活动室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "废弃小楼2F活动室"; },
+    text: "活动室。几把椅子东倒西歪，角落堆着没拆完的横幅和彩带，桌上散落着几本社团的招新册子。这里曾经很热闹，如今只剩下灰尘和寂静。",
+    choices: [
+      { text: "离开", nextScene: "建平-废弃小楼-2F", effect: updateTime(1) }
+    ]
+  },
   "建平-门卫室": jpRoom("门卫室", "建平-校园门口"),
 
 

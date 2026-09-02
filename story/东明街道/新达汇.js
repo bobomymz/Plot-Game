@@ -703,7 +703,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-1F电梯厅": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/elevatorHall.png */,
+    image: "images/新达汇/电梯厅.jpg",
     text: function(vars) {
       if (vars._powerOut) return "电梯厅一片死寂，主电闸已经被你拉下来了。";
       if (vars._catChasing) return "电梯厅墙上的电箱面板在闪烁。";
@@ -1251,7 +1251,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F电梯厅": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/elevatorHall.png */,
+    image: "images/新达汇/电梯厅.jpg",
     text: function(vars) {
       if (vars._powerOut) return "电梯厅一片死寂。";
       return "按钮面板上B1、1F、3F、4F、5F的按键都还亮着。";
@@ -1668,7 +1668,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-3F电梯厅": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/elevatorHall.png */,
+    image: "images/新达汇/电梯厅.jpg",
     text: function(vars) {
       if (vars._powerOut) return "电梯厅一片死寂。";
       return "按钮面板上B1、1F、2F、4F、5F的按键都还亮着。";
@@ -2181,7 +2181,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F电梯厅": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/elevatorHall.png */,
+    image: "images/新达汇/电梯厅.jpg",
     text: function(vars) {
       if (vars._powerOut) return "电梯厅一片死寂。";
       return "按钮面板上B1、1F、2F、3F、5F的按键都还亮着。";
@@ -2564,7 +2564,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F电梯厅": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/elevatorHall.png */,
+    image: "images/新达汇/电梯厅.jpg",
     text: function(vars) {
       if (vars._powerOut) return "5F的电梯厅一片死寂。";
       return "按钮面板上B1、1F、2F、3F、4F的按键都还亮着。";
@@ -2897,7 +2897,7 @@ Object.assign(storyData, {
 
   // ==================== 垂直交通中间场景 ====================
   "新达汇-电梯途中": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/elevatorInterior.png */,
+    image: "images/新达汇/电梯里.jpg",
     onEnter: function(vars) {
       if (vars.chasedByZombies <= 1) {
         vars.chasedByZombies = Math.min(5, vars.chasedByZombies + 1);
@@ -2962,14 +2962,15 @@ Object.assign(storyData, {
 
   // ---- B1层 ----
   "新达汇-B1后勤走廊": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
+    image: "images/新达汇/B1后勤走廊.jpg",
     onEnter: function(v) {
       if (v.chasedByZombies >= 4) { v._backhallDead = true; return {}; }
       if (v.chasedByZombies <= 1) v.chasedByZombies = 0;
       else if (v.chasedByZombies == 2) v.chasedByZombies = 1;
       return {};
     },
-    text: function(v) { return "你推开防火门，走进一条狭窄的后勤走廊。头顶的管道裸露着，凝结的水珠偶尔滴落在地上，发出清晰的啪嗒声。应急灯发出惨白的光，照出墙面上斑驳的油渍和霉斑。\n" + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>你反手把防火门轻轻带上——门锁咔哒一声扣死。外面的声音一下子被隔开了，这里很安全。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>身后的防火门被什么东西撞了一下，闷响了一声。你加快脚步拐了两个弯，追兵被岔路搞糊涂了——甩掉了不少。</span>" : "") + describeZombieWave(v); },
+    text: function(v) { return "你推开防火门，走进一条狭窄的后勤走廊。头顶的管道裸露着，凝结的水珠偶尔滴落在地上，发出清晰的啪嗒声。应急灯发出惨白的光，照出墙面上斑驳的油渍和霉斑。\n"
+ + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>你反手把防火门轻轻带上——门锁咔哒一声扣死。外面的声音一下子被隔开了，这里很安全。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>身后的防火门被什么东西撞了一下，闷响了一声。你加快脚步拐了两个弯，追兵被岔路搞糊涂了——甩掉了不少。</span>" : "") + describeZombieWave(v); },
     choices: [
       {
         text: "推开旁边设备间的门进去看看",
@@ -2977,7 +2978,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "沿着走廊往前走向垃圾清运区",
+        text: "沿着走廊往前走",
         nextScene: "新达汇-B1垃圾清运通道",
         effect: updateTime(2),
       },
@@ -2989,7 +2990,7 @@ Object.assign(storyData, {
     ],
   },
   "新达汇-B1设备间": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
+    image: "images/新达汇/B1设备间.jpg",
     text: "你推开一扇半掩的铁门，走进一间设备间。几台锈蚀的空调主机嗡嗡作响，管道从天花板穿过，上面贴着褪色的标签。墙角的工具架上散落着几把扳手和螺丝刀——都是固定在地面上。旁边挂着一本翻开的设备巡检记录表。",
     choices: [
       {
