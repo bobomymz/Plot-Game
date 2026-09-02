@@ -41,7 +41,7 @@ function jpStair(prefix, label, floors, chIncrease) {
   return {
     image: "images/placeholder.png" /* TODO: images/jianping/stairwell.png */,
     onEnter: function(vars) { vars.currentPos = label; return chIncrease ? { add: { chasedByZombies: chIncrease } } : {}; },
-    text: function(vars) { return label + "。" + describeZombieWave(vars); },
+    text: function(vars) { return label + "。"; },
     choices: function(vars) { return jpStairChoices(vars, prefix, floors); }
   };
 }
@@ -92,7 +92,7 @@ function jpRoom(label, backScene) {
     onEnter: function(vars) { vars.currentPos = label; },
     text: label + "。",
     choices: [
-      { text: "回去", nextScene: backScene, effect: updateTime(1) }
+      { text: "离开", nextScene: backScene, effect: updateTime(1) }
     ]
   };
 }
@@ -171,7 +171,7 @@ Object.assign(storyData, {
       if (vars._frontGateCleared) {
         return [
           { text: "走进前门（金苹果广场）", nextScene: "建平-金苹果广场", effect: updateTime(2) },
-          { text: "退回校园门口", nextScene: "建平-校园门口", effect: updateTime(5) }
+          { text: "去校园门口", nextScene: "建平-校园门口", effect: updateTime(5) }
         ];
       }
       return [
@@ -220,7 +220,7 @@ Object.assign(storyData, {
         cs.push({ text: "打开后门", nextScene: "建平-后门-开门", effect: updateTime(1) });
       }
       cs.push({ text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) });
-      cs.push({ text: "退回校园门口", nextScene: "建平-校园门口", effect: updateTime(10) });
+      cs.push({ text: "去校园门口", nextScene: "建平-校园门口", effect: updateTime(10) });
       return cs;
     }
   },
@@ -236,7 +236,7 @@ Object.assign(storyData, {
     text: "你深吸一口气，握住门闩，猛地拉开了后门。\n门轴发出刺耳的摩擦声，门内的丧尸被惊动，齐刷刷地转过头来。\n——后门开了，但丧尸也都被你引了过来。",
     choices: [
       { text: "直接开打！", nextScene: "建平-后门-开打" },
-      { text: "快逃！退回校园门口", nextScene: "建平-校园门口", effect: updateTime(5) }
+      { text: "快逃！去校园门口", nextScene: "建平-校园门口", effect: updateTime(5) }
     ]
   },
 
@@ -269,7 +269,7 @@ Object.assign(storyData, {
       if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft) {
         return "你沿着后门辅路走。\n一辆轿车亮着车灯停在不远处——是忻老师。他摇下车窗，朝你招了招手。\n\"上车，我带你一程。\"";
       }
-      return "后门辅路。一条通往食堂的窄路，路旁的围墙根长满了杂草。" + describeZombieWave(vars);
+      return "后门辅路。一条通往食堂的窄路，路旁的围墙根长满了杂草。这里远离校门，丧尸反倒不多。";
     },
     choices: function(vars) {
       var cs = [];
@@ -308,7 +308,7 @@ Object.assign(storyData, {
       if (!vars._frontGateCleared) return { add: { chasedByZombies: 1 } };   // 前门清空后广场不再反复加追兵
       return {};
     },
-    text: function(vars) { return "金苹果广场。" + describeZombieWave(vars); },
+    text: function(vars) { return "金苹果广场。丧尸从半开的校门和四周楼里不断涌来，广场上到处是歪斜游荡的身影，几乎没有一块干净的空地。"; },
     choices: [
       { text: "去前门", nextScene: "建平-前门", effect: updateTime(2) },
       { text: "去行政楼", nextScene: "建平-行政楼-1F", effect: updateTime(2) },
@@ -327,8 +327,6 @@ Object.assign(storyData, {
       { text: "去远翔楼", nextScene: "建平-远翔楼-1F", effect: updateTime(2) },
       { text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) },
       { text: "去济美楼", nextScene: "建平-济美楼-1F", effect: updateTime(2) },
-      { text: "去操场", nextScene: "建平-操场", effect: updateTime(3) },
-      { text: "去后门（辅路）", nextScene: "建平-后门辅路", effect: updateTime(3) },
       { text: "躲进报刊亭", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-金苹果大道报刊亭" }
     ]
   },
@@ -336,7 +334,7 @@ Object.assign(storyData, {
   "建平-水池": {
     image: "images/placeholder.png" /* TODO: images/jianping/pond.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "水池"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "水池。" + describeZombieWave(vars); },
+    text: function(vars) { return "水池。丧尸像被什么吸引似的沿着池边越聚越多，有些半个身子泡在水里——水的湿气让它们扎堆在这里。"; },
     choices: [
       { text: "去废弃小楼", nextScene: "建平-废弃小楼-1F", effect: updateTime(2) },
       { text: "去挹芬楼（南门）", nextScene: "建平-挹芬楼南门", effect: updateTime(2) },
@@ -373,7 +371,7 @@ Object.assign(storyData, {
   "建平-行政楼-1F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "行政楼1F"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "行政楼 1 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "行政楼 1 楼。大厅里的丧尸比外面更密，大概是顺着校门一口气涌进来的，挤在电梯和楼梯口。"; },
     choices: [
       { text: "出门（金苹果广场）", nextScene: "建平-金苹果广场", effect: updateTime(2) },
       { text: "去东楼梯", nextScene: "建平-行政楼-东楼梯", effect: updateTime(1) },
@@ -419,7 +417,7 @@ Object.assign(storyData, {
   "建平-挹芬楼北门": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼北门"; return {}; },
-    text: function(vars) { return "挹芬楼北门。门外就是金苹果广场，广场上几具丧尸正漫无目的地游荡。门内是挹芬楼的大厅——往里走，那股腐臭更浓了。" + describeZombieWave(vars); },
+    text: function(vars) { return "挹芬楼北门。门外就是金苹果广场，广场上几具丧尸正漫无目的地游荡。门内是挹芬楼的大厅——往里走，那股腐臭更浓了，挹芬楼里的丧尸明显比广场上密。"; },
     choices: [
       { text: "去金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(2) },
       { text: "进入挹芬楼", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
@@ -428,7 +426,7 @@ Object.assign(storyData, {
   "建平-挹芬楼南门": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼南门"; return {}; },
-    text: function(vars) { return "挹芬楼南门。门外不远处是水池，再往西是思贤堂的方向。门内是挹芬楼的大厅。" + describeZombieWave(vars); },
+    text: function(vars) { return "挹芬楼南门。门外不远处是水池，丧尸沿着岸边密密麻麻地挤着——挹芬楼是全校丧尸最密集的地方，光站在门口就能感到那股压迫感。"; },
     choices: [
       { text: "去水池", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "去思贤堂", nextScene: "建平-思贤堂", effect: updateTime(2) },
@@ -669,18 +667,18 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "老吴的杂物室，也是他的总务处工具间。货架上堆满了学校物资——成箱的打印纸、劳技课材料、灯泡电线。";
       if (vars.dd >= 3 && !vars._laowuKilled) {
-        desc += "\n\n角落里，老吴趴在地上，一动不动，像是睡着了。";
+        desc += "\n角落里，老吴趴在地上，一动不动，像是睡着了。";
       } else if (vars.dd < 3) {
-        desc += "\n\n角落里，老吴趴在地上，一动不动。空气里有股淡淡的血腥味。";
+        desc += "\n角落里，老吴趴在地上，一动不动。空气里有股淡淡的血腥味。";
       } else {
-        desc += "\n\n角落里，老吴的尸体还趴在那里——已经被你处理过了。";
+        desc += "\n角落里，老吴的尸体还趴在那里——已经被你处理过了。";
       }
       return desc;
     },
     choices: [
       { text: "翻找货架", nextScene: "建平-致真楼-1F-老吴杂物室-翻货架", effect: updateTime(2) },
       { text: "查看老吴", nextScene: "建平-致真楼-1F-老吴杂物室-查看老吴", effect: updateTime(1) },
-      { text: "回 1 楼", nextScene: "建平-致真楼-1F", effect: updateTime(1) }
+      { text: "回 1 楼走廊", nextScene: "建平-致真楼-1F", effect: updateTime(1) }
     ]
   },
 
@@ -795,7 +793,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "致真楼2F化学实验室"; },
     text: "致真楼 2 楼 · 化学实验室。",
     choices: [
-      { text: "回 2 楼", nextScene: "建平-致真楼-2F", effect: updateTime(1) }
+      { text: "回 2 楼走廊", nextScene: "建平-致真楼-2F", effect: updateTime(1) }
     ]
   },
 
@@ -866,7 +864,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "远翔楼1F医务室"; },
     text: "远翔楼 1 楼 · 医务室。",
     choices: [
-      { text: "回 1 楼", nextScene: "建平-远翔楼-1F", effect: updateTime(1) }
+      { text: "回 1 楼走廊", nextScene: "建平-远翔楼-1F", effect: updateTime(1) }
     ]
   },
 
@@ -891,7 +889,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-物理办公室" },
-      { text: "回 3 楼", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
+      { text: "回 3 楼走廊", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
     ]
   },
 
@@ -901,13 +899,13 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "高三 14 班教室，你曾经的班级。课桌还摆成原来的样子，黑板上留着没擦掉的粉笔字。";
       if (jpIsMealTime(vars)) {
-        desc += "\n\n彭奕宸正坐在自己的座位上，从书包柜里掏出一包方便面。";
+        desc += "\n彭奕宸正坐在自己的座位上，从书包柜里掏出一包方便面。";
       } else if (vars._pengGalCleared) {
-        desc += "\n\n彭奕宸不在——电脑还亮着，课桌上摊着本翻开的漫画。他大概又溜去音乐教室或者图书馆了。这家伙，在教室里永远待不住。";
+        desc += "\n彭奕宸不在——电脑还亮着，课桌上摊着本翻开的漫画。他大概又溜去音乐教室或者图书馆了。这家伙，在教室里永远待不住。";
       } else if (vars._pengComputerFixed) {
-        desc += "\n\n彭奕宸坐在靠窗的位子，盯着电脑屏幕，一脸跃跃欲试。";
+        desc += "\n彭奕宸坐在靠窗的位子，盯着电脑屏幕，一脸跃跃欲试。";
       } else {
-        desc += "\n\n彭奕宸坐在靠窗的位子，盯着那台时不时开不了机的电脑，一脸烦躁。";
+        desc += "\n彭奕宸坐在靠窗的位子，盯着那台时不时开不了机的电脑，一脸烦躁。";
       }
       return desc;
     },
@@ -928,7 +926,7 @@ Object.assign(storyData, {
       if (vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-14班" });
       }
-      cs.push({ text: "回 4 楼", nextScene: "建平-远翔楼-4F", effect: updateTime(1) });
+      cs.push({ text: "回 4 楼走廊", nextScene: "建平-远翔楼-4F", effect: updateTime(1) });
       return cs;
     }
   },
@@ -937,7 +935,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     text: "彭奕宸指着那台电脑抱怨：\"这破电脑，动不动就开不了机。我按了半天开机键，屏幕就是黑。\"\n你蹲下来看了看主机，又看了看墙上的插座——插头松垮垮的，插座面板都有点烧焦的痕迹。\n你隐约觉得，问题可能不在电脑本身，而在供电。但要确认，得有个万用表测一测电压。",
     choices: [
-      { text: "想起老吴杂物室有万用表", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
+      { text: "去哪里找呢？", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
     ]
   },
 
@@ -991,7 +989,7 @@ Object.assign(storyData, {
   "建平-远翔楼-4F-高三14班-方便面": {
     image: "images/placeholder.png",
     onEnter: { set: { _pengNoodleShared: true }, add: { strength: 1 } },
-    text: "彭奕宸把方便面掰成两半，递给你一半。\n就着没喝完的水，你们俩蹲在教室里，一人半包方便面。\n谈不上多好吃，但在这种时候，能和旧同桌分着吃口热乎的，比什么都强。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: "彭奕宸把方便面掰成两半，递给你一半。\n就着没喝完的水，你们俩蹲在教室里，一人半包方便面。\n谈不上多好吃，但在这种时候，能和老同学分着吃口热乎的，比什么都强。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
     ]
@@ -1191,7 +1189,7 @@ Object.assign(storyData, {
   "建平-弘渊楼-1F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "弘渊楼1F"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "弘渊楼（图书馆）1 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "弘渊楼（图书馆）1 楼。临水的一层潮气重，丧尸贴着墙根和书架缝隙聚集，比楼上密得多。"; },
     choices: [
       { text: "出门（前门·水池）", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "出门（后门·操场）", nextScene: "建平-操场", effect: updateTime(2) },
@@ -1234,11 +1232,11 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "图书馆 4 楼的电脑区。一排排电脑黑着屏幕，只有角落里一台亮着。";
       if (jpIsMealTime(vars)) {
-        desc += "\n\n蔡镜晓不在——这个点他应该去食堂后厨找吃的了。";
+        desc += "\n蔡镜晓不在——这个点他应该去食堂后厨找吃的了。";
       } else {
-        desc += "\n\n蔡镜晓坐在那台亮着的电脑前，戴着耳机打明日方舟，屏幕上闪烁着作战画面。";
+        desc += "\n蔡镜晓坐在那台亮着的电脑前，戴着耳机打明日方舟，屏幕上闪烁着作战画面。";
         if (vars._pengGalCleared) {
-          desc += "\n\n彭奕宸也占了旁边一台电脑，玩得正起劲——这俩家伙，一个图书馆一个教室，满学校乱窜。";
+          desc += "\n彭奕宸也占了旁边一台电脑，玩得正起劲——这俩家伙，一个图书馆一个教室，满学校乱窜。";
         }
       }
       return desc;
@@ -1251,7 +1249,7 @@ Object.assign(storyData, {
       if (vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-电脑区" });
       }
-      cs.push({ text: "回 4 楼", nextScene: "建平-弘渊楼-4F", effect: updateTime(1) });
+      cs.push({ text: "回 4 楼走廊", nextScene: "建平-弘渊楼-4F", effect: updateTime(1) });
       return cs;
     }
   },
@@ -1277,7 +1275,7 @@ Object.assign(storyData, {
   "建平-济美楼-1F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼1F"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "济美楼 1 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "济美楼 1 楼。门口和走廊里都有丧尸游荡——靠近水池的方向，动静尤其多。"; },
     choices: [
       { text: "出门（金苹果大道）", nextScene: "建平-金苹果大道", effect: updateTime(2) },
       { text: "出门（水池）", nextScene: "建平-水池", effect: updateTime(2) },
@@ -1325,7 +1323,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "济美楼1F心理教室"; },
     text: "济美楼 1 楼 · 心理教室。",
     choices: [
-      { text: "回 1 楼", nextScene: "建平-济美楼-1F", effect: updateTime(1) }
+      { text: "回 1 楼走廊", nextScene: "建平-济美楼-1F", effect: updateTime(1) }
     ]
   },
 
@@ -1339,7 +1337,7 @@ Object.assign(storyData, {
       return "济美楼 4 楼 · 音乐教室。一架旧钢琴蒙着灰，谱架上的乐谱被风吹乱了几页。";
     },
     choices: [
-      { text: "回 4 楼", nextScene: "建平-济美楼-4F", effect: updateTime(1) }
+      { text: "回 4 楼走廊", nextScene: "建平-济美楼-4F", effect: updateTime(1) }
     ]
   },
 
@@ -1348,7 +1346,7 @@ Object.assign(storyData, {
   "建平-废弃小楼-1F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "废弃小楼1F"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "废弃小楼 1 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "废弃小楼 1 楼。这栋没人管的小楼里堆着杂物，丧尸在阴影里躲了不少，比外面看起来的还要多。"; },
     choices: [
       { text: "去水池", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "去思贤堂", nextScene: "建平-思贤堂", effect: updateTime(2) },
@@ -1383,7 +1381,7 @@ Object.assign(storyData, {
     text: "废弃小楼 3 楼 · 团委工作室。",
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-团委工作室" },
-      { text: "回 3 楼", nextScene: "建平-废弃小楼-3F", effect: updateTime(1) }
+      { text: "回 3 楼走廊", nextScene: "建平-废弃小楼-3F", effect: updateTime(1) }
     ]
   },
 
@@ -1412,7 +1410,7 @@ Object.assign(storyData, {
     text: "挹芬楼 3 楼 · 机房。",
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-挹芬楼机房3F" },
-      { text: "回 3 楼", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) }
+      { text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) }
     ]
   },
   "建平-挹芬楼-4F-高二教室": jpRoom("挹芬楼 4 楼 · 高二教室", "建平-挹芬楼-4F"),
@@ -1422,7 +1420,7 @@ Object.assign(storyData, {
     text: "挹芬楼 4 楼 · 机房。",
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-挹芬楼机房4F" },
-      { text: "回 4 楼", nextScene: "建平-挹芬楼-4F", effect: updateTime(1) }
+      { text: "回 4 楼走廊", nextScene: "建平-挹芬楼-4F", effect: updateTime(1) }
     ]
   },
   "建平-挹芬楼-5F-高二教室": jpRoom("挹芬楼 5 楼 · 高二教室", "建平-挹芬楼-5F"),

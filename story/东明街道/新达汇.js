@@ -128,6 +128,7 @@ Object.assign(storyData, {
 
   // ==================== B1 地下层 ====================
   "新达汇-B1下沉广场入口": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/b1Entry.png */,
     text: function(vars) { return "下沉广场入口。阶梯从地面延伸下来，这里的比上面暗了不少，应急灯发出惨白的光。广场中央的绿植绿意盎然，周围几把户外桌椅东倒西歪。\n前方就是B1美食广场的入口。\n" + describeZombieWave(vars); },
     choices: [
