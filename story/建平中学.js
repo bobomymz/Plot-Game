@@ -84,9 +84,9 @@ function jpElevator(prefix, label, floors) {
       vars.currentPos = label;
       vars._harshActive = true;
       vars._harshCaught = false;
-      vars._harshIndex = 0;
-      vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 10);   // 重置计步基准，避免休眠期"补进度"
-      vars._harshTrack = [prefix + "-电梯", prefix + "-电梯", prefix + "-电梯", prefix + "-电梯", prefix + "-电梯", prefix + "-电梯"];
+      vars._harshLag = 6;                                  // 唤醒时落后 6 步，给玩家缓冲
+      vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 3);   // 重置计步基准，避免休眠期"补进度"
+      vars._harshTrack = [];                               // 轨迹清空，从激活点开始记真实路径
       flashStatusWarning("⚠ 电梯启动的嗡鸣声中，楼上传来一声凄厉的嚎叫——有什么东西醒了。");
     },
     text: function(vars) { return label + "。" + describeZombieWave(vars); },
@@ -120,25 +120,27 @@ function jpHarshTrack(vars, sceneId) {
   var track = vars._harshTrack || [];
   if (track.length >= 1 && track[track.length - 1] === sceneId) return;  // 已在末尾（原地停留/重复进同一场景），不重复记
   if (track.length >= 2 && track[track.length - 2] === sceneId) {
-    // 折返一步：弹出末尾凸出点，末尾即当前场景，无需再 push
+    // 折返一步：弹出末尾凸出点，末尾即当前场景，无需再 push。
+    // 去+回两步路程一起消失，距离骤减 2 —— 很近时折返会迎面撞上。
     track.pop();
-    if (vars._harshIndex >= track.length) vars._harshIndex = track.length - 1;
-    if (vars._harshIndex < 0) vars._harshIndex = 0;
+    vars._harshLag = (vars._harshLag || 0) - 2;
     vars._harshTrack = track;
+    if (vars._harshLag <= 0) vars._harshCaught = true;   // 折返迎面撞上
     return;
   }
   vars._harshTrack = track.concat([sceneId]);
+  vars._harshLag = (vars._harshLag || 0) + 1;   // 走远一步
 }
 
 // Harsh 距离提示：写入地点节点 text 末尾（仅激活且足够近时）。
 // 遭遇前（_harshEncounters == 0）保持悬念用"身影"；被堵住过一次后才直呼 Harsh。
 function jpHarshHint(vars) {
-  if (!vars._harshActive || !vars._harshTrack || vars._harshTrack.length < 2) return "";
-  var dist = vars._harshTrack.length - 1 - vars._harshIndex;
+  if (!vars._harshActive) return "";
+  var lag = vars._harshLag || 0;
   var met = (vars._harshEncounters || 0) > 0;
-  if (dist <= 0) return "\n<span style='color:#ff4444;'>——" + (met ? "Harsh" : "那个身影") + "就在你眼前！</span>";
-  if (dist <= 2) return "\n<span style='color:#ffaa00;'>身后传来拖沓的脚步声，" + (met ? "Harsh" : "有什么东西") + "越来越近了……</span>";
-  if (dist <= 4) return met ? "\n远处，Harsh还在跟着你。" : "\n远处似乎有个身影在跟着你。";
+  if (lag <= 0) return "\n<span style='color:#ff4444;'>——" + (met ? "Harsh" : "那个身影") + "就在你眼前！</span>";
+  if (lag <= 2) return "\n<span style='color:#ffaa00;'>身后传来拖沓的脚步声，" + (met ? "Harsh" : "有什么东西") + "越来越近了……</span>";
+  if (lag <= 5) return met ? "\n远处，Harsh还在跟着你。" : "\n远处似乎有个身影在跟着你。";
   return "";   // 距离远时不提及（不剧透）
 }
 
@@ -231,7 +233,7 @@ Object.assign(storyData, {
   "建平-前门-清场": {
     image: "images/placeholder.png" /* TODO: images/jianping/frontGate.png */,
     onEnter: { set: { _frontGateCleared: true, showZombies: true, currentPos: "前门" } },
-    text: "你记住了颜色的顺序，在丧尸合围之前冲进了前门。\n身后的丧尸被你甩在了门外——它们一时半会儿追不上来。",
+    text: "你趁丧尸合围的间隙闪身冲过了前门，一头扎进校园。\n身后的丧尸扑了个空，被你甩在门外——它们一时半会儿追不上来。",
     choices: [
       { text: "进入金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(1) }
     ]
@@ -349,7 +351,7 @@ Object.assign(storyData, {
       if (!vars._frontGateCleared) return { add: { chasedByZombies: 1 } };   // 前门清空后广场不再反复加追兵
       return {};
     },
-    text: function(vars) { return "金苹果广场。丧尸从半开的校门和四周楼里不断涌来，广场上到处是歪斜游荡的身影，几乎没有一块干净的空地。"; },
+    text: function(vars) { return "金苹果广场。你注意到，丧尸正逐渐从四周楼里涌来。"; },
     choices: [
       { text: "去前门", nextScene: "建平-前门", effect: updateTime(2) },
       { text: "去行政楼", nextScene: "建平-行政楼-1F", effect: updateTime(2) },
@@ -1501,13 +1503,13 @@ Object.assign(storyData, {
         // 两次被追上：驱赶后强制休眠（需再次坐电梯才会重新追逐）
         vars._harshActive = false;
         vars._harshTrack = [];
-        vars._harshIndex = 0;
+        vars._harshLag = 6;
       } else {
-        // 播种轨迹：垫 6 份返回位置，让她重新落后数步，避免立刻再被追上
+        // 驱赶成功：她重新落后 6 步，轨迹只留当前位置
         var ret = vars._harshReturn || "建平-金苹果大道";
-        vars._harshIndex = 0;
-        vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 10);
-        vars._harshTrack = [ret, ret, ret, ret, ret, ret];
+        vars._harshLag = 6;
+        vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 3);
+        vars._harshTrack = [ret];
       }
       return {};
     },
@@ -1530,13 +1532,13 @@ Object.assign(storyData, {
         // 两次被追上且逃跑：Harsh 累了，强制休眠
         vars._harshActive = false;
         vars._harshTrack = [];
-        vars._harshIndex = 0;
+        vars._harshLag = 6;
       } else {
-        // 播种轨迹：垫 6 份返回位置，让她重新落后数步
+        // 逃跑成功：她重新落后 6 步，轨迹只留当前位置
         var ret = vars._harshReturn || "建平-金苹果大道";
-        vars._harshIndex = 0;
-        vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 10);
-        vars._harshTrack = [ret, ret, ret, ret, ret, ret];
+        vars._harshLag = 6;
+        vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 3);
+        vars._harshTrack = [ret];
       }
       return {};
     },
