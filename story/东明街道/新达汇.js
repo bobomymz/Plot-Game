@@ -2804,7 +2804,7 @@ Object.assign(storyData, {
   },
   "新达汇-哥哥的深夜食堂": {
     onEnter: { set: { showPowerOut: true } },
-    image: "images/placeholder.png" /* TODO: images/新达汇/izakaya.png */,
+    image: "images/新达汇/哥哥的深夜食堂.jpg",
     text: function(vars) {
       if (vars._yorozuyaUnlocked) return "你在哥哥的深夜食堂，门锁好了，很安静。";
       if (vars.hasDoorKey1) return "门上一把U型锁。锁孔的形状跟你找到的那把钥匙好像匹配。";

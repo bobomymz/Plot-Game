@@ -72,11 +72,12 @@ function jpBlockedStair(sceneId, prefix, label, floors, clearedVar) {
 }
 
 // 电梯间：可直达任意楼层（坐电梯，快；会唤醒 Harsh）。
-// 激活时播种轨迹：垫 5 份电梯位置，Harsh 起步落后 5 步（约 50 分钟才能追到）。
-function jpElevator(prefix, label, floors) {
+// floorOverrides 可选：映射"某层 → 场景ID"，用于楼层被拆分/改名的特殊情况（如挹芬楼 1F 拆成西侧/东侧走廊）。
+function jpElevator(prefix, label, floors, floorOverrides) {
   var choices = [];
   floors.forEach(function(f) {
-    choices.push({ text: "坐电梯去" + f + "楼", nextScene: prefix + "-" + f + "F", effect: updateTime(1) });
+    var target = (floorOverrides && floorOverrides[f]) || (prefix + "-" + f + "F");
+    choices.push({ text: "坐电梯去" + f + "楼", nextScene: target, effect: updateTime(1) });
   });
   return {
     image: "images/placeholder.png" /* TODO: images/jianping/elevator.png */,
@@ -184,6 +185,7 @@ Object.assign(storyData, {
       { text: "去前门看看", nextScene: "建平-前门", effect: updateTime(5) },
       { text: "绕去后门", nextScene: "建平-后门", effect: updateTime(10) },
       { text: "去门卫室", nextScene: "建平-门卫室", effect: updateTime(1) },
+      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-校园门口" } } },
       { text: "离开这里", nextScene: "罗山路立交桥下", effect: updateTime(10) }
     ]
   },
@@ -448,6 +450,7 @@ Object.assign(storyData, {
     text: function(vars) { return "行政楼天台花园。" + describeZombieWave(vars); },
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-天台" },
+      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-行政楼-天台" } } },
       { text: "回 3 楼", nextScene: "建平-行政楼-3F", effect: updateTime(1) }
     ]
   },
@@ -636,7 +639,7 @@ Object.assign(storyData, {
   },
   "建平-挹芬楼-东楼梯": jpStair("建平-挹芬楼", "挹芬楼东侧楼梯间", [1, 2, 3, 4, 5, 6]),
   "建平-挹芬楼-西楼梯": jpStair("建平-挹芬楼", "挹芬楼西侧楼梯间", [1, 2, 3, 4, 5, 6]),
-  "建平-挹芬楼-电梯": jpElevator("建平-挹芬楼", "挹芬楼电梯间", [1, 2, 3, 4, 5, 6]),
+  "建平-挹芬楼-电梯": jpElevator("建平-挹芬楼", "挹芬楼电梯间", [1, 2, 3, 4, 5, 6], { 1: "建平-挹芬楼-1F-西侧走廊" }),
 
   // ==================== 致真楼（5 层 · 1 电梯 + 2 楼梯 · 老吴杂物室） ====================
 
@@ -834,9 +837,27 @@ Object.assign(storyData, {
   "建平-致真楼-2F-化学实验室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "致真楼2F化学实验室"; },
-    text: "致真楼 2 楼 · 化学实验室。",
+    text: "致真楼 2 楼 · 化学实验室。实验台上摆着各种瓶瓶罐罐，水池边散落着几把镊子和螺丝刀。",
+    choices: function(vars) {
+      var cs = [];
+      if (vars.hasCSGun && !vars.hasTorch) {
+        cs.push({ text: "拆解真人CS枪，取下战术手电", nextScene: "建平-致真楼-2F-化学实验室-拆枪" });
+      }
+      cs.push({ text: "回 2 楼走廊", nextScene: "建平-致真楼-2F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-致真楼-2F-化学实验室-拆枪": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars.hasCSGun = false;
+      vars.hasTorch = true;   // CS枪上的战术手电当手电筒用；1格换1格，itemCount 不变
+      return {};
+    },
+    text: "你用桌上的螺丝刀把真人CS枪拆开，取下了枪管上那个战术手电。\n按下开关，一道光柱打在墙上——灯头还是好的。这可比那把打不了子弹的仿真枪有用多了。",
     choices: [
-      { text: "回 2 楼走廊", nextScene: "建平-致真楼-2F", effect: updateTime(1) }
+      { text: "收好手电筒", nextScene: "建平-致真楼-2F-化学实验室", effect: updateTime(2) }
     ]
   },
 
@@ -906,9 +927,27 @@ Object.assign(storyData, {
   "建平-远翔楼-1F-医务室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "远翔楼1F医务室"; },
-    text: "远翔楼 1 楼 · 医务室。",
+    text: function(vars) {
+      var desc = "医务室。药柜半开着，里面的药品大多被翻得乱七八糟，只剩些纱布和空药盒。";
+      if (!vars.hasFeverMed) desc += "\n角落里，一盒没拆封的退烧药孤零零地躺在药柜底层。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars.hasFeverMed) {
+        cs.push({ text: "拿那盒退烧药", nextScene: "建平-远翔楼-1F-医务室-拿药" });
+      }
+      cs.push({ text: "回 1 楼走廊", nextScene: "建平-远翔楼-1F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-远翔楼-1F-医务室-拿药": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasFeverMed: true }, add: { itemCount: 1 } },
+    text: "你拿起那盒退烧药，看了看保质期——还没过期。\n说不定哪天发烧了用得上。你把它塞进包里。",
     choices: [
-      { text: "回 1 楼走廊", nextScene: "建平-远翔楼-1F", effect: updateTime(1) }
+      { text: "收好", nextScene: "建平-远翔楼-1F-医务室", effect: updateTime(1) }
     ]
   },
 
@@ -933,6 +972,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-物理办公室" },
+      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-3F-物理办公室" } } },
       { text: "回 3 楼走廊", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
     ]
   },
@@ -970,6 +1010,7 @@ Object.assign(storyData, {
       if (vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-14班" });
       }
+      cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-4F-高三14班" } } });
       cs.push({ text: "回 4 楼走廊", nextScene: "建平-远翔楼-4F", effect: updateTime(1) });
       return cs;
     }
@@ -1068,7 +1109,8 @@ Object.assign(storyData, {
       { text: "去宿舍", nextScene: "建平-宿舍-门口", effect: updateTime(2) },
       { text: "去后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) },
       { text: "看看刘冠宇", nextScene: "建平-食堂-刘冠宇", effect: updateTime(1) },
-      { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-食堂" }
+      { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-食堂" },
+      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-食堂" } } }
     ]
   },
 
@@ -1301,6 +1343,7 @@ Object.assign(storyData, {
       if (!jpIsMealTime(vars) && vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-电脑区" });
       }
+      cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-弘渊楼-4F-电脑区" } } });
       cs.push({ text: "回 4 楼走廊", nextScene: "建平-弘渊楼-4F", effect: updateTime(1) });
       return cs;
     }
@@ -1443,6 +1486,7 @@ Object.assign(storyData, {
         cs.push({ text: "拿走校服内胆", nextScene: "建平-废弃小楼-3F-团委工作室-内胆" });
       }
       cs.push({ text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-团委工作室" });
+      cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-废弃小楼-3F-团委工作室" } } });
       cs.push({ text: "回 3 楼走廊", nextScene: "建平-废弃小楼-3F", effect: updateTime(1) });
       return cs;
     }
@@ -1570,14 +1614,57 @@ Object.assign(storyData, {
   "建平-济美楼-3F-JTV办公室": jpRoom("济美楼 3 楼 · JTV办公室", "建平-济美楼-3F"),
   "建平-挹芬楼-1F-公开课教室": jpRoom("挹芬楼 1 楼 · 公开课教室", "建平-挹芬楼-1F-西侧走廊"),
   "建平-挹芬楼-1F-饮料机": jpRoom("挹芬楼 1 楼 · 饮料机", "建平-挹芬楼-1F-休息区"),
-  "建平-挹芬楼-2F-高一教室": jpRoom("挹芬楼 2 楼 · 高一教室", "建平-挹芬楼-2F"),
-  "建平-挹芬楼-3F-高一教室": jpRoom("挹芬楼 3 楼 · 高一教室", "建平-挹芬楼-3F"),
+  "建平-挹芬楼-2F-高一教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼2F高一教室"; },
+    text: function(vars) {
+      var desc = "高一教室。课桌东倒西歪，黑板上还留着半截没写完的板书。";
+      if (!vars._yifenFood2F) desc += "\n某个课桌抽屉里，露出半截零食包装袋。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._yifenFood2F) {
+        cs.push({ text: "翻翻课桌抽屉", nextScene: "建平-挹芬楼-2F-高一教室-食品" });
+      }
+      cs.push({ text: "回 2 楼走廊", nextScene: "建平-挹芬楼-2F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-挹芬楼-2F-高一教室-食品": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _yifenFood2F: true }, add: { strength: 1 } },
+    text: "你翻出一个没拆封的面包和半瓶水。顾不上那么多，你撕开包装就吃。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "建平-挹芬楼-2F-高一教室", effect: updateTime(2) }
+    ]
+  },
+  "建平-挹芬楼-3F-高一教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼3F高一教室"; },
+    text: "高一教室。地上散落着书包和课本，几张课桌被拼在一起，像是有人在这里熬过夜。",
+    choices: [
+      { text: "查看桌上的纸条", showCondition: "!_yifenNote3F", nextScene: "建平-挹芬楼-3F-高一教室-纸条" },
+      { text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-挹芬楼-3F-高一教室-纸条": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _yifenNote3F: true } },
+    text: "你捡起桌上那张揉皱的纸条，上面用圆珠笔匆匆写着几行字：\n「他们说外面都是那种东西。老师让把门顶死，谁也别出去。\n楼下的声音越来越大了……」\n字迹到这里就断了，最后一笔拖出长长一道，像是写的人被什么打断了。",
+    choices: [
+      { text: "放下纸条", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(1) }
+    ]
+  },
   "建平-挹芬楼-3F-机房": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼3F机房"; },
     text: "挹芬楼 3 楼 · 机房。",
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-挹芬楼机房3F" },
+      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-挹芬楼-3F-机房" } } },
       { text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) }
     ]
   },
@@ -1588,15 +1675,108 @@ Object.assign(storyData, {
     text: "挹芬楼 4 楼 · 机房。",
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-挹芬楼机房4F" },
+      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-挹芬楼-4F-机房" } } },
       { text: "回 4 楼走廊", nextScene: "建平-挹芬楼-4F", effect: updateTime(1) }
     ]
   },
-  "建平-挹芬楼-5F-高二教室": jpRoom("挹芬楼 5 楼 · 高二教室", "建平-挹芬楼-5F"),
-  "建平-挹芬楼-6F-自习教室": jpRoom("挹芬楼 6 楼 · 自习教室", "建平-挹芬楼-6F"),
+  "建平-挹芬楼-5F-高二教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼5F高二教室"; },
+    text: "高二教室。桌椅被推到墙边，中间空出一块，像是有人把这里当成了临时据点。",
+    choices: [
+      { text: "看黑板上的字", showCondition: "!_yifenBoard5F", nextScene: "建平-挹芬楼-5F-高二教室-黑板" },
+      { text: "回 5 楼走廊", nextScene: "建平-挹芬楼-5F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-挹芬楼-5F-高二教室-黑板": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _yifenBoard5F: true } },
+    text: "黑板上用粉笔潦草地写着几个大字：\n「Day 2 · 还剩 11 个人」\n下面还有一行小字：「谁也别自己下楼，下去就回不来了。」",
+    choices: [
+      { text: "移开视线", nextScene: "建平-挹芬楼-5F-高二教室", effect: updateTime(1) }
+    ]
+  },
+  "建平-挹芬楼-6F-自习教室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼6F自习教室"; },
+    text: function(vars) {
+      var desc = "自习教室。几排桌椅挤在一起，靠墙的储物柜大多敞着。";
+      if (!vars._yifenFood6F) desc += "\n其中一个储物柜里，好像塞着点吃的。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._yifenFood6F) {
+        cs.push({ text: "翻翻储物柜", nextScene: "建平-挹芬楼-6F-自习教室-食品" });
+      }
+      cs.push({ text: "回 6 楼走廊", nextScene: "建平-挹芬楼-6F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-挹芬楼-6F-自习教室-食品": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _yifenFood6F: true }, add: { strength: 1 } },
+    text: "你从储物柜里翻出几包夹心饼干和一盒没喝完的牛奶。\n牛奶有点温了，但你顾不上，就着饼干一起咽了下去。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "建平-挹芬楼-6F-自习教室", effect: updateTime(2) }
+    ]
+  },
   "建平-行政楼-1F-教学处": jpRoom("行政楼 1 楼 · 教学处", "建平-行政楼-1F"),
-  "建平-行政楼-2F-文印室": jpRoom("行政楼 2 楼 · 文印室", "建平-行政楼-2F"),
+  "建平-行政楼-2F-文印室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "行政楼2F文印室"; },
+    text: function(vars) {
+      var desc = "文印室。桌上、地上堆满了印了一半的卷子和废纸，空气里一股油墨味。";
+      if (!vars.hasWatch) desc += "\n靠窗那张办公桌的抽屉半开着，里面似乎有什么东西。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars.hasWatch) {
+        cs.push({ text: "翻翻抽屉", nextScene: "建平-行政楼-2F-文印室-手表" });
+      }
+      cs.push({ text: "回 2 楼走廊", nextScene: "建平-行政楼-2F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-行政楼-2F-文印室-手表": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasWatch: true }, add: { itemCount: 1 } },
+    text: "你拉开抽屉，里面躺着一只机械手表——秒针还在一下一下地跳。\n是哪个老师匆忙间落下的。你把它戴上手腕，这样随时都能知道时间了。",
+    choices: [
+      { text: "收好", nextScene: "建平-行政楼-2F-文印室", effect: updateTime(1) }
+    ]
+  },
   "建平-行政楼-3F-公开课教室": jpRoom("行政楼 3 楼 · 公开课教室", "建平-行政楼-3F"),
-  "建平-废弃小楼-1F-纸箱": jpRoom("废弃小楼 1 楼 · 纸箱", "建平-废弃小楼-1F"),
+  "建平-废弃小楼-1F-纸箱": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "废弃小楼1F纸箱"; },
+    text: function(vars) {
+      var desc = "角落里有个纸箱，里面堆着些校园活动留下的道具——彩带、气球、几把真人CS的枪。";
+      if (!vars.hasCSGun) desc += "\n其中一把枪上装了个战术手电，灯头看起来还是好的。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars.hasCSGun) {
+        cs.push({ text: "拿一把真人CS枪", nextScene: "建平-废弃小楼-1F-纸箱-拿枪" });
+      }
+      cs.push({ text: "回 1 楼", nextScene: "建平-废弃小楼-1F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-废弃小楼-1F-纸箱-拿枪": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasCSGun: true }, add: { itemCount: 1 } },
+    text: "你拿起那把真人CS的枪。枪是仿真的，打不了真子弹，但枪管上那个战术手电看着挺实用。\n你把它收了起来——也许能拆出点有用的零件。",
+    choices: [
+      { text: "收好", nextScene: "建平-废弃小楼-1F-纸箱", effect: updateTime(1) }
+    ]
+  },
   "建平-废弃小楼-2F-活动室": jpRoom("废弃小楼 2 楼 · 活动室", "建平-废弃小楼-2F"),
   "建平-门卫室": jpRoom("门卫室", "建平-校园门口"),
 

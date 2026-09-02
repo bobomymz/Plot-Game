@@ -182,6 +182,13 @@ const storyData = {
     _pengGalCleared: false,     // 是否帮彭奕宸打完galgame
     _pengNoodleShared: false,   // 14班方便面是否已分享（饭点一次性）
     hasCanteenFood: false,      // 食堂干粮（占背包，一次性，吃+体力）
+    hasFeverMed: false,         // 退烧药（医务室，占背包，感冒系统铺路）
+    hasWatch: false,            // 机械手表（行政楼2F文印室，占背包，整理整理看时间）
+    hasCSGun: false,            // 真人CS枪（废弃小楼1F纸箱，占背包，化学实验室拆成手电筒）
+    _yifenFood2F: false,        // 挹芬楼2F高一教室食品是否已拿
+    _yifenNote3F: false,        // 挹芬楼3F高一教室纸条是否已看
+    _yifenBoard5F: false,       // 挹芬楼5F高二教室黑板字是否已看
+    _yifenFood6F: false,        // 挹芬楼6F自习教室食品是否已拿
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除
@@ -695,6 +702,17 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
+        showCondition: "hasCSGun",
+        text: "丢下真人CS枪",
+        effect: updateTime(1, { set : { hasCSGun: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasWatch",
+        text: "看看时间",
+        nextScene: "整理整理-看时间"
+      },
+      {
         text: "不丢，谢谢",
         showCondition: "itemCount <= bagVolume", // 只有当物品数量小于等于背包容量时，才能继续前进，否则需要整理整理物品
         nextScene: "{positionAfterOperation}"
@@ -703,6 +721,18 @@ const storyData = {
   },
 
   // ====== 整理整理-使用道具（独立描述节点） ======
+  "整理整理-看时间": {
+    image: "images/整理整理.png",
+    text: function(vars) {
+      var hh = vars.hh, mm = vars.mm;
+      var period = hh >= 6 && hh < 11 ? "上午" : (hh < 14 ? "中午" : (hh < 18 ? "下午" : "晚上"));
+      return "你抬起手腕看了眼手表——现在是第 " + vars.dd + " 天，" + period + " " + hh + " 点 " + (mm < 10 ? "0" : "") + mm + " 分。";
+    },
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
   "整理整理-喝水": {
     image: "images/整理整理.png",
     onEnter: function(vars) {
