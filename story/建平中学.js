@@ -71,7 +71,8 @@ function jpBlockedStair(sceneId, prefix, label, floors, clearedVar) {
   };
 }
 
-// 电梯间：可直达任意楼层（坐电梯，快；后续会唤醒 Harsh）。
+// 电梯间：可直达任意楼层（坐电梯，快；会唤醒 Harsh）。
+// 激活时播种轨迹：垫 5 份电梯位置，Harsh 起步落后 5 步（约 50 分钟才能追到）。
 function jpElevator(prefix, label, floors) {
   var choices = [];
   floors.forEach(function(f) {
@@ -79,7 +80,15 @@ function jpElevator(prefix, label, floors) {
   });
   return {
     image: "images/placeholder.png" /* TODO: images/jianping/elevator.png */,
-    onEnter: function(vars) { vars.currentPos = label; vars._harshActive = true; },
+    onEnter: function(vars) {
+      vars.currentPos = label;
+      vars._harshActive = true;
+      vars._harshCaught = false;
+      vars._harshIndex = 0;
+      vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 10);   // 重置计步基准，避免休眠期"补进度"
+      vars._harshTrack = [prefix + "-电梯", prefix + "-电梯", prefix + "-电梯", prefix + "-电梯", prefix + "-电梯", prefix + "-电梯"];
+      flashStatusWarning("⚠ 电梯启动的嗡鸣声中，楼上传来一声凄厉的嚎叫——有什么东西醒了。");
+    },
     text: function(vars) { return label + "。" + describeZombieWave(vars); },
     choices: choices
   };
@@ -103,18 +112,33 @@ function jpIsMealTime(vars) {
 }
 
 // Harsh 追踪：玩家进入地点节点时记录轨迹（仅 Harsh 激活时）。在地点节点 onEnter 里调用。
+// 路径剪枝：玩家原路折返一步时，弹出"凸出"的那格——[a,b,c,d] 后回到 c，
+// 轨迹剪成 [a,b,c]（不再重复 push c），Harsh 沿剪后轨迹追到中段 c 才可能迎面撞上，
+// 而不是"瞬移到轨迹末尾"抓你；同时防止轨迹因来回绕圈无限膨胀。
 function jpHarshTrack(vars, sceneId) {
   if (!vars._harshActive) return;
-  vars._harshTrack = (vars._harshTrack || []).concat([sceneId]);
+  var track = vars._harshTrack || [];
+  if (track.length >= 1 && track[track.length - 1] === sceneId) return;  // 已在末尾（原地停留/重复进同一场景），不重复记
+  if (track.length >= 2 && track[track.length - 2] === sceneId) {
+    // 折返一步：弹出末尾凸出点，末尾即当前场景，无需再 push
+    track.pop();
+    if (vars._harshIndex >= track.length) vars._harshIndex = track.length - 1;
+    if (vars._harshIndex < 0) vars._harshIndex = 0;
+    vars._harshTrack = track;
+    return;
+  }
+  vars._harshTrack = track.concat([sceneId]);
 }
 
-// Harsh 距离提示：写入地点节点 text 末尾（仅激活且足够近时）
+// Harsh 距离提示：写入地点节点 text 末尾（仅激活且足够近时）。
+// 遭遇前（_harshEncounters == 0）保持悬念用"身影"；被堵住过一次后才直呼 Harsh。
 function jpHarshHint(vars) {
-  if (!vars._harshActive || !vars._harshTrack || vars._harshTrack.length < 1) return "";
+  if (!vars._harshActive || !vars._harshTrack || vars._harshTrack.length < 2) return "";
   var dist = vars._harshTrack.length - 1 - vars._harshIndex;
-  if (dist <= 0) return "\n<span style='color:#ff4444;'>——那个身影就在你眼前！</span>";
-  if (dist <= 2) return "\n<span style='color:#ffaa00;'>身后传来拖沓的脚步声，越来越近了……</span>";
-  if (dist <= 4) return "\n远处似乎有个身影在跟着你。";
+  var met = (vars._harshEncounters || 0) > 0;
+  if (dist <= 0) return "\n<span style='color:#ff4444;'>——" + (met ? "Harsh" : "那个身影") + "就在你眼前！</span>";
+  if (dist <= 2) return "\n<span style='color:#ffaa00;'>身后传来拖沓的脚步声，" + (met ? "Harsh" : "有什么东西") + "越来越近了……</span>";
+  if (dist <= 4) return met ? "\n远处，Harsh还在跟着你。" : "\n远处似乎有个身影在跟着你。";
   return "";   // 距离远时不提及（不剧透）
 }
 
@@ -137,7 +161,7 @@ function jpHide(image, successText, failText, reduceLevel) {
     text: function(vars) { return vars._hideFail ? failText : successText; },
     // 躲完后返回来源场景，避免"无选项 → 剧终"
     choices: [
-      { text: "继续前进", nextScene: function(vars) { return vars._lastScene || "建平-金苹果大道"; } }
+      { text: "继续", nextScene: function(vars) { return vars._lastScene || "建平-金苹果大道"; } }
     ]
   };
 }
@@ -367,7 +391,7 @@ Object.assign(storyData, {
     choices: [
       { text: "去食堂侧门", nextScene: "建平-食堂", effect: updateTime(2) },
       { text: "去弘渊楼后门", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
-      { text: "去宿舍", nextScene: "建平-宿舍", effect: updateTime(2) },
+      { text: "去宿舍", nextScene: "建平-宿舍-门口", effect: updateTime(2) },
       { text: "躲到灌木丛", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-操场灌木丛" }
     ]
   },
@@ -1039,7 +1063,7 @@ Object.assign(storyData, {
       { text: "从正门出去", nextScene: "建平-金苹果大道", effect: updateTime(2) },
       { text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) },
       { text: "从侧门出去", nextScene: "建平-操场", effect: updateTime(2) },
-      { text: "去宿舍", nextScene: "建平-宿舍", effect: updateTime(2) },
+      { text: "去宿舍", nextScene: "建平-宿舍-门口", effect: updateTime(2) },
       { text: "去后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) },
       { text: "看看刘冠宇", nextScene: "建平-食堂-刘冠宇", effect: updateTime(1) },
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-食堂" }
@@ -1151,10 +1175,20 @@ Object.assign(storyData, {
 
   // ==================== 宿舍楼（单节点 · 简化） ====================
 
-  "建平-宿舍": {
+  "建平-宿舍-门口": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "宿舍门口"; return { add: { chasedByZombies: 1 } }; },
+    text: function(vars) { return "学生宿舍楼。楼门半掩着，往里看黑洞洞的，隐约能听到走廊里拖沓的脚步声——这栋楼里的丧尸比外面多得多。\n如果能把它们清干净，这里倒是个能安心过夜的落脚点。"; },
+    choices: [
+      { text: "进入宿舍", nextScene: "建平-宿舍-内部", effect: updateTime(1) },
+      { text: "去操场", nextScene: "建平-操场", effect: updateTime(2) },
+      { text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) }
+    ]
+  },
+  "建平-宿舍-内部": {
     image: "images/placeholder.png",
     onEnter: function(vars) {
-      vars.currentPos = "宿舍";
+      vars.currentPos = "宿舍内部";
       if (!vars._dormCleared) {
         var seq = randSeq(["红","蓝","绿"], 5);
         vars._currentSeq = seq;
@@ -1166,9 +1200,9 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if (vars._dormCleared) {
-        return "宿舍。丧尸已经被你清理干净了，走廊安静了下来。这里可以安心休息，甚至过夜。" + describeZombieWave(vars);
+        return "宿舍内部。丧尸已经被你清理干净了，走廊安静了下来。这里可以安心休息，甚至过夜。" + describeZombieWave(vars);
       }
-      return "宿舍楼里挤着不少丧尸，在走廊里漫无目的地游荡。想在这里安身，得先把它们清掉。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+      return "你推开宿舍的门——走廊里挤着不少丧尸，在昏暗的光线里漫无目的地游荡。得先把它们清掉。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
       if (!vars._dormCleared) {
@@ -1177,7 +1211,8 @@ Object.assign(storyData, {
             text: "输入你看到的颜色分布",
             input: { placeholder: "例如：3红2蓝" },
             condition: checkFlashAnswer,
-            nextScene: "建平-宿舍-清场",
+            effect: { set: { _dormCleared: true } },
+            nextScene: "建平-宿舍-内部",
             elseScene: "结局-宿舍失守",
             timeout: 12000,
             timeoutScene: "结局-宿舍失守"
@@ -1185,18 +1220,9 @@ Object.assign(storyData, {
         ];
       }
       return [
-        { text: "去操场", nextScene: "建平-操场", effect: updateTime(2) },
-        { text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) }
+        { text: "回宿舍门口", nextScene: "建平-宿舍-门口", effect: updateTime(1) }
       ];
     }
-  },
-  "建平-宿舍-清场": {
-    image: "images/placeholder.png",
-    onEnter: { set: { _dormCleared: true, currentPos: "宿舍" } },
-    text: "你清掉了宿舍里的丧尸。走廊安静了下来，这里终于能安身了。",
-    choices: [
-      { text: "继续", nextScene: "建平-宿舍", effect: updateTime(1) }
-    ]
   },
   "结局-宿舍失守": {
     image: "images/zombieKnockYouDown.png",
@@ -1470,10 +1496,19 @@ Object.assign(storyData, {
   "建平-Harsh堵住-驱赶": {
     image: "images/placeholder.png",
     onEnter: function(vars) {
-      // 驱赶成功：Harsh 退开，重置追逐（回落到轨迹起点），记录本次碰撞不累计休眠（除非已到2次）
       vars._harshCaught = false;
-      vars._harshIndex = 0;
-      vars._harshTrack = vars._harshReturn ? [vars._harshReturn] : [];
+      if (vars._harshEncounters >= 2) {
+        // 两次被追上：驱赶后强制休眠（需再次坐电梯才会重新追逐）
+        vars._harshActive = false;
+        vars._harshTrack = [];
+        vars._harshIndex = 0;
+      } else {
+        // 播种轨迹：垫 6 份返回位置，让她重新落后数步，避免立刻再被追上
+        var ret = vars._harshReturn || "建平-金苹果大道";
+        vars._harshIndex = 0;
+        vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 10);
+        vars._harshTrack = [ret, ret, ret, ret, ret, ret];
+      }
       return {};
     },
     text: function(vars) {
@@ -1497,8 +1532,11 @@ Object.assign(storyData, {
         vars._harshTrack = [];
         vars._harshIndex = 0;
       } else {
+        // 播种轨迹：垫 6 份返回位置，让她重新落后数步
+        var ret = vars._harshReturn || "建平-金苹果大道";
         vars._harshIndex = 0;
-        vars._harshTrack = vars._harshReturn ? [vars._harshReturn] : [];
+        vars._harshLastTick = Math.floor((vars.gameMinutes || 0) / 10);
+        vars._harshTrack = [ret, ret, ret, ret, ret, ret];
       }
       return {};
     },
@@ -1577,12 +1615,22 @@ Object.assign(storyData, {
 });
 
 // ==================== Harsh 追踪接入（运行时包装） ====================
-// 对所有"建平-地点节点"（非战斗/躲藏/Harsh/结局/房间）统一包装：
-// 进入时记录轨迹（jpHarshTrack），text 追加距离提示（jpHarshHint）。
-// 排除：躲藏场景、Harsh 场景本身、结局、校园门口外的高架节点。
+// 对所有"建平-地点节点"统一包装：进入时记录轨迹（jpHarshTrack），text 追加距离提示（jpHarshHint）。
+// 判定方式是【排除法】：以"建平-"开头（KEEP）且不命中排除规则，才算地点节点。
+//
+// ⚠️ 新增场景时的注意事项：
+//   1. 新增【地点节点】（走廊/楼层/户外等空间）：无需处理，本包装器自动覆盖。
+//   2. 新增【非地点的剧情子节点】（战斗/拾取/对话/解密等中间步骤场景）：
+//      必须让它的场景ID命中下面的 NON_PLACE 正则，否则会被误记入轨迹，
+//      导致 Harsh 的追踪距离失真。做法：场景 ID 以 "-关键词" 结尾
+//      （如 "xxx-翻找"、"xxx-对话"），并把关键词同步补进 NON_PLACE。
+//   3. 躲藏场景以"建平-躲藏-"开头、Harsh 相关以"建平-Harsh"开头：自动排除。
+//   4. 本包装器只遍历到此处已注册的场景——以后若把建平场景拆到别的文件，
+//      需保证该文件在 index.html 中先于 engine.js 加载、并先于本段执行。
 (function() {
   var EXCLUDE = /^(建平-躲藏-|建平-Harsh|结局-|复旦)/;
   var KEEP = /^建平-/;
+  // 非地点节点关键词（每次新增此类场景需同步补充）
   var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;

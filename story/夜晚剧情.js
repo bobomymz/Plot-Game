@@ -611,7 +611,7 @@ Object.assign(storyData, {
 你挑了张下铺躺下，拉过被子——虽然蒙着灰，但总比露天强。\n\
 第二天醒来，阳光从窗户照进来。你在母校的宿舍里，睡得竟然格外安稳。",
     choices: [
-      { text: "继续", nextScene: "建平-宿舍" }
+      { text: "继续", nextScene: "建平-宿舍-内部" }
     ]
   },
 

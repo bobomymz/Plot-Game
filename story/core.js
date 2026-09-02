@@ -165,6 +165,7 @@ const storyData = {
     _harshEncounters: 0,        // 累计撞上 Harsh 次数（2次强制休眠）
     hasInnerLining: 0,          // 校服内胆数量（丢给 Harsh 驱赶，单次消耗）
     _harshReturn: "",           // 被 Harsh 堵住前的位置（逃跑/驱赶后返回）
+    _harshLastTick: -1,          // Harsh 上次推进时的 10 分钟档（用于计算一次推进几步）
     _innerLiningYouthRoom: false, // 团委工作室的校服内胆是否已拿
     _yuanxiangWestStairCleared: false,  // 远翔楼西楼梯强丧尸是否已清
     _zhizhenEastStairCleared: false,    // 致真楼东楼梯强丧尸是否已清
@@ -321,13 +322,18 @@ const storyData = {
         }
       },
 
-      // --- Harsh 追逐：每10分钟逼近1步，追上触发"被堵住" ---
+      // --- Harsh 追逐：每3分钟逼近1步（一次状态变更跨 N 档则推进 N 步），追上触发"被堵住" ---
       {
         id: "harsh-chase",
         condition: function(v) { return v._harshActive && !v._harshCaught && v._harshTrack && v._harshTrack.length > 1; },
-        triggerKey: "Math.floor(gameMinutes / 10)",
+        triggerKey: "Math.floor(gameMinutes / 3)",
         effect: function(v) {
-          v._harshIndex = Math.min(v._harshTrack.length - 1, v._harshIndex + 1);
+          var tick = Math.floor(v.gameMinutes / 3);
+          var last = (v._harshLastTick === undefined || v._harshLastTick === null || v._harshLastTick < 0) ? tick - 1 : v._harshLastTick;
+          var steps = Math.max(1, tick - last);   // 至少推进1步（唤醒后立即起步）
+          steps = Math.min(steps, 4);            // 封顶：单次最多推进4步，防止异常时间跳跃瞬移
+          v._harshLastTick = tick;
+          v._harshIndex = Math.min(v._harshTrack.length - 1, v._harshIndex + steps);
           if (v._harshIndex >= v._harshTrack.length - 1) {
             v._harshCaught = true;
             return true;   // 追上了
@@ -337,7 +343,7 @@ const storyData = {
         onTrigger: function(v, rule, caught) {
           if (caught) return;  // 追上交给全局触发器处理
           var dist = v._harshTrack.length - 1 - v._harshIndex;
-          if (dist <= 2) flashStatusWarning("⚠ 身后传来拖沓的脚步声……（Harsh 逼近）");
+          if (dist <= 2) flashStatusWarning("⚠ 身后传来拖沓的脚步声……（有什么东西在逼近）");
         }
       },
 

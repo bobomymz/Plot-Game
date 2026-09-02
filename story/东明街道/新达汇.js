@@ -2728,7 +2728,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-屋顶花园-起飞": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    image: "images/新达汇/乘无人机飞走.jpg",
     onEnter: { set: { showRain: true } },
     text: "取餐码正确。你爬上无人机，无人机缓缓升起。\n你飞越了新达汇的喷泉广场、三林路的十字路口，飞过华夏西路高架桥上的尸潮——飞向某个未知的方向。\n\
 <span style='color: #f8d305ff;'>—— 无人机的救赎 · 好结局 ——</span>",
