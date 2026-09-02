@@ -3006,8 +3006,9 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-B1设备间-记录表": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
-    text: "设备巡检记录表——新达汇物业工程部：\n6/24 | 空调主机A-03 | 正常 | 王建国\n6/25 | 排水泵B-07 | 检修中 | 王建国\n6/25 | 配电房 | 锁芯更换 | 王建国\n6月25日是最后一页。之后全是空白。",
+    image: "images/新达汇/设备巡检记录表.jpg",
+    text: "设备巡检记录表——新达汇物业工程部：\n\
+……\n6/24 | 空调主机A-03 | 正常 | 王建国\n6/25 | 排水泵B-07 | 检修中 | 王建国\n6/25 | 配电房 | 锁芯更换 | 王建国\n6月25日是最后一页。之后全是空白。",
     choices: [
       {
         text: "合上记录表",
@@ -3023,7 +3024,7 @@ Object.assign(storyData, {
     return d; },
     choices: [
       {
-        text: "钻进那间昏暗的房间看看",
+        text: "钻进旁边的房间",
         nextScene: "新达汇-B1废弃仓库",
         effect: updateTime(2),
       },
@@ -3069,7 +3070,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-B1废弃仓库-纸箱": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
+    image: "images/新达汇/废弃仓库纸箱.jpg",
     text: "你打开纸箱——过期的五金店收据、几卷用过的胶带、一团揉皱的报纸。没什么值钱的东西。",
     choices: [
       {

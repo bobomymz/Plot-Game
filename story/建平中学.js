@@ -426,7 +426,7 @@ Object.assign(storyData, {
   "建平-行政楼-2F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "行政楼2F"; },
-    text: function(vars) { return "行政楼 2 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "行政楼 2 楼。这里你以前从来没来过。四处翻了翻，这里好像除了文档就没别的了。\n" + describeZombieWave(vars); },
     choices: [
       { text: "去东楼梯", nextScene: "建平-行政楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-行政楼-西楼梯", effect: updateTime(1) },
@@ -436,7 +436,7 @@ Object.assign(storyData, {
   "建平-行政楼-3F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "行政楼3F"; },
-    text: function(vars) { return "行政楼 3 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "行政楼 3 楼。以前你管理的AI社团“灵海社”正是在这里的一间教室上课。你转头看看走廊那边的那间活动室，大屏幕漆黑如炭，白色的椅子上似乎沾染了血迹。\n" + describeZombieWave(vars); },
     choices: [
       { text: "去东楼梯", nextScene: "建平-行政楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-行政楼-西楼梯", effect: updateTime(1) },
@@ -447,7 +447,7 @@ Object.assign(storyData, {
   "建平-行政楼-天台": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "行政楼天台"; },
-    text: function(vars) { return "行政楼天台花园。" + describeZombieWave(vars); },
+    text: function(vars) { return "行政楼天台花园。以前只是听李彦青说行政楼楼顶有个校长的小花园，没想到这里真有。\n" + describeZombieWave(vars); },
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-天台" },
       { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-行政楼-天台" } } },
@@ -471,7 +471,7 @@ Object.assign(storyData, {
   "建平-挹芬楼南门": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼南门"; return {}; },
-    text: function(vars) { return "挹芬楼南门。门外不远处是水池，丧尸沿着岸边密密麻麻地挤着——挹芬楼是全校丧尸最密集的地方，光站在门口就能感到那股压迫感。"; },
+    text: function(vars) { return "挹芬楼南门。门外不远处是水池和思贤堂，丧尸沿着岸边密密麻麻地挤着。往里看，挹芬楼是全校丧尸最密集的地方，光站在门口就能感到那股压迫感。"; },
     choices: [
       { text: "去水池", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "去思贤堂", nextScene: "建平-思贤堂", effect: updateTime(2) },
