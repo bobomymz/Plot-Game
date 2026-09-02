@@ -158,7 +158,14 @@ const storyData = {
     // 建平中学 - 状态
     _frontGateCleared: false,   // 前门丧尸是否已清（记忆闪色，成功后一次性进出）
     _backGateOpened: false,     // 后门是否已开（开门引走丧尸，忻老师后门逃脱的铺垫）
-    _harshActive: false,        // Harsh（年级组长丧尸）是否被唤醒（坐电梯触发；追逐逻辑后续实现）
+    _harshActive: false,        // Harsh（年级组长丧尸）是否被唤醒（坐电梯触发）
+    _harshIndex: 0,             // Harsh 在玩家轨迹数组中的下标
+    _harshTrack: [],            // 玩家地点轨迹数组（地点节点序列）
+    _harshCaught: false,        // 是否被 Harsh 追上（触发"被堵住"）
+    _harshEncounters: 0,        // 累计撞上 Harsh 次数（2次强制休眠）
+    hasInnerLining: 0,          // 校服内胆数量（丢给 Harsh 驱赶，单次消耗）
+    _harshReturn: "",           // 被 Harsh 堵住前的位置（逃跑/驱赶后返回）
+    _innerLiningYouthRoom: false, // 团委工作室的校服内胆是否已拿
     _yuanxiangWestStairCleared: false,  // 远翔楼西楼梯强丧尸是否已清
     _zhizhenEastStairCleared: false,    // 致真楼东楼梯强丧尸是否已清
     _yifenWestCleared: false,   // 挹芬楼1F西侧走廊丧尸是否已清（强制记忆闪色）
@@ -314,6 +321,26 @@ const storyData = {
         }
       },
 
+      // --- Harsh 追逐：每10分钟逼近1步，追上触发"被堵住" ---
+      {
+        id: "harsh-chase",
+        condition: function(v) { return v._harshActive && !v._harshCaught && v._harshTrack && v._harshTrack.length > 1; },
+        triggerKey: "Math.floor(gameMinutes / 10)",
+        effect: function(v) {
+          v._harshIndex = Math.min(v._harshTrack.length - 1, v._harshIndex + 1);
+          if (v._harshIndex >= v._harshTrack.length - 1) {
+            v._harshCaught = true;
+            return true;   // 追上了
+          }
+          return false;
+        },
+        onTrigger: function(v, rule, caught) {
+          if (caught) return;  // 追上交给全局触发器处理
+          var dist = v._harshTrack.length - 1 - v._harshIndex;
+          if (dist <= 2) flashStatusWarning("⚠ 身后传来拖沓的脚步声……（Harsh 逼近）");
+        }
+      },
+
     ]
   },
 
@@ -321,6 +348,7 @@ const storyData = {
   _globalTriggers: [
     { condition: "strength <= 0.01", targetScene: "结局-体力耗尽", priority: 10 },
     { condition: "gasIndex >= 100", targetScene: "结局-煤气中毒", priority: 5 },
+    { condition: "_harshCaught", targetScene: "建平-Harsh堵住", priority: 8 },
     { condition: "mercuryLoad >= 70", targetScene: "结局-汞中毒尸变", priority: 9 },
     { condition: "chasedByZombies >= 5", targetScene: "结局-尸潮撕碎了你", priority: 8 },
     { condition: "_backhallDead", targetScene: "结局-后勤通道被堵", priority: 7 },

@@ -102,6 +102,12 @@ function jpIsMealTime(vars) {
   return (vars.hh >= 11 && vars.hh <= 13) || (vars.hh >= 17 && vars.hh <= 19);
 }
 
+// Harsh 追踪：玩家进入地点节点时记录轨迹（仅 Harsh 激活时）。在地点节点 onEnter 里调用。
+function jpHarshTrack(vars, sceneId) {
+  if (!vars._harshActive) return;
+  vars._harshTrack = (vars._harshTrack || []).concat([sceneId]);
+}
+
 // 建平躲藏场景：reduceLevel 2=室内封闭（降ch2，不失败）；1=半开放/户外（降ch1，ch≥3 时 40% 失败）
 function jpHide(image, successText, failText, reduceLevel) {
   return {
@@ -266,14 +272,14 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/jianping/backAuxRoad.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "后门辅路"; },
     text: function(vars) {
-      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft) {
+      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         return "你沿着后门辅路走。\n一辆轿车亮着车灯停在不远处——是忻老师。他摇下车窗，朝你招了招手。\n\"上车，我带你一程。\"";
       }
       return "后门辅路。一条通往食堂的窄路，路旁的围墙根长满了杂草。这里远离校门，丧尸反倒不多。";
     },
     choices: function(vars) {
       var cs = [];
-      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft) {
+      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         cs.push({ text: "跟忻老师上车（去复旦）", nextScene: "建平-前往复旦", effect: function(v) { v._teacherLeft = true; v.hasCar = false; v.hasEbike = false; v.hasRustyBike = false; v.hasScooter = false; return {}; } });
         cs.push({ text: "算了，我还有事", nextScene: "建平-食堂", effect: updateTime(2) });
       }
@@ -1235,7 +1241,11 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "图书馆 4 楼的电脑区。一排排电脑黑着屏幕，只有角落里一台亮着。";
       if (jpIsMealTime(vars)) {
-        desc += "\n蔡镜晓不在——这个点他应该去食堂后厨找吃的了。";
+        if (vars._visit['建平-弘渊楼-4F-电脑区-蔡镜晓'] > 0) {
+          desc += "\n蔡镜晓不在——这个点他应该去食堂后厨找吃的了。";
+        } else {
+          desc += "\n电脑区空无一人，角落里那台电脑还亮着。";
+        }
       } else {
         desc += "\n蔡镜晓坐在那台亮着的电脑前，戴着耳机打明日方舟，屏幕上闪烁着作战画面。";
         if (vars._pengGalCleared) {
@@ -1249,7 +1259,8 @@ Object.assign(storyData, {
       if (!jpIsMealTime(vars)) {
         cs.push({ text: "跟蔡镜晓搭话", nextScene: "建平-弘渊楼-4F-电脑区-蔡镜晓" });
       }
-      if (vars.chasedByZombies > 0) {
+      // 躲藏文案"蔡镜晓也猫着腰"依赖他在场——饭点他去后厨了，此时不提供躲藏
+      if (!jpIsMealTime(vars) && vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-电脑区" });
       }
       cs.push({ text: "回 4 楼走廊", nextScene: "建平-弘渊楼-4F", effect: updateTime(1) });

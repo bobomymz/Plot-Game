@@ -2641,7 +2641,7 @@ Object.assign(storyData, {
 });
         return f(vars);
       }
-      return "images/placeholder.png";
+      return "images/新达汇/楼顶无人机.jpg";
     }, /* TODO: images/新达汇/roofGarden.png */
     onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) {
@@ -2677,9 +2677,9 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-屋顶花园-看无人机": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    image: "images/新达汇/观察无人机.jpg",
     onEnter: { set: { showRain: true } },
-    text: "白色的外卖无人机，货箱密封，侧面贴着二维码。你没有手机能扫它。",
+    text: "白色的外卖无人机，侧面贴着二维码。你没有手机能扫它。",
     choices: [
       {
         text: "返回",
@@ -2689,11 +2689,14 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-屋顶花园-扫码": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    image: function(vars) {
+      if (vars._powerOut && vars._droneBattery <= 0) return "images/新达汇/输入取餐码.jpg";
+      return "images/新达汇/输入取餐码-无人机有电.png";
+    },
     onEnter: { set: { showRain: true } },
     text: function(vars) {
       var desc = "APP弹出对话框：**请验证取餐码**。\n";
-      if (vars._powerOut && vars._droneBattery <= 0) return desc + "无人机指示灯已熄灭了。晚了。";
+      if (vars._powerOut && vars._droneBattery <= 0) return desc + "不好，无人机指示灯已熄灭了，没电了。晚了。";
       return desc;
     },
     choices: [
