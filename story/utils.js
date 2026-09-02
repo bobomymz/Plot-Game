@@ -279,7 +279,11 @@ function hideOnLocation(image, failText, successText) {
         }
       : function(vars) {
           return vars._hideFail ? failText : successText;
-        }
+        },
+    // 躲完后返回来源场景，避免"无选项 → 剧终"
+    choices: [
+      { text: "继续前进", nextScene: function(vars) { return vars._lastScene || "三林路-环林东路 十字路口"; } }
+    ]
   };
 }
 

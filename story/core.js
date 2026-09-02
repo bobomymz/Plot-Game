@@ -67,6 +67,7 @@ const storyData = {
     _committeeSearched: false,  // 是否搜过物业楼居委会办公室
     showRain: false,           // 是否展示雨滴叠加特效（B类场景 onEnter 控制）
     showZombies: false,        // 是否展示丧尸包围遮罩（路网节点 onEnter 控制）
+    showPowerOut: false,       // 是否展示停电灰色遮罩（新达汇室内节点 onEnter 控制）
     wangGiveKey: false,        // 王老师是否给了钥匙
     _lastScene: "",            // 引擎自动记录的上一个场景ID（目标场景 text 用于差异化承接）
     // 金谊广场
@@ -160,7 +161,8 @@ const storyData = {
     _harshActive: false,        // Harsh（年级组长丧尸）是否被唤醒（坐电梯触发；追逐逻辑后续实现）
     _yuanxiangWestStairCleared: false,  // 远翔楼西楼梯强丧尸是否已清
     _zhizhenEastStairCleared: false,    // 致真楼东楼梯强丧尸是否已清
-    _yifen1FCleared: false,     // 挹芬楼1F丧尸是否已清（强制记忆闪色）
+    _yifenWestCleared: false,   // 挹芬楼1F西侧走廊丧尸是否已清（强制记忆闪色）
+    _yifenEastCleared: false,   // 挹芬楼1F东侧走廊丧尸是否已清（强制记忆闪色）
     _teacherLeft: false,        // 忻老师是否已开车离开（跟去复旦后为 true）
     hasMultimeter: false,       // 万用表（老吴杂物室，修14班电脑用）
     _dormCleared: false,        // 建平宿舍丧尸是否已清理（记忆闪色，安全过夜前置）
@@ -337,6 +339,7 @@ const storyData = {
     { condition: "strength == 2", className: "vignette-warning" },
     { condition: "strength <= 1", className: "vignette-danger" },
     { condition: 'weather == "雨" && showRain', className: "weather-rain" },
+    { condition: "_powerOut && showPowerOut", className: "power-out" },
     {
       condition: "chasedByZombies >= 1 && chasedByZombies <= 2 && showZombies",
       className: "zombie-surround-moderate",

@@ -118,7 +118,11 @@ function jpHide(image, successText, failText, reduceLevel) {
       }
       return {};
     },
-    text: function(vars) { return vars._hideFail ? failText : successText; }
+    text: function(vars) { return vars._hideFail ? failText : successText; },
+    // 躲完后返回来源场景，避免"无选项 → 剧终"
+    choices: [
+      { text: "继续前进", nextScene: function(vars) { return vars._lastScene || "建平-金苹果大道"; } }
+    ]
   };
 }
 
@@ -414,51 +418,52 @@ Object.assign(storyData, {
 
   "建平-挹芬楼北门": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼北门"; return { add: { chasedByZombies: 1 } }; },
+    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼北门"; return {}; },
     text: function(vars) { return "挹芬楼北门。门外就是金苹果广场，广场上几具丧尸正漫无目的地游荡。门内是挹芬楼的大厅——往里走，那股腐臭更浓了。" + describeZombieWave(vars); },
     choices: [
       { text: "去金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(2) },
-      { text: "进入挹芬楼", nextScene: "建平-挹芬楼-1F", effect: updateTime(1) }
+      { text: "进入挹芬楼", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
     ]
   },
   "建平-挹芬楼南门": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼南门"; return { add: { chasedByZombies: 1 } }; },
+    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼南门"; return {}; },
     text: function(vars) { return "挹芬楼南门。门外不远处是水池，再往西是思贤堂的方向。门内是挹芬楼的大厅。" + describeZombieWave(vars); },
     choices: [
       { text: "去水池", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "去思贤堂", nextScene: "建平-思贤堂", effect: updateTime(2) },
-      { text: "进入挹芬楼", nextScene: "建平-挹芬楼-1F", effect: updateTime(1) }
+      { text: "进入挹芬楼", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
     ]
   },
 
-  "建平-挹芬楼-1F": {
+  "建平-挹芬楼-1F-西侧走廊": {
     image: "images/placeholder.png",
     onEnter: function(vars) {
-      vars.currentPos = "挹芬楼1F";
-      if (!vars._yifen1FCleared) {
+      vars.currentPos = "挹芬楼1F西侧走廊";
+      if (!vars._yifenWestCleared) {
         var seq = randSeq(["红","蓝","绿"], 5);
         vars._currentSeq = seq;
         vars._currentAnswer = seqToAnswer(seq);
         vars._seqPlayed = false;
-        return { add: { chasedByZombies: 2 } };
+        return { add: { chasedByZombies: 1 } };
       }
       return {};
     },
     text: function(vars) {
-      if (vars._yifen1FCleared) {
-        return "挹芬楼 1 楼。丧尸已经被你清空了，休息区安静了下来。" + describeZombieWave(vars);
+      if (vars._yifenWestCleared) {
+        return "挹芬楼 1 楼西侧走廊。丧尸已经被你清掉了，电梯间和教室门口都安静了下来。" + describeZombieWave(vars);
       }
-      return "你踏进挹芬楼 1 楼——这里的丧尸比外面密集得多，从各个方向朝你涌来。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+      return "你踏进挹芬楼 1 楼西侧走廊——电梯间附近几只丧尸朝你扑来。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
-      if (!vars._yifen1FCleared) {
+      if (!vars._yifenWestCleared) {
         return [
           {
             text: "输入你看到的颜色分布",
             input: { placeholder: "例如：3红2蓝" },
             condition: checkFlashAnswer,
-            nextScene: "建平-挹芬楼-1F-清场",
+            effect: { set: { _yifenWestCleared: true } },
+            nextScene: "建平-挹芬楼-1F-西侧走廊",
             elseScene: "结局-挹芬楼失守",
             timeout: 12000,
             timeoutScene: "结局-挹芬楼失守"
@@ -467,25 +472,55 @@ Object.assign(storyData, {
       }
       return [
         { text: "去北门（金苹果广场方向）", nextScene: "建平-挹芬楼北门", effect: updateTime(1) },
-        { text: "去南门（水池方向）", nextScene: "建平-挹芬楼南门", effect: updateTime(1) },
-        { text: "在休息区休息", nextScene: "建平-挹芬楼-1F-休息区", effect: updateTime(30) },
-        { text: "去东楼梯", nextScene: "建平-挹芬楼-东楼梯", effect: updateTime(1) },
         { text: "去西楼梯", nextScene: "建平-挹芬楼-西楼梯", effect: updateTime(1) },
         { text: "去电梯", nextScene: "建平-挹芬楼-电梯", effect: updateTime(0) },
         { text: "去公开课教室", nextScene: "建平-挹芬楼-1F-公开课教室", effect: updateTime(1) },
-        { text: "去饮料机", nextScene: "建平-挹芬楼-1F-饮料机", effect: updateTime(1) }
+        { text: "去东侧走廊", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
       ];
     }
   },
 
-  "建平-挹芬楼-1F-清场": {
+  "建平-挹芬楼-1F-东侧走廊": {
     image: "images/placeholder.png",
-    onEnter: { set: { _yifen1FCleared: true, currentPos: "挹芬楼1F" } },
-    text: "你记住了颜色的顺序，在丧尸的包围中杀出一条血路。\n等你停下来时，挹芬楼 1 楼的丧尸已经被你清空了——休息区里安静了下来。",
-    choices: [
-      { text: "去休息区歇会儿", nextScene: "建平-挹芬楼-1F-休息区", effect: updateTime(5) },
-      { text: "继续探索", nextScene: "建平-挹芬楼-1F", effect: updateTime(1) }
-    ]
+    onEnter: function(vars) {
+      vars.currentPos = "挹芬楼1F东侧走廊";
+      if (!vars._yifenEastCleared) {
+        var seq = randSeq(["红","蓝","绿"], 5);
+        vars._currentSeq = seq;
+        vars._currentAnswer = seqToAnswer(seq);
+        vars._seqPlayed = false;
+        return { add: { chasedByZombies: 1 } };
+      }
+      return {};
+    },
+    text: function(vars) {
+      if (vars._yifenEastCleared) {
+        return "挹芬楼 1 楼东侧走廊。丧尸已经被你清掉了，楼梯口和休息区门口都安静了下来。" + describeZombieWave(vars);
+      }
+      return "你走进挹芬楼 1 楼东侧走廊——楼梯口和休息区方向都有丧尸涌来。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+    },
+    choices: function(vars) {
+      if (!vars._yifenEastCleared) {
+        return [
+          {
+            text: "输入你看到的颜色分布",
+            input: { placeholder: "例如：3红2蓝" },
+            condition: checkFlashAnswer,
+            effect: { set: { _yifenEastCleared: true } },
+            nextScene: "建平-挹芬楼-1F-东侧走廊",
+            elseScene: "结局-挹芬楼失守",
+            timeout: 12000,
+            timeoutScene: "结局-挹芬楼失守"
+          }
+        ];
+      }
+      return [
+        { text: "去南门（水池方向）", nextScene: "建平-挹芬楼南门", effect: updateTime(1) },
+        { text: "去东楼梯", nextScene: "建平-挹芬楼-东楼梯", effect: updateTime(1) },
+        { text: "去休息区", nextScene: "建平-挹芬楼-1F-休息区", effect: updateTime(30) },
+        { text: "去西侧走廊", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
+      ];
+    }
   },
 
   "建平-挹芬楼-1F-休息区": {
@@ -493,7 +528,8 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "挹芬楼1F休息区"; vars._travelMinutes = 0; return { add: { strength: 1 } }; },
     text: "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
-      { text: "起身离开", nextScene: "建平-挹芬楼-1F", effect: updateTime(1) }
+      { text: "去饮料机", nextScene: "建平-挹芬楼-1F-饮料机", effect: updateTime(1) },
+      { text: "回东侧走廊", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
     ]
   },
 
@@ -1366,8 +1402,8 @@ Object.assign(storyData, {
   "建平-济美楼-1F-饮料机": jpRoom("济美楼 1 楼 · 饮料机", "建平-济美楼-1F"),
   "建平-济美楼-2F-美术教室": jpRoom("济美楼 2 楼 · 美术教室", "建平-济美楼-2F"),
   "建平-济美楼-3F-JTV办公室": jpRoom("济美楼 3 楼 · JTV办公室", "建平-济美楼-3F"),
-  "建平-挹芬楼-1F-公开课教室": jpRoom("挹芬楼 1 楼 · 公开课教室", "建平-挹芬楼-1F"),
-  "建平-挹芬楼-1F-饮料机": jpRoom("挹芬楼 1 楼 · 饮料机", "建平-挹芬楼-1F"),
+  "建平-挹芬楼-1F-公开课教室": jpRoom("挹芬楼 1 楼 · 公开课教室", "建平-挹芬楼-1F-西侧走廊"),
+  "建平-挹芬楼-1F-饮料机": jpRoom("挹芬楼 1 楼 · 饮料机", "建平-挹芬楼-1F-休息区"),
   "建平-挹芬楼-2F-高一教室": jpRoom("挹芬楼 2 楼 · 高一教室", "建平-挹芬楼-2F"),
   "建平-挹芬楼-3F-高一教室": jpRoom("挹芬楼 3 楼 · 高一教室", "建平-挹芬楼-3F"),
   "建平-挹芬楼-3F-机房": {

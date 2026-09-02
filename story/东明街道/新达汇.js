@@ -144,6 +144,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-B1美食广场": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/b1FoodCourt.png */,
     text: function(vars) { return "B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。地面上散落着打翻的餐盘和已经馊掉的剩菜，苍蝇在上面嗡嗡地盘旋。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着“后勤通道 · 非工作人员勿入”的标签。\n" + describeZombieWave(vars); },
     choices: [
@@ -170,6 +171,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-B1走廊": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/b1Corridor.png */,
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "你走进B1走廊。这条通道连接美食广场和停车场，两侧的墙壁上贴着过时的促销海报。荧光灯管在头顶嗡嗡作响，忽明忽暗。\n" + describeZombieWave(vars); },
@@ -254,7 +256,7 @@ Object.assign(storyData, {
   // ==================== 1F 首层（日字型走廊） ====================
   "新达汇-1F中庭": {
     image: "images/新达汇/1F中庭.png" /* TODO: images/新达汇/1fAtrium.png */,
-    onEnter: function(v) { transit(v, "1F-中庭"); return { set: { positionAfterOperation: "新达汇-1F中庭" } }; },
+    onEnter: function(v) { transit(v, "1F-中庭"); v.showPowerOut = true; return { set: { positionAfterOperation: "新达汇-1F中庭" } }; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "你站在1F中庭。挑空大厅，阳光从天窗洒下来。环形走廊在头顶层层叠叠，中庭中央有一株大型绿植。\n"
  + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>远处传来猫叫。</span>\n" : "")
@@ -297,6 +299,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-1F公告屏": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/infoScreen.png */,
     text: "电子公告屏显示着停运前的楼层导览。\n\
 【1F】华为体验店 | 味千拉面\n【2F】Nike | 海澜之家 | 雅戈尔\n【3F】卡通尼乐园 | 金宝贝 | 爱婴室\n【4F】大渝火锅 | 大米先生 | 日料店 | CGV影城\n【5F】石物恋·烧肉 | 左庭右院 | 游戏厅\n\
@@ -313,7 +316,7 @@ Object.assign(storyData, {
   "新达汇-1F北走廊西": {
     image: "images/新达汇/味千拉面门口.jpg",
     qte: mallQTE(20000, "结局-丧尸的围殴"),
-    onEnter: function(v) { transit(v, "1F-北走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "1F-北走廊西"); v.showPowerOut = true; return {}; },
     text: function(vars) {
       var desc = "1F北走廊西段。走廊两侧是几家关了门的店铺，卷帘门拉着。其中有一家味千拉面，卷帘门下有空间，但似乎不足以钻进去。";
       if (!vars._backhallEntered) desc += "\n墙边有一扇白色的门，上面贴着“员工通道”的标签——门锁着，推不动。";
@@ -372,7 +375,7 @@ Object.assign(storyData, {
 
   "新达汇-1F南走廊中-电线-拨开": {
     image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
-    onEnter: { set: { _1f_wireFixed: true }, add: { chasedByZombies: 1 } },
+    onEnter: { set: { showPowerOut: true,  _1f_wireFixed: true }, add: { chasedByZombies: 1 } },
     text: "你用外套裹住手，抓住电线头小心地拎到一边。外套是干的，没有导电。但拨开那一刻火花噼啪了两声，在安静的走廊里格外刺耳。",
     choices: [
       {
@@ -384,7 +387,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F南走廊中-电线-木棍": {
     image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
-    onEnter: { set: { _1f_wireFixed: true } },
+    onEnter: { set: { showPowerOut: true,  _1f_wireFixed: true } },
     text: "你在走廊角落找到一根废弃的拖把杆，用干的那一头把电线挑开了。安全，安静，但多花了些时间。",
     choices: [
       {
@@ -396,7 +399,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F南走廊中-电线-绕行": {
     image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
-    onEnter: { add: { strength: -1 } },
+    onEnter: { set: { showPowerOut: true },  add: { strength: -1 } },
     text: "你贴着墙壁试图绕过积水和电线——但落脚的地方太窄了，你一脚踩进了水里。电流穿过你的身体，一阵刺痛从脚底窜上来。好在电压不大，你只是麻了一下，裤腿湿透了。",
     choices: [
       {
@@ -407,6 +410,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-1F味千拉面": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/味千拉面.jpg",
     text: function(vars) {
       var desc = "你钻进卷帘门，来到味千拉面店内。\n灶台上的汤锅已经冷透了，汤面凝了一层白色的油脂。后厨的操作台上散落着几包未拆封的袋装拉面——不是店里的货，看起来是员工自己囤的。";
@@ -439,7 +443,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F味千拉面-休息": {
     image: "images/新达汇/味千后厨.jpg", 
-    onEnter: updateTime(30, { add: { strength: 1, chasedByZombies: -1 } }),
+    onEnter: function(v) { v.showPowerOut = true; return updateTime(30, { add: { strength: 1, chasedByZombies: -1 } })(v); },
     text: "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n你靠墙休息了一会儿，外面的声音渐渐远去了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
     choices: [
       {
@@ -452,6 +456,7 @@ Object.assign(storyData, {
   "新达汇-1F味千拉面-徒手": {
     image: "images/placeholder.png" /* TODO: images/新达汇/1fNorth.png */,
     onEnter: function(vars) {
+      vars.showPowerOut = true;
       vars._ramenVisited = Math.random() < 0.5;
       if (!vars._ramenVisited) {
         vars.chasedByZombies = Math.min(5, vars.chasedByZombies + 2);
@@ -471,7 +476,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F北走廊中": {
     image: "images/新达汇/1F北走廊中.png",
-    onEnter: function(v) { transit(v, "1F-北走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "1F-北走廊中"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "1F北走廊中段。从这里可以看到中庭的采光顶。走廊继续向前，右侧有一条通道通向中庭方向。\n" + describeZombieWave(vars); },
     choices: [
@@ -494,7 +499,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F北走廊东": {
     image: "images/新达汇/1F北走廊东.png",
-    onEnter: function(v) { transit(v, "1F-北走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "1F-北走廊东"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "1F北走廊东端。走廊在这里到头，前方是消防通道。\n" + describeZombieWave(vars); },
     choices: [
@@ -518,7 +523,7 @@ Object.assign(storyData, {
   // 1F 南走廊
   "新达汇-1F南走廊西": {
     image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
-    onEnter: function(v) { transit(v, "1F-南走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "1F-南走廊西"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "1F南走廊西段。沿途是一些美妆店的橱窗，玻璃大多完好。\n" + describeZombieWave(vars); },
     choices: [
@@ -536,7 +541,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F南走廊中": {
     image: "images/placeholder.png" /* TODO: images/新达汇/1fSouth.png */,
-    onEnter: function(v) { transit(v, "1F-南走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "1F-南走廊中"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) {
       var desc = "1F南走廊中段。这里有一片开放式休息区——几把椅子歪斜地摆着，几盆绿植已经蔫了，叶片无精打采地垂着。";
@@ -596,7 +601,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F南走廊东": {
     image: "images/新达汇/1F南走廊东.png",
-    onEnter: function(v) { transit(v, "1F-南走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "1F-南走廊东"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) {
       var desc = "1F南走廊东端。走廊尽头是电梯厅。旁边有一家华为体验店，玻璃门半掩着。";
@@ -626,7 +631,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F数码店": {
     image: "images/新达汇/华为体验店.jpg",
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { add: { chasedByZombies: 1 }, set: { showPowerOut: true } },
     text: function(vars) {
       if (vars._metGaoAtMall) {
         if (vars._powerOut) return "华为体验店里一片漆黑。感应门没电了，你推开玻璃门走了进去。\n展示台前蹲着一个人——锅盖头，深色卫衣，手里攥着一台黑了屏的展示机。\n高锦睿抬头看到你，一脸绝望：\n“怎么没电了？！我刚下载好一个游戏——等了一下午才下完的。你知不知道商场的WiFi有多慢——不是，你知道拉电闸的是谁吗？”\n你说：“现在都这个样子了，你还想着玩游戏？”\n他愣了一秒，低头看了看手里黑屏的手机。\n“……不然还能干嘛呢。”\n这句话说得很轻。然后他把手机放回展示台，站了起来，咧嘴一笑：“算了算了，反正那游戏也不好玩——我看了评论才两星。”他拍了拍裤子上的灰，朝门口走去。\n“看到什么好东西记得喊我。”";
@@ -654,7 +659,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F数码店-手机": {
     image: "images/placeholder.png" /* TODO: images/新达汇/digitalStore.png */,
-    onEnter: { set: { positionAfterOperation: "新达汇-1F数码店-手机" } },
+    onEnter: { set: { showPowerOut: true,  positionAfterOperation: "新达汇-1F数码店-手机" } },
     text: "你在柜台下摸到一台落满灰的华为展示机。屏幕有几道裂纹，但还能亮。桌面干干净净，只有一个美团外卖的APP图标。",
     choices: [
       {
@@ -667,6 +672,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-1F数码店-没手机": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/digitalStore.png */,
     text: "柜台里空荡荡的，什么都没有。",
     choices: [
@@ -881,7 +887,7 @@ Object.assign(storyData, {
   // ==================== 2F 零售层（日字型走廊） ====================
   "新达汇-2F中庭环廊": {
     image: "images/新达汇/2F中庭.png",
-    onEnter: function(v) { transit(v, "2F-中庭环廊"); return {}; },
+    onEnter: function(v) { transit(v, "2F-中庭环廊"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F中庭环廊。玻璃围栏让人能直接看到1F中庭。环形走廊两侧是各种零售店铺。\n" + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声在回荡。</span>\n" : "") + describeZombieWave(vars); },
     choices: [
@@ -911,7 +917,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F北走廊西": {
     image: "images/新达汇/2F北走廊西.png",
-    onEnter: function(v) { transit(v, "2F-北走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "2F-北走廊西"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F北走廊西段。这里有一家Nike体验店，大门被撞碎。\n" + describeZombieWave(vars); },
     choices: [
@@ -934,7 +940,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F北走廊中": {
     image: "images/新达汇/2F北走廊中.png",
-    onEnter: function(v) { transit(v, "2F-北走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "2F-北走廊中"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) {
       var desc = "2F北走廊中段。";
@@ -995,7 +1001,7 @@ Object.assign(storyData, {
 
   "新达汇-2F北走廊中-搬椅": {
     image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
-    onEnter: { set: { _2f_chairsCleared: true } },
+    onEnter: { set: { showPowerOut: true,  _2f_chairsCleared: true } },
     text: "你一把一把地把椅子搬到旁边。塑料椅腿碰在一起发出轻微的咔嗒声，但整体还算安静。花了些时间，但路通了。",
     choices: [
       {
@@ -1007,7 +1013,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F北走廊中-钻缝": {
     image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
-    onEnter: { set: { _2f_chairsCleared: true } },
+    onEnter: { set: { showPowerOut: true,  _2f_chairsCleared: true } },
     text: "你侧身挤进椅子之间的缝隙，屏住呼吸一点一点挪过去。虽然姿势不太雅观，但没有碰到任何一把椅子。",
     choices: [
       {
@@ -1019,7 +1025,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F北走廊中-翻椅": {
     image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
-    onEnter: { set: { _2f_chairsCleared: true }, add: { chasedByZombies: 2, strength: -1 } },
+    onEnter: { set: { showPowerOut: true,  _2f_chairsCleared: true }, add: { chasedByZombies: 2, strength: -1 } },
     text: "你双手撑住椅背准备翻过去——但一把椅子的腿被你的膝盖碰了一下，哗啦一声倒在了旁边的椅子堆上。几把椅子像多米诺骨牌一样倒了下去，在走廊里发出不小的声响。",
     choices: [
       {
@@ -1031,7 +1037,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F北走廊东": {
     image: "images/新达汇/2F北走廊东.png",
-    onEnter: function(v) { transit(v, "2F-北走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "2F-北走廊东"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F北走廊东端。卫生间和消防通道在这里。\n" + describeZombieWave(vars); },
     choices: [
@@ -1064,7 +1070,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F南走廊西": {
     image: "images/新达汇/2F南走廊西.png",
-    onEnter: function(v) { transit(v, "2F-南走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "2F-南走廊西"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F南走廊西段。\n" + describeZombieWave(vars); },
     choices: [
@@ -1082,7 +1088,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F南走廊中": {
     image: "images/新达汇/2F南走廊中.png",
-    onEnter: function(v) { transit(v, "2F-南走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "2F-南走廊中"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F南走廊中段。雅戈尔深色木纹的门面就在走廊旁。\n" + describeZombieWave(vars); },
     choices: [
@@ -1110,7 +1116,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F南走廊东": {
     image: "images/新达汇/2F南走廊东.png",
-    onEnter: function(v) { transit(v, "2F-南走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "2F-南走廊东"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "2F南走廊东端。电梯厅在这里。\n" + describeZombieWave(vars); },
     choices: [
@@ -1127,6 +1133,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F-Nike店": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/Nike店.jpg",
     text: "Nike体验店。大门被撞碎，展示架东倒西歪，场景化陈列被翻得面目全非。运动鞋和衣服散落一地。",
     choices: [
@@ -1139,7 +1146,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F服装店": {
     image: "images/新达汇/服装店.jpg",
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { add: { chasedByZombies: 1 }, set: { showPowerOut: true } },
     text: function(vars) { return "你刚靠近海澜之家的玻璃门，感应器就发出一声短促的电子提示音，门缓缓滑开。声音不大，但在安静的走廊里足够传到很远。\n\
 海澜之家和雅戈尔面对面开着。海澜之家白色装修，冷淡简约；雅戈尔深色木纹更显沉稳。试衣间的门关着。雅戈尔那边的收银台后面有一扇门，贴着“员工间”的标签。\n" + describeZombieWave(vars); },
     choices: [
@@ -1167,7 +1174,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F服装店-陷阱": {
     image: "images/placeholder.png" /* TODO: images/新达汇/fittingRoom.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { set: { showPowerOut: true },  add: { chasedByZombies: 1 } },
     text: function(vars) {
       if (vars.chasedByZombies >= 3) return "你拉开一间隔间的门钻了进去，反手锁上门。\n\
 但隔音太差了——你能听到外面传来的拖沓脚步声越聚越多。它们在试衣间外面停了下来，发出低沉的嘶吼。\n\
@@ -1184,6 +1191,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-2F卫生间": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/toilet.png */,
     text: function(vars) {
       var desc = "公用卫生间。洗手台上的镜子裂了一道，洗手池里积着陈年的水垢。隔间的门大多关着，空气里飘着一股潮闷的消毒水味。";
@@ -1212,7 +1220,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F卫生间-接水": {
     image: "images/placeholder.png" /* TODO: images/新达汇/toilet.png */,
-    onEnter: { set: { bottleWater: 1, waterToxic: true } },
+    onEnter: { set: { showPowerOut: true,  bottleWater: 1, waterToxic: true } },
     text: "你拧开瓶盖，把瓶口凑到水龙头下。水哗哗地灌进瓶里，很快就装满了。\n你拧上瓶盖，把水瓶收好。",
     choices: [
       { text: "继续", nextScene: "新达汇-2F卫生间" }
@@ -1298,7 +1306,7 @@ Object.assign(storyData, {
   // ==================== 3F 亲子层（日字型走廊） ====================
   "新达汇-3F中庭环廊": {
     image: "images/新达汇/3F中庭.png",
-    onEnter: function(v) { transit(v, "3F-中庭环廊"); return {}; },
+    onEnter: function(v) { transit(v, "3F-中庭环廊"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "这里是3F中庭，墙上有彩色的卡通墙绘，天花板上挂着落了一半的气球。\n"
        + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声就在这一层。</span>\n" : "") + describeZombieWave(vars); },
@@ -1334,7 +1342,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F北走廊西": {
     image: "images/新达汇/3F北走廊西.png",
-    onEnter: function(v) { transit(v, "3F-北走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "3F-北走廊西"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "3F北走廊西段。金宝贝早教中心蓝黄配色的门头就在前面。旁边一座玻璃天桥通往东区3楼的露天平台。\n" + describeZombieWave(vars); },
     choices: [
@@ -1362,7 +1370,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F北走廊中": {
     image: "images/新达汇/3F北走廊中.png",
-    onEnter: function(v) { transit(v, "3F-北走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "3F-北走廊中"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "3F北走廊中段。一家关了门的童装店，货架已经搬空了，橱窗里落满灰。\n" + describeZombieWave(vars); },
     choices: [
@@ -1395,7 +1403,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F童装店-躲藏": {
     image: "images/placeholder.png" /* TODO: images/新达汇/childrenShop.png */,
-    onEnter: updateTime(30, { add: { chasedByZombies: -1 } }),
+    onEnter: function(v) { v.showPowerOut = true; return updateTime(30, { add: { chasedByZombies: -1 } })(v); },
     text: "童装店里空荡荡的，只有几个落满灰的塑料模特歪倒在地上。你绕到收银台后面蹲下来，这里正好被柜体挡住，从外面完全看不到。\n\
 你缩在阴影里，听着外面的走廊里的脚步声来来回回——但它们没有停下来。过了很久，外面终于安静了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>",
     choices: [
@@ -1408,7 +1416,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F北走廊东": {
     image: "images/新达汇/3F北走廊东.png",
-    onEnter: function(v) { transit(v, "3F-北走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "3F-北走廊东"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "3F北走廊东端。爱婴室和消防通道在这里。\n" + describeZombieWave(vars); },
     choices: [
@@ -1436,7 +1444,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F南走廊西": {
     image: "images/新达汇/3F南走廊西.png",
-    onEnter: function(v) { transit(v, "3F-南走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "3F-南走廊西"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "3F南走廊西段。卡通墙绘密集，走廊尽头是卡通尼乐园的入口。\n"
  + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声从儿童乐园方向传来。</span>\n" : "")
@@ -1461,7 +1469,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F南走廊中": {
     image: "images/新达汇/3F南走廊中.png",
-    onEnter: function(v) { transit(v, "3F-南走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "3F-南走廊中"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) {
       if (vars._3f_darkZoneDone) return "3F南走廊中段——之前那段漆黑的地方你现在可以正常通过了。\n" + describeZombieWave(vars);
@@ -1510,7 +1518,7 @@ Object.assign(storyData, {
 
   "新达汇-3F南走廊中-摸黑": {
     image: "images/placeholder.png" /* TODO: images/新达汇/3fSouth.png */,
-    onEnter: { set: { _3f_darkZoneDone: true }, add: { chasedByZombies: 1 } },
+    onEnter: { set: { showPowerOut: true,  _3f_darkZoneDone: true }, add: { chasedByZombies: 1 } },
     text: "你伸着手在黑暗中摸索前进。脚下嘎吱一声——你踩碎了什么塑料玩具。声音虽不大，但在安静的走廊里还是挺清楚的。",
     choices: [
       {
@@ -1522,7 +1530,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F南走廊东": {
     image: "images/placeholder.png" /* TODO: images/新达汇/3fSouth.png */,
-    onEnter: function(v) { transit(v, "3F-南走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "3F-南走廊东"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "3F南走廊东端。\n" + describeZombieWave(vars); },
     choices: [
@@ -1539,6 +1547,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-3F大型综合儿童乐园": {
+    onEnter: { set: { showPowerOut: true } },
     image: function(vars) {
       if(vars._powerOut) return "images/新达汇/卡通尼小猫-断电.jpg";
       return "images/新达汇/卡通尼小猫.jpg";
@@ -1583,6 +1592,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-卡通尼乐园-喂猫": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/kidsPlayArea.png */,
     text: "那只变异猫盯着你手里的食物看了几秒，然后轻盈地从滑梯上跳下来，小心翼翼地靠近。它叼走了食物，退到几步之外，低头吃了起来。\n你慢慢退出卡通尼乐园。变异猫没有跟上来——它消失在了海洋球池深处。\n你能感觉到它不再盯着你了。",
     choices: [
@@ -1594,6 +1604,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-3F金宝贝早教中心": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/earlyEducation.png */,
     text: function(vars) {
       if (vars._backhallEntered) return "你从后勤通道绕进了金宝贝早教中心的后门。\n蓝黄配色的装潢，教室里小桌椅整齐排列，地面铺着软垫。黑板上画着一只歪歪扭扭的小熊。前门确实锁着——但现在你从里面了，想走也可以从前门出去。";
@@ -1621,6 +1632,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-3F爱婴室": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/babyStore.png */,
     text: "你走进爱婴室。彩虹渐变logo，白底彩色地砖配木纹货架。货架上还有婴儿湿巾、矿泉水和磨牙饼干。",
     choices: [
@@ -1711,7 +1723,7 @@ Object.assign(storyData, {
   // ==================== 4F 餐饮+影院层（日字型走廊） ====================
   "新达汇-4F中庭环廊": {
     image: "images/新达汇/4F中庭.png",
-    onEnter: function(v) { transit(v, "4F-中庭环廊"); return {}; },
+    onEnter: function(v) { transit(v, "4F-中庭环廊"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "4F，中庭顶部近在咫尺。空气里飘着油烟和酸味。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -1745,7 +1757,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F北走廊西": {
     image: "images/新达汇/4F北走廊西.png",
-    onEnter: function(v) { transit(v, "4F-北走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "4F-北走廊西"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "4F北走廊西段。大米先生快餐店的门口堆满了等位椅。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -1767,7 +1779,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F北走廊中": {
     image: "images/新达汇/4F北走廊中.png",
-    onEnter: function(v) { transit(v, "4F-北走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "4F-北走廊中"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "4F北走廊中段。油烟味很重——大渝火锅的排风扇上挂着一层油脂。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -1794,7 +1806,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F北走廊东": {
     image: "images/新达汇/4F北走廊东.png",
-    onEnter: function(v) { transit(v, "4F-北走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "4F-北走廊东"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "4F北走廊东端。消防通道在这里。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -1816,7 +1828,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F南走廊西": {
     image: "images/新达汇/4F南走廊西.png",
-    onEnter: function(v) { transit(v, "4F-南走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "4F-南走廊西"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "4F南走廊西段。墙上有老电影海报。“争鲜”日料店的吧台就在前面。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -1838,7 +1850,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F南走廊中": {
     image: "images/新达汇/4F南走廊中.png",
-    onEnter: function(v) { transit(v, "4F-南走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "4F-南走廊中"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "4F南走廊中段。空气里飘着淡淡的爆米花味——CGV影城就在前面。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -1865,7 +1877,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F南走廊东": {
     image: "images/新达汇/4F南走廊东.png",
-    onEnter: function(v) { transit(v, "4F-南走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "4F-南走廊东"); v.showPowerOut = true; return {}; },
     text: function(vars) {
       var desc = "4F南走廊东端。";
       if(vars._visit['4F电梯厅'] == 1) desc += "走廊上有一滩从卫生间溢出来的污水，散发着刺鼻的臭气，横跨了整个路面。";
@@ -1903,7 +1915,7 @@ Object.assign(storyData, {
 
   "新达汇-4F南走廊东-滑倒": {
     image: "images/placeholder.png" /* TODO: images/新达汇/4fSouth.png */,
-    onEnter: { add: { chasedByZombies: 1, strength: -1 } },
+    onEnter: { set: { showPowerOut: true },  add: { chasedByZombies: 1, strength: -1 } },
     text: "你快步冲过污水区——但地面比看起来滑得多。你脚下一滑，手掌撑在地上才没摔倒，但溅起的水花和你的声音在走廊里回荡。",
     choices: [
       {
@@ -1914,6 +1926,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F大渝火锅": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/4F大渝火锅.jpg",
     text: function(vars) {
       if (vars._triedHotpot && !vars.hasCatSnack) return "大渝火锅的食材已经被你搜刮干净了。门口的零食台上倒还有几包小零食——但你已经拿过一包了。";
@@ -1968,7 +1981,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F火锅-麻辣": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
-    onEnter: { add: { strength: -1 }, set: { _triedHotpot: true } },
+    onEnter: { add: { strength: -1 }, set: { showPowerOut: true,  _triedHotpot: true } },
     text: "🌶麻辣锅底——你涮了一片午餐肉——太久没吃辣，胃完全受不了。体力-1。",
     choices: [
       {
@@ -1980,7 +1993,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F火锅-番茄": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
-    onEnter: { add: { strength: 1 }, set: { _triedHotpot: true } },
+    onEnter: { add: { strength: 1 }, set: { showPowerOut: true,  _triedHotpot: true } },
     text: "🍅番茄锅底温和多了。吃了一顿饱饭。体力+1。",
     choices: [
       {
@@ -1992,7 +2005,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F火锅-菌菇": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
-    onEnter: { add: { strength: 2 }, set: { _triedHotpot: true } },
+    onEnter: { add: { strength: 2 }, set: { showPowerOut: true,  _triedHotpot: true } },
     text: "🍄菌菇汤底鲜甜暖胃。体力+2。",
     choices: [
       {
@@ -2003,6 +2016,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F大米先生": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/大米先生门口.jpg",
     text: "门口堆满了等位椅。白绿配色的装潢，暖木色桌椅，透明厨房隔断上贴着“现炒现做”。保温台上的菜盘已经凉透了。",
     choices: [
@@ -2021,7 +2035,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F大米先生-吃剩菜": {
     image: "images/placeholder.png" /* TODO: images/新达汇/riceRestaurant.png */,
-    onEnter: updateTime(5, { add: { strength: 2 } }),
+    onEnter: function(v) { v.showPowerOut = true; return updateTime(5, { add: { strength: 2 } })(v); },
     text: "你绕过保温台，掀开菜盘的盖子。红烧肉、番茄炒蛋、炒青菜——都凉透了，油脂凝固成一层白膜，但好在还没有馊味。\n\
 你挑了几样看着还能吃的，就着凉米饭扒了几口。末世里能吃上一口“凉乎的”剩菜，已经算走运了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
@@ -2029,6 +2043,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F日料店": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/japaneseRestaurant.png */,
     text: function(vars) {
       var desc = "吧台被砸了，清酒瓶碎了一地，地上满是碎玻璃和陶瓷片，踩上去咔嚓作响。脚下黏糊糊的——酒液浸透了地毯，走起来带出轻微的粘滞声。";
@@ -2069,7 +2084,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F日料店-找吃的": {
     image: "images/placeholder.png" /* TODO: images/新达汇/japaneseRestaurant.png */,
-    onEnter: updateTime(5, { add: { strength: 2 } }),
+    onEnter: function(v) { v.showPowerOut = true; return updateTime(5, { add: { strength: 2 } })(v); },
     text: "你踮着脚绕过满地的碎玻璃和酒液，掀开后厨冷藏柜的盖子。里面躺着几盒密封的寿司拼盘和饭团——贴着当天的标签，冰袋还没完全化。\n你拆开一盒，就着冰凉的米饭吞下去。三文鱼已经不新鲜了，但你告诉自己至少没馊。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-4F日料店", effect: updateTime(1) }
@@ -2077,7 +2092,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F日料店-陷阱": {
     image: "images/placeholder.png" /* TODO: images/新达汇/japaneseRestaurant.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { set: { showPowerOut: true },  add: { chasedByZombies: 1 } },
     text: function(vars) {
       var desc = "你小心地绕过地上的碎玻璃，翻进吧台后面。还没站稳，脚底传来一声清脆的碎裂声——你踩到了一块埋在阴影里的碎瓷片。\n声音在狭小的日料店里格外响亮，甚至还有回音。";
       if (vars.chasedByZombies >= 3) {
@@ -2098,7 +2113,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F电影院大厅": {
     image: "images/placeholder.png" /* TODO: images/新达汇/cinemaLobby.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { add: { chasedByZombies: 1 }, set: { showPowerOut: true } },
     text: "影城的玻璃感应门在你靠近时无声打开——它居然还有电。伴随着一声低沉的电子提示音，你的身影被门框上的摄像头捕捉到了。\n售票处电子屏还在闪烁，爆米花撒了一地。影厅走廊延伸向黑暗深处。",
     choices: [
       {
@@ -2114,6 +2129,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F影厅走廊": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/cinemaHallway.png */,
     text: "暗红色地毯，墙上挂着电影海报。3号厅的门半开着。",
     choices: [
@@ -2130,6 +2146,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F放映厅3": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/theater3.png */,
     text: "银幕上定格着《飞驰人生3》的片尾字幕。最后一排的角落有什么东西蜷缩着——没有动。",
     choices: [
@@ -2219,7 +2236,7 @@ Object.assign(storyData, {
   // ==================== 5F 特色餐饮层（日字型走廊） ====================
   "新达汇-5F中庭环廊": {
     image: "images/新达汇/5F中庭.png",
-    onEnter: function(v) { transit(v, "5F-中庭环廊"); return {}; },
+    onEnter: function(v) { transit(v, "5F-中庭环廊"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "5F中庭环廊。环形走廊到了最顶层，头顶就是采光穹顶——阳光从玻璃缝隙漏下来，在地板上投出斑驳的光影。从这里能看到整座商场在脚下层层展开。\n" + describeZombieWave(vars); },
     choices: [
@@ -2249,7 +2266,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F北走廊西": {
     image: "images/新达汇/5F北走廊西.png",
-    onEnter: function(v) { transit(v, "5F-北走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "5F-北走廊西"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "5F北走廊西段。走廊比下面几层窄一些，天花板也低了些。石物恋·烧肉就在前面。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -2288,7 +2305,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F北走廊中": {
     image: "images/新达汇/5F北走廊中.png",
-    onEnter: function(v) { transit(v, "5F-北走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "5F-北走廊中"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "5F北走廊中段。左庭右院的招牌在这里。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -2320,7 +2337,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F北走廊东": {
     image: "images/新达汇/5F北走廊东.png",
-    onEnter: function(v) { transit(v, "5F-北走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "5F-北走廊东"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "5F北走廊东端。消防通道从这里上屋顶。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -2342,7 +2359,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F南走廊西": {
     image: "images/新达汇/5F南走廊西.png",
-    onEnter: function(v) { transit(v, "5F-南走廊西"); return {}; },
+    onEnter: function(v) { transit(v, "5F-南走廊西"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "5F南走廊西段。游戏厅的招牌灯还在闪烁。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -2364,7 +2381,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F南走廊中": {
     image: "images/新达汇/5F南走廊中.png",
-    onEnter: function(v) { transit(v, "5F-南走廊中"); return {}; },
+    onEnter: function(v) { transit(v, "5F-南走廊中"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "5F南走廊中段。走廊旁有一个小型展示区，摆着一些商场改造前的历史照片。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -2391,7 +2408,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F南走廊东": {
     image: "images/新达汇/5F南走廊东.png",
-    onEnter: function(v) { transit(v, "5F-南走廊东"); return {}; },
+    onEnter: function(v) { transit(v, "5F-南走廊东"); v.showPowerOut = true; return {}; },
     text: function(vars) { return "5F南走廊东端。\n" + describeZombieWave(vars); },
     choices: [
       {
@@ -2407,6 +2424,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F食物恋": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/食物恋.jpg",
     text: "石物恋·烧肉。电圈烤炉摆在桌上，冷藏柜门开着，里面的肉已经不冰了。地上有脚印。",
     choices: [
@@ -2430,7 +2448,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F食物恋-烤肉": {
     image: "images/新达汇/炭火烤肉.png" /* TODO: images/新达汇/bbqRestaurant.png */,
-    onEnter: updateTime(20, { add: { strength: 3 } }),
+    onEnter: function(v) { v.showPowerOut = true; return updateTime(20, { add: { strength: 3 } })(v); },
     text: "你拉开椅子坐下，打开电圈烤炉。肉虽然已经不冰了，但还没完全坏——你挑了几片看着新鲜的，铺在烤盘上。\n\
 油脂在电圈上滋滋作响，肉香飘散开来。你夹起一片，没蘸料————虽然你平时也不怎么蘸————咬下去。虽然没有配菜，这是末世以来你吃过最像样的一顿。\n\
 你警惕地看了一眼门口。香味也许会把什么引来……但管不了那么多了。\n\
@@ -2440,6 +2458,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F左庭右院": {
+    onEnter: { set: { showPowerOut: true } },
     image: function(vars) {
       if(vars._deliveryCode) return "images/新达汇/左庭右院-门口.jpg";
       return "images/新达汇/左庭右院-门口-无外卖.jpg";
@@ -2471,7 +2490,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F左庭右院-取外卖": {
     image: "images/新达汇/外卖.jpg",
-    onEnter: { set: { _deliveryCode: "473829" } }, // 只读取取餐码线索，不占背包容量
+    onEnter: { set: { showPowerOut: true,  _deliveryCode: "473829" } }, // 只读取取餐码线索，不占背包容量
     text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：“北青公路某号某室”。\n你撕开包裹——里面是一份盖浇饭，凉了，但还完整。",
     choices: [
       {
@@ -2487,6 +2506,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F左庭右院-吃外卖": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/牛肉炒饭.jpg",
     text: "外卖真好吃。\
 【系统提示】体力+2，当前体力：{strength}。",
@@ -2495,6 +2515,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-5F游戏厅": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/arcade.png */,
     text: function(vars) {
       let basicDes = "";
@@ -2523,7 +2544,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F游戏厅-躲藏": {
     image: "images/placeholder.png" /* TODO: images/新达汇/arcade.png */,
-    onEnter: updateTime(30, { add: { chasedByZombies: -2 } }),
+    onEnter: function(v) { v.showPowerOut = true; return updateTime(30, { add: { chasedByZombies: -2 } })(v); },
     text: function(vars) {
       var desc = "你绕到一排娃娃机后面，蹲下来缩在机器和墙壁之间的缝隙里。";
       if (vars._powerOut) {
@@ -2794,6 +2815,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-哥哥的深夜食堂": {
+    onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/izakaya.png */,
     text: function(vars) {
       if (vars._yorozuyaUnlocked) return "你在哥哥的深夜食堂，门锁好了，很安静。";
@@ -2828,7 +2850,7 @@ Object.assign(storyData, {
   },
   "新达汇-哥哥的深夜食堂-解锁": {
     image: "images/placeholder.png" /* TODO: images/新达汇/izakaya.png */,
-    onEnter: { set: { _yorozuyaUnlocked: true } },
+    onEnter: { set: { showPowerOut: true,  _yorozuyaUnlocked: true } },
     text: "你掏出那把全家捡来的钥匙，插进去轻轻一转——门开了。你从里面挂上门链。",
     choices: [
       {
@@ -2840,7 +2862,7 @@ Object.assign(storyData, {
   },
   "新达汇-哥哥的深夜食堂-休息": {
     image: "images/placeholder.png" /* TODO: images/新达汇/izakaya.png */,
-    onEnter: { set: { _travelMinutes: 0 } },
+    onEnter: { set: { showPowerOut: true,  _travelMinutes: 0 } },
     text: "你在吧台前坐下，喝了一瓶饮料。这里很安静。",
     choices: [
       {

@@ -365,6 +365,15 @@ html, body {
   pointer-events: none;
 }
 
+/* ===== 停电遮罩（半透明灰，仿雨天；新达汇拉闸后室内变暗） ===== */
+#screen-effect-overlay.power-out::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(12, 12, 18, 0.55);
+  pointer-events: none;
+}
+
 /* ===== 丧尸包围遮罩（两档：轻度 ch≤2 / 重度 ch≥3，通过 --zombie-bg 动态指定图片） ===== */
 #screen-effect-overlay.zombie-surround-moderate::before,
 #screen-effect-overlay.zombie-surround-heavy::before {
