@@ -2659,11 +2659,6 @@ Object.assign(storyData, {
         showCondition: "hasPhone &&  (_droneBattery > 0 || !_powerOut)",
       },
       {
-        text: "无人机电池已耗尽",
-        nextScene: "新达汇-屋顶花园-没电",
-        showCondition: "hasPhone && _droneBattery <= 0 && _powerOut",
-      },
-      {
         text: "走近看看那架无人机",
         nextScene: "新达汇-屋顶花园-看无人机",
         effect: updateTime(1),
@@ -2721,7 +2716,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-屋顶花园-输错码": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
+    image: "images/新达汇/取餐码错误.jpg",
     onEnter: { set: { showRain: true } },
     text: "取餐码错误。",
     choices: [
@@ -2732,21 +2727,10 @@ Object.assign(storyData, {
       },
     ]
   },
-  "新达汇-屋顶花园-没电": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
-    onEnter: { set: { showRain: true } },
-    text: "无人机指示灯完全熄灭，看来是飞不起来了。",
-    choices: [
-      {
-        text: "返回",
-        nextScene: "新达汇-屋顶花园",
-      },
-    ]
-  },
   "新达汇-屋顶花园-起飞": {
     image: "images/placeholder.png" /* TODO: images/新达汇/roofGarden.png */,
     onEnter: { set: { showRain: true } },
-    text: "取餐码正确。货箱解锁。你爬进货箱，无人机缓缓升起。\n你飞越了新达汇的喷泉广场、三林路的十字路口，飞过华夏西路高架桥上的尸潮——飞向某个未知的方向。\n\
+    text: "取餐码正确。你爬上无人机，无人机缓缓升起。\n你飞越了新达汇的喷泉广场、三林路的十字路口，飞过华夏西路高架桥上的尸潮——飞向某个未知的方向。\n\
 <span style='color: #f8d305ff;'>—— 无人机的救赎 · 好结局 ——</span>",
     style: "text-align: center;",
     choices: [

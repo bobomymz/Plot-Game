@@ -108,6 +108,16 @@ function jpHarshTrack(vars, sceneId) {
   vars._harshTrack = (vars._harshTrack || []).concat([sceneId]);
 }
 
+// Harsh 距离提示：写入地点节点 text 末尾（仅激活且足够近时）
+function jpHarshHint(vars) {
+  if (!vars._harshActive || !vars._harshTrack || vars._harshTrack.length < 1) return "";
+  var dist = vars._harshTrack.length - 1 - vars._harshIndex;
+  if (dist <= 0) return "\n<span style='color:#ff4444;'>——那个身影就在你眼前！</span>";
+  if (dist <= 2) return "\n<span style='color:#ffaa00;'>身后传来拖沓的脚步声，越来越近了……</span>";
+  if (dist <= 4) return "\n远处似乎有个身影在跟着你。";
+  return "";   // 距离远时不提及（不剧透）
+}
+
 // 建平躲藏场景：reduceLevel 2=室内封闭（降ch2，不失败）；1=半开放/户外（降ch1，ch≥3 时 40% 失败）
 function jpHide(image, successText, failText, reduceLevel) {
   return {
@@ -176,7 +186,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       if (vars._frontGateCleared) {
         return [
-          { text: "走进前门（金苹果广场）", nextScene: "建平-金苹果广场", effect: updateTime(2) },
+          { text: "走进前门", nextScene: "建平-金苹果广场", effect: updateTime(2) },
           { text: "去校园门口", nextScene: "建平-校园门口", effect: updateTime(5) }
         ];
       }
@@ -319,7 +329,7 @@ Object.assign(storyData, {
     choices: [
       { text: "去前门", nextScene: "建平-前门", effect: updateTime(2) },
       { text: "去行政楼", nextScene: "建平-行政楼-1F", effect: updateTime(2) },
-      { text: "去挹芬楼（北门）", nextScene: "建平-挹芬楼北门", effect: updateTime(2) },
+      { text: "去挹芬楼北门", nextScene: "建平-挹芬楼北门", effect: updateTime(2) },
       { text: "去致真楼", nextScene: "建平-致真楼-1F", effect: updateTime(2) },
       { text: "去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) }
     ]
@@ -332,7 +342,7 @@ Object.assign(storyData, {
     choices: [
       { text: "去金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(3) },
       { text: "去远翔楼", nextScene: "建平-远翔楼-1F", effect: updateTime(2) },
-      { text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) },
+      { text: "去食堂正门", nextScene: "建平-食堂", effect: updateTime(2) },
       { text: "去济美楼", nextScene: "建平-济美楼-1F", effect: updateTime(2) },
       { text: "躲进报刊亭", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-金苹果大道报刊亭" }
     ]
@@ -344,8 +354,8 @@ Object.assign(storyData, {
     text: function(vars) { return "水池。丧尸像被什么吸引似的沿着池边越聚越多，有些半个身子泡在水里——水的湿气让它们扎堆在这里。"; },
     choices: [
       { text: "去废弃小楼", nextScene: "建平-废弃小楼-1F", effect: updateTime(2) },
-      { text: "去挹芬楼（南门）", nextScene: "建平-挹芬楼南门", effect: updateTime(2) },
-      { text: "去弘渊楼（前门）", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
+      { text: "去挹芬楼南门", nextScene: "建平-挹芬楼南门", effect: updateTime(2) },
+      { text: "去弘渊楼前门", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
       { text: "去济美楼", nextScene: "建平-济美楼-1F", effect: updateTime(2) }
     ]
   },
@@ -355,8 +365,8 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "操场"; },
     text: function(vars) { return "操场。" + describeZombieWave(vars); },
     choices: [
-      { text: "去食堂（侧门）", nextScene: "建平-食堂", effect: updateTime(2) },
-      { text: "去弘渊楼（后门）", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
+      { text: "去食堂侧门", nextScene: "建平-食堂", effect: updateTime(2) },
+      { text: "去弘渊楼后门", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
       { text: "去宿舍", nextScene: "建平-宿舍", effect: updateTime(2) },
       { text: "躲到灌木丛", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-操场灌木丛" }
     ]
@@ -367,7 +377,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "思贤堂"; },
     text: function(vars) { return "思贤堂（礼堂）。" + describeZombieWave(vars); },
     choices: [
-      { text: "去挹芬楼（南门）", nextScene: "建平-挹芬楼南门", effect: updateTime(2) },
+      { text: "去挹芬楼南门", nextScene: "建平-挹芬楼南门", effect: updateTime(2) },
       { text: "去废弃小楼", nextScene: "建平-废弃小楼-1F", effect: updateTime(2) }
     ]
   },
@@ -379,7 +389,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "行政楼1F"; return { add: { chasedByZombies: 1 } }; },
     text: function(vars) { return "行政楼 1 楼。大厅里的丧尸比外面更密，大概是顺着校门一口气涌进来的，挤在电梯和楼梯口。"; },
     choices: [
-      { text: "出门（金苹果广场）", nextScene: "建平-金苹果广场", effect: updateTime(2) },
+      { text: "去金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(2) },
       { text: "去东楼梯", nextScene: "建平-行政楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-行政楼-西楼梯", effect: updateTime(1) },
       { text: "去教学处", nextScene: "建平-行政楼-1F-教学处", effect: updateTime(1) }
@@ -475,7 +485,7 @@ Object.assign(storyData, {
         ];
       }
       return [
-        { text: "去北门（金苹果广场方向）", nextScene: "建平-挹芬楼北门", effect: updateTime(1) },
+        { text: "去北门", nextScene: "建平-挹芬楼北门", effect: updateTime(1) },
         { text: "去西楼梯", nextScene: "建平-挹芬楼-西楼梯", effect: updateTime(1) },
         { text: "去电梯", nextScene: "建平-挹芬楼-电梯", effect: updateTime(0) },
         { text: "去公开课教室", nextScene: "建平-挹芬楼-1F-公开课教室", effect: updateTime(1) },
@@ -519,7 +529,7 @@ Object.assign(storyData, {
         ];
       }
       return [
-        { text: "去南门（水池方向）", nextScene: "建平-挹芬楼南门", effect: updateTime(1) },
+        { text: "去南门", nextScene: "建平-挹芬楼南门", effect: updateTime(1) },
         { text: "去东楼梯", nextScene: "建平-挹芬楼-东楼梯", effect: updateTime(1) },
         { text: "去休息区", nextScene: "建平-挹芬楼-1F-休息区", effect: updateTime(30) },
         { text: "去西侧走廊", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
@@ -609,7 +619,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "致真楼1F"; },
     text: function(vars) { return "致真楼 1 楼。" + describeZombieWave(vars); },
     choices: [
-      { text: "出门（金苹果广场）", nextScene: "建平-金苹果广场", effect: updateTime(2) },
+      { text: "去金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(2) },
       { text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) },
       { text: "去东楼梯", nextScene: "建平-致真楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-致真楼-西楼梯", effect: updateTime(1) },
@@ -811,7 +821,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "远翔楼1F"; },
     text: function(vars) { return "远翔楼 1 楼。" + describeZombieWave(vars); },
     choices: [
-      { text: "出门（金苹果大道）", nextScene: "建平-金苹果大道", effect: updateTime(2) },
+      { text: "去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(2) },
       { text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) },
       { text: "去东楼梯", nextScene: "建平-远翔楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-远翔楼-西楼梯", effect: updateTime(1) },
@@ -1026,9 +1036,9 @@ Object.assign(storyData, {
       return desc + describeZombieWave(vars);
     },
     choices: [
-      { text: "去金苹果大道（正门）", nextScene: "建平-金苹果大道", effect: updateTime(2) },
-      { text: "去后门（辅路）", nextScene: "建平-后门辅路", effect: updateTime(2) },
-      { text: "去操场（侧门）", nextScene: "建平-操场", effect: updateTime(2) },
+      { text: "从正门出去", nextScene: "建平-金苹果大道", effect: updateTime(2) },
+      { text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) },
+      { text: "从侧门出去", nextScene: "建平-操场", effect: updateTime(2) },
       { text: "去宿舍", nextScene: "建平-宿舍", effect: updateTime(2) },
       { text: "去后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) },
       { text: "看看刘冠宇", nextScene: "建平-食堂-刘冠宇", effect: updateTime(1) },
@@ -1200,8 +1210,8 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "弘渊楼1F"; return { add: { chasedByZombies: 1 } }; },
     text: function(vars) { return "弘渊楼（图书馆）1 楼。临水的一层潮气重，丧尸贴着墙根和书架缝隙聚集，比楼上密得多。"; },
     choices: [
-      { text: "出门（前门·水池）", nextScene: "建平-水池", effect: updateTime(2) },
-      { text: "出门（后门·操场）", nextScene: "建平-操场", effect: updateTime(2) },
+      { text: "从前门出去", nextScene: "建平-水池", effect: updateTime(2) },
+      { text: "从后门出去", nextScene: "建平-操场", effect: updateTime(2) },
       { text: "去楼梯", nextScene: "建平-弘渊楼-楼梯", effect: updateTime(1) }
     ]
   },
@@ -1291,8 +1301,8 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "济美楼1F"; return { add: { chasedByZombies: 1 } }; },
     text: function(vars) { return "济美楼 1 楼。门口和走廊里都有丧尸游荡——靠近水池的方向，动静尤其多。"; },
     choices: [
-      { text: "出门（金苹果大道）", nextScene: "建平-金苹果大道", effect: updateTime(2) },
-      { text: "出门（水池）", nextScene: "建平-水池", effect: updateTime(2) },
+      { text: "从侧门出去", nextScene: "建平-金苹果大道", effect: updateTime(2) },
+      { text: "从正门出去", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "去东楼梯", nextScene: "建平-济美楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-济美楼-西楼梯", effect: updateTime(1) },
       { text: "去心理教室", nextScene: "建平-济美楼-1F-心理教室", effect: updateTime(1) },
@@ -1392,10 +1402,114 @@ Object.assign(storyData, {
   "建平-废弃小楼-3F-团委工作室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "废弃小楼3F团委工作室"; },
-    text: "废弃小楼 3 楼 · 团委工作室。",
+    text: function(vars) {
+      var desc = "废弃小楼 3 楼 · 团委工作室。这里堆满了历年校园活动的道具和杂物。";
+      if (!vars._innerLiningYouthRoom) {
+        desc += "\n\n角落里的一堆校服下面，露出半截校服外套的内胆。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._innerLiningYouthRoom) {
+        cs.push({ text: "拿走校服内胆", nextScene: "建平-废弃小楼-3F-团委工作室-内胆" });
+      }
+      cs.push({ text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-团委工作室" });
+      cs.push({ text: "回 3 楼走廊", nextScene: "建平-废弃小楼-3F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-废弃小楼-3F-团委工作室-内胆": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _innerLiningYouthRoom: true }, add: { hasInnerLining: 1 } },
+    text: "你抽出那件校服外套的内胆——软软的，还带着点霉味。\n这东西平时没什么用，但对付那个只会嚎叫的家伙……说不定能派上用场。",
     choices: [
-      { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-团委工作室" },
-      { text: "回 3 楼走廊", nextScene: "建平-废弃小楼-3F", effect: updateTime(1) }
+      { text: "收好内胆", nextScene: "建平-废弃小楼-3F-团委工作室", effect: updateTime(1) }
+    ]
+  },
+
+  // ==================== Harsh 被堵住（追上处理） ====================
+
+  "建平-Harsh堵住": {
+    image: "images/placeholder.png" /* TODO: images/jianping/harsh.png */,
+    onEnter: function(vars) {
+      vars._harshEncounters = (vars._harshEncounters || 0) + 1;
+      vars._harshReturn = vars._harshTrack && vars._harshTrack.length > 0
+        ? vars._harshTrack[vars._harshTrack.length - 1]
+        : "建平-金苹果大道";
+      return {};
+    },
+    text: function(vars) {
+      var desc = "那个身影堵住了你的去路——是 Harsh，那个生前以严厉著称的年级组长。\n\
+她歪着头站在那儿，喉咙里发出低哑的嘶声。她挥臂朝你抓来——但动作很慢，你轻易就躲开了。\n\
+可就在这时，她仰起头，发出一声凄厉的嚎叫——那声音在空旷的校园里回荡，引来四面八方的丧尸！";
+      if (vars._harshEncounters >= 2) {
+        desc += "\n\n<span style='color:#ffaa00;'>这已经是她第二次追上你了。</span>";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars.hasInnerLining > 0) {
+        cs.push({
+          text: "丢出校服内胆！",
+          nextScene: "建平-Harsh堵住-驱赶",
+          effect: function(v) { v.hasInnerLining -= 1; return {}; }
+        });
+      }
+      cs.push({
+        text: "快逃！",
+        nextScene: "建平-Harsh堵住-逃跑",
+        effect: function(v) { v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; }
+      });
+      return cs;
+    }
+  },
+
+  "建平-Harsh堵住-驱赶": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      // 驱赶成功：Harsh 退开，重置追逐（回落到轨迹起点），记录本次碰撞不累计休眠（除非已到2次）
+      vars._harshCaught = false;
+      vars._harshIndex = 0;
+      vars._harshTrack = vars._harshReturn ? [vars._harshReturn] : [];
+      return {};
+    },
+    text: function(vars) {
+      if (vars._harshEncounters >= 2) {
+        return "你把内胆丢向她。她一把抱住，低头嗅了嗅，随后缓缓转身，拖着那件校服内胆，一步一步地走远了——彻底消失在了走廊尽头。\n<span style='color:#00fbffff; font-style: italic;'>她走了，短期内不会再追来。</span>";
+      }
+      return "你把内胆丢向她。她一把抱住，低头嗅了嗅，像是认出了什么。\n她抱着那件校服内胆，缓缓转身走开了几步——但你能感觉到，她还会再追上来。";
+    },
+    choices: [
+      { text: "趁现在离开", nextScene: function(vars) { return vars._harshReturn || "建平-金苹果大道"; }, effect: updateTime(2) }
+    ]
+  },
+
+  "建平-Harsh堵住-逃跑": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars._harshCaught = false;
+      if (vars._harshEncounters >= 2) {
+        // 两次被追上且逃跑：Harsh 累了，强制休眠
+        vars._harshActive = false;
+        vars._harshTrack = [];
+        vars._harshIndex = 0;
+      } else {
+        vars._harshIndex = 0;
+        vars._harshTrack = vars._harshReturn ? [vars._harshReturn] : [];
+      }
+      return {};
+    },
+    text: function(vars) {
+      if (!vars._harshActive) {
+        return "你拼命跑，身后传来她那凄厉的嚎叫和渐渐杂乱的丧尸群——好在你七拐八绕，总算甩开了它们。\n你回头望去，那个身影已经不见了。\n<span style='color:#00fbffff; font-style: italic;'>她好像不追了。也许下次坐电梯之前，你该好好想想。</span>";
+      }
+      return "你拼命跑，身后传来她的嚎叫和丧尸群杂乱的脚步声——你七拐八绕，好不容易才拉开一段距离。\n但你知道，她还在跟着你的轨迹。";
+    },
+    choices: [
+      { text: "喘口气", nextScene: function(vars) { return vars._harshReturn || "建平-金苹果大道"; }, effect: updateTime(2) }
     ]
   },
 
@@ -1461,3 +1575,40 @@ Object.assign(storyData, {
   "建平-躲藏-金苹果大道报刊亭": jpHide("images/placeholder.png", "你躲进报刊亭。丧尸从外面经过，没注意到你。", "报刊亭的门关不严——丧尸闯了进来，你只能逃。", 1),
 
 });
+
+// ==================== Harsh 追踪接入（运行时包装） ====================
+// 对所有"建平-地点节点"（非战斗/躲藏/Harsh/结局/房间）统一包装：
+// 进入时记录轨迹（jpHarshTrack），text 追加距离提示（jpHarshHint）。
+// 排除：躲藏场景、Harsh 场景本身、结局、校园门口外的高架节点。
+(function() {
+  var EXCLUDE = /^(建平-躲藏-|建平-Harsh|结局-|复旦)/;
+  var KEEP = /^建平-/;
+  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住)$/;
+  for (var sceneId in storyData) {
+    if (!storyData.hasOwnProperty(sceneId)) continue;
+    if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;
+
+    // 每轮迭代用 IIFE 捕获当轮的 sceneId / scene，避免 var 共享变量导致的闭包串味
+    (function(id) {
+      var scene = storyData[id];
+
+      // 包装 onEnter：先记轨迹，再执行原逻辑
+      var origOnEnter = scene.onEnter;
+      scene.onEnter = function(vars) {
+        jpHarshTrack(vars, id);
+        var result;
+        if (typeof origOnEnter === "function") result = origOnEnter(vars);
+        else if (origOnEnter && typeof origOnEnter === "object") result = origOnEnter;
+        return result || {};
+      };
+
+      // 包装 text：末尾追加距离提示
+      var origText = scene.text;
+      if (typeof origText === "function") {
+        scene.text = function(vars) { return (origText(vars) || "") + jpHarshHint(vars); };
+      } else if (typeof origText === "string") {
+        scene.text = function(vars) { return origText + jpHarshHint(vars); };
+      }
+    })(sceneId);
+  }
+})();
