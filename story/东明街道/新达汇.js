@@ -197,7 +197,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-B1货梯间": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/b1FreightElevator.png */,
+    image: "images/新达汇/货梯间.jpg",
     text: "你走进货梯间。一部货运电梯停在一楼，按钮面板亮着微弱的红光。旁边是步梯通道。",
     choices: [
       {
@@ -311,11 +311,11 @@ Object.assign(storyData, {
   },
   // 1F 北走廊
   "新达汇-1F北走廊西": {
-    image: "images/新达汇/1F北走廊西.png",
+    image: "images/新达汇/味千拉面门口.jpg",
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     onEnter: function(v) { transit(v, "1F-北走廊西"); return {}; },
     text: function(vars) {
-      var desc = "1F北走廊西段。走廊两侧是几家关了门的店铺，卷帘门拉着。其中有一家味千拉面，卷帘门的下沿有一道不起眼的缝隙——好像可以抬起来。";
+      var desc = "1F北走廊西段。走廊两侧是几家关了门的店铺，卷帘门拉着。其中有一家味千拉面，卷帘门下有空间，但似乎不足以钻进去。";
       if (!vars._backhallEntered) desc += "\n墙边有一扇白色的门，上面贴着“员工通道”的标签——门锁着，推不动。";
       desc += "\n" + describeZombieWave(vars);
       return desc;
@@ -689,7 +689,7 @@ Object.assign(storyData, {
         effect: updateTime(2, { add: { strength: -1 } }),
       },
       {
-        text: "回到1F中庭",
+        text: "去中庭",
         nextScene: "新达汇-1F中庭",
         effect: updateTime(1),
       },
@@ -1235,7 +1235,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到中庭",
+        text: "去中庭",
         nextScene: "新达汇-2F中庭环廊",
         effect: updateTime(1),
       },
@@ -1563,7 +1563,7 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "钻进员工区回到后勤走廊",
+        text: "钻进员工区去后勤走廊",
         nextScene: "新达汇-3F后勤走廊东",
         effect: updateTime(2),
         showCondition: "_backhallEntered",
@@ -1607,7 +1607,7 @@ Object.assign(storyData, {
         showCondition: "_backhallEntered",
       },
       {
-        text: "回到后勤走廊",
+        text: "去后勤走廊",
         nextScene: "新达汇-3F后勤走廊",
         effect: updateTime(1),
         showCondition: "_backhallEntered",
@@ -1648,7 +1648,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到中庭",
+        text: "去中庭",
         nextScene: "新达汇-3F中庭环廊",
         effect: updateTime(1),
       },
@@ -2081,7 +2081,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "你小心地绕过地上的碎玻璃，翻进吧台后面。还没站稳，脚底传来一声清脆的碎裂声——你踩到了一块埋在阴影里的碎瓷片。\n声音在狭小的日料店里格外响亮，甚至还有回音。";
       if (vars.chasedByZombies >= 3) {
-        desc += "\n你听到店外传来急促的脚步声——它们听到了。你只能从后门翻出去，绕了一圈才回到走廊上。碎玻璃满地都是，根本无处下脚。";
+        desc += "\n你听到店外传来急促的脚步声——它们听到了。你只能从后门翻出去，绕了一圈才到走廊上。碎玻璃满地都是，根本无处下脚。";
       } else {
         desc += "\n你僵在原地，屏住呼吸。过了好一会儿，外面没有什么反应——但你已经不太想在这个满地碎玻璃的地方多待了。";
       }
@@ -2156,7 +2156,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到中庭",
+        text: "去中庭",
         nextScene: "新达汇-4F中庭环廊",
         effect: updateTime(1),
       },
@@ -2280,7 +2280,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到中庭",
+        text: "去中庭",
         nextScene: "新达汇-5F中庭环廊",
         effect: updateTime(1),
       },
@@ -2584,7 +2584,7 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "回到中庭",
+        text: "去中庭",
         nextScene: "新达汇-5F中庭环廊",
         effect: updateTime(1),
       },
@@ -2988,7 +2988,7 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "回到后勤走廊",
+        text: "去后勤走廊",
         nextScene: "新达汇-B1后勤走廊",
         effect: updateTime(1),
       },
@@ -3147,7 +3147,7 @@ Object.assign(storyData, {
     text: "你推开门。这是一间小型储物仓库，货架上堆着一些落满灰的清洁用品和几箱矿泉水。矿泉水箱上放着一瓶已经开封的——看起来是某个员工留下的。",
     choices: [
       {
-        text: "回到后勤走廊",
+        text: "去后勤走廊",
         nextScene: "新达汇-1F后勤走廊中",
         effect: updateTime(1),
       },
@@ -3199,7 +3199,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到后勤走廊",
+        text: "去后勤走廊",
         nextScene: "新达汇-2F后勤走廊",
         effect: updateTime(1),
       },
@@ -3297,7 +3297,7 @@ Object.assign(storyData, {
         showCondition: "!hasLubricant",
       },
       {
-        text: "回到后勤走廊",
+        text: "去后勤走廊",
         nextScene: "新达汇-3F后勤走廊东",
         effect: updateTime(1),
       },
