@@ -297,8 +297,10 @@ Object.assign(storyData, {
       desc += "你们一起从吉祥馄饨的卷帘门里冲了出来。停车场的丧尸被你们的动静吸引，有几只从河边转过身来。\n集中注意力——看清它们的动作轨迹！";
       return desc;
     },
-    choices: [
-      {
+    choices: function(vars) {
+      var cs = [];
+      // 记忆闪色：和陈默配合躲闪杀出
+      cs.push({
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
         condition: checkFlashAnswer,
@@ -306,8 +308,24 @@ Object.assign(storyData, {
         elseScene: "结局-被丧尸扑倒咬死",
         timeout: 20000,
         timeoutScene: "结局-被丧尸扑倒咬死"
+      });
+      // 武器速杀：警察局家底在这派上用场（代价是动静——追击上升）
+      if (vars.hasAxe) {
+        cs.push({ text: "抡起斧头替陈默开路", nextScene: "金谊广场-停车场-救完", effect: { add: { chasedByZombies: 1 } } });
       }
-    ]
+      if (vars.hasDagger) {
+        cs.push({ text: "攥紧匕首贴上去捅", nextScene: "金谊广场-停车场-救完", effect: { add: { chasedByZombies: 1 } } });
+      }
+      if (vars.hasGun) {
+        cs.push({
+          text: "拔枪崩掉最近那只丧尸",
+          // 空枪仍可选——无弹扣扳机即死（被扑倒咬死）
+          nextScene: function(v) { return v.gunAmmo > 0 ? "金谊广场-停车场-救完" : "结局-被丧尸扑倒咬死"; },
+          effect: function(v) { if (v.gunAmmo > 0) { v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; } return {}; }
+        });
+      }
+      return cs;
+    }
   },
 
   "金谊广场-停车场-救完": {
@@ -392,8 +410,10 @@ Object.assign(storyData, {
       desc += "集中注意力——在它们合围之前，看清每一只的动作轨迹！";
       return desc;
     },
-    choices: [
-      {
+    choices: function(vars) {
+      var cs = [];
+      // 记忆闪色：在合围前看清轨迹
+      cs.push({
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
         condition: checkFlashAnswer,
@@ -401,13 +421,38 @@ Object.assign(storyData, {
         elseScene: "结局-被丧尸扑倒咬死",
         timeout: 18000,
         timeoutScene: "结局-被丧尸扑倒咬死"
+      });
+      // 武器速杀：有家底就不用赌闪色（代价是动静——追击上升）
+      if (vars.hasAxe) {
+        cs.push({ text: "抡起斧头劈开一条路", nextScene: "金谊广场-正门硬闯-成功", effect: function(v) { v._gateWeapon = "斧"; return { add: { chasedByZombies: 1 } }; } });
       }
-    ]
+      if (vars.hasDagger) {
+        cs.push({ text: "攥紧匕首贴门捅开", nextScene: "金谊广场-正门硬闯-成功", effect: function(v) { v._gateWeapon = "匕首"; return { add: { chasedByZombies: 1 } }; } });
+      }
+      if (vars.hasGun) {
+        cs.push({
+          text: "拔枪崩开合围",
+          // 空枪仍可选——无弹扣扳机即死（被扑倒咬死）
+          nextScene: function(v) { return v.gunAmmo > 0 ? "金谊广场-正门硬闯-成功" : "结局-被丧尸扑倒咬死"; },
+          effect: function(v) {
+            if (v.gunAmmo > 0) { v._gateWeapon = "枪"; v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; }
+            return {};
+          }
+        });
+      }
+      return cs;
+    }
   },
 
   "金谊广场-正门硬闯-成功": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/正门硬闯.jpg */,
-    text: "你撞开一只当先扑来的丧尸，从合围的缝隙里挤进了中庭，反手用力一推——卡着尸体的旋转门转了半圈，正好把追到门边的丧尸挡在了外面。\n你靠着墙喘了几口气。门扇外传来挠门和低吼的声音，一时半会儿它们进不来。\n总算是闯进来了。",
+    text: function(vars) {
+      var lead = "你撞开一只当先扑来的丧尸，";
+      if (vars._gateWeapon === "斧") lead = "你抡起斧头，把扑到门前的丧尸劈开一道缺口，";
+      else if (vars._gateWeapon === "匕首") lead = "你攥紧匕首捅穿扑到身前的丧尸，侧身一闪，";
+      else if (vars._gateWeapon === "枪") lead = "枪声在中庭炸开，当先的丧尸应声栽倒，你抓住空隙，";
+      return lead + "从合围的缝隙里挤进了中庭，反手用力一推——卡着尸体的旋转门转了半圈，正好把追到门边的丧尸挡在了外面。\n你靠着墙喘了几口气。门扇外传来挠门和低吼的声音，一时半会儿它们进不来。\n总算是闯进来了。";
+    },
     choices: [
       { text: "继续", nextScene: "金谊广场-1F 门面层", effect: updateTime(1) }
     ]
@@ -616,7 +661,7 @@ Object.assign(storyData, {
       {
         text: "继续休息",
         nextScene: "金谊广场-2F-休息-休息完",
-        effect: updateTime(30)
+        effect: updateTime(30, { set: { _travelMinutes: 0 } })
       },
       {
         text: "起来继续探索",
@@ -633,7 +678,7 @@ Object.assign(storyData, {
       {
         text: "继续休息",
         nextScene: "金谊广场-2F-休息-休息完",
-        effect: updateTime(30)
+        effect: updateTime(30, { set: { _travelMinutes: 0 } })
       },
       {
         text: "起来继续探索",

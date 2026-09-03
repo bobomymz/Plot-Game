@@ -92,6 +92,8 @@ const storyData = {
     hasCutter: false,          // 是否有美工刀
     hasAxe: false,             // 是否有斧头（警察局警用斧 / 初始小区1楼消防箱，统一为斧头）
     hasGun: false,             // 是否有手枪（警察局）
+    gunAmmo: 0,                // 手枪剩余子弹（警察局首取3发，全图几乎无补给；空枪扣扳机=死）
+    _policeGunTaken: false,    // 是否已在警察局拿到过手枪（防"丢枪→重取"刷满子弹）
     hasDagger: false,          // 是否有匕首（警察局）
     hasCharger: false,         // 是否有充电器（图书馆藏书区，解锁王知筠笔记本）
     hasBiscuit: false,         // 是否有饼干（安盛街便利店）
@@ -562,7 +564,7 @@ const storyData = {
       {
         showCondition: "hasGun",
         text: "丢下手枪",
-        effect: updateTime(1, { set : { hasGun: false }, add: { itemCount: -1 } }),
+        effect: updateTime(1, { set : { hasGun: false, gunAmmo: 0 }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {

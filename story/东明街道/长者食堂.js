@@ -120,8 +120,10 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: [
-      {
+    choices: function(vars) {
+      var cs = [];
+      // 记忆闪色：看清扑击轨迹
+      cs.push({
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
         condition: checkFlashAnswer,
@@ -129,8 +131,24 @@ Object.assign(storyData, {
         elseScene: "结局-被丧尸扑倒咬死",
         timeout: 15000,
         timeoutScene: "结局-被丧尸扑倒咬死"
+      });
+      // 武器速杀：直接放倒门口的丧尸（代价是动静——追击上升）
+      if (vars.hasAxe) {
+        cs.push({ text: "抡起斧头劈翻它", nextScene: "三林路-东明路 十字路口", effect: { add: { chasedByZombies: 1 } } });
       }
-    ]
+      if (vars.hasDagger) {
+        cs.push({ text: "抽出匕首捅穿它的头颅", nextScene: "三林路-东明路 十字路口", effect: { add: { chasedByZombies: 1 } } });
+      }
+      if (vars.hasGun) {
+        cs.push({
+          text: "拔枪朝它开一枪",
+          // 空枪仍可选——无弹扣扳机即死（被扑倒咬死）
+          nextScene: function(v) { return v.gunAmmo > 0 ? "三林路-东明路 十字路口" : "结局-被丧尸扑倒咬死"; },
+          effect: function(v) { if (v.gunAmmo > 0) { v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; } return {}; }
+        });
+      }
+      return cs;
+    }
   },
 
   "长者食堂-内部": {

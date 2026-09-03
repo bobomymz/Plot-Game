@@ -436,21 +436,75 @@ Object.assign(storyData, {
       }
       return "你摸黑走进员工通道。太暗了，只能用手扶着墙慢慢往前挪。\n上次那只迅捷丧尸已经不在了，走廊里很安静，只有你自己的呼吸声。\n你在走廊里摸索了半天，只找到几件挂在墙上的旧工作服和一个上锁的储物柜。\n<span style='color: #888;'>也许下次带个手电筒来会有收获。</span>";
     },
+    choices: function(vars) {
+      var cs = [];
+      if (vars.FamilymartHasZombie) {
+        // 记忆闪色：黑暗中判断扑击方向
+        cs.push({
+          text: "输入你看到的颜色分布（例如：3红3蓝3绿）",
+          input: { placeholder: "例如：3红3蓝3绿" },
+          condition: checkFlashAnswer,
+          elseScene: "结局-员工通道-迅捷丧尸咬死",
+          effect: updateTime(2, { add: { strength: -1 } }),
+          nextScene: "全家便利店-员工通道-踢飞丧尸",
+          timeout: 15000,                     // 9色闪完约7秒，留约8秒输入（原10000只剩3秒，太紧）
+          timeoutScene: "结局-员工通道-迅捷丧尸咬死"
+        });
+        // 武器速杀：不靠闪色，直接迎击黑影（仍会引来些许动静）
+        if (vars.hasAxe) {
+          cs.push({
+            text: "抡起斧头劈向黑影",
+            effect: function(v) { v._employeeWeapon = "斧"; return updateTime(2, { add: { strength: -1, chasedByZombies: 1 } })(v); },
+            nextScene: "全家便利店-员工通道-武器放倒"
+          });
+        }
+        if (vars.hasDagger) {
+          cs.push({
+            text: "攥紧匕首反手迎上",
+            effect: function(v) { v._employeeWeapon = "匕首"; return updateTime(2, { add: { strength: -1, chasedByZombies: 1 } })(v); },
+            nextScene: "全家便利店-员工通道-武器放倒"
+          });
+        }
+        if (vars.hasGun) {
+          cs.push({
+            text: "拔枪朝黑影扣下扳机",
+            // 空枪仍可选——无弹扣扳机即死（迅捷丧尸咬死）
+            nextScene: function(v) { return v.gunAmmo > 0 ? "全家便利店-员工通道-武器放倒" : "结局-员工通道-迅捷丧尸咬死"; },
+            effect: function(v) {
+              v._employeeWeapon = "枪";
+              if (v.gunAmmo > 0) v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1);
+              return updateTime(2, { add: { strength: -1, chasedByZombies: 2 } })(v);
+            }
+          });
+        }
+      } else {
+        cs.push({ text: "摸回去", nextScene: "全家便利店内部" });
+      }
+      return cs;
+    }
+  },
+
+  "全家便利店-员工通道-武器放倒": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/员工通道-暗.png */,
+    onEnter: { set: { FamilymartHasZombie: false } },
+    text: function(vars) {
+      if (vars._employeeWeapon === "斧") {
+        return "黑暗中你抡起斧头，对准那道扑来的黑影横扫过去。斧刃劈进它的脖颈，它闷声栽倒，抽搐了几下不再动了。\n\
+你喘着粗气，把斧刃上的污血在墙边蹭了蹭——这一斧动静不小，得赶紧离开。\n\
+你抹黑退了出来，回到了便利店。";
+      }
+      if (vars._employeeWeapon === "枪") {
+        return "你拔枪对准黑影扣下扳机——\n\
+枪声在狭窄的通道里炸开，震得你耳膜发疼。那道黑影在半空被掀翻，重重摔在地上。\n\
+枪声的回音在走廊里滚了很久——你几乎能听见整条街的丧尸都被这一声吸引了过来。你不敢耽搁，抹黑退了出来，回到了便利店。";
+      }
+      return "那道黑影扑到半空时，你早已攥紧匕首反手迎上——刀尖刺进它的下颚，直贯而入。它僵在你面前，随即软了下去。\n\
+你甩开尸体，屏着气听了一会儿——还好，没引来更多动静。\n\
+你抹黑退了出来，回到了便利店。";
+    },
     choices: [
       {
-        showCondition: "FamilymartHasZombie",
-        text: "输入你看到的颜色分布（例如：3红3蓝3绿）",
-        input: { placeholder: "例如：3红3蓝3绿" },
-        condition: checkFlashAnswer,
-        elseScene: "结局-员工通道-迅捷丧尸咬死",
-        effect: updateTime(2, { add: { strength: -1 } }),
-        nextScene: "全家便利店-员工通道-踢飞丧尸",
-        timeout: 15000,                     // 9色闪完约7秒，留约8秒输入（原10000只剩3秒，太紧）
-        timeoutScene: "结局-员工通道-迅捷丧尸咬死"
-      },
-      {
-        showCondition: "!FamilymartHasZombie",
-        text: "摸回去",
+        text: "继续",
         nextScene: "全家便利店内部"
       }
     ]

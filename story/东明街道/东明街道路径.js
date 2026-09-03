@@ -745,6 +745,12 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
           nextScene: "联华超市-地下室-撬锁"
         });
       }
+      if (vars.hasAxe) {
+        cs.push({
+          text: "抡起斧头劈开那扇铁栅栏门",
+          nextScene: "联华超市-地下室-破锁"
+        });
+      }
       return cs;
     }
   },

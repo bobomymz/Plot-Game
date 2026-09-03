@@ -261,6 +261,7 @@ function hideOnLocation(image, failText, successText) {
     onEnter: function(vars) {
       vars.showRain = true;  // 户外躲藏，雨天叠加雨滴
       updateTime(15 + Math.floor(Math.random() * 16))(vars);
+      vars._travelMinutes = 0;  // 躲藏是静止，不累积连续移动疲劳
       if (vars.chasedByZombies >= 4 && Math.random() < 0.4) {
         vars.strength = Math.max(0, vars.strength - 1);
         vars._hideFail = true;

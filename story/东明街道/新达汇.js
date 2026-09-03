@@ -446,7 +446,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F味千拉面-休息": {
     image: "images/新达汇/味千后厨.jpg", 
-    onEnter: function(v) { v.showPowerOut = true; return updateTime(30, { add: { strength: 1, chasedByZombies: -1 } })(v); },
+    onEnter: function(v) { v.showPowerOut = true; var e = updateTime(30, { add: { strength: 1, chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
     text: "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n你靠墙休息了一会儿，外面的声音渐渐远去了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
     choices: [
       {
@@ -1406,7 +1406,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F童装店-躲藏": {
     image: "images/placeholder.png" /* TODO: images/新达汇/childrenShop.png */,
-    onEnter: function(v) { v.showPowerOut = true; return updateTime(30, { add: { chasedByZombies: -1 } })(v); },
+    onEnter: function(v) { v.showPowerOut = true; var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
     text: "童装店里空荡荡的，只有几个落满灰的塑料模特歪倒在地上。你绕到收银台后面蹲下来，这里正好被柜体挡住，从外面完全看不到。\n\
 你缩在阴影里，听着外面的走廊里的脚步声来来回回——但它们没有停下来。过了很久，外面终于安静了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>",
     choices: [
@@ -2547,7 +2547,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F游戏厅-躲藏": {
     image: "images/placeholder.png" /* TODO: images/新达汇/arcade.png */,
-    onEnter: function(v) { v.showPowerOut = true; return updateTime(30, { add: { chasedByZombies: -2 } })(v); },
+    onEnter: function(v) { v.showPowerOut = true; var e = updateTime(30, { add: { chasedByZombies: -2 } })(v); v._travelMinutes = 0; return e; },
     text: function(vars) {
       var desc = "你绕到一排娃娃机后面，蹲下来缩在机器和墙壁之间的缝隙里。";
       if (vars._powerOut) {

@@ -463,10 +463,10 @@ Object.assign(storyData, {
         // 更新时间为第二天7：30
         return {};
       } else {
-        vars._travelMinutes = 0;
         vars.strength = Math.min(10, vars.strength + 1);
         vars.restAtBarber = true;
         updateTime(30)(vars);
+        vars._travelMinutes = 0;   // 休息不累积连续移动疲劳（updateTime 会累加，这里在效果结算前清零）
         return {};
       }
     },

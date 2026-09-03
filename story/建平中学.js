@@ -61,7 +61,8 @@ function jpBlockedStair(sceneId, prefix, label, floors, clearedVar) {
       if (!vars[clearedVar]) {
         var cs = [];
         if (vars.hasAxe) cs.push({ text: "用斧头劈开丧尸", nextScene: sceneId, effect: function(v) { v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
-        if (vars.hasGun) cs.push({ text: "用手枪射杀丧尸", nextScene: sceneId, effect: function(v) { v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 2); return {}; } });
+        // 空枪仍可选——无弹扣扳机即死（结局-空枪）
+        if (vars.hasGun) cs.push({ text: "用手枪射杀丧尸", nextScene: function(v) { return v.gunAmmo > 0 ? sceneId : "建平-结局-空枪"; }, effect: function(v) { if (v.gunAmmo > 0) { v.gunAmmo = Math.max(0, v.gunAmmo - 1); v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 2); } return {}; } });
         if (vars.hasDagger) cs.push({ text: "用匕首刺穿丧尸头颅", nextScene: sceneId, effect: function(v) { v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
         cs.push({ text: "退回", nextScene: function(v) { return v._lastScene; } });
         return cs;
@@ -158,6 +159,7 @@ function jpHide(image, successText, failText, reduceLevel) {
     onEnter: function(vars) {
       vars.showRain = true;
       updateTime(30)(vars);
+      vars._travelMinutes = 0;  // 躲藏是静止，不累积连续移动疲劳
       if (reduceLevel <= 1 && vars.chasedByZombies >= 3 && Math.random() < 0.4) {
         vars.strength = Math.max(0, vars.strength - 1);
         vars._hideFail = true;
@@ -325,7 +327,8 @@ Object.assign(storyData, {
     text: "你深吸一口气，握住门闩，猛地拉开了后门。\n门轴发出刺耳的摩擦声，门内的丧尸被惊动，齐刷刷向你扑来！",
     choices: function(vars) {
       var cs = [];
-      if (vars.hasGun) cs.push({ text: "拔枪射击！", nextScene: "建平-后门-手枪" });
+      // 空枪时仍保留该选项——扣下扳机即死（结局-空枪）
+      if (vars.hasGun) cs.push({ text: "拔枪射击！", nextScene: function(v) { return v.gunAmmo > 0 ? "建平-后门-手枪" : "建平-结局-空枪"; } });
       if (vars.hasAxe) cs.push({ text: "抡起斧头劈过去！", nextScene: "建平-后门-斧头" });
       if (vars.hasDagger) cs.push({ text: "抽出匕首近身！", nextScene: "建平-后门-匕首" });
       cs.push({ text: "空手硬拼！", nextScene: "建平-后门-开打" });
@@ -339,13 +342,24 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPos = "后门";
+      vars.gunAmmo = Math.max(0, (vars.gunAmmo || 0) - 1);   // 打掉一发子弹
       vars.chasedByZombies = Math.min(5, (vars.chasedByZombies || 0) + 1);   // 枪声引来更多丧尸
       return {};
     },
-    text: "你拔出手枪，对准最前面那只丧尸扣下扳机。\n枪声在巷子里炸开，那丧尸的头猛地向后一仰，栽倒在地。其余丧尸被枪声吓得一顿，随即又嘶吼着朝你扑来。\n你连开几枪，趁乱冲进了后门。",
+    text: function(vars) {
+      var desc = "你拔出手枪，对准最前面那只丧尸扣下扳机。\n枪声在巷子里炸开，那丧尸的头猛地向后一仰，栽倒在地。其余丧尸被枪声吓得一顿，随即又嘶吼着朝你扑来。\n你趁乱闪身冲进了后门。";
+      if (vars.gunAmmo <= 0) desc += "\n枪膛里传来清脆的空响——这已经是最后一发。你摸了摸口袋，没有子弹了。";
+      return desc;
+    },
     choices: [
       { text: "冲进后门", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
+  },
+
+  "建平-结局-空枪": {
+    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    text: "你举起手枪，对准扑来的丧尸扣下扳机——\n枪膛里只传来一声清脆的空响。\n没有子弹。\n你愣了一下。就在这半秒里，丧尸已经扑到了面前，你来不及后悔，就被拖进了黑暗里。\n\
+—— 结局：空枪 ——"
   },
 
   "建平-后门-斧头": {
@@ -762,7 +776,7 @@ Object.assign(storyData, {
       return [
         { text: "去南门", nextScene: "建平-挹芬楼南门", effect: updateTime(1) },
         { text: "去东楼梯", nextScene: "建平-挹芬楼-东楼梯", effect: updateTime(1) },
-        { text: "去休息区", nextScene: "建平-挹芬楼-1F-休息区", effect: updateTime(30) },
+        { text: "去休息区", nextScene: "建平-挹芬楼-1F-休息区", effect: updateTime(30, { set: { _travelMinutes: 0 } }) },
         { text: "去西侧走廊", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
       ];
     }
@@ -782,7 +796,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
       if (jpPengAtPiano(vars, 2)) {
-        desc += "\n\n休息区靠墙那架钢琴前，彭奕宸正低着头，手指在琴键上缓慢地游走。";
+        desc += "\n休息区靠墙那架钢琴前，彭奕宸正低着头，手指在琴键上缓慢地游走。";
         if (vars._yifenStudentSaved) {
           desc += "\n那个被你救活的男生就坐在他旁边的长椅上，安安静静地听着。谁也没有说话，只有琴声在空旷的一楼里轻轻回响。";
         }
@@ -1526,9 +1540,18 @@ Object.assign(storyData, {
         ];
       }
       return [
+        { text: "在床上躺一会儿（休息）", nextScene: "建平-宿舍-内部-休息", effect: updateTime(30, { set: { _travelMinutes: 0 } }) },
         { text: "回宿舍门口", nextScene: "建平-宿舍-门口", effect: updateTime(1) }
       ];
     }
+  },
+  "建平-宿舍-内部-休息": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; return { add: { strength: 1 } }; },
+    text: "你挑了张下铺躺下，拉过半旧的被子。走廊里安安静静的，你终于能合一会儿眼了。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    choices: [
+      { text: "起来", nextScene: "建平-宿舍-内部", effect: updateTime(1) }
+    ]
   },
   "建平-宿舍-内部-清场": {
     image: "images/placeholder.png",
@@ -1748,7 +1771,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "废弃小楼 3 楼 · 团委工作室。这里堆满了历年校园活动的道具和杂物。";
       if (!vars._innerLiningYouthRoom) {
-        desc += "\n\n角落里的一堆校服下面，露出半截校服外套的内胆。";
+        desc += "\n角落里的一堆校服下面，露出半截校服外套的内胆。";
       }
       return desc;
     },
@@ -1794,7 +1817,7 @@ Object.assign(storyData, {
 她歪着头站在那儿，喉咙里发出低哑的嘶声。她挥臂朝你抓来——但动作很慢，你轻易就躲开了。\n\
 可就在这时，她仰起头，发出一声凄厉的嚎叫——那声音在空旷的校园里回荡，引来四面八方的丧尸！";
       if (vars._harshEncounters >= 2) {
-        desc += "\n\n<span style='color:#ffaa00;'>这已经是她第二次追上你了。</span>";
+        desc += "\n<span style='color:#ffaa00;'>这已经是她第二次追上你了。</span>";
       }
       return desc;
     },
@@ -2129,11 +2152,11 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "高二教室。桌椅被推到墙边，中间空出一块，像是有人把这里当成了临时据点。";
       if (vars.dd >= 3 && !vars._yifenStudentSaved) {
-        desc += "\n\n靠墙的角落里，蜷缩着一个男生——他低着头，一动不动。";
+        desc += "\n靠墙的角落里，蜷缩着一个男生——他低着头，一动不动。";
       } else if (vars._yifenStudentSaved) {
-        desc += "\n\n靠墙的角落里，那个被你救活的男生裹着件校服，虚弱地冲你点了点头。";
+        desc += "\n靠墙的角落里，那个被你救活的男生裹着件校服，虚弱地冲你点了点头。";
       } else {
-        desc += "\n\n靠墙的角落里，一个男生裹着几件校服蜷缩着，脸色潮红，额头烫得厉害——他在发高烧。";
+        desc += "\n靠墙的角落里，一个男生裹着几件校服蜷缩着，脸色潮红，额头烫得厉害——他在发高烧。";
       }
       return desc;
     },
@@ -2148,10 +2171,13 @@ Object.assign(storyData, {
       } else {
         cs.push({ text: "跟那男生说说话", nextScene: "建平-挹芬楼-5F-高二教室-学生已救" });
       }
+      if (vars.chasedByZombies > 0) cs.push({ text: "躲起来", nextScene: "建平-躲藏-挹芬楼5F高二教室" });
       cs.push({ text: "回 5 楼走廊", nextScene: "建平-挹芬楼-5F", effect: updateTime(1) });
       return cs;
     }
   },
+
+  "建平-躲藏-挹芬楼5F高二教室": jpHide("images/placeholder.png", "你闪进教室，反手把门带上，蹲在课桌后面。\n外面走廊里的脚步声由远及近，又渐渐远了。教室里安静下来，只剩下你自己的心跳。", "", 2),
 
   "建平-挹芬楼-5F-高二教室-学生": {
     image: "images/placeholder.png",

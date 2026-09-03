@@ -27,9 +27,17 @@ Object.assign(storyData, {
       applyWeatherDrain(vars);
     },
     text: function(vars) {
-      if (vars.hasClassMates) return "你又回到了学校门口。铁门还是半开着，但门卫室的窗户今天看起来更破了。你在救出小陆他们之后带着他们离开了这里——学校里该拿的都拿了，不值得再冒一次险。\n" + describeWeather(vars);
-      return "你来到上实南校门口。铁门半开着，门卫室里空无一人——窗户碎了，桌上的茶杯还冒着热气。\n仰望曾经的教室，走廊上散落着几只在游荡的丧尸，教学楼深红色的轮廓在阴沉的天色下显得格外压抑。\n\
-你记得初中四年每天从这里走进走出，如今再看，恍如隔世。\n" + describeWeather(vars);
+      var desc;
+      if (vars.hasClassMates) {
+        desc = "你又回到了学校门口。铁门还是半开着，但门卫室的窗户今天看起来更破了。你在救出小陆他们之后带着他们离开了这里——学校里该拿的都拿了，不值得再冒一次险。\n";
+      } else {
+        desc = "你来到上实南校门口。铁门半开着，门卫室里空无一人——窗户碎了，桌上的茶杯还冒着热气。\n仰望曾经的教室，走廊上散落着几只在游荡的丧尸，教学楼深红色的轮廓在阴沉的天色下显得格外压抑。\n\
+你记得初中四年每天从这里走进走出，如今再看，恍如隔世。\n";
+      }
+      if (!vars.hasEbike && !vars.hasRustyBike && !vars.hasScooter) {
+        desc += "往北望去，东明路尽头的派出所招牌若隐若现——但路中横七竖八堵满了翻倒的车辆，丧尸在车缝间游荡。没辆能钻缝的轻便车，这段路走不过去。\n";
+      }
+      return desc + describeWeather(vars);
     },
     choices: [
       {
@@ -50,8 +58,11 @@ Object.assign(storyData, {
       },
       {
         text: "沿东明路向北去警察局",
-        nextScene: "警察局",
-        effect: updateTime(15)
+        // 北段废弃车辆堵路：只有轻便车（电瓶车/自行车/滑板车）钻得过车缝；轿车/步行过不去
+        nextScene: function(vars) {
+          return (vars.hasEbike || vars.hasRustyBike || vars.hasScooter)
+            ? "警察局-北段-骑车穿行" : "警察局-北段-步行尝试";
+        }
       }
     ]
   },

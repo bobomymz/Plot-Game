@@ -901,9 +901,68 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   "三林安居苑-7号楼-6楼": {
     image: "images/placeholder.png",
     onEnter: updateTime(1),
-    text: "你走上六楼——这栋楼的顶层。601的门锁着，门把手上没怎么落灰，像是前些天还有人在进出。\n楼梯尽头的天台门被一根生锈的铁链拴得死死的，链子上挂着一把同样锈迹斑斑的挂锁。你试着拽了拽，纹丝不动。\n六楼到此为止，没有再往上的路了。",
+    text: function(vars) {
+      var desc = "你走上六楼——这栋楼的顶层。601的门锁着，门把手上没怎么落灰，像是前些天还有人在进出。\n";
+      if (vars._roofOpened) {
+        desc += "楼梯尽头的天台门歪开着，锁链断成两截耷拉在门把手上——你上次用斧头劈开的那道口子还在。\n";
+      } else {
+        desc += "楼梯尽头的天台门被一根生锈的铁链拴得死死的，链子上挂着一把同样锈迹斑斑的挂锁。你试着拽了拽，纹丝不动。\n";
+        if (vars.hasAxe) desc += "你掂了掂手里的斧头——砍断这几道锈链，不在话下。";
+      }
+      desc += "六楼到此为止，没有再往上的路了。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._roofOpened && vars.hasAxe) {
+        cs.push({ text: "抡起斧头劈开锁链", nextScene: "三林安居苑-7号楼-天台破锁" });
+      } else if (vars._roofOpened) {
+        cs.push({ text: "推开天台门", nextScene: "三林安居苑-7号楼-天台" });
+      }
+      cs.push({ text: "下楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "三林安居苑-7号楼-天台破锁": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/天台门.png */,
+    onEnter: function(vars) {
+      vars._roofOpened = true;
+      return updateTime(1, { add: { chasedByZombies: 1 } })(vars);  // 劈锁的动静在楼道里回荡
+    },
+    text: "你抡起斧头，对准锁链的环扣砸下去。\n铛——铁器碰撞的声音在空旷的楼道里炸开，震得你虎口发麻。你连砸两下，锈链上崩出一串火星，啪地一声断成两截。挂锁连着半截铁链，叮叮当当地滚到了墙角。\n你把断链拨到一边，推开了通往天台的门。",
     choices: [
-      { text: "下楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) }
+      { text: "推门上天台", nextScene: "三林安居苑-7号楼-天台" }
+    ]
+  },
+
+  "三林安居苑-7号楼-天台": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/天台.png */,
+    onEnter: { set: { currentPos: "天台" } },
+    text: "天台的视野豁然开朗。脚下是灰扑扑的水泥平台，边缘砌着半人高的护墙，几根晾衣绳空荡荡地横在头顶，一端还夹着一件被遗忘的男式衬衫，被风吹得啪嗒作响。\n\
+你扶着护墙往下望——楼下就是安盛街的中段，再往西能看见三林路上蠕动的黑点，那是游荡的丧尸。东边低矮的房顶连成一片，隐约能辨认出新达汇商场的轮廓。\n\
+六楼的高度让底下的嘶吼声变得很远。你忽然觉得，这里大概是这片街区仅剩的、能让人喘口气的高处。",
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._roofRested) {
+        cs.push({
+          text: "靠着护墙坐下喘口气",
+          effect: updateTime(10, { add: { strength: 1 } }),
+          nextScene: "三林安居苑-7号楼-天台-歇脚"
+        });
+      }
+      cs.push({ text: "下楼", nextScene: "三林安居苑-7号楼-6楼", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "三林安居苑-7号楼-天台-歇脚": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/天台.png */,
+    onEnter: { set: { _roofRested: true } },
+    text: "你在护墙边的水泥台沿上坐下，把腿伸直，后背靠上温热的墙面。风从楼与楼的缝隙间穿过，把汗湿的衣服一点点吹干。\n\
+底下是丧尸的拖步声，头顶是空旷的天。你闭了一会儿眼——这大概是爆发以来，难得安静的三分钟。",
+    choices: [
+      { text: "站起来，下楼", nextScene: "三林安居苑-7号楼-天台", effect: updateTime(1) }
     ]
   },
 
