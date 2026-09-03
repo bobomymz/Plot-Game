@@ -119,10 +119,10 @@ Object.assign(storyData, {
 
   "窗外的风景": {
     image: timeImage({
-      morning:  "images/home/overlookNeighboorhood.png",
-      evening:  "images/home/overlookNeighboorhood-evening.png",
-      night:    "images/home/overlookNeighboorhood-night&midnight.png",
-      midnight: "images/home/overlookNeighboorhood-night&midnight.png"
+      morning:  "images/home/overlookNeighboorhood.jpg",
+      evening:  "images/home/overlookNeighboorhood-evening.jpg",
+      night:    "images/home/overlookNeighboorhood-night&midnight.jpg",
+      midnight: "images/home/overlookNeighboorhood-night&midnight.jpg"
     }),
     onEnter: updateTime(5), // 花5分钟看风景
     text: "你走到窗前。窗外是小区的风景，看起来还不错。你觉得可以下楼看看？",

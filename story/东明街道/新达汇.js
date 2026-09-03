@@ -1928,7 +1928,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F大渝火锅": {
     onEnter: { set: { showPowerOut: true } },
-    image: "images/新达汇/4F大渝火锅.jpg",
+    image: "images/新达汇/大渝火锅.jpg",
     text: function(vars) {
       if (vars._triedHotpot && !vars.hasCatSnack) return "大渝火锅的食材已经被你搜刮干净了。门口的零食台上倒还有几包小零食——但你已经拿过一包了。";
       if (vars._triedHotpot && vars.hasCatSnack) return "大渝火锅的食材已经被你搜刮干净了。";
@@ -2272,7 +2272,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "去石物恋·烧肉",
-        nextScene: "新达汇-5F食物恋",
+        nextScene: "新达汇-5F石物恋",
         effect: updateTime(1),
       },
       {
@@ -2424,16 +2424,16 @@ Object.assign(storyData, {
       },
     ]
   },
-  "新达汇-5F食物恋": {
+  "新达汇-5F石物恋": {
     onEnter: { set: { showPowerOut: true } },
-    image: "images/新达汇/食物恋.jpg",
+    image: "images/新达汇/石物恋.jpg",
     text: "石物恋·烧肉。电圈烤炉摆在桌上，冷藏柜门开着，里面的肉已经不冰了。地上有脚印。",
     choices: [
       {
         text: "开烤炉烤几片肉",
-        nextScene: "新达汇-5F食物恋-烤肉",
+        nextScene: "新达汇-5F石物恋-烤肉",
         effect: updateTime(1),
-        showCondition: "!_visit['新达汇-5F食物恋-烤肉']",
+        showCondition: "!_visit['新达汇-5F石物恋-烤肉']",
       },
       {
         text: "推开后厨门",
@@ -2447,22 +2447,22 @@ Object.assign(storyData, {
       },
     ]
   },
-  "新达汇-5F食物恋-烤肉": {
-    image: "images/新达汇/炭火烤肉.png" /* TODO: images/新达汇/bbqRestaurant.png */,
+  "新达汇-5F石物恋-烤肉": {
+    image: "images/新达汇/炭火烤肉.jpg",
     onEnter: function(v) { v.showPowerOut = true; return updateTime(20, { add: { strength: 3 } })(v); },
     text: "你拉开椅子坐下，打开电圈烤炉。肉虽然已经不冰了，但还没完全坏——你挑了几片看着新鲜的，铺在烤盘上。\n\
 油脂在电圈上滋滋作响，肉香飘散开来。你夹起一片，没蘸料————虽然你平时也不怎么蘸————咬下去。虽然没有配菜，这是末世以来你吃过最像样的一顿。\n\
 你警惕地看了一眼门口。香味也许会把什么引来……但管不了那么多了。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
     choices: [
-      { text: "继续", nextScene: "新达汇-5F食物恋", effect: updateTime(1) }
+      { text: "继续", nextScene: "新达汇-5F石物恋", effect: updateTime(1) }
     ]
   },
   "新达汇-5F左庭右院": {
     onEnter: { set: { showPowerOut: true } },
     image: function(vars) {
       if(vars._deliveryCode) return "images/新达汇/左庭右院-门口.jpg";
-      return "images/新达汇/左庭右院-门口-无外卖.jpg";
+      return "images/新达汇/左庭右院-门口-没外卖.jpg";
     },
     text: function(vars){
       if (vars._deliveryCode) return "左庭右院里那份外卖你已经拿走了。";
@@ -3031,16 +3031,11 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "屏住呼吸，从窄缝中一点一点挤过去",
+        text: "咬咬牙爬过去",
         nextScene: "新达汇-B1消防通道",
         effect: updateTime(3),
         condition: "chasedByZombies == 0",
         elseScene: "结局-后勤通道暗算",
-      },
-      {
-        text: "咬咬牙——从窄缝硬挤过去",
-        nextScene: "结局-后勤通道暗算",
-        showCondition: "chasedByZombies > 0",
       },
       {
         text: "沿着来路走回去",
@@ -3050,8 +3045,9 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-B1废弃仓库": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
-    text: "你走进一间废弃的小仓库。配电箱的盖板掉在地上，几根电线裸露在外。墙角堆着几个落满灰的纸箱和几袋水泥——水泥已经完全结块了。靠墙还有一个老旧的工具箱，盖子上用记号笔写着“王建国”。",
+    image: "images/新达汇/B1废弃仓库.jpg",
+    text: "你走进一间废弃的小仓库。配电箱的盖板掉在地上，几根电线裸露在外。墙角堆着几个落满灰的纸箱和几袋水泥——水泥已经完全结块了。\n\
+靠墙还有一个老旧的工具箱，盖子上用记号笔写着“王建国”。",
     choices: [
       {
         text: "翻开墙角那几个纸箱看看",
@@ -3082,7 +3078,10 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-B1废弃仓库-工具箱": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
+    image: function(vars) {
+      if (vars.hasCutter) return "images/新达汇/B1废弃仓库-工具箱.jpg";
+      return "images/新达汇/B1废弃仓库-空的工具箱.jpg";
+    },
     text: function(vars) {
       if (vars.hasCutter) return "工具箱的盖子敞着，里面已经空了。把手旁那个“王”字还留在盖子上。";
       return "你掀开工具箱的盖子。里面躺着一把美工刀——刀刃有些锈迹，但刀片还能换。把手旁边用记号笔写着一个“王”字。";
@@ -3420,7 +3419,7 @@ Object.assign(storyData, {
       },
       {
         text: "推开隔壁烧肉店的后厨门",
-        nextScene: "新达汇-5F食物恋",
+        nextScene: "新达汇-5F石物恋",
         effect: updateTime(1),
       },
     ]
