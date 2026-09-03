@@ -112,6 +112,12 @@ function jpIsMealTime(vars) {
   return (vars.hh >= 11 && vars.hh <= 13) || (vars.hh >= 17 && vars.hh <= 19);
 }
 
+// 彭奕宸是否正在 which 钢琴（1=远翔楼圆厅 2=挹芬楼休息区 3=音乐教室）。
+// 仅在钢琴时段（hh==13 或 16）且 _pengPiano 命中时返回 true。
+function jpPengAtPiano(vars, which) {
+  return (vars.hh === 13 || vars.hh === 16) && vars._pengPiano === which;
+}
+
 // Harsh 追踪：玩家进入地点节点时记录轨迹（仅 Harsh 激活时）。在地点节点 onEnter 里调用。
 // 路径剪枝：玩家原路折返一步时，弹出"凸出"的那格——[a,b,c,d] 后回到 c，
 // 轨迹剪成 [a,b,c]（不再重复 push c），Harsh 沿剪后轨迹追到中段 c 才可能迎面撞上，
@@ -177,6 +183,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/jianping/campusGate.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "校园门口"; },
     text: function(vars) {
+      if(vars._lastScene === "建平-后门") return "你刚从后门逃回来。那些丧尸没有跟过来。";
       return "你站在建平中学前门马路对面的一棵行道树后，没有急着靠近。\n\
 校门还是老样子——“上海市建平中学”七个金字静静地立在墙上，移动门半开。你能看到里面那片熟悉到骨子里的金苹果广场，和广场上歪歪斜斜游荡着的身影。\n\
 校门口内外都有丧尸，只是现在它们还没注意到你。你压低身子，盘算着怎么进去。" + describeZombieWave(vars);
@@ -214,12 +221,12 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: { set: { _valveBoxOpened: true } },
     text: function(vars) {
-      var desc = "你打开箱门。里面是一组分管阀门和一个取样龙头，管道上还挂着一只采样用的旧玻璃瓶——瓶底沉着一点洗不掉的灰。\n\
-箱门内侧被人用马克笔潦草地画了几道线，标着「支线」两个字——是老吴的笔迹，跟他在管线图上画的一模一样。\n\
-他 6/28 那天确实来过这里。他怀疑学校的水有问题，一路查到这根市政支管，撬开阀门箱想取水样——然后就没能回去。";
+      var desc = "你打开箱门。里面是一组分管阀门和一个取样龙头，管道上还挂着一只采样用的旧玻璃瓶——瓶底沉着一点洗不掉的灰。";
       if (vars.hasPipelineMap) {
-        desc += "\n你掏出老吴的管线图对比——图上他标注「水有毒，别喝」的那一段，正是眼前这根支管。\n\
+        desc += "\n箱门内侧被人用马克笔潦草地画了几道线，标着「支线」两个字——是老吴的笔迹。\n你掏出他的管线图对比——图上标注「水有毒，别喝」的那一段，正是眼前这根支管。\n\
 <span style='color:#ffaa00;'>老吴不是尝出来的——他修了十七年水管，是从直饮水里带出的泥沙和那股说不上来的不对劲，才一路追到这里。真正害人的东西无色无味，他没能带走那个水样。</span>";
+      } else {
+        desc += "\n箱门内侧被人用马克笔潦草地画了几道线，标着「支线」两个字。";
       }
       return desc;
     },
@@ -299,7 +306,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars._backGateOpened) {
-        cs.push({ text: "打开后门", nextScene: "建平-后门-开门", effect: updateTime(1) });
+        cs.push({ text: "作死打开后门", nextScene: "建平-后门-开门", effect: updateTime(1) });
       }
       cs.push({ text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) });
       cs.push({ text: "去校园门口", nextScene: "建平-校园门口", effect: updateTime(10) });
@@ -318,7 +325,7 @@ Object.assign(storyData, {
     text: "你深吸一口气，握住门闩，猛地拉开了后门。\n门轴发出刺耳的摩擦声，门内的丧尸被惊动，齐刷刷地转过头来。\n——后门开了，但丧尸也都被你引了过来。",
     choices: [
       { text: "直接开打！", nextScene: "建平-后门-开打" },
-      { text: "快逃！去校园门口", nextScene: "建平-校园门口", effect: updateTime(5) }
+      { text: "快逃！", nextScene: "建平-校园门口", effect: updateTime(5) }
     ]
   },
 
@@ -694,7 +701,16 @@ Object.assign(storyData, {
   "建平-挹芬楼-1F-休息区": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼1F休息区"; vars._travelMinutes = 0; return { add: { strength: 1 } }; },
-    text: "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: function(vars) {
+      var desc = "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
+      if (jpPengAtPiano(vars, 2)) {
+        desc += "\n\n休息区靠墙那架钢琴前，彭奕宸正低着头，手指在琴键上缓慢地游走。";
+        if (vars._yifenStudentSaved) {
+          desc += "\n那个被你救活的男生就坐在他旁边的长椅上，安安静静地听着。谁也没有说话，只有琴声在空旷的一楼里轻轻回响。";
+        }
+      }
+      return desc;
+    },
     choices: [
       { text: "去饮料机", nextScene: "建平-挹芬楼-1F-饮料机", effect: updateTime(1) },
       { text: "回东侧走廊", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
@@ -1594,6 +1610,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼4F音乐教室"; },
     text: function(vars) {
+      if (jpPengAtPiano(vars, 3)) {
+        return "济美楼 4 楼 · 音乐教室。\n彭奕宸正坐在钢琴前，十指在琴键上轻轻起落，断断续续地弹着一首曲子。听见你进来，他头也不回地说：\"坐，这首我还没弹熟。\"";
+      }
       if (vars._pengGalCleared) {
         return "济美楼 4 楼 · 音乐教室。\n彭奕宸正靠着钢琴翻手机，看见你，咧嘴一笑：\"哟，来了。刚才那隐藏结局，谢了啊。\"\n他拍了拍身边的凳子示意你坐，又自顾自念叨着——这家伙果然满学校乱窜，教室、图书馆、这儿，没个准点。";
       }
@@ -1663,7 +1682,12 @@ Object.assign(storyData, {
   "建平-废弃小楼-3F-团委工作室-内胆": {
     image: "images/placeholder.png",
     onEnter: { set: { _innerLiningYouthRoom: true }, add: { hasInnerLining: 1 } },
-    text: "你抽出那件校服外套的内胆——软软的，还带着点霉味。\n这东西平时没什么用，但对付那个只会嚎叫的家伙……说不定能派上用场。",
+    text: function(vars) {
+      if (vars._harshActive) {
+        return "你抽出那件校服外套的内胆——软软的，还带着点霉味。\n想到楼上那声凄厉的嚎叫，你隐约觉得这东西……说不定能派上用场。";
+      }
+      return "你抽出那件校服外套的内胆——软软的，还带着点霉味。\n你不明白为什么有人会把内胆从校服里拆出来单独收着，但还是收好了。";
+    },
     choices: [
       { text: "收好内胆", nextScene: "建平-废弃小楼-3F-团委工作室", effect: updateTime(1) }
     ]
@@ -1820,7 +1844,13 @@ Object.assign(storyData, {
   "建平-远翔楼-1F-圆厅": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "远翔楼1F圆厅"; },
-    text: "圆厅。这个半圆形的小礼堂曾经是集会、颁奖、文艺汇演的地方，舞台上的幕布垂下半截。如今观众席空无一人，只有几把翻倒的椅子，和一地没人收的节目单。",
+    text: function(vars) {
+      var desc = "圆厅。这个半圆形的小礼堂曾经是集会、颁奖、文艺汇演的地方，舞台上的幕布垂下半截。如今观众席空无一人，只有几把翻倒的椅子，和一地没人收的节目单。";
+      if (jpPengAtPiano(vars, 1)) {
+        desc += "\n舞台边上那架钢琴前，彭奕宸正坐着，一下一下地按着琴键。琴声在空荡荡的圆厅里回荡，显得格外清楚。";
+      }
+      return desc;
+    },
     choices: [
       { text: "离开", nextScene: "建平-远翔楼-1F", effect: updateTime(1) }
     ]
@@ -2011,10 +2041,88 @@ Object.assign(storyData, {
   "建平-挹芬楼-5F-高二教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼5F高二教室"; },
-    text: "高二教室。桌椅被推到墙边，中间空出一块，像是有人把这里当成了临时据点。",
+    text: function(vars) {
+      var desc = "高二教室。桌椅被推到墙边，中间空出一块，像是有人把这里当成了临时据点。";
+      if (vars.dd >= 3 && !vars._yifenStudentSaved) {
+        desc += "\n\n靠墙的角落里，蜷缩着一个男生——他低着头，一动不动。";
+      } else if (vars._yifenStudentSaved) {
+        desc += "\n\n靠墙的角落里，那个被你救活的男生裹着件校服，虚弱地冲你点了点头。";
+      } else {
+        desc += "\n\n靠墙的角落里，一个男生裹着几件校服蜷缩着，脸色潮红，额头烫得厉害——他在发高烧。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._yifenBoard5F) cs.push({ text: "看黑板上的字", nextScene: "建平-挹芬楼-5F-高二教室-黑板" });
+      // 幸存学生交互
+      if (vars.dd >= 3 && !vars._yifenStudentSaved) {
+        cs.push({ text: "走近看看他", nextScene: "建平-挹芬楼-5F-高二教室-学生尸体" });
+      } else if (!vars._yifenStudentSaved) {
+        cs.push({ text: "看看那个发烧的男生", nextScene: "建平-挹芬楼-5F-高二教室-学生" });
+      } else {
+        cs.push({ text: "跟那男生说说话", nextScene: "建平-挹芬楼-5F-高二教室-学生已救" });
+      }
+      cs.push({ text: "回 5 楼走廊", nextScene: "建平-挹芬楼-5F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-挹芬楼-5F-高二教室-学生": {
+    image: "images/placeholder.png",
+    text: function(vars) {
+      var desc = "你蹲下身。男生烧得迷迷糊糊，嘴唇干裂，嘴里含混地念叨着什么。\n他发高烧了——再不退烧，怕是撑不过去。";
+      if (vars.hasFeverMed) desc += "\n你包里有一盒退烧药。";
+      else desc += "\n你想起医务室可能有退烧药。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars.hasFeverMed) {
+        cs.push({ text: "给他吃退烧药", nextScene: "建平-挹芬楼-5F-高二教室-救活" });
+      }
+      cs.push({ text: "暂时离开", nextScene: "建平-挹芬楼-5F-高二教室", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-挹芬楼-5F-高二教室-救活": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars._yifenStudentSaved = true;
+      vars.hasFeverMed = false;
+      vars.itemCount = Math.max(0, (vars.itemCount || 0) - 1);
+      return {};
+    },
+    text: "你掰开退烧药，就着水喂他服下。\n过了好一会儿，他的呼吸渐渐平稳下来，脸上的潮红也退了些。他睁开眼，声音沙哑地说了句：\"谢……谢谢。\"\n你守了他一会儿——他睡着了。你帮他把校服裹紧，退到一边。",
     choices: [
-      { text: "看黑板上的字", showCondition: "!_yifenBoard5F", nextScene: "建平-挹芬楼-5F-高二教室-黑板" },
-      { text: "回 5 楼走廊", nextScene: "建平-挹芬楼-5F", effect: updateTime(1) }
+      { text: "让他休息", nextScene: "建平-挹芬楼-5F-高二教室", effect: updateTime(10) }
+    ]
+  },
+
+  "建平-挹芬楼-5F-高二教室-学生已救": {
+    image: "images/placeholder.png",
+    text: "男生裹着校服坐在角落里，脸色还很差，但已经退了烧。\n他低声说：\"水……不敢喝。之前那些同学，喝了楼下的水，一个个都……\"\n他话没说完，只是摇了摇头。你听得出来，他不知道自己捡回了一条命，也还不知道自己身体里已经有什么东西。",
+    choices: [
+      { text: "让他好好休息", nextScene: "建平-挹芬楼-5F-高二教室", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-挹芬楼-5F-高二教室-学生尸体": {
+    image: "images/placeholder.png",
+    text: "你走到那个蜷缩的男生身边。\n他已经没了呼吸，身体僵硬，脸颊凹陷，嘴唇发紫。",
+    choices: [
+      { text: "触碰一下确认", nextScene: "建平-挹芬楼-5F-高二教室-碰尸体" },
+      { text: "别碰，离开", nextScene: "建平-挹芬楼-5F-高二教室", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-挹芬楼-5F-高二教室-碰尸体": {
+    image: "images/placeholder.png",
+    onEnter: { add: { mercuryLoad: 10 } },
+    text: "你伸手碰了碰他的肩膀——入手冰凉。\n你猛地缩回手，却已经来不及了。他的皮肤上带着一丝若有若无的金属光泽，你想起了管线图上那行字。\n<span style='color:#ffaa00;'>他的身体里，已经积满了那些看不见的东西。</span>",
+    choices: [
+      { text: "退开", nextScene: "建平-挹芬楼-5F-高二教室", effect: updateTime(1) }
     ]
   },
 
