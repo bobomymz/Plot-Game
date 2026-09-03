@@ -183,7 +183,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/jianping/campusGate.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "校园门口"; },
     text: function(vars) {
-      if(vars._lastScene === "建平-后门") return "你刚从后门逃回来。那些丧尸没有跟过来。";
+      if(vars._lastScene === "建平-后门-开门") return "你刚从后门逃回来。那些丧尸没有跟过来。";
       return "你站在建平中学前门马路对面的一棵行道树后，没有急着靠近。\n\
 校门还是老样子——“上海市建平中学”七个金字静静地立在墙上，移动门半开。你能看到里面那片熟悉到骨子里的金苹果广场，和广场上歪歪斜斜游荡着的身影。\n\
 校门口内外都有丧尸，只是现在它们还没注意到你。你压低身子，盘算着怎么进去。" + describeZombieWave(vars);
@@ -322,17 +322,36 @@ Object.assign(storyData, {
       vars.currentPos = "后门";
       return {};
     },
-    text: "你深吸一口气，握住门闩，猛地拉开了后门。\n门轴发出刺耳的摩擦声，门内的丧尸被惊动，齐刷刷地转过头来。\n——后门开了，但丧尸也都被你引了过来。",
+    text: "你深吸一口气，握住门闩，猛地拉开了后门。\n门轴发出刺耳的摩擦声，门内的丧尸被惊动，齐刷刷向你扑来！",
+    choices: function(vars) {
+      var cs = [];
+      if (vars.hasGun) cs.push({ text: "拔枪射击！", nextScene: "建平-后门-手枪" });
+      if (vars.hasAxe) cs.push({ text: "抡起斧头劈过去！", nextScene: "建平-后门-斧头" });
+      if (vars.hasDagger) cs.push({ text: "抽出匕首近身！", nextScene: "建平-后门-匕首" });
+      cs.push({ text: "空手硬拼！", nextScene: "建平-后门-开打" });
+      cs.push({ text: "快逃！", nextScene: "建平-校园门口", effect: updateTime(5) });
+      return cs;
+    }
+  },
+
+  "建平-后门-手枪": {
+    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPos = "后门";
+      vars.chasedByZombies = Math.min(5, (vars.chasedByZombies || 0) + 1);   // 枪声引来更多丧尸
+      return {};
+    },
+    text: "你拔出手枪，对准最前面那只丧尸扣下扳机。\n枪声在巷子里炸开，那丧尸的头猛地向后一仰，栽倒在地。其余丧尸被枪声吓得一顿，随即又嘶吼着朝你扑来。\n你连开几枪，趁乱冲进了后门。",
     choices: [
-      { text: "直接开打！", nextScene: "建平-后门-开打" },
-      { text: "快逃！", nextScene: "建平-校园门口", effect: updateTime(5) }
+      { text: "冲进后门", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
   },
 
-  "建平-后门-开打": {
+  "建平-后门-斧头": {
     image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
     onEnter: initMemoryGame(["红","蓝","绿"], 5, { set: { showZombies: true, currentPos: "后门" } }),
-    text: "你迎着丧尸群冲了上去。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    text: "你抡起斧头，迎着丧尸群劈了过去——斧刃落下，一只丧尸的头应声而飞。\n但门内的丧尸太多了，你必须趁乱杀出一条血路。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
     choices: [
       {
         text: "输入你看到的颜色分布",
@@ -340,9 +359,51 @@ Object.assign(storyData, {
         condition: checkFlashAnswer,
         nextScene: "建平-后门辅路",
         elseScene: "结局-后门失守",
-        timeout: 12000,            // 5色闪完约4秒，留约8秒输入
+        timeout: 12000,
         timeoutScene: "结局-后门失守"
       }
+    ]
+  },
+
+  "建平-后门-匕首": {
+    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    onEnter: initMemoryGame(["红","蓝","绿"], 5, { set: { showZombies: true, currentPos: "后门" } }),
+    text: "你抽出匕首，反手握着，猫着腰冲进丧尸群。匕首捅进一只丧尸的下颚，温热的污血喷了你一手。\n你甩开尸体，继续往前。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：3红2蓝" },
+        condition: checkFlashAnswer,
+        nextScene: "建平-后门辅路",
+        elseScene: "结局-后门失守",
+        timeout: 12000,
+        timeoutScene: "结局-后门失守"
+      }
+    ]
+  },
+
+  "建平-后门-开打": {
+    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    onEnter: initMemoryGame(["红","蓝","绿"], 8, { set: { showZombies: true, currentPos: "后门" } }),
+    text: "你赤手空拳迎着丧尸群冲了上去。没有武器，你只能靠反应和运气。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：3红2蓝" },
+        condition: checkFlashAnswer,
+        nextScene: "建平-后门-开打-胜利",
+        elseScene: "结局-后门失守",
+        timeout: 16000,            // 8色闪完约6.4秒，留约9.6秒输入
+        timeoutScene: "结局-后门失守"
+      }
+    ]
+  },
+  "建平-后门-开打-胜利": {
+    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    text: "你贴着门框闪身，避开当头扑来的一只丧尸，顺势把另一只撞进了尸堆里。趁它们纠缠成一团的空当，你从门边挤了出去，跌跌撞撞踏上后门辅路。\n\
+身后的铁门内外乱作一团——丧尸们互相挤撞着，一时半会儿追不上来。",
+    choices: [
+      { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
   },
 
@@ -358,7 +419,7 @@ Object.assign(storyData, {
       if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         return "你沿着后门辅路走。\n一辆轿车亮着车灯停在不远处——是忻老师。他摇下车窗，朝你招了招手。\n\"上车，我带你一程。\"";
       }
-      return "后门辅路。一条通往食堂的窄路，路旁的围墙根长满了杂草。这里远离校门，丧尸反倒不多。";
+      return "后门辅路。一条通往食堂的窄路，旁边停着几辆车。这里远离校门，丧尸反倒不多。";
     },
     choices: function(vars) {
       var cs = [];
@@ -377,7 +438,8 @@ Object.assign(storyData, {
   "建平-前往复旦": {
     image: "images/placeholder.png" /* TODO: images/jianping/leavingCar.png */,
     onEnter: function(vars) { vars.currentArea = "复旦"; vars.currentPlace = "复旦"; vars.currentPos = "车上"; },
-    text: "你钻进副驾驶座，忻老师发动了车。\n车轮碾过满地的碎玻璃，缓缓驶离了后门。后视镜里，建平中学的轮廓越来越远，越来越小。\n忻老师把着方向盘，目不转睛地盯着前方的路。",
+    text: "你钻进副驾驶座，忻老师发动了车。\n车轮碾过满地的碎玻璃，缓缓驶离了后门。后视镜里，建平中学的轮廓越来越远，越来越小。\n\
+忻老师把着方向盘，目不转睛地盯着前方的路。途中你们碰到了一些尸群，好在忻老师车技还可以，成功躲开了它们。",
     choices: [
       { text: "继续", nextScene: "复旦江湾", effect: updateTime(30) }
     ]
@@ -638,7 +700,7 @@ Object.assign(storyData, {
             input: { placeholder: "例如：3红2蓝" },
             condition: checkFlashAnswer,
             effect: { set: { _yifenWestCleared: true } },
-            nextScene: "建平-挹芬楼-1F-西侧走廊",
+            nextScene: "建平-挹芬楼-1F-西侧走廊-清场",
             elseScene: "结局-挹芬楼失守",
             timeout: 12000,
             timeoutScene: "结局-挹芬楼失守"
@@ -653,6 +715,14 @@ Object.assign(storyData, {
         { text: "去东侧走廊", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
       ];
     }
+  },
+
+  "建平-挹芬楼-1F-西侧走廊-清场": {
+    image: "images/placeholder.png",
+    text: "你抄起墙边一截断掉的水管横扫出去，把扑到面前的丧尸逼开。几只丧尸被砸得连连后退，绊在一起跌倒在地。\n等走廊重新安静下来，你喘着气——这一段总算清了。",
+    choices: [
+      { text: "继续", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
+    ]
   },
 
   "建平-挹芬楼-1F-东侧走廊": {
@@ -682,7 +752,7 @@ Object.assign(storyData, {
             input: { placeholder: "例如：3红2蓝" },
             condition: checkFlashAnswer,
             effect: { set: { _yifenEastCleared: true } },
-            nextScene: "建平-挹芬楼-1F-东侧走廊",
+            nextScene: "建平-挹芬楼-1F-东侧走廊-清场",
             elseScene: "结局-挹芬楼失守",
             timeout: 12000,
             timeoutScene: "结局-挹芬楼失守"
@@ -696,6 +766,14 @@ Object.assign(storyData, {
         { text: "去西侧走廊", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
       ];
     }
+  },
+
+  "建平-挹芬楼-1F-东侧走廊-清场": {
+    image: "images/placeholder.png",
+    text: "你侧身躲过楼梯口扑来的丧尸，顺势一脚把它踹翻，又用肩膀撞开了从休息区方向挤过来的另一只。\n等走廊安静下来，你浑身是汗——这一段算是清干净了。",
+    choices: [
+      { text: "继续", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
+    ]
   },
 
   "建平-挹芬楼-1F-休息区": {
@@ -1440,7 +1518,7 @@ Object.assign(storyData, {
             input: { placeholder: "例如：3红2蓝" },
             condition: checkFlashAnswer,
             effect: { set: { _dormCleared: true } },
-            nextScene: "建平-宿舍-内部",
+            nextScene: "建平-宿舍-内部-清场",
             elseScene: "结局-宿舍失守",
             timeout: 12000,
             timeoutScene: "结局-宿舍失守"
@@ -1451,6 +1529,13 @@ Object.assign(storyData, {
         { text: "回宿舍门口", nextScene: "建平-宿舍-门口", effect: updateTime(1) }
       ];
     }
+  },
+  "建平-宿舍-内部-清场": {
+    image: "images/placeholder.png",
+    text: "你贴着墙根冲进走廊，接连闪过几具丧尸的扑抓，一路把散在各处的它们引到楼梯口，反手将防火门猛地带上。\n门后传来沉闷的撞击声，渐渐弱了下去。你靠着门喘匀了气——这栋宿舍总算安静了。",
+    choices: [
+      { text: "继续", nextScene: "建平-宿舍-内部", effect: updateTime(1) }
+    ]
   },
   "结局-宿舍失守": {
     image: "images/zombieKnockYouDown.png",
@@ -1794,7 +1879,7 @@ Object.assign(storyData, {
   "建平-致真楼-3F-科创实验室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "致真楼3F科创实验室"; },
-    text: "科创实验室。墙角一台 3D 打印机半开着，喷头还悬在一个没打完的模型上，机器人的零件散了一桌子。墙上贴满了历届科创比赛的奖状，如今都蒙上了一层灰。",
+    text: "科创实验室。墙角一台 3D 打印机半开着，喷头还悬在一个没打完的模型上，机器人的零件散了一桌子。墙上贴着历届科创比赛的奖状，边角有些发卷。",
     choices: [
       { text: "离开", nextScene: "建平-致真楼-3F", effect: updateTime(1) }
     ]
@@ -2197,7 +2282,7 @@ Object.assign(storyData, {
   "建平-行政楼-3F-公开课教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "行政楼3F公开课教室"; },
-    text: "公开课教室。阶梯状的座位面向讲台，多媒体屏幕黑着。讲台上还立着一杯没喝完的茶，杯壁上的水渍已经干涸发黄。",
+    text: "公开课教室。阶梯状的座位面向讲台，多媒体屏幕黑着。讲台上还立着一杯没喝完的茶，杯壁上的水渍已经干涸。",
     choices: [
       { text: "离开", nextScene: "建平-行政楼-3F", effect: updateTime(1) }
     ]

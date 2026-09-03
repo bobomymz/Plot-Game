@@ -2991,7 +2991,9 @@ Object.assign(storyData, {
   },
   "新达汇-B1设备间": {
     image: "images/新达汇/B1设备间.jpg",
-    text: "你推开一扇半掩的铁门，走进一间设备间。几台锈蚀的空调主机嗡嗡作响，管道从天花板穿过，上面贴着褪色的标签。墙角的工具架上散落着几把扳手和螺丝刀——都是固定在地面上。旁边挂着一本翻开的设备巡检记录表。",
+    text: "你推开一扇半掩的铁门，走进一间设备间。\n\
+几台锈蚀的空调主机嗡嗡作响，管道从天花板穿过，上面贴着褪色的标签。\n\
+墙角的工具架上散落着几把扳手和螺丝刀——都是固定在地面上。旁边挂着一本翻开的设备巡检记录表。",
     choices: [
       {
         text: "翻开巡检记录表看看",
@@ -3017,7 +3019,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-B1垃圾清运通道": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/backHallB1.png */,
+    image: "images/新达汇/B1垃圾清运通道.jpg",
     text: function(v) { var d = "走廊在这里拐了一个弯，变得更窄了。墙上的应急灯有一盏不亮了，照得通道明暗交错。地面上有一层滑腻的污水渍，踩上去鞋底直打滑。\n\
 前方有一堆倾倒的货架堵住了半边走廊——生锈的铁架横七竖八地卡在中间，只留出一条勉强能侧身挤过去的窄缝。";
       if (v.chasedByZombies > 0) d += "\n<span style='color: #ff4444;'>身后传来丧尸熟悉的脚步声——越来越近了，不知道是什么时候跟上来的。你没有时间犹豫。</span>"; 
@@ -3063,7 +3065,7 @@ Object.assign(storyData, {
         showCondition: "!hasCutter",
       },
       {
-        text: "回到垃圾清运通道",
+        text: "离开",
         nextScene: "新达汇-B1垃圾清运通道",
         effect: updateTime(1),
       },

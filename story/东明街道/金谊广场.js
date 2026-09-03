@@ -397,11 +397,19 @@ Object.assign(storyData, {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
         condition: checkFlashAnswer,
-        nextScene: "金谊广场-1F 门面层",
+        nextScene: "金谊广场-正门硬闯-成功",
         elseScene: "结局-被丧尸扑倒咬死",
         timeout: 18000,
         timeoutScene: "结局-被丧尸扑倒咬死"
       }
+    ]
+  },
+
+  "金谊广场-正门硬闯-成功": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/正门硬闯.jpg */,
+    text: "你撞开一只当先扑来的丧尸，从合围的缝隙里挤进了中庭，反手用力一推——卡着尸体的旋转门转了半圈，正好把追到门边的丧尸挡在了外面。\n你靠着墙喘了几口气。门扇外传来挠门和低吼的声音，一时半会儿它们进不来。\n总算是闯进来了。",
+    choices: [
+      { text: "继续", nextScene: "金谊广场-1F 门面层", effect: updateTime(1) }
     ]
   },
 

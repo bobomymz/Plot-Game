@@ -1583,7 +1583,7 @@ Object.assign(storyData, {
   "仁济南院-楼梯-门诊楼低": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
     onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
-    text: "你来到门诊楼的楼梯间。台阶很宽，扶手上积了一层灰。往上一层是二楼。",
+    text: "你来到门诊楼的楼梯间。台阶很宽，扶手上落了灰——好几天没人擦过了。往上一层是二楼。",
     choices: [
       {
         text: "上楼",
