@@ -313,3 +313,7 @@ function travelScene(text, nextScene, options) {
   if (options.onEnter) scene.onEnter = options.onEnter;
   return scene;
 }
+
+function zombieOutsideHome(vars) { // 丧尸在家门口
+  return (vars.dd == 1 || vars.dd == 3) && vars.hh % 2 == 0;
+}

@@ -185,10 +185,14 @@ const storyData = {
     hasFeverMed: false,         // 退烧药（医务室，占背包，感冒系统铺路）
     hasWatch: false,            // 机械手表（行政楼2F文印室，占背包，整理整理看时间）
     hasCSGun: false,            // 真人CS枪（废弃小楼1F纸箱，占背包，化学实验室拆成手电筒）
+    hasScrewdriver: false,      // 螺丝刀（物理实验室/老吴杂物室锁柜，钥匙串开，拆CS枪用，全图唯一）
+    _podiumFood3F: false,       // 挹芬楼3F高一教室锁讲台食物是否已拿（钥匙串开，+3体力）
+    _valveBoxOpened: false,     // 崮山路市政阀门箱是否已开（钥匙串开，验水）
     _yifenFood2F: false,        // 挹芬楼2F高一教室食品是否已拿
     _yifenNote3F: false,        // 挹芬楼3F高一教室纸条是否已看
     _yifenBoard5F: false,       // 挹芬楼5F高二教室黑板字是否已看
     _yifenFood6F: false,        // 挹芬楼6F自习教室食品是否已拿
+    _guardTakeoutTaken: false,  // 门卫室外卖是否已处理（Day<3 新鲜+1，Day≥3 变质）
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除
@@ -241,7 +245,8 @@ const storyData = {
       canSee: function(v) { return canSee(v); },
       hasFood: function(v) { return hasFood(v); }, // 是否有食物
       zombieAtHomeDoor: function(v) { return zombieAtHomeDoor(v); }, // 丧尸还在门口
-      hasNoTransportation: function(v) { return hasNoTransportation(v); } // 是否没有交通工具
+      hasNoTransportation: function(v) { return hasNoTransportation(v); }, // 是否没有交通工具
+      zombieOutsideHome: function(v) { return zombieOutsideHome(v); }, // 丧尸在门口
       // 也支持函数（复杂逻辑）
       // fatigue: function(v) { return Math.max(0, 10 - v.strength); }
     },

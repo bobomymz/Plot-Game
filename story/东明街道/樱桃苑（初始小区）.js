@@ -28,7 +28,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "起床散步去喽",
-        condition: "dd == 2 || dd == 4 || hh % 2 == 1", // 仅第2天、第4天和特定时间段是没有丧尸堵在门口的
+        condition: "!zombieOutsideHome", // 仅第2天、第4天和特定时间段是没有丧尸堵在门口的
         nextScene: "1楼-安全",
         elseScene: "结局-开幕雷击"
       },
@@ -196,11 +196,52 @@ Object.assign(storyData, {
     text: "你打不开闹钟，搞不清楚里面有什么东西。也许只是钟坏了，你想。",
     choices: [
       {
-        text: "离开房间",
+        text: "四处走走",
+        nextScene: "客厅"
+      }
+    ]
+  },
+
+  "客厅": {
+    image: timeImage({
+      morning:  "images/home/客厅.png",
+      evening:  "images/home/客厅-evening.png",
+      night:    "images/home/客厅-night&midnight.png",
+      midnight: "images/home/客厅-night&midnight.png"
+    }),
+    text: "你走到客厅。沙发、电视、弟弟的书桌，还有几把小凳子，静静地躺着。\n\
+爸爸早上应该带弟弟上篮球课去了。",
+    choices: [
+      {
+        showCondition: "!_visit['沙发上的小熊']",
+        text: "坐沙发上",
+        nextScene: "沙发上的小熊"
+      },
+      {
+        text: "返回卧室",
+        nextScene: "初始卧室"
+      },
+      {
+        text: "看看门口",
         nextScene: "玄关"
       }
     ]
   },
+
+  "沙发上的小熊": {
+    image: "images/home/沙发上的小熊.png",
+    onEnter: updateTime(5),
+    text: "你陷进沙发的柔软里。清晨的微凉伴着阳光，铺洒在你的身上。转头看看身旁，一个小熊玩偶静静地躺在那里。\n\
+它穿着建平标志性的校服————现在已经叫老校服了，你是穿这套校服的最后一届。\n\
+你记得这是某次活动送的。可能是930或者新年联欢晚会。不知道，记忆像蒙了层纱。",
+    choices: [
+      {
+        text: "起身",
+        nextScene: "客厅"
+      }
+    ]
+  },
+
   // 家门外的丧尸场景添加抖动效果
   "家门外的丧尸": {
     image: "images/home/zombieOutsideHome.png",
@@ -290,7 +331,7 @@ Object.assign(storyData, {
       },
       {
         text: "下楼到1楼",
-        condition: "dd == 2 || dd == 4 || hh % 2 == 1", // 仅第2天、第4天和特定时间段是没有丧尸堵在门口的
+        condition: "!zombieOutsideHome", // 仅第2天、第4天和特定时间段是没有丧尸堵在门口的
         nextScene: "1楼-安全",
         elseScene: "结局-1楼-party"
       },
@@ -324,7 +365,7 @@ Object.assign(storyData, {
       },
       {
         text: "F1",
-        condition: "dd == 2 || dd == 4 || hh % 2 == 1", // 仅第2天、第4天和特定时间段是没有丧尸堵在门口的
+        condition: "!zombieOutsideHome", // 仅第2天、第4天和特定时间段是没有丧尸堵在门口的
         nextScene: "1楼-安全",
         elseScene: "结局-1楼-party",
       },

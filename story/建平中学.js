@@ -186,7 +186,45 @@ Object.assign(storyData, {
       { text: "绕去后门", nextScene: "建平-后门", effect: updateTime(10) },
       { text: "去门卫室", nextScene: "建平-门卫室", effect: updateTime(1) },
       { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-校园门口" } } },
+      { text: "查看路边的阀门箱", condition: "hasKeyRing", nextScene: "建平-崮山路-阀门箱", showCondition: "hasKeyRing", effect: updateTime(1) },
       { text: "离开这里", nextScene: "罗山路立交桥下", effect: updateTime(10) }
+    ]
+  },
+
+  "建平-崮山路-阀门箱": {
+    image: "images/placeholder.png" /* TODO: images/jianping/valveBox.png */,
+    onEnter: function(vars) { vars.currentPos = "崮山路"; },
+    text: function(vars) {
+      if (vars._valveBoxOpened) {
+        return "崮山路边的市政阀门箱还敞着。你已经看过里面的东西了。";
+      }
+      return "你蹲到人行道上那只漆成蓝灰色的铁皮阀门箱前。箱子上印着「上海市自来水 · 抢修」的铭牌，挂锁已经被人撬开过——锁舌上留着新鲜的工具痕。\n你用钥匙串上的一把试了试，咔哒一声，锁彻底开了。";
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._valveBoxOpened) {
+        cs.push({ text: "打开箱门查看", nextScene: "建平-崮山路-阀门箱-查看" });
+      }
+      cs.push({ text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-崮山路-阀门箱-查看": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _valveBoxOpened: true } },
+    text: function(vars) {
+      var desc = "你打开箱门。里面是一组分管阀门和一个取样龙头，管道上还挂着一只采样用的旧玻璃瓶——瓶底沉着一点洗不掉的灰。\n\
+箱门内侧被人用马克笔潦草地画了几道线，标着「支线」两个字——是老吴的笔迹，跟他在管线图上画的一模一样。\n\
+他 6/28 那天确实来过这里。他怀疑学校的水有问题，一路查到这根市政支管，撬开阀门箱想取水样——然后就没能回去。";
+      if (vars.hasPipelineMap) {
+        desc += "\n你掏出老吴的管线图对比——图上他标注「水有毒，别喝」的那一段，正是眼前这根支管。\n\
+<span style='color:#ffaa00;'>老吴不是尝出来的——他修了十七年水管，是从直饮水里带出的泥沙和那股说不上来的不对劲，才一路追到这里。真正害人的东西无色无味，他没能带走那个水样。</span>";
+      }
+      return desc;
+    },
+    choices: [
+      { text: "关上箱门", nextScene: "建平-校园门口", effect: updateTime(2) }
     ]
   },
 
@@ -359,7 +397,8 @@ Object.assign(storyData, {
       { text: "去行政楼", nextScene: "建平-行政楼-1F", effect: updateTime(2) },
       { text: "去挹芬楼北门", nextScene: "建平-挹芬楼北门", effect: updateTime(2) },
       { text: "去致真楼", nextScene: "建平-致真楼-1F", effect: updateTime(2) },
-      { text: "去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) }
+      { text: "去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) },
+      { text: "下地下车库", nextScene: "建平-地下车库-东口", effect: updateTime(1) }
     ]
   },
 
@@ -372,7 +411,93 @@ Object.assign(storyData, {
       { text: "去远翔楼", nextScene: "建平-远翔楼-1F", effect: updateTime(2) },
       { text: "去食堂正门", nextScene: "建平-食堂", effect: updateTime(2) },
       { text: "去济美楼", nextScene: "建平-济美楼-1F", effect: updateTime(2) },
+      { text: "下地下车库", nextScene: "建平-地下车库-大道口", effect: updateTime(1) },
       { text: "躲进报刊亭", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-金苹果大道报刊亭" }
+    ]
+  },
+
+  // ==================== 地下自行车车库（民防设施 · 单节点） ====================
+
+  "建平-地下车库-东口": {
+    image: "images/placeholder.png" /* TODO: images/jianping/bikeGarageRamp.png */,
+    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "地下车库"; },
+    text: "你沿着金苹果广场边上的坡道走下，推开一扇锈迹斑斑的铁门，进入了地下自行车车库。\n车库很大，一排排车架在昏暗的应急灯下拖着长长的影子，空气里一股潮湿的霉味。",
+    choices: [
+      { text: "探索车库", nextScene: "建平-地下车库", effect: updateTime(2) },
+      { text: "回金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-地下车库-大道口": {
+    image: "images/placeholder.png" /* TODO: images/jianping/bikeGarageRamp.png */,
+    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "地下车库"; },
+    text: "你掀开金苹果大道旁的一处地库入口盖板，顺着台阶走下，进入了地下自行车车库。\n车库很大，一排排车架在昏暗的应急灯下拖着长长的影子，空气里一股潮湿的霉味。",
+    choices: [
+      { text: "探索车库", nextScene: "建平-地下车库", effect: updateTime(2) },
+      { text: "回金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-地下车库": {
+    image: "images/placeholder.png" /* TODO: images/jianping/bikeGarageInterior.png */,
+    onEnter: function(vars) { vars.currentPos = "地下车库"; },
+    text: function(vars) {
+      var desc = "车库深处比入口更暗。墙边一扇铁门上了锁，门上用油漆刷着「工具间」三个字——这是学校的民防设施，平时锁着，钥匙应该在后勤手里。";
+      if (vars._gasMaskGarage) desc += "\n工具间的锁已经被你打开了。";
+      return desc;
+    },
+    choices: [
+      { text: "去工具间", nextScene: "建平-地下车库-工具间", effect: updateTime(1) },
+      { text: "从东口上去", nextScene: "建平-地下车库-东口", effect: updateTime(1) },
+      { text: "从大道口上去", nextScene: "建平-地下车库-大道口", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-地下车库-工具间": {
+    image: "images/placeholder.png" /* TODO: images/jianping/toolRoom.png */,
+    onEnter: function(vars) { vars.currentPos = "地下车库工具间"; },
+    text: function(vars) {
+      if (!vars._gasMaskGarage) {
+        return "工具间的门锁着。这锁不是普通挂锁——是后勤的那种铁芯锁。";
+      }
+      var desc = "工具间。墙上挂着扳手、管钳，货架上码着几箱应急物资。";
+      if (!vars.hasGasMask) desc += "\n角落里挂着一只老式防毒面具。";
+      else desc += "\n你已经有防毒面具了，没再拿。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._gasMaskGarage) {
+        if (vars.hasKeyRing) {
+          cs.push({ text: "用钥匙串开门", nextScene: "建平-地下车库-工具间-开门" });
+        } else {
+          cs.push({ text: "（锁着，打不开）", nextScene: "建平-地下车库" });
+        }
+      } else {
+        if (!vars.hasGasMask) {
+          cs.push({ text: "拿防毒面具", nextScene: "建平-地下车库-工具间-拿面具" });
+        }
+        cs.push({ text: "离开", nextScene: "建平-地下车库", effect: updateTime(1) });
+      }
+      return cs;
+    }
+  },
+
+  "建平-地下车库-工具间-开门": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _gasMaskGarage: true } },
+    text: "你用钥匙串上的一把钥匙试了试——咔哒，锁开了。\n工具间里码着各种应急物资，墙角挂着一只老式防毒面具。",
+    choices: [
+      { text: "进去看看", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-地下车库-工具间-拿面具": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasGasMask: true }, add: { itemCount: 1 } },
+    text: "你取下那只防毒面具。橡胶面罩保存得还行，滤罐没有明显破损。\n你把面具收进包里。",
+    choices: [
+      { text: "收好", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
     ]
   },
 
@@ -711,7 +836,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "致真楼1F老吴杂物室"; },
     text: function(vars) {
-      var desc = "老吴的杂物室，也是他的总务处工具间。货架上堆满了学校物资——成箱的打印纸、劳技课材料、灯泡电线。";
+      var desc = "老吴的杂物室，也是他的总务处工具间。货架上堆满了学校物资——成箱的打印纸、劳技课材料、灯泡电线。靠墙一个铁柜上了锁。";
       if (vars.dd >= 3 && !vars._laowuKilled) {
         desc += "\n角落里，老吴趴在地上，一动不动，像是睡着了。";
       } else if (vars.dd < 3) {
@@ -721,11 +846,17 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: [
-      { text: "翻找货架", nextScene: "建平-致真楼-1F-老吴杂物室-翻货架", effect: updateTime(2) },
-      { text: "查看老吴", nextScene: "建平-致真楼-1F-老吴杂物室-查看老吴", effect: updateTime(1) },
-      { text: "回 1 楼走廊", nextScene: "建平-致真楼-1F", effect: updateTime(1) }
-    ]
+    choices: function(vars) {
+      var cs = [
+        { text: "翻找货架", nextScene: "建平-致真楼-1F-老吴杂物室-翻货架", effect: updateTime(2) },
+        { text: "查看老吴", nextScene: "建平-致真楼-1F-老吴杂物室-查看老吴", effect: updateTime(1) }
+      ];
+      if (!vars.hasScrewdriver) {
+        cs.push({ text: "看那个锁着的铁柜", nextScene: "建平-致真楼-1F-老吴杂物室-铁柜" });
+      }
+      cs.push({ text: "回 1 楼走廊", nextScene: "建平-致真楼-1F", effect: updateTime(1) });
+      return cs;
+    }
   },
 
   "建平-致真楼-1F-老吴杂物室-翻货架": {
@@ -748,9 +879,36 @@ Object.assign(storyData, {
   "建平-致真楼-1F-老吴杂物室-万用表": {
     image: "images/placeholder.png",
     onEnter: { set: { hasMultimeter: true }, add: { itemCount: 1 } },
-    text: "你打开工具箱——里面躺着一只万用表，还有几把螺丝刀、一卷电工胶带。\n万用表的表盘上贴着一小条胶布，用圆珠笔写着\"吴\"字。这是老吴的家伙什。",
+    text: "你打开工具箱——里面躺着一只万用表，还有一卷电工胶带。\n万用表的表盘上贴着一小条胶布，用圆珠笔写着\"吴\"字。这是老吴的家伙什。",
     choices: [
       { text: "收好万用表", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-致真楼-1F-老吴杂物室-铁柜": {
+    image: "images/placeholder.png",
+    text: function(vars) {
+      var desc = "那个铁柜锁着，是后勤的挂锁。";
+      if (!vars.hasKeyRing) return desc + "\n你没有能打开它的钥匙。";
+      if (vars.hasScrewdriver) return "你已经有螺丝刀了。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars.hasKeyRing && !vars.hasScrewdriver) {
+        cs.push({ text: "用钥匙串开铁柜", nextScene: "建平-致真楼-1F-老吴杂物室-螺丝刀" });
+      }
+      cs.push({ text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-致真楼-1F-老吴杂物室-螺丝刀": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasScrewdriver: true }, add: { itemCount: 1 } },
+    text: "你用钥匙串打开了铁柜。柜子里码着几排螺丝刀、钳子和锉刀——老吴的家当。\n你抽走了一把趁手的十字螺丝刀。",
+    choices: [
+      { text: "收好螺丝刀", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
     ]
   },
 
@@ -837,15 +995,25 @@ Object.assign(storyData, {
   "建平-致真楼-2F-化学实验室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "致真楼2F化学实验室"; },
-    text: "致真楼 2 楼 · 化学实验室。实验台上摆着各种瓶瓶罐罐，水池边散落着几把镊子和螺丝刀。",
+    text: "致真楼 2 楼 · 化学实验室。实验台上摆着各种瓶瓶罐罐，水池边散落着几把镊子和试管刷。",
     choices: function(vars) {
       var cs = [];
-      if (vars.hasCSGun && !vars.hasTorch) {
-        cs.push({ text: "拆解真人CS枪，取下战术手电", nextScene: "建平-致真楼-2F-化学实验室-拆枪" });
+      if (vars.hasCSGun && !vars.hasTorch && vars.hasScrewdriver) {
+        cs.push({ text: "用螺丝刀拆开真人CS枪", nextScene: "建平-致真楼-2F-化学实验室-拆枪" });
+      } else if (vars.hasCSGun && !vars.hasTorch && !vars.hasScrewdriver) {
+        cs.push({ text: "想拆CS枪，但没螺丝刀", nextScene: "建平-致真楼-2F-化学实验室-没螺丝刀" });
       }
       cs.push({ text: "回 2 楼走廊", nextScene: "建平-致真楼-2F", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  "建平-致真楼-2F-化学实验室-没螺丝刀": {
+    image: "images/placeholder.png",
+    text: "你把真人CS枪翻来覆去看了几遍。枪管上的战术手电是螺丝固定的——没有螺丝刀拆不下来。\n你记得物理实验室和总务处工具间都有工具柜，也许那边有。",
+    choices: [
+      { text: "回去", nextScene: "建平-致真楼-2F-化学实验室", effect: updateTime(1) }
+    ]
   },
 
   "建平-致真楼-2F-化学实验室-拆枪": {
@@ -855,7 +1023,7 @@ Object.assign(storyData, {
       vars.hasTorch = true;   // CS枪上的战术手电当手电筒用；1格换1格，itemCount 不变
       return {};
     },
-    text: "你用桌上的螺丝刀把真人CS枪拆开，取下了枪管上那个战术手电。\n按下开关，一道光柱打在墙上——灯头还是好的。这可比那把打不了子弹的仿真枪有用多了。",
+    text: "你用螺丝刀拧开固定螺丝，把真人CS枪拆开，取下了枪管上那个战术手电。\n按下开关，一道光柱打在墙上——灯头还是好的。这可比那把打不了子弹的仿真枪有用多了。",
     choices: [
       { text: "收好手电筒", nextScene: "建平-致真楼-2F-化学实验室", effect: updateTime(2) }
     ]
@@ -1618,9 +1786,35 @@ Object.assign(storyData, {
   "建平-致真楼-5F-物理实验室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "致真楼5F物理实验室"; },
-    text: "物理实验室。光学仪器东倒西歪，示波器的屏幕黑着，地上散落着一把把螺丝刀和导线。黑板上的电路图画到一半，旁边用红笔打了个大大的问号。",
+    text: function(vars) {
+      var desc = "物理实验室。光学仪器东倒西歪，示波器的屏幕黑着，地上散落着导线。黑板上的电路图画到一半，旁边用红笔打了个大大的问号。靠墙的工具柜上了锁。";
+      if (vars.hasScrewdriver) desc += "（你已经有一把螺丝刀了。）";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars.hasScrewdriver && vars.hasKeyRing) {
+        cs.push({ text: "用钥匙串开工具柜", nextScene: "建平-致真楼-5F-物理实验室-螺丝刀" });
+      } else if (!vars.hasScrewdriver && !vars.hasKeyRing) {
+        cs.push({ text: "看看那个锁着的工具柜", nextScene: "建平-致真楼-5F-物理实验室-锁柜" });
+      }
+      cs.push({ text: "离开", nextScene: "建平-致真楼-5F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+  "建平-致真楼-5F-物理实验室-锁柜": {
+    image: "images/placeholder.png",
+    text: "工具柜锁着，是实验室统一配的挂锁。你没有能打开的钥匙。",
     choices: [
-      { text: "离开", nextScene: "建平-致真楼-5F", effect: updateTime(1) }
+      { text: "离开", nextScene: "建平-致真楼-5F-物理实验室", effect: updateTime(1) }
+    ]
+  },
+  "建平-致真楼-5F-物理实验室-螺丝刀": {
+    image: "images/placeholder.png",
+    onEnter: { set: { hasScrewdriver: true }, add: { itemCount: 1 } },
+    text: "你用钥匙串打开工具柜。柜里整整齐齐码着各种实验工具，你抽走了一把十字螺丝刀。",
+    choices: [
+      { text: "收好螺丝刀", nextScene: "建平-致真楼-5F-物理实验室", effect: updateTime(1) }
     ]
   },
   "建平-远翔楼-1F-圆厅": {
@@ -1748,10 +1942,33 @@ Object.assign(storyData, {
   "建平-挹芬楼-3F-高一教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼3F高一教室"; },
-    text: "高一教室。地上散落着书包和课本，几张课桌被拼在一起，像是有人在这里熬过夜。",
+    text: function(vars) {
+      var desc = "高一教室。地上散落着书包和课本，几张课桌被拼在一起，像是有人在这里熬过夜。";
+      if (!vars._podiumFood3F) {
+        if (vars.hasKeyRing) desc += "\n讲台的抽屉上了锁——或许钥匙串能打开。";
+        else desc += "\n讲台的抽屉上了锁。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._yifenNote3F) cs.push({ text: "查看桌上的纸条", nextScene: "建平-挹芬楼-3F-高一教室-纸条" });
+      if (!vars._podiumFood3F) {
+        if (vars.hasKeyRing) {
+          cs.push({ text: "用钥匙串开讲台锁", nextScene: "建平-挹芬楼-3F-高一教室-讲台" });
+        }
+      }
+      cs.push({ text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-挹芬楼-3F-高一教室-讲台": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _podiumFood3F: true }, add: { strength: 3 } },
+    text: "你用钥匙串打开了讲台的抽屉。里面放着几包饼干、一盒午餐肉和一瓶没开封的水——像是老师悄悄囤的。\n你撕开午餐肉就着饼干吃了些，胃里终于有了点实在的东西。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复3点体力，当前体力：{strength}。</span>",
     choices: [
-      { text: "查看桌上的纸条", showCondition: "!_yifenNote3F", nextScene: "建平-挹芬楼-3F-高一教室-纸条" },
-      { text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) }
+      { text: "继续", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(3) }
     ]
   },
 
@@ -1911,7 +2128,46 @@ Object.assign(storyData, {
       { text: "离开", nextScene: "建平-废弃小楼-2F", effect: updateTime(1) }
     ]
   },
-  "建平-门卫室": jpRoom("门卫室", "建平-校园门口"),
+  "建平-门卫室": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "门卫室"; },
+    text: function(vars) {
+      var desc = "门卫室。墙上挂着全校班级的钥匙板，桌上摆着一部没信号的座机，风扇还在无力地转着。";
+      if (!vars._guardTakeoutTaken) {
+        desc += "\n靠门的桌上放着一个外卖纸袋——看着像是出事当天送到、还没来得及取的。";
+      } else if (vars._guardTakeoutTaken) {
+        desc += "\n桌上那个外卖纸袋已经被你处理掉了。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._guardTakeoutTaken) {
+        cs.push({ text: "打开外卖纸袋", nextScene: "建平-门卫室-外卖" });
+      }
+      cs.push({ text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-门卫室-外卖": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars._guardTakeoutTaken = true;
+      if (vars.dd < 3) vars.strength = Math.min(10, (vars.strength || 0) + 1);   // Day<3 新鲜 +1
+      return {};
+    },
+    text: function(vars) {
+      var desc = "你打开纸袋——是一份盖浇饭，还附着一瓶可乐。\n";
+      if (vars.dd < 3) {
+        return desc + "袋子还温着，饭也没馊。你扒了两口，熟悉的油腻香味让你鼻子一酸。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
+      }
+      return desc + "但已经放了太久——米饭结成硬块，菜叶发黑，散发出一股馊味。你闻了闻就把它丢回了垃圾桶。";
+    },
+    choices: [
+      { text: "离开门卫室", nextScene: "建平-校园门口", effect: updateTime(2) }
+    ]
+  },
 
 
   // ==================== 躲藏点（降 ch） ====================
