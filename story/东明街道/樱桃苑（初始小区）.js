@@ -119,10 +119,10 @@ Object.assign(storyData, {
 
   "窗外的风景": {
     image: timeImage({
-      morning:  "images/home/overlookNeighboorhood.jpg",
-      evening:  "images/home/overlookNeighboorhood-evening.jpg",
-      night:    "images/home/overlookNeighboorhood-night&midnight.jpg",
-      midnight: "images/home/overlookNeighboorhood-night&midnight.jpg"
+      morning:  "images/home/overlookNeighboorhood.png",
+      evening:  "images/home/overlookNeighboorhood-evening.png",
+      night:    "images/home/overlookNeighboorhood-night&midnight.png",
+      midnight: "images/home/overlookNeighboorhood-night&midnight.png"
     }),
     onEnter: updateTime(5), // 花5分钟看风景
     text: "你走到窗前。窗外是小区的风景，看起来还不错。你觉得可以下楼看看？",
@@ -204,10 +204,10 @@ Object.assign(storyData, {
 
   "客厅": {
     image: timeImage({
-      morning:  "images/home/客厅.png",
-      evening:  "images/home/客厅-evening.png",
-      night:    "images/home/客厅-night&midnight.png",
-      midnight: "images/home/客厅-night&midnight.png"
+      morning:  "images/home/客厅.jpg",
+      evening:  "images/home/客厅-evening.jpg",
+      night:    "images/home/客厅-night&midnight.jpg",
+      midnight: "images/home/客厅-night&midnight.jpg"
     }),
     text: "你走到客厅。沙发、电视、弟弟的书桌，还有几把小凳子，静静地躺着。\n\
 爸爸早上应该带弟弟上篮球课去了。",
@@ -229,7 +229,7 @@ Object.assign(storyData, {
   },
 
   "沙发上的小熊": {
-    image: "images/home/沙发上的小熊.png",
+    image: "images/home/建平小熊.png",
     onEnter: updateTime(5),
     text: "你陷进沙发的柔软里。清晨的微凉伴着阳光，铺洒在你的身上。转头看看身旁，一个小熊玩偶静静地躺在那里。\n\
 它穿着建平标志性的校服————现在已经叫老校服了，你是穿这套校服的最后一届。\n\
