@@ -953,6 +953,13 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   gameState.showZombies = false;
   gameState.showPowerOut = false;
 
+  // 户外场景统一标记：自动应用天气身体影响（掉体力 / 晴 ch 归零 / 感冒累积）。
+  // 注意：只做身体效果，不碰 showRain/showZombies —— 雨滴与丧尸包围遮罩共用 ::before 伪元素，
+  // 视觉上互斥（后声明的丧尸包围会盖掉雨滴），所以两者仍由 onEnter 手动控制。
+  if (scene.outdoor && !skipOnEnter) {
+    applyWeatherDrain(gameState);
+  }
+
   // 解析进入效果（支持函数模式）
   let enterEffect = scene.onEnter;
   if (typeof enterEffect === "function") {

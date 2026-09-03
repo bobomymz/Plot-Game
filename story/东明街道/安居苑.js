@@ -5,6 +5,7 @@ Object.assign(storyData, {
 
   // ==================== 三林安居苑（老小区） ====================
   "安居苑后门": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({ // evening ~ midnight 统一为 night
@@ -24,7 +25,6 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.currentPlace = "安居苑";
       vars.currentPos = "安居苑";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       let desc = "你来到三林安居苑的入口。这是一个老小区，没有地下车库，几栋六层楼围绕着中间的小花园。\n";
@@ -79,6 +79,7 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-小区内部": {
+    outdoor: true,
     image: timeImage({
       morning: "images/安居苑/小区内部.jpg",
       evening: "images/安居苑/小区内部-evening.jpg",
@@ -89,7 +90,6 @@ Object.assign(storyData, {
       vars.showRain = true;
       vars.currentPlace = "安居苑";
       vars.currentPos = "安居苑";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       let basicDes = "你走在三林安居苑的一条小道上。印象中，老小区的布局很简单：中间是一个小花园，围绕着几排六层居民楼。旁边还有一个下沉式小广场，你以前经常在这里玩滑板车。\n"
@@ -135,6 +135,7 @@ Object.assign(storyData, {
   // ========== 小广场 ==========
 
   "三林安居苑-小广场": {
+    outdoor: true,
     image: timeImage({
       morning: "images/安居苑/小广场.jpg",
       evening: "images/安居苑/小广场-evening.jpg",
@@ -146,7 +147,6 @@ Object.assign(storyData, {
       vars.currentPlace = "安居苑";
       vars.currentPos = "小广场";
       vars.positionAfterOperation = "三林安居苑-滑板车";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       var desc = "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。小广场一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
@@ -1249,6 +1249,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "安居苑前门": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
@@ -1272,7 +1273,6 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       });
       return f(vars);
     }, /* TODO: images/安居苑/anjuyuanFrontDoor.png */
-    onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) { return "你来到了安居苑的前门\n" + describeWeather(vars); },
     choices: [
       {

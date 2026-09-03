@@ -6,6 +6,7 @@ Object.assign(storyData, {
 
   // ==================== 入口：安盛街东侧 ====================
   "安盛街东侧": {
+    outdoor: true,
     image: function(vars) {
       if(vars._lastScene === "三林路-环林东路 十字路口") {
         if (vars.weather === "雨") {
@@ -41,7 +42,6 @@ Object.assign(storyData, {
       vars.showZombies = true;
       vars.currentPlace = "安盛街";
       vars.currentPos = "安盛街";
-      applyWeatherDrain(vars);
     },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
@@ -542,6 +542,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街中段 ====================
   "安盛街中段": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
@@ -566,7 +567,6 @@ Object.assign(storyData, {
       vars.currentArea = "周边社区";
       vars.currentPlace = "安盛街";
       vars.currentPos = "安盛街";
-      applyWeatherDrain(vars);
     },
     qte: {
       timeout: "10000 - chasedByZombies * 1000",
@@ -1477,6 +1477,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街西侧（分岔路口） ====================
   "安盛街西侧": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
@@ -1499,7 +1500,6 @@ Object.assign(storyData, {
       vars.currentArea = "周边社区";
       vars.currentPlace = "安盛街";
       vars.currentPos = "安盛街";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       let desc = "你来到了安盛街西侧。这里比东侧更加破败——路面上到处是斑斑点点的血迹，有些已经发暗，有些还泛着潮。几辆废弃的车辆歪停在路边。\n\

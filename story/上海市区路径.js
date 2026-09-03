@@ -4,6 +4,7 @@
 
 Object.assign(storyData, {
   "杨高南路立交桥": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/highwayJam.png */,
     onEnter: function(vars) { 
       vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; 
@@ -50,6 +51,7 @@ Object.assign(storyData, {
   },
 
   "下不下高架？": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/zombiesBesideExit.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: "前面车辆感觉越来越多，而且有些不知怎么烧了起来。\n\
@@ -77,6 +79,7 @@ Object.assign(storyData, {
   },
 
   "济阳路跨线桥": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/jiyangOverpass.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: "高架在济阳路跨线桥处分叉。桥下往西北方向的道路，通向仁济医院那一带。\n\
@@ -105,6 +108,7 @@ Object.assign(storyData, {
   // ==================== 外环高架·北线（建平方向） ====================
 
   "外环罗山路立交桥": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/waijianLuoshan.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
     text: "你沿着外环高架一路向东。越往前，堵车带越稀疏，偶尔才有几辆撞毁的私家车横在路中央，有的引擎盖还在冒烟。\n\
@@ -117,6 +121,7 @@ Object.assign(storyData, {
   },
 
   "张江立交桥": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/zhangjiang.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
     text: "外环在这里与通往张江方向的匝道交汇。匝道下方灰蒙蒙的一片，是张江高科园区那些低矮的玻璃幕墙写字楼——曾经彻夜灯火通明，如今只剩几块残破的招牌在风里晃荡。\n\
@@ -128,6 +133,7 @@ Object.assign(storyData, {
   },
 
   "罗山路立交桥下": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/luoshanExit.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
     text: "高架在这里缓缓下降，一个下高架的匝道口出现在右侧。匝道口没有堵死——只横着一辆侧翻的出租车，车头瘪进去一块，驾驶室的门大敞着，像是有人仓皇弃车而逃。\n\

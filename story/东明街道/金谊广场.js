@@ -7,6 +7,7 @@ Object.assign(storyData, {
   // ==================== 龙头区 ====================
 
   "金谊广场-龙头区": {
+    outdoor: true,
     image: timeImage({
       morning: "images/placeholder.png" /* TODO: images/金谊广场/龙头区.jpg */,
       night: "images/placeholder.png" /* TODO: images/金谊广场/龙头区-night.jpg */
@@ -65,6 +66,7 @@ Object.assign(storyData, {
 
   // --- 龙头区长廊（幸存者据点） ---
   "金谊广场-龙头区长廊": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/金谊广场/龙头区长廊.jpg */,
     onEnter: function(vars) {
       vars.showRain = true;
@@ -266,6 +268,7 @@ Object.assign(storyData, {
 
   // --- 地面停车场（陈默被困） ---
   "金谊广场-地面停车场": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.jpg */,
     onEnter: function(vars) {
       vars.showZombies = true;
@@ -362,6 +365,7 @@ Object.assign(storyData, {
 
   // --- 金谊广场地面入口（正门） ---
   "金谊广场地面入口": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/金谊广场/地面入口.jpg */,
     onEnter: function(vars) {
       vars.showZombies = true;

@@ -111,9 +111,24 @@ function describeWeather(vars) {
   return pool[n];
 }
 
-// 户外天气效果：晴 ch 归零（丧尸趋避阳光）+ 体力扣除，阴扣体力，雨无效果
+// 户外天气效果：晴 ch 归零（丧尸趋避阳光）+ 体力扣除，阴扣体力，雨累积受凉值（可能感冒）
 function applyWeatherDrain(vars) {
-  if (vars.weather === "雨") return;
+  if (vars.weather === "雨") {
+    // 雨天户外：受凉值累积，满 100 感冒（晴/阴户外会清零，进屋躲雨不增长）
+    if (!vars.hasCold) {
+      vars._rainExposure = (vars._rainExposure || 0) + 20;
+      if (vars._rainExposure >= 100) {
+        vars._rainExposure = 0;
+        vars.hasCold = true;
+        flashStatusWarning("⚠ 你着凉了，开始发烧！");
+      } else {
+        flashStatusWarning("⚠ 你被雨淋湿了，身子发冷（受凉 " + vars._rainExposure + "/100）");
+      }
+    }
+    return;
+  }
+  // 晴/阴：太阳/干爽把身上的湿气晒掉，受凉值清零
+  vars._rainExposure = 0;
   var drain = vars.weather === "晴" ? 0.5 : 0.2;
   if (vars.windy) drain -= 0.1;
   vars.strength = Math.max(0, vars.strength - drain);
@@ -196,6 +211,23 @@ function canSee(vars) {
 
 function hasNoTransportation(vars) {
   return !vars.hasEbike && !vars.hasCar && !vars.hasRustyBike && !vars.hasScooter;
+}
+
+// 是否有近战武器（普通铁管/拐杖/拖把杆/美工刀 + 警察局高级斧头/匕首；手枪是远程耗弹，不算近战）
+function hasMeleeWeapon(vars) {
+  return vars.hasIronPipe || vars.hasCane || vars.hasMopHandle
+      || vars.hasCutter  || vars.hasAxe  || vars.hasDagger;
+}
+
+// 按强度返回"最优"近战武器名（斧头 > 匕首 > 铁管 > 拐杖 > 拖把杆 > 美工刀），无则空串
+function meleeWeaponName(vars) {
+  if (vars.hasAxe) return "斧头";
+  if (vars.hasDagger) return "匕首";
+  if (vars.hasIronPipe) return "铁管";
+  if (vars.hasCane) return "拐杖";
+  if (vars.hasMopHandle) return "拖把杆";
+  if (vars.hasCutter) return "美工刀";
+  return "";
 }
 
 // ====== 记忆闪色辅助函数 ======

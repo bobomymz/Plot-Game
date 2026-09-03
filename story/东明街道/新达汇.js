@@ -16,6 +16,7 @@ function mallQTE(baseTimeout, onTimeout) {
 Object.assign(storyData, {
 
   "新达汇-喷泉广场": {
+    outdoor: true,
     image: function(vars) {
       var f = timeImage({
         morning: "images/新达汇/喷泉广场.png",
@@ -30,7 +31,6 @@ Object.assign(storyData, {
       vars.currentPlace = "新达汇";
       vars.currentArea = "周边社区";
       vars.currentPos = "新达汇";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       var desc = "新达汇·三林的主入口广场。中央的喷泉停着，池底浅浅一层积水漂着落叶。广场上零散地倒着几个歪斜的广告牌和废弃的购物车。\n\
@@ -2637,6 +2637,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-屋顶花园": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({morning: "images/placeholder.png"
@@ -2645,7 +2646,6 @@ Object.assign(storyData, {
       }
       return "images/新达汇/楼顶无人机.jpg";
     }, /* TODO: images/新达汇/roofGarden.png */
-    onEnter: function(vars) { applyWeatherDrain(vars); },
     text: function(vars) {
       var desc = "你站在新达汇的屋顶花园。视野豁然开朗。中央有一个小型直升机停机坪——旁边停放着一架白色的外卖无人机。";
       if (vars._powerOut && vars._droneBattery <= 0) desc += "\n无人机指示灯已灭，电池彻底耗尽。";

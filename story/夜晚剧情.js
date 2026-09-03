@@ -220,6 +220,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 前往理发店 ====================
   "过夜-前往理发店": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/anshengStreet/nightRun.png */,
     onEnter: function(vars) {
       vars.showRain = true;
@@ -351,6 +352,7 @@ Object.assign(storyData, {
 
   // ==================== 兜底 - 街头过夜 ====================
   "过夜-街头兜底": {
+    outdoor: true,
     image: "images/hurtByzombie.png",
     onEnter: function(vars) {
       vars.showRain = true;
@@ -554,6 +556,7 @@ Object.assign(storyData, {
 
   // ==================== 摸黑离开医院 ====================
   "过夜-仁济-摸黑离开": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiNightRun.png */,
     onEnter: function(vars) {
       vars.showRain = true;

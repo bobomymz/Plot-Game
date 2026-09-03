@@ -6,6 +6,7 @@ Object.assign(storyData, {
 
   // ==================== 入口 ====================
   "图书馆": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({morning: "images/placeholder.png"
@@ -17,7 +18,6 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.currentPlace = "东明路";
       vars.currentPos = "图书馆";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       if (vars.libraryCleared) return "你再次来到东明社区图书馆。玻璃门上还留着上次你清理时留下的痕迹。里面很安静——你知道，现在这里是安全的。" + describeWeather(vars);

@@ -6,6 +6,7 @@ Object.assign(storyData, {
 
   // ==================== 五金店入口（三林路） ====================
   "五金店": {
+    outdoor: true,
     image: timeImage({
       morning: "images/小区周边/五金店/门口.jpg",
       night: "images/小区周边/五金店/门口-night.jpg"
@@ -14,7 +15,6 @@ Object.assign(storyData, {
       vars.showRain = true;
       vars.currentPlace = "三林路";
       vars.currentPos = "五金店";
-      applyWeatherDrain(vars);
     },
     text: function(vars) { 
       if(vars._visit["五金店"] > 1) return "你又来到了五金店门口。" + describeWeather(vars);

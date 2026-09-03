@@ -13,6 +13,8 @@ const storyData = {
     mm: 0,                     // 当前时间，初始为0，单位为分钟
     // 时间格式：天数-小时-分钟，从玩家醒来当天零点开始计算，玩家醒来时间为Day1 8:00（2026/6/29）
     hurtByZombie: false,       // 是否被丧尸咬（后续未找到医疗物资会感染）
+    hasCold: false,            // 是否感冒（雨天户外累积受凉；只能吃退烧药治愈，掉体力更快）
+    _rainExposure: 0,          // 受凉值 0-100（雨天户外场景每次+20，晴/阴户外清零；满100感冒）
     mercuryLoad: 0,            // 汞负荷 0-100，隐藏变量（设计细节 §三）
 
     // --- 天气 ---
@@ -245,7 +247,7 @@ const storyData = {
       // 支持字符串表达式（推荐，简洁）
       gameMinutes: "((dd - 1) * 1440 + (hh - 8) * 60 + mm)",
       isNight:     "hh >= 19 || hh < 6",
-      minutesBetweenReduceStrength: "hurtByZombie ? 20 : 60", // 若被丧尸抓伤，体力下降会更快
+      minutesBetweenReduceStrength: "(hurtByZombie && hasCold) ? 15 : (hurtByZombie ? 20 : (hasCold ? 40 : 60))", // 受伤/感冒都会让体力掉更快，叠加更快
       canSee: function(v) { return canSee(v); },
       hasFood: function(v) { return hasFood(v); }, // 是否有食物
       zombieAtHomeDoor: function(v) { return zombieAtHomeDoor(v); }, // 丧尸还在门口
@@ -649,6 +651,11 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
+        showCondition: "hasFeverMed && hasCold",
+        text: "服用退烧药",
+        nextScene: "整理整理-退烧"
+      },
+      {
         showCondition: "hasAntibiotic",
         text: "丢下抗生素",
         effect: updateTime(1, { set : { hasAntibiotic: false }, add: { itemCount: -1 } }),
@@ -807,6 +814,21 @@ const storyData = {
       return updateTime(1)(vars);
     },
     text: "你抠出那粒无标签的淡黄色药丸，放在手心端详了一下，还是放进嘴里用水送了下去。药丸没有味道，说不上来是什么感觉——但你隐约觉得，身体里那股沉甸甸的压迫感好像减轻了一点。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你服下了那粒无标签的药丸。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-退烧": {
+    image: "images/整理整理.png",
+    onEnter: function(vars) {
+      vars.hasCold = false;
+      vars._rainExposure = 0;
+      vars.hasFeverMed = false;
+      vars.itemCount = Math.max(0, vars.itemCount - 1);
+      return updateTime(5)(vars);
+    },
+    text: "你掰下一粒退烧药，就着半瓶水咽了下去。药效来得不算快，但过了好一会儿，你身上那股散不掉的寒气慢慢退了，额头也不再发烫。\n你抹了把汗，整个人虚脱似的坐了一会儿——总算不发烧了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】感冒已治愈。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

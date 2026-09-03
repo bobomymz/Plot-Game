@@ -160,11 +160,50 @@ Object.assign(storyData,{
         effect: updateTime(1)
       },
       {
+        showCondition: "!hasFeverMed",
+        text: "往更深处的货架找",
+        nextScene: "益丰大药房-退烧药",
+        effect: updateTime(1)
+      },
+      {
         text: "货架太高了，先去找个梯子吧",
         nextScene: "益丰大药房-库房里的丧尸",
         effect: updateTime(1)
       }
     ]
+  },
+
+  "益丰大药房-退烧药": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/退烧药.png */,
+    onEnter: { set: { positionAfterOperation: "益丰大药房-库房" } },
+    text: function(vars) {
+      if (vars.hasFeverMed) {
+        return "你翻遍了感冒药区，货架上的药盒大多被拆开过，里面的药片早没了。退烧药更是影子都见不着——你已经有了一盒，也就没再细找。";
+      }
+      return "你蹲下身，在感冒药区最底层的纸箱里翻找。多数药盒都空了，只剩一些散落的包装纸。就在你准备放弃时，指尖碰到一个压扁的纸盒——里面居然还有一板没拆封的退烧药。\n\
+你吹掉盒子上落的灰：布洛芬缓释胶囊，保质期到年底。";
+    },
+    choices: function(vars) {
+      if (!vars.hasFeverMed) {
+        return [
+          {
+            text: "拿上退烧药",
+            condition: "itemCount < bagVolume",
+            nextScene: "益丰大药房-库房",
+            effect: updateTime(3, { add: { itemCount: 1 }, set: { hasFeverMed: true } }),
+            elseScene: "整理整理"
+          },
+          {
+            text: "不拿",
+            nextScene: "益丰大药房-库房",
+            effect: updateTime(1)
+          }
+        ];
+      }
+      return [
+        { text: "回去", nextScene: "益丰大药房-库房", effect: updateTime(1) }
+      ];
+    }
   },
 
   "益丰大药房-左边货架翻找": {

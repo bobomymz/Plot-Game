@@ -7,13 +7,13 @@ Object.assign(storyData, {
   // ==================== 外部：到达与入口 ====================
 
   "仁济南院-浦锦路": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiRoad.png */,
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentArea = "仁济南院";
       vars.currentPlace = "仁济南院";
       vars.currentPos = "浦锦路";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       var desc = "你下了高架，沿着一条两侧种满香樟的路前进。路边褪色的指示牌写着“仁济医院南院”，箭头指向路尽头的几栋白色建筑。\n\
@@ -48,6 +48,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-急诊大门": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
@@ -145,6 +146,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-门诊大门": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: "你来到了门诊大门门口。这里遍地尸体，苍蝇在低空盘旋，但没看到有丧尸。\n\
@@ -166,6 +168,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-救护车通道": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: "你来到了救护车通道门口。铁门半掩着，一辆救护车堵在门口，车门大开，车内的担架翻落在地。通道深处的应急灯一闪一闪，投下忽明忽暗的影子。\n\
@@ -245,6 +248,7 @@ Object.assign(storyData, {
   // ==================== 检验科后门（方瑜遇难） ====================
 
   "仁济南院-检验科后门": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiBackdoor.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {

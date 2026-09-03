@@ -7,6 +7,7 @@ Object.assign(storyData, {
 
   // ==================== 校门口 ====================
   "上实南校门口": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({morning: "images/placeholder.png"
@@ -24,7 +25,6 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.currentPlace = "东明路";
       vars.currentPos = "上实南校";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       var desc;

@@ -2,6 +2,7 @@
 
 Object.assign(storyData, {
   "全家便利店（环林东路）": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") return "images/小区周边/全家和公交站/全家便利店门口-night.jpg";
       return "images/小区周边/全家和公交站/全家便利店门口.jpg";
@@ -9,7 +10,6 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.currentPlace = "初始小区";
       vars.currentPos = "全家便利店";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       return "你来到了全家便利店。\n<span style='font-weight: bold;'>全家熟悉的专属开门声音传来，门缓缓打开。</span>\n也许你可以吃一些东西垫垫肚子。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
@@ -325,6 +325,7 @@ Object.assign(storyData, {
   },
 
   "公交车站（环林东路）": {
+    outdoor: true,
     image: function(vars) {
       var f = timeImage({
         morning: "images/小区周边/全家和公交站/公交车站.png",
@@ -339,7 +340,6 @@ Object.assign(storyData, {
       vars.positionAfterOperation = "三林路-环林东路 十字路口";
       vars.currentPlace = "周边社区";
       vars.currentPos = "公交站";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       return "你来到了公交车站。\n那辆1003的车窗反射着日光，让你的眼睛不太舒服。窗内有群人影在蠕动，想都不用想就知道是丧尸。\n车门关着，所以你不会被它们围殴，问题不大。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);

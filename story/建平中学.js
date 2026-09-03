@@ -182,6 +182,7 @@ Object.assign(storyData, {
   // ==================== 校园门口（到达中转节点） ====================
 
   "建平-校园门口": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/campusGate.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "校园门口"; },
     text: function(vars) {
@@ -201,6 +202,7 @@ Object.assign(storyData, {
   },
 
   "建平-崮山路-阀门箱": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/valveBox.png */,
     onEnter: function(vars) { vars.currentPos = "崮山路"; },
     text: function(vars) {
@@ -240,6 +242,7 @@ Object.assign(storyData, {
   // ==================== 校园入口 ====================
 
   "建平-前门": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/frontGate.png */,
     onEnter: function(vars) {
       vars.showZombies = true;
@@ -294,6 +297,7 @@ Object.assign(storyData, {
   },
 
   "建平-后门": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "后门"; },
     text: function(vars) {
@@ -427,6 +431,7 @@ Object.assign(storyData, {
   },
 
   "建平-后门辅路": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/backAuxRoad.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "后门辅路"; },
     text: function(vars) {
@@ -467,6 +472,7 @@ Object.assign(storyData, {
   // ==================== 户外 ====================
 
   "建平-金苹果广场": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/goldenApplePlaza.png */,
     onEnter: function(vars) {
       vars.showZombies = true;
@@ -486,6 +492,7 @@ Object.assign(storyData, {
   },
 
   "建平-金苹果大道": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/goldenAppleAvenue.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "金苹果大道"; },
     text: function(vars) { return "金苹果大道。" + describeZombieWave(vars); },
@@ -585,6 +592,7 @@ Object.assign(storyData, {
   },
 
   "建平-水池": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/pond.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "水池"; return { add: { chasedByZombies: 1 } }; },
     text: function(vars) { return "水池。丧尸像被什么吸引似的沿着池边越聚越多，有些半个身子泡在水里——水的湿气让它们扎堆在这里。"; },
@@ -597,6 +605,7 @@ Object.assign(storyData, {
   },
 
   "建平-操场": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/playground.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "操场"; },
     text: function(vars) { return "操场。" + describeZombieWave(vars); },
@@ -653,6 +662,7 @@ Object.assign(storyData, {
     ]
   },
   "建平-行政楼-天台": {
+    outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "行政楼天台"; },
     text: function(vars) { return "行政楼天台花园。以前只是听李彦青说行政楼楼顶有个校长的小花园，没想到这里真有。\n" + describeZombieWave(vars); },
@@ -668,6 +678,7 @@ Object.assign(storyData, {
   // ==================== 挹芬楼（6 层 · 1 电梯 + 2 楼梯 · 丧尸密度最高） ====================
 
   "建平-挹芬楼北门": {
+    outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼北门"; return {}; },
     text: function(vars) { return "挹芬楼北门。门外就是金苹果广场，广场上几具丧尸正漫无目的地游荡。门内是挹芬楼的大厅——往里走，那股腐臭更浓了，挹芬楼里的丧尸明显比广场上密。"; },
@@ -677,6 +688,7 @@ Object.assign(storyData, {
     ]
   },
   "建平-挹芬楼南门": {
+    outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼南门"; return {}; },
     text: function(vars) { return "挹芬楼南门。门外不远处是水池和思贤堂，丧尸沿着岸边密密麻麻地挤着。往里看，挹芬楼是全校丧尸最密集的地方，光站在门口就能感到那股压迫感。"; },
@@ -1496,6 +1508,7 @@ Object.assign(storyData, {
   // ==================== 宿舍楼（单节点 · 简化） ====================
 
   "建平-宿舍-门口": {
+    outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "宿舍门口"; return { add: { chasedByZombies: 1 } }; },
     text: function(vars) { return "学生宿舍楼。楼门半掩着，往里看黑洞洞的，隐约能听到走廊里拖沓的脚步声——这栋楼里的丧尸比外面多得多。\n如果能把它们清干净，这里倒是个能安心过夜的落脚点。"; },

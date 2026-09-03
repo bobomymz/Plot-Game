@@ -52,6 +52,7 @@ function sanLinRoadImage(vars) {
 
 Object.assign(storyData, {
   "小区东门-整装待发": { // 此时时间；Day1 12:00
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
@@ -78,7 +79,7 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: function(vars) { vars.showZombies = true; applyWeatherDrain(vars); },
+    onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
       var desc = "你四处张望。\n远处有不少丧尸在游荡。紧挨着小区的门是一个全家便利店，你经常在那里买早餐。\n\
 你向身旁看去，那里有一辆你初中时常坐的公交车，此刻就像一头休憩的野兽，静静蹲守在一个公交站台旁。\n";
@@ -114,6 +115,7 @@ Object.assign(storyData, {
   },
 
   "小区西门-整装待发": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
@@ -141,7 +143,7 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: function(vars) { vars.showZombies = true; applyWeatherDrain(vars); },
+    onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) { return "你整理好东西，准备出发了。" + describeWeather(vars); },
     choices: [
       {
@@ -153,6 +155,7 @@ Object.assign(storyData, {
 
 
   "三林路-环林东路 十字路口": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
@@ -173,7 +176,6 @@ Object.assign(storyData, {
       vars.currentArea = "周边社区";
       vars.currentPlace = "十字路口";
       vars.currentPos = "十字路口";
-      applyWeatherDrain(vars);
     },
     qte: {
       timeout: "20000 - chasedByZombies * 2000", // 尸潮越猛，限时越短
@@ -215,12 +217,12 @@ Object.assign(storyData, {
   },
 
   "三林路": {
+    outdoor: true,
     image: sanLinRoadImage, /* TODO: images/小区周边/三林路.png */
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPlace = "三林路";
       vars.currentPos = "三林路";
-      applyWeatherDrain(vars);
     },
     qte: {
       timeout: "20000 - chasedByZombies * 1000",
@@ -266,12 +268,12 @@ Object.assign(storyData, {
   },
 
   "三林路-北侧": {
+    outdoor: true,
     image: sanLinRoadImage,
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPlace = "三林路";
       vars.currentPos = "三林路-北侧";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       return "你走在三林路北侧的人行道上。这一侧紧挨着建设银行和小超市，路边还停着一辆轿车。\n丧尸在马路对面游荡，暂时隔着一段距离。\n" + describeZombieWave(vars);
@@ -292,12 +294,12 @@ Object.assign(storyData, {
   },
 
   "三林路-南侧": {
+    outdoor: true,
     image: sanLinRoadImage,
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPlace = "三林路";
       vars.currentPos = "三林路-南侧";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       return "你走在三林路南侧的人行道上。这一侧通向老小区入口、药房和五金店。\n丧尸在马路对面游荡，暂时隔着一段距离。\n" + describeZombieWave(vars);
@@ -312,6 +314,7 @@ Object.assign(storyData, {
   },
 
   "三林路-东明路 十字路口": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
@@ -339,7 +342,6 @@ Object.assign(storyData, {
       vars.currentArea = "周边社区";
       vars.currentPlace = "十字路口";
       vars.currentPos = "十字路口";
-      applyWeatherDrain(vars);
     },
     qte: {
       timeout: "18000 - chasedByZombies * 1000",
@@ -462,6 +464,7 @@ Object.assign(storyData, {
   },
 
   "东明路-三林路": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
@@ -490,7 +493,6 @@ Object.assign(storyData, {
       vars.currentArea = "周边社区";
       vars.currentPlace = "东明路";
       vars.currentPos = "东明路";
-      applyWeatherDrain(vars);
     },
     qte: {
       timeout: "18000 - chasedByZombies * 2000",
@@ -539,6 +541,7 @@ Object.assign(storyData, {
 
   // ==================== 建设银行 ====================
   "银行门口": {
+    outdoor: true,
     image: function(vars) {
       var f = timeImage({
         morning: "images/小区周边/银行/银行门口.jpg",
@@ -552,7 +555,6 @@ Object.assign(storyData, {
       vars.currentPlace = "三林路";
       vars.currentPos = "银行";
       vars.showRain = true;
-      applyWeatherDrain(vars);
     },
     text: function(vars) { return "你来到了建设银行门口。这是你办第一张储蓄卡的地方，你把自己的压岁钱存了2年定期，但是1年就取出来了，只有活期的利率。不过，本来也没多少钱。\n\
 如果你带卡了，或许可以去ATM机里掏出一些钱来————不过，这末世里钱有什么用？" + describeWeather(vars); },

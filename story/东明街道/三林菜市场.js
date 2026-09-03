@@ -7,11 +7,11 @@ Object.assign(storyData, {
 
   // ==================== 正门入口（安盛街西侧） ====================
   "菜市场-卷帘门": {
+    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/菜市场/卷帘门.jpg */,
     onEnter: function(vars) {
       vars.currentPlace = "三林菜市场";
       vars.currentPos = "菜市场卷帘门";
-      applyWeatherDrain(vars);
     },
     text: "你来到菜市场的卷帘门前。卷帘门只落下来一半，底部离地留着一道半人高的缝，刚好够一个人猫着腰钻进去。\n透过那道缝往里看，只有几排冰柜的黑影静悄悄地立在昏暗里，什么声音都没有——静得有点不真实。\n门缝里飘出一股鱼腥味，混着一丝若有若无的腐味。",
     choices: [
@@ -30,7 +30,6 @@ Object.assign(storyData, {
       vars.currentPlace = "三林菜市场";
       vars.currentPos = "菜市场大厅";
       vars._marketEntry = "大厅";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       var desc = "你从卷帘门下的缝隙里钻进了菜市场。头顶的日光灯早就熄了，只有侧窗漏进来的天光把摊位间的过道照得明暗交错。\n鱼摊、肉摊、菜摊……冰柜的玻璃门蒙着厚厚的雾气，看不清里面还剩什么。";
@@ -45,7 +44,7 @@ Object.assign(storyData, {
       var cs = [];
       if (!vars._marketHallCleared) {
         cs.push({ text: "绕开它，从摊位底下钻过去", nextScene: "菜市场-大厅-潜行", effect: updateTime(2) });
-        cs.push({ text: "抄家伙把它彻底解决", nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
+        cs.push({ showCondition: "hasIronPipe", text: "抄家伙把它彻底解决", nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
         cs.push({ text: "太危险了，退回去", nextScene: "安盛街西侧", effect: updateTime(1) });
       } else {
         cs.push({ text: "前往冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) });

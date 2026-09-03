@@ -627,6 +627,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "小区道路": {
+    outdoor: true,
     image: function(vars) {
       var t = timeImage({morning: vars.weather === "雨" ? "images/home/小区道路-雨天.png" : "images/home/小区道路.png"
 });
@@ -635,7 +636,6 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     onEnter: function(vars) {
       vars.currentPlace = "初始小区";
       vars.currentPos = "小区道路";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       var desc = "你走在小区的小道上。曾经你在这里练习足球，可以看到很多老年人带着孩子玩，时不时有外卖员驶过。现在，不会再有了。\n";
@@ -1514,6 +1514,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "小区东门": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var rf = timeImage({
@@ -1536,7 +1537,6 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
       vars.positionAfterOperation = "小区东门-整装待发";
       vars.currentPlace = "初始小区";
       vars.currentPos = "东门";
-      applyWeatherDrain(vars);
     },
     text: function(vars) {
       return "小区东门。保安亭的大红灯笼还挂在墙上，随风摇曳，沙沙作响。石板路从小区深处蜿蜒而出，在门口收束成短短的一段坡道。\n\
@@ -1559,6 +1559,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
 
   "小区西门": {
+    outdoor: true,
     image: function(vars) {
       if (vars.weather === "雨") {
         var rf = timeImage({
@@ -1579,7 +1580,6 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     },
     onEnter: function(vars) {
       var effect = updateTime(2, { set: { positionAfterOperation: "小区西门-整装待发", currentPlace: "初始小区", currentPos: "西门" } })(vars);
-      applyWeatherDrain(vars);
       return effect;
     },
     text: function(vars) {
@@ -1802,6 +1802,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   // ========== 小区草地 + 物业楼（高锦睿） ==========
 
   "小区草地": {
+    outdoor: true,
     image: function(vars) {
       var t = timeImage({morning: vars.weather === "雨" ? "images/home/小区草地-雨天.jpg" : "images/home/小区草地.jpg"
 });
@@ -1809,7 +1810,6 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     },
     onEnter: function(vars) {
       var effect = updateTime(1)(vars);
-      applyWeatherDrain(vars);
       return effect;
     },
     qte: {
