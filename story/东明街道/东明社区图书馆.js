@@ -59,7 +59,7 @@ Object.assign(storyData, {
     choices: [
         { text: "蹲下身子，从前台下方绕过去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-潜行", effect: updateTime(2) },
         { text: "从书架上抽一本书，朝另一侧扔出去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-声东击西", effect: updateTime(1) },
-        { text: "抄起门口的铁质书立，上去解决它", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-战斗", condition: "hasMeleeWeapon || strength >= 3", elseScene: "图书馆-大厅-徒劳" },
+        { text: "抄起门口的铁质书立，上去解决它", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-战斗", condition: "hasMeleeWeapon || strength >= 3", elseScene: "结局-图书馆-大厅-徒劳" },
         { text: "前往阅览室", showCondition: "libraryCleared", nextScene: "图书馆-阅览室" },
         { text: "前往藏书区", showCondition: "libraryCleared", nextScene: "图书馆-藏书区" },
         { text: "离开图书馆", showCondition: "libraryCleared", nextScene: "东明路-三林路" }
@@ -124,9 +124,9 @@ Object.assign(storyData, {
     ]
   },
 
-  "图书馆-大厅-徒劳": {
+  "结局-图书馆-大厅-徒劳": {
     image: "images/zombieKnockYouDown.png",
-    text: "你冲向志愿者丧尸，但手里没有像样的武器——你只能用拳头。\n你一拳打在它胸口，它只是退了两步，然后猛地抓住了你的手臂。它的力气比你想象中大得多。\n你挣扎着想甩开它，但大厅里的动静引来了更多麻烦——藏书区方向传来了回应般的低吼。\n两只丧尸一前一后堵住了你的退路。"
+    text: "你冲向志愿者丧尸，但手里没有像样的武器——你只能用拳头。\n你一拳打在它胸口，它只是退了两步，然后猛地抓住了你的手臂。它的力气比你想象中大得多。\n你挣扎着想甩开它，但大厅里的动静引来了更多麻烦——藏书区方向传来了回应般的低吼。\n两只丧尸一前一后堵住了你的退路。\n\n—— 结局：图书馆-大厅-徒劳 ——"
   },
 
   // ==================== 阅览室 ====================

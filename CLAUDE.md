@@ -17,20 +17,53 @@ explorer index.html
 
 没有构建、打包、测试或依赖安装步骤。修改任意 `.js`/`.css`/`.html` 后刷新浏览器即可看到效果。
 
+## 信息索引（先读这节）
+
+**元规则：一切以实际运行代码为准。** 发现 CLAUDE.md / 注释 / 文档与 engine.js 或 story 数据不一致时，
+是文档过时了——去改文档，不要迁就文档。尤其"引擎支不支持某写法"，读 engine.js 判定，别信文档断言"不支持"。
+
+### 权威层级（矛盾时谁赢）
+1. **engine.js** —— 渲染/结算的"事实"（决定系统实际怎么跑）。
+2. **story/*.js 实际数据** —— 剧情内容、跳转、结局、已落地设定。
+3. **CLAUDE.md 约定** —— 写新内容必须遵守的规范；与已有实现冲突 → 按规范改（旧实现算遗留债）。
+4. **设计细节.md** —— 路网/立交/出城等规划性设定；已实装的以代码为准。
+5. **人物档案.md** —— NPC 人设、去向、关系；未实装部分仅作参考。
+6. **核心设定3.0.md** —— 世界观顶层设定（核心设定系列以 3.0 为准，勿被 .md / 2.0 旧版干扰）。
+7. **各 story 文件顶部注释** —— 该文件"想做什么"的速览，可能滞后。
+> 例外：CLAUDE.md 明确写"以 X 为准"的子主题，X 更高（如高速路网→设计细节.md）。
+
+### 查什么 → 去哪
+| 想知道/想做 | 去 |
+|---|---|
+| 某 flag/物品是否已定义、初始值、全图唯一 | core.js `_variables` |
+| 某物品在哪拿/被用 | grep `hasXxx` 全 story/ |
+| computed/每小时规则/屏幕特效/全局触发器 | core.js `_reactive` / `_screenEffects` / `_globalTriggers` |
+| 引擎支持的条件/QTE/闪色/输入框写法 | CLAUDE.md 数据格式节 → 拿不准再读 engine.js |
+| 工具函数/工厂用法（updateTime/timeImage/travelScene/initMemoryGame/hasMeleeWeapon…） | utils.js（函数旁注释即文档） |
+| 某区域剧情/场景结构 | 对应 story 文件 + 顶部注释 |
+| 路网/立交/出城衔接 | 设计细节.md |
+| NPC 人设/去向 | 人物档案.md + 对应场景 |
+| 世界观顶层设定 | 核心设定3.0.md |
+| 结局节点规范 | grep `"结局-`（core.js 已归一次） |
+| 新机制（感冒/户外/疲劳/冷兵器分级） | 见下方各处，勿只看一处 |
+
+### 新增机制的四处同步清单
+加可复用机制时按需更新：core.js(变量+computed+rule) · utils.js(函数) · engine.js(若改行为) · 本表对应行。
+
 ## Architecture
 
 ```
 index.html          → 入口，加载所有脚本（顺序重要）
 style.css           → 全部 UI 样式
-engine.js           → 核心引擎（~730行，单体文件）
+engine.js           → 核心引擎（~1100行，单体文件）
 story/
-  core.js           → storyData 声明、全局变量、钳位、响应式规则、全局触发器、起始场景
-  utils.js          → updateTime()、describeZombieWave()
-  myNeiborhood.js   → 小区内部（初始卧室、楼道、地下室、民防设施）
-  communityConnection.js → 邻近社区（十字路口、药店、银行、超市、图书馆、地铁站）
-  FamilymartAndBusStop.js → 全家便利店 + 公交车站
-  anShengStreet.js  → 安盛街（理发店安全屋）
-  cityConnection.js → 高架/高速出口、出城路线、迪士尼、临港新城
+  core.js           → storyData 声明、_variables、钳位、_reactive/computed/rules、_globalTriggers、_screenEffects、整理整理、起始场景
+  utils.js          → 工具函数/工厂（updateTime、timeImage、initMemoryGame、travelScene、hasMeleeWeapon/Tier 等）
+  夜晚剧情.js       → 天黑强制过夜系统
+  东明街道/         → 东明街道主区域（樱桃苑/东明街道路径/新达汇/金谊广场/安盛街/安居苑/上实南校/图书馆/菜市场/益丰/全家/五金店/长者食堂/地铁站/警察局 等，一文件一区域）
+  仁济南院.js       → 仁济医院（西南线真相线）
+  建平中学.js       → 建平中学（北线营救）
+  上海市区路径.js   → 高架/立交/城市级连接
 images/             → 场景图（PNG/JPG），按区域存放
 ```
 

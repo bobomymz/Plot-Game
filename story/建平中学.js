@@ -375,11 +375,19 @@ Object.assign(storyData, {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
         condition: checkFlashAnswer,
-        nextScene: "建平-后门辅路",
+        nextScene: "建平-后门-斧头-胜利",
         elseScene: "结局-后门失守",
         timeout: 12000,
         timeoutScene: "结局-后门失守"
       }
+    ]
+  },
+
+  "建平-后门-斧头-胜利": {
+    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    text: "你抡起斧头一路劈砍，斧刃所过之处，丧尸纷纷倒下。\n你踩着满地的残肢和污血，从门边杀了出去，踏上后门辅路。身后的铁门内外，剩余的丧尸嘶吼着，一时追不上来。",
+    choices: [
+      { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
   },
 
@@ -392,11 +400,19 @@ Object.assign(storyData, {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
         condition: checkFlashAnswer,
-        nextScene: "建平-后门辅路",
+        nextScene: "建平-后门-匕首-胜利",
         elseScene: "结局-后门失守",
         timeout: 12000,
         timeoutScene: "结局-后门失守"
       }
+    ]
+  },
+
+  "建平-后门-匕首-胜利": {
+    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    text: "你握着匕首左冲右突，专挑丧尸的下颚和太阳穴下手。\n等回过神来，你已经从门边挤了出来，踏上后门辅路。身后的铁门内外乱作一团，丧尸们一时追不上来。",
+    choices: [
+      { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
   },
 
@@ -511,7 +527,7 @@ Object.assign(storyData, {
   "建平-地下车库-东口": {
     image: "images/placeholder.png" /* TODO: images/jianping/bikeGarageRamp.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "地下车库"; },
-    text: "你沿着金苹果广场边上的坡道走下，推开一扇锈迹斑斑的铁门，进入了地下自行车车库。\n车库很大，一排排车架在昏暗的应急灯下拖着长长的影子，空气里一股潮湿的霉味。",
+    text: "你沿着金苹果广场边上的坡道走下，推开一扇蒙着灰的铁门，进入了地下自行车车库。\n车库很大，一排排车架在昏暗的应急灯下拖着长长的影子，空气里一股潮湿的霉味。",
     choices: [
       { text: "探索车库", nextScene: "建平-地下车库", effect: updateTime(2) },
       { text: "回金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(1) }
@@ -608,11 +624,16 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/playground.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "操场"; },
-    text: function(vars) { return "操场。" + describeZombieWave(vars); },
+    text: function(vars) { 
+      if(vars._visit['建平-操场'] == 1) return "这里是操场。建平的操场比你初中的还小，因为这片市中心区域的建筑比较密集，实在挤不出空间。你在这里踢了3年球。\n\
+转头一看，球门里正好有个足球。要不踢一会儿吧。" + describeZombieWave(vars); 
+      return "这里是操场。远处高耸的松树和低矮的草丛，一起在微风中摇曳。" + describeZombieWave(vars);
+    },
     choices: [
       { text: "去食堂侧门", nextScene: "建平-食堂", effect: updateTime(2) },
       { text: "去弘渊楼后门", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
       { text: "去宿舍", nextScene: "建平-宿舍-门口", effect: updateTime(2) },
+      { text: "去踢球", nextScene: "建平-操场-踢球", effect: updateTime(2) },
       { text: "躲到灌木丛", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-操场灌木丛" }
     ]
   },
@@ -620,7 +641,7 @@ Object.assign(storyData, {
   "建平-思贤堂": {
     image: "images/placeholder.png" /* TODO: images/jianping/sixianHall.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "思贤堂"; },
-    text: function(vars) { return "思贤堂（礼堂）。" + describeZombieWave(vars); },
+    text: function(vars) { return "这里是思贤堂。红色帷幕耷拉在舞台两边，候场区的钢琴和牌子略显杂乱；没有小桌板的扶手椅整整齐齐地排着，虽然看不到几只丧尸，但椅子的缝隙间应该躺着不少尸体。" + describeZombieWave(vars); },
     choices: [
       { text: "去挹芬楼南门", nextScene: "建平-挹芬楼南门", effect: updateTime(2) },
       { text: "去废弃小楼", nextScene: "建平-废弃小楼-1F", effect: updateTime(2) }
@@ -1533,7 +1554,9 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if (vars._dormCleared) {
-        return "宿舍内部。丧尸已经被你清理干净了，走廊安静了下来。这里可以安心休息，甚至过夜。" + describeZombieWave(vars);
+        return "宿舍内部。丧尸已经被你清理干净了，走廊安静了下来。这里可以安心休息，甚至过夜。\n\
+宿舍前几年翻修过一遍，实木地板，8人一寝————看起来还不错，虽然你除了军训就没在这里住过。\n\
+记得高中时听说有人会偷偷在宿舍里玩游戏、打牌，这里就是一个灰色地带。" + describeZombieWave(vars);
       }
       return "你推开宿舍的门——走廊里挤着不少丧尸，在昏暗的光线里漫无目的地游荡。得先把它们清掉。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
     },
@@ -1553,7 +1576,7 @@ Object.assign(storyData, {
         ];
       }
       return [
-        { text: "在床上躺一会儿（休息）", nextScene: "建平-宿舍-内部-休息", effect: updateTime(30, { set: { _travelMinutes: 0 } }) },
+        { text: "找个床躺一会儿", nextScene: "建平-宿舍-内部-休息", effect: updateTime(30, { set: { _travelMinutes: 0 } }) },
         { text: "回宿舍门口", nextScene: "建平-宿舍-门口", effect: updateTime(1) }
       ];
     }
@@ -1561,9 +1584,11 @@ Object.assign(storyData, {
   "建平-宿舍-内部-休息": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; return { add: { strength: 1 } }; },
-    text: "你挑了张下铺躺下，拉过半旧的被子。走廊里安安静静的，你终于能合一会儿眼了。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: "你挑了张下铺躺下，拉过半旧的被子。走廊里安安静静的，你终于能合一会儿眼了。\n\
+<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
-      { text: "起来", nextScene: "建平-宿舍-内部", effect: updateTime(1) }
+      { text: "起来", nextScene: "建平-宿舍-内部", effect: updateTime(1) },
+      { text: "继续睡觉", nextScene: "建平-宿舍-内部-发现狼人杀手牌"}
     ]
   },
   "建平-宿舍-内部-清场": {

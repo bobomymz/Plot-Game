@@ -26,8 +26,8 @@ function updateTime(addMinutes, extraEffect = {}) { // 更新时间
     if (vars.hh !== oldHh || addMinutes >= 60) {
       updateWeather(vars);
     }
-    // 疲劳系统：>6分钟的移动累加到连续移动时间
-    if (addMinutes > 6) {
+    // 疲劳系统：>6分钟的户外移动累加到连续移动时间（当前场景 scene.outdoor 为真才计）
+    if (addMinutes > 6 && vars._isOutdoor) {
       vars._travelMinutes = (vars._travelMinutes || 0) + addMinutes;
     }
     return extraEffect;

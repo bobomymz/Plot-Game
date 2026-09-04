@@ -952,6 +952,8 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   gameState.showRain = false;
   gameState.showZombies = false;
   gameState.showPowerOut = false;
+  // 标记当前场景是否户外：供 updateTime 判断"连续移动疲劳"只累计户外跋涉
+  gameState._isOutdoor = !!scene.outdoor;
 
   // 户外场景统一标记：自动应用天气身体影响（掉体力 / 晴 ch 归零 / 感冒累积）。
   // 注意：只做身体效果，不碰 showRain/showZombies —— 雨滴与丧尸包围遮罩共用 ::before 伪元素，

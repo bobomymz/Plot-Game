@@ -64,7 +64,7 @@ Object.assign(storyData, {
       {
         showCondition: "!_visit['全家-喝饮料腹泻']",
         text: "喝饮料",
-        nextScene: "全家-喝饮料腹泻"
+        nextScene: "结局-全家-喝饮料腹泻"
       },
       {
         showCondition: "hasTorch",
@@ -319,7 +319,7 @@ Object.assign(storyData, {
     ]
   },
 
-  "全家-喝饮料腹泻": {
+  "结局-全家-喝饮料腹泻": {
     image: "images/小区周边/全家和公交站/公厕里的丧尸.png",
     onEnter: updateTime(2),
     text: "你随手从冰柜里抓起一瓶冰凉的柠檬水，咕嘟咕嘟一饮而尽。片刻之后，你感觉胃部传来一阵绞痛。\n\

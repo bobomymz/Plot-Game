@@ -78,7 +78,7 @@ Object.assign(storyData, {
         text: "蹲下贴着墙壁慢慢绕过去",
         nextScene: "地铁站-安检区",
         condition: "strength >= 2",
-        elseScene: "地铁站-站厅层-被发现"
+        elseScene: "结局-地铁站-站厅层-被发现"
       },
       {
         text: "丢个东西引开它们注意",
@@ -100,7 +100,7 @@ Object.assign(storyData, {
         text: "撞开左边的丧尸冲过去",
         nextScene: "地铁站-安检区",
         condition: "strength >= 2",
-        elseScene: "地铁站-站厅层-被发现",
+        elseScene: "结局-地铁站-站厅层-被发现",
         effect: { add: { strength: -1, chasedByZombies: 1 } }
       },
       {
@@ -121,9 +121,9 @@ Object.assign(storyData, {
     ]
   },
 
-  "地铁站-站厅层-被发现": {
+  "结局-地铁站-站厅层-被发现": {
     image: "images/zombieKnockYouDown.png",
-    text: "你的体力不够撑住蹲姿太久——腿一软，手掌撑在地上发出一声响。靠在墙角的那只丧尸猛地转过头，嘶吼着朝你扑了过来。\n你还没来得及站起来就被扑倒了。"
+    text: "你的体力不够撑住蹲姿太久——腿一软，手掌撑在地上发出一声响。靠在墙角的那只丧尸猛地转过头，嘶吼着朝你扑了过来。\n你还没来得及站起来就被扑倒了。\n\n—— 结局：地铁站-站厅层-被发现 ——"
   },
 
   // ==================== 安检区（QTE: 6s，隐藏） ====================
@@ -329,7 +329,7 @@ Object.assign(storyData, {
         text: "抓紧扶手，快速绕下去",
         nextScene: "地铁站-楼梯-绕行",
         condition: "strength >= 2",
-        elseScene: "地铁站-楼梯-摔倒"
+        elseScene: "结局-地铁站-楼梯-摔倒"
       },
       {
         text: "坐上扶手滑下去",
@@ -378,9 +378,9 @@ Object.assign(storyData, {
     ]
   },
 
-  "地铁站-楼梯-摔倒": {
+  "结局-地铁站-楼梯-摔倒": {
     image: "images/zombieKnockYouDown.png",
-    text: "你的体力不足以支撑你在湿滑的地面上保持平衡。你脚下一滑，膝盖重重磕在台阶的边缘上。\n剧痛让你一时间站不起来——而身后的脚步声正在迅速逼近。\n你想爬起来，但已经来不及了。"
+    text: "你的体力不足以支撑你在湿滑的地面上保持平衡。你脚下一滑，膝盖重重磕在台阶的边缘上。\n剧痛让你一时间站不起来——而身后的脚步声正在迅速逼近。\n你想爬起来，但已经来不及了。\n\n—— 结局：地铁站-楼梯-摔倒 ——"
   },
 
   "地铁站-楼梯-滑扶手": {
@@ -398,7 +398,7 @@ Object.assign(storyData, {
         text: "紧急刹车，从扶手上跳下来",
         nextScene: "地铁站-楼梯-绕行",
         condition: "strength >= 2",
-        elseScene: "地铁站-楼梯-摔倒"
+        elseScene: "结局-地铁站-楼梯-摔倒"
       }
     ]
   },

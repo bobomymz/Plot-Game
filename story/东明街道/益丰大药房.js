@@ -63,7 +63,7 @@ Object.assign(storyData,{
         text: "给它来一下",
         nextScene: "益丰大药房-击杀",
         condition: function(vars) { return hasMeleeWeapon(vars) && vars.strength >= 2; },
-        elseScene: "益丰大药房-被反杀"
+        elseScene: "结局-益丰-被反杀"
       },
       {
         text: "趁它没发现，慢慢退出去",
@@ -73,9 +73,9 @@ Object.assign(storyData,{
     ]
   },
 
-  "益丰大药房-被反杀": {
+  "结局-益丰-被反杀": {
     image: "images/zombieKnockYouDown.png",
-    text: "你举起手中的家伙砸了下去，但手臂太软了——这一击只蹭到了它的后背。\n白大褂丧尸猛地转过身，张开嘴朝你的手臂咬了下来。\n剧烈的疼痛让你眼前发黑……"
+    text: "你举起手中的家伙砸了下去，但手臂太软了——这一击只蹭到了它的后背。\n白大褂丧尸猛地转过身，张开嘴朝你的手臂咬了下来。\n剧烈的疼痛让你眼前发黑……\n\n—— 结局：益丰-被反杀 ——"
   },
 
   "益丰大药房-击杀": {
