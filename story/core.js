@@ -202,6 +202,7 @@ const storyData = {
     _yifenBoard5F: false,       // 挹芬楼5F高二教室黑板字是否已看
     _yifenFood6F: false,        // 挹芬楼6F自习教室食品是否已拿
     _guardTakeoutTaken: false,  // 门卫室外卖是否已处理（Day<3 新鲜+1，Day≥3 变质）
+    _playgroundKicked: false,   // 操场那只足球是否已踢过（回忆[起脚爆射]，一次性）
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除

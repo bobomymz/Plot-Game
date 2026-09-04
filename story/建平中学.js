@@ -189,7 +189,7 @@ Object.assign(storyData, {
       if(vars._lastScene === "建平-后门-开门") return "你刚从后门逃回来。那些丧尸没有跟过来。";
       return "你站在建平中学前门马路对面的一棵行道树后，没有急着靠近。\n\
 校门还是老样子——“上海市建平中学”七个金字静静地立在墙上，移动门半开。你能看到里面那片熟悉到骨子里的金苹果广场，和广场上歪歪斜斜游荡着的身影。\n\
-校门口内外都有丧尸，只是现在它们还没注意到你。你压低身子，盘算着怎么进去。" + describeZombieWave(vars);
+校门口内外都有丧尸，只是现在它们还没注意到你。你压低身子，盘算着怎么进去。\n" + describeWeather(vars) + describeZombieWave(vars);
     },
     choices: [
       { text: "去前门看看", nextScene: "建平-前门", effect: updateTime(5) },
@@ -207,9 +207,9 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "崮山路"; },
     text: function(vars) {
       if (vars._valveBoxOpened) {
-        return "崮山路边的市政阀门箱还敞着。你已经看过里面的东西了。";
+        return "崮山路边的市政阀门箱还敞着。你已经看过里面的东西了。\n" + describeWeather(vars);
       }
-      return "你蹲到人行道上那只漆成蓝灰色的铁皮阀门箱前。箱子上印着「上海市自来水 · 抢修」的铭牌，挂锁已经被人撬开过——锁舌上留着新鲜的工具痕。\n你用钥匙串上的一把试了试，咔哒一声，锁彻底开了。";
+      return "你蹲到人行道上那只漆成蓝灰色的铁皮阀门箱前。箱子上印着「上海市自来水 · 抢修」的铭牌，挂锁已经被人撬开过——锁舌上留着新鲜的工具痕。\n你用钥匙串上的一把试了试，咔哒一声，锁彻底开了。\n" + describeWeather(vars);
     },
     choices: function(vars) {
       var cs = [];
@@ -257,7 +257,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if (vars._frontGateCleared) {
-        return "前门的丧尸已经清空了。你上次冲进来时把它们都甩在了门外。\n现在这里安静了不少，可以自由进出。" + describeZombieWave(vars);
+        return "前门的丧尸已经清空了。你上次冲进来时把它们都甩在了门外。\n现在这里安静了不少，可以自由进出。\n" + describeWeather(vars) + describeZombieWave(vars);
       }
       return "你贴着墙根摸到前门。铁门半敞着，门内外的丧尸已经发现了你，正从两侧缓缓围拢过来。\n你必须趁它们合围之前冲进去。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
     },
@@ -307,7 +307,7 @@ Object.assign(storyData, {
       } else {
         desc += "丧尸都挤在门内，隔着铁栅栏朝外伸着手臂，低沉的嘶吼连成一片。门内黑压压的一片，看不清到底有多少。";
       }
-      return desc + describeZombieWave(vars);
+      return desc + "\n" + describeWeather(vars) + describeZombieWave(vars);
     },
     choices: function(vars) {
       var cs = [];
@@ -454,7 +454,7 @@ Object.assign(storyData, {
       if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         return "你沿着后门辅路走。\n一辆轿车亮着车灯停在不远处——是忻老师。他摇下车窗，朝你招了招手。\n\"上车，我带你一程。\"";
       }
-      return "后门辅路。一条通往食堂的窄路，旁边停着几辆车。这里远离校门，丧尸反倒不多。";
+      return "后门辅路。一条通往食堂的窄路，旁边停着几辆车。这里远离校门，丧尸反倒不多。\n" + describeWeather(vars);
     },
     choices: function(vars) {
       var cs = [];
@@ -496,7 +496,7 @@ Object.assign(storyData, {
       if (!vars._frontGateCleared) return { add: { chasedByZombies: 1 } };   // 前门清空后广场不再反复加追兵
       return {};
     },
-    text: function(vars) { return "金苹果广场。你注意到，丧尸正逐渐从四周楼里涌来。"; },
+    text: function(vars) { return "金苹果广场。你注意到，丧尸正逐渐从四周楼里涌来。\n" + describeWeather(vars); },
     choices: [
       { text: "去前门", nextScene: "建平-前门", effect: updateTime(2) },
       { text: "去行政楼", nextScene: "建平-行政楼-1F", effect: updateTime(2) },
@@ -511,7 +511,7 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/goldenAppleAvenue.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "金苹果大道"; },
-    text: function(vars) { return "金苹果大道。" + describeZombieWave(vars); },
+    text: function(vars) { return "金苹果大道。" + describeWeather(vars) + describeZombieWave(vars); },
     choices: [
       { text: "去金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(3) },
       { text: "去远翔楼", nextScene: "建平-远翔楼-1F", effect: updateTime(2) },
@@ -611,7 +611,7 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/pond.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "水池"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "水池。丧尸像被什么吸引似的沿着池边越聚越多，有些半个身子泡在水里——水的湿气让它们扎堆在这里。"; },
+    text: function(vars) { return "水池。丧尸像被什么吸引似的沿着池边越聚越多，有些半个身子泡在水里——水的湿气让它们扎堆在这里。\n" + describeWeather(vars); },
     choices: [
       { text: "去废弃小楼", nextScene: "建平-废弃小楼-1F", effect: updateTime(2) },
       { text: "去挹芬楼南门", nextScene: "建平-挹芬楼南门", effect: updateTime(2) },
@@ -624,17 +624,26 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/playground.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "操场"; },
-    text: function(vars) { 
-      if(vars._visit['建平-操场'] == 1) return "这里是操场。建平的操场比你初中的还小，因为这片市中心区域的建筑比较密集，实在挤不出空间。你在这里踢了3年球。\n\
-转头一看，球门里正好有个足球。要不踢一会儿吧。" + describeZombieWave(vars); 
-      return "这里是操场。远处高耸的松树和低矮的草丛，一起在微风中摇曳。" + describeZombieWave(vars);
+    text: function(vars) {
+      if (!vars._playgroundKicked) return "这里是操场。建平的操场不大——这片市中心区域实在挤不出空间，但你在这里踢了三年球。\n\
+靠近球门的地方，滚着一只孤零零的足球。\n" + describeWeather(vars) + describeZombieWave(vars);
+      return "这里是操场。远处高耸的松树和低矮的草丛，在视野尽头静静地立着。\n" + describeWeather(vars) + describeZombieWave(vars);
     },
     choices: [
       { text: "去食堂侧门", nextScene: "建平-食堂", effect: updateTime(2) },
       { text: "去弘渊楼后门", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
       { text: "去宿舍", nextScene: "建平-宿舍-门口", effect: updateTime(2) },
-      { text: "去踢球", nextScene: "建平-操场-踢球", effect: updateTime(2) },
+      { text: "去踢球", showCondition: "!_playgroundKicked", nextScene: "建平-操场-踢球", effect: updateTime(2) },
       { text: "躲到灌木丛", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-操场灌木丛" }
+    ]
+  },
+
+  "建平-操场-踢球": {
+    image: "images/placeholder.png" /* TODO: images/jianping/playgroundKick.png */,
+    onEnter: function(vars) { vars.personalMemorySet.add("起脚爆射"); vars._playgroundKicked = true; return {}; },
+    text: "你捞起那只孤零零的足球，退到中圈。四下很静，风从操场一头灌过来，把空着的球门网吹得鼓了一下。\n你没怎么助跑，脚背一送——球不高不低地飞过禁区，擦着横梁下沿，钉进了球门死角。球在网里弹了两下，停住了。\n嗯，很有脚感。\n一阵回忆涌了上来。高三那会儿，别人都在树荫里聊天，你就爱抱着球来这儿。中圈到球门，一脚一脚地试，非要踢出那种擦着横梁下沿落进死角的球才算完。班主任远远喊一句“别踢了，回教室刷题”，你嘴上应着，脚下没停。\n如今球门还在，可这个点了，不会再有哨声催你回教室了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[起脚爆射]</span>",
+    choices: [
+      { text: "把球留在球门里，离开", nextScene: "建平-操场", effect: updateTime(1) }
     ]
   },
 
@@ -686,7 +695,7 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "行政楼天台"; },
-    text: function(vars) { return "行政楼天台花园。以前只是听李彦青说行政楼楼顶有个校长的小花园，没想到这里真有。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "这里是行政楼天台花园。以前只是听李彦青说行政楼楼顶有个校长的小花园，没想到这里真有。\n" + describeWeather(vars) + describeZombieWave(vars); },
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-天台" },
       { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-行政楼-天台" } } },
@@ -702,7 +711,7 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼北门"; return {}; },
-    text: function(vars) { return "挹芬楼北门。门外就是金苹果广场，广场上几具丧尸正漫无目的地游荡。门内是挹芬楼的大厅——往里走，那股腐臭更浓了，挹芬楼里的丧尸明显比广场上密。"; },
+    text: function(vars) { return "挹芬楼北门。门外就是金苹果广场，广场上几具丧尸正漫无目的地游荡。门内是挹芬楼的大厅——往里走，那股腐臭更浓了，挹芬楼里的丧尸明显比广场上密。\n" + describeWeather(vars); },
     choices: [
       { text: "去金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(2) },
       { text: "进入挹芬楼", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
@@ -712,7 +721,7 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "挹芬楼南门"; return {}; },
-    text: function(vars) { return "挹芬楼南门。门外不远处是水池和思贤堂，丧尸沿着岸边密密麻麻地挤着。往里看，挹芬楼是全校丧尸最密集的地方，光站在门口就能感到那股压迫感。"; },
+    text: function(vars) { return "挹芬楼南门。门外不远处是水池和思贤堂，丧尸沿着岸边密密麻麻地挤着。往里看，挹芬楼是全校丧尸最密集的地方，光站在门口就能感到那股压迫感。\n" + describeWeather(vars); },
     choices: [
       { text: "去水池", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "去思贤堂", nextScene: "建平-思贤堂", effect: updateTime(2) },
@@ -1374,7 +1383,9 @@ Object.assign(storyData, {
   "建平-远翔楼-4F-高三14班-看B站": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.mixedMemorySet.add("腐烂尸城"); return {}; },
-    text: "彭奕宸点开视频。《腐烂尸城》——一个互动视频，讲一座城市被尸潮吞没，幸存者们在废墟中挣扎求生。\n画面里的丧尸、逃命的人群、绝望的呐喊……和你这些天的经历，是那么相似。\n你看着看着，仿佛自己也置身其中。\n<span style='color:#ffaa00;'>【记忆】你获得了一段混合记忆：腐烂尸城。</span>",
+    text: "彭奕宸点开视频。《腐烂尸城》——一个互动视频，讲一座城市被尸潮吞没，幸存者们在废墟中挣扎求生。\n\
+画面里的丧尸、逃命的人群、绝望的呐喊……和你这些天的经历，是那么相似。\n你看着看着，仿佛自己也置身其中。\n\
+ <span style='color:#ffaa00;'>【记忆】你获得了一段记忆：腐烂尸城。</span>",
     choices: [
       { text: "关掉视频", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
     ]
@@ -1532,7 +1543,7 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "宿舍门口"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "学生宿舍楼。楼门半掩着，往里看黑洞洞的，隐约能听到走廊里拖沓的脚步声——这栋楼里的丧尸比外面多得多。\n如果能把它们清干净，这里倒是个能安心过夜的落脚点。"; },
+    text: function(vars) { return "学生宿舍楼。楼门半掩着，往里看黑洞洞的，隐约能听到走廊里拖沓的脚步声——这栋楼里的丧尸比外面多得多。\n如果能把它们清干净，这里倒是个能安心过夜的落脚点。\n" + describeWeather(vars); },
     choices: [
       { text: "进入宿舍", nextScene: "建平-宿舍-内部", effect: updateTime(1) },
       { text: "去操场", nextScene: "建平-操场", effect: updateTime(2) },
@@ -1588,9 +1599,18 @@ Object.assign(storyData, {
 <span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "起来", nextScene: "建平-宿舍-内部", effect: updateTime(1) },
-      { text: "继续睡觉", nextScene: "建平-宿舍-内部-发现狼人杀手牌"}
+      { text: "继续休息", nextScene: "建平-宿舍-内部-发现狼人杀手牌", effect: updateTime(120) }
     ]
   },
+
+  "建平-宿舍-内部-发现狼人杀手牌": {
+    image: "images/placeholder.png",
+    text: "你翻身休息，眼皮渐渐沉下。再次醒来时，天色已经变了。你用力撑起身子，感觉摸到了什么————原来是一张狼人杀手牌。金色镶边，一个红眼的狼人画在上面，黑毛飘飘，张牙舞爪，像是在嘶吼。",
+    choices: [
+      { text: "继续", nextScene: "建平-宿舍-内部", effect: updateTime(1) }
+    ]
+  },
+
   "建平-宿舍-内部-清场": {
     image: "images/placeholder.png",
     text: "你贴着墙根冲进走廊，接连闪过几具丧尸的扑抓，一路把散在各处的它们引到楼梯口，反手将防火门猛地带上。\n门后传来沉闷的撞击声，渐渐弱了下去。你靠着门喘匀了气——这栋宿舍总算安静了。",
@@ -1991,14 +2011,26 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "远翔楼1F圆厅"; },
     text: function(vars) {
-      var desc = "圆厅。这个半圆形的小礼堂曾经是集会、颁奖、文艺汇演的地方，舞台上的幕布垂下半截。如今观众席空无一人，只有几把翻倒的椅子，和一地没人收的节目单。";
+      var desc = "圆厅。这个半圆形的小礼堂曾经是集会、颁奖、大学宣讲的地方，舞台上的幕布垂下半截。如今观众席空无一人，只有几把翻倒的椅子，和一地没人收的节目单。";
       if (jpPengAtPiano(vars, 1)) {
-        desc += "\n舞台边上那架钢琴前，彭奕宸正坐着，一下一下地按着琴键。琴声在空荡荡的圆厅里回荡，显得格外清楚。";
+        desc += "\n舞台边上那架钢琴前，彭奕宸正坐着，一下一下地按着琴键。琴声在空荡荡的圆厅里回荡，显得格外清楚。（他什么时候搬进来的？这琴本来不是在走廊上吗？）";
       }
       return desc;
     },
     choices: [
+      { text: "在旁边站着听一会儿", showCondition: function(v) { return jpPengAtPiano(v, 1) && !v.personalMemorySet.has("悠扬琴声"); }, nextScene: "建平-远翔楼-1F-圆厅-听琴" },
       { text: "离开", nextScene: "建平-远翔楼-1F", effect: updateTime(1) }
+    ]
+  },
+  "建平-远翔楼-1F-圆厅-听琴": {
+    image: "images/placeholder.png" /* TODO: images/jianping/yuanTingPiano.png */,
+    onEnter: function(vars) { vars.personalMemorySet.add("悠扬琴声"); return {}; },
+    text: "你放轻脚步，在观众席第一排坐下。彭奕宸没回头，指尖的曲子断断续续——弹错一个音，他就退回那一小节，从头重来一遍。\n\
+你听了一会儿，忽然想起高三那会儿——那时候这琴还摆在走廊上。你中午吃完饭经过，总会放慢脚步，站下来听一会儿。琴声不紧不慢，能把下午第一节课前那点烦闷都熨平。\n\
+大概他也不知道，走廊里那架琴替他收留过多少个午后的听众。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[悠扬琴声]</span>",
+    choices: [
+      { text: "悄悄起身离开", nextScene: "建平-远翔楼-1F-圆厅", effect: updateTime(1) }
     ]
   },
   "建平-远翔楼-2F-高三教室": {
@@ -2459,7 +2491,7 @@ Object.assign(storyData, {
   var EXCLUDE = /^(建平-躲藏-|建平-Harsh|结局-|复旦)/;
   var KEEP = /^建平-/;
   // 非地点节点关键词（每次新增此类场景需同步补充）
-  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住)$/;
+  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住|踢球|听琴)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;
