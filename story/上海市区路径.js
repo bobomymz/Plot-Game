@@ -86,6 +86,11 @@ Object.assign(storyData, {
 如果你不下高架继续往前，前方的高架被废弃车辆堵得严严实实，看不到尽头。",
     choices: [
       {
+        showCondition: function(v) { return !v.foundDadCar; },
+        text: "路边那辆银灰色的丰田",
+        nextScene: "济阳路跨线桥-弃车"
+      },
+      {
         text: "下高架",
         condition: "!hasNoTransportation",
         nextScene: "仁济南院-浦锦路",
@@ -177,6 +182,22 @@ Object.assign(storyData, {
     text: "你过了徐浦大桥，来到上海交通大学门口。校门前散落着几只行李箱，闸机大开，校园里静得反常。\n（作者尚未更新此处）",
     choices: [
       { text: "掉头返回", nextScene: "济阳路跨线桥" }
+    ]
+  }
+});
+
+// ===== 爸爸线 breadcrumb：济阳路跨线桥那辆弃车（丰田+篮球） =====
+Object.assign(storyData, {
+  "济阳路跨线桥-弃车": {
+    outdoor: true,
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.foundDadCar = true; return {}; },
+    text: "你离开主路，绕到那辆银灰色丰田旁。前盖凹了一块，驾驶门开着，钥匙孔空空——人走得急，连车门都没来得及锁。\n\
+后座横着一只瘪了大半的篮球——和你弟常练的那只一个牌子。旁边一瓶拧开盖的水已经见底。驾驶座上散着几张皱巴巴的纸，你抽出一张：社区篮球暑期班报名单。\n\
+年龄栏那一格，填着一笔歪歪扭扭、你眼熟得发慌的字迹。\n你捏着那张报名单站了一会儿，最后还是把它塞回了座位底下，轻轻带上了车门。\n\
+你希望这辆车上的人已经走远了。",
+    choices: [
+      { text: "继续上路", nextScene: "济阳路跨线桥" }
     ]
   }
 });

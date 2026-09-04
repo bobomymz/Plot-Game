@@ -20,6 +20,12 @@ Object.assign(storyData, {
         nextScene: "全家便利店内部"
       },
       {
+        // 妈妈遗物：店内的威胁清静后才注意到门口那辆倒下的早点车（先摆平迅捷丧尸才有这选项）
+        showCondition: "!FamilymartHasZombie && !foundMomRemains",
+        text: "店门口那辆歪倒的早点车，再仔细看看",
+        nextScene: "全家门口-妈妈的遗物"
+      },
+      {
         text: "转身离开",
         nextScene: "小区东门-整装待发"
       },
@@ -528,4 +534,26 @@ Object.assign(storyData, {
   },
 
 
+});
+
+// ===== 妈妈的遗物：门口那辆倒下的早点车（回收自己的手机） =====
+Object.assign(storyData, {
+  "全家门口-妈妈的遗物": {
+    image: "images/小区周边/全家和公交站/全家便利店门口.jpg",
+    onEnter: function(vars) {
+      vars.foundMomRemains = true;
+      if (!vars.hasPhone) vars.hasPhone = true;
+      return {};
+    },
+    text: "清静下来的店门口，你终于注意到那辆被撞歪的早点车。车斗里翻倒着一只你妈用了好几年的帽子。\n\
+车斗底下压着袋没来得及拎走的肉包，塑料袋口松着。你蹲下去，从肉包里摸出一部手机——是你的。屏幕碎了一道口，还剩最后一丝电。\n\
+你把它摁亮，微信停在最后几屏：\n\
+<span style='color: #aaa;'>6/28 06:57 妈：醒了吗？锅里有粥，妈出去买早饭，很快回来。</span>\n\
+<span style='color: #aaa;'>6/28 07:35 妈：店里忽然乱起来了，外面也是。你锁好门，千万别出来，等妈回——</span>\n\
+最后一条没有发出去。消息停在转圈的箭头，像半句话悬在半空。\n\
+你握着手机蹲了很久。天亮得刺眼。",
+    choices: [
+      { text: "收好手机，离开", nextScene: "全家便利店（环林东路）" }
+    ]
+  }
 });

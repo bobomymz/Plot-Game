@@ -104,7 +104,9 @@ const storyData = {
     hasCrumpledLeaflet: false, // 是否有揉皱的传单
     _leafletUsed: false,       // 是否已用传单打开过服装店304柜（传单使命完成）
     _cafeteriaEnterMinute: -1, // 长者食堂首次进入的游戏总分钟数（计时难度用，-1=未进入）
-    hasPhone: false,           // 是否找到华为店展示机
+    hasPhone: false,           // 是否拥有可用的手机(自己的原机[全家门口妈妈遗物] 或 华为店展示机)
+    foundMomRemains: false,    // 是否已在全家门口发现妈妈的遗物(回收自己的手机)
+    foundDadCar: false,        // 是否查看过济阳路跨线桥那辆弃车(爸爸线 breadcrumb)
     hasLiquidParaffin: false,  // 是否有医用石蜡油（益丰大药房左边货架）
     hasBottle: false,          // 是否有水瓶
     bottleWater: 0,            // 水瓶还有几口水（0=空瓶，1=有水；饮水机可反复打满）
