@@ -46,7 +46,7 @@ Object.assign(storyData, {
         effect: updateTime(4)
       },
       {
-        showCondition: "hasCane || hasMopHandle || hasIronPipe",
+        showCondition: "hasMeleeWeapon",
         text: "挥舞武器吓唬它们",
         nextScene: "三林安居苑-驱赶变异猫",
         effect: updateTime(2)
@@ -152,7 +152,7 @@ Object.assign(storyData, {
       var desc = "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。小广场一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
 再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。";      
       if (vars._lastScene === "三林安居苑-鹅卵石路" && vars.hasKey502) {
-        desc += "\n你捏了捏口袋里那枚钥匙——上面写着“402”，不知道对应哪扇门。";
+        desc += "\n你捏了捏口袋里那枚钥匙——上面写着“502”，对应七号楼五楼那扇门。";
       }
       return desc + "\n" + describeWeather(vars);
     },
@@ -259,7 +259,7 @@ Object.assign(storyData, {
 藤蔓从长椅下方的花坛里疯长出来，把它整个下半身缠得严严实实。它只能扭动上半身，朝你张着黑洞洞的嘴，发出嗬嗬的气声。";
       if (vars.hasCutter) {
         desc += "\n<span style='color: #ffaa00;'>口袋里的美工刀正好可以用来割断这些藤蔓。</span>";
-      } else if (vars.hasCane || vars.hasMopHandle || vars.hasIronPipe) {
+      } else if (vars.hasAxe || vars.hasCane || vars.hasMopHandle || vars.hasIronPipe) {
         desc += "\n你没带刀，但手里的家伙足够长——可以试着拨开藤蔓，或者直接给它一下。";
       }
       return desc;
@@ -278,10 +278,11 @@ Object.assign(storyData, {
         effect: updateTime(1, {set: {fightWithVineZombie: true}})
       },
       {
-        showCondition: "hasCane || hasMopHandle || hasIronPipe",
+        showCondition: "hasAxe || hasCane || hasMopHandle || hasIronPipe",
         text: function(vars) {
           let wea = "";
-          if(vars.hasCane) wea = "拐杖";
+          if(vars.hasAxe) wea = "斧头";
+          else if(vars.hasCane) wea = "拐杖";
           else if(vars.hasMopHandle) wea = "拖把杆";
           else if(vars.hasIronPipe) wea = "铁管";
           return `用${wea}拨开藤蔓`;
@@ -335,20 +336,8 @@ Object.assign(storyData, {
 藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。",
     choices: [
       {
-        showCondition: "hasIronPipe",
-        text: "铁管一击爆头",
-        nextScene: "三林安居苑-藤蔓丧尸-击杀",
-        effect: updateTime(1, { add: { strength: -1 } })
-      },
-      {
-        showCondition: "hasCane && !hasIronPipe",
-        text: "抡起拐杖，一击爆头",
-        nextScene: "三林安居苑-藤蔓丧尸-击杀",
-        effect: updateTime(1, { add: { strength: -1 } })
-      },
-      {
-        showCondition: "hasMopHandle && !hasIronPipe",
-        text: "拖把杆横扫，猛敲过去",
+        showCondition: "meleeWeaponTier >= 2",
+        text: function(vars) { return meleeWeaponName(vars) + "一击爆头"; },
         nextScene: "三林安居苑-藤蔓丧尸-击杀",
         effect: updateTime(1, { add: { strength: -1 } })
       },
@@ -854,7 +843,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       {
         text: "去厨房看看有什么物资",
         nextScene: "三林安居苑-厨房",
-        condition: "hasCane || hasMopHandle || hasIronPipe",
+        condition: "hasMeleeWeapon",
         elseScene: "三林安居苑-厨房危险"
       },
       {
@@ -1171,7 +1160,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       },
       {
         text: "离开",
-        nextScene: "三林安居苑-离开卧室"
+        nextScene: "三林安居苑-7号楼-1楼-某户"
       }
     ]
   },

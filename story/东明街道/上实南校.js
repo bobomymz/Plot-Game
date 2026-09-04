@@ -374,7 +374,7 @@ Object.assign(storyData, {
     }
   },
 
-  "上实南校-化学实验室-面具坏了被毒死": {
+  "结局-上实南校-化学实验室-面具坏了被毒死": {
     image: "images/placeholder.png" /* TODO: images/上实南校/chemLab.png */,
     text: function(vars) {
       if(vars._visit['民防设施-物资区-检修记录表']) return "你戴上面具，快步走进实验室。\n\
@@ -1140,7 +1140,7 @@ Object.assign(storyData, {
         nextScene: "上实南校-后门-潜行"
       },
       {
-        condition: "hasIronPipe || hasCane || hasMopHandle",
+        condition: "hasAxe || hasIronPipe || hasCane || hasMopHandle",
         text: "用家伙砸断锁链",
         nextScene: "上实南校-后门-砸锁",
         elseScene: "上实南校-后门-无工具"
@@ -1181,7 +1181,8 @@ Object.assign(storyData, {
     onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
     text: function(vars) {
       let wpn = "手中的家伙";
-      if (vars.hasIronPipe) wpn = "铁管";
+      if (vars.hasAxe) wpn = "斧头";
+      else if (vars.hasIronPipe) wpn = "铁管";
       else if (vars.hasCane) wpn = "拐杖";
       else if (vars.hasMopHandle) wpn = "拖把杆";
       return "你举起" + wpn + "，对准锁链的连接处狠狠砸了下去。金属碰撞声在校园里回荡——第一下没砸开。你又砸了一下。锁链上的铁环变形了，但还是没断。\n值日教师被声音吸引，朝后门这边走来。\n第三下——锁链终于崩断了。铁环弹飞出去，砸在地上叮当作响。\n你拉开门，四个人冲了出去。值日教师已经走到巷子中间，离你们只有几米远——但你们已经出了校门，顺着窄巷跑了出去。它在后面追了几步，然后停住了。\n你们终于离开了学校。";

@@ -717,15 +717,8 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        showCondition: "hasCane",
-        text: "抡起拐杖敲它脑袋",
-        nextScene: "安盛街-文具店击杀",
-        condition: "strength >= 3",
-        elseScene: "结局-安盛街-文具店被反杀"
-      },
-      {
-        showCondition: "hasMopHandle",
-        text: "抄起拖把杆砸过去",
+        showCondition: "hasMeleeWeapon",
+        text: function(vars) { return "抄起" + meleeWeaponName(vars) + "砸过去"; },
         nextScene: "安盛街-文具店击杀",
         condition: "strength >= 3",
         elseScene: "结局-安盛街-文具店被反杀"
@@ -737,9 +730,7 @@ Object.assign(storyData, {
     image: "images/安盛街/晨光文具店/丧尸被砸倒.jpg",
     onEnter: { add: { strength: -1 }, set: { _stationeryZombieDead: true } },
     text: function(vars) {
-      let weaponDesc = "你举起手中的家伙";
-      if (vars.hasCane) weaponDesc = "你抡起金属拐杖";
-      else if (vars.hasMopHandle) weaponDesc = "你抄起拖把杆";
+      let weaponDesc = "你举起" + (meleeWeaponName(vars) || "手中的家伙");
       return weaponDesc + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n\
 你补了几下，确定它不会再动了。收银台后面的小门看起来通往更里面——也许仓库里还有什么有用的东西————或者是更多丧尸。";
     },
@@ -1241,7 +1232,7 @@ Object.assign(storyData, {
       {
         showCondition: "!_visit['安盛街-食品店战斗']",
         text: "抄家伙打它",
-        condition: "hasCane || hasMopHandle || hasIronPipe",
+        condition: "hasMeleeWeapon",
         nextScene: "安盛街-食品店战斗",
         elseScene: "结局-被丧尸扑倒咬死"
       },
@@ -1421,7 +1412,7 @@ Object.assign(storyData, {
       {
         text: "砸开右边店铺的门",
         nextScene: "安盛街-破门逃生",
-        condition: "hasCane || hasMopHandle || hasIronPipe",
+        condition: "hasAxe || hasCane || hasMopHandle || hasIronPipe",
         elseScene: "结局-安盛街-被尸潮吞没"
       },
       {

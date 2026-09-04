@@ -230,6 +230,15 @@ function meleeWeaponName(vars) {
   return "";
 }
 
+// 近战武器档位：弱(1 美工刀/拖把杆) 中(2 拐杖/铁管) 强(3 匕首/斧头)，无(0)
+// 强丧尸用 condition: "meleeWeaponTier >= N" 挡弱武器
+function meleeWeaponTier(vars) {
+  if (vars.hasAxe || vars.hasDagger) return 3;
+  if (vars.hasIronPipe || vars.hasCane) return 2;
+  if (vars.hasCutter || vars.hasMopHandle) return 1;
+  return 0;
+}
+
 // ====== 记忆闪色辅助函数 ======
 
 function randSeq(colors, len) {

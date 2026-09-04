@@ -106,7 +106,7 @@ Object.assign(storyData, {
         text: "躲到货架后面",
         condition: "hasDiary",
         nextScene: "躲在货架后",
-        elseScene: "脚步声太大啦"
+        elseScene: "结局-脚步声太大啦"
       },
       {
         showCondition: "hasIronPipe",
@@ -162,7 +162,7 @@ Object.assign(storyData, {
   "丧尸被零食引开": {
     text: "你丢出零食，薯片在地上发出清脆的响声。丧尸像发现了猎物一般扑了过去。",
     qte: {
-      timeOut: 7000,
+      timeout: 7000,
       onTimeout: "结局-被丧尸扑倒咬死"
     },
     choices: [
@@ -195,7 +195,7 @@ Object.assign(storyData, {
 只是轻轻的一声，那只丧尸动作突然停了下来，像是有所察觉，向你缓缓走来。\n\
 ",
     qte: {
-      timeOut: 5000,
+      timeout: 5000,
       onTimeout: "结局-被丧尸扑倒咬死"
     },
     choices: [

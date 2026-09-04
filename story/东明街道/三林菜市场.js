@@ -44,7 +44,7 @@ Object.assign(storyData, {
       var cs = [];
       if (!vars._marketHallCleared) {
         cs.push({ text: "绕开它，从摊位底下钻过去", nextScene: "菜市场-大厅-潜行", effect: updateTime(2) });
-        cs.push({ showCondition: "hasIronPipe", text: "抄家伙把它彻底解决", nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
+        cs.push({ showCondition: "hasMeleeWeapon", text: "抄家伙把它彻底解决", nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
         cs.push({ text: "太危险了，退回去", nextScene: "安盛街西侧", effect: updateTime(1) });
       } else {
         cs.push({ text: "前往冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) });
@@ -67,10 +67,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/菜市场/大厅-清场.jpg */,
     onEnter: { set: { _marketHallCleared: true } },
     text: function(vars) {
-      var wpn = "手中的家伙";
-      if (vars.hasIronPipe) wpn = "铁管";
-      else if (vars.hasCane) wpn = "拐杖";
-      else if (vars.hasMopHandle) wpn = "拖把杆";
+      var wpn = meleeWeaponName(vars) || "手中的家伙";
       return "你走上前，它朝你张开了嘴。你举起" + wpn + "，给了它一下。\n它抽搐了几下，不动了。你把它拖到冰柜后面，用一张脏布盖上——至少看着不那么碍眼。\n大厅安静了下来。";
     },
     choices: [

@@ -1608,48 +1608,6 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
 
-  // ========== 记忆闪色测试场景 ==========
-
-  "丧尸袭来": {
-    image: "images/zombieWaveSmashYouIntoPieces.png",
-    onEnter: initMemoryGame(["红","蓝","绿"], 5),
-    text: "丧尸从四面八方朝你涌来！你必须在瞬间记住它们的颜色分布——这将决定你的反击策略。\n集中注意力，仔细看！",
-    choices: [
-      {
-        text: "输入你看到的颜色分布（例如：3红2蓝）",
-        input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
-        condition: checkFlashAnswer,
-        elseScene: "颜色记错了",
-        nextScene: "战斗胜利",
-        effect: updateTime(5, { add: { strength: -1 } }),
-        timeout: 8000,
-        timeoutScene: "颜色记错了"
-      }
-    ]
-  },
-
-  "战斗胜利": {
-    image: "images/home/bedroom.png",
-    text: "你成功记下了丧尸的颜色分布，制定了精准的反击策略！\n战斗胜利！\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】这是个测试场景，你已经成功验证了记忆闪色机制。</span>",
-    choices: [
-      {
-        text: "返回卧室",
-        nextScene: "初始卧室"
-      }
-    ]
-  },
-
-  "颜色记错了": {
-    image: "images/zombieKnockYouDown.png",
-    text: "你记错了颜色分布，反击策略完全错误——丧尸抓住了你的破绽！\n<span style='color: #ff4444;'>—— 测试失败 ——</span>\n不过别担心，这只是测试，你可以回溯再试一次。",
-    choices: [
-      {
-        text: "返回卧室重新挑战",
-        nextScene: "初始卧室"
-      }
-    ]
-  },
-
   // ========== 4楼：丧尸遭遇 + 记忆闪色 ==========
 
   "樱桃苑-4楼": {

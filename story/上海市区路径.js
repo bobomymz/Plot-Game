@@ -145,3 +145,38 @@ Object.assign(storyData, {
   }
 
 });
+
+// ===== 未实装区域 · 占位 stub（先能走通，剧情待后续制作） =====
+Object.assign(storyData, {
+  "前往迪士尼": {
+    image: "images/placeholder.png",
+    text: "你沿匝道朝迪士尼方向开去，路越走越偏。远处树林和围栏后隐约可见城堡的塔尖，但通往那里的路到此为止了。\n（作者尚未更新此处）",
+    choices: [
+      { text: "掉头返回", nextScene: "杨高南路立交桥" }
+    ]
+  },
+
+  "骑车前往临港新城": {
+    image: "images/placeholder.png",
+    text: "你骑车朝临港新城方向驶去，道路在城郊的农田与集装箱堆场间延伸，望不到尽头。\n（作者尚未更新此处）",
+    choices: [
+      { text: "掉头返回", nextScene: "杨高南路立交桥" }
+    ]
+  },
+
+  "三条出城线的抉择": {
+    image: "images/placeholder.png",
+    text: "你停在出城的岔口前，路牌指向三个方向，每条路尽头都热浪蒸腾、看不清去向。\n（作者尚未更新此处）",
+    choices: [
+      { text: "掉头返回", nextScene: "杨高南路立交桥" }
+    ]
+  },
+
+  "上海交通大学": {
+    image: "images/placeholder.png",
+    text: "你过了徐浦大桥，来到上海交通大学门口。校门前散落着几只行李箱，闸机大开，校园里静得反常。\n（作者尚未更新此处）",
+    choices: [
+      { text: "掉头返回", nextScene: "济阳路跨线桥" }
+    ]
+  }
+});

@@ -62,7 +62,7 @@ Object.assign(storyData,{
       {
         text: "给它来一下",
         nextScene: "益丰大药房-击杀",
-        condition: function(vars) { return (vars.hasCane || vars.hasMopHandle || vars.hasIronPipe || vars.hasCutter) && vars.strength >= 2; },
+        condition: function(vars) { return hasMeleeWeapon(vars) && vars.strength >= 2; },
         elseScene: "益丰大药房-被反杀"
       },
       {
@@ -282,7 +282,7 @@ Object.assign(storyData,{
     ]
   },
 
-  "库房里的丧尸": {
+  "益丰大药房-库房里的丧尸": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/库房里的丧尸.png */,
     text: "你发现了一只丧尸，正在向你移动。\n\
 它穿着一件皱巴巴的白大褂——是药房的员工。但它的身体看起来不太对劲：裸露的皮肤覆盖着一层暗沉的黑色，像被什么东西从头到脚染过一遍。\n\
@@ -349,7 +349,7 @@ Object.assign(storyData,{
     text: "你到了办公室门口。办公室的门关着，里面透出冷白的光。门上贴着一张被汗浸皱的便签。\n\
 <span style = 'font-style: italic;'><em>里面有人。我是店长赵广成。别撞门，推一下就开了。求你不是那种东西就行。</em></span></>\n",
     qte: {
-      time: 5000,
+      timeout: 5000,
       onTimeout: "益丰大药房-办公室门口-门锁上了"
     },
     choices: [
@@ -419,7 +419,7 @@ Object.assign(storyData,{
       }
 
       // 解脱选项（有武器、未杀）
-      if ((vars.hasCane || vars.hasMopHandle || vars.hasIronPipe || vars.hasCutter) && !vars.pharmacyApprenticeKilled) {
+      if (hasMeleeWeapon(vars) && !vars.pharmacyApprenticeKilled) {
         opts.push({
           text: "给她一下子",
           nextScene: "益丰大药房-解脱学徒",

@@ -252,6 +252,8 @@ const storyData = {
       hasFood: function(v) { return hasFood(v); }, // 是否有食物
       zombieAtHomeDoor: function(v) { return zombieAtHomeDoor(v); }, // 丧尸还在门口
       hasNoTransportation: function(v) { return hasNoTransportation(v); }, // 是否没有交通工具
+      hasMeleeWeapon: function(v) { return hasMeleeWeapon(v); }, // 是否有近战武器（普通+斧头/匕首，含在 string condition 里直接引用）
+      meleeWeaponTier: function(v) { return meleeWeaponTier(v); }, // 近战武器档位 0-3，强丧尸用 "meleeWeaponTier >= N" 挡弱武器
       zombieOutsideHome: function(v) { return zombieOutsideHome(v); }, // 丧尸在门口
       // 也支持函数（复杂逻辑）
       // fatigue: function(v) { return Math.max(0, 10 - v.strength); }
