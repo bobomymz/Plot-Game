@@ -420,6 +420,12 @@ Object.assign(storyData, {
     },
     choices: [
       {
+        showCondition: function(v) { return !v.askTunnelLore; },
+        text: "“周师傅，三林路上那几家老店，你熟吗？”",
+        nextScene: "理发店-地道闲聊",
+        effect: { set: { askTunnelLore: true } }
+      },
+      {
         text: "“谢谢你，周师傅”",
         nextScene: "理发店-店内"
       },
@@ -1552,4 +1558,15 @@ Object.assign(storyData, {
   "安盛街西侧-躲藏": hideOnLocation("images/placeholder.png" /* TODO: images/anshengStreet/westStreet.png */,
     "你躲到一块倒下的巨型广告牌后面，但铁架发出吱嘎声——几只丧尸爬上了倒下的广告牌。铁架在摇晃，快撑不住了！你一脚踹开最近的那只，从铁架缝隙里钻了出去。",
     "你躲到一块倒下的巨型广告牌后面。铁架和帆布形成了一个三角空间，像街边的一个临时掩体。外面的丧尸在广告牌另一侧徘徊，看不见你。等声音远去，你才从里面爬出来。"),
+});
+
+// ===== 周师傅 · 老底子闲聊（联华超市→五金店地道线索） =====
+Object.assign(storyData, {
+  "理发店-地道闲聊": {
+    image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
+    text: "周师傅眯起眼，像是在从你脸上认什么东西：“你爸当年带你来剃过冬瓜头，我记得你。”\n他往窗外努了努嘴：“三林路那几家都是老街坊。联华超市底下是早年挖的防空洞，改成了库房——货架后头有块能掀开的地板，底下跟五金店是通的。老辈人图省事，进货都从地底下走。”\n“五金店正门你别进，那味儿不对。要真缺工具，绕去联华超市看看，指不定还能下得去——就是几十年没人走，怕早就塌了。”",
+    choices: [
+      { text: "“记住了，谢谢你，周师傅。”", nextScene: "理发店-店内" }
+    ]
+  }
 });

@@ -15,7 +15,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if(vars._visit["初始卧室"] === 1) {
-        return "你是建平中学的毕业生，高考已经结束，日子仿佛被抽去了骨架，软塌塌地摊在七月闷热的空气里。这天早上你醒来时，阳光已经穿过半旧的窗帘，在地板上烙下懒洋洋的光斑。\
+        return "你是建平中学的毕业生，高考已经结束，日子仿佛被抽去了骨架，软塌塌地摊在六月闷热的空气里。这天早上你醒来时，阳光已经穿过半旧的窗帘，在地板上烙下懒洋洋的光斑。\
     <span style='font-size: 12px;'>请往下滑动哦</span>\n\
 闹钟显示7:30，如果是在往日，早读已经过去一半了。\n哦，这么算的话，再过半小时，妈妈就买早餐回来了。<span style='font-size: 12px;'>鼠标点击此框可以快速过剧情哦，若再点一次可以展开</span>";
       }
@@ -210,7 +210,8 @@ Object.assign(storyData, {
       midnight: "images/home/客厅-night&midnight.jpg"
     }),
     text: "你走到客厅。沙发、电视、弟弟的书桌，还有几把小凳子，静静地躺着。\n\
-爸爸早上应该带弟弟上篮球课去了。",
+爸爸早上应该带弟弟上篮球课去了。\n\
+茶几下层那个插线板上，爸爸和弟弟的充电头都还插着，独独你的不在——你昨晚睡前把手机压在枕头底下，早上摸了个空。也许是爸妈临走前没收了，免得你又窝在被窝里刷到日上三竿。可现在，你宁愿是妈妈带走了它。",
     choices: [
       {
         showCondition: "!_visit['沙发上的小熊']",
@@ -247,7 +248,7 @@ Object.assign(storyData, {
     image: "images/home/zombieOutsideHome.png",
     text: "你按下把手，拉开家门，外面竟是一只蠢蠢欲动的丧尸！",
     qte: {
-      timeout: 5000,              // 5 秒（这次选错就是即死结局，没什么决策深度，所以时间紧）
+      timeout: 7000,              // 7 秒（开场第一个QTE，纯反应无权衡，给第一次玩的玩家留点余量）
       onTimeout: "结局-被丧尸扑倒咬死"  // 超时则被咬死
     },
     onEnter: {
@@ -277,7 +278,7 @@ Object.assign(storyData, {
         elseScene: "结局-颜色错误，被丧尸咬死",
         effect: updateTime(5, { add: { strength: -1 } }),
         nextScene: "家外楼梯间的抉择",
-        timeout: 10000,           // ← 10秒倒计时
+        timeout: 12000,           // ← 12秒倒计时（首课闪色，多留几秒输入）
         timeoutScene: "结局-被丧尸扑倒咬死"       // ← 超时自动触发
       }
     ]
@@ -312,7 +313,7 @@ Object.assign(storyData, {
     text: "你跑到楼梯间。一只丧尸突然闪到了你的身后！\n\
 你只能快速选择一个楼层离开，或者躲起来，祈祷丧尸不会追你……",
     qte: {
-      timeout: 10000,              // 10 秒
+      timeout: 15000,              // 15 秒（六条去路要读，且无进度条，放宽）
       hidden: true,
       onTimeout: "结局-被丧尸扑倒咬死"  // 超时则被咬死
     },
@@ -351,7 +352,7 @@ Object.assign(storyData, {
     text: "你躲进了电梯，丧尸没有追上来。你显然不能继续待在你家的2楼，需要赶快选个楼层离开。\nF5的按钮被人撬掉了，按不了——不知道是谁干的。",
     onEnter: updateTime(1), // 花1分钟到达2楼
     qte: {
-      timeout: 15000,              // 15 秒
+      timeout: 20000,              // 20 秒
       onTimeout: "结局-电梯门开了"  // 超时则被咬死
     },
     choices: [ // 选择楼层
@@ -410,7 +411,7 @@ Object.assign(storyData, {
     image: "images/home/zombieScare.png",
     text: "突然，一只丧尸不知从什么地方窜了出来，向你扑来！",
     qte: {
-      timeout: "5000 - repeatedClickTimes * 2000 - foodUnderBed * 999", // 5 秒，但每次点击减少2秒
+      timeout: "8000 - repeatedClickTimes * 2000 - foodUnderBed * 999", // 8 秒起，但每次点击减少2秒
       onTimeout: "结局-反应太慢被咬死了"  // 超时则被咬死
     },
     choices: [
@@ -726,7 +727,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     text: "你走在前往西出口的路上。这里你轻车熟路，因为平时雨天你都会走这条路回家。\n\
 突然，一只丧尸从一根柱子后面闪了出来，你无法继续前进。",
     qte: {
-      timeout: 3000,              // 3秒
+      timeout: 6000,              // 6秒
       onTimeout: "结局-被丧尸扑倒咬死"  // 超时则被咬死
     },
     choices: [
@@ -746,7 +747,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     onEnter: {shake: true},
     text: "丧尸向你袭来，你要攻击它哪里？",
     qte: {
-      timeout: 2000,              // 2秒
+      timeout: 6000,              // 6秒（部位教学带体力门槛，需读选项，全作最短的2秒上调）
       onTimeout: "结局-被丧尸扑倒咬死"  // 超时则被咬死
     },
     choices: [
@@ -879,7 +880,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: "images/home/一脚击退地库丧尸.png" ,
     text: "你一拳打在丧尸胸口，将它击退，它踉跄几步，眼神凶狠，加快速度向你扑来",
     qte: {
-      timeout: 5000,
+      timeout: 7000,
       onTimeout: "结局-被丧尸扑倒咬死"
     },
     choices: [
@@ -897,7 +898,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: "images/home/防爆门.jpg",
     text: "你仓皇逃窜，眼前是一道防爆门，关上它就能挡住丧尸！",
     qte: {
-      timeout: 3000,              // 3秒
+      timeout: 6000,              // 6秒（方向把手两选一仍保留盲猜的死亡幽默，只是别让玩家没看清就死）
       onTimeout: "结局-被丧尸扑倒咬死"  // 超时则被咬死
     },
     choices: [
@@ -1161,7 +1162,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "民防设施-楼梯间": {
     image: "images/home/等候室走廊.jpg",
     qte: {
-      timeout: 5000,
+      timeout: 8000,
       onTimeout: "结局-被丧尸扑倒咬死"
     },
     text: "你往走廊深处走，发现了一个楼梯间。<span style='color:red;'>突然，你听到砰的一声，进来的那扇铁门被硬生生撞开了，一个魁梧的丧尸钻了进来。</span>你要怎么办？",
@@ -1235,7 +1236,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: "images/home/storageRoom.png",
     text: "你抬头一看，两只丧尸一前一后从杂物堆里走了出来，对你虎视眈眈。",
     qte: {
-      timeout: 5000,
+      timeout: 8000,
       hidden: true,
       onTimeout: "结局-被丧尸扑倒咬死",
     },
@@ -1623,7 +1624,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         nextScene: "樱桃苑-4楼-胜利",
         elseScene: "樱桃苑-4楼-失败",
         effect: updateTime(3, { add: { strength: -1 } }),
-        timeout: 10000,                     // ← 10秒倒计时（4色闪完约3秒，留约7秒输入）
+        timeout: 12000,                     // ← 12秒倒计时（4色闪完约3秒，留约9秒输入）
         timeoutScene: "樱桃苑-4楼-失败"       // ← 超时=反应太慢，被抓伤但逃脱
       }
     ]
