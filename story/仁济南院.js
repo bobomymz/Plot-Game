@@ -194,8 +194,10 @@ Object.assign(storyData, {
       var desc = "地下停车场的入口坡道黑黢黢的，往下看不到底。入口处横着一辆失控的轿车，挡风玻璃碎了一半。\n";
       if (vars.hasTorch) {
         desc += "你打开照明，光线勉强能照清前方几米——这条潜行路线通向医院的后勤区。";
+      } else if(vars.hasPhone && vars.phoneBattery > 0) {
+        desc += "你打开手机，屏幕的微光勉强能照清前方几米——这条潜行路线通向医院的后勤区。手机电量还剩 " + vars.phoneBattery + "%。";
       } else if(vars.hasPhone) {
-        desc += "你打开手机，光线勉强能照清前方几米——这条潜行路线通向医院的后勤区。";
+        desc += "你摁亮手机——屏幕闪了一下就黑了。电量见底，和没有一样。";
       } else {
         desc += "里面比外面暗得多——没有照明的话，进去什么都看不见，只会撞上不知道什么东西。";
       }
@@ -203,10 +205,10 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        condition: "hasTorch || hasPhone",
+        condition: "hasTorch || (hasPhone && phoneBattery > 0)",
         text: "进去看看",
         nextScene: "仁济南院-后勤通道",
-        effect: updateTime(5)
+        effect: function(vars) { return updateTime(5, { add: { phoneBattery: vars.hasTorch ? 0 : -5 } })(vars); }
       },
       {
         text: "去浦锦路",

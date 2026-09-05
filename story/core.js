@@ -106,6 +106,7 @@ const storyData = {
     _leafletUsed: false,       // 是否已用传单打开过服装店304柜（传单使命完成）
     _cafeteriaEnterMinute: -1, // 长者食堂首次进入的游戏总分钟数（计时难度用，-1=未进入）
     hasPhone: false,           // 是否拥有可用的手机(自己的原机[全家门口妈妈遗物] 或 华为店展示机)
+    phoneBattery: 0,           // 手机剩余电量%(妈妈遗物+20/华为展示机+50；照明、WiFi、扫码节点各-5，无充电途径)
     foundMomRemains: false,    // 是否已在全家门口发现妈妈的遗物(回收自己的手机)
     foundDadCar: false,        // 是否查看过济阳路跨线桥那辆弃车(爸爸线 breadcrumb)
     hasLiquidParaffin: false,  // 是否有医用石蜡油（益丰大药房左边货架）
@@ -241,6 +242,7 @@ const storyData = {
   _caps: {
     strength:  { min: 0, max: 10 },
     chasedByZombies:  { min: 0, max: 5 },
+    phoneBattery: { min: 0, max: 100 },
     // 未来随时加：
     // sanity:   { min: 0, max: 100 },
     // bagVolume:{ min: 1, max: 20 },
@@ -532,10 +534,10 @@ const storyData = {
         nextScene: "整理整理-吃冻肉"
       },
       {
-        showCondition: "hasPhone && _cafeteriaWifiOn && currentPlace == '长者食堂'",
-        text: "用手机看看有什么消息",
+        showCondition: "hasPhone && phoneBattery > 0 && _cafeteriaWifiOn && currentPlace == '长者食堂'",
+        text: "用手机看看有什么消息（电量 {phoneBattery}%）",
         nextScene: "长者食堂-手机信息",
-        effect: function(v) { v.positionAfterOperation = v.positionAfterOperation || "长者食堂-内部"; return {}; }
+        effect: function(v) { v.positionAfterOperation = v.positionAfterOperation || "长者食堂-内部"; v.phoneBattery = Math.max(0, v.phoneBattery - 5); return {}; }
       },
       {
         showCondition: "hasEbikeKey",

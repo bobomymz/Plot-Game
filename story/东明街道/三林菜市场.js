@@ -84,16 +84,19 @@ Object.assign(storyData, {
     },
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "员工通道", _marketEntry: "员工通道" } },
     text: function(vars) {
-      if (vars.hasTorch || vars.hasPhone) {
+      if (vars.hasTorch || (vars.hasPhone && vars.phoneBattery > 0)) {
         return "你穿过长者食堂后厨那道冷藏室的门，走进一条堆着空菜筐的过道。头顶的灯管蒙着灰，但借着你手里的光，通道里的情况还算看得清。\n前方分岔出三条通道——左边堆着几只倒扣的塑料周转箱，中间是一条直道，右边好像通向一个小房间。";
+      }
+      if (vars.hasPhone && vars.phoneBattery <= 0) {
+        return "你推开冷藏室的门，走进一条堆着空菜筐的过道。你摁亮手机想照个亮——屏幕闪了一下就黑了，电量见底。\n你只能摸黑往前挪，脚下踩到一只滚落的菜筐，差点绊倒。前方好像分出了岔路，但你什么也看不清。";
       }
       return "你推开冷藏室的门，走进一条堆着空菜筐的过道。门在身后咔哒一声合上——你面前一片漆黑。\n你摸黑往前走了几步，脚下踩到一只滚落的菜筐，差点绊倒。手边似乎摸到了几面墙，前方好像分出了岔路，但你什么也看不清。";
     },
     choices: [
       {
         text: "往左边那条通道走",
-        nextScene: function(vars) { return (vars.hasTorch || vars.hasPhone) ? "菜市场-冷库区" : "菜市场-通道迷路"; },
-        effect: updateTime(2)
+        nextScene: function(vars) { return (vars.hasTorch || (vars.hasPhone && vars.phoneBattery > 0)) ? "菜市场-冷库区" : "菜市场-通道迷路"; },
+        effect: function(vars) { return updateTime(2, { add: { phoneBattery: (vars.hasTorch || !vars.hasPhone) ? 0 : -5 } })(vars); }
       },
       {
         text: "往中间那条通道走",
@@ -117,7 +120,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/菜市场/员工通道-暗.jpg */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: function(vars) {
-      if (vars.hasTorch || vars.hasPhone) {
+      if (vars.hasTorch || (vars.hasPhone && vars.phoneBattery > 0)) {
         return "你沿着通道走了几步，发现前方是一条死路——堆满的旧货架堵死了去路。你回想了一下，刚才岔路口那几个方向里，好像有个方向你漏看了。\n你退回了岔路口，重新打量四周。";
       }
       return "你凭着感觉往前走，却一头撞进了一个杂物间——手在黑暗中碰到冰冷的东西，像是铁钩。你打了个寒战，赶紧退回去。黑暗中，你隐约觉得背后有拖沓的脚步声。你不敢再乱闯了。";

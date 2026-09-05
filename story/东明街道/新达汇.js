@@ -685,7 +685,7 @@ Object.assign(storyData, {
         text: "收好手机",
         condition: "itemCount < bagVolume",
         nextScene: "新达汇-1F南走廊东",
-        effect: updateTime(1, { set: { hasPhone: true }, add: { itemCount: 1 } }),
+        effect: updateTime(1, { set: { hasPhone: true, phoneBattery: 50 }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
     ]
@@ -2673,14 +2673,14 @@ Object.assign(storyData, {
       {
         text: "用手机扫描无人机二维码",
         nextScene: "新达汇-屋顶花园-扫码",
-        effect: updateTime(1),
-        showCondition: "hasPhone &&  (_droneBattery > 0 || !_powerOut)",
+        effect: updateTime(1, { add: { phoneBattery: -5 } }),
+        showCondition: "hasPhone && phoneBattery > 0 && (_droneBattery > 0 || !_powerOut)",
       },
       {
         text: "走近看看那架无人机",
         nextScene: "新达汇-屋顶花园-看无人机",
         effect: updateTime(1),
-        showCondition: "!hasPhone",
+        showCondition: "!hasPhone || phoneBattery <= 0",
       },
       {
         text: "前往入口",
@@ -2692,7 +2692,10 @@ Object.assign(storyData, {
   "新达汇-屋顶花园-看无人机": {
     image: "images/新达汇/观察无人机.jpg",
     onEnter: { set: { showRain: true } },
-    text: "白色的外卖无人机，侧面贴着二维码。你没有手机能扫它。",
+    text: function(vars) {
+      if (vars.hasPhone) return "白色的外卖无人机，侧面贴着二维码。你摁亮手机——屏幕闪了一下就黑了，电量见底，扫不了码。";
+      return "白色的外卖无人机，侧面贴着二维码。你没有手机能扫它。";
+    },
     choices: [
       {
         text: "返回",

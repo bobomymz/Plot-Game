@@ -533,16 +533,12 @@ Object.assign(storyData, {
     text: "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。\n\n—— 结局：员工通道的迅捷丧尸 ——"
   },
 
-
-});
-
 // ===== 妈妈的遗物：门口那辆倒下的早点车（回收自己的手机） =====
-Object.assign(storyData, {
   "全家门口-妈妈的遗物": {
     image: "images/小区周边/全家和公交站/全家便利店门口.jpg",
     onEnter: function(vars) {
       vars.foundMomRemains = true;
-      if (!vars.hasPhone) vars.hasPhone = true;
+      if (!vars.hasPhone) { vars.hasPhone = true; vars.phoneBattery = 5; }
       return {};
     },
     text: "清静下来的店门口，你终于注意到那辆被撞歪的早点车。车斗里翻倒着一只你妈用了好几年的帽子。\n\

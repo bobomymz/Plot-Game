@@ -269,9 +269,13 @@ Object.assign(storyData, {
   // --- 地面停车场（陈默被困） ---
   "金谊广场-地面停车场": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.jpg */,
+    image: timeImage({
+      morning: "images/金谊广场/地面停车场.jpg",
+      night: "images/金谊广场/地面停车场-night.jpg"
+    }),
     onEnter: function(vars) {
       vars.showZombies = true;
+      vars.showRain = true;
     },
     text: function(vars) {
       var desc = "你走进地面停车场。这里紧邻小河，挨着一个新建的“泽宇北岸球场”，空气中弥漫着潮湿的水汽和一股淡淡的腥味。\n";
@@ -488,7 +492,7 @@ Object.assign(storyData, {
 
   // --- B2车库入口（??? 盲选） ---
   "金谊广场-B2车库入口": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/B2车库入口.jpg */,
+    image: "images/金谊广场/B2车库入口.png" /* TODO: images/金谊广场/B2车库入口.jpg */,
     text: function(vars) {
       if (vars.hasTorch) {
         return "你找到了地下车库的入口。坡道向下延伸，越往里越黑。\n\
@@ -502,6 +506,7 @@ Object.assign(storyData, {
         return [
           { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(2) },
           { text: "去消防通道", nextScene: "金谊广场-B2摸到死路", effect: updateTime(1) },
+          { text: "往深处走", nextScene: "金谊广场-B2 地下车库", effect: updateTime(2) },
           { text: "退回地面", nextScene: "金谊广场地面入口", effect: updateTime(2) }
         ];
       } else {
@@ -529,7 +534,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-B2货梯间": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/B2货梯间.jpg */,
+    image: "images/金谊广场/B2货梯间.jpg" /* TODO: images/金谊广场/B2货梯间.jpg */,
     text: function(vars) {
       var desc = "你找到了货梯间。货梯的门开着，轿厢里的应急灯还亮着——发出微弱的黄光。\n";
       desc += "你注意到货梯间角落的通风口附近，有一层淡淡的白雾在缓缓飘动。\n";
@@ -1089,7 +1094,7 @@ Object.assign(storyData, {
 
   // --- B2 地下车库（毒气丧尸区） ---
   "金谊广场-B2 地下车库": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/B2地下车库.jpg */,
+    image: "images/金谊广场/B2地下车库.jpg",
     text: function(vars) {
       var desc = "你走进B2地下车库。这里比上面更暗，只有几盏应急灯在远处的柱子上发出微弱的黄光。\n";
       desc += "车库里的空气很闷，带着一股说不清的甜腻味——和货梯间闻到的一样。\n";
