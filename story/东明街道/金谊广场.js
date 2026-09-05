@@ -274,7 +274,7 @@ Object.assign(storyData, {
       vars.showZombies = true;
     },
     text: function(vars) {
-      var desc = "你走进地面停车场。这里紧邻小河，空气中弥漫着潮湿的水汽和一股淡淡的腥味。\n";
+      var desc = "你走进地面停车场。这里紧邻小河，挨着一个新建的“泽宇北岸球场”，空气中弥漫着潮湿的水汽和一股淡淡的腥味。\n";
       desc += "车辆成片停着，有几辆的轮胎已经泡在水里——河水漫过了堤岸的低处。\n";
       desc += "丧尸比你能想到的要多。它们沿着河岸挤在一起，有些半个身子浸在水里，朝着河水的方向缓缓挪动，像是在朝圣。\n";
       desc += "它们被水吸引。河岸是它们的走廊。\n";
@@ -417,7 +417,20 @@ Object.assign(storyData, {
 
   // --- 正门硬闯（记忆闪色，高难度） ---
   "金谊广场-正门硬闯": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/正门硬闯.jpg */,
+    image: function(vars) {
+      if(vars.weaather == '雨') {
+        var f = timeImage({
+          morning: "images/金谊广场/旋转门大战-雨.jpg",
+          night: "images/金谊广场/旋转门大战-雨-night.jpg"
+        });
+        return f;
+      }
+      var f = timeImage({
+        morning: "images/金谊广场/旋转门大战.jpg",
+        night: "images/金谊广场/旋转门大战-night.jpg"
+      })
+      return f;
+    },
     onEnter: initMemoryGame(["红","蓝","绿","黄","白"], 9, { add: { chasedByZombies: 1 } }),
     text: function(vars) {
       var desc = "你推着旋转门的扇格，从尸体和门框之间的缝隙挤了进去。\n";

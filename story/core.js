@@ -212,6 +212,7 @@ const storyData = {
     hasSnackCookie: false,    // 味千小饼干（占格；可拆吃+1 / 喂橘猫）
     hasHamSausage: false,     // 火腿肠（联华"小超市"货架，占格；可吃+1 / 喂橘猫）
     hasCracker: false,        // 夹心饼干（挹芬楼6F自习教室，样板改可收集，占格；可吃+1 / 喂橘猫）
+    _stairKillNote: "",       // 堵路强丧尸清场旁白（武器effect写入，楼梯text展示后清除，一次性）
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除

@@ -55,16 +55,20 @@ function jpBlockedStair(sceneId, prefix, label, floors, clearedVar) {
       if (!vars[clearedVar]) {
         return label + "。\n一只格外强壮的丧尸堵在楼梯拐角——它比普通丧尸大一圈，低吼着，徒手根本对付不了。" + describeZombieWave(vars);
       }
+      // 刚用武器清掉堵路丧尸：追加一句一次性击杀旁白（_stairKillNote 由武器 effect 写入，展示后清除）
+      var note = vars._stairKillNote || "";
+      vars._stairKillNote = "";
+      if (note) return label + "。" + note + "\n" + describeZombieWave(vars);
       return label + "。" + describeZombieWave(vars);
     },
     choices: function(vars) {
       if (!vars[clearedVar]) {
         var cs = [];
-        if (vars.hasAxe) cs.push({ text: "用斧头劈开丧尸", nextScene: sceneId, effect: function(v) { v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
+        if (vars.hasAxe) cs.push({ text: "用斧头劈开丧尸", nextScene: sceneId, effect: function(v) { v._stairKillNote = "你抡起消防斧，斧刃楔进那只强壮的丧尸的颅骨——它闷哼一声，轰然栽下楼梯，不动了。"; v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
         // 空枪仍可选——无弹扣扳机即死（结局-空枪）
-        if (vars.hasGun) cs.push({ text: "用手枪射杀丧尸", nextScene: function(v) { return v.gunAmmo > 0 ? sceneId : "建平-结局-空枪"; }, effect: function(v) { if (v.gunAmmo > 0) { v.gunAmmo = Math.max(0, v.gunAmmo - 1); v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 2); } return {}; } });
-        if (vars.hasDagger) cs.push({ text: "用匕首刺穿丧尸头颅", nextScene: sceneId, effect: function(v) { v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
-        if (vars.hasFireTorch) cs.push({ text: "举起火把燎向丧尸", nextScene: sceneId, effect: function(v) { v.hasFireTorch = false; v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
+        if (vars.hasGun) cs.push({ text: "用手枪射杀丧尸", nextScene: function(v) { return v.gunAmmo > 0 ? sceneId : "建平-结局-空枪"; }, effect: function(v) { if (v.gunAmmo > 0) { v._stairKillNote = "枪声在封闭的楼道里炸开，震得人耳朵发麻。那只强壮的丧尸胸口炸出一蓬污血，仰面瘫在台阶上，不再动弹。"; v.gunAmmo = Math.max(0, v.gunAmmo - 1); v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 2); } return {}; } });
+        if (vars.hasDagger) cs.push({ text: "用匕首刺穿丧尸头颅", nextScene: sceneId, effect: function(v) { v._stairKillNote = "你攥紧匕首欺身而上，刀尖自下颚直贯入颅。它痉挛了两下，软倒在地，不再动弹。"; v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
+        if (vars.hasFireTorch) cs.push({ text: "举起火把燎向丧尸", nextScene: sceneId, effect: function(v) { v._stairKillNote = "你举起火把燎向它，火舌卷上外套，焦臭味一下子漫开。它嘶吼着挣扎着跌下楼梯，在转角烧成一团，渐渐不动了。"; v.hasFireTorch = false; v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
         cs.push({ text: "退回", nextScene: function(v) { return v._lastScene; } });
         return cs;
       }
