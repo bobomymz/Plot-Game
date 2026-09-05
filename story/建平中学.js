@@ -119,6 +119,21 @@ function jpPengAtPiano(vars, which) {
   return (vars.hh === 13 || vars.hh === 16) && vars._pengPiano === which;
 }
 
+// 走廊/楼层追击 QTE：被追（chasedByZombies > 0）时进入节点就开始场景级倒计时，
+// 尸潮越猛限时越短，超时被丧尸围殴；没被追就静静走、不起 QTE。
+// 可选 pred 额外守卫：如挹芬楼 1F 走廊未清场时走记忆闪色，需清场后才启用本 QTE。
+// 仿东明"三林路-十字路口"场景级 QTE 的 ch 用法。
+function jpChaseQTE(pred) {
+  return function(vars) {
+    if (!(vars.chasedByZombies > 0)) return null;   // 没被追，不启动
+    if (pred && !pred(vars)) return null;            // 额外守卫不满足（如未清场）
+    return {
+      timeout: "20000 - chasedByZombies * 2000",
+      onTimeout: "结局-丧尸的围殴"
+    };
+  };
+}
+
 // Harsh 追踪：玩家进入地点节点时记录轨迹（仅 Harsh 激活时）。在地点节点 onEnter 里调用。
 // 路径剪枝：玩家原路折返一步时，弹出"凸出"的那格——[a,b,c,d] 后回到 c，
 // 轨迹剪成 [a,b,c]（不再重复 push c），Harsh 沿剪后轨迹追到中段 c 才可能迎面撞上，
@@ -490,13 +505,15 @@ Object.assign(storyData, {
   "建平-金苹果广场": {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/goldenApplePlaza.png */,
+    qte: jpChaseQTE(),
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPos = "金苹果广场";
       if (!vars._frontGateCleared) return { add: { chasedByZombies: 1 } };   // 前门清空后广场不再反复加追兵
       return {};
     },
-    text: function(vars) { return "金苹果广场。你注意到，丧尸正逐渐从四周楼里涌来。\n" + describeWeather(vars); },
+    text: function(vars) { return "你走到了金苹果广场。\n\
+这里有个金苹果雕塑————建平的象征。环视四周，丧尸正逐渐从楼里涌来。\n" + describeWeather(vars); },
     choices: [
       { text: "去前门", nextScene: "建平-前门", effect: updateTime(2) },
       { text: "去行政楼", nextScene: "建平-行政楼-1F", effect: updateTime(2) },
@@ -510,6 +527,7 @@ Object.assign(storyData, {
   "建平-金苹果大道": {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/goldenAppleAvenue.png */,
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "金苹果大道"; },
     text: function(vars) { return "金苹果大道。" + describeWeather(vars) + describeZombieWave(vars); },
     choices: [
@@ -731,6 +749,7 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-1F-西侧走廊": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(function(v) { return !!v._yifenWestCleared; }),
     onEnter: function(vars) {
       vars.currentPos = "挹芬楼1F西侧走廊";
       if (!vars._yifenWestCleared) {
@@ -783,6 +802,7 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-1F-东侧走廊": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(function(v) { return !!v._yifenEastCleared; }),
     onEnter: function(vars) {
       vars.currentPos = "挹芬楼1F东侧走廊";
       if (!vars._yifenEastCleared) {
@@ -857,6 +877,7 @@ Object.assign(storyData, {
   },
   "建平-挹芬楼-2F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "挹芬楼2F"; },
     text: function(vars) { return "挹芬楼 2 楼。" + describeZombieWave(vars); },
     choices: [
@@ -868,6 +889,7 @@ Object.assign(storyData, {
   },
   "建平-挹芬楼-3F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "挹芬楼3F"; },
     text: function(vars) { return "挹芬楼 3 楼。" + describeZombieWave(vars); },
     choices: [
@@ -880,6 +902,7 @@ Object.assign(storyData, {
   },
   "建平-挹芬楼-4F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "挹芬楼4F"; },
     text: function(vars) { return "挹芬楼 4 楼。" + describeZombieWave(vars); },
     choices: [
@@ -892,6 +915,7 @@ Object.assign(storyData, {
   },
   "建平-挹芬楼-5F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "挹芬楼5F"; },
     text: function(vars) { return "挹芬楼 5 楼。" + describeZombieWave(vars); },
     choices: [
@@ -903,6 +927,7 @@ Object.assign(storyData, {
   },
   "建平-挹芬楼-6F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "挹芬楼6F"; },
     text: function(vars) { return "挹芬楼 6 楼。" + describeZombieWave(vars); },
     choices: [
@@ -1183,6 +1208,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-1F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼1F"; },
     text: function(vars) { return "远翔楼 1 楼。" + describeZombieWave(vars); },
     choices: [
@@ -1196,6 +1222,7 @@ Object.assign(storyData, {
   },
   "建平-远翔楼-2F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼2F"; },
     text: function(vars) { return "远翔楼 2 楼。" + describeZombieWave(vars); },
     choices: [
@@ -1206,6 +1233,7 @@ Object.assign(storyData, {
   },
   "建平-远翔楼-3F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼3F"; },
     text: function(vars) { return "远翔楼 3 楼。" + describeZombieWave(vars); },
     choices: [
@@ -1218,6 +1246,7 @@ Object.assign(storyData, {
   },
   "建平-远翔楼-4F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼4F"; },
     text: function(vars) { return "远翔楼 4 楼。" + describeZombieWave(vars); },
     choices: [
@@ -1230,6 +1259,7 @@ Object.assign(storyData, {
   },
   "建平-远翔楼-5F": {
     image: "images/placeholder.png",
+    qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼5F"; },
     text: function(vars) { return "远翔楼 5 楼。" + describeZombieWave(vars); },
     choices: [
@@ -1328,10 +1358,21 @@ Object.assign(storyData, {
       if (vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-14班" });
       }
+      cs.push({ text: "看看窗边", nextScene: "建平-远翔楼-4F-高三14班-窗边" });
       cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-4F-高三14班" } } });
       cs.push({ text: "回 4 楼走廊", nextScene: "建平-远翔楼-4F", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  "建平-远翔楼-4F-高三14班-窗边": {
+    image: "images/placeholder.png" /* TODO: images/jianping/windowDadao.png */,
+    text: function(vars) {
+      return "你走到教室后窗边，推开一扇没关严的窗。\n楼下就是金苹果大道。路边的几棵大榕树还撑着一树浓荫，枝条垂得很低。大道对面，挹芬楼和济美楼安静地立着，楼前的松树在日头下投出短短的影。\n这个点，搁以前早该是人声——赶着去食堂的、去操场踢球的，挤成一片。如今大道上一个人影也没有，只有几只丧尸拖着脚步，从榕树荫下慢慢挪过。\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "从窗边退开", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
+    ]
   },
 
   "建平-远翔楼-4F-高三14班-电脑坏": {
@@ -1693,10 +1734,21 @@ Object.assign(storyData, {
       if (!jpIsMealTime(vars) && vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-电脑区" });
       }
+      cs.push({ text: "看看窗边", nextScene: "建平-弘渊楼-4F-电脑区-窗边" });
       cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-弘渊楼-4F-电脑区" } } });
       cs.push({ text: "回 4 楼走廊", nextScene: "建平-弘渊楼-4F", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  "建平-弘渊楼-4F-电脑区-窗边": {
+    image: "images/placeholder.png" /* TODO: images/jianping/windowGushanRd.png */,
+    text: function(vars) {
+      return "你走到电脑区靠窗的位子，拨开窗帘往下看。\n隔着操场和校门，校门口那条崮山路上，几辆歪在路边的车堵着半幅路面。行道树的树冠探过墙头，更远处的十字路口空荡荡的，只有风卷着纸屑在路面上打旋。\n你要是想离开学校，崮山路是绕不开的一段——这会儿看着还算安静，要走宜早不宜晚。\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "拉上窗帘，回到座位", nextScene: "建平-弘渊楼-4F-电脑区", effect: updateTime(1) }
+    ]
   },
 
   "建平-弘渊楼-4F-电脑区-蔡镜晓": {
@@ -2328,9 +2380,20 @@ Object.assign(storyData, {
       if (!vars._yifenFood6F) {
         cs.push({ text: "翻翻储物柜", nextScene: "建平-挹芬楼-6F-自习教室-食品" });
       }
+      cs.push({ text: "看看窗边", nextScene: "建平-挹芬楼-6F-自习教室-窗边" });
       cs.push({ text: "回 6 楼走廊", nextScene: "建平-挹芬楼-6F", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  "建平-挹芬楼-6F-自习教室-窗边": {
+    image: "images/placeholder.png" /* TODO: images/jianping/windowHigh6F.png */,
+    text: function(vars) {
+      return "你走到自习教室尽头的窗边。挹芬楼有 6 层，够高了——望出去，大半个校园在脚下铺开。\n近处是废弃小楼灰扑扑的墙和图书馆的楼顶，思贤堂半圆的顶从树梢间露出一角。再往远处，校园外十几层的居民楼密密地排开，底层的商铺招牌歪歪斜斜，楼群之间的马路一条条空着，望不到头。\n从高处往下看，这座塞满了丧尸的城市，反而安静得让人发毛。\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "离开窗边", nextScene: "建平-挹芬楼-6F-自习教室", effect: updateTime(1) }
+    ]
   },
 
   "建平-挹芬楼-6F-自习教室-食品": {
@@ -2491,7 +2554,7 @@ Object.assign(storyData, {
   var EXCLUDE = /^(建平-躲藏-|建平-Harsh|结局-|复旦)/;
   var KEEP = /^建平-/;
   // 非地点节点关键词（每次新增此类场景需同步补充）
-  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住|踢球|听琴)$/;
+  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住|踢球|听琴|窗边)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;
