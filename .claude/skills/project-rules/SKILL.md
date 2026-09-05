@@ -36,6 +36,15 @@ description: 尸潮笔记项目强制规则 — 重新注入硬性约束，用�
 - 新地点在 `images/` 下建对应目录；AI 只写 `images/placeholder.png` 占位，图片由用户生成。
 - 直接放在 `images/` 根目录的图（如 `zombieKnockYouDown`）为全局可用图，无视地点场景。
 
+## 工具调用规范（省 token，长对话防漂移）
+- 浏览器验证剧情跳转/flag/选项：优先 `evaluate_script` 返回紧凑 JSON（当前场景、选项文字、关键变量——游戏状态全在全局 `gameState`），禁止惯性 `take_snapshot`（整棵 a11y 树，数 k token/次）。
+- 点击选项可用 `evaluate_script` 直接触发 `button.click()`，省去先 snapshot 拿 uid。
+- 确需快照/截图时，用 `filePath` 参数落盘，再按需局部读取，不整份进上下文。
+- `take_screenshot` 仅用于确认视觉效果（图片加载/遮罩/布局）。
+- 读 `story/*.js`、engine.js：先 Grep 定位（场景 ID/变量名/函数名），再 Read 带 offset/limit 局部读；仅小文件或需通览结构时才整读。
+- 本会话已 Read 过的文件禁止重读（Edit/Write 自带校验）。
+- 大范围清点/扫描交给 Explore 子代理，只取结论不吞文件内容。
+
 ## 思考与推理必须遵守的规则
 - 多门建筑：进出选项直接写门名（"去食堂侧门"），禁止"出门（金苹果广场）"括号式。
 - 记忆闪色成功后必须落到"打赢"战斗结果节点，禁止直接跳地点（地点文本不叙述战斗）。
