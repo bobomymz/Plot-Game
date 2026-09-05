@@ -432,7 +432,7 @@ Object.assign(storyData, {
 
   // ==================== 站台层（QTE: 3s，可见） ====================
   "地铁站-站台层": {
-    image: "images/placeholder.png" /* TODO: images/地铁站/platform.png */,
+    image: "images/地铁站/站台.jpg",
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     qte: {
       timeout: "3000 - chasedByZombies * 300",

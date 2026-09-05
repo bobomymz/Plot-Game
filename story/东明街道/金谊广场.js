@@ -496,7 +496,7 @@ Object.assign(storyData, {
     text: function(vars) {
       if (vars.hasTorch) {
         return "你找到了地下车库的入口。坡道向下延伸，越往里越黑。\n\
-你打开手电筒——光束劈开黑暗，照亮了前方的岔路：左边是货梯间的方向，右边似乎是通往更深处的车道，正前方是一扇半开的消防门。";
+你打开手电筒——光束劈开黑暗，照亮了前方的岔路：右边似乎是通往更深处的车道，正前方是一扇半开的消防门。";
       }
       return "你找到了地下车库的入口。坡道向下延伸，里面一片漆黑——伸手不见五指。\n\
 你只能摸着墙壁慢慢往前走。脚下的地面湿漉漉的，踩上去有细碎的回声。\n黑暗中你摸到了岔路——但完全看不清哪条通向哪里。";
@@ -504,15 +504,14 @@ Object.assign(storyData, {
     choices: function(vars) {
       if (vars.hasTorch) {
         return [
-          { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(2) },
           { text: "去消防通道", nextScene: "金谊广场-B2摸到死路", effect: updateTime(1) },
-          { text: "往深处走", nextScene: "金谊广场-B2 地下车库", effect: updateTime(2) },
+          { text: "往深处走", nextScene: "金谊广场-B2 地下车库", effect: updateTime(5) },
           { text: "退回地面", nextScene: "金谊广场地面入口", effect: updateTime(2) }
         ];
       } else {
         return [
-          { text: "???", nextScene: "金谊广场-B2货梯间", effect: updateTime(2) },
           { text: "???", nextScene: "金谊广场-B2摸到死路", effect: updateTime(1) },
+          { text: "???", nextScene: "金谊广场-B2 地下车库", effect: updateTime(5) },
           { text: "退回地面", nextScene: "金谊广场地面入口", effect: updateTime(2) }
         ];
       }
@@ -1120,8 +1119,7 @@ Object.assign(storyData, {
       }
       return [
         { text: "戴上面具搜索车库", nextScene: "金谊广场-B2-搜刮", effect: updateTime(3, { add: { maskRemainingUses: -1 } }) },
-        { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(1) },
-        { text: "退回", nextScene: "金谊广场-1F 门面层", effect: updateTime(2) }
+        { text: "离开这里", nextScene: "金谊广场-B2车库入口", effect: updateTime(2) }
       ];
     }
   },
@@ -1133,7 +1131,7 @@ Object.assign(storyData, {
 它已经死了——被这座车库里无孔不入的毒气熏死的。",
     choices: [
       { text: "继续搜索其他车辆", nextScene: "金谊广场-B2-搜刮-搜完", effect: updateTime(3) },
-      { text: "去货梯间", nextScene: "金谊广场-B2货梯间", effect: updateTime(1) }
+      { text: "离开这里", nextScene: "金谊广场-B2车库入口", effect: updateTime(2) }
     ]
   },
 
@@ -1144,7 +1142,7 @@ Object.assign(storyData, {
       if (vars.maskRemainingUses <= 0) {
         return "你又撬开了几辆车的车门，搜刮了一些杂物。\n面罩的滤层开始发涩——活性炭快到极限了。你得赶紧离开这里。\n<span style='color: #ff4444;'>【警告】防毒面具滤层已耗尽。</span>";
       }
-      return "你又撬开了几辆车的车门，搜刮了一些杂物。\n防毒面具的滤层微微发涩——还能撑一会儿，但别在这里待太久。";
+      return "你又撬开了几辆车的车门，搜刮了一些杂物。这时，你转头看到旁边有个货梯间。\n防毒面具的滤层微微发涩——还能撑一会儿，但别在这里待太久。";
     },
     choices: [
       { text: "继续搜索", nextScene: "金谊广场-B2-搜刮-搜完", effect: updateTime(3) },
