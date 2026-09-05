@@ -697,9 +697,26 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         effect: updateTime(1)
       },
       {
+        text: "从货架上拿一根火腿肠",
+        showCondition: "!hasHamSausage",
+        nextScene: "小超市-火腿肠",
+        effect: updateTime(1)
+      },
+      {
         text: "离开",
         nextScene: "三林路"
       }
+    ]
+  },
+
+  "小超市-火腿肠": {
+    image: "images/小区周边/联华超市/内部.jpg",
+    onEnter: { set: { positionAfterOperation: "小超市-火腿肠" } },
+    text: "散货架角落挂着几根散装火腿肠，真空包装完好的还剩几根。你拿了一根在手里掂了掂。",
+    choices: [
+      { text: "撕开吃掉（体力+1）", nextScene: "小超市", effect: updateTime(2, { add: { strength: 1 } }) },
+      { text: "收进背包", condition: "itemCount < bagVolume", nextScene: "小超市", effect: updateTime(2, { set: { hasHamSausage: true }, add: { itemCount: 1 } }), elseScene: "整理整理" },
+      { text: "放回去", nextScene: "小超市", effect: updateTime(1) }
     ]
   },
 

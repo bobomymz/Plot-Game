@@ -375,8 +375,8 @@ html, body {
 }
 
 /* ===== 丧尸包围遮罩（两档：轻度 ch≤2 / 重度 ch≥3，通过 --zombie-bg 动态指定图片） ===== */
-#screen-effect-overlay.zombie-surround-moderate::before,
-#screen-effect-overlay.zombie-surround-heavy::before {
+#screen-effect-overlay.zombie-surround-moderate::after,
+#screen-effect-overlay.zombie-surround-heavy::after {
   content: '';
   position: absolute;
   inset: 0;

@@ -272,7 +272,6 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.jpg */,
     onEnter: function(vars) {
       vars.showZombies = true;
-      vars.showRain = true;
     },
     text: function(vars) {
       var desc = "你走进地面停车场。这里紧邻小河，空气中弥漫着潮湿的水汽和一股淡淡的腥味。\n";
@@ -366,10 +365,22 @@ Object.assign(storyData, {
   // --- 金谊广场地面入口（正门） ---
   "金谊广场地面入口": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/金谊广场/地面入口.jpg */,
+    image: function(vars) {
+      if(vars.weaather == '雨') {
+        var f = timeImage({
+          morning: "images/金谊广场/正门-雨.jpg",
+          night: "images/金谊广场/正门-雨-night.jpg"
+        });
+        return f;
+      }
+      var f = timeImage({
+        morning: "images/金谊广场/正门.jpg",
+        night: "images/金谊广场/正门-night.jpg"
+      })
+      return f;
+    },
     onEnter: function(vars) {
       vars.showZombies = true;
-      vars.showRain = true;
     },
     text: function(vars) {
       var desc = "你来到金谊广场的正门。旋转门的一个格子里卡着一具尸体——它大概是被人群挤进去的，手臂以不自然的角度折在身后，脸上的皮肤已经干瘪发黑。\n";

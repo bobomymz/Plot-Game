@@ -64,6 +64,7 @@ function jpBlockedStair(sceneId, prefix, label, floors, clearedVar) {
         // 空枪仍可选——无弹扣扳机即死（结局-空枪）
         if (vars.hasGun) cs.push({ text: "用手枪射杀丧尸", nextScene: function(v) { return v.gunAmmo > 0 ? sceneId : "建平-结局-空枪"; }, effect: function(v) { if (v.gunAmmo > 0) { v.gunAmmo = Math.max(0, v.gunAmmo - 1); v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 2); } return {}; } });
         if (vars.hasDagger) cs.push({ text: "用匕首刺穿丧尸头颅", nextScene: sceneId, effect: function(v) { v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
+        if (vars.hasFireTorch) cs.push({ text: "举起火把燎向丧尸", nextScene: sceneId, effect: function(v) { v.hasFireTorch = false; v[clearedVar] = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } });
         cs.push({ text: "退回", nextScene: function(v) { return v._lastScene; } });
         return cs;
       }
@@ -84,6 +85,7 @@ function jpElevator(prefix, label, floors, floorOverrides) {
     image: "images/placeholder.png" /* TODO: images/jianping/elevator.png */,
     onEnter: function(vars) {
       vars.currentPos = label;
+      if (vars._harshDead) return {};   // Harsh 已被火烧死，电梯的动静再也不会惊醒她
       vars._harshActive = true;
       vars._harshCaught = false;
       vars._harshLag = 6;                                  // 唤醒时落后 6 步，给玩家缓冲
@@ -134,6 +136,33 @@ function jpChaseQTE(pred) {
   };
 }
 
+// ===== 建平橘猫向导（B 支线） =====
+// 橘猫游走于校园各点；玩家用任一"猫食"喂它 → 它带你去致真楼（给新玩家"下一步去哪"的指引），
+// 喂过后它成为 Harsh 的"软预警"（jpHarshHint 里比玩家直觉早一档提示）。
+// 可喂的猫食：脆脆炒米 / 饼干 / 味千小饼干 / 火腿肠 / 挹芬楼6F夹心饼干（各具名占格）。
+function jpCatFoods(vars) {
+  var list = [];
+  if (vars.hasCatSnack)    list.push({ flag: "hasCatSnack",    name: "脆脆炒米" });
+  if (vars.hasBiscuit)     list.push({ flag: "hasBiscuit",     name: "饼干" });
+  if (vars.hasSnackCookie) list.push({ flag: "hasSnackCookie", name: "味千小饼干" });
+  if (vars.hasHamSausage)  list.push({ flag: "hasHamSausage",  name: "火腿肠" });
+  if (vars.hasCracker)     list.push({ flag: "hasCracker",     name: "夹心饼干" });
+  return list;
+}
+function jpHasCatFood(vars) {
+  return jpCatFoods(vars).length > 0;
+}
+
+// 遇猫选项：push 进各游走节点 choices。只有"还没喂过 + 手上正好有猫食"才会见到它，
+// 免得玩家看见猫却只能干瞪眼；没喂前它会一直在这些点等你。
+function jpCatOption(whereText) {
+  return {
+    text: "一只橘猫蹲在" + whereText + "，正舔着爪子，看见你也不躲。",
+    showCondition: function(v) { return !v._jianpingCatFed && jpHasCatFood(v); },
+    nextScene: "建平-橘猫-相遇"
+  };
+}
+
 // Harsh 追踪：玩家进入地点节点时记录轨迹（仅 Harsh 激活时）。在地点节点 onEnter 里调用。
 // 路径剪枝：玩家原路折返一步时，弹出"凸出"的那格——[a,b,c,d] 后回到 c，
 // 轨迹剪成 [a,b,c]（不再重复 push c），Harsh 沿剪后轨迹追到中段 c 才可能迎面撞上，
@@ -157,14 +186,18 @@ function jpHarshTrack(vars, sceneId) {
 
 // Harsh 距离提示：写入地点节点 text 末尾（仅激活且足够近时）。
 // 遭遇前（_harshEncounters == 0）保持悬念用"身影"；被堵住过一次后才直呼 Harsh。
+// 橘猫软预警：喂过橘猫后，Harsh 进到 6 步内（比玩家的 5 步直觉还早一档），橘猫先炸毛示警。
 function jpHarshHint(vars) {
   if (!vars._harshActive) return "";
   var lag = vars._harshLag || 0;
   var met = (vars._harshEncounters || 0) > 0;
-  if (lag <= 0) return "\n<span style='color:#ff4444;'>——" + (met ? "Harsh" : "那个身影") + "就在你眼前！</span>";
-  if (lag <= 2) return "\n<span style='color:#ffaa00;'>身后传来拖沓的脚步声，" + (met ? "Harsh" : "有什么东西") + "越来越近了……</span>";
-  if (lag <= 5) return met ? "\n远处，Harsh还在跟着你。" : "\n远处似乎有个身影在跟着你。";
-  return "";   // 距离远时不提及（不剧透）
+  var catLine = (vars._jianpingCatFed && lag <= 6)
+    ? "\n<span style='color:#ff9a3c;'>脚边的橘猫忽然停下，背毛炸起，耳朵转向身后，喉咙里滚过低哑的呜咽。</span>"
+    : "";
+  if (lag <= 0) return catLine + "\n<span style='color:#ff4444;'>——" + (met ? "Harsh" : "那个身影") + "就在你眼前！</span>";
+  if (lag <= 2) return catLine + "\n<span style='color:#ffaa00;'>身后传来拖沓的脚步声，" + (met ? "Harsh" : "有什么东西") + "越来越近了……</span>";
+  if (lag <= 5) return catLine + (met ? "\n远处，Harsh还在跟着你。" : "\n远处似乎有个身影在跟着你。");
+  return catLine || "";   // 5<lag<=6：只有橘猫能感觉到不对劲；再远则安静（不剧透）
 }
 
 // 建平躲藏场景：reduceLevel 2=室内封闭（降ch2，不失败）；1=半开放/户外（降ch1，ch≥3 时 40% 失败）
@@ -481,6 +514,7 @@ Object.assign(storyData, {
       cs.push({ text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) });
       cs.push({ text: "去远翔楼", nextScene: "建平-远翔楼-1F", effect: updateTime(2) });
       cs.push({ text: "去致真楼", nextScene: "建平-致真楼-1F", effect: updateTime(2) });
+      cs.push(jpCatOption("辅路旁一辆车的底盘下"));
       return cs;
     }
   },
@@ -520,7 +554,7 @@ Object.assign(storyData, {
       { text: "去挹芬楼北门", nextScene: "建平-挹芬楼北门", effect: updateTime(2) },
       { text: "去致真楼", nextScene: "建平-致真楼-1F", effect: updateTime(2) },
       { text: "去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) },
-      { text: "下地下车库", nextScene: "建平-地下车库-东口", effect: updateTime(1) }
+      { text: "下地下车库", nextScene: "建平-地下车库-西口", effect: updateTime(1) }
     ]
   },
 
@@ -536,13 +570,14 @@ Object.assign(storyData, {
       { text: "去食堂正门", nextScene: "建平-食堂", effect: updateTime(2) },
       { text: "去济美楼", nextScene: "建平-济美楼-1F", effect: updateTime(2) },
       { text: "下地下车库", nextScene: "建平-地下车库-大道口", effect: updateTime(1) },
+      jpCatOption("金苹果大道边的长椅下"),
       { text: "躲进报刊亭", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-金苹果大道报刊亭" }
     ]
   },
 
   // ==================== 地下自行车车库（民防设施 · 单节点） ====================
 
-  "建平-地下车库-东口": {
+  "建平-地下车库-西口": {
     image: "images/placeholder.png" /* TODO: images/jianping/bikeGarageRamp.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "地下车库"; },
     text: "你沿着金苹果广场边上的坡道走下，推开一扇蒙着灰的铁门，进入了地下自行车车库。\n车库很大，一排排车架在昏暗的应急灯下拖着长长的影子，空气里一股潮湿的霉味。",
@@ -568,12 +603,51 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "车库深处比入口更暗。墙边一扇铁门上了锁，门上用油漆刷着「工具间」三个字——这是学校的民防设施，平时锁着，钥匙应该在后勤手里。";
       if (vars._gasMaskGarage) desc += "\n工具间的锁已经被你打开了。";
+      if (vars._garageFireCabinet) desc += "\n墙边那台红漆消防柜的玻璃门已经碎了。";
       return desc;
     },
+    choices: function(vars) {
+      var cs = [
+        { text: "去工具间", nextScene: "建平-地下车库-工具间", effect: updateTime(1) },
+        { text: "从西口上去", nextScene: "建平-地下车库-西口", effect: updateTime(1) },
+        { text: "从大道口上去", nextScene: "建平-地下车库-大道口", effect: updateTime(1) }
+      ];
+      // 深处太暗：需光源（火把/手电）才能发现消防柜；已有斧则无需再看
+      if ((vars.hasFireTorch || vars.hasTorch) && (!vars._garageFireCabinet || !vars.hasAxe)) {
+        cs.push({
+          text: function(v) { return (v.hasFireTorch ? "点亮火把" : "打亮手电筒") + "，照向车库更深处"; },
+          nextScene: "建平-地下车库-消防柜",
+          effect: updateTime(1)
+        });
+      }
+      return cs;
+    }
+  },
+
+  "建平-地下车库-消防柜": {
+    image: "images/placeholder.png" /* TODO: images/jianping/fireCabinet.png */,
+    onEnter: function(vars) { vars.currentPos = "地下车库消防柜"; vars._garageFireCabinet = true; return {}; },
+    text: function(vars) {
+      if (vars.hasAxe) return "消防柜的玻璃门敞着，里面只剩空挂架和半截卡扣——斧头你身上已经有一把了。";
+      var light = vars.hasFireTorch ? "火把" : "手电光柱";
+      return "你把" + light + "举高，扫过车库最深处那面墙——靠墙立着一台红漆的消防柜，玻璃门蒙着灰。透过灰蒙蒙的玻璃，能看见里面横着一把消防斧。";
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars.hasAxe) {
+        cs.push({ text: "砸开玻璃，取消防斧", nextScene: "建平-地下车库-消防柜-取斧", effect: updateTime(1) });
+      }
+      cs.push({ text: "回车库", nextScene: "建平-地下车库", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-地下车库-消防柜-取斧": {
+    image: "images/placeholder.png" /* TODO: images/jianping/fireAxe.png */,
+    onEnter: { set: { hasAxe: true }, add: { itemCount: 1, chasedByZombies: 1 } },
+    text: "你抡起手边一块砖头，砸碎消防柜的玻璃门。碎裂声在空旷的车库里格外响。\n你飞快地抓起那把消防斧——沉甸甸的，刃口崭新，是学校里那种防暴斧。",
     choices: [
-      { text: "去工具间", nextScene: "建平-地下车库-工具间", effect: updateTime(1) },
-      { text: "从东口上去", nextScene: "建平-地下车库-东口", effect: updateTime(1) },
-      { text: "从大道口上去", nextScene: "建平-地下车库-大道口", effect: updateTime(1) }
+      { text: "收好消防斧", nextScene: "建平-地下车库", effect: updateTime(1) }
     ]
   },
 
@@ -652,6 +726,7 @@ Object.assign(storyData, {
       { text: "去弘渊楼后门", nextScene: "建平-弘渊楼-1F", effect: updateTime(2) },
       { text: "去宿舍", nextScene: "建平-宿舍-门口", effect: updateTime(2) },
       { text: "去踢球", showCondition: "!_playgroundKicked", nextScene: "建平-操场-踢球", effect: updateTime(2) },
+      jpCatOption("操场边的看台上"),
       { text: "躲到灌木丛", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-操场灌木丛" }
     ]
   },
@@ -884,7 +959,8 @@ Object.assign(storyData, {
       { text: "去东楼梯", nextScene: "建平-挹芬楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-挹芬楼-西楼梯", effect: updateTime(1) },
       { text: "去电梯", nextScene: "建平-挹芬楼-电梯", effect: updateTime(0) },
-      { text: "去高一教室", nextScene: "建平-挹芬楼-2F-高一教室", effect: updateTime(1) }
+      { text: "去高一教室", nextScene: "建平-挹芬楼-2F-高一教室", effect: updateTime(1) },
+      jpCatOption("挹芬楼 2 楼走廊的窗台上")
     ]
   },
   "建平-挹芬楼-3F": {
@@ -1178,9 +1254,26 @@ Object.assign(storyData, {
       } else if (vars.hasCSGun && !vars.hasTorch && !vars.hasScrewdriver) {
         cs.push({ text: "想拆CS枪，但没螺丝刀", nextScene: "建平-致真楼-2F-化学实验室-没螺丝刀" });
       }
+      if (vars.hasLiquidParaffin && !vars.hasFireTorch) {
+        cs.push({ text: "用石蜡油浸布条，裹一支火把", nextScene: "建平-致真楼-2F-化学实验室-火把" });
+      }
       cs.push({ text: "回 2 楼走廊", nextScene: "建平-致真楼-2F", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  "建平-致真楼-2F-化学实验室-火把": {
+    image: "images/placeholder.png" /* TODO: images/jianping/chemTorch.png */,
+    onEnter: function(vars) {
+      vars.hasLiquidParaffin = false;
+      vars.itemCount = Math.max(0, vars.itemCount - 1);
+      vars.hasFireTorch = true;
+      return {};
+    },
+    text: "实验台的抽屉里有几卷纱布和一根断了的木架杆。你把纱布撕成条，一圈圈缠在杆头，拧开那瓶医用石蜡油浸透，再缠上一层，留出燃烧的余头。\n你把它凑到酒精灯上借了个火，等布条把油吃透、火苗稳住，又把它吹熄——要用的时候再点上。石蜡油的气味在实验室里散开，不算浓。\n<span style='color:#00fbffff;font-style:italic;'>【系统提示】获得火把（不占背包）。点亮照暗处不消耗；用来烧敌人，烧完即灭。</span>",
+    choices: [
+      { text: "收好火把", nextScene: "建平-致真楼-2F-化学实验室", effect: updateTime(1) }
+    ]
   },
 
   "建平-致真楼-2F-化学实验室-没螺丝刀": {
@@ -1217,7 +1310,8 @@ Object.assign(storyData, {
       { text: "去东楼梯", nextScene: "建平-远翔楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-远翔楼-西楼梯", effect: updateTime(1) },
       { text: "去医务室", nextScene: "建平-远翔楼-1F-医务室", effect: updateTime(1) },
-      { text: "去圆厅", nextScene: "建平-远翔楼-1F-圆厅", effect: updateTime(1) }
+      { text: "去圆厅", nextScene: "建平-远翔楼-1F-圆厅", effect: updateTime(1) },
+      jpCatOption("远翔楼门口的台阶上")
     ]
   },
   "建平-远翔楼-2F": {
@@ -1940,6 +2034,13 @@ Object.assign(storyData, {
           effect: function(v) { v.hasInnerLining -= 1; return {}; }
         });
       }
+      if (vars.hasFireTorch) {
+        cs.push({
+          text: "举起火把逼向 Harsh！",
+          nextScene: "建平-Harsh堵住-火焚",
+          effect: function(v) { v.hasFireTorch = false; v._harshDead = true; v.chasedByZombies = Math.min(5, v.chasedByZombies + 2); return {}; }
+        });
+      }
       cs.push({
         text: "快逃！",
         nextScene: "建平-Harsh堵住-逃跑",
@@ -1947,6 +2048,22 @@ Object.assign(storyData, {
       });
       return cs;
     }
+  },
+
+  "建平-Harsh堵住-火焚": {
+    image: "images/placeholder.png" /* TODO: images/jianping/harshFire.png */,
+    onEnter: function(vars) {
+      // 火焚：永久解决 Harsh（_harshDead 由选项 effect 置位，这里兜底关闭追逐）
+      vars._harshCaught = false;
+      vars._harshActive = false;
+      vars._harshTrack = [];
+      vars._harshLag = 6;
+      return {};
+    },
+    text: "你举起火把，火舌舔上她伸来的手臂——她猛地一缩，随即发出一声凄厉到不像是人能的尖啸。\n你后退半步，把火把整个掷了过去。火苗顺着她的旧外套蹿起来，很快就吞没了她。她在火光里挣扎、踉跄，最后缓缓倒了下去，不再动弹。\n那声尖啸远远传了出去——四面八方的丧尸正循声朝这边涌来。你不能在这里久留。",
+    choices: [
+      { text: "趁尸群还没围拢，快离开", nextScene: function(vars) { return vars._harshReturn || "建平-金苹果大道"; }, effect: updateTime(2) }
+    ]
   },
 
   "建平-Harsh堵住-驱赶": {
@@ -2004,6 +2121,47 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "喘口气", nextScene: function(vars) { return vars._harshReturn || "建平-金苹果大道"; }, effect: updateTime(2) }
+    ]
+  },
+
+  "建平-橘猫-相遇": {
+    image: "images/placeholder.png" /* TODO: images/jianping/orangeCat.png */,
+    onEnter: function(vars) { vars._catReturn = vars._lastScene || "建平-金苹果大道"; return {}; },
+    text: "一只橘猫蹲在不远处，圆滚滚的，毛色油亮。它歪头看了你两秒，才慢慢走过来，在你脚边坐下，仰头望着你，轻轻喵了一声——那眼神明摆着：你有吃的吗？",
+    choices: function(vars) {
+      var cs = jpCatFoods(vars).map(function(f) {
+        return {
+          text: "喂它" + f.name,
+          nextScene: "建平-橘猫-亲近",
+          effect: (function(flag) {
+            return function(v) {
+              v[flag] = false;
+              v.itemCount = Math.max(0, v.itemCount - 1);
+              v._jianpingCatFed = true;
+              return {};
+            };
+          })(f.flag)
+        };
+      });
+      cs.push({ text: "算了，先不给", nextScene: function(v) { return v._catReturn || "建平-金苹果大道"; } });
+      return cs;
+    }
+  },
+
+  "建平-橘猫-亲近": {
+    image: "images/placeholder.png" /* TODO: images/jianping/orangeCatEat.png */,
+    text: "它凑过来，低头小口小口地把吃的咽下去，末了还意犹未尽地舔了舔嘴。\n然后它蹭了蹭你的裤腿，抬头看你一眼，转身往前走了两步，又停下回头——那意思再明显不过：跟我来。",
+    choices: [
+      { text: "跟它走", nextScene: "建平-橘猫-带路", effect: updateTime(15) },
+      { text: "由它去吧", nextScene: function(v) { return v._catReturn || "建平-金苹果大道"; }, effect: updateTime(1) }
+    ]
+  },
+
+  "建平-橘猫-带路": {
+    image: "images/placeholder.png" /* TODO: images/jianping/catGuide.png */,
+    text: "橘猫在前面领路，走得不紧不慢，时不时停下来回头等你。它带你穿过操场边的小径，绕过金苹果广场，一路把你领到了致真楼门口，才停下，回头冲你喵了一声，纵身跳进楼边的花坛里没了影。\n你站在致真楼前——老吴是校工，他的杂物间就在这栋楼 1 楼尽头。猫不会说人话，但这意思你懂了。",
+    choices: [
+      { text: "进致真楼看看", nextScene: "建平-致真楼-1F", effect: updateTime(1) }
     ]
   },
 
@@ -2380,6 +2538,9 @@ Object.assign(storyData, {
       if (!vars._yifenFood6F) {
         cs.push({ text: "翻翻储物柜", nextScene: "建平-挹芬楼-6F-自习教室-食品" });
       }
+      if (vars.hasCracker) {
+        cs.push({ text: "吃掉夹心饼干（体力+1）", nextScene: "建平-挹芬楼-6F-自习教室-食品-吃掉" });
+      }
       cs.push({ text: "看看窗边", nextScene: "建平-挹芬楼-6F-自习教室-窗边" });
       cs.push({ text: "回 6 楼走廊", nextScene: "建平-挹芬楼-6F", effect: updateTime(1) });
       return cs;
@@ -2398,10 +2559,42 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-6F-自习教室-食品": {
     image: "images/placeholder.png",
-    onEnter: { set: { _yifenFood6F: true }, add: { strength: 1 } },
-    text: "你从储物柜里翻出几包夹心饼干和一盒没喝完的牛奶。\n牛奶有点温了，但你顾不上，就着饼干一起咽了下去。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    onEnter: { set: { positionAfterOperation: "建平-挹芬楼-6F-自习教室-食品" } },
+    text: "你拉开那个储物柜——里面塞着几包夹心饼干，还有一盒喝剩一半的牛奶。夹心饼干包装完好，就是不知道在柜子里闷了几天。\n面包会坏，饼干还能放一放——吃掉，还是带着？",
+    choices: [
+      { text: "拆开吃掉（体力+1）", nextScene: "建平-挹芬楼-6F-自习教室-食品-吃掉", effect: updateTime(1) },
+      { text: "收进背包当干粮", condition: "itemCount < bagVolume", nextScene: "建平-挹芬楼-6F-自习教室-食品-收下", effect: updateTime(1), elseScene: "整理整理" }
+    ]
+  },
+
+  "建平-挹芬楼-6F-自习教室-食品-吃掉": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars._yifenFood6F = true;
+      if (vars.hasCracker) {   // 吃的是"收进背包"那份存货
+        vars.hasCracker = false;
+        vars.itemCount = Math.max(0, vars.itemCount - 1);
+      }
+      vars.strength = Math.min(10, (vars.strength || 0) + 1);
+      return {};
+    },
+    text: "夹心饼干有点潮了，但还能吃。你两三口咽下去，又从柜子里摸出那盒牛奶漱了漱口——牛奶温得发腻，你只喝了两口就放下了。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-6F-自习教室", effect: updateTime(2) }
+    ]
+  },
+
+  "建平-挹芬楼-6F-自习教室-食品-收下": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars._yifenFood6F = true;
+      vars.hasCracker = true;
+      vars.itemCount += 1;
+      return {};
+    },
+    text: "你拆开盒子确认了一下，饼干没受潮，便重新包好收进背包。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】获得夹心饼干（占 1 格）。可以自己吃（回自习教室拆一包），也可以留着喂那只橘猫。</span>",
+    choices: [
+      { text: "收好", nextScene: "建平-挹芬楼-6F-自习教室", effect: updateTime(1) }
     ]
   },
   "建平-行政楼-1F-教学处": {
@@ -2554,7 +2747,7 @@ Object.assign(storyData, {
   var EXCLUDE = /^(建平-躲藏-|建平-Harsh|结局-|复旦)/;
   var KEEP = /^建平-/;
   // 非地点节点关键词（每次新增此类场景需同步补充）
-  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住|踢球|听琴|窗边)$/;
+  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住|踢球|听琴|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|食品|吃掉|收下)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;

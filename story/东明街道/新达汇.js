@@ -433,6 +433,12 @@ Object.assign(storyData, {
         showCondition: "chasedByZombies <= 1",
       },
       {
+        text: "翻翻前台的抽屉",
+        showCondition: "!hasSnackCookie",
+        nextScene: "新达汇-1F味千拉面-小饼干",
+        effect: updateTime(1),
+      },
+      {
         text: "推开后厨的铁门——好像通到哪里",
         nextScene: "新达汇-1F后勤走廊西",
         effect: updateTime(1),
@@ -442,6 +448,16 @@ Object.assign(storyData, {
         nextScene: "新达汇-1F北走廊西",
         effect: updateTime(1),
       },
+    ]
+  },
+  "新达汇-1F味千拉面-小饼干": {
+    image: "images/新达汇/味千拉面.jpg",
+    onEnter: { set: { showPowerOut: true, positionAfterOperation: "新达汇-1F味千拉面-小饼干" } },
+    text: "前台的抽屉里，除了几双一次性筷子和餐巾纸，还压着一包小饼干——大概是等位时给小孩的那种，独立小包装，还没开封。",
+    choices: [
+      { text: "拆开小饼干吃掉（体力+1）", nextScene: "新达汇-1F味千拉面", effect: updateTime(2, { add: { strength: 1 } }) },
+      { text: "收进背包", condition: "itemCount < bagVolume", nextScene: "新达汇-1F味千拉面", effect: updateTime(2, { set: { hasSnackCookie: true }, add: { itemCount: 1 } }), elseScene: "整理整理" },
+      { text: "放回去", nextScene: "新达汇-1F味千拉面", effect: updateTime(1) }
     ]
   },
   "新达汇-1F味千拉面-休息": {

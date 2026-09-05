@@ -203,6 +203,15 @@ const storyData = {
     _yifenFood6F: false,        // 挹芬楼6F自习教室食品是否已拿
     _guardTakeoutTaken: false,  // 门卫室外卖是否已处理（Day<3 新鲜+1，Day≥3 变质）
     _playgroundKicked: false,   // 操场那只足球是否已踢过（回忆[起脚爆射]，一次性）
+    // 建平·道具解密支线（橘猫向导 B / 石蜡油火把 C）
+    hasFireTorch: false,      // 石蜡油火把（化学实验室制，不占格；照明不耗，烧敌人/楼梯丧尸时燃尽）
+    _harshDead: false,        // Harsh 是否被火烧死（永久，坐电梯不再唤醒）
+    _garageFireCabinet: false,// 地下车库深处消防柜是否已被光源照亮发现
+    _jianpingCatFed: false,   // 建平橘猫是否已喂（喂后带路去致真楼 + Harsh 软预警）
+    _catReturn: "",           // 橘猫相遇时来自哪个游走节点（喂后"算了/由它去"回这里）
+    hasSnackCookie: false,    // 味千小饼干（占格；可拆吃+1 / 喂橘猫）
+    hasHamSausage: false,     // 火腿肠（联华"小超市"货架，占格；可吃+1 / 喂橘猫）
+    hasCracker: false,        // 夹心饼干（挹芬楼6F自习教室，样板改可收集，占格；可吃+1 / 喂橘猫）
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除
@@ -626,6 +635,24 @@ const storyData = {
         showCondition: "hasLiquidParaffin",
         text: "丢下石蜡油小瓶子",
         effect: updateTime(1, { set : { hasLiquidParaffin: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasSnackCookie",
+        text: "丢下味千小饼干",
+        effect: updateTime(1, { set : { hasSnackCookie: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasHamSausage",
+        text: "丢下火腿肠",
+        effect: updateTime(1, { set : { hasHamSausage: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasCracker",
+        text: "丢下夹心饼干",
+        effect: updateTime(1, { set : { hasCracker: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {
