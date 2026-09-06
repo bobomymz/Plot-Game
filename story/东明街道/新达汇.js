@@ -149,7 +149,7 @@ Object.assign(storyData, {
   "新达汇-B1美食广场": {
     onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/b1FoodCourt.png */,
-    text: function(vars) { return "B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。地面上散落着打翻的餐盘和已经馊掉的剩菜，苍蝇在上面嗡嗡地盘旋。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着“后勤通道 · 非工作人员勿入”的标签。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "B1美食广场。开放式就餐区的桌椅大半倒在地上，取餐台的灯还亮着，但柜台后面凌乱不堪。地面上散落着打翻的餐盘和已经馊掉的剩菜，苍蝇在上面嗡嗡地盘旋。\n几扇通往走廊的出口分布在两侧。角落里有一扇货梯间。墙角处有一扇银色的防火门，上面贴着“后勤通道 · 非工作人员勿入”的标签。取餐台一侧还有一道没挂标识的窄门，虚掩着。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "推开防火门进入后勤通道",
@@ -164,6 +164,11 @@ Object.assign(storyData, {
       {
         text: "前往货梯间",
         nextScene: "新达汇-B1货梯间",
+        effect: updateTime(1),
+      },
+      {
+        text: "取餐台旁边那道窄门——过去看看",
+        nextScene: "新达汇-B1值班过道",
         effect: updateTime(1),
       },
       {
@@ -249,6 +254,132 @@ Object.assign(storyData, {
       {
         text: "前往B1走廊",
         nextScene: "新达汇-B1走廊",
+        effect: updateTime(1),
+      },
+    ]
+  },
+
+  // ==================== B1 值班室 / 保安室 ====================
+  "新达汇-B1值班过道": {
+    onEnter: { set: { showPowerOut: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1值班过道.jpg */,
+    text: function(vars) {
+      if (vars._powerOut && !canSee(vars)) {
+        return "过道里一片黑。你扶着墙走到尽头，指尖碰到一扇虚掩的门。\n" + describeZombieWave(vars);
+      }
+      var d = "窄门后面是一小段过道，堆着几把折叠椅和一个拖把桶。尽头一扇门，贴着褪色的标签——“值班”两个字还认得出，下面一行小字看不清了。门虚掩着。";
+      d += "\n" + describeZombieWave(vars);
+      return d;
+    },
+    choices: [
+      {
+        text: "推开那扇门",
+        nextScene: "新达汇-B1保安室",
+        effect: updateTime(1),
+      },
+      {
+        text: "回美食广场",
+        nextScene: "新达汇-B1美食广场",
+        effect: updateTime(1),
+      },
+    ]
+  },
+  "新达汇-B1保安室": {
+    onEnter: { set: { showPowerOut: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1保安室.jpg */,
+    text: function(vars) {
+      if (vars._powerOut && !canSee(vars)) {
+        return "值班室里一片漆黑，什么也看不清。你摸到值班台的边缘，站了一会儿。\n" + describeZombieWave(vars);
+      }
+      var d = "值班室不大。一面墙嵌着监控屏幕墙，旁边一张掉漆的值班台，台面上有个空的对讲机充电座和一个搪瓷缸。角落立着一个灰色的铁皮配电柜。";
+      if (vars._powerOut) {
+        d += "\n监控屏幕全黑了。配电柜的总闸被你扳到了最底下，卡住了。";
+      } else {
+        d += "\n监控墙还亮着，十几个分屏无声地切换着商场各处的画面。配电柜门半开，里面一排闸刀。";
+      }
+      d += "\n" + describeZombieWave(vars);
+      return d;
+    },
+    choices: [
+      {
+        text: "凑近看监控墙",
+        nextScene: "新达汇-B1保安室-监控墙",
+        effect: updateTime(1),
+        showCondition: "!_powerOut",
+      },
+      {
+        text: "拉下配电柜里的总闸",
+        nextScene: "新达汇-B1保安室-拉闸",
+        effect: updateTime(1),
+        showCondition: "!_powerOut",
+      },
+      {
+        text: "翻一翻值班台的抽屉",
+        nextScene: "新达汇-B1保安室-抽屉",
+        effect: updateTime(1),
+        showCondition: "!_powerOut || hasTorch",
+      },
+      {
+        text: "回值班过道",
+        nextScene: "新达汇-B1值班过道",
+        effect: updateTime(1),
+      },
+    ]
+  },
+  "新达汇-B1保安室-监控墙": {
+    onEnter: { set: { showPowerOut: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1监控墙.jpg */,
+    text: function(vars) {
+      var d = "你把脸凑到监控墙前，一格一格地看。\n";
+      d += "大堂和中庭的机位里，黑影三三两两地贴着墙根挪；B1这一片最密，取餐台后面糊了一层。\n";
+      d += "员工通道的几路信号大半是雪花，偶尔跳出一段能看清的走廊——空的，冷清得反常。\n";
+      if (vars._metGaoAtMall) {
+        d += "二楼一个机位里晃过个大活人——锅盖头，背着包，走路大摇大摆，一看就知道是谁。\n";
+      }
+      d += "最上面一排是屋顶的机位。风把镜头吹得直晃，那片停机坪从头到尾没有一个影子——人也好，别的东西也好，都没有。";
+      return d;
+    },
+    choices: [
+      {
+        text: "看够了，退回来",
+        nextScene: "新达汇-B1保安室",
+        effect: updateTime(1),
+      },
+    ]
+  },
+  "新达汇-B1保安室-拉闸": {
+    onEnter: { set: { _powerOut: true, _catChasing: false, showPowerOut: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/拉闸.jpg */,
+    text: "你双手扣住总闸的胶木把手，往下一压。\n\
+咔的一声闷响，脚下某处传来电流退去的嗡鸣。头顶的应急灯闪了两下，灭了。整个地下层沉进黑里，只有配电柜深处溅了几点橘红的火花。\n\
+你摸着墙往回走，脑子里冒出来一些乱七八糟的念头——电梯这下是别想坐了；屋顶那架无人机的充电座，这会儿多半也黑了，要用趁早；还有，接下来推哪家店的门，大概都不会再响那声“欢迎光临”了。",
+    choices: [
+      {
+        text: "摸黑回到值班室",
+        nextScene: "新达汇-B1保安室",
+        effect: updateTime(1),
+      },
+    ]
+  },
+  "新达汇-B1保安室-抽屉": {
+    onEnter: { set: { showPowerOut: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1值班台抽屉.jpg */,
+    text: function(vars) {
+      var d = "值班台的抽屉没锁。里面有一串没挂钥匙的空钥匙圈、一本卷了边的值班记录";
+      d += vars._mallGuardSnack ? "。" : "，还有半盒受潮的桃酥。";
+      d += "\n记录的最后一页写着：“6/28 22:00 交接，西门卷帘门已降，配电房锁芯明早等老王来换。——张”。后面就没有了。";
+      return d;
+    },
+    choices: [
+      {
+        text: "把桃酥吃了",
+        nextScene: "新达汇-B1保安室",
+        effect: updateTime(3, { set: { _mallGuardSnack: true }, add: { strength: 2 } }),
+        showCondition: "!_mallGuardSnack",
+      },
+      {
+        text: "合上抽屉",
+        nextScene: "新达汇-B1保安室",
         effect: updateTime(1),
       },
     ]
@@ -650,7 +781,8 @@ Object.assign(storyData, {
   },
   "新达汇-1F数码店": {
     image: "images/新达汇/华为体验店.jpg",
-    onEnter: { add: { chasedByZombies: 1 }, set: { showPowerOut: true } },
+    // 感应门报警引尸：断电后门失效，不再引尸
+    onEnter: function(vars) { vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
     text: function(vars) {
       if (vars._metGaoAtMall) {
         if (vars._powerOut) return "华为体验店里一片漆黑。感应门没电了，你推开玻璃门走了进去。\n展示台前蹲着一个人——锅盖头，深色卫衣，手里攥着一台黑了屏的展示机。\n高锦睿抬头看到你，一脸绝望：\n“怎么没电了？！我刚下载好一个游戏——等了一下午才下完的。你知不知道商场的WiFi有多慢——不是，你知道拉电闸的是谁吗？”\n你说：“现在都这个样子了，你还想着玩游戏？”\n他愣了一秒，低头看了看手里黑屏的手机。\n“……不然还能干嘛呢。”\n这句话说得很轻。然后他把手机放回展示台，站了起来，咧嘴一笑：“算了算了，反正那游戏也不好玩——我看了评论才两星。”他拍了拍裤子上的灰，朝门口走去。\n“看到什么好东西记得喊我。”";
@@ -1165,9 +1297,12 @@ Object.assign(storyData, {
   },
   "新达汇-2F服装店": {
     image: "images/新达汇/服装店.jpg",
-    onEnter: { add: { chasedByZombies: 1 }, set: { showPowerOut: true } },
-    text: function(vars) { return "你刚靠近海澜之家的玻璃门，感应器就发出一声短促的电子提示音，门缓缓滑开。声音不大，但在安静的走廊里足够传到很远。\n\
-海澜之家和雅戈尔面对面开着。海澜之家白色装修，冷淡简约；雅戈尔深色木纹更显沉稳。试衣间的门关着。雅戈尔那边的收银台后面有一扇门，贴着“员工间”的标签。\n" + describeZombieWave(vars); },
+    // 感应门报警引尸：断电后门失效，不再引尸
+    onEnter: function(vars) { vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
+    text: function(vars) { return (vars._powerOut
+        ? "海澜之家的玻璃门没电了，你用手扒开一条缝挤了进去。\n"
+        : "你刚靠近海澜之家的玻璃门，感应器就发出一声短促的电子提示音，门缓缓滑开。声音不大，但在安静的走廊里足够传到很远。\n")
+      + "海澜之家和雅戈尔面对面开着。海澜之家白色装修，冷淡简约；雅戈尔深色木纹更显沉稳。试衣间的门关着。雅戈尔那边的收银台后面有一扇门，贴着“员工间”的标签。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "快躲进试衣间！",
@@ -1198,6 +1333,8 @@ Object.assign(storyData, {
       if (vars.chasedByZombies >= 3) return "你拉开一间隔间的门钻了进去，反手锁上门。\n\
 但隔音太差了——你能听到外面传来的拖沓脚步声越聚越多。它们在试衣间外面停了下来，发出低沉的嘶吼。\n\
 你被困住了。过了很久它们才散去，但你意识到躲进货架林立的服装店不是一个好主意——屏障太多，根本不知道哪个角落藏着什么。";
+      if (vars._powerOut) return "你拉开一间隔间的门钻了进去，反手锁上门。\n隔间的空间不大，勉强能站一个人。你贴着墙壁，听到外面有拖沓的脚步声——有什么东西摸进了店里。\n\
+脚步声在试衣间门口徘徊了一会儿，然后远去了。你等了几分钟，确认安全后才推开门。\n<span style='color: #ffaa00;'>货架林立的服装店实在不是个好藏身处。</span>";
       return "你拉开一间隔间的门钻了进去，反手锁上门。\n隔间的空间不大，勉强能站一个人。你贴着墙壁，听到外面的感应门又响了几声——有什么东西进来了。\n\
 脚步声在试衣间门口徘徊了一会儿，然后远去了。你等了几分钟，确认安全后才推开门。\n<span style='color: #ffaa00;'>警报声引来了更多丧尸。</span>";
     },
@@ -1566,7 +1703,14 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-3F大型综合儿童乐园": {
-    onEnter: { set: { showPowerOut: true } },
+    onEnter: function(vars) {
+      vars.showPowerOut = true;
+      // 首次进入、未喂食、未断电 → 变异猫开始尾随（text 里靠 _visit===1 先播首遇文本）
+      if (!vars._powerOut && !vars._catFed && vars._visit["新达汇-3F大型综合儿童乐园"] === 1) {
+        vars._catChasing = true;
+      }
+      return {};
+    },
     image: function(vars) {
       if(vars._powerOut) return "images/新达汇/卡通尼小猫-断电.jpg";
       return "images/新达汇/卡通尼小猫.jpg";
@@ -1578,11 +1722,14 @@ Object.assign(storyData, {
         return "卡通尼乐园里一片漆黑。";
       }
       if (vars._catFed) return "你又来到了卡通尼乐园。那只变异猫蜷在海洋球池深处，尾巴搭在池沿上，缓缓摆动。它看了你一眼，没有动——似乎对你已经失去了兴趣。";
-      if (vars._catChasing) return "你又来到了卡通尼乐园。那只变异猫不知什么时候回来了，蹲在滑梯顶上，尾巴缓缓摆动。它看到你，没有跑——只是盯着你。";
-      return "你走进卡通尼乐园。游戏机的屏幕大多暗着。一只体型异常的猫蹲在抓娃娃机顶上，绿眼睛在昏暗的光线下发光。它与你对视了一秒，然后从你脚边窜出了门外。\n\
+      if (vars._visit["新达汇-3F大型综合儿童乐园"] === 1) {
+        return "你走进卡通尼乐园。游戏机的屏幕大多暗着。一只体型异常的猫蹲在抓娃娃机顶上，绿眼睛在昏暗的光线下发光。它与你对视了一秒，然后从你脚边窜出了门外。\n\
 这里并没有什么有用的东西，你转身离开。\n\
 走了几步，你就听到猫叫声从身后传来。<span style='font-style: italic;'>其声呜呜然，如怨如慕，如泣如诉。</span>\n\
 <span style='color: #ffaa00;'>它跟上你了。</span>";
+      }
+      if (vars._catChasing) return "你又来到了卡通尼乐园。那只变异猫不知什么时候回来了，蹲在滑梯顶上，尾巴缓缓摆动。它看到你，没有跑——只是盯着你。";
+      return "你又来到了卡通尼乐园。这里空荡荡的，没什么有用的东西。";
     },
     choices: [
       {
@@ -1600,13 +1747,13 @@ Object.assign(storyData, {
         text: "掏出口袋里的饼干，试探性地伸向猫",
         nextScene: "新达汇-卡通尼乐园-喂猫",
         effect: { set: { hasBiscuit: false, _catChasing: false, _catFed: true }, add: { itemCount: -1 } },
-        showCondition: "_catChasing && hasBiscuit",
+        showCondition: function(vars) { return vars._catChasing && vars.hasBiscuit && vars._visit["新达汇-3F大型综合儿童乐园"] > 1; },
       },
       {
         text: "掏出那包脆脆炒米，撕开包装晃了晃",
         nextScene: "新达汇-卡通尼乐园-喂猫",
         effect: { set: { hasCatSnack: false, _catChasing: false, _catFed: true }, add: { itemCount: -1 } },
-        showCondition: "_catChasing && hasCatSnack",
+        showCondition: function(vars) { return vars._catChasing && vars.hasCatSnack && vars._visit["新达汇-3F大型综合儿童乐园"] > 1; },
       },
     ]
   },
@@ -1945,12 +2092,13 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F大渝火锅": {
-    onEnter: { set: { showPowerOut: true } },
+    onEnter: { set: { showPowerOut: true, positionAfterOperation: "新达汇-4F大渝火锅" } },
     image: "images/新达汇/大渝火锅.jpg",
     text: function(vars) {
-      if (vars._triedHotpot && !vars.hasCatSnack) return "大渝火锅的食材已经被你搜刮干净了。门口的零食台上倒还有几包小零食——但你已经拿过一包了。";
-      if (vars._triedHotpot && vars.hasCatSnack) return "大渝火锅的食材已经被你搜刮干净了。";
-      var desc = "你走进大渝火锅。冰柜里还有一些食材没完全坏掉。灶台还能用。\n门口等位区的零食台上散落着几包没拆封的零食——其中有一包脆脆炒米。";
+      var desc = vars._triedHotpot
+        ? "大渝火锅的食材已经被你搜刮干净了。"
+        : "你走进大渝火锅。冰柜里还有一些食材没完全坏掉。灶台还能用。";
+      if (!vars.hasCatSnack) desc += "\n门口等位区的零食台上散落着几包没拆封的零食——其中有一包脆脆炒米。";
       if (vars._backhallEntered) desc += "\n后厨通向一条后勤走廊——你之前去过那里。";
       return desc;
     },
@@ -1959,7 +2107,9 @@ Object.assign(storyData, {
         text: "拿起那包脆脆炒米",
         nextScene: "新达汇-4F大渝火锅",
         effect: { set: { hasCatSnack: true }, add: { itemCount: 1 } },
-        showCondition: "!hasCatSnack && !_triedHotpot",
+        condition: "itemCount < bagVolume",
+        elseScene: "整理整理",
+        showCondition: "!hasCatSnack",
       },
       {
         text: "煮一锅麻辣锅底——过瘾！",
@@ -2132,8 +2282,12 @@ Object.assign(storyData, {
   },
   "新达汇-4F电影院大厅": {
     image: "images/placeholder.png" /* TODO: images/新达汇/cinemaLobby.png */,
-    onEnter: { add: { chasedByZombies: 1 }, set: { showPowerOut: true } },
-    text: "影城的玻璃感应门在你靠近时无声打开——它居然还有电。伴随着一声低沉的电子提示音，你的身影被门框上的摄像头捕捉到了。\n售票处电子屏还在闪烁，爆米花撒了一地。影厅走廊延伸向黑暗深处。",
+    // 感应门报警引尸：断电后门失效，不再引尸
+    onEnter: function(vars) { vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
+    text: function(vars) {
+      if (vars._powerOut) return "影城的玻璃感应门黑着，你使劲扒开一道缝钻了进去。售票处的电子屏也灭了，爆米花撒了一地。影厅走廊延伸向黑暗深处。";
+      return "影城的玻璃感应门在你靠近时无声打开——它居然还有电。伴随着一声低沉的电子提示音，你的身影被门框上的摄像头捕捉到了。\n售票处电子屏还在闪烁，爆米花撒了一地。影厅走廊延伸向黑暗深处。";
+    },
     choices: [
       {
         text: "走进影厅走廊",

@@ -501,8 +501,20 @@ Object.assign(storyData, {
   "建平-后门辅路": {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/backAuxRoad.png */,
-    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "后门辅路"; },
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPos = "后门辅路";
+      if (vars._backGateOpened && !vars._teacherLeft && !vars._xinDead && vars.chasedByZombies >= 3) {
+        vars._xinDead = true;
+      }
+    },
     text: function(vars) {
+      if (vars._xinDead) {
+        if (vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
+          return "你沿着后门辅路走。\n轿车还停在原地，车门大开，引擎已经熄了。忻老师倒靠在车旁，后颈有深深的咬伤，手里还攥着钥匙。\n——丧尸从后门漫进来了。你来晚了一步。";
+        }
+        return "你沿着后门辅路走。\n一辆轿车停在路边，车门大开，引擎熄了。一个中年男人倒靠在车旁，已经没了气息。";
+      }
       if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         return "你沿着后门辅路走。\n一辆轿车亮着车灯停在不远处——是忻老师。他摇下车窗，朝你招了招手。\n\"上车，我带你一程。\"";
       }
@@ -510,7 +522,7 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
+      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && !vars._xinDead && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         cs.push({ text: "跟忻老师上车（去复旦）", nextScene: "建平-前往复旦", effect: function(v) { v._teacherLeft = true; v.hasCar = false; v.hasEbike = false; v.hasRustyBike = false; v.hasScooter = false; return {}; } });
         cs.push({ text: "算了，我还有事", nextScene: "建平-食堂", effect: updateTime(2) });
       }
@@ -1401,6 +1413,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "远翔楼3F物理办公室"; },
     text: function(vars) {
+      if (vars._xinDead) {
+        return "物理办公室里空了。桌上摊着一沓批了一半的试卷，椅子被推到一边——忻老师已经不在这里了。";
+      }
       var desc;
       if (!vars._visit["建平-远翔楼-3F-物理办公室"] || vars._visit["建平-远翔楼-3F-物理办公室"] <= 1) {
         desc = "你推开物理办公室的门。\n忻老师——你的物理老师——正坐在办公桌前，手边摊着一沓批了一半的试卷。看到你，他先是一愣，随即露出一个复杂的笑容。\n\"是你啊。没想到还能在这儿见到你。\"\n";
@@ -1545,16 +1560,22 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) {
       vars.currentPos = "食堂";
-      // 死亡锁存：Day 3 且阀门未关时刘冠宇已煤气中毒死亡；一旦在食堂观察到（锁存），
-      // 之后即使关掉煤气阀也永久保持死亡，不复活。
-      if (vars.dd >= 3 && !vars._gasValveClosed) {
-        vars._liuCorpse = true;
+      if (!vars._liuCorpse) {
+        // ch 联动：尸潮等级高时丧尸闯进食堂咬死刘冠宇（两难冲突：救老师 vs 守食堂）
+        if (vars.chasedByZombies >= 3) {
+          vars._liuCorpse = "zombie";
+        // 死亡锁存：Day 3 且阀门未关时煤气中毒；一旦在食堂观察到即锁存，不复活
+        } else if (vars.dd >= 3 && !vars._gasValveClosed) {
+          vars._liuCorpse = "gas";
+        }
       }
       return {};
     },
     text: function(vars) {
       var desc = "食堂。";
-      if (vars._liuCorpse) {
+      if (vars._liuCorpse === "zombie") {
+        desc += "\n长椅旁的地上，刘冠宇侧倒着，一动不动。";
+      } else if (vars._liuCorpse) {
         desc += "\n靠墙的长椅上，刘冠宇蜷缩着，一动不动。";
       } else {
         desc += "\n刘冠宇坐在靠墙的长椅上，一条腿翘着，腿上缠着绷带。";
@@ -1576,6 +1597,9 @@ Object.assign(storyData, {
   "建平-食堂-刘冠宇": {
     image: "images/placeholder.png",
     text: function(vars) {
+      if (vars._liuCorpse === "zombie") {
+        return "你走到刘冠宇身边。\n他侧倒在长椅旁的地上，脖子上有深深的齿痕和抓伤，脸上满是恐惧与不甘。\n——丧尸闯进来了。你来得太晚了。";
+      }
       if (vars._liuCorpse) {
         return "你走到刘冠宇身边。\n他蜷缩在长椅上，脸色铁青，已经没了呼吸。\n煤气中毒。你来得太晚了。";
       }
@@ -1601,6 +1625,14 @@ Object.assign(storyData, {
         vars.gasIndex = Math.min(100, vars.gasIndex + 20);
       }
       return {};
+    },
+    // gasIndex≥60 时开始计时压力：每次进入在倒计时内不处理就被迫退出
+    qte: function(vars) {
+      if (vars.gasIndex >= 60 && !vars._gasValveClosed) {
+        var t = 15000 - (vars.gasIndex - 60) * 250;  // 60→15s, 80→10s
+        return { hidden: false, timeout: t, onTimeout: "建平-食堂-后厨-窒息" };
+      }
+      return null;
     },
     text: function(vars) {
       if (vars.dd < 2) {
@@ -1633,6 +1665,14 @@ Object.assign(storyData, {
     text: "你在货架和冰柜里翻找，找到几罐没开封的罐头和一些干粮。\n这些够你撑一阵子了。",
     choices: [
       { text: "收好食物", nextScene: "建平-食堂-后厨", effect: updateTime(2) }
+    ]
+  },
+
+  "建平-食堂-后厨-窒息": {
+    image: "images/placeholder.png",
+    text: "你在弥漫的煤气味中撑不住了，踉跄着退出后厨，狠狠地咳了好几声。\n你感觉腿软心慌——再待下去恐怕就出不来了。",
+    choices: [
+      { text: "先退到食堂缓缓", nextScene: "建平-食堂", effect: updateTime(1) }
     ]
   },
 
@@ -1789,7 +1829,7 @@ Object.assign(storyData, {
     text: function(vars) { return "弘渊楼 3 楼。" + describeZombieWave(vars); },
     choices: [
       { text: "去楼梯", nextScene: "建平-弘渊楼-楼梯", effect: updateTime(1) },
-      { text: "经廊桥去废弃小楼", nextScene: "建平-废弃小楼-3F", effect: updateTime(2) },
+      { text: "经廊桥去废弃小楼", condition: "hasKeyRing", nextScene: "建平-废弃小楼-3F", effect: updateTime(2), elseScene: "建平-廊桥-锁门" },
       { text: "去阅览区", nextScene: "建平-弘渊楼-3F-阅览区", effect: updateTime(1) }
     ]
   },
@@ -1916,7 +1956,7 @@ Object.assign(storyData, {
   "建平-济美楼-1F-心理教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼1F心理教室"; },
-    text: "心理教室。靠墙摆着一排放松椅，角落里有个沙盘，里面堆着没来得及收的小摆件。墙上的「心情晴雨表」还贴着几张便利贴，最后一张的日期，停在出事的那天。",
+    text: "心理教室。靠墙摆着一排放松椅，角落里有个沙盘，里面堆着没来得及收的小摆件。墙上的「心情晴雨表」还贴着几张便利贴，最后一张的日期，停在6/28。",
     choices: [
       { text: "回 1 楼走廊", nextScene: "建平-济美楼-1F", effect: updateTime(1) }
     ]
@@ -1967,8 +2007,15 @@ Object.assign(storyData, {
     text: function(vars) { return "废弃小楼 3 楼。" + describeZombieWave(vars); },
     choices: [
       { text: "去楼梯", nextScene: "建平-废弃小楼-楼梯", effect: updateTime(1) },
-      { text: "经廊桥去弘渊楼", nextScene: "建平-弘渊楼-3F", effect: updateTime(2) },
+      { text: "经廊桥去弘渊楼", condition: "hasKeyRing", nextScene: "建平-弘渊楼-3F", effect: updateTime(2), elseScene: "建平-廊桥-锁门" },
       { text: "去团委工作室", nextScene: "建平-废弃小楼-3F-团委工作室", effect: updateTime(1) }
+    ]
+  },
+  "建平-廊桥-锁门": {
+    image: "images/placeholder.png",
+    text: "廊桥尽头的铁门挂着一把锈迹斑斑的挂锁，纹丝不动。\n需要钥匙串才能打开。",
+    choices: [
+      { text: "退回", nextScene: function(v) { return v._lastScene || "建平-废弃小楼-3F"; }, effect: updateTime(1) }
     ]
   },
   "建平-废弃小楼-楼梯": jpStair("建平-废弃小楼", "废弃小楼楼梯间", [1, 2, 3]),

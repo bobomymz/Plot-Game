@@ -572,15 +572,177 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-8号楼-203室-笔记本": {
-    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    image: "images/placeholder.png" /* TODO: images/安居苑/wangLaptop.png */,
     onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室" } },
-    text: "你按了按笔记本的电源键——屏幕毫无反应。电源指示灯早就暗了，充电口周围积了一层薄灰。\n\
-你把电脑翻过来，A面贴着一张卡通贴纸：一只戴着博士帽的蚯蚓，下面手写着“Dr. Earthworm”。\n\
-没有电。你合上电脑，想着哪天找到电源了，再来看看里面有什么。",
-    choices: [
-      {
+    text: function(vars) {
+      var desc = "这是一台用了好几年的 ThinkPad。你把它翻过来看——A面贴着一张卡通贴纸：一只戴着博士帽的蚯蚓，下面手写着“Dr. Earthworm”。\n\
+贴纸旁边还粘着一张卷了边的便利贴，是同一个人的字：“今天蚯蚓怎么样了？”\n";
+      if (vars._wangLaptopUnlocked) {
+        desc += "电脑已经解锁，屏幕停在桌面上。";
+      } else if (vars._wangLaptopBooted) {
+        desc += "你刚才接上电源开了机，屏幕亮着，卡在登录界面，等着输入开机密码。";
+      } else if (vars.hasCharger) {
+        desc += "屏幕黑着，电源灯也灭了。你手里正好有个充电器，也许能把它救活。";
+      } else {
+        desc += "你按了按电源键——屏幕毫无反应。电源灯早就暗了，充电口周围积了一层薄灰。没有电，得先找个充电器。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var opts = [];
+      if (vars._wangLaptopUnlocked) {
+        opts.push({
+          text: "看看电脑里的东西",
+          nextScene: "三林安居苑-8号楼-203室-笔记本-桌面",
+          effect: updateTime(1)
+        });
+      } else if (vars._wangLaptopBooted) {
+        opts.push({
+          text: "输入开机密码",
+          input: { placeholder: "开机密码", maxLength: 20 },
+          condition: function(v) { return String(v._input || "").toLowerCase().replace(/[\s.]/g, "") === "drearthworm"; },
+          nextScene: "三林安居苑-8号楼-203室-笔记本-桌面",
+          effect: { set: { _wangLaptopUnlocked: true } },
+          elseScene: "三林安居苑-8号楼-203室-笔记本-密码错误"
+        });
+      } else if (vars.hasCharger) {
+        opts.push({
+          text: "插上充电器开机",
+          nextScene: "三林安居苑-8号楼-203室-笔记本-开机",
+          effect: updateTime(3)
+        });
+      }
+      opts.push({
         text: "放下笔记本",
         nextScene: "三林安居苑-8号楼-203室",
+        effect: updateTime(1)
+      });
+      return opts;
+    }
+  },
+
+  "三林安居苑-8号楼-203室-笔记本-开机": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/wangLaptop.png */,
+    onEnter: { set: { _wangLaptopBooted: true, positionAfterOperation: "三林安居苑-8号楼-203室" } },
+    text: "你找了个插座接上充电器。风扇转了两下，屏幕亮起来——电量勉强够用。\n\
+系统跳出登录框，用户名那栏写着 zhiyun.wang，下面是空的密码框，光标一闪一闪。\n\
+你看了眼A面那只戴博士帽的蚯蚓。",
+    choices: [
+      {
+        text: "输入开机密码",
+        input: { placeholder: "开机密码", maxLength: 20 },
+        condition: function(v) { return String(v._input || "").toLowerCase().replace(/[\s.]/g, "") === "drearthworm"; },
+        nextScene: "三林安居苑-8号楼-203室-笔记本-桌面",
+        effect: { set: { _wangLaptopUnlocked: true } },
+        elseScene: "三林安居苑-8号楼-203室-笔记本-密码错误"
+      },
+      {
+        text: "先不弄了",
+        nextScene: "三林安居苑-8号楼-203室-笔记本",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "三林安居苑-8号楼-203室-笔记本-密码错误": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/wangLaptop.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室" } },
+    text: function(vars) {
+      var q = String(vars._input || "").replace(/[{}]/g, "");
+      return "登录框抖了一下，弹出红字：密码错误。\n你输的是“" + q + "”。\n再想想——贴纸上那行字，她是怎么称呼自己的？";
+    },
+    choices: [
+      {
+        text: "再试一次",
+        input: { placeholder: "开机密码", maxLength: 20 },
+        condition: function(v) { return String(v._input || "").toLowerCase().replace(/[\s.]/g, "") === "drearthworm"; },
+        nextScene: "三林安居苑-8号楼-203室-笔记本-桌面",
+        effect: { set: { _wangLaptopUnlocked: true } },
+        elseScene: "三林安居苑-8号楼-203室-笔记本-密码错误"
+      },
+      {
+        text: "算了",
+        nextScene: "三林安居苑-8号楼-203室-笔记本",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "三林安居苑-8号楼-203室-笔记本-桌面": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/wangLaptop.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室" } },
+    text: "桌面壁纸是一张显微镜下的土壤剖面照。任务栏上还开着两个窗口：一个浏览器停在 B 站的创作中心，一个邮件客户端。\n\
+她走得急，什么都没来得及关。",
+    choices: [
+      {
+        text: "看看 B 站创作中心",
+        nextScene: "三林安居苑-8号楼-203室-笔记本-B站",
+        effect: updateTime(2)
+      },
+      {
+        text: "翻一翻邮件",
+        nextScene: "三林安居苑-8号楼-203室-笔记本-邮件",
+        effect: updateTime(2)
+      },
+      {
+        text: "合上电脑",
+        nextScene: "三林安居苑-8号楼-203室-笔记本",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "三林安居苑-8号楼-203室-笔记本-B站": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/wangLaptop.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室-笔记本-桌面" } },
+    text: "浏览器停在她的 B 站创作中心，账号没退出。粉丝一万出头，简介写着“环境毒理学 / 蚯蚓的朋友 / 科普是我的第二份工作”。\n\
+\n\
+【内容管理】\n\
+· 图文动态《浦东居民请留意：自来水可能存在重金属污染》\n\
+　发布于 6/27 09:14 ｜ 状态：已限流，被标记“涉及不实信息”\n\
+　浏览 327 ｜ 评论区顶着一条：“up主你认真的吗？我住浦东，刚喝了一杯水。”——她没有回复过这条。\n\
+\n\
+· 直播回放《浦东自来水检出甲基汞异常——建议暂时不要直接饮用》\n\
+　开播 6/28 上午 ｜ 时长约 7 分钟（被强制中断）\n\
+　状态：视频已下架，账号处于冻结中。最高在线 187 人。\n\
+\n\
+【草稿箱（1）】\n\
+· 一条没发出去的动态，最后编辑于 6/28 17:53：\n\
+　“老洪那瓶芜湖带回来的水样测出来了，和我自采的自来水完全一致——不是我仪器的问题。\n\
+　他讲的那个封存区、含汞废料、暴雨渗漏，全对得上。我查了三天没敢下的结论，他一句话就说全了。\n\
+　我去仁济，方瑜答应帮我留脑脊液样本。有临床样本就是铁证，压不下去。\n\
+　这条等我从仁济回来、拿到数据再发。”",
+    choices: [
+      {
+        text: "关掉这个窗口",
+        nextScene: "三林安居苑-8号楼-203室-笔记本-桌面",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "三林安居苑-8号楼-203室-笔记本-邮件": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/wangLaptop.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室-笔记本-桌面" } },
+    text: "邮件客户端里，最上面一封是发件箱里的，还标着“已发送”。\n\
+\n\
+收件人：方瑜（仁济南院 检验科）\n\
+主题：脑脊液样本 / 今晚过去\n\
+时间：6/28 16:22\n\
+\n\
+“阿瑜：\n\
+　长话短说。黄浦江和浦东自来水里检出甲基汞，超正常值 40 倍，我自己复测了三遍；还有一个独立的污染源——邻居从芜湖一个化工封存区带回来的水样，数据一致。扩散路径是自来水管网。\n\
+　你们这两天收的那些‘高热、抽搐、意识障碍’的病人，八成不是病毒，是急性甲基汞中毒。我需要临床样本把这条链子钉死：脑脊液，越多越好，冷藏，别加固定剂。\n\
+　我今晚过去，走检验科后门，你把设备给我开一下就行，不耽误你多少时间。\n\
+　这次我不等了。\n\
+　知筠”\n\
+\n\
+下面一封是方瑜的回信，16:40：\n\
+“收到，后门等你。你路上小心，医院这边也开始乱了。”",
+    choices: [
+      {
+        text: "关掉这个窗口",
+        nextScene: "三林安居苑-8号楼-203室-笔记本-桌面",
         effect: updateTime(1)
       }
     ]

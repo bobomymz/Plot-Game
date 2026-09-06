@@ -52,6 +52,7 @@ const storyData = {
     _3f_darkZoneDone: false,   // 3F黑暗段是否已安全通过
     _deliveryCode: "",         // 外卖取餐码（拿到外卖时记录）
     _droneBattery: 30,         // 无人机剩余电量(分钟)，断电后消耗
+    _mallGuardSnack: false,     // 新达汇B1保安室值班台桃酥是否已吃（一次性+2体力）
     _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
     _marketHallCleared: false, // 菜市场大厅的丧尸是否已清理
     _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
@@ -145,11 +146,13 @@ const storyData = {
     hasSutureKit: false,    // 缝合包（仁济手术供应室）
     hasTourniquet: false,   // 止血带（仁济手术供应室）
     hasAnesthetic: false,   // 麻醉剂（仁济手术供应室）
-    // 仁济医院 - 真相线索（占背包）
+    // 仁济医院 - 真相线索（不占背包）
     hasWangPhone: false,    // 王知筠手机（仁济检验科）
     hasWangNotebook: false, // 王知筠实验记录本（仁济检验科）
     hasMercuryReport: false,// 检测报告备份（仁济太平间）
     wangPhoneBattery: 0,    // 王知筠手机剩余电量（捡到时按 dd 计算）
+    _wangLaptopBooted: false,   // 安居苑203室王知筠笔记本是否已用充电器通电开机
+    _wangLaptopUnlocked: false, // 安居苑203室王知筠笔记本是否已输入开机密码解锁（Dr.Earthworm）
     // 仁济医院 - 状态
     _renjiERCleared: false,     // 急诊大厅丧尸是否清除
     _renjiLabCleared: false,    // 检验科守卫丧尸是否清除
@@ -180,6 +183,7 @@ const storyData = {
     _yifenWestCleared: false,   // 挹芬楼1F西侧走廊丧尸是否已清（强制记忆闪色）
     _yifenEastCleared: false,   // 挹芬楼1F东侧走廊丧尸是否已清（强制记忆闪色）
     _teacherLeft: false,        // 忻老师是否已开车离开（跟去复旦后为 true）
+    _xinDead: false,            // 忻老师是否已被丧尸杀死（ch>=3 进入后门辅路时触发）
     hasMultimeter: false,       // 万用表（老吴杂物室，修14班电脑用）
     _dormCleared: false,        // 建平宿舍丧尸是否已清理（记忆闪色，安全过夜前置）
     _liuCorpse: false,          // 刘冠宇是否已死（锁存：在食堂观察到尸体后永久保持，关煤气阀不复活）
@@ -777,6 +781,11 @@ const storyData = {
         nextScene: "整理整理-看时间"
       },
       {
+        showCondition: "hasPhone",
+        text: "用手机查地图导航",
+        nextScene: "整理整理-导航"
+      },
+      {
         text: "不丢，谢谢",
         showCondition: "itemCount <= bagVolume", // 只有当物品数量小于等于背包容量时，才能继续前进，否则需要整理整理物品
         nextScene: "{positionAfterOperation}"
@@ -867,6 +876,46 @@ const storyData = {
     text: "你掰下一粒退烧药，就着半瓶水咽了下去。药效来得不算快，但过了好一会儿，你身上那股散不掉的寒气慢慢退了，额头也不再发烫。\n你抹了把汗，整个人虚脱似的坐了一会儿——总算不发烧了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】感冒已治愈。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  // ====== 整理整理-手机地图导航（导航表见 utils.js 的 NAV_TABLE） ======
+  "整理整理-导航": {
+    image: "images/整理整理.png",
+    text: "你摸出手机，点开离线地图。大半个屏幕是模糊的灰色，只有你走过的街道还标着清楚的名字。\n输入想去的地方，看看怎么走。",
+    choices: [
+      {
+        text: "输入目的地",
+        input: { placeholder: "地名，如：仁济医院 / 建平中学", maxLength: 20 },
+        nextScene: function(vars) {
+          return navLookup(vars._input) ? "整理整理-导航-结果" : "整理整理-导航-查无";
+        }
+      },
+      { text: "收起手机", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-导航-结果": {
+    image: "images/整理整理.png",
+    text: function(vars) {
+      var entry = navLookup(vars._input);
+      return entry ? navRouteText(vars, entry) : "地图上找不到这个地方。";
+    },
+    choices: [
+      { text: "再查一个地方", nextScene: "整理整理-导航" },
+      { text: "收起手机", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-导航-查无": {
+    image: "images/整理整理.png",
+    text: function(vars) {
+      var q = String(vars._input || "").replace(/[{}]/g, "");
+      return "你在搜索框里输入了“" + q + "”。\n地图上找不到这个地方。";
+    },
+    choices: [
+      { text: "再查一个地方", nextScene: "整理整理-导航" },
+      { text: "收起手机", nextScene: "整理整理" }
     ]
   },
 

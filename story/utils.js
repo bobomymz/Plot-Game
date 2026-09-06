@@ -359,3 +359,68 @@ function travelScene(text, nextScene, options) {
 function zombieOutsideHome(vars) { // 丧尸在家门口
   return (vars.dd == 1 || vars.dd == 3) && vars.hh % 2 == 0;
 }
+
+// ====== 手机地图导航（挂在"整理整理"，showCondition: hasPhone） ======
+// 导航表：每条 = { keys:玩家可能输入的关键词, name:显示名, route:途经的真实场景ID, tip:方向/条件提示 }
+// route 直接用游戏节点 ID —— 点亮机制：去过的节点(_visit>0)报出节点名，没去过的显示 ？？？。
+// 需要补新目的地时，只在 NAV_TABLE 里加一条即可，不用改引擎。目前只收录了前往仁济、建平两条高架线。
+var NAV_TABLE = [
+  {
+    keys: ["仁济", "仁济医院", "仁济南院", "南院"],
+    name: "仁济医院南院",
+    route: [
+      "三林路-环林东路 十字路口",
+      "杨高南路立交桥",
+      "济阳路跨线桥",
+      "仁济南院-浦锦路"
+    ],
+    tip: "全程走高架，必须有车。上杨高南路立交桥后往西，到济阳路跨线桥朝西北下高架。"
+  },
+  {
+    keys: ["建平", "建平中学"],
+    name: "建平中学",
+    route: [
+      "三林路-环林东路 十字路口",
+      "杨高南路立交桥",
+      "外环罗山路立交桥",
+      "张江立交桥",
+      "罗山路立交桥下",
+      "建平-校园门口"
+    ],
+    tip: "全程走高架，必须有车。上杨高南路立交桥后沿外环一路往东，到罗山路立交桥下下高架。"
+  }
+];
+
+// 按玩家输入(_input)模糊匹配导航表；查不到返回 null
+function navLookup(input) {
+  if (!input) return null;
+  var s = String(input).trim();
+  if (!s) return null;
+  for (var i = 0; i < NAV_TABLE.length; i++) {
+    for (var j = 0; j < NAV_TABLE[i].keys.length; j++) {
+      if (s.indexOf(NAV_TABLE[i].keys[j]) >= 0) return NAV_TABLE[i];
+    }
+  }
+  return null;
+}
+
+// 渲染一条导航结果：去过的节点报节点名，没去过的打问号（点亮机制）
+function navRouteText(vars, entry) {
+  var visit = vars._visit || {};
+  var complete = true;
+  var lines = "";
+  for (var i = 0; i < entry.route.length; i++) {
+    var id = entry.route[i];
+    if (visit[id] > 0) {
+      lines += "\n" + (i + 1) + "、" + id;
+    } else {
+      lines += "\n" + (i + 1) + "、？？？";
+      complete = false;
+    }
+  }
+  var out = "你在离线地图上标出了去【" + entry.name + "】的路线：" + lines + "\n" + entry.tip;
+  if (!complete) {
+    out += "\n标着问号的路段你还没走过，地图上是一片空白——到了那儿再看吧。";
+  }
+  return out;
+}
