@@ -1580,10 +1580,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
       });
       return f(vars);
     },
-    onEnter: function(vars) {
-      var effect = updateTime(2, { set: { positionAfterOperation: "小区西门-整装待发", currentPlace: "初始小区", currentPos: "西门" } })(vars);
-      return effect;
-    },
+    onEnter: updateTime(2, { set: { positionAfterOperation: "小区西门-整装待发", currentPlace: "初始小区", currentPos: "西门" } }),
     text: function(vars) {
       let basicDes = "你来到了小区西门。\n\
 推开失灵的感应门。门外是一条空荡荡的街道，几辆歪斜的汽车堵在路中间，车窗碎裂，里面空无一人。\n\

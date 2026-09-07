@@ -612,6 +612,7 @@ const storyData = {
       {
         showCondition: "hasBiscuit",
         text: "吃掉饼干（体力+1）",
+        effect: updateTime(1, { set: {hasBiscuit: false}, add: {strength: 1, itemCount: -1}}),
         nextScene: "整理整理-吃饼干"
       },
       {

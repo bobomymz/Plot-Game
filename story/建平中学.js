@@ -1984,7 +1984,7 @@ Object.assign(storyData, {
   "建平-废弃小楼-1F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "废弃小楼1F"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "废弃小楼 1 楼。这栋没人管的小楼里堆着杂物，丧尸在阴影里躲了不少，比外面看起来的还要多。"; },
+    text: function(vars) { return "你推开废弃小楼的玻璃门，走进了这处人迹罕至的地方。这栋没人管的小楼里堆着杂物，丧尸在阴影里躲了不少，比外面看起来的还要多。"; },
     choices: [
       { text: "去水池", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "去思贤堂", nextScene: "建平-思贤堂", effect: updateTime(2) },
@@ -1995,7 +1995,7 @@ Object.assign(storyData, {
   "建平-废弃小楼-2F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "废弃小楼2F"; },
-    text: function(vars) { return "废弃小楼 2 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "2 楼有几间上锁的房间，从窗户往里看，也不知道里面放了什么。" + describeZombieWave(vars); },
     choices: [
       { text: "去楼梯", nextScene: "建平-废弃小楼-楼梯", effect: updateTime(1) },
       { text: "去活动室", nextScene: "建平-废弃小楼-2F-活动室", effect: updateTime(1) }
@@ -2004,7 +2004,7 @@ Object.assign(storyData, {
   "建平-废弃小楼-3F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "废弃小楼3F"; },
-    text: function(vars) { return "废弃小楼 3 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "你走到废弃小楼的3楼。这里有团委办公室等工作室，平时这里是一些游手好闲的学生打游戏的天堂—————不会有人知道这里。有些小情侣也会在这里约会。\n" + describeZombieWave(vars); },
     choices: [
       { text: "去楼梯", nextScene: "建平-废弃小楼-楼梯", effect: updateTime(1) },
       { text: "经廊桥去弘渊楼", condition: "hasKeyRing", nextScene: "建平-弘渊楼-3F", effect: updateTime(2), elseScene: "建平-廊桥-锁门" },
@@ -2013,7 +2013,7 @@ Object.assign(storyData, {
   },
   "建平-廊桥-锁门": {
     image: "images/placeholder.png",
-    text: "廊桥尽头的铁门挂着一把锈迹斑斑的挂锁，纹丝不动。\n需要钥匙串才能打开。",
+    text: "廊桥尽头的铁门挂着一把锈迹斑斑的挂锁，纹丝不动。\n需要钥匙才能打开。",
     choices: [
       { text: "退回", nextScene: function(v) { return v._lastScene || "建平-废弃小楼-3F"; }, effect: updateTime(1) }
     ]
@@ -2024,7 +2024,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "废弃小楼3F团委工作室"; },
     text: function(vars) {
-      var desc = "废弃小楼 3 楼 · 团委工作室。这里堆满了历年校园活动的道具和杂物。";
+      var desc = "你按下把手，吱呀一声，门开了。团委工作室空间并不大，几个小沙发、高脚椅，加上一张大桌子。这里堆了些历年校园活动的道具和杂物。";
       if (!vars._innerLiningYouthRoom) {
         desc += "\n角落里的一堆校服下面，露出半截校服外套的内胆。";
       }
@@ -2033,7 +2033,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars._innerLiningYouthRoom) {
-        cs.push({ text: "拿走校服内胆", nextScene: "建平-废弃小楼-3F-团委工作室-内胆" });
+        cs.push({ text: "查看那堆校服", nextScene: "建平-废弃小楼-3F-团委工作室-内胆" });
       }
       cs.push({ text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-团委工作室" });
       cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-废弃小楼-3F-团委工作室" } } });
@@ -2044,15 +2044,27 @@ Object.assign(storyData, {
 
   "建平-废弃小楼-3F-团委工作室-内胆": {
     image: "images/placeholder.png",
-    onEnter: { set: { _innerLiningYouthRoom: true }, add: { hasInnerLining: 1 } },
     text: function(vars) {
+      let basicDes = "你蹲下来翻看熟悉的校服。这些是已经绝版的老校服，还有些演出服装混在里面，最底下有一件校服内胆。\n\
+内胆当作外套穿，是一件很常见的穿法————虽然Harsh，你的年级组长，一直对此耿耿于怀，在年级大会上对此大放厥词。";
       if (vars._harshActive) {
-        return "你抽出那件校服外套的内胆——软软的，还带着点霉味。\n想到楼上那声凄厉的嚎叫，你隐约觉得这东西……说不定能派上用场。";
+        basicDes += "你抽出那件校服外套的内胆——软软的，还带着点霉味。\n想到楼上那声凄厉的嚎叫，你隐约觉得这东西……说不定能派上用场。";
       }
-      return "你抽出那件校服外套的内胆——软软的，还带着点霉味。\n你不明白为什么有人会把内胆从校服里拆出来单独收着，但还是收好了。";
+      basicDes += "你抽出那件校服外套的内胆——软软的，还带着点霉味。或许有用吧。";
+      return basicDes;
     },
     choices: [
-      { text: "收好内胆", nextScene: "建平-废弃小楼-3F-团委工作室", effect: updateTime(1) }
+      { text: "离开", nextScene: "建平-废弃小楼-3F-团委工作室", effect: updateTime(1) },
+      { text: "收好内胆", nextScene: "建平-废弃小楼-3F-团委工作室-内胆", effect: updateTime(1), condition: "itemCount < bagVolumn", elseScene: "整理整理"}
+    ]
+  },
+
+  "建平-废弃小楼-3F-团委工作室-收好内胆": {
+    image: "images/placeholder.png",
+    onEnter: { set: { _innerLiningYouthRoom: true }, add: { hasInnerLining: 1 } },
+    text: "你收起了内胆。",
+    choices: [
+      {text: "继续", nextScene: "建平-废弃小楼-3F-团委工作室", effect: updateTime(1)}
     ]
   },
 
