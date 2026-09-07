@@ -1910,7 +1910,7 @@ Object.assign(storyData, {
   "建平-济美楼-1F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼1F"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "济美楼 1 楼。门口和走廊里都有丧尸游荡——靠近水池的方向，动静尤其多。"; },
+    text: "济美楼的白色瓷砖地沾染了血迹。抬头向上看，回字形走廊延申到屋顶。办公室里传来低吼声，似乎丧尸不少。",
     choices: [
       { text: "从侧门出去", nextScene: "建平-金苹果大道", effect: updateTime(2) },
       { text: "从正门出去", nextScene: "建平-水池", effect: updateTime(2) },
@@ -1923,7 +1923,7 @@ Object.assign(storyData, {
   "建平-济美楼-2F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼2F"; },
-    text: function(vars) { return "济美楼 2 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "你来到济美楼 2 楼。这里有美术教室，还有几个不知道用来做什么的办公室。" + describeZombieWave(vars); },
     choices: [
       { text: "去东楼梯", nextScene: "建平-济美楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-济美楼-西楼梯", effect: updateTime(1) },
@@ -1933,7 +1933,7 @@ Object.assign(storyData, {
   "建平-济美楼-3F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼3F"; },
-    text: function(vars) { return "济美楼 3 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "济美楼 3 楼。这里有JTV的办公室。" + describeZombieWave(vars); },
     choices: [
       { text: "去东楼梯", nextScene: "建平-济美楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-济美楼-西楼梯", effect: updateTime(1) },
@@ -1943,7 +1943,7 @@ Object.assign(storyData, {
   "建平-济美楼-4F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼4F"; },
-    text: function(vars) { return "济美楼 4 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "你来到了 4 楼，以前上音乐课就在这里。走廊上有一台钢琴。" + describeZombieWave(vars); },
     choices: [
       { text: "去东楼梯", nextScene: "建平-济美楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-济美楼-西楼梯", effect: updateTime(1) },
