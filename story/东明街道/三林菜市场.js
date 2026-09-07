@@ -138,10 +138,10 @@ Object.assign(storyData, {
 
   // ==================== 冷库区 ====================
   "菜市场-冷库区": {
-    image: function(vars) {
-      var f = timeImage({ morning: "images/placeholder.png" }); /* TODO: images/菜市场/冷库区.jpg */
-      return f(vars);
-    },
+    image: timeImage({
+      morning: "images/菜市场/冷库区.jpg",
+      night: "images/菜市场/冷库区-night.jpg"
+    }),
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "冷库区" } },
     text: "你走进冷库区。温度明显低了下来，墙角一排冷库门上结着白霜，其中一扇虚掩着，门缝里漏出微弱的昏黄灯光，还有一股柴油的味道。\n\
 那就是发电机的声音——低沉的嗡嗡声，从虚掩的门后传出来。",
