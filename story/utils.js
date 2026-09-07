@@ -161,7 +161,7 @@ function transit(vars, pos) {
 function sprintAway(destinations) {
   return {
     showCondition: "chasedByZombies > 2",
-    text: "拼命冲刺，甩开追兵！",
+    text: "拼命冲刺，甩开追兵！（体力-2）",
     effect: function(vars) {
       vars.strength -= 2;
       vars.chasedByZombies -= Math.floor(Math.random() * 3);

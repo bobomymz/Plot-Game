@@ -1190,7 +1190,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "回到东明路",
+        text: "回到东明路（体力-1）",
         nextScene: "上实南校-撤离成功",
         effect: { add: { strength: -1 } }
       }
@@ -1288,7 +1288,7 @@ Object.assign(storyData, {
     text: "”跑！”你一声令下，四个人一起冲了出去。\n路面的丧尸被脚步声惊动，纷纷转过头来。你们跑得很快——快到它们还没来得及围上来，你们已经穿过了马路。\n一只穿着保安服的丧尸从侧面的巷子里冲了出来，差点抓住跑在最后的小赵。你一棍子砸在它手上，它松开了。\n你们拐进对面的小巷，终于甩开了它们。\n你们终于离开了学校。",
     choices: [
       {
-        text: "回到东明路",
+        text: "回到东明路（体力-1）",
         nextScene: "上实南校-撤离成功",
         effect: { add: { strength: -1 } }
       }

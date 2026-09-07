@@ -64,7 +64,8 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/安居苑/mutantCat.png */,
     onEnter: { set: { showRain: true }, add: { strength: -1 } },
     text: "你挥舞手中的家伙，朝那些变异猫大声吼叫。它们弓起背，发出愤怒的嘶吼，但并没有扑上来——它们似乎还保留着一丝对人类的畏惧。\n\
-对峙了几秒后，带头的那只大猫转身跑进了花坛深处，其他的也跟着散了。\n小区暂时安全了，至少入口是。",
+对峙了几秒后，带头的那只大猫转身跑进了花坛深处，其他的也跟着散了。\n\
+这一通虚张声势耗得你不轻——吼得嗓子发干，胳膊也抡酸了。\n小区暂时安全了，至少入口是。",
     choices: [
       {
         text: "进入小区",
@@ -828,7 +829,6 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   "三林安居苑-8号楼-204室-老洪": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
-    onEnter: { add: { strength: -1 } },
     text: "你蹲下身，靠近他。他的眼睛半睁着，眼球在微微颤动——他还活着，但已经说不出完整的话了。\n\
 他感觉到有人靠近，嘴唇动了动，发出一串含混的气音。你把耳朵凑近，勉强辨认出几个字：\n\
 <em>“水……别喝……”</em>\n\

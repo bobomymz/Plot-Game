@@ -628,7 +628,7 @@ Object.assign(storyData, {
   "仁济南院-检验科-撬开了": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
     onEnter: { set: { _renjiNoise: true, positionAfterOperation: "仁济南院-检验科" } },
-    text: "门锁“啪”地一声弹开了。动静不小，但好歹是把门撬开了。\n\
+    text: "门锁“啪”地一声弹开了——你的胳膊酸得几乎抬不起来。动静不小，但好歹是把门撬开了。\n\
 你冲进去，迎面就是那只丧尸。",
     choices: [
       {

@@ -724,7 +724,7 @@ Object.assign(storyData, {
 
 | 条件 | className | 效果 |
 |------|-----------|------|
-| `strength == 2` | `vignette-warning` | 轻微暗角 |
+| `strength <= 2 && strength > 1` | `vignette-warning` | 轻微暗角 |
 | `strength <= 1` | `vignette-danger` | 重度暗角 + 脉冲呼吸感 |
 | `weather == "雨" && showRain` | `weather-rain` | 雨滴遮罩（静态 PNG + 蓝调） |
 | `ch >= 1 && ch <= 2 && showZombies` | `zombie-surround-moderate` | PVZ 风格丧尸剪影 ×3 随机，45% |

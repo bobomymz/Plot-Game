@@ -310,7 +310,7 @@ Object.assign(storyData, {
   "家外楼梯间的抉择": {
     image: "images/home/staircase.png",
     onEnter: updateTime(1), // 花1分钟跑到楼梯间
-    text: "你跑到楼梯间。一只丧尸突然闪到了你的身后！\n\
+    text: "你一路狂奔冲进楼梯间，胸口剧烈地起伏。一只丧尸突然闪到了你的身后！\n\
 你只能快速选择一个楼层离开，或者躲起来，祈祷丧尸不会追你……",
     qte: {
       timeout: 15000,              // 15 秒（六条去路要读，且无进度条，放宽）
@@ -1792,7 +1792,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         effect: updateTime(1, { add: { chasedByZombies: 1 } })
       },
       {
-        text: "往东门方向冲刺",
+        text: "往东门方向冲刺（体力-1）",
         nextScene: "小区东门",
         effect: updateTime(1, { add: { chasedByZombies: 1, strength: -1 } })
       }

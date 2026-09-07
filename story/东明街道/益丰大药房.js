@@ -306,7 +306,6 @@ Object.assign(storyData,{
 
   "益丰大药房-击倒针筒丧尸": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/击倒针筒丧尸.png */,
-    onEnter: { add: { strength: -1 } },
     text: "这只黑皮的药房学徒举起针筒向你挥来，你抬手格挡；他又张开嘴向你肘部咬下，你抽出手向右闪开，脖子后缩，躲过他又一爪。\n\
 它发出低沉的怒吼向你再次扑来，你看准时机，抓住针筒，反手一拧将其夺下，再一脚将其踹到货架上，\n\
 轰的一声，数不清的药箱砸在它身上。有这个铁质货架压着，一时半会儿应该是起不来了。\n\
@@ -803,7 +802,7 @@ Object.assign(storyData,{
     onEnter: initMemoryGame(["红","蓝","绿"], 10), // 中等难度
     choices: [
       {
-        text: "输入你看到的颜色",
+        text: "输入你看到的颜色（体力-1）",
         input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
         condition: checkFlashAnswer,
         elseScene: "结局-颜色错误，被丧尸咬死",

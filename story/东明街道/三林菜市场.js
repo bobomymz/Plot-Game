@@ -22,9 +22,12 @@ Object.assign(storyData, {
 
   "菜市场-大厅": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/菜市场/大厅-雨.jpg";
-      var f = timeImage({ morning: "images/菜市场/大厅.jpg" });
-      return f(vars);
+      if (vars.weather === "雨") {
+        if(!vars._marketHallCleared) return "images/菜市场/大厅-雨.jpg";
+        return "images/菜市场/大厅-雨-无丧尸.jpg"
+      } 
+      if(!vars._marketHallCleared) return "images/菜市场/大厅.jpg";
+      return "images/菜市场/大厅-无丧尸.jpg";
     },
     onEnter: function(vars) {
       vars.currentPlace = "三林菜市场";
@@ -80,8 +83,9 @@ Object.assign(storyData, {
   "菜市场-员工通道": {
     image: function(vars) {
       // 有照明能看清"安全出口"标志（图片上画在左侧通道）；没照明图很昏暗
-      if (vars.hasTorch || vars.hasPhone) return "images/placeholder.png"; /* TODO: images/菜市场/员工通道-亮.jpg */
-      return "images/placeholder.png"; /* TODO: images/菜市场/员工通道-暗.jpg */
+      if (vars.hasTorch) return "images/菜市场/员工通道-手电筒.jpg"; 
+      else if(vars.hasPhone && vars.phoneBattery > 0) return "images/菜市场/员工通道-手机.jpg";
+      return "images/placeholder.png";
     },
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "员工通道", _marketEntry: "员工通道" } },
     text: function(vars) {

@@ -421,7 +421,7 @@ const storyData = {
 
   // -------- 屏幕特效 --------
   _screenEffects: [
-    { condition: "strength == 2", className: "vignette-warning" },
+    { condition: "strength <= 2 && strength > 1", className: "vignette-warning" },
     { condition: "strength <= 1", className: "vignette-danger" },
     { condition: 'weather == "雨" && showRain', className: "weather-rain" },
     { condition: "_powerOut && showPowerOut", className: "power-out" },

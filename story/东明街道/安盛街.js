@@ -651,7 +651,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "朝人少的方向跑",
+        text: "朝人少的方向跑（体力-1）",
         nextScene: "安盛街西侧",
         effect: { add: { strength: -1, chasedByZombies: 1 } }
       }

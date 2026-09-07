@@ -247,7 +247,7 @@ Object.assign(storyData, {
     text: "你推开消防通道的门。步梯间里回荡着你的脚步声，墙上的应急出口标志泛着绿光。从这里可以步行上到各楼层。",
     choices: [
       {
-        text: "上到1F",
+        text: "上到1F（体力-1）",
         nextScene: "新达汇-1F消防通道",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -841,7 +841,7 @@ Object.assign(storyData, {
     text: function(vars) { return "停运的扶梯，当楼梯用。从这里可以上下楼。\n" + describeZombieWave(vars); },
     choices: [
       {
-        text: "上2F",
+        text: "上2F（体力-1）",
         nextScene: "新达汇-2F中庭环廊",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -930,7 +930,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "5F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
-        text: "上屋顶",
+        text: "上屋顶（体力-1）",
         nextScene: "新达汇-屋顶花园入口",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -952,7 +952,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "4F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
-        text: "往上走到5F",
+        text: "往上走到5F（体力-1）",
         nextScene: "新达汇-5F消防通道",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -974,7 +974,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "3F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
-        text: "往上走到4F",
+        text: "往上走到4F（体力-1）",
         nextScene: "新达汇-4F消防通道",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -996,7 +996,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "2F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
-        text: "往上走到3F",
+        text: "往上走到3F（体力-1）",
         nextScene: "新达汇-3F消防通道",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -1018,7 +1018,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "1F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
-        text: "往上走到2F",
+        text: "往上走到2F（体力-1）",
         nextScene: "新达汇-2F消防通道",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -1389,7 +1389,7 @@ Object.assign(storyData, {
     text: function(vars) { return "停运的扶梯，当楼梯用。从这里可以上下楼。\n" + describeZombieWave(vars); },
     choices: [
       {
-        text: "上3F",
+        text: "上3F（体力-1）",
         nextScene: "新达汇-3F中庭环廊",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -1816,7 +1816,7 @@ Object.assign(storyData, {
     text: function(vars) { return "停运的扶梯，当楼梯用。\n" + describeZombieWave(vars); },
     choices: [
       {
-        text: "上4F",
+        text: "上4F（体力-1）",
         nextScene: "新达汇-4F中庭环廊",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
@@ -2336,7 +2336,7 @@ Object.assign(storyData, {
     text: "停运的扶梯，当楼梯用。",
     choices: [
       {
-        text: "上5F",
+        text: "上5F（体力-1）",
         nextScene: "新达汇-5F北走廊西",
         effect: updateTime(2, { add: { strength: -1 } }),
       },
