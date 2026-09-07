@@ -563,7 +563,7 @@ Object.assign(storyData, {
 
   // --- 地铁站厅（记忆闪色战斗） ---
   "金谊广场-地铁站厅": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/地铁站厅.jpg */,
+    image: "images/金谊广场/地铁站厅.jpg",
     onEnter: initMemoryGame(["红","蓝","绿"], 8),
     text: function(vars) {
       var desc = "你从坍塌的吊顶缝隙钻进了三林路地铁站的站厅。大片吊顶塌了下来，裸露的线缆和通风管道垂在半空。\n";
@@ -628,7 +628,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-1F肯德基": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/1F肯德基.jpg */,
+    image: "images/金谊广场/肯德基.jpg",
     text: function(vars) {
       var desc = "你走进肯德基。餐厅里一片狼藉——托盘和纸杯散落一地，点餐屏幕早就黑了。冰柜的门开着，化冻的水淌了一地，混着打翻的番茄酱，看起来像稀释的血。\n";
       desc += "你推开后厨的门。炸锅里的油已经凝固成一层白膜。\n";
@@ -650,7 +650,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-1F肯德基-吃鸡块": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/1F肯德基-吃鸡块.jpg */,
+    image: "images/金谊广场/吃鸡块.jpg",
     onEnter: { add: { strength: 3 } },
     text: "你拆开一盒鸡块，撕开番茄酱的小包。\n冷掉了，但还能吃。你坐在油腻的地板上，把两盒鸡块一扫而光。\n胃里终于有了点实在的东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
     choices: [
@@ -660,11 +660,11 @@ Object.assign(storyData, {
 
   // --- 2F 服装层 ---
   "金谊广场-2F": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/2F服装.jpg */,
+    image: "images/金谊广场/2F.jpg",
     text: "你走上二楼。这一层是服装区——几家品牌店的橱窗模特东倒西歪，有的被推倒在地上，身上还穿着当季的新款。\n自动扶梯旁边有一家源氏木语家具店，里面的沙发和床垫看起来还完好——在这末世里，一个能安心躺下的地方比什么都珍贵。\n更里面是一家运动品牌折扣店，货架上还挂着几排没拆标签的T恤和运动鞋。",
     choices: [
       {
-        text: "在家具店休息一会儿",
+        text: "在源氏木语休息一会儿",
         nextScene: "金谊广场-2F-休息",
         effect: updateTime(5, { add: { strength: 1 }, set: { _travelMinutes: 0 } })
       },

@@ -132,6 +132,7 @@ function applyWeatherDrain(vars) {
   var drain = vars.weather === "晴" ? 0.5 : 0.2;
   if (vars.windy) drain -= 0.1;
   vars.strength = Math.max(0, vars.strength - drain);
+  flashStatusWarning("⚠ " + (vars.weather === "晴" ? "烈日暴晒" : "户外奔波") + "，体力 -" + drain + " · 剩余 " + Math.round(vars.strength));
   if (vars.weather === "晴") vars.chasedByZombies = 0;
 }
 

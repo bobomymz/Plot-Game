@@ -286,12 +286,12 @@ Object.assign(storyData, {
   },
   "新达汇-B1保安室": {
     onEnter: { set: { showPowerOut: true } },
-    image: "images/placeholder.png" /* TODO: images/新达汇/B1保安室.jpg */,
+    image: "images/新达汇/B1保安室.jpg",
     text: function(vars) {
       if (vars._powerOut && !canSee(vars)) {
         return "值班室里一片漆黑，什么也看不清。你摸到值班台的边缘，站了一会儿。\n" + describeZombieWave(vars);
       }
-      var d = "值班室不大。一面墙嵌着监控屏幕墙，旁边一张掉漆的值班台，台面上有个空的对讲机充电座和一个搪瓷缸。角落立着一个灰色的铁皮配电柜。";
+      var d = "值班室不大。一面墙嵌着监控屏幕墙，旁边一张掉漆的值班台，台面上有个空的对讲机充电座。角落立着一个灰色的铁皮配电柜。";
       if (vars._powerOut) {
         d += "\n监控屏幕全黑了。配电柜的总闸被你扳到了最底下，卡住了。";
       } else {

@@ -22,8 +22,8 @@ Object.assign(storyData, {
 
   "菜市场-大厅": {
     image: function(vars) {
-      if (vars.weather === "雨") return "images/placeholder.png"; /* TODO: images/菜市场/大厅-雨.jpg */
-      var f = timeImage({ morning: "images/placeholder.png" }); /* TODO: images/菜市场/大厅.jpg */
+      if (vars.weather === "雨") return "images/菜市场/大厅-雨.jpg";
+      var f = timeImage({ morning: "images/菜市场/大厅.jpg" });
       return f(vars);
     },
     onEnter: function(vars) {
@@ -32,7 +32,8 @@ Object.assign(storyData, {
       vars._marketEntry = "大厅";
     },
     text: function(vars) {
-      var desc = "你从卷帘门下的缝隙里钻进了菜市场。头顶的日光灯早就熄了，只有侧窗漏进来的天光把摊位间的过道照得明暗交错。\n鱼摊、肉摊、菜摊……冰柜的玻璃门蒙着厚厚的雾气，看不清里面还剩什么。";
+      var desc = "你从卷帘门下的缝隙里钻进了菜市场。头顶的日光灯早就熄了，只有棚顶漏进来的天光把摊位间的过道照得明暗交错。\n\
+鱼摊、肉摊、菜摊……冰柜的玻璃门蒙着厚厚的雾气，看不清里面还剩什么。";
       if (!vars._marketHallCleared) {
         desc += "\n过道中间趴着一具穿着围裙的尸体，正以一种奇怪的姿势抽搐着——它还有一口气。看到你，它开始往你的方向爬。";
       } else {
