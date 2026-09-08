@@ -1059,10 +1059,10 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         effect: updateTime(1) // 芑1分钟往走廊深处走
       },
       {
-        showCondition: "visitWaitingRoomTimes <= 1",
+        showCondition: "visitWaitingRoomTimes <= 2",
         text: "回头离开",
         nextScene: "陌生的岔路口",
-        effect: updateTime(1) // 芑1分钟回头离开
+        effect: updateTime(1) // 查看东西的次数<=2次，才能回头离开
       }
     ]
   },

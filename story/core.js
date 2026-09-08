@@ -26,6 +26,7 @@ const storyData = {
     foodUnderBed: true,        // 底下是否有食物，初始为true
     chasedByZombies: 0,        // 被尸潮追击的等级（0~5，效果：进行任何战斗操作都有概率被群殴，qte时间均缩短，体力消耗增加）
     _travelMinutes: 0,         // 连续户外移动累积时间（分钟），户外场景 >6min 的移动累加，休息/吃饭/过夜归零
+    _fatiguePaid: 0,           // 疲劳已扣档位（0-5，只增不退；travel-fatigue 规则自维护，剧情勿改。休息只归零 _travelMinutes 不退此值，防"休息→再走20分钟"刷扣体力）
     _isOutdoor: false,         // 当前渲染场景是否户外（引擎每次渲染按 scene.outdoor 写入，供 updateTime 判断疲劳累计）
     _sleepingZombieGone: false,// 小区道路椅子上躺着的那个丧尸走了没有
     bikeInAnjuyuan: true,      // 三林安居苑是否还有锈蚀的自行车
@@ -254,7 +255,7 @@ const storyData = {
 
   // --- 显示格式化：{变量名} 插值时调用，不影响原值 ---
   _display: {
-    strength: function(v) { return Math.round(v); },
+    strength: function(v) { return fmtStrength(v); },  // 体力保留1位小数显示（fmtStrength 见 utils.js）
   },
 
   // story-core.js 中，放在 _caps 和 _globalTriggers 之间
@@ -287,16 +288,28 @@ const storyData = {
         condition:  "gameMinutes > minutesBetweenReduceStrength",
         triggerKey: "Math.floor(gameMinutes / minutesBetweenReduceStrength)",
         effect: { add: { strength: -1 } },   // 简单效果直接用对象
-        onTrigger: function(v) { flashStatusWarning("⚠ 体力 -1（饥饿）· 剩余 " + Math.round(v.strength)); }
+        onTrigger: function(v) { flashStatusWarning("⚠ 体力 -1（饥饿）· 剩余 " + fmtStrength(v.strength)); }
       },
 
-      // --- 连续移动疲劳（20/36/48/56/60五档，间隔递减，每档-1体力） ---
+      // --- 连续移动疲劳（20/36/48/56/60五档，间隔递减，每档-1体力，全程上限-5） ---
+      // ⚠ 故意不写 condition：引擎对"条件不满足"的规则会清空 triggerKey 节流记录（applyReactive），
+      // 若写 condition: "_travelMinutes >= 20"，休息归零 _travelMinutes 后整条档位阶梯会被重新武装，
+      // 此后每走满 20 分钟就再扣 1 点（"休息→再走→又扣"无限刷）。改为无条件 + 档位键 + _fatiguePaid 台账：
+      // 里程下降（休息/躲藏归零）只改键不扣体力；档位创新高才按差值扣，跨多档一次扣清。
       {
         id: "travel-fatigue",
-        condition:  "_travelMinutes >= 20",
-        triggerKey: "_travelMinutes >= 60 ? 5 : (_travelMinutes >= 56 ? 4 : (_travelMinutes >= 48 ? 3 : (_travelMinutes >= 36 ? 2 : 1)))",
-        effect: { add: { strength: -1 } },
-        onTrigger: function(v) { flashStatusWarning("⚠ 体力 -1（疲劳）· 剩余 " + Math.round(v.strength)); }
+        triggerKey: "fatigueTier(_travelMinutes)",
+        effect: function(v) {
+          var t = fatigueTier(v._travelMinutes);
+          if (t <= v._fatiguePaid) return false;   // 档位未创新高（含休息归零）——不扣
+          var n = t - v._fatiguePaid;              // 一次跨多档则一次扣清
+          v.strength = Math.max(0, v.strength - n);
+          v._fatiguePaid = t;
+          return n;
+        },
+        onTrigger: function(v, rule, n) {
+          if (n) flashStatusWarning("⚠ 体力 -" + n + "（疲劳）· 剩余 " + fmtStrength(v.strength));
+        }
       },
 
       // --- 体力低于 3 时进入虚弱状态 ---

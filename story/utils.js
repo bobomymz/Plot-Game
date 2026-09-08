@@ -35,6 +35,26 @@ function updateTime(addMinutes, extraEffect = {}) { // 更新时间
 // 运用了一个特性：updateTime 直接修改了参数 vars（也就是 gameState），但返回的是空 effect 对象。这碰巧能工作，因为 applyEffect 之前 vars 已经被改了。
 }
 
+// ====== 疲劳档位 ======
+// 连续移动疲劳的五档阶梯：20/36/48/56/60 分钟各 -1 体力；<20 分钟为 0 档。
+// travel-fatigue 规则（core.js）用它做 triggerKey 和扣档依据，调档位阈值时改这里即可。
+function fatigueTier(min) {
+  min = min || 0;
+  if (min >= 60) return 5;
+  if (min >= 56) return 4;
+  if (min >= 48) return 3;
+  if (min >= 36) return 2;
+  if (min >= 20) return 1;
+  return 0;
+}
+
+// ====== 显示格式化 ======
+// 体力统一保留1位小数显示（"7.0"）。所有给玩家看的体力数字——剧情 {strength} 插值（core.js _display）
+// 和 flashStatusWarning 弹窗字符串——都用它，别处手写 Math.round 会显示不一致。
+function fmtStrength(v) {
+  return Number(v).toFixed(1);
+}
+
 // ====== 天气系统 ======
 
 function updateWeather(vars) {
@@ -132,7 +152,7 @@ function applyWeatherDrain(vars) {
   var drain = vars.weather === "晴" ? 0.5 : 0.2;
   if (vars.windy) drain -= 0.1;
   vars.strength = Math.max(0, vars.strength - drain);
-  flashStatusWarning("⚠ " + (vars.weather === "晴" ? "烈日暴晒" : "户外奔波") + "，体力 -" + drain + " · 剩余 " + Math.round(vars.strength));
+  flashStatusWarning("⚠ " + (vars.weather === "晴" ? "烈日暴晒" : "户外奔波") + "，体力 -" + drain + " · 剩余 " + fmtStrength(vars.strength));
   if (vars.weather === "晴") vars.chasedByZombies = 0;
 }
 

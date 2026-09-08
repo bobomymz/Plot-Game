@@ -2233,7 +2233,8 @@ Object.assign(storyData, {
   "建平-致真楼-3F-科创实验室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "致真楼3F科创实验室"; },
-    text: "科创实验室。墙角一台 3D 打印机半开着，喷头还悬在一个没打完的模型上，机器人的零件散了一桌子。墙上贴着历届科创比赛的奖状，边角有些发卷。",
+    text: "这里是Fablab 创客实验室。墙角一台 3D 打印机半开着，喷头还悬在一个没打完的模型上，机器人的零件散了一桌子。墙上贴着历届科创比赛的奖状。\n\
+你从未进入过这里，唯一的印象是听同学说杜同学喜欢在这里打游戏。然而，这里的电脑似乎是开不了了。",
     choices: [
       { text: "离开", nextScene: "建平-致真楼-3F", effect: updateTime(1) }
     ]

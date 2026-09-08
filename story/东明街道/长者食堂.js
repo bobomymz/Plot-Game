@@ -23,7 +23,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "关门",
+        text: "关门进去",
         nextScene: "长者食堂-关门"
       },
       {
@@ -191,6 +191,10 @@ Object.assign(storyData, {
         nextScene: "长者食堂-打门口丧尸",
         effect: updateTime(1)
       },
+      {
+        text: "坐在椅子上休息一会儿",
+        nextScene: "长者食堂-休息"
+      }
     ]
   },
 

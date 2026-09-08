@@ -302,11 +302,12 @@ images/             → 场景图（PNG/JPG），按区域存放
 
 ```javascript
 _display: {
-  strength: function(v) { return Math.round(v); },  // 显示体力时取整，原值保留小数
+  strength: function(v) { return fmtStrength(v); },  // 体力保留1位小数显示（fmtStrength 见 utils.js）
 }
 ```
 
 引擎在插值替换时查 `_display` 表，有则调用格式化函数，无则直接显示原值。这是一个通用机制，任何变量都可注册显示格式器。
+**体力显示约定**：给玩家看的体力数字一律保留1位小数（"7.0"）——剧情 `{strength}` 插值走 `_display` 自动生效；手写 flashStatusWarning 弹窗字符串时用 `fmtStrength(v.strength)`，别用 `Math.round`，否则显示不一致。
 
 ### 时间系统
 
@@ -369,7 +370,7 @@ computed: {
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | `id` | string | 唯一 ID（必填，缺省报错） |
-| `condition` | 表达式/函数 | 满足时才可能触发 |
+| `condition` | 表达式/函数 | [可选] 满足时才可能触发。**省略时视为恒满足，且引擎不会清空其节流记录**——适合"键值可能回落（如休息归零 `_travelMinutes`），回落不应重新武装规则"的场景（见 travel-fatigue） |
 | `triggerKey` | 表达式 | 节流：相同值不重复触发 |
 | `effect` | 对象/函数 | 触发时执行的效果。**函数形式可返回一个值**（见下） |
 | `onTrigger` | 函数 | [可选] 效果执行后调用的副作用回调，签名 `(gameState, rule, effectResult)` |
@@ -763,9 +764,15 @@ Object.assign(storyData, {
 `updateTime(addMinutes)` 中，当 `addMinutes > 6` 时自动累加到 `_travelMinutes`。雨天走路慢 30%，同段路程更快触发疲劳。
 
 `_travelMinutes` 达阈值时 reactively 扣体力（间隔递减）：
-20 / 36 / 48 / 56 / 60 min → 每档 -1 体力（共 5 档，上限 -5）。
+20 / 36 / 48 / 56 / 60 min → 每档 -1 体力（共 5 档，**全程上限 -5**，一次跨多档则一次扣清）。档位计算用 utils.js 的 `fatigueTier(_travelMinutes)`。
 
-**重置方式：** 休息、过夜、吃东西时设 `_travelMinutes = 0`。
+**重置方式：** 休息、过夜、吃东西时设 `_travelMinutes = 0`。归零只重置里程累计；已扣档位记在
+`_fatiguePaid`（0-5，只增不退，travel-fatigue 规则自维护），所以休息后再走不会立刻重扣第 1 档，只有
+连续移动累计超过历史最高档位才继续扣——否则"休息→走20分钟→再休息"可无限刷扣体力。若想让过夜恢复
+部分档位，可在过夜场景 onEnter 加 `vars._fatiguePaid = Math.max(0, vars._fatiguePaid - 2)`。
+
+注意：travel-fatigue 规则**故意不写 condition**——引擎对条件不满足的规则会清空 triggerKey 节流记录，
+那会让归零后的阶梯重新武装（即上述刷体力 bug 的根源）。
 
 **休息场景守卫：**
 A类（室内安全，无额外条件）：家、理发店、图书馆(清)、民防设施

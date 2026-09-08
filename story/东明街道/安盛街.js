@@ -331,13 +331,13 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!talkToBarber",
+        showCondition: "!talkToBarber && restAtBarber",
         text: "与周师傅交谈",
         nextScene: "理发店-交谈",
         effect: updateTime(5)
       },
       {
-        showCondition: "!restAtBarber || hh >= 19 || hh <= 6",
+        showCondition: "hh >= 19 || hh <= 6",
         text: "休息一会儿",
         nextScene: "理发店-休息"
       },

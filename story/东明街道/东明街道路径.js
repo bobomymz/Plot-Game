@@ -251,7 +251,7 @@ Object.assign(storyData, {
       {
         text: "往前走",
         nextScene: function(vars) {
-          if(_lastScene == "三林路-环林东路 十字路口") return "三林路-东明路 十字路口";
+          if(vars._lastScene == "三林路-环林东路 十字路口") return "三林路-东明路 十字路口";
           return "三林路-环林东路 十字路口";
         },
         effect: updateTime(10)
@@ -259,7 +259,7 @@ Object.assign(storyData, {
       {
         text: "往后走",
         nextScene: function(vars) {
-          if(_lastScene == "三林路-环林东路 十字路口") return "三林路-环林东路 十字路口";
+          if(vars._lastScene == "三林路-环林东路 十字路口") return "三林路-环林东路 十字路口";
           return "三林路-东明路 十字路口";
         },
         effect: updateTime(10)
@@ -287,7 +287,7 @@ Object.assign(storyData, {
         effect: updateTime(1),
         elseScene: "三林路-轿车门锁了"
       },
-      { text: "去小超市", nextScene: "小超市", effect: updateTime(2) },
+      { text: "去小超市", nextScene: "联华超市", effect: updateTime(2) },
       { text: "横穿到南侧", nextScene: "三林路-南侧", effect: updateTime(1) },
       { text: "回到路中央", nextScene: "三林路", effect: updateTime(1) }
     ]
@@ -679,7 +679,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   // ==================== 联华超市 ====================
-  "小超市": {
+  "联华超市": {
     image: "images/小区周边/联华超市/内部.jpg",
     onEnter: { set: { currentPlace: "三林路", currentPos: "联华超市" } },
     text: "你走进联华超市。货架上东西不多，但比起那些被扫荡一空的店铺，这里还算有些存货——几包方便面、几瓶矿泉水、几袋饼干散落在货架上。\n\
@@ -697,12 +697,6 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         effect: updateTime(1)
       },
       {
-        text: "从货架上拿一根火腿肠",
-        showCondition: "!hasHamSausage",
-        nextScene: "小超市-火腿肠",
-        effect: updateTime(1)
-      },
-      {
         text: "离开",
         nextScene: "三林路"
       }
@@ -712,11 +706,25 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   "小超市-火腿肠": {
     image: "images/小区周边/联华超市/内部.jpg",
     onEnter: { set: { positionAfterOperation: "小超市-火腿肠" } },
-    text: "散货架角落挂着几根散装火腿肠，真空包装完好的还剩几根。你拿了一根在手里掂了掂。",
+    text: "散货架角落挂着几根散装火腿肠，真空包装完好的还剩1根。你拿了一根在手里掂了掂。",
     choices: [
-      { text: "撕开吃掉（体力+1）", nextScene: "小超市", effect: updateTime(2, { add: { strength: 1 } }) },
-      { text: "收进背包", condition: "itemCount < bagVolume", nextScene: "小超市", effect: updateTime(2, { set: { hasHamSausage: true }, add: { itemCount: 1 } }), elseScene: "整理整理" },
-      { text: "放回去", nextScene: "小超市", effect: updateTime(1) }
+      { text: "撕开吃掉", nextScene: "联华超市-吃火腿肠", effect: updateTime(2, { add: { strength: 1 } }) },
+      { text: "收进背包", condition: "itemCount < bagVolume", nextScene: "联华超市", effect: updateTime(2, { set: { hasHamSausage: true }, add: { itemCount: 1 } }), elseScene: "整理整理" },
+      { text: "放回去", nextScene: "联华超市", effect: updateTime(1) }
+    ]
+  },
+
+  "联华超市-吃火腿肠": {
+    image: "images/小区周边/联华超市/吃火腿肠.jpg",
+    onEnter: { set: { positionAfterOperation: "联华超市-吃火腿肠" } },
+    text: "你吃了一根火腿肠。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
+你继续探索联华超市。",
+    choices: [
+      {
+        text: "继续", nextScene: "联华超市",
+        effect: updateTime(5)
+      }
     ]
   },
 
@@ -725,12 +733,19 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     onEnter: { add: { strength: 1 }, set: { _supermarketSuppliesTaken: true } },
     text: "你撕开一包旺旺雪饼，就着一瓶脉动吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n\
 旺旺雪饼熟悉的味道在空气中弥漫开，又迅速散去。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
+货架上还有几根火腿肠，你要吃吗？",
     choices: [
       {
         text: "继续",
-        nextScene: "小超市",
+        nextScene: "联华超市",
         effect: updateTime(5)
+      },
+      {
+        text: "从货架上拿一根火腿肠",
+        showCondition: "!_visit['小超市-火腿肠']",
+        nextScene: "小超市-火腿肠",
+        effect: updateTime(1)
       }
     ]
   },
@@ -747,16 +762,16 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     },
     choices: function(vars) {
       var cs = [];
-      if (vars.hasBottle && vars.bottleWater == 0 && vars.supermarketWaterLeft > 0) {
+      if ((!vars.hasBottle || vars.bottleWater == 0) && vars.supermarketWaterLeft > 0) { // 没有空瓶，或者空瓶没有水
         cs.push({
-          text: "从箱子里拿一瓶水，灌进空瓶",
+          text: "从箱子里拿一瓶水",
           nextScene: "联华超市-仓库-拿水",
           effect: updateTime(2)
         });
       }
       cs.push({
         text: "记下这个位置，离开",
-        nextScene: "小超市"
+        nextScene: "联华超市"
       });
       if (vars.hasIronPipe) {
         cs.push({
@@ -777,13 +792,14 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   "联华超市-仓库-拿水": {
     image: "images/小区周边/联华超市/仓库.jpg" /* TODO: images/小区周边/supermarketWarehouse.png */,
     onEnter: function(vars) {
+      vars.hasBottle = true;
       vars.bottleWater = 1;
       vars.waterToxic = false;
       vars.supermarketWaterLeft = Math.max(0, vars.supermarketWaterLeft - 1);
       return {};
     },
     text: function(vars) {
-      var desc = "你蹲下来，从纸箱里抽出一瓶水，拧开瓶盖倒进自己的空瓶里。瓶装水还带着出厂时的密封感——生产日期是六月下旬，应该是安全的。\n你把空瓶子灌满了，拧紧瓶盖。";
+      var desc = "你蹲下来，从纸箱里抽出一瓶水。瓶装水还带着出厂时的密封感——生产日期是六月下旬，应该是安全的。";
       if (vars.supermarketWaterLeft > 0) desc += "\n箱子里还剩" + vars.supermarketWaterLeft + "瓶。";
       return desc;
     },

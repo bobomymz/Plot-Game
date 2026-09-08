@@ -562,6 +562,8 @@ Object.assign(storyData, {
         text: "在后厨翻翻看有什么吃的",
         nextScene: "新达汇-1F味千拉面-休息",
         showCondition: "chasedByZombies <= 1",
+        condition: "!_visit['新达汇-1F味千拉面-休息']",
+        elseScene: "新达汇-1F味千拉面-没吃的",
       },
       {
         text: "翻翻前台的抽屉",
@@ -594,7 +596,22 @@ Object.assign(storyData, {
   "新达汇-1F味千拉面-休息": {
     image: "images/新达汇/味千后厨.jpg", 
     onEnter: function(v) { v.showPowerOut = true; var e = updateTime(30, { add: { strength: 1, chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
-    text: "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n你靠墙休息了一会儿，外面的声音渐渐远去了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
+    text: "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n\
+你靠墙休息了一会儿，外面的声音渐渐远去了。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "新达汇-1F味千拉面",
+        effect: updateTime(1),
+      },
+    ]
+  },
+  "新达汇-1F味千拉面-没吃的": {
+    image: "images/新达汇/味千后厨-没吃的.jpg",
+    onEnter: function(v) { v.showPowerOut = true; return {}; },
+    text: "你在后厨的角落坐下休息了一会儿，外面的声音渐渐远去了。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
     choices: [
       {
         text: "继续",
