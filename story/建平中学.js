@@ -642,7 +642,7 @@ Object.assign(storyData, {
 
   "建平-地下车库-消防柜": {
     image: "images/placeholder.png" /* TODO: images/jianping/fireCabinet.png */,
-    onEnter: function(vars) { vars.currentPos = "地下车库消防柜"; vars._garageFireCabinet = true; return {}; },
+    onEnter: function(vars) { vars.currentPos = "地下车库消防柜"; vars._garageFireCabinet = true; vars.positionAfterOperation = "建平-地下车库-消防柜"; return {}; },
     text: function(vars) {
       if (vars.hasAxe) return "消防柜的玻璃门敞着，里面只剩空挂架和半截卡扣——斧头你身上已经有一把了。";
       var light = vars.hasFireTorch ? "火把" : "手电光柱";
@@ -651,7 +651,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars.hasAxe) {
-        cs.push({ text: "砸开玻璃，取消防斧", nextScene: "建平-地下车库-消防柜-取斧", effect: updateTime(1) });
+        cs.push({ text: "砸开玻璃，取消防斧", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-消防柜-取斧", effect: updateTime(1), elseScene: "整理整理" });
       }
       cs.push({ text: "回车库", nextScene: "建平-地下车库", effect: updateTime(1) });
       return cs;
@@ -669,7 +669,7 @@ Object.assign(storyData, {
 
   "建平-地下车库-工具间": {
     image: "images/placeholder.png" /* TODO: images/jianping/toolRoom.png */,
-    onEnter: function(vars) { vars.currentPos = "地下车库工具间"; },
+    onEnter: function(vars) { vars.currentPos = "地下车库工具间"; vars.positionAfterOperation = "建平-地下车库-工具间"; },
     text: function(vars) {
       if (!vars._gasMaskGarage) {
         return "工具间的门锁着。这锁不是普通挂锁——是后勤的那种铁芯锁。";
@@ -689,7 +689,7 @@ Object.assign(storyData, {
         }
       } else {
         if (!vars.hasGasMask) {
-          cs.push({ text: "拿防毒面具", nextScene: "建平-地下车库-工具间-拿面具" });
+          cs.push({ text: "拿防毒面具", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-工具间-拿面具", elseScene: "整理整理" });
         }
         cs.push({ text: "离开", nextScene: "建平-地下车库", effect: updateTime(1) });
       }
@@ -1128,6 +1128,7 @@ Object.assign(storyData, {
 
   "建平-致真楼-1F-老吴杂物室-翻货架": {
     image: "images/placeholder.png",
+    onEnter: function(vars) { vars.positionAfterOperation = "建平-致真楼-1F-老吴杂物室-翻货架"; },
     text: function(vars) {
       if (vars.hasMultimeter) return "你在货架间又翻了一遍，除了打印纸和劳技课材料，没什么有用的了。";
       return "你在货架间翻找。打印纸、劳技课材料、灯泡、电线……最后，你在一个工具柜的底层翻出一个工具箱。";
@@ -1137,7 +1138,7 @@ Object.assign(storyData, {
         return [{ text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }];
       }
       return [
-        { text: "打开工具箱", nextScene: "建平-致真楼-1F-老吴杂物室-万用表", effect: updateTime(2) },
+        { text: "打开工具箱", condition: "itemCount < bagVolume", nextScene: "建平-致真楼-1F-老吴杂物室-万用表", effect: updateTime(2), elseScene: "整理整理" },
         { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
       ];
     }
@@ -1154,6 +1155,7 @@ Object.assign(storyData, {
 
   "建平-致真楼-1F-老吴杂物室-铁柜": {
     image: "images/placeholder.png",
+    onEnter: function(vars) { vars.positionAfterOperation = "建平-致真楼-1F-老吴杂物室-铁柜"; },
     text: function(vars) {
       var desc = "那个铁柜锁着，是后勤的挂锁。";
       if (!vars.hasKeyRing) return desc + "\n你没有能打开它的钥匙。";
@@ -1163,7 +1165,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (vars.hasKeyRing && !vars.hasScrewdriver) {
-        cs.push({ text: "用钥匙串开铁柜", nextScene: "建平-致真楼-1F-老吴杂物室-螺丝刀" });
+        cs.push({ text: "用钥匙串开铁柜", condition: "itemCount < bagVolume", nextScene: "建平-致真楼-1F-老吴杂物室-螺丝刀", elseScene: "整理整理" });
       }
       cs.push({ text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) });
       return cs;
@@ -1181,6 +1183,7 @@ Object.assign(storyData, {
 
   "建平-致真楼-1F-老吴杂物室-查看老吴": {
     image: "images/placeholder.png",
+    onEnter: function(vars) { vars.positionAfterOperation = "建平-致真楼-1F-老吴杂物室-查看老吴"; },
     text: function(vars) {
       if (vars.dd >= 3 && !vars._laowuKilled) {
         return "你走近老吴，蹲下身想看看情况。\n就在你伸手的一瞬间——那具\"尸体\"突然抽搐了一下，猛地抬起头，露出一张灰白扭曲的脸！\n它诈尸了！";
@@ -1193,14 +1196,14 @@ Object.assign(storyData, {
     choices: function(vars) {
       if (vars.dd >= 3 && !vars._laowuKilled) {
         return [
-          { text: "战斗！", nextScene: "建平-致真楼-1F-老吴杂物室-战斗" },
+          { text: "战斗！", condition: "itemCount < bagVolume", nextScene: "建平-致真楼-1F-老吴杂物室-战斗", elseScene: "整理整理" },
           { text: "逃离", nextScene: "建平-致真楼-1F", effect: function(v) { v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return updateTime(1)(v); } },
-          { text: "趁机抢走管线图", nextScene: "建平-致真楼-1F-老吴杂物室-抢管线图" }
+          { text: "趁机抢走管线图", condition: "itemCount < bagVolume", nextScene: "建平-致真楼-1F-老吴杂物室-抢管线图", elseScene: "整理整理" }
         ];
       }
       if (!vars.hasKeyRing || !vars.hasPipelineMap) {
         return [
-          { text: "搜尸体", nextScene: "建平-致真楼-1F-老吴杂物室-搜尸体", effect: updateTime(2) },
+          { text: "搜尸体", condition: "itemCount < bagVolume", nextScene: "建平-致真楼-1F-老吴杂物室-搜尸体", effect: updateTime(2), elseScene: "整理整理" },
           { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
         ];
       }
@@ -1384,7 +1387,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-1F-医务室": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "远翔楼1F医务室"; },
+    onEnter: function(vars) { vars.currentPos = "远翔楼1F医务室"; vars.positionAfterOperation = "建平-远翔楼-1F-医务室"; },
     text: function(vars) {
       var desc = "医务室。药柜半开着，里面的药品大多被翻得乱七八糟，只剩些纱布和空药盒。";
       if (!vars.hasFeverMed) desc += "\n角落里，一盒没拆封的退烧药孤零零地躺在药柜底层。";
@@ -1393,7 +1396,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars.hasFeverMed) {
-        cs.push({ text: "拿那盒退烧药", nextScene: "建平-远翔楼-1F-医务室-拿药" });
+        cs.push({ text: "拿那盒退烧药", condition: "itemCount < bagVolume", nextScene: "建平-远翔楼-1F-医务室-拿药", elseScene: "整理整理" });
       }
       cs.push({ text: "回 1 楼走廊", nextScene: "建平-远翔楼-1F", effect: updateTime(1) });
       return cs;
@@ -1621,6 +1624,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) {
       vars.currentPos = "食堂后厨";
+      vars.positionAfterOperation = "建平-食堂-后厨";
       if (vars.dd >= 2 && !vars._gasValveClosed) {
         vars.gasIndex = Math.min(100, vars.gasIndex + 20);
       }
@@ -1652,7 +1656,7 @@ Object.assign(storyData, {
         cs.push({ text: "去关煤气阀", nextScene: "建平-食堂-煤气阀", effect: updateTime(1) });
       }
       if ((vars.dd < 2 || vars._gasValveClosed) && !vars.hasCanteenFood) {
-        cs.push({ text: "找食物", nextScene: "建平-食堂-后厨-找食物" });
+        cs.push({ text: "找食物", condition: "itemCount < bagVolume", nextScene: "建平-食堂-后厨-找食物", elseScene: "整理整理" });
       }
       cs.push({ text: "回食堂", nextScene: "建平-食堂", effect: updateTime(1) });
       return cs;
@@ -2055,7 +2059,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "离开", nextScene: "建平-废弃小楼-3F-团委工作室", effect: updateTime(1) },
-      { text: "收好内胆", nextScene: "建平-废弃小楼-3F-团委工作室-内胆", effect: updateTime(1), condition: "itemCount < bagVolumn", elseScene: "整理整理"}
+      { text: "收好内胆", nextScene: "建平-废弃小楼-3F-团委工作室-收好内胆", effect: updateTime(1) }
     ]
   },
 
@@ -2249,7 +2253,7 @@ Object.assign(storyData, {
   },
   "建平-致真楼-5F-物理实验室": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "致真楼5F物理实验室"; },
+    onEnter: function(vars) { vars.currentPos = "致真楼5F物理实验室"; vars.positionAfterOperation = "建平-致真楼-5F-物理实验室"; },
     text: function(vars) {
       var desc = "物理实验室。光学仪器东倒西歪，示波器的屏幕黑着，地上散落着导线。黑板上的电路图画到一半，旁边用红笔打了个大大的问号。靠墙的工具柜上了锁。";
       if (vars.hasScrewdriver) desc += "（你已经有一把螺丝刀了。）";
@@ -2258,7 +2262,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars.hasScrewdriver && vars.hasKeyRing) {
-        cs.push({ text: "用钥匙串开工具柜", nextScene: "建平-致真楼-5F-物理实验室-螺丝刀" });
+        cs.push({ text: "用钥匙串开工具柜", condition: "itemCount < bagVolume", nextScene: "建平-致真楼-5F-物理实验室-螺丝刀", elseScene: "整理整理" });
       } else if (!vars.hasScrewdriver && !vars.hasKeyRing) {
         cs.push({ text: "看看那个锁着的工具柜", nextScene: "建平-致真楼-5F-物理实验室-锁柜" });
       }
@@ -2671,7 +2675,7 @@ Object.assign(storyData, {
   },
   "建平-行政楼-2F-文印室": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "行政楼2F文印室"; },
+    onEnter: function(vars) { vars.currentPos = "行政楼2F文印室"; vars.positionAfterOperation = "建平-行政楼-2F-文印室"; },
     text: function(vars) {
       var desc = "文印室。桌上、地上堆满了印了一半的卷子和废纸，空气里一股油墨味。";
       if (!vars.hasWatch) desc += "\n靠窗那张办公桌的抽屉半开着，里面似乎有什么东西。";
@@ -2680,7 +2684,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars.hasWatch) {
-        cs.push({ text: "翻翻抽屉", nextScene: "建平-行政楼-2F-文印室-手表" });
+        cs.push({ text: "翻翻抽屉", condition: "itemCount < bagVolume", nextScene: "建平-行政楼-2F-文印室-手表", elseScene: "整理整理" });
       }
       cs.push({ text: "回 2 楼走廊", nextScene: "建平-行政楼-2F", effect: updateTime(1) });
       return cs;
@@ -2705,7 +2709,7 @@ Object.assign(storyData, {
   },
   "建平-废弃小楼-1F-纸箱": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "废弃小楼1F纸箱"; },
+    onEnter: function(vars) { vars.currentPos = "废弃小楼1F纸箱"; vars.positionAfterOperation = "建平-废弃小楼-1F-纸箱"; },
     text: function(vars) {
       var desc = "角落里有个纸箱，里面堆着些校园活动留下的道具——彩带、气球、几把真人CS的枪。";
       if (!vars.hasCSGun) desc += "\n其中一把枪上装了个战术手电，灯头看起来还是好的。";
@@ -2714,7 +2718,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars.hasCSGun) {
-        cs.push({ text: "拿一把真人CS枪", nextScene: "建平-废弃小楼-1F-纸箱-拿枪" });
+        cs.push({ text: "拿一把真人CS枪", condition: "itemCount < bagVolume", nextScene: "建平-废弃小楼-1F-纸箱-拿枪", elseScene: "整理整理" });
       }
       cs.push({ text: "回 1 楼", nextScene: "建平-废弃小楼-1F", effect: updateTime(1) });
       return cs;
@@ -2811,7 +2815,7 @@ Object.assign(storyData, {
   var EXCLUDE = /^(建平-躲藏-|建平-Harsh|结局-|复旦)/;
   var KEEP = /^建平-/;
   // 非地点节点关键词（每次新增此类场景需同步补充）
-  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|关阀|被堵住|踢球|听琴|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|食品|吃掉|收下)$/;
+  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|收好内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|铁柜|螺丝刀|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|关阀|被堵住|踢球|听琴|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|食品|吃掉|收下)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;

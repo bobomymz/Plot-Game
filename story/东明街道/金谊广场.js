@@ -492,7 +492,7 @@ Object.assign(storyData, {
 
   // --- B2车库入口（??? 盲选） ---
   "金谊广场-B2车库入口": {
-    image: "images/金谊广场/B2车库入口.png" /* TODO: images/金谊广场/B2车库入口.jpg */,
+    image: "images/金谊广场/B2车库入口.jpg" /* TODO: images/金谊广场/B2车库入口.jpg */,
     text: function(vars) {
       if (vars.hasTorch) {
         return "你找到了地下车库的入口。坡道向下延伸，越往里越黑。\n\
@@ -533,7 +533,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-B2货梯间": {
-    image: "images/金谊广场/B2货梯间.jpg" /* TODO: images/金谊广场/B2货梯间.jpg */,
+    image: "images/金谊广场/B2货梯.jpg",
     text: function(vars) {
       var desc = "你找到了货梯间。货梯的门开着，轿厢里的应急灯还亮着——发出微弱的黄光。\n";
       desc += "你注意到货梯间角落的通风口附近，有一层淡淡的白雾在缓缓飘动。\n";
@@ -822,7 +822,7 @@ Object.assign(storyData, {
       var desc = "你靠着吧台坐下来，问起长廊那群人的事。\n";
       desc += "小林沉默了一会儿。\n";
       desc += "“那个领头的叫老周——以前是奥乐齐的仓库主管。人不坏，但太软了。他谁都不得罪，结果谁都管不住。”\n";
-      desc += "“里面有个戴眼镜的，以前在松月楼当领班。他最狠——不是那种拿刀砍人的狠，是那种饿急了的狠。你要小心他。”\n";
+      desc += "“里面有个戴眼镜的，以前在坂吉屋当领班。他最狠——不是那种拿刀砍人的狠，是那种饿急了的狠。你要小心他。”\n";
       if (vars._jinyiSurvivorsRobbed) {
         desc += "他看了你一眼。“你手臂上的伤……是不是他们干的？”\n你点了点头。\n";
         desc += "“我就知道。”他把竹签握紧了。“老周不会动手，但那个戴眼镜的——他不会让你白拿东西走。你受伤了，他就觉得你好欺负。”\n";
@@ -859,20 +859,20 @@ Object.assign(storyData, {
   },
   // --- 4F 餐饮/影院 ---
   "金谊广场-4F": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/4F影院.jpg */,
+    image: "images/金谊广场/4F.jpg" /* TODO: images/金谊广场/4F影院.jpg */,
     text: function(vars) {
       var desc = "你来到四楼。华夏金谊影院的招牌还亮着——不知道是发电机在转还是备用电源。大厅里循环播放着一段片尾字幕，在空无一人的影院里反复回响。\n";
       desc += "放映厅的门半开着，你能看到座椅上坐着几个人——不，是几具尸体。他们躲进来等电影，最后死在了座位上。\n";
-      desc += "影院旁边是一家松月楼，后厨的门虚掩着。";
+      desc += "影院旁边是一家坂吉屋，后厨的门虚掩着。";
       if (!vars.hasBottle) {
-        desc += "\n松月楼门口的垃圾桶旁边，滚落着一只空矿泉水瓶——看起来还算干净。";
+        desc += "\n坂吉屋门口的垃圾桶旁边，滚落着一只空矿泉水瓶——看起来还算干净。";
       }
       return desc;
     },
     choices: function(vars) {
       var choices = [];
       choices.push({ text: "去影院大厅看看", nextScene: "金谊广场-4F-影院", effect: updateTime(1) });
-      choices.push({ text: "去松月楼后厨", nextScene: "金谊广场-4F-后厨", effect: updateTime(1) });
+      choices.push({ text: "去坂吉屋后厨", nextScene: "金谊广场-4F-后厨", effect: updateTime(1) });
       if (!vars.hasBottle) {
         choices.push({
           text: "捡起空水瓶",
@@ -907,9 +907,9 @@ Object.assign(storyData, {
   },
 
   "金谊广场-4F-后厨": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/4F后厨.jpg */,
+    image: "images/金谊广场/坂吉屋后厨.jpg",
     text: function(vars) {
-      var desc = "你推开松月楼后厨的门。灶台上还放着几笼没蒸完的包子，已经发霉长毛了。\n";
+      var desc = "你推开坂吉屋后厨的门。灶台上还放着几盘三文鱼。\n";
       desc += "水槽里积着半池浑浊的水，表面漂着一层油光。你拧开水龙头——自来水哗哗地流了出来，清亮得很，和灾前没什么两样。\n";
       if (vars.hasBottle && vars.bottleWater == 0) {
         desc += "\n你可以用空水瓶在这里接水。";
@@ -983,7 +983,7 @@ Object.assign(storyData, {
   "金谊广场-B1 心谊如意街": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1心谊如意街.jpg */,
     text: function(vars) {
-      var desc = "你走下楼梯，来到B1心谊如意街。这是一条地下商业街，两侧是各种店铺——京东电器、肯德基、松月楼……\n";
+      var desc = "你走下楼梯，来到B1心谊如意街。这是一条地下商业街，两侧是各种店铺——京东电器、肯德基、坂吉屋……\n";
       if (vars._lastScene === '金谊广场-地铁站厅' || vars._lastScene === '金谊广场-地铁站厅-失败') {
         desc += "走廊尽头是通往三林路地铁站的通道——你刚才就是从那边过来的。\n";
       } else {

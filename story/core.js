@@ -676,6 +676,37 @@ const storyData = {
         effect: updateTime(1, { set : { hasCracker: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
+      // 建平·占格道具的丢弃项（钥匙串/管线图为关键线索且合占 1 格，参照王知筠线索不设丢弃）
+      {
+        showCondition: "hasCanteenFood",
+        text: "丢下食堂干粮",
+        effect: updateTime(1, { set : { hasCanteenFood: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasMultimeter",
+        text: "丢下万用表",
+        effect: updateTime(1, { set : { hasMultimeter: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasScrewdriver",
+        text: "丢下螺丝刀",
+        effect: updateTime(1, { set : { hasScrewdriver: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasWatch",
+        text: "丢下手表",
+        effect: updateTime(1, { set : { hasWatch: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasFeverMed",
+        text: "丢下退烧药",
+        effect: updateTime(1, { set : { hasFeverMed: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
       {
         showCondition: "hasMercuryPill && mercuryLoad > 0",
         text: "服用无标签药丸（作用未知）",
