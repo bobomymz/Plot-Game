@@ -517,7 +517,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   "三林安居苑-8号楼-203室-双肩包": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
-    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室" } },
+    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室-双肩包" } },
     text: function(vars) {
       var desc = "你蹲下来翻看那只敞开的双肩包。里面有几根封着口的便携采样管、一支记号笔、一包没拆封的口罩。\n\
 你往内侧夹层里摸了摸，指尖触到一张硬卡。你抽出来一看：白色门禁卡，正面印着仁济医院的标志和“检验科”三个字，背面贴着一张姓名标签，但被人用记号笔涂掉了。\n\
@@ -529,7 +529,9 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       if (!vars.hasRenjiCard) {
         opts.push({
           text: "拿走这张门禁卡",
+          condition: "itemCount < bagVolume",
           nextScene: "三林安居苑-8号楼-203室-门禁卡",
+          elseScene: "整理整理",
           effect: updateTime(1)
         });
       } else {

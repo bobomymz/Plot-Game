@@ -40,6 +40,11 @@ const storyData = {
     _supermarketSuppliesTaken: false,// 联华超市的补给是否已经拿到
     maskRemainingUses: 1,      // 防毒面具剩余使用次数（初始1，含进风机房，耗尽可能二次使用会死）
     hasClassMates: false,      // 是否救出上实南校三位同学
+    // --- 上实南校临时道具（不占背包容量 itemCount，不可丢弃，离开学校线即无用）---
+    _hasCampusKey: false,      // 员工通道钥匙串（教务室铁皮柜割锁获得，教学楼走员工通道下楼用）
+    _hasAlcoholLamp: false,    // 酒精灯和火柴（化学实验室取，2号楼1楼砸体育老师丧尸）
+    _hasAcid: false,           // 盐酸溶液（化学实验室取，后门溶断锁链；用后置回 false）
+    _hasThermometer: false,    // 温度计（化学实验室取，给小赵测温判断是否发炎）
     _yorozuyaUnlocked: false,  // 是否解锁哥哥的深夜食堂
     _triedHotpot: false,       // 是否吃过新达汇大渝火锅（一次性）
     _catChasing: false,        // 新达汇变异猫是否在追玩家
@@ -189,12 +194,12 @@ const storyData = {
     _dormCleared: false,        // 建平宿舍丧尸是否已清理（记忆闪色，安全过夜前置）
     _liuCorpse: false,          // 刘冠宇是否已死（锁存：在食堂观察到尸体后永久保持，关煤气阀不复活）
     hasPipelineMap: false,      // 管线图（老吴杂物室，"水有毒"真相线索）
-    hasKeyRing: false,          // 钥匙串（老吴身上，开工具间/教室/水表井）
+    hasKeyRing: false,          // 钥匙串（老吴身上，开工具间/教室/阀门箱）
     _laowuKilled: false,        // 老吴尸变后是否被击杀
     _pengComputerFixed: false,  // 14班电脑是否修好（供电）
     _pengGalCleared: false,     // 是否帮彭奕宸打完galgame
     _pengNoodleShared: false,   // 14班方便面是否已分享（饭点一次性）
-    hasCanteenFood: false,      // 食堂干粮（占背包，一次性，吃+体力）
+    hasCanteenFood: false,      // 食堂干粮（占背包，一次性，整理整理里吃+2体力）
     hasFeverMed: false,         // 退烧药（医务室，占背包，感冒系统铺路）
     hasWatch: false,            // 机械手表（行政楼2F文印室，占背包，整理整理看时间）
     hasCSGun: false,            // 真人CS枪（废弃小楼1F纸箱，占背包，化学实验室拆成手电筒）
@@ -551,6 +556,12 @@ const storyData = {
         nextScene: "整理整理-吃冻肉"
       },
       {
+        showCondition: "hasFrozenMeat",
+        text: "丢下冻肉",
+        effect: updateTime(1, { set : { hasFrozenMeat: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
         showCondition: "hasPhone && phoneBattery > 0 && _cafeteriaWifiOn && currentPlace == '长者食堂'",
         text: "用手机看看有什么消息（电量 {phoneBattery}%）",
         nextScene: "长者食堂-手机信息",
@@ -572,6 +583,12 @@ const storyData = {
         showCondition: "hasKey502",
         text: "丢下502钥匙",
         effect: updateTime(1, { set : { hasKey502: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasCommitteeKey",
+        text: "丢下居委会钥匙",
+        effect: updateTime(1, { set : { hasCommitteeKey: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {
@@ -625,7 +642,6 @@ const storyData = {
       {
         showCondition: "hasBiscuit",
         text: "吃掉饼干（体力+1）",
-        effect: updateTime(1, { set: {hasBiscuit: false}, add: {strength: 1, itemCount: -1}}),
         nextScene: "整理整理-吃饼干"
       },
       {
@@ -671,12 +687,23 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
+        showCondition: "hasCatSnack",
+        text: "丢下脆脆炒米",
+        effect: updateTime(1, { set : { hasCatSnack: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
         showCondition: "hasCracker",
         text: "丢下夹心饼干",
         effect: updateTime(1, { set : { hasCracker: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       // 建平·占格道具的丢弃项（钥匙串/管线图为关键线索且合占 1 格，参照王知筠线索不设丢弃）
+      {
+        showCondition: "hasCanteenFood",
+        text: "吃掉食堂干粮（体力+2）",
+        nextScene: "整理整理-吃食堂干粮"
+      },
       {
         showCondition: "hasCanteenFood",
         text: "丢下食堂干粮",
@@ -722,6 +749,12 @@ const storyData = {
         showCondition: "hasCrumpledLeaflet",
         text: "丢下揉皱的传单",
         effect: updateTime(1, { set : { hasCrumpledLeaflet: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasBankSlip",
+        text: "丢下存款凭条",
+        effect: updateTime(1, { set : { hasBankSlip: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {
@@ -890,6 +923,15 @@ const storyData = {
     image: "images/整理整理.png",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasBiscuit: false } }),
     text: "你拆开包装袋，掰了一块压缩饼干放进嘴里。干巴巴的，嚼起来有点硬，但那股麦香让你想起还没出事时的日子。你就着水咽了下去，胃里终于有了点东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃食堂干粮": {
+    image: "images/整理整理.png",
+    onEnter: updateTime(1, { add: { strength: 2, itemCount: -1 }, set: { hasCanteenFood: false } }),
+    text: "你撬开一个罐头，就着干粮慢慢吃了一顿。罐头咸得齁人，干粮噎嗓子，但胃里有了实在的东西，身上也暖了些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

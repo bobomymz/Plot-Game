@@ -703,21 +703,21 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     ]
   },
 
-  "小超市-火腿肠": {
+  "小超市-香肠": {
     image: "images/小区周边/联华超市/内部.jpg",
-    onEnter: { set: { positionAfterOperation: "小超市-火腿肠" } },
-    text: "散货架角落挂着几根散装火腿肠，真空包装完好的还剩1根。你拿了一根在手里掂了掂。",
+    onEnter: { set: { positionAfterOperation: "小超市-香肠" } },
+    text: "散货架角落挂着几根散装香肠，真空包装完好的还剩1根。你拿了一根在手里掂了掂。",
     choices: [
-      { text: "撕开吃掉", nextScene: "联华超市-吃火腿肠", effect: updateTime(2, { add: { strength: 1 } }) },
+      { text: "撕开吃掉", nextScene: "联华超市-吃香肠", effect: updateTime(2, { add: { strength: 1 } }) },
       { text: "收进背包", condition: "itemCount < bagVolume", nextScene: "联华超市", effect: updateTime(2, { set: { hasHamSausage: true }, add: { itemCount: 1 } }), elseScene: "整理整理" },
       { text: "放回去", nextScene: "联华超市", effect: updateTime(1) }
     ]
   },
 
-  "联华超市-吃火腿肠": {
-    image: "images/小区周边/联华超市/吃火腿肠.jpg",
-    onEnter: { set: { positionAfterOperation: "联华超市-吃火腿肠" } },
-    text: "你吃了一根火腿肠。\n\
+  "联华超市-吃香肠": {
+    image: "images/小区周边/联华超市/吃香肠.jpg",
+    onEnter: { set: { positionAfterOperation: "联华超市-吃香肠" } },
+    text: "你吃了一根香肠。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
 你继续探索联华超市。",
     choices: [
@@ -734,7 +734,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     text: "你撕开一包旺旺雪饼，就着一瓶脉动吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n\
 旺旺雪饼熟悉的味道在空气中弥漫开，又迅速散去。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
-货架上还有几根火腿肠，你要吃吗？",
+货架上还有几根香肠，你要吃吗？",
     choices: [
       {
         text: "继续",
@@ -742,9 +742,9 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         effect: updateTime(5)
       },
       {
-        text: "从货架上拿一根火腿肠",
-        showCondition: "!_visit['小超市-火腿肠']",
-        nextScene: "小超市-火腿肠",
+        text: "从货架上拿一根香肠",
+        showCondition: "!_visit['小超市-香肠']",
+        nextScene: "小超市-香肠",
         effect: updateTime(1)
       }
     ]

@@ -248,7 +248,7 @@ Object.assign(storyData, {
       { text: "绕去后门", nextScene: "建平-后门", effect: updateTime(10) },
       { text: "去门卫室", nextScene: "建平-门卫室", effect: updateTime(1) },
       { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-校园门口" } } },
-      { text: "查看路边的阀门箱", condition: "hasKeyRing", nextScene: "建平-崮山路-阀门箱", showCondition: "hasKeyRing", effect: updateTime(1) },
+      { text: "查看路边的阀门箱", condition: "hasKeyRing", nextScene: "建平-崮山路-阀门箱", effect: updateTime(1), elseScene: "建平-崮山路-阀门箱-锁着" },
       { text: "离开这里", nextScene: "罗山路立交桥下", effect: updateTime(10) }
     ]
   },
@@ -271,6 +271,18 @@ Object.assign(storyData, {
       cs.push({ text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  "建平-崮山路-阀门箱-锁着": {
+    outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/jianping/valveBox.png */,
+    onEnter: updateTime(1, { set: { currentPos: "崮山路" } }),
+    text: function(vars) {
+      return "你蹲到人行道上那只漆成蓝灰色的铁皮阀门箱前。「上海市自来水 · 抢修」的铭牌下挂着一把挂锁，锁舌上留着新鲜的工具痕——有人撬过它，但没撬开。\n你拽了拽锁梁，纹丝不动。看来得有钥匙才打得开。\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) }
+    ]
   },
 
   "建平-崮山路-阀门箱-查看": {
@@ -1216,7 +1228,8 @@ Object.assign(storyData, {
   "建平-致真楼-1F-老吴杂物室-搜尸体": {
     image: "images/placeholder.png",
     onEnter: { set: { hasKeyRing: true, hasPipelineMap: true }, add: { itemCount: 1 } },
-    text: "你小心翼翼地把老吴翻过来。他手里那串钥匙被你取了下来——上面挂着好几把钥匙。\n你又捡起地上那张图纸：是一张供水管线图，旁边用红笔潦草地写着几个字——\"水有毒，别喝\"。",
+    text: "你小心翼翼地把老吴翻过来。他手里那串钥匙被你取了下来——上面挂着好几把钥匙。\n\
+你又捡起地上那张图纸：是一张供水管线图，旁边用红笔潦草地写着几个字——\"水有毒，别喝\"。",
     choices: [
       { text: "收好，回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
     ]
@@ -1390,12 +1403,16 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "远翔楼1F医务室"; vars.positionAfterOperation = "建平-远翔楼-1F-医务室"; },
     text: function(vars) {
       var desc = "医务室。药柜半开着，里面的药品大多被翻得乱七八糟，只剩些纱布和空药盒。";
-      if (!vars.hasFeverMed) desc += "\n角落里，一盒没拆封的退烧药孤零零地躺在药柜底层。";
+      if (vars._visit['建平-远翔楼-1F-医务室-拿药'] > 0) {
+        desc += "\n药柜底层那格空着——那盒退烧药已经被你拿走了。";
+      } else {
+        desc += "\n角落里，一盒没拆封的退烧药孤零零地躺在药柜底层。";
+      }
       return desc;
     },
     choices: function(vars) {
       var cs = [];
-      if (!vars.hasFeverMed) {
+      if (!(vars._visit['建平-远翔楼-1F-医务室-拿药'] > 0)) {
         cs.push({ text: "拿那盒退烧药", condition: "itemCount < bagVolume", nextScene: "建平-远翔楼-1F-医务室-拿药", elseScene: "整理整理" });
       }
       cs.push({ text: "回 1 楼走廊", nextScene: "建平-远翔楼-1F", effect: updateTime(1) });
@@ -2806,8 +2823,10 @@ Object.assign(storyData, {
 //   1. 新增【地点节点】（走廊/楼层/户外等空间）：无需处理，本包装器自动覆盖。
 //   2. 新增【非地点的剧情子节点】（战斗/拾取/对话/解密等中间步骤场景）：
 //      必须让它的场景ID命中下面的 NON_PLACE 正则，否则会被误记入轨迹，
-//      导致 Harsh 的追踪距离失真。做法：场景 ID 以 "-关键词" 结尾
-//      （如 "xxx-翻找"、"xxx-对话"），并把关键词同步补进 NON_PLACE。
+//      导致 Harsh 的追踪距离失真。做法：场景 ID 以关键词【结尾】
+//      （如 "xxx-战斗"、"xxx-没螺丝刀"——关键词前面是什么字都行），
+//      并把关键词同步补进 NON_PLACE。
+//      ⚠️ 反过来：真地点节点不要以关键词结尾（"休息区"安全，"休息"不安全）。
 //   3. 躲藏场景以"建平-躲藏-"开头、Harsh 相关以"建平-Harsh"开头：自动排除。
 //   4. 本包装器只遍历到此处已注册的场景——以后若把建平场景拆到别的文件，
 //      需保证该文件在 index.html 中先于 engine.js 加载、并先于本段执行。
@@ -2815,7 +2834,9 @@ Object.assign(storyData, {
   var EXCLUDE = /^(建平-躲藏-|建平-Harsh|结局-|复旦)/;
   var KEEP = /^建平-/;
   // 非地点节点关键词（每次新增此类场景需同步补充）
-  var NON_PLACE = /-(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|内胆|收好内胆|翻货架|查看老吴|搜尸体|万用表|抢管线图|铁柜|螺丝刀|电脑坏|修电脑|galgame|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|关阀|被堵住|踢球|听琴|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|食品|吃掉|收下)$/;
+  // 匹配规则：ID 以关键词【结尾】即命中（无 "-" 前缀锚）——"没螺丝刀/收好内胆/搜尸体"
+  // 这类变体由 螺丝刀/内胆/尸体 等基础词直接覆盖，无需逐个造词。
+  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|galgame-2|galgame-完成|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|查看|关阀|被堵住|踢球|听琴|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;

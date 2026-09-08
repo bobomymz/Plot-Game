@@ -828,7 +828,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
       },
       {
         text: "骑上一辆电瓶车",
-        condition: "Math.random() < 0.2 || hasEbikeKey", // 30%概率解锁一辆电瓶车
+        condition: "Math.random() < 0.3 || hasEbikeKey", // 30%概率解锁一辆电瓶车
         nextScene: "骑车去西出口",
         elseScene: "电瓶车上锁了"
       },
@@ -869,9 +869,8 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     choices: [
       {
         text: "骑上电瓶车",
-        condition: "itemCount < bagVolume",
         nextScene: "西出口",
-        effect: { set: { hasEbike: true }, add: { itemCount: 1 } },
+        effect: { set: { hasEbike: true }},
         elseScene: "整理整理"
       }
     ]
@@ -1837,13 +1836,17 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     },
     onEnter: { set: { currentPos: "物业楼" } },
     text: function(vars) {
-      if (vars.dd == 1 && vars.hh < 12) {
-        return "物业楼不大，靠墙立着几排档案柜，中间一张旧办公桌上摊着半张小区平面图，被茶杯印子洇了一圈褐色的环。空气里混着机油和自行车链条的金属味。\n\
+      var base = vars.dd == 1 && vars.hh < 12
+        ? "物业楼不大，靠墙立着几排档案柜，中间一张旧办公桌上摊着半张小区平面图，被茶杯印子洇了一圈褐色的环。空气里混着机油和自行车链条的金属味。\n\
 一个锅盖头少年正蹲在地上捣鼓一辆红色山地车——变速器拆了一半，零件散了一地。他嘴里咬着一根不知道从哪找到的扎带，抬头看到你，愣了一秒，然后把扎带从嘴里拿出来：\n\
-“我靠，你还没死啊？“";
-      }
-      return "物业楼里空荡荡的。办公桌还在，半张小区平面图已经被风吹到了地上。地上散落着几个拧废的螺丝和半截断掉的自行车链条。\n\
+“我靠，你还没死啊？“"
+        : "物业楼里空荡荡的。办公桌还在，半张小区平面图已经被风吹到了地上。地上散落着几个拧废的螺丝和半截断掉的自行车链条。\n\
 墙上有人用记号笔歪歪扭扭写了一行字：\n<em>高某到此一游。下一站，新达汇。</em>";
+      var desc = base;
+      if (!vars.hasCommitteeKey && !vars._committeeSearched) {
+        desc += "\n\n走廊尽头那扇办公室的门关得严实，锁孔里没插钥匙，你推了推——纹丝不动。";
+      }
+      return desc;
     },
     choices: [
       {
@@ -1852,14 +1855,24 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         showCondition: "dd == 1 && hh < 12"
       },
       {
-        text: "用居委会钥匙打开走廊尽头那扇门",
+        text: "试着推走廊尽头那扇门",
         nextScene: "物业楼-居委会办公室",
-        showCondition: "hasCommitteeKey && !_committeeSearched"
+        condition: "hasCommitteeKey",
+        showCondition: "!_committeeSearched",
+        elseScene: "物业楼-居委会-门锁了"
       },
       {
         text: "去小区东门",
         nextScene: "小区东门"
       }
+    ]
+  },
+
+  "物业楼-居委会-门锁了": {
+    image: "images/home/物业楼.png",
+    text: "你握住门把手用力往下按——锁死了，纹丝不动。那扇门上了锁，得找钥匙才打得开。",
+    choices: [
+      { text: "回物业楼", nextScene: "物业楼", effect: updateTime(1) }
     ]
   },
 

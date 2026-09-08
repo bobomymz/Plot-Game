@@ -475,11 +475,19 @@ Object.assign(storyData, {
         nextScene: "上实南校-1楼出口"
       },
       {
-        showCondition: "_hasCampusKey",
         text: "走员工通道下楼",
         nextScene: "上实南校-员工通道",
-        elseScene: "上实南校-1楼出口"
+        condition: "_hasCampusKey",
+        elseScene: "上实南校-员工通道-锁着"
       }
+    ]
+  },
+
+  "上实南校-员工通道-锁着": {
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolStairs.png */,
+    text: "你找到了楼梯间旁边那扇贴着「员工通道」的门。门把上锁着一把弹子锁，锁得死死的——你没有能打开它的钥匙。\n你只能走普通楼梯下楼。",
+    choices: [
+      { text: "走普通楼梯下楼", nextScene: "上实南校-1楼出口", effect: updateTime(1) }
     ]
   },
 
@@ -802,7 +810,14 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       var wasToxic = vars.waterToxic;
       vars.waterGivenToTeacher = (vars.waterGivenToTeacher || 0) + 1;
-      if (vars.waterGivenToTeacher >= 15) vars.hasCarKey = true; // 15次信任达成，王老师给车钥匙
+      if (vars.waterGivenToTeacher >= 15) {
+        vars.hasCarKey = true; // 15次信任达成，王老师给车钥匙
+        vars.itemCount ++;
+        if(vars.itemCount > vars.bagVolume) { // 如果背包已满，丢弃水瓶
+          vars.itemCount --;
+          vars.hasBottle = false;
+        }
+      }
       vars.hasBottle = false;
       vars.bottleWater = 0;
       vars.waterToxic = false;
