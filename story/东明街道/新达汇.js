@@ -1786,6 +1786,12 @@ Object.assign(storyData, {
         effect: { set: { hasCatSnack: false, _catChasing: false, _catFed: true }, add: { itemCount: -1 } },
         showCondition: function(vars) { return vars._catChasing && vars.hasCatSnack && vars._visit["新达汇-3F大型综合儿童乐园"] > 1; },
       },
+      {
+        text: "掏出婴儿磨牙饼干，在猫眼前晃了晃",
+        nextScene: "新达汇-卡通尼乐园-喂猫",
+        effect: { set: { hasTeethingBiscuit: false, _catChasing: false, _catFed: true }, add: { itemCount: -1 } },
+        showCondition: function(vars) { return vars._catChasing && vars.hasTeethingBiscuit && vars._visit["新达汇-3F大型综合儿童乐园"] > 1; },
+      },
     ]
   },
   "新达汇-卡通尼乐园-喂猫": {
@@ -1844,8 +1850,20 @@ Object.assign(storyData, {
   "新达汇-3F爱婴室": {
     onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/babyStore.png */,
-    text: "你走进爱婴室。彩虹渐变logo，白底彩色地砖配木纹货架。货架上还有婴儿湿巾、矿泉水和磨牙饼干。",
+    text: function(vars) {
+      var desc = "你走进爱婴室。彩虹渐变logo，白底彩色地砖配木纹货架。婴儿湿巾的包装早就被人拆开过，干得像纸。\n矿泉水货架上剩下的几瓶全是空的——瓶盖却又都被拧了回去，一瓶一瓶立得整整齐齐。有人喝完之后，一瓶一瓶拧好的。";
+      if (!vars.hasTeethingBiscuit) desc += "\n货架最下层还剩两罐没开封的磨牙饼干。";
+      return desc;
+    },
     choices: [
+      {
+        text: "拿一罐磨牙饼干",
+        nextScene: "新达汇-3F爱婴室",
+        effect: updateTime(1, { set: { hasTeethingBiscuit: true }, add: { itemCount: 1 } }),
+        condition: "itemCount < bagVolume",
+        elseScene: "整理整理",
+        showCondition: "!hasTeethingBiscuit",
+      },
       {
         text: "回到走廊",
         nextScene: "新达汇-3F北走廊东",
@@ -2090,7 +2108,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "4F-南走廊东"); v.showPowerOut = true; return {}; },
     text: function(vars) {
       var desc = "4F南走廊东端。";
-      if(vars._visit['4F电梯厅'] == 1) desc += "走廊上有一滩从卫生间溢出来的污水，散发着刺鼻的臭气，横跨了整个路面。";
+      if(vars._visit['4F电梯厅'] == 1) desc += "走廊上有一滩从卫生间溢出来的污水，散发着刺鼻的臭气，横跨了整个路面。天花板角落鼓着一包发黄的水渍——楼上卫生间的管道裂了，自来水还在供，水从出事那天起就顺着楼板缝一直渗，在这里积成了这滩东西。";
       else if (vars._visit['4F电梯厅'] == 2) desc += "你刚刚穿过了一滩污水。";
       desc += "\n" + describeZombieWave(vars);
       return desc;
@@ -2737,7 +2755,7 @@ Object.assign(storyData, {
     text: function(vars) {
       let basicDes = "";
       if (vars._powerOut) basicDes += "游戏厅一片漆黑。街机和娃娃机的屏幕全都暗了。";
-      else basicDes += "你走进游戏厅。抓娃娃机和街机的屏幕大多亮着。《拳皇97》定格在选人画面。电源居然还没断。";
+      else basicDes += "你走进游戏厅。抓娃娃机和街机的屏幕大多亮着，《拳皇97》定格在选人画面，靠里那排投篮机的计分屏滚动着“INSERT COIN”。电源居然还没断。";
       basicDes += "\n" + describeZombieWave(vars);
       return basicDes;
     },
@@ -2751,6 +2769,21 @@ Object.assign(storyData, {
         text: "四处看看机台后面有什么",
         nextScene: "新达汇-5F游戏厅-躲藏",
         showCondition: "chasedByZombies <= 1",
+      },
+      {
+        text: "把机台上没收走的游戏币拢一拢",
+        nextScene: "新达汇-5F游戏厅-捡币",
+        showCondition: "!_gotGameTokens",
+      },
+      {
+        text: "塞几枚币，投几颗球",
+        nextScene: "新达汇-5F游戏厅-投篮机",
+        showCondition: "_gotGameTokens && !_powerOut",
+      },
+      {
+        text: "塞币玩一把抓娃娃",
+        nextScene: "新达汇-5F游戏厅-娃娃机",
+        showCondition: "_gotGameTokens && !_powerOut",
       },
       {
         text: "回到走廊",
@@ -2767,7 +2800,9 @@ Object.assign(storyData, {
       if (vars._powerOut) {
         desc += "黑暗中你只能听着自己的呼吸声。过了很久，外面终于安静了。";
       } else {
-        desc += "街机的屏幕在你身旁闪烁着微光，发出嗡嗡的电流声。几台机器上还残留着没被拿走的游戏币。过了很久，外面的脚步声终于远去了。";
+        desc += "街机的屏幕在你身旁闪烁着微光，发出嗡嗡的电流声。";
+        if (!vars._gotGameTokens) desc += "几台机器上还残留着没被拿走的游戏币。";
+        desc += "过了很久，外面的脚步声终于远去了。";
       }
       return desc + "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>";
     },
@@ -2775,6 +2810,56 @@ Object.assign(storyData, {
       {
         text: "从缝隙里钻出来",
         nextScene: "新达汇-5F南走廊西",
+        effect: updateTime(1),
+      },
+    ]
+  },
+
+  // ===== 5F游戏厅 · 游戏币（纯风味消费，无数值奖励防刷） =====
+  "新达汇-5F游戏厅-捡币": {
+    onEnter: { set: { showPowerOut: true, _gotGameTokens: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/arcade.png */,
+    text: "你沿着机台走了一圈，把投币口旁边遗落的游戏币一枚一枚抠下来，拢在掌心——沉甸甸的一小把。\n在一个能上网、能点外卖、能刷脸进地铁的世界里，这些东西一分钱都不值。现在也一样。但你还是把它们装进了口袋。",
+    choices: [
+      {
+        text: "回到游戏厅中央",
+        nextScene: "新达汇-5F游戏厅",
+        effect: updateTime(1),
+      },
+    ]
+  },
+
+  "新达汇-5F游戏厅-投篮机": {
+    onEnter: { set: { showPowerOut: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/basketballMachine.png */,
+    text: "你塞进两枚币，机器立刻来了精神——倒计时开始，篮球从滚道里一颗颗吐出来。\n你投了十几颗。命中的时候机器放礼炮音效，大喊“好球！”，声音在空荡荡的游戏厅里炸开。你缩了缩脖子，回头看了一眼入口。\n最后屏幕定格在你的分数上。不算高。但这是出事以来，你头一次为了“玩”而做一件事。",
+    choices: [
+      {
+        text: "再来一把",
+        nextScene: "新达汇-5F游戏厅-投篮机",
+        effect: updateTime(5),
+      },
+      {
+        text: "够了",
+        nextScene: "新达汇-5F游戏厅",
+        effect: updateTime(1),
+      },
+    ]
+  },
+
+  "新达汇-5F游戏厅-娃娃机": {
+    onEnter: { set: { showPowerOut: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/clawMachine.png */,
+    text: "你塞进一枚币，握着摇杆。爪子晃晃悠悠地落下去，稳稳夹住了一只棕色的小熊——升起来，挪到出口正上方——然后松了。\n小熊完美地掉回了机器正中央。\n你盯着那只爪子看了几秒。有些东西是灾变改变不了的：这台机器的主人从装机那天起，就把爪子的力度调到了最松。世界末日了，它还在恪尽职守地骗小孩的币。",
+    choices: [
+      {
+        text: "再试一次",
+        nextScene: "新达汇-5F游戏厅-娃娃机",
+        effect: updateTime(3),
+      },
+      {
+        text: "跟它耗不起",
+        nextScene: "新达汇-5F游戏厅",
         effect: updateTime(1),
       },
     ]

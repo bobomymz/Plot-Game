@@ -66,6 +66,7 @@ const storyData = {
     _powerRoomOpen: false,      // 新达汇B1配电房是否已打开（保安组暗线终点）
     _got3fExtinguisher: false,  // 是否拿走了新达汇3F消防通道的灭火器（打王建国用）
     _jinbaobeiFrontOpen: false, // 金宝贝前门是否已用钥匙牌打开
+    _gotGameTokens: false,     // 是否捡了新达汇5F游戏厅的游戏币（纯风味，不占背包）
     _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
     _marketHallCleared: false, // 菜市场大厅的丧尸是否已清理
     _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
@@ -207,6 +208,8 @@ const storyData = {
     _laowuKilled: false,        // 老吴尸变后是否被击杀
     _pengComputerFixed: false,  // 14班电脑是否修好（供电）
     _pengGalCleared: false,     // 是否帮彭奕宸打完galgame
+    _pengGalResult: "",         // galgame最近一次结局：""=未玩过 / "bad"/"normal"/"true"（bad不关门可重试）
+    _pengGalWqxSeen: false,     // 是否已见过 wqx 存档彩蛋（galgame真结局，设计见 galgame.md）
     _pengNoodleShared: false,   // 14班方便面是否已分享（饭点一次性）
     hasCanteenFood: false,      // 食堂干粮（占背包，一次性，整理整理里吃+2体力）
     hasFeverMed: false,         // 退烧药（医务室，占背包，感冒系统铺路）
@@ -232,6 +235,7 @@ const storyData = {
     hasSnackCookie: false,    // 味千小饼干（占格；可拆吃+1 / 喂橘猫）
     hasHamSausage: false,     // 火腿肠（联华"小超市"货架，占格；可吃+1 / 喂橘猫）
     hasCracker: false,        // 夹心饼干（挹芬楼6F自习教室，样板改可收集，占格；可吃+1 / 喂橘猫）
+    hasTeethingBiscuit: false, // 磨牙饼干（新达汇3F爱婴室，占格；可吃+1 / 喂猫）
     _stairKillNote: "",       // 堵路强丧尸清场旁白（武器effect写入，楼梯text展示后清除，一次性）
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
@@ -707,6 +711,17 @@ const storyData = {
         effect: updateTime(1, { set : { hasCracker: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
+      {
+        showCondition: "hasTeethingBiscuit",
+        text: "吃掉磨牙饼干（体力+1）",
+        nextScene: "整理整理-吃磨牙饼干"
+      },
+      {
+        showCondition: "hasTeethingBiscuit",
+        text: "丢下磨牙饼干",
+        effect: updateTime(1, { set : { hasTeethingBiscuit: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
       // 建平·占格道具的丢弃项（钥匙串/管线图为关键线索且合占 1 格，参照王知筠线索不设丢弃）
       {
         showCondition: "hasCanteenFood",
@@ -932,6 +947,15 @@ const storyData = {
     image: "images/整理整理.png",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasBiscuit: false } }),
     text: "你拆开包装袋，掰了一块压缩饼干放进嘴里。干巴巴的，嚼起来有点硬，但那股麦香让你想起还没出事时的日子。你就着水咽了下去，胃里终于有了点东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃磨牙饼干": {
+    image: "images/整理整理.png",
+    onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasTeethingBiscuit: false } }),
+    text: "你拆开磨牙饼干的罐子，拿出一根咬了一口——硬得离谱，几乎没什么味道，只有一点淡淡的谷物甜。这是给没长牙的婴儿磨牙的东西。你嚼了很久才咽下去，居然还挺顶饿。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

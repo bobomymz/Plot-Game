@@ -143,7 +143,7 @@ function jpChaseQTE(pred) {
 // ===== 建平橘猫向导（B 支线） =====
 // 橘猫游走于校园各点；玩家用任一"猫食"喂它 → 它带你去致真楼（给新玩家"下一步去哪"的指引），
 // 喂过后它成为 Harsh 的"软预警"（jpHarshHint 里比玩家直觉早一档提示）。
-// 可喂的猫食：脆脆炒米 / 饼干 / 味千小饼干 / 火腿肠 / 挹芬楼6F夹心饼干（各具名占格）。
+// 可喂的猫食：脆脆炒米 / 饼干 / 味千小饼干 / 火腿肠 / 挹芬楼6F夹心饼干 / 磨牙饼干（各具名占格）。
 function jpCatFoods(vars) {
   var list = [];
   if (vars.hasCatSnack)    list.push({ flag: "hasCatSnack",    name: "脆脆炒米" });
@@ -151,6 +151,7 @@ function jpCatFoods(vars) {
   if (vars.hasSnackCookie) list.push({ flag: "hasSnackCookie", name: "味千小饼干" });
   if (vars.hasHamSausage)  list.push({ flag: "hasHamSausage",  name: "火腿肠" });
   if (vars.hasCracker)     list.push({ flag: "hasCracker",     name: "夹心饼干" });
+  if (vars.hasTeethingBiscuit) list.push({ flag: "hasTeethingBiscuit", name: "磨牙饼干" });
   return list;
 }
 function jpHasCatFood(vars) {
@@ -1483,6 +1484,8 @@ Object.assign(storyData, {
         desc += "\n彭奕宸正坐在自己的座位上，从书包柜里掏出一包方便面。";
       } else if (vars._pengGalCleared) {
         desc += "\n彭奕宸不在——电脑还亮着，课桌上摊着本翻开的漫画。他大概又溜去音乐教室或者图书馆了。这家伙，在教室里永远待不住。";
+      } else if (vars._pengGalResult === "bad") {
+        desc += "\n彭奕宸守在电脑前，时不时瞄一眼屏幕。";
       } else if (vars._pengComputerFixed) {
         desc += "\n彭奕宸坐在靠窗的位子，盯着电脑屏幕，一脸跃跃欲试。";
       } else {
@@ -1501,8 +1504,14 @@ Object.assign(storyData, {
         } else {
           cs.push({ text: "看看那台电脑", nextScene: "建平-远翔楼-4F-高三14班-电脑坏" });
         }
-      } else if (!vars._pengGalCleared) {
-        cs.push({ text: "帮彭奕宸打galgame", nextScene: "建平-远翔楼-4F-高三14班-galgame" });
+      } else {
+        cs.push({
+          text: vars._pengGalResult === "bad" ? "再帮彭奕宸打一次galgame" : "帮彭奕宸打galgame",
+          nextScene: "建平-远翔楼-4F-高三14班-galgame"
+        });
+      }
+      if (vars._pengGalResult !== "" && !vars.mixedMemorySet.has("腐烂尸城")) {
+        cs.push({ text: "看看彭奕宸收藏的视频", nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) });
       }
       if (vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-14班" });
@@ -1541,32 +1550,114 @@ Object.assign(storyData, {
     ]
   },
 
+  // ===== 彭奕宸 galgame 支线（设计稿见 galgame.md v3）=====
+  // 内层（游戏中的游戏）场景用蓝色屏幕标记行 + 粉色假好感度 UI 与现实层区分；
+  // 彭奕宸在内层一律不出声，不给玩家的选择当"教练"。
+  // 时间推进每次 ≤6 分钟：坐着打游戏不计入赶路疲劳（_travelMinutes）。
   "建平-远翔楼-4F-高三14班-galgame": {
     image: "images/placeholder.png",
-    text: "电脑修好了，彭奕宸迫不及待地打开一个galgame。\n\"帮我打一关，我要拿那个隐藏结局。\"\n屏幕上的女主角歪着头，问男主角：\"周末……你想带我去哪儿呀？\"",
+    text: "电脑修好了，彭奕宸把椅子拖到讲台前，点开 Steam——游戏库最底下还躺着一个《Summer Pockets》。\n“高三上学期偷偷装的，就打到白羽线海边这段，重开了七八次都没打出最优解。”他说，“要不要打？虽然我知道你可能对二次元不是很感兴趣。”\n你拉开键盘。屏幕亮起，读档，「第 7 天・傍晚・防波堤」。",
     choices: [
-      { text: "游乐园", nextScene: "建平-远翔楼-4F-高三14班-galgame-2" },
-      { text: "图书馆", nextScene: "建平-远翔楼-4F-高三14班-galgame-2" },
-      { text: "电影院", nextScene: "建平-远翔楼-4F-高三14班-galgame-2" }
+      { text: "开始", nextScene: "建平-远翔楼-4F-高三14班-galgame-防波堤", effect: updateTime(5) },
+      { text: "先不打了", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
     ]
   },
 
-  "建平-远翔楼-4F-高三14班-galgame-2": {
+  "建平-远翔楼-4F-高三14班-galgame-防波堤": {
     image: "images/placeholder.png",
-    text: "女主角笑了，接着问：\"那……走累的时候，你想牵我的手吗？\"\n彭奕宸在旁边紧张地盯着屏幕。",
+    text: "<span style='color:#7fb8e8ff;'>—— 屏幕 · 《Summer Pockets》 ——</span>\n鸟白岛南边的防波堤，夕阳把海面染成琥珀色。鸣濑白羽扶着栏杆，背对着主角，海风吹动她的白色发梢。\n白羽：“……鹰原同学。”\n白羽：“你有没有过……一种很奇怪的感觉？”\n白羽：“就好像今天走过的路、说过的话，还有这片海、这个夕阳……”\n白羽：“都像是，已经经历过很多很多次一样。”",
     choices: [
-      { text: "牵", nextScene: "建平-远翔楼-4F-高三14班-galgame-完成" },
-      { text: "不牵，保持距离", nextScene: "建平-远翔楼-4F-高三14班-galgame-完成" }
+      { text: "最近太累了吧，别想太多", nextScene: "建平-远翔楼-4F-高三14班-galgame-失落的沉默", effect: updateTime(5) },
+      { text: "我相信你说的感觉", nextScene: "建平-远翔楼-4F-高三14班-galgame-动摇的坦白", effect: updateTime(5) },
+      { text: "你是不是……记得很多个夏天？", nextScene: "建平-远翔楼-4F-高三14班-galgame-尘封的真相", effect: updateTime(5) }
     ]
   },
 
-  "建平-远翔楼-4F-高三14班-galgame-完成": {
+  "建平-远翔楼-4F-高三14班-galgame-失落的沉默": {
     image: "images/placeholder.png",
-    onEnter: { set: { _pengGalCleared: true } },
-    text: "结局动画放完了。彭奕宸一拍大腿：\"爽！这隐藏结局我等了好久！\"\n他心情大好，扭头对你说：\"对了，你想不想看点好东西？B站上有个视频，叫《腐烂尸城》，我收藏了好久。\"",
+    text: "<span style='color:#7fb8e8ff;'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span style='color:#ffb6c1ff; font-style: italic;'>【好感度 -10】</span>\n白羽的肩膀几不可察地僵了一下，轻轻“嗯”了一声，重新转过身去，望着海面。\n白羽：“……也是。”\n白羽：“大概，只是我一个人的胡思乱想吧。”",
     choices: [
-      { text: "看看那个视频", nextScene: "建平-远翔楼-4F-高三14班-看B站" },
-      { text: "下次吧", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
+      { text: "别多想了，早点回去吧", nextScene: "建平-远翔楼-4F-高三14班-galgame-坏结算", effect: updateTime(5) },
+      { text: "……其实，我也有点这种感觉", nextScene: "建平-远翔楼-4F-高三14班-galgame-普通结算", effect: updateTime(5) }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-galgame-动摇的坦白": {
+    image: "images/placeholder.png",
+    text: "<span style='color:#7fb8e8ff;'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span style='color:#ffb6c1ff; font-style: italic;'>【好感度 +10】</span>\n白羽缓缓转过身来，眼睛里有一丝惊讶。\n白羽：“其实……我已经不止一次，度过这个夏天了。”\n白羽：“每一次结束，一切都会重新开始。所有人都会忘记，只有我一个人记得所有事。”\n白羽：“很奇怪吧。”",
+    choices: [
+      { text: "这种能力太痛苦了，不如试着忘掉？", nextScene: "建平-远翔楼-4F-高三14班-galgame-普通结算", effect: updateTime(5) },
+      { text: "那以后，我陪你一起记。", nextScene: "建平-远翔楼-4F-高三14班-galgame-真结算", effect: updateTime(5) }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-galgame-尘封的真相": {
+    image: "images/placeholder.png",
+    text: "<span style='color:#7fb8e8ff;'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span style='color:#ffb6c1ff; font-style: italic;'>【好感度 +25】</span>\n白羽猛地转过身，瞳孔缩了一下。\n白羽：“你……怎么会知道。”\n白羽：“没错。一次又一次，同样的夏天，同样的相遇，同样的……离别。”\n白羽：“我已经数不清，这是第几次了。”\n屏幕的白光晃了你一下——有那么一瞬间，你好像在白羽身后的海面上看见了倒扣的课桌，听见很远的地方传来拖沓的脚步声。\n你眨眨眼。防波堤，夕阳，海。什么都没有。",
+    choices: [
+      { text: "为什么会这样？", nextScene: "建平-远翔楼-4F-高三14班-galgame-普通结算", effect: updateTime(5) },
+      { text: "这一次，不会再是你一个人了。", nextScene: "建平-远翔楼-4F-高三14班-galgame-真结算", effect: updateTime(5) }
+    ]
+  },
+
+  // 坏结局不关门（_pengGalCleared 不置 true），"读档再试"可反复进入；首败/再败用 _visit 区分。
+  "建平-远翔楼-4F-高三14班-galgame-坏结算": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars._pengGalResult = "bad"; return {}; },
+    text: function(vars) {
+      if (vars._visit["建平-远翔楼-4F-高三14班-galgame-坏结算"] > 1) {
+        return "屏幕再次暗下去，还是「擦肩而过」。\n彭奕宸看看屏幕，又看看你，把鼠标又推了过来。\n……或者先歇会儿，看看他收藏的那个视频。";
+      }
+      return "屏幕暗下去，结局画面浮出来：「擦肩而过」。白羽在坡道上回头看了一眼，又转身走远。\n彭奕宸盯着屏幕看了几秒，靠回椅背，没说什么安慰的话。\n他把鼠标往你这边推了推。\n要是你打累了，也可以先歇着——他提了一嘴，自己收藏了个视频，说换换脑子不错。";
+    },
+    choices: [
+      { text: "读档，再试一次", nextScene: "建平-远翔楼-4F-高三14班-galgame-防波堤", effect: updateTime(2) },
+      { text: "看看他收藏的视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
+      { text: "回教室", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-galgame-普通结算": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars._pengGalResult = "normal";
+      vars._pengGalCleared = true;
+      return { add: { strength: 1 } };
+    },
+    text: "屏幕上弹出结算画面：「徐徐靠近」。白羽站在坡道上，朝主角轻轻挥了挥手。\n彭奕宸盯着结算画面看了一会儿，忽然起身，从书包柜里翻出他囤的泡面，撕开一桶，掰了半块面饼给你，又从铅笔盒里摸出半根火腿肠。\n“比我打得好。”他说，“吃。”\n你们就着饮水机里的温水，把面啃完了。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n收拾面桶的时候，他提了一句：收藏了个互动视频，有兴趣可以看看。",
+    choices: [
+      { text: "看看那个视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
+      { text: "回教室", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-远翔楼-4F-高三14班-galgame-真结算": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars._pengGalResult = "true";
+      vars._pengGalCleared = true;
+      return { add: { strength: 2 } };
+    },
+    text: "屏幕上弹出结算画面：「记忆同频」。几只半透明的七影蝶从海面掠过，在夕阳下泛着微光——解锁隐藏 CG「七影蝶的约定」。\n彭奕宸盯着屏幕，很久没动。\n“……这段我从来没见过。”他看看你，“你怎么想到往那上面问的？”\n你还没想好怎么回答，他已经起身，把整桶没开封的泡面和一颗卤蛋放到你面前，又顺手把屏幕亮度调低了一点。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "建平-远翔楼-4F-高三14班-galgame-wqx存档", effect: updateTime(5) }
+    ]
+  },
+
+  // wqx 存档彩蛋：存档时间 6/29 08:00 = 核心设定3.0「设计师跌入游戏世界」的时刻，勿改。
+  // hasDiary 时追加日记联想；多周目"复见"变体暂缓（galgame.md v3）。
+  "建平-远翔楼-4F-高三14班-galgame-wqx存档": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars._pengGalWqxSeen = true; return {}; },
+    text: function(vars) {
+      var desc = "钢琴 BGM 渐渐淡下去，屏幕上弹出最后一行提示：「解锁 CG：七影蝶的约定」。\n讲台边的饮水机嗡嗡作响——修好插座之后，这台老古董总算烧出了一壶热水。借着微光泡上面，水汽一点一点糊住屏幕。\n你随手点开存档列表，想看看他当年到底卡在哪。\n除了他的几个普通存档，最顶上还静静躺着一个编号 0 的存档，名字是三个字母：wqx。\n存档时间：202X年6月29日 08:00:00。\n“这存档是你的？”你碰了碰屏幕。\n彭奕宸凑过来看了一眼，眉头皱起来：“不可能。我前几天刚清空过存档文件夹。再说这个时间……6月29号早上八点整，不就是出事那天早上？”\n窗外的丧尸忽然低低地嘶吼了一声。电脑屏幕猛地闪了一下。\n你揉了揉眼睛——存档列表干干净净，编号 0 的位置空着，什么都没有。\n面的热气涌上来，模糊了你的视线。";
+      if (vars.hasDiary) desc += "\n那三个字母莫名让你想起自己在民防设施里捡到的那本灰皮日记。";
+      desc += "\n过了很久，彭奕宸才闷闷地开口：“……这事别跟人说。”顿了顿，又补了一句：“要是睡不着，我收藏了个视频。”";
+      return desc;
+    },
+    choices: [
+      { text: "看看那个视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
+      { text: "回教室", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
     ]
   },
 
@@ -2009,7 +2100,9 @@ Object.assign(storyData, {
         return "济美楼 4 楼 · 音乐教室。\n彭奕宸正坐在钢琴前，十指在琴键上轻轻起落，断断续续地弹着一首曲子。听见你进来，他头也不回地说：\"坐，这首我还没弹熟。\"";
       }
       if (vars._pengGalCleared) {
-        return "济美楼 4 楼 · 音乐教室。\n彭奕宸正靠着钢琴翻手机，看见你，咧嘴一笑：\"哟，来了。刚才那隐藏结局，谢了啊。\"\n他拍了拍身边的凳子示意你坐，又自顾自念叨着——这家伙果然满学校乱窜，教室、图书馆、这儿，没个准点。";
+        var galLine = vars._pengGalResult === "true" ? "刚才那隐藏结局，谢了啊。" : "刚才那局，谢了啊。";
+        return "济美楼 4 楼 · 音乐教室。\n彭奕宸正靠着钢琴翻手机，看见你，咧嘴一笑：\"哟，来了。" + galLine + "\"\n\
+他拍了拍身边的凳子示意你坐，又自顾自念叨着——这家伙果然满学校乱窜，教室、图书馆、这儿，没个准点。";
       }
       return "济美楼 4 楼 · 音乐教室。一架旧钢琴蒙着灰，谱架上的乐谱被风吹乱了几页。";
     },
@@ -2854,7 +2947,7 @@ Object.assign(storyData, {
   // 非地点节点关键词（每次新增此类场景需同步补充）
   // 匹配规则：ID 以关键词【结尾】即命中（无 "-" 前缀锚）——"没螺丝刀/收好内胆/搜尸体"
   // 这类变体由 螺丝刀/内胆/尸体 等基础词直接覆盖，无需逐个造词。
-  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|galgame-2|galgame-完成|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|查看|关阀|被堵住|踢球|听琴|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下)$/;
+  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|防波堤|失落的沉默|动摇的坦白|尘封的真相|结算|wqx存档|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|查看|关阀|被堵住|踢球|听琴|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;
