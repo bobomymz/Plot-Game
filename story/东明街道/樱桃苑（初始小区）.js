@@ -1881,7 +1881,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
       morning: "images/home/居委会办公室.jpg",
       night: "images/home/居委会办公室-night.jpg",
     }),
-    onEnter: { set: { _committeeSearched: true } },
+    onEnter: { set: { _committeeSearched: true, positionAfterOperation: "物业楼-居委会办公室" } },
     text: "钥匙转动——门开了。里面是一间不大的办公室，靠墙一排铁皮档案柜，桌上摊着几本翻开的台账。空气里飘着淡淡的樟脑丸味道。\n\
 你拉开柜门翻了翻——旧文件夹、一盒干掉的印泥、半包口罩。在底层抽屉里，你找到了一个落满灰的纸箱，上面贴着“便民维修工具”的标签。\n\
 旁边的箱子里有一套自行车修理工具——补胎胶、链条润滑油、几根备用辐条。看起来是居委会以前搞便民服务时留下的。",
@@ -1892,10 +1892,21 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         showCondition: "dd == 1 && hh < 12"
       },
       {
-        text: "收起来，以后也许用得上",
-        nextScene: "物业楼",
-        effect: updateTime(2)
+        text: "自己收起来，以后也许用得上",
+        condition: "!hasLubricant && itemCount < bagVolume",
+        nextScene: "物业楼-居委会办公室-收起润滑油",
+        effect: updateTime(2),
+        elseScene: "整理整理"
       }
+    ]
+  },
+
+  "物业楼-居委会办公室-收起润滑油": {
+    image: "images/home/物业楼.png",
+    onEnter: {set: {hasLubricant: true}, add: {itemCount: 1}},
+    text: "你把链条润滑油收起来，以后也许用得上。",
+    choices: [
+      { text: "继续", nextScene: "物业楼", effect: updateTime(1) }
     ]
   },
 

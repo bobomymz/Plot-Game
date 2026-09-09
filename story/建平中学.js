@@ -1350,7 +1350,8 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼2F"; },
-    text: function(vars) { return "远翔楼 2 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "你走到了2楼。这里有高三几个平行班，还有一个不大不小的阳台，放着一些木头椅子和花篮。平时只有找王某和陈某时才会到这里来。"
+ + describeZombieWave(vars); },
     choices: [
       { text: "去东楼梯", nextScene: "建平-远翔楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-远翔楼-西楼梯", effect: updateTime(1) },
@@ -1361,15 +1362,30 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼3F"; },
-    text: function(vars) { return "远翔楼 3 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "你来到了3楼，这里有高三一些班级的教室————早已人去房空，还有物理教学组的办公室。地板上躺着一具尸体，不知道是哪个倒霉蛋。" + describeZombieWave(vars); },
     choices: [
       { text: "去东楼梯", nextScene: "建平-远翔楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-远翔楼-西楼梯", effect: updateTime(1) },
-      { text: "去物理办公室", nextScene: "建平-远翔楼-3F-物理办公室", effect: updateTime(1) },
+      { 
+        text: "去物理办公室", 
+        condition: "hasKeyRing",
+        nextScene: "建平-远翔楼-3F-物理办公室",
+        elseScene: "建平-远翔楼-3F-物理办公室-没钥匙", 
+        effect: updateTime(1) 
+      },
       { text: "去高三教室", nextScene: "建平-远翔楼-3F-高三教室", effect: updateTime(1) },
       { text: "经廊桥去致真楼", nextScene: "建平-致真楼-3F", effect: updateTime(2) }
     ]
   },
+
+  "建平-远翔楼-3F-物理办公室-没钥匙": {
+    image: "images/placeholder.png",
+    text: "你走过去推了推门————锁上了，是从内部上锁的。窗户也被关上了。你喊了几声，没人回应。不知道里面还有没有活人。",
+    choices: [
+      { text: "继续", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
+    ]
+  },
+
   "建平-远翔楼-4F": {
     image: "images/placeholder.png",
     qte: jpChaseQTE(),
@@ -1387,12 +1403,12 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼5F"; },
-    text: function(vars) { return "远翔楼 5 楼。" + describeZombieWave(vars); },
+    text: function(vars) { return "这里是远翔楼5楼，只有一些没什么人用的自习室。" + describeZombieWave(vars); },
     choices: [
       { text: "去东楼梯", nextScene: "建平-远翔楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-远翔楼-西楼梯", effect: updateTime(1) },
       { text: "经廊桥去致真楼", nextScene: "建平-致真楼-5F", effect: updateTime(2) },
-      { text: "去杂物教室", nextScene: "建平-远翔楼-5F-杂物教室", effect: updateTime(1) }
+      { text: "去自习室", nextScene: "建平-远翔楼-5F-自习室", effect: updateTime(1) }
     ]
   },
   "建平-远翔楼-东楼梯": jpStair("建平-远翔楼", "远翔楼东侧楼梯间", [1, 2, 3, 4, 5], 1),
@@ -1434,7 +1450,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "远翔楼3F物理办公室"; },
     text: function(vars) {
       if (vars._xinDead) {
-        return "物理办公室里空了。桌上摊着一沓批了一半的试卷，椅子被推到一边——忻老师已经不在这里了。";
+        return "物理办公室里早空了。桌上摊着一沓批了一半的试卷，椅子被推到一边——忻老师已经不在这里了。";
       }
       var desc;
       if (!vars._visit["建平-远翔楼-3F-物理办公室"] || vars._visit["建平-远翔楼-3F-物理办公室"] <= 1) {
@@ -2353,9 +2369,9 @@ Object.assign(storyData, {
       { text: "离开", nextScene: "建平-远翔楼-4F", effect: updateTime(1) }
     ]
   },
-  "建平-远翔楼-5F-杂物教室": {
+  "建平-远翔楼-5F-自习室": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "远翔楼5F杂物教室"; },
+    onEnter: function(vars) { vars.currentPos = "远翔楼5F自习室"; },
     text: "这层楼像是被废弃了很久。几间空教室堆着旧桌椅、坏掉的黑板和成箱的废纸，空气里一股潮气。偶尔有风从破窗灌进来，吹得地上的废纸沙沙作响。",
     choices: [
       { text: "离开", nextScene: "建平-远翔楼-5F", effect: updateTime(1) }
