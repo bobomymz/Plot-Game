@@ -995,7 +995,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
-    text: "你推开防火门，走进楼梯间。墙上标着「3F」。脚步声在混凝土楼梯井里回荡。",
+    text: "你推开防火门，走进楼梯间。墙上标着「3F」。脚步声在混凝土楼梯井里回荡。\n楼梯平台的消火栓箱玻璃裂着纹，里面还立着一只干粉灭火器。",
     onEnter: function(v) { transit(v, "3F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
@@ -1007,6 +1007,12 @@ Object.assign(storyData, {
         text: "往下走到2F",
         nextScene: "新达汇-2F消防通道",
         effect: updateTime(2),
+      },
+      {
+        text: "掰开消火栓箱，取出灭火器",
+        nextScene: "新达汇-3F消防通道",
+        effect: updateTime(1, { set: { _got3fExtinguisher: true } }),
+        showCondition: "!_got3fExtinguisher",
       },
       {
         text: "回到3F走廊",
@@ -1798,15 +1804,28 @@ Object.assign(storyData, {
     onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/earlyEducation.png */,
     text: function(vars) {
-      if (vars._backhallEntered) return "你从后勤通道绕进了金宝贝早教中心的后门。\n蓝黄配色的装潢，教室里小桌椅整齐排列，地面铺着软垫。黑板上画着一只歪歪扭扭的小熊。前门确实锁着——但现在你从里面了，想走也可以从前门出去。";
-      return "门锁着。蓝黄配色的装潢，教室里小桌椅整齐排列，地面铺着软垫。黑板上画着一只歪歪扭扭的小熊。里面似乎有很轻的动静。";
+      if (vars._backhallEntered || vars._jinbaobeiFrontOpen) {
+        var head = vars._backhallEntered && !vars._jinbaobeiFrontOpen
+          ? "你从后勤通道绕进了金宝贝早教中心的后门。\n"
+          : "前门敞开着。\n";
+        return head + "蓝黄配色的装潢，教室里小桌椅整齐排列，地面铺着软垫。黑板上画着一只歪歪扭扭的小熊。\n教室深处传来一阵规律的嗡嗡声——一台扫地机器人卡在倒塌的桌椅腿中间，履带空转，把同一块地砖擦了一遍又一遍。\n每天早上九点，它都会准时出仓。这座商场里，只有它还在上班。";
+      }
+      var d = "门锁着。蓝黄配色的装潢，教室里小桌椅整齐排列，地面铺着软垫。黑板上画着一只歪歪扭扭的小熊。里面似乎有很轻的动静。";
+      if (vars.hasDoorKey3) d += "\n你手里那块钥匙牌上就写着“3F·金宝贝（前门）”。";
+      return d;
     },
     choices: [
+      {
+        text: "用钥匙牌打开前门",
+        nextScene: "新达汇-3F金宝贝早教中心",
+        effect: updateTime(1, { set: { _jinbaobeiFrontOpen: true } }),
+        showCondition: "hasDoorKey3 && !_jinbaobeiFrontOpen",
+      },
       {
         text: "推开前门出去",
         nextScene: "新达汇-3F北走廊西",
         effect: updateTime(1),
-        showCondition: "_backhallEntered",
+        showCondition: "_backhallEntered || _jinbaobeiFrontOpen",
       },
       {
         text: "去后勤走廊",
@@ -1818,7 +1837,7 @@ Object.assign(storyData, {
         text: "回到走廊",
         nextScene: "新达汇-3F北走廊西",
         effect: updateTime(1),
-        showCondition: "!_backhallEntered",
+        showCondition: "!_backhallEntered && !_jinbaobeiFrontOpen",
       },
     ]
   },
@@ -3171,9 +3190,14 @@ Object.assign(storyData, {
       else if (v.chasedByZombies == 2) v.chasedByZombies = 1;
       return {};
     },
-    text: function(v) { return "你推开防火门，走进一条狭窄的后勤走廊。头顶的管道裸露着，凝结的水珠偶尔滴落在地上，发出清晰的啪嗒声。应急灯发出惨白的光，照出墙面上斑驳的油渍和霉斑。\n"
+    text: function(v) { return "你推开防火门，走进一条狭窄的后勤走廊。头顶的管道裸露着，凝结的水珠偶尔滴落在地上，发出清晰的啪嗒声。应急灯发出惨白的光，照出墙面上斑驳的油渍和霉斑。\n走廊中段有一扇钢门，贴着“高压危险”的褪色警示——门上的锁芯却是簇新的黄铜色，跟周围的一切格格不入。门缝底下的地面上散着七八个空矿泉水瓶，瓶身瘪瘪的，全都朝着门的方向。\n"
  + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>你反手把防火门轻轻带上——门锁咔哒一声扣死。外面的声音一下子被隔开了，这里很安全。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>身后的防火门被什么东西撞了一下，闷响了一声。你加快脚步拐了两个弯，追兵被岔路搞糊涂了——甩掉了不少。</span>" : "") + describeZombieWave(v); },
     choices: [
+      {
+        text: "走近看看那扇装着新锁芯的钢门",
+        nextScene: "新达汇-B1配电房门外",
+        effect: updateTime(1),
+      },
       {
         text: "推开旁边设备间的门进去看看",
         nextScene: "新达汇-B1设备间",
@@ -3212,7 +3236,7 @@ Object.assign(storyData, {
   "新达汇-B1设备间-记录表": {
     image: "images/新达汇/设备巡检记录表.jpg",
     text: "设备巡检记录表——新达汇物业工程部：\n\
-……\n6/24 | 空调主机A-03 | 正常 | 王建国\n6/25 | 排水泵B-07 | 检修中 | 王建国\n6/25 | 配电房 | 锁芯更换 | 王建国\n6月25日是最后一页。之后全是空白。",
+……\n6/23 | 美食广场·烤鱼档 | 排风检修 | 王建国\n6/24 | 空调主机A-03 | 正常 | 王建国\n6/25 | 排水泵B-07 | 检修中 | 王建国\n6/25 | 配电房 | 锁芯更换 | 王建国\n6月25日是最后一页。之后全是空白。",
     choices: [
       {
         text: "合上记录表",
@@ -3301,6 +3325,106 @@ Object.assign(storyData, {
       {
         text: "不拿",
         nextScene: "新达汇-B1废弃仓库",
+      },
+    ]
+  },
+
+  // ---- B1 配电房（保安组暗线终点，黄铜钥匙在3F王建国身上）----
+  "新达汇-B1配电房门外": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1配电房.jpg */,
+    onEnter: { set: { showPowerOut: true } },
+    text: function(vars) {
+      var d = "配电房的钢门。褪色的“高压危险 · 非工作人员勿入”警示旁边，锁芯是簇新的黄铜——这几天里才换的。\n门底的缝隙里渗出一股潮闷的水汽。空瓶从走廊一直散到门缝跟前，全是空的，瘪的，有几个瓶盖还拧在瓶口上。\n";
+      if (vars._powerRoomOpen) {
+        d += "门敞开着。里面很安静。";
+      } else {
+        d += "你把耳朵贴在钢门上。很久，久到你几乎要放弃——门的另一侧传来一声极轻的、拖沓的挪动。\n然后又是安静。";
+      }
+      return d;
+    },
+    choices: [
+      {
+        text: "用黄铜钥匙开门",
+        nextScene: "新达汇-B1配电房-开门",
+        effect: updateTime(1),
+        showCondition: "hasDoorKey2 && !_powerRoomOpen",
+      },
+      {
+        text: "推门进去看看",
+        nextScene: "新达汇-B1配电房-内部",
+        effect: updateTime(1),
+        showCondition: "_powerRoomOpen",
+      },
+      {
+        text: "回后勤走廊",
+        nextScene: "新达汇-B1后勤走廊",
+        effect: updateTime(1),
+      },
+    ]
+  },
+  "新达汇-B1配电房-开门": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1配电房.jpg */,
+    onEnter: function(vars) { vars.showPowerOut = true; vars._powerRoomOpen = true; return initMemoryGame(["红","蓝","绿"], 4)(vars); },
+    text: "你把黄铜钥匙插进锁孔，轻轻一转——咔哒。\n门还没推开，门板就从里面被狠狠撞了一下。一个穿着保安制服的干瘦身影从门缝里挤了出来，制服空荡荡地挂在身上，喉咙里拉着风箱一样的嘶声。\n他在这间屋子里，已经待了很多天了。",
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：2红1蓝1绿" },
+        condition: checkFlashAnswer,
+        nextScene: "新达汇-B1配电房-内部",
+        elseScene: "结局-等水的人",
+        effect: updateTime(2, { add: { strength: -1 } }),
+        timeout: 9000,
+        timeoutScene: "结局-等水的人"
+      }
+    ]
+  },
+  "新达汇-B1配电房-内部": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1配电房.jpg */,
+    onEnter: function(vars) {
+      vars.showPowerOut = true;
+      vars.personalMemorySet.add("喝不够的水");
+      return {};
+    },
+    text: function(vars) {
+      if (vars._visit["新达汇-B1配电房-内部"] === 1) {
+        return "你把那具瘦得脱形的身影按倒在地。他挣了几下，不动了。胸牌歪在制服外面——“刘志鹏 · 保安部”，照片上是个笑得很用力的小伙子。\n你环顾这间不到四平米的小屋。\n满地都是矿泉水瓶——不是门外那几个，是几十个，空的，瘪的，从门口一直铺到墙角。\n配电柜前的空地上，一件保安外套叠得整整齐齐，被当作枕头压过，还留着一个人形的凹痕。\n墙上没有任何字。他什么都没写。配电柜侧面钉着一个小抽屉，半开着。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[喝不够的水]——有些渴，喝水是解不了的。</span>";
+      }
+      return "配电房里很安静。刘志鹏躺在门边，空瓶还铺在地上，外套还叠在墙角。配电柜侧面的小抽屉半开着。";
+    },
+    choices: [
+      {
+        text: "拉开配电柜侧面的小抽屉",
+        nextScene: "新达汇-B1配电房-抽屉",
+        effect: updateTime(1),
+      },
+      {
+        text: "退出去，把钢门重新带上",
+        nextScene: "新达汇-B1配电房门外",
+        effect: updateTime(1),
+      },
+    ]
+  },
+  "新达汇-B1配电房-抽屉": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1配电房.jpg */,
+    onEnter: { set: { showPowerOut: true, positionAfterOperation: "新达汇-B1配电房-抽屉" } },
+    text: function(vars) {
+      var d = "抽屉里放着一块塑料钥匙牌，牌子上手写着“3F·金宝贝（前门）”。\n下面压着一张照片：三个男人站在商场西门跟前——左边的高个子咧着嘴，中间的中年男人不苟言笑，右边的小伙子比着剪刀手。\n照片背面有一行圆珠笔字：“6/2 小刘入职，欢迎。”";
+      if (vars.hasDoorKey3) d += "\n钥匙牌已经被你拿走了，照片还留在抽屉里。";
+      return d;
+    },
+    choices: [
+      {
+        text: "收走钥匙牌",
+        nextScene: "新达汇-B1配电房-抽屉",
+        effect: updateTime(1, { set: { hasDoorKey3: true }, add: { itemCount: 1 } }),
+        condition: "!hasDoorKey3 && itemCount < bagVolume",
+        elseScene: "整理整理",
+      },
+      {
+        text: "合上抽屉",
+        nextScene: "新达汇-B1配电房-内部",
+        effect: updateTime(1),
       },
     ]
   },
@@ -3450,22 +3574,48 @@ Object.assign(storyData, {
   "新达汇-3F后勤走廊": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall3f.png */,
     onEnter: function(v) { transit(v, "3F-后勤走廊"); return {}; },
-    text: function(v) { var d = "你走进3F的后勤走廊。这里比下面几层更暗——有两盏应急灯坏了，走廊的中段几乎完全淹没在阴影里。\n\
-阴影的深处站着一个摇摇晃晃的轮廓——一只穿着维修工服的丧尸堵在走廊正中间。它面朝着你，似乎还没看清——但窄走廊没有任何绕过去的空间。";
+    text: function(v) {
+      var d = "你走进3F的后勤走廊。这里比下面几层更暗——有两盏应急灯坏了，走廊的中段几乎完全淹没在阴影里。\n";
+      if (v._wangjianguoDead) {
+        d += "那个穿维修工服的身影还倒在走廊正中间。扳手掉在他手边，工牌的挂绳缠在纽扣上。";
+        if (v._catFed) d += "\n那只变异猫蹲在离他一步远的地方，尾巴盖着爪子，一直看着他。";
+        return d;
+      }
+      d += "阴影的深处站着一个摇摇晃晃的轮廓——一只穿着维修工服的丧尸堵在走廊正中间，手里还攥着一把活扳手。它面朝着你，似乎还没看清——但窄走廊没有任何绕过去的空间。";
+      if (v._catFed) d += "\n走廊口的消防管道支架上蹲着那只变异猫。它没有像往常那样看你——它盯着走廊深处那个摇晃的影子，一动不动，也不出声。";
       if (v.chasedByZombies > 0) d += "\n<span style='color: #ff4444;'>身后传来窸窣的脚步声——你身后的动静让它停下了摇晃，缓缓转过头来。</span>";
-    return d; },
+      return d;
+    },
     choices: [
+      {
+        text: "迎上去，解决它",
+        nextScene: "新达汇-3F后勤走廊-工服丧尸",
+        showCondition: "!_wangjianguoDead && (hasIronPipe || hasCane || hasMopHandle || hasAxe || hasDagger || _got3fExtinguisher)",
+      },
       {
         text: "放轻脚步，贴着墙从它身边蹭过去",
         nextScene: "新达汇-3F后勤走廊东",
         effect: updateTime(3),
         condition: "chasedByZombies == 0",
         elseScene: "结局-后勤通道暗算",
+        showCondition: "!_wangjianguoDead",
       },
       {
         text: "拼一把——闭眼冲过去",
         nextScene: "结局-后勤通道暗算",
-        showCondition: "chasedByZombies > 0",
+        showCondition: "!_wangjianguoDead && chasedByZombies > 0",
+      },
+      {
+        text: function(v) { return v._searchedWang ? "再回到王建国身边翻翻" : "搜一搜他身上的东西"; },
+        nextScene: "新达汇-3F后勤走廊-王建国的口袋",
+        effect: updateTime(1),
+        showCondition: "_wangjianguoDead && (!_searchedWang || !hasDoorKey2)",
+      },
+      {
+        text: "穿过走廊往前走",
+        nextScene: "新达汇-3F后勤走廊东",
+        effect: updateTime(3),
+        showCondition: "_wangjianguoDead",
       },
       {
         text: "推开消防通道的门",
@@ -3542,6 +3692,87 @@ Object.assign(storyData, {
       {
         text: "离开",
         nextScene: "新达汇-3F通风机房",
+      },
+    ]
+  },
+
+  // ---- 3F 工服丧尸（王建国）战斗链：便条作者的结局 ----
+  "新达汇-3F后勤走廊-工服丧尸": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/工服丧尸.jpg */,
+    onEnter: function(vars) { vars.showPowerOut = true; return initMemoryGame(["红","蓝","绿"], 4)(vars); },
+    text: function(vars) {
+      var d = "你握紧手里的东西，迎着那个轮廓走了过去。\n他比看上去更高。工装袖口磨得发白，那把活扳手垂在身侧，随着摇晃一下一下磕在腿上。\n他终于看清了你。喉咙深处滚出一声干哑的气音，脚步停了。";
+      if (vars._got3fExtinguisher) d += "\n你把灭火器抱在身前，拔掉了保险销。";
+      return d;
+    },
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：2红1蓝1绿" },
+        condition: checkFlashAnswer,
+        nextScene: "新达汇-3F后勤走廊-王建国",
+        elseScene: "结局-维修工的最后一单",
+        effect: updateTime(2, { add: { strength: -1 } }),
+        timeout: 9000,
+        timeoutScene: "结局-维修工的最后一单"
+      }
+    ]
+  },
+  "新达汇-3F后勤走廊-王建国": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/王建国.jpg */,
+    onEnter: function(v) {
+      v.showPowerOut = true;
+      v._wangjianguoDead = true;
+      if (v._got3fExtinguisher) v._got3fExtinguisher = false;   // 灭火器喷完
+      return { add: { chasedByZombies: 1 } };
+    },
+    text: function(vars) {
+      var d = "扳手从他手里脱落，砸在地上，脆响在走廊里滚了很远。\n他晃了晃，直挺挺地向后倒下去——扬起的灰在应急灯下慢慢落定。\n这是一张五十岁上下的脸，颧骨很高，鼻梁两侧留着眼镜的压痕。眼镜早就不在了。\n他胸前的工牌翻了过来：“王建国 · 物业工程部”。照片上的男人不苟言笑，和躺在地上的这张脸是同一张。";
+      if (vars._catFed) d += "\n那只变异猫不知什么时候从管道上跳了下来。它绕着倒下的身影走了一圈，闻了闻他的工牌，然后在离他一步远的地方卧下了。\n它没有叫。";
+      return d;
+    },
+    choices: [
+      {
+        text: function(v) { return v._searchedWang ? "再翻一次他的口袋" : "搜一搜他身上的东西"; },
+        nextScene: "新达汇-3F后勤走廊-王建国的口袋",
+        effect: updateTime(1),
+        showCondition: "!_searchedWang || !hasDoorKey2",
+      },
+      {
+        text: "从原路退回去",
+        nextScene: "新达汇-3F后勤走廊",
+        effect: updateTime(1),
+      },
+      {
+        text: "往东继续走",
+        nextScene: "新达汇-3F后勤走廊东",
+        effect: updateTime(2),
+      },
+    ]
+  },
+  "新达汇-3F后勤走廊-王建国的口袋": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/王建国的口袋.jpg */,
+    onEnter: { set: { showPowerOut: true, _searchedWang: true, positionAfterOperation: "新达汇-3F后勤走廊-王建国的口袋" } },
+    text: function(vars) {
+      var d = "你蹲下来翻他的口袋。\n腰间挂着一串钥匙——大部分锈得发乌，只有一把是崭新的黄铜色，齿口锃亮，像是这几天才配的。\n工装内袋里还有半包压扁的烟，和一张揉皱的派工单。派工单的背面用铅笔描着“正”字——四个整的，第五个只写了两笔。";
+      if (vars._visit["新达汇-5F清洁工具间-便条"] > 0) {
+        d += "\n你想起5F清洁工具间那张便条的最后一行——“配电房的钥匙我也拿走了。——王建国 6/27”";
+      }
+      if (vars.hasDoorKey2) d += "\n那把黄铜钥匙的棱角隔着布料硌着你的口袋。";
+      return d;
+    },
+    choices: [
+      {
+        text: "把黄铜钥匙收进背包",
+        nextScene: "新达汇-3F后勤走廊-王建国的口袋",
+        effect: updateTime(1, { set: { hasDoorKey2: true }, add: { itemCount: 1 } }),
+        condition: "!hasDoorKey2 && itemCount < bagVolume",
+        elseScene: "整理整理",
+      },
+      {
+        text: "先不拿",
+        nextScene: "新达汇-3F后勤走廊",
+        effect: updateTime(1),
       },
     ]
   },
@@ -3666,6 +3897,18 @@ Object.assign(storyData, {
     image: "images/zombiePounceOnYou.jpg" /* TODO: images/新达汇/backHallB1.png */,
     text: "你试图在黑暗中屏住呼吸——但身后的脚步声出卖了你。\n窄走廊里无处可躲。身前是障碍，身后是追兵。狭窄的水泥墙把它们的嘶吼声压缩成了一道道针扎般的回音。\n\
 —— 结局：后勤通道的暗算 ——"
+  },
+
+  // ==================== 保安组暗线结局 ====================
+  "结局-维修工的最后一单": {
+    image: "images/zombieKnockYouDown.png",
+    text: "他手里的活扳手比你想象的快得多。\n你倒下去之前，最后看清的是他胸前晃动的工牌。\n派工单的背面，铅笔的“正”字旁边，又多了一笔。\n\
+—— 结局：维修工的最后一单 ——"
+  },
+  "结局-等水的人": {
+    image: "images/zombiePounceOnYou.jpg",
+    text: "你没能拦住他。\n他扑上来的时候甚至没有咬你——他把脸死死埋进你的颈侧，像是要喝水一样地贴着，喉咙里的嘶声一点点平息下来，满足得像叹了口气。\n在这间不到四平米的房间里，一个渴了很多天的人，终于等到了自己走进门来的水。\n\
+—— 结局：等水的人 ——"
   }
 });
 

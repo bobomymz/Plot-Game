@@ -61,6 +61,11 @@ const storyData = {
     _deliveryCode: "",         // 外卖取餐码（拿到外卖时记录）
     _droneBattery: 30,         // 无人机剩余电量(分钟)，断电后消耗
     _mallGuardSnack: false,     // 新达汇B1保安室值班台桃酥是否已吃（一次性+2体力）
+    _wangjianguoDead: false,    // 新达汇3F后勤走廊工服丧尸（王建国）是否已被击倒
+    _searchedWang: false,       // 是否已搜过王建国的口袋
+    _powerRoomOpen: false,      // 新达汇B1配电房是否已打开（保安组暗线终点）
+    _got3fExtinguisher: false,  // 是否拿走了新达汇3F消防通道的灭火器（打王建国用）
+    _jinbaobeiFrontOpen: false, // 金宝贝前门是否已用钥匙牌打开
     _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
     _marketHallCleared: false, // 菜市场大厅的丧尸是否已清理
     _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
@@ -132,6 +137,8 @@ const storyData = {
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
+    hasDoorKey2: false,        // 是否有门钥匙2（新达汇B1配电房黄铜钥匙，王建国遗物）
+    hasDoorKey3: false,        // 是否有门钥匙3（新达汇3F金宝贝前门钥匙牌，配电房抽屉）
     hasCarKey: false,          // 是否有轿车钥匙
     hasCatSnack: false,        // 是否有脆脆炒米（新达汇4F大渝火锅门口，猫零食）
     hasKey502: false,          // 是否有502钥匙（鹅卵石路自行车）
