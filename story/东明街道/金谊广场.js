@@ -666,7 +666,7 @@ Object.assign(storyData, {
       {
         text: "在源氏木语休息一会儿",
         nextScene: "金谊广场-2F-休息",
-        effect: updateTime(5, { add: { strength: 1 }, set: { _travelMinutes: 0 } })
+        effect: updateTime(5, { set: { _travelMinutes: 0 } })
       },
       {
         text: "去运动品牌店看看",
@@ -704,8 +704,10 @@ Object.assign(storyData, {
 
   "金谊广场-2F-休息-休息完": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/2F家具店.jpg */,
-    onEnter: { add: { strength: 1 }, set: { _travelMinutes: 0 } },
-    text: "你在沙发上闭着眼睛躺了很久。不记得自己什么时候睡着的——也许只是一小会儿。\n当你睁开眼时，窗外透进来的光已经变了颜色。你活动了一下肩膀，站起来。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    onEnter: function(vars) { restRecover(vars, 1); return { set: { _travelMinutes: 0 } }; },
+    text: function(vars) {
+      return "你在沙发上闭着眼睛躺了很久。不记得自己什么时候睡着的——也许只是一小会儿。\n当你睁开眼时，窗外透进来的光已经变了颜色。你活动了一下肩膀，站起来。" + restHint(vars);
+    },
     choices: [
       {
         text: "继续休息",
@@ -1014,7 +1016,7 @@ Object.assign(storyData, {
 
   // --- B1 奥乐齐大超市 ---
   "金谊广场-B1奥乐齐": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
+    image: "images/金谊广场/奥乐齐.jpg" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
     text: function(vars) {
       if(vars._visit['金谊广场-B1奥乐齐'] > 3) return "你已经搜刮过奥乐齐好几遍了，没有新的东西了。";
       var desc = "你走进奥乐齐。超市很大——货架上的东西被翻过，但还剩下不少。罐头区几乎没被动过，饮料区的矿泉水还有好几箱，零食区的薯片和饼干撒了一地但还有整袋的。\n";
@@ -1037,7 +1039,7 @@ Object.assign(storyData, {
             }
           });
         }
-        choices.push({ text: "搜刮一些自己用的补给", nextScene: "金谊广场-B1奥乐齐-搜刮-吃完", effect: updateTime(3, { add: { strength: 1 } }) });
+        choices.push({ text: "搜刮一些自己用的补给", nextScene: "金谊广场-B1奥乐齐-搜刮-吃完", effect: updateTime(3) });
       }
       choices.push({ text: "离开超市", nextScene: "金谊广场-B1 心谊如意街", effect: updateTime(1) });
       return choices;
@@ -1055,7 +1057,7 @@ Object.assign(storyData, {
 
   // --- B1 童涵春堂药房 ---
   "金谊广场-B1童涵春堂": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/B1童涵春堂.jpg */,
+    image: "images/金谊广场/童涵春堂.jpg",
     text: function(vars) {
       var desc = "你推开童涵春堂的玻璃门。药房里弥漫着中药的苦香味。\n";
       desc += "中药柜的抽屉被拉开了一大半，草药撒了一地。西药区的货架倒是整齐——大概没人觉得中药铺里有西药。\n";
@@ -1141,7 +1143,7 @@ Object.assign(storyData, {
 
   // --- 天台 ---
   "金谊广场-天台": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/天台.jpg */,
+    image: "images/金谊广场/天台.jpg",
     text: function(vars) {
       var desc = "你推开天台的门。风很大，吹得你眯起了眼睛。\n";
       desc += "从这里能看得很远——往西，黄浦江的轮廓在灰白的天空下若隐若现。江面上没有船，只有一片死寂的灰色水面。\n";

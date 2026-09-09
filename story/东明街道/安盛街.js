@@ -443,7 +443,7 @@ Object.assign(storyData, {
       let isNight = vars.hh >= 19 || vars.hh <= 6; // 包含了timeImage的night和midnight
       let isMorning = vars.hh > 6 && vars.hh < 12; // 是不是早上
       let basicDes = "";
-      let hint = "";
+      let hint = restHint(vars, "你回复1点体力");
       if (isNight) {
         basicDes = "周师傅拉出一张折叠床，递给你一条毯子。\n“今晚就安心睡吧，我守上半夜，你守下半夜。”\n你把身体埋进折叠床里，听着窗外偶尔传来的丧尸低吼声，竟出奇地睡着了。\n\
 	第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
@@ -451,9 +451,8 @@ Object.assign(storyData, {
 第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
       } else if(!isMorning) {
         basicDes = "你在理发椅上靠了一会儿。虽然只是短暂的小憩，但足够让酸痛的肌肉稍微放松一点。\n周师傅在门口望风，偶尔回头看你一眼。“别睡太久，天黑前最好有个打算。”";
-        hint = "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
       }
-      else basicDes = "你在理发店休息。<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n";
+      else basicDes = "你在理发店休息。";
       return basicDes + hint + describeZombieWave(vars);
     },
     onEnter: function(vars) {
@@ -469,7 +468,7 @@ Object.assign(storyData, {
         // 更新时间为第二天7：30
         return {};
       } else {
-        vars.strength = Math.min(10, vars.strength + 1);
+        restRecover(vars, 1);
         vars.restAtBarber = true;
         updateTime(30)(vars);
         vars._travelMinutes = 0;   // 休息不累积连续移动疲劳（updateTime 会累加，这里在效果结算前清零）
@@ -1294,9 +1293,9 @@ Object.assign(storyData, {
       morning: "images/安盛街/食品店/门口喝水-没丧尸.png",
       night: "images/安盛街/食品店/门口喝水-没丧尸-night.png"
     }),
-    onEnter: { add: { strength: 2 } },
+    onEnter: { add: { strength: 4 } },
     text: "你拧开一瓶水，就着饼干和午餐肉吃了一顿。虽然冷了点，但能填饱肚子就是好事。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复4点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",

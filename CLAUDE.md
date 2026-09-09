@@ -776,8 +776,10 @@ Object.assign(storyData, {
 
 **休息场景守卫：**
 A类（室内安全，无额外条件）：家、理发店、图书馆(清)、民防设施
-B类（半开放，需 `chasedByZombies <= 1`）：全家(清)、安居苑室内
-C类（户外）：绝不出现 — 街道、十字路口、高架
+B类（半开放，需 `chasedByZombies <= 1`）：全家(清)、安居苑室内、银行保安室、联华超市、安居苑小广场、益丰药房办公室（赵广成在，回访条件 `_visit['益丰大药房-办公室闲聊'] > 0 && !_zhaoGuangchengDead`）
+C类（户外暴露地形）：绝不出现 — 街道、十字路口、高架。注意区分：封闭小区院墙内的露天点（小广场/天台）按 B类处理，不算 C类
+
+**休息节点体力规则：** 休息选项可无限重复，但体力 ≥ 6 后休息不再回复体力，提示"你已经差不多歇够了"。实现见 utils.js：onEnter 里调 `restRecover(vars, n)`（写 `_restBlocked`，core.js 已注册），text 末尾拼 `restHint(vars, okText)`。新写休息场景一律用这对函数，勿裸写 `add: { strength }`。
 
 ## Update Plot
 ### 添加新剧情

@@ -55,6 +55,25 @@ function fmtStrength(v) {
   return Number(v).toFixed(1);
 }
 
+// ====== 休息恢复体力（全图休息节点通用） ======
+// 休息可无限重复，但体力 >= REST_CAP 时不再回复（防无限刷体力）；行程疲劳清零等其余效果不受影响。
+// restRecover 写 vars._restBlocked（core.js _variables 已注册），供休息场景 text 函数配合 restHint 切换提示语。
+var REST_CAP = 6;
+function restRecover(v, amount) {
+  if (v.strength >= REST_CAP) { v._restBlocked = true; return 0; }
+  v._restBlocked = false;
+  var before = v.strength;
+  v.strength = Math.min(10, v.strength + amount);
+  return v.strength - before;
+}
+// 休息提示语：被门槛挡住时提示"你已经差不多歇够了"，否则显示 okText（默认"体力+1"）。
+// 返回值以 \n 开头、内含 {strength} 插值（text 函数返回值仍会做插值），直接拼在描述末尾即可。
+function restHint(vars, okText) {
+  if (vars._restBlocked)
+    return "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。</span>";
+  return "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】" + (okText || "体力+1") + "，当前体力：{strength}。</span>";
+}
+
 // ====== 天气系统 ======
 
 function updateWeather(vars) {

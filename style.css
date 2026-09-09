@@ -21,9 +21,19 @@
   box-sizing: border-box;
 }
 
+/* 触控设备：连点选项不触发双击缩放（桌面无感知） */
+.choice-btn,
+#restart-btn,
+#backtrack-btn,
+.choice-input-submit,
+#scene-text {
+  touch-action: manipulation;
+}
+
 html, body {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;        /* 手机端地址栏收放不跳动（不支持 dvh 的浏览器用上一行） */
   background: var(--canvas);
   color: var(--ink);
   font-family: "STZhongsong", "Songti SC", "Noto Serif CJK SC", "SimSun", serif;
@@ -35,12 +45,14 @@ html, body {
 #game-container {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* ========== 图片区域：占满一屏高度 ========== */
 #image-area {
   width: 100%;
   height: 100vh;             /* 恰好占满视口 */
+  height: 100dvh;
   background: var(--canvas); /* 加载前底色 */
   position: relative;
   overflow: hidden;
@@ -91,6 +103,7 @@ html, body {
   width: 90%;
   max-width: none;
   max-height: 82vh;
+  max-height: 82dvh;
   z-index: 100;
   margin: 0;
   background: rgba(22, 20, 15, 0.95);
@@ -167,13 +180,7 @@ html, body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
 }
 
-/* 悬停：左侧浮起磷光绿竖线（像用绿笔标注重点） */
-.choice-btn:hover {
-  border-color: rgba(168, 212, 105, 0.5);
-  color: #efe9da;
-  transform: translateY(-2px);
-  box-shadow: inset 3px 0 0 var(--phosphor), 0 6px 20px rgba(0, 0, 0, 0.45);
-}
+/* 悬停效果见文件末尾 @media (hover: hover) —— 触屏设备不触发粘滞 hover */
 
 .choice-btn:active {
   transform: translateY(0);
@@ -235,10 +242,7 @@ html, body {
   border-color: rgba(168, 212, 105, 0.4);
 }
 
-.choice-input-submit:hover {
-  background: rgba(168, 212, 105, 0.25);
-  transform: translateY(-1px);
-}
+/* .choice-input-submit:hover 见文件末尾 @media (hover: hover) */
 
 /* 无选项提示文字 */
 #choices-area p {
@@ -286,16 +290,70 @@ html, body {
   display: none;
 }
 
-#backtrack-btn:hover {
-  color: #efe9da;
-  background: rgba(168, 212, 105, 0.15);
-  border-color: rgba(168, 212, 105, 0.6);
+/* #backtrack-btn:hover 见文件末尾 @media (hover: hover) */
+
+/* QTE 倒计时浮层（结构由 engine.js startQteUi 创建） */
+#qte-timer {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88%;
+  max-width: 640px;
+  z-index: 150;
+  margin-top: 8px;
+  padding: 12px 18px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(168, 212, 105, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
 }
 
-/* QTE 倒计时容器与选项的间距 */
-#qte-timer {
+.qte-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.qte-label {
+  color: var(--ink);
+  font-weight: bold;
+  white-space: nowrap;
+  font-size: 15px;
+}
+
+.qte-track {
+  flex: 1;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.qte-progress {
+  height: 100%;
   width: 100%;
-  margin-top: 8px;
+  background: var(--blood);
+  border-radius: 5px;
+}
+
+.qte-countdown {
+  color: var(--ink);
+  font-weight: bold;
+  font-size: 16px;
+  min-width: 42px;
+  text-align: right;
+}
+
+/* 最后 1 秒警戒色（由 engine.js 加类） */
+#qte-timer.qte-urgent .qte-progress {
+  background: #7d1f1a;
+}
+#qte-timer.qte-urgent .qte-countdown {
+  color: #7d1f1a;
 }
 
 /* ===== 场景抖动 ===== */
@@ -468,4 +526,177 @@ html, body {
   color: var(--ash);
   letter-spacing: 2px;
   font-family: "Consolas", "Courier New", monospace;
+}
+
+/* ===== 存档选择对话框（启动时检测到存档） ===== */
+#save-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;              /* 压过预加载遮罩 9999 */
+  background: rgba(11, 13, 10, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.save-dialog-box {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px 24px;
+  background: rgba(22, 20, 15, 0.95);
+  border: 1px solid rgba(122, 116, 102, 0.35);
+  border-left: 3px solid rgba(158, 42, 34, 0.55);
+  border-radius: 14px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.save-dialog-title {
+  font-size: 20px;
+  color: var(--ink);
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+}
+
+.save-dialog-summary {
+  font-size: 14px;
+  color: var(--ash);
+  letter-spacing: 1px;
+  margin-bottom: 22px;
+  font-family: "Consolas", "Courier New", monospace;
+}
+
+.save-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== 悬停效果：仅真正支持悬停的设备（桌面）生效 ===== */
+@media (hover: hover) {
+  /* 悬停：左侧浮起磷光绿竖线（像用绿笔标注重点） */
+  .choice-btn:hover {
+    border-color: rgba(168, 212, 105, 0.5);
+    color: #efe9da;
+    transform: translateY(-2px);
+    box-shadow: inset 3px 0 0 var(--phosphor), 0 6px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  .choice-input-submit:hover {
+    background: rgba(168, 212, 105, 0.25);
+    transform: translateY(-1px);
+  }
+
+  #backtrack-btn:hover {
+    color: #efe9da;
+    background: rgba(168, 212, 105, 0.15);
+    border-color: rgba(168, 212, 105, 0.6);
+  }
+}
+
+/* ===== 手机竖屏：单屏紧凑布局（图上 / 文中 / 选项下，一屏内完成阅读+选择） ===== */
+@media (max-width: 767px) {
+  html, body {
+    overflow: hidden;                  /* 整页不滚动 */
+    overscroll-behavior-y: contain;    /* 屏蔽下拉刷新（误触即丢进度） */
+  }
+
+  #game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+  }
+
+  #image-area {
+    flex: 0 0 42%;
+    height: auto;
+    min-height: 0;
+    -webkit-touch-callout: none;       /* 长按图片不弹系统菜单 */
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #text-area {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 92%;
+    max-height: none;                  /* 清掉桌面的 100px */
+    margin: 10px auto 0;               /* 清掉桌面的 -200px 上叠 */
+    padding: 16px 14px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    backdrop-filter: blur(8px);        /* 14px → 8px，手机端性能降档 */
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  #scene-text {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  #choices-area {
+    flex: 0 0 auto;
+    flex-direction: column;            /* 纵向排列，不再挤成细条 */
+    width: 92%;
+    margin: 10px auto 0;
+    max-height: 38vh;
+    max-height: 38dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    gap: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .choice-btn {
+    min-height: 46px;                  /* ≥44px 触控目标 */
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  .choice-input-field {
+    user-select: text;                 /* 输入框保持可选可输 */
+    -webkit-user-select: text;
+  }
+
+  #status-bar {
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    right: calc(env(safe-area-inset-right, 0px) + 10px);
+  }
+
+  #restart-btn,
+  #backtrack-btn {
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: 15px;
+  }
+
+  /* QTE 条下移到状态栏下方，不再遮挡"重启 / 回溯" */
+  #qte-timer {
+    top: calc(env(safe-area-inset-top, 0px) + 64px);
+    margin-top: 0;
+    padding: 10px 14px;
+  }
+
+  /* 展开态：top + bottom 双锚点，底部留 148px 给选项，二者不重叠 */
+  #text-area.text-expanded {
+    top: calc(env(safe-area-inset-top, 0px) + 52px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 148px);
+    left: 4%;
+    width: 92%;
+    max-height: none;
+  }
+
+  #text-area.text-expanded ~ #choices-area.text-expanded {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+    max-height: 132px;
+    overflow-y: auto;
+  }
+
+  /* 状态警告浮层让开 QTE 条 */
+  #status-warning {
+    top: calc(env(safe-area-inset-top, 0px) + 136px);
+  }
 }

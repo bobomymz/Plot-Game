@@ -957,9 +957,9 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-1F-休息区": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "挹芬楼1F休息区"; vars._travelMinutes = 0; return { add: { strength: 1 } }; },
+    onEnter: function(vars) { vars.currentPos = "挹芬楼1F休息区"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
     text: function(vars) {
-      var desc = "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
+      var desc = "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。" + restHint(vars, "你回复1点体力");
       if (jpPengAtPiano(vars, 2)) {
         desc += "\n休息区靠墙那架钢琴前，彭奕宸正低着头，手指在琴键上缓慢地游走。";
         if (vars._yifenStudentSaved) {
@@ -1794,9 +1794,10 @@ Object.assign(storyData, {
   },
   "建平-宿舍-内部-休息": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; return { add: { strength: 1 } }; },
-    text: "你挑了张下铺躺下，拉过半旧的被子。走廊里安安静静的，你终于能合一会儿眼了。\n\
-<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
+    text: function(vars) {
+      return "你挑了张下铺躺下，拉过半旧的被子。走廊里安安静静的，你终于能合一会儿眼了。" + restHint(vars, "你回复1点体力");
+    },
     choices: [
       { text: "起来", nextScene: "建平-宿舍-内部", effect: updateTime(1) },
       { text: "继续休息", nextScene: "建平-宿舍-内部-发现狼人杀手牌", effect: updateTime(120) }

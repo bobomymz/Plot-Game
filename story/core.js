@@ -27,6 +27,7 @@ const storyData = {
     chasedByZombies: 0,        // 被尸潮追击的等级（0~5，效果：进行任何战斗操作都有概率被群殴，qte时间均缩短，体力消耗增加）
     _travelMinutes: 0,         // 连续户外移动累积时间（分钟），户外场景 >6min 的移动累加，休息/吃饭/过夜归零
     _fatiguePaid: 0,           // 疲劳已扣档位（0-5，只增不退；travel-fatigue 规则自维护，剧情勿改。休息只归零 _travelMinutes 不退此值，防"休息→再走20分钟"刷扣体力）
+    _restBlocked: false,       // 休息是否被体力门槛挡住（体力>=6 时 restRecover 置 true，休息场景 text 用 restHint 提示"你已经差不多歇够了"）
     _isOutdoor: false,         // 当前渲染场景是否户外（引擎每次渲染按 scene.outdoor 写入，供 updateTime 判断疲劳累计）
     _sleepingZombieGone: false,// 小区道路椅子上躺着的那个丧尸走了没有
     bikeInAnjuyuan: true,      // 三林安居苑是否还有锈蚀的自行车
@@ -34,6 +35,7 @@ const storyData = {
     pharmacyZombieKilled: false, // 益丰大药房白大褂丧尸是否已被击杀
     pharmacyApprenticeWatered: false, // 益丰大药房长发女学徒是否已被喂水
     pharmacyApprenticeKilled: false, // 益丰大药房长发女学徒是否已被解脱
+    _zhaoGuangchengDead: false, // 益丰大药房店长赵广成是否已死（断电事故害死；死后办公室不再可回访歇脚）
     libraryCleared: false,     // 是否清空了社区图书馆的丧尸
     defeatedOldMan: false,     // 是否已击败安盛街老头丧尸
     _supermarketCompromised: false, // 联华超市地下室是否已暴露不再安全

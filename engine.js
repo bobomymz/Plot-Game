@@ -126,7 +126,8 @@ sceneText.addEventListener("click", () => {
 // ====== 工具函数 ======
 function initGameState() {
   const defaults = (storyData && storyData._variables) || {};
-  gameState = { ...defaults };
+  // 深拷贝：_variables 里含 Set（记忆集合），浅拷贝会让重启后残留上一局的记忆
+  gameState = snapshotState(defaults);
   console.log("【引擎】变量已初始化：", gameState);
 }
 
@@ -262,12 +263,21 @@ function clearMemoryFlash() {
   }
 }
 
+const MEM_FLASH_MS = 600;   // 每色闪烁时长
+const MEM_PAUSE_MS = 200;   // 闪烁间隔
+
+// 闪色动画本身要花掉的时长（选项级倒计时与闪色同时启动，故需扣除这段"白给"时间）
+function memFlashDuration(vars) {
+  if (vars._seqPlayed || !Array.isArray(vars._currentSeq)) return 0;
+  return vars._currentSeq.length * (MEM_FLASH_MS + MEM_PAUSE_MS);
+}
+
 function applyMemoryFlash(vars) {
   if (!vars._currentSeq || vars._seqPlayed) return false;
 
   const seq = vars._currentSeq;
-  const flashMs = 600;   // 每色闪烁时长
-  const pauseMs = 200;   // 闪烁间隔
+  const flashMs = MEM_FLASH_MS;
+  const pauseMs = MEM_PAUSE_MS;
   const overlay = document.getElementById("screen-effect-overlay");
   if (!overlay) return false;
 
@@ -465,6 +475,39 @@ function clearQTE() {
   if (oldTimer) oldTimer.remove();
 }
 
+// ====== 触屏输入补时 ======
+// 手机中文输入法（点输入框唤起键盘 → 拼音 → 选字）比物理键盘慢得多，
+// 但闪色播放的那几秒是"白给"的，不该跟着放大——所以只对输入型选项、
+// 且只对"扣掉闪色时长之后的敲字时间"乘系数，"颜色越多时限越紧"的原设计不变。
+// 调这个常量即可调松紧，设为 1 等于关闭该补时。
+const TOUCH_INPUT_FACTOR = 2;
+const IS_TOUCH = !!(window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches);
+
+// ====== QTE 倒计时浮层（场景级 / 选项级共用；样式见 style.css 的 #qte-timer） ======
+function startQteUi(timeoutMs) {
+  const timerDiv = document.createElement("div");
+  timerDiv.id = "qte-timer";
+  timerDiv.innerHTML =
+    '<div class="qte-row">' +
+      '<span class="qte-label">⚡ 快做决定！</span>' +
+      '<div class="qte-track"><div class="qte-progress"></div></div>' +
+      '<span class="qte-countdown">' + (timeoutMs / 1000).toFixed(1) + 's</span>' +
+    '</div>';
+  document.body.appendChild(timerDiv);
+
+  const progressBar   = timerDiv.querySelector(".qte-progress");
+  const countdownSpan = timerDiv.querySelector(".qte-countdown");
+  const startTime = Date.now();
+  const total = timeoutMs;
+
+  qteInterval = setInterval(() => {
+    const remaining = Math.max(0, total - (Date.now() - startTime));
+    progressBar.style.width = (total > 0 ? (remaining / total) * 100 : 0) + "%";
+    countdownSpan.textContent = (remaining / 1000).toFixed(1) + "s";
+    if (remaining < 1000) timerDiv.classList.add("qte-urgent");   // 最后 1 秒转警戒色
+  }, 100);
+}
+
 // ====== 解析跳转目标（支持函数、{变量}、普通字符串） ======
 function parseRedirectTarget(target, state) {
   if (typeof target === 'function') {
@@ -482,7 +525,7 @@ function parseRedirectTarget(target, state) {
 function pushHistory() {
   historyStack.push({
     sceneId: currentScene,
-    gameState: JSON.parse(JSON.stringify(gameState))  // 深拷贝
+    gameState: snapshotState(gameState)  // 深拷贝（Set 会被正确还原为 Set）
   });
   //backtrackBtn.style.display = 'inline-block';  // 有历史就显示顶部按钮
 }
@@ -569,53 +612,7 @@ function renderChoices(scene, sceneId) {
 
     // === 仅非隐藏时创建浮层 UI ===
     if (!hidden) {
-      const timerDiv = document.createElement("div");
-      timerDiv.id = "qte-timer";
-      timerDiv.style.cssText = `
-        position: fixed;
-        top: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 88%;
-        max-width: 640px;
-        z-index: 150;
-        padding: 12px 18px;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(168, 212, 105, 0.35);
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-      `;
-      timerDiv.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="color:#cfc7b6;font-weight:bold;white-space:nowrap;font-size:15px;">⚡ 快做决定！</span>
-          <div style="flex:1;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;min-width:60px;">
-            <div id="qte-progress" style="height:100%;width:100%;background:#9e2a22;border-radius:5px;"></div>
-          </div>
-          <span id="qte-countdown" style="color:#cfc7b6;font-weight:bold;font-size:16px;min-width:42px;text-align:right;">${(timeout/1000).toFixed(1)}s</span>
-        </div>
-      `;
-      document.body.appendChild(timerDiv);
-
-      const progressBar = document.getElementById("qte-progress");
-      const countdownSpan = document.getElementById("qte-countdown");
-
-      const startTime = Date.now();
-      const total = timeout;
-
-      qteInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const remaining = Math.max(0, total - elapsed);
-        const percent = (remaining / total) * 100;
-        progressBar.style.width = percent + "%";
-        countdownSpan.textContent = (remaining / 1000).toFixed(1) + "s";
-
-        if (remaining < 1000) {
-          progressBar.style.background = "#7d1f1a";
-          countdownSpan.style.color = "#7d1f1a";
-        }
-      }, 100);
+      startQteUi(timeout);
     }
 
     // === 超时跳转（隐藏/非隐藏通用） ===
@@ -629,9 +626,7 @@ function renderChoices(scene, sceneId) {
       }
     }, timeout);
 
-    // 恢复选项横向布局并渲染选项按钮
-    choicesArea.style.flexDirection = "row";
-
+    // 渲染选项按钮（排列方向由 style.css 决定：桌面横排 / 手机纵排）
     if (_choices && _choices.length > 0) {
       _choices.forEach(choice => {
         // showCondition 不满足 → 不显示该选项
@@ -676,9 +671,7 @@ function renderChoices(scene, sceneId) {
   }
 
   // ===== 原普通 choices 渲染逻辑=====
-
-  // 恢复横向排列
-  choicesArea.style.flexDirection = "row";
+  // 排列方向由 style.css 决定：桌面横排 / 手机纵排
 
   if (_choices && _choices.length > 0) {
     let visibleCount = 0;
@@ -816,58 +809,19 @@ function renderChoices(scene, sceneId) {
           }
         }
         timedTimeout = Math.max(0, timeout || 5000);
+        // 触屏输入补时：只放宽"敲字"这一段
+        if (IS_TOUCH && choice.input && TOUCH_INPUT_FACTOR > 1) {
+          const flashPart = memFlashDuration(gameState);
+          const inputPart = Math.max(0, timedTimeout - flashPart);
+          timedTimeout = flashPart + Math.round(inputPart * TOUCH_INPUT_FACTOR);
+        }
         break;
       }
     }
 
     if (timedChoice) {
       clearQTE();
-
-      const timerDiv = document.createElement("div");
-      timerDiv.id = "qte-timer";
-      timerDiv.style.cssText = `
-        position: fixed;
-        top: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 88%;
-        max-width: 640px;
-        z-index: 150;
-        padding: 12px 18px;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        border: 1px solid rgba(168, 212, 105, 0.35);
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-      `;
-      timerDiv.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="color:#cfc7b6;font-weight:bold;white-space:nowrap;font-size:15px;">⚡ 快做决定！</span>
-          <div style="flex:1;height:10px;background:rgba(255,255,255,0.15);border-radius:5px;overflow:hidden;min-width:60px;">
-            <div id="qte-progress" style="height:100%;width:100%;background:#9e2a22;border-radius:5px;"></div>
-          </div>
-          <span id="qte-countdown" style="color:#cfc7b6;font-weight:bold;font-size:16px;min-width:42px;text-align:right;">${(timedTimeout/1000).toFixed(1)}s</span>
-        </div>
-      `;
-      document.body.appendChild(timerDiv);
-
-      const progressBar = document.getElementById("qte-progress");
-      const countdownSpan = document.getElementById("qte-countdown");
-      const startTime = Date.now();
-      const total = timedTimeout;
-
-      qteInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const remaining = Math.max(0, total - elapsed);
-        const percent = (remaining / total) * 100;
-        progressBar.style.width = percent + "%";
-        countdownSpan.textContent = (remaining / 1000).toFixed(1) + "s";
-        if (remaining < 1000) {
-          progressBar.style.background = "#7d1f1a";
-          countdownSpan.style.color = "#7d1f1a";
-        }
-      }, 100);
+      startQteUi(timedTimeout);
 
       qteTimer = setTimeout(() => {
         clearQTE();
@@ -924,6 +878,9 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   // 进入新场景时重置展开状态
   document.getElementById("text-area").classList.remove("text-expanded");
   document.getElementById("choices-area").classList.remove("text-expanded");
+  // 内部滚动条回顶（手机端紧凑布局下文字/选项区各自可滚）
+  document.getElementById("text-area").scrollTop = 0;
+  choicesArea.scrollTop = 0;
 
   if (!gameState || (Object.keys(gameState).length === 0 && storyData && storyData._variables)) {
     console.warn("【引擎】检测到 gameState 为空，重新初始化变量。");
@@ -1047,6 +1004,9 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     });
   }
 
+  // 自动存档：全局触发器级联时外层会提前 return，只有最终落地的这一层走到这里，
+  // 因此玩家每次动作恰好存一次（选项点击 / QTE 超时 / 回溯 / 重启皆经此路径）
+  saveGame(sceneId);
 }
 
 // ====== 重新开始 ======
@@ -1055,6 +1015,8 @@ restartBtn.addEventListener("click", () => {
   clearQTE();   // 终止任何进行中的 QTE
   historyStack = [];          // 清空历史
   backtrackBtn.style.display = 'none';  // 隐藏回溯
+  _reactiveState = {};        // 清空规则节流记录，否则新局第一小时不扣体力
+  clearSave();                // 重启 = 清档（随后 renderScene 会写入全新存档）
   initGameState();
   lastRenderedScene = "";     // 重置上一场景记录，避免旧场景串场
   applyScreenEffects();   // ← 新增：重置特效
@@ -1064,6 +1026,136 @@ restartBtn.addEventListener("click", () => {
 });
 // 回溯按钮事件绑定
 backtrackBtn.addEventListener("click", backtrack);
+
+// ====== 自动存档（localStorage） ======
+const SAVE_KEY     = "shichaobiji_save_v1";
+const SAVE_VERSION = 1;
+const HISTORY_CAP  = 30;      // 入档的回溯步数上限（内存中仍是全量）
+let storageOk = true;         // 首次读写失败即静默停用（隐私模式/配额满）
+
+// Set 的序列化：JSON 原生不支持 Set，转成 { __set: [...] } 再还原
+function setReplacer(k, v) {
+  return v instanceof Set ? { __set: Array.from(v) } : v;
+}
+function setReviver(k, v) {
+  return (v && typeof v === "object" && Array.isArray(v.__set)) ? new Set(v.__set) : v;
+}
+// 深拷贝状态（Set 进出都保持 Set），供存档 / pushHistory / initGameState 共用
+function snapshotState(state) {
+  return JSON.parse(JSON.stringify(state, setReplacer), setReviver);
+}
+
+// 保存当前进度。在 renderScene 末尾调用——此时 onEnter 已执行、_visit 已累加、全局触发器已级联完毕
+function saveGame(sceneId) {
+  if (!storageOk) return;
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      version:      SAVE_VERSION,
+      savedAt:      Date.now(),
+      sceneId:      sceneId,
+      gameState:    gameState,
+      historyStack: historyStack.slice(-HISTORY_CAP),
+      reactiveState: _reactiveState      // 规则节流状态，不存会导致恢复后二次扣体力
+    }, setReplacer));
+  } catch (e) {
+    storageOk = false;
+    console.warn("【存档】写入失败，本局将不再自动存档：", e);
+  }
+}
+
+function clearSave() {
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch (e) {
+    console.warn("【存档】清除失败：", e);
+  }
+}
+
+// 读取并校验存档；不可用则返回 null（调用方走全新开局）
+function loadSave() {
+  let saved;
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    saved = JSON.parse(raw, setReviver);
+  } catch (e) {
+    storageOk = false;
+    console.warn("【存档】读取失败：", e);
+    return null;
+  }
+
+  if (!saved || saved.version !== SAVE_VERSION) return null;
+  if (!saved.gameState || typeof saved.gameState !== "object") return null;
+  if (!saved.sceneId || !storyData[saved.sceneId]) {
+    console.warn("【存档】场景已不存在，弃档：", saved.sceneId);
+    return null;
+  }
+  // 剧情改动后可能有历史场景被删除，逐项过滤
+  saved.historyStack = (saved.historyStack || []).filter(function (h) {
+    return h && h.sceneId && storyData[h.sceneId] && h.gameState;
+  });
+  return saved;
+}
+
+// 把存档写回运行状态（不负责渲染）
+function applySave(saved) {
+  gameState      = saved.gameState;               // Set 已由 reviver 还原
+  historyStack   = saved.historyStack || [];
+  _reactiveState = saved.reactiveState || {};
+  currentScene   = saved.sceneId;
+  // ⚠️ 必须从 gameState._lastScene 恢复：renderScene 会先把 lastRenderedScene 写进
+  // gameState._lastScene 再更新自己。若这里填 saved.sceneId，_lastScene 会被覆盖成当前场景，
+  // 所有依赖 _lastScene 的承接句全部失效。
+  lastRenderedScene = saved.gameState._lastScene || "";
+  // 注意：这里不显示右上角"回溯"按钮——正常游玩中它常态隐藏（pushHistory 的显示语句被注释），
+  // 回溯入口只有死亡屏的 appendBacktrackToChoices。恢复后保持一致；历史栈照常保留，死亡屏照样可回溯。
+}
+
+// 恢复渲染：跳过 onEnter（效果不重复），并补回被 renderScene 无条件重置的遮罩标志
+function renderRestoredScene(sceneId) {
+  const flags = {
+    showRain:     gameState.showRain,
+    showZombies:  gameState.showZombies,
+    showPowerOut: gameState.showPowerOut
+  };
+  renderScene(sceneId, true);
+  Object.assign(gameState, flags);
+  applyScreenEffects();
+}
+
+// 存档摘要（不剧透场景名）
+function makeSaveSummary(saved) {
+  const v = saved.gameState;
+  const mm = String(v.mm !== undefined ? v.mm : 0).padStart(2, "0");
+  const memCount = ["gameMemorySet", "personalMemorySet", "mixedMemorySet"]
+    .reduce(function (n, k) { return n + (v[k] instanceof Set ? v[k].size : 0); }, 0);
+  return "Day " + v.dd + " " + v.hh + ":" + mm + " · 记忆 " + memCount + " 段";
+}
+
+// 启动时的存档选择框（append 到 body 末尾，不进 #game-container，避免干扰兄弟选择器）
+function showSaveDialog(summary, onContinue, onNew) {
+  const dialog = document.createElement("div");
+  dialog.id = "save-dialog";
+  dialog.innerHTML =
+    '<div class="save-dialog-box">' +
+      '<div class="save-dialog-title">尸潮笔记</div>' +
+      '<div class="save-dialog-summary">上次进度：' + summary + '</div>' +
+      '<div class="save-dialog-actions">' +
+        '<button class="choice-btn" id="save-continue">继续上次冒险</button>' +
+        '<button class="choice-btn" id="save-new">从 Day 1 重新开始</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(dialog);
+
+  document.getElementById("save-continue").addEventListener("click", function () {
+    dialog.remove();
+    onContinue();
+  });
+  document.getElementById("save-new").addEventListener("click", function () {
+    dialog.remove();
+    onNew();
+  });
+}
 
 // ====== 图片预加载 ======
 function collectImagePaths(storyData) {
@@ -1149,18 +1241,16 @@ function preloadImages(onProgress, onComplete) {
 }
 
 // ====== 页面启动 ======
-window.addEventListener("DOMContentLoaded", () => {
-  if (typeof storyData === 'undefined') {
-    console.error("【引擎】storyData 未定义！请确保 story.js 在 engine.js 之前加载。");
-    sceneText.textContent = "【引擎错误】storyData 未加载。";
-    return;
-  }
-  initGameState();
-
-  // --- 预加载流程 ---
+// 预加载 + 首屏渲染。restore=true 时走"恢复存档"渲染（跳过 onEnter、补回遮罩标志）
+function startPreload(sceneId, restore) {
   const overlay = document.getElementById("preload-overlay");
   const bar    = document.getElementById("preload-bar");
   const label  = document.getElementById("preload-label");
+
+  const renderFirst = function () {
+    if (restore) renderRestoredScene(sceneId);
+    else renderScene(sceneId);
+  };
 
   if (overlay && bar) {
     // 有进度条 UI → 显示进度
@@ -1176,12 +1266,39 @@ window.addEventListener("DOMContentLoaded", () => {
         setTimeout(function () {
           overlay.style.display = "none";
         }, 500);
-        renderScene(currentScene);
+        renderFirst();
       }
     );
   } else {
     // 无 UI → 静默预加载 + 立即渲染（不阻塞游戏）
     preloadImages(null, null);
-    renderScene(currentScene);
+    renderFirst();
+  }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  if (typeof storyData === 'undefined') {
+    console.error("【引擎】storyData 未定义！请确保 story.js 在 engine.js 之前加载。");
+    sceneText.textContent = "【引擎错误】storyData 未加载。";
+    return;
+  }
+  initGameState();
+
+  // --- 存档检测 → 选择 → 预加载 ---
+  const saved = loadSave();
+  if (saved) {
+    showSaveDialog(
+      makeSaveSummary(saved),
+      function () {                          // 继续
+        applySave(saved);
+        startPreload(saved.sceneId, true);
+      },
+      function () {                          // 从头开始
+        clearSave();
+        startPreload("start", false);
+      }
+    );
+  } else {
+    startPreload("start", false);
   }
 });

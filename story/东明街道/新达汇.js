@@ -595,10 +595,14 @@ Object.assign(storyData, {
   },
   "新达汇-1F味千拉面-休息": {
     image: "images/新达汇/味千后厨.jpg", 
-    onEnter: function(v) { v.showPowerOut = true; var e = updateTime(30, { add: { strength: 1, chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
-    text: "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n\
-你靠墙休息了一会儿，外面的声音渐渐远去了。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
+    onEnter: function(v) { v.showPowerOut = true; restRecover(v, 1); var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
+    text: function(vars) {
+      var hint = vars._restBlocked
+        ? "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
+        : "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>";
+      return "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n\
+你靠墙休息了一会儿，外面的声音渐渐远去了。\n" + hint;
+    },
     choices: [
       {
         text: "继续",
@@ -609,9 +613,13 @@ Object.assign(storyData, {
   },
   "新达汇-1F味千拉面-没吃的": {
     image: "images/新达汇/味千后厨-没吃的.jpg",
-    onEnter: function(v) { v.showPowerOut = true; return {}; },
-    text: "你在后厨的角落坐下休息了一会儿，外面的声音渐渐远去了。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>",
+    onEnter: function(v) { v.showPowerOut = true; restRecover(v, 1); var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
+    text: function(vars) {
+      var hint = vars._restBlocked
+        ? "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
+        : "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>";
+      return "吃的是没有了，但你在后厨的角落坐下休息了一会儿，外面的声音渐渐远去了。\n" + hint;
+    },
     choices: [
       {
         text: "继续",
@@ -3042,8 +3050,10 @@ Object.assign(storyData, {
   },
   "新达汇-哥哥的深夜食堂-休息": {
     image: "images/placeholder.png" /* TODO: images/新达汇/izakaya.png */,
-    onEnter: { set: { showPowerOut: true,  _travelMinutes: 0 } },
-    text: "你在吧台前坐下，喝了一瓶饮料。这里很安静。",
+    onEnter: function(vars) { restRecover(vars, 1); return { set: { showPowerOut: true,  _travelMinutes: 0 } }; },
+    text: function(vars) {
+      return "你在吧台前坐下，喝了一瓶饮料。这里很安静。" + restHint(vars);
+    },
     choices: [
       {
         text: "继续",

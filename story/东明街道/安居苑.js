@@ -178,11 +178,46 @@ Object.assign(storyData, {
         nextScene: "三林安居苑-鹅卵石路"
       },
       {
+        showCondition: "chasedByZombies <= 1",
+        text: "在长亭的石阶上坐一会儿",
+        nextScene: "三林安居苑-小广场-歇脚",
+        effect: updateTime(1)
+      },
+      {
         showCondition: "!fightWithVineZombie",
         text: "看看旁边的健身区",
         nextScene: "三林安居苑-藤蔓丧尸",
         effect: updateTime(2)
       },
+    ]
+  },
+
+  "三林安居苑-小广场-歇脚": {
+    image: timeImage({
+      morning: "images/安居苑/小广场.jpg",
+      evening: "images/安居苑/小广场-evening.jpg",
+      night: "images/安居苑/小广场-night.jpg"
+      // midnight直接复用night图片
+    }),
+    onEnter: function(vars) {
+      vars.showRain = true;
+      restRecover(vars, 1);
+      return updateTime(15, { set: { _travelMinutes: 0 } })(vars);
+    },
+    text: function(vars) {
+      return "你在长亭的石阶上坐下——就是小时候奶奶坐着看你玩滑板车的那圈台阶。亭檐挡去了大半天光，小区里静得能听见花坛那头的虫鸣。\n露天的位置本不敢久坐，但院墙把街面上的动静隔得很远；真有什么，从这儿跑回楼道也就几步路。你盯着那段鹅卵石路，歇了十五分钟。" + restHint(vars);
+    },
+    choices: [
+      {
+        text: "再歇一会儿",
+        nextScene: "三林安居苑-小广场-歇脚",
+        effect: updateTime(1)
+      },
+      {
+        text: "起身离开",
+        nextScene: "三林安居苑-小广场",
+        effect: updateTime(1)
+      }
     ]
   },
 
@@ -231,6 +266,7 @@ Object.assign(storyData, {
       let basicDes = "你走到了鹅卵石路。鹅卵石路是一条老路，上面的鹅卵石很老，但是很平滑。\n";
       if(!vars.hasKey502) basicDes += "你走着走着，发现鹅卵石路的尽头是一个老式的自行车，车筐里塞着半袋没来得及拿上楼的菜。\n\
 你骑上去试了试。很可惜，这个自行车上锁了。车篮里有一把钥匙，但不是车锁的钥匙，上面写着“502”。"
+      return basicDes + "\n" + describeWeather(vars);
     },
     choices: [
       {
@@ -1095,25 +1131,23 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     text: "天台的视野豁然开朗。脚下是灰扑扑的水泥平台，边缘砌着半人高的护墙，几根晾衣绳空荡荡地横在头顶，一端还夹着一件被遗忘的男式衬衫，被风吹得啪嗒作响。\n\
 你扶着护墙往下望——楼下就是安盛街的中段，再往西能看见三林路上蠕动的黑点，那是游荡的丧尸。东边低矮的房顶连成一片，隐约能辨认出新达汇商场的轮廓。\n\
 六楼的高度让底下的嘶吼声变得很远。你忽然觉得，这里大概是这片街区仅剩的、能让人喘口气的高处。",
-    choices: function(vars) {
-      var cs = [];
-      if (!vars._roofRested) {
-        cs.push({
-          text: "靠着护墙坐下喘口气",
-          effect: updateTime(10, { add: { strength: 1 } }),
-          nextScene: "三林安居苑-7号楼-天台-歇脚"
-        });
-      }
-      cs.push({ text: "下楼", nextScene: "三林安居苑-7号楼-6楼", effect: updateTime(1) });
-      return cs;
-    }
+    choices: [
+      {
+        text: "靠着护墙坐下喘口气",
+        effect: updateTime(10, { set: { _travelMinutes: 0 } }),
+        nextScene: "三林安居苑-7号楼-天台-歇脚"
+      },
+      { text: "下楼", nextScene: "三林安居苑-7号楼-6楼", effect: updateTime(1) }
+    ]
   },
 
   "三林安居苑-7号楼-天台-歇脚": {
     image: "images/placeholder.png" /* TODO: images/安居苑/天台.png */,
-    onEnter: { set: { _roofRested: true } },
-    text: "你在护墙边的水泥台沿上坐下，把腿伸直，后背靠上温热的墙面。风从楼与楼的缝隙间穿过，把汗湿的衣服一点点吹干。\n\
-底下是丧尸的拖步声，头顶是空旷的天。你闭了一会儿眼——这大概是爆发以来，难得安静的三分钟。",
+    onEnter: function(vars) { restRecover(vars, 1); return {}; },
+    text: function(vars) {
+      return "你在护墙边的水泥台沿上坐下，把腿伸直，后背靠上温热的墙面。风从楼与楼的缝隙间穿过，把汗湿的衣服一点点吹干。\n\
+底下是丧尸的拖步声，头顶是空旷的天。你闭了一会儿眼——这大概是爆发以来，难得安静的三分钟。" + restHint(vars);
+    },
     choices: [
       { text: "站起来，下楼", nextScene: "三林安居苑-7号楼-天台", effect: updateTime(1) }
     ]
@@ -1331,10 +1365,10 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
 "三林安居苑-厨房": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
-    onEnter: updateTime(5, { add: { strength: 1 } }),
+    onEnter: updateTime(5, { add: { strength: 5 } }),
     text: "你握着武器靠近厨房。那只丧尸试图爬过来抓你，被你一棍子敲翻在地。\n你打开橱柜——里面还有几包没开封的挂面和一瓶食用油。虽然面条没法生吃，但你发现料理台上还有半箱矿泉水，以及几罐八宝粥。\n\
 你打开一罐八宝粥喝了个精光。甜腻的味道让你想起小时候的早餐，但此刻它是你吃过最好吃的东西。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复5点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -1404,7 +1438,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   "安居苑前门": {
     outdoor: true,
     image: function(vars) {
-      if (vars.weather === "雨") {
+      if (vars.weather === "雨") {ss
         var f = timeImage({
           morning: "images/安居苑/前门-雨.jpg",
           night: "images/安居苑/前门-雨-night.jpg"

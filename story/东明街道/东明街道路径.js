@@ -579,8 +579,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 保安室的门半开着，里面黑洞洞的，似乎有什么东西在动……好像是错觉。",
     choices: [
       {
-        showCondition: "!_visit['银行-保安室']",
-        text: "查看保安室",
+        text: "去保安室",
         nextScene: "银行-保安室",
         effect: updateTime(1)
       },
@@ -601,13 +600,25 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 
   "银行-保安室": {
     image: "images/小区周边/银行/保安室.jpg",
-    text: "你打开灯，探头往保安室里看。一个穿着保安制服的丧尸被卡在办公椅下面，正徒劳地蹬着地面，发出吱——吱——的摩擦声。它看到你，伸出手臂徒劳地抓挠，但够不到你。\n\
-办公桌上有一瓶没开封的矿泉水，在日光灯下反射着微光。",
+    text: function(vars) {
+      if (vars._visit["银行-保安室"] > 1) {
+        return "保安室的灯还亮着。那只保安丧尸还卡在办公椅底下——不知蹬了几天了，吱——吱——的摩擦声就没停过，那把椅子愣是没散架。\n这间屋子就这么大点地方，你都熟了。";
+      }
+      return "你打开灯，探头往保安室里看。一个穿着保安制服的丧尸被卡在办公椅下面，正徒劳地蹬着地面，发出吱——吱——的摩擦声。它看到你，伸出手臂徒劳地抓挠，但够不到你。\n\
+办公桌上有一瓶没开封的矿泉水，在日光灯下反射着微光。";
+    },
     choices: [
       {
+        showCondition: "!_visit['银行-拿水']",
         text: "绕过它去拿水",
         nextScene: "银行-拿水",
         effect: updateTime(2)
+      },
+      {
+        showCondition: "chasedByZombies <= 1",
+        text: "在值班椅上歇一会儿",
+        nextScene: "银行-保安室-歇脚",
+        effect: updateTime(1)
       },
       {
         showCondition: "!_visit['银行-金库']",
@@ -618,6 +629,26 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
       {
         text: "太危险了，走吧",
         nextScene: "银行内部"
+      }
+    ]
+  },
+
+  "银行-保安室-歇脚": {
+    image: "images/小区周边/银行/保安室.jpg",
+    onEnter: function(vars) { restRecover(vars, 1); return updateTime(15, { set: { _travelMinutes: 0 } })(vars); },
+    text: function(vars) {
+      return "你把墙角那把备用的值班椅拖过来，隔着办公桌，背对那只卡住的保安丧尸坐下。\n它蹬椅子的吱吱声单调又规律，听久了竟有点像老式挂钟——你盯着一片漆黑的监控墙，居然就这么眯着了。\n只要那把椅子不散架，它就永远够不到你。" + restHint(vars);
+    },
+    choices: [
+      {
+        text: "再歇一会儿",
+        nextScene: "银行-保安室-歇脚",
+        effect: updateTime(1)
+      },
+      {
+        text: "起身离开",
+        nextScene: "银行内部",
+        effect: updateTime(1)
       }
     ]
   },
@@ -697,6 +728,12 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         effect: updateTime(1)
       },
       {
+        showCondition: "chasedByZombies <= 1",
+        text: "在收银台边的长凳上歇一会儿",
+        nextScene: "联华超市-歇脚",
+        effect: updateTime(1)
+      },
+      {
         text: "离开",
         nextScene: "三林路"
       }
@@ -745,6 +782,26 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         text: "从货架上拿一根香肠",
         showCondition: "!_visit['小超市-香肠']",
         nextScene: "小超市-香肠",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "联华超市-歇脚": {
+    image: "images/小区周边/联华超市/内部.jpg",
+    onEnter: function(vars) { restRecover(vars, 1); return updateTime(15, { set: { _travelMinutes: 0 } })(vars); },
+    text: function(vars) {
+      return "你把收银台旁顾客休息长凳上的传单拨到地上，坐了下来。头顶的日光灯管还剩两根在亮，惨白的光照着一排排半空的货架。\n身后那排冰柜早就断电了，外壳倒还是凉的。你靠着它，盯着货架之间那条空荡荡的过道，歇了十五分钟——一家没人的超市，比想象中安静得多。" + restHint(vars);
+    },
+    choices: [
+      {
+        text: "再歇一会儿",
+        nextScene: "联华超市-歇脚",
+        effect: updateTime(1)
+      },
+      {
+        text: "起来继续转转",
+        nextScene: "联华超市",
         effect: updateTime(1)
       }
     ]

@@ -36,6 +36,12 @@ Object.assign(storyData,{
         elseScene: "益丰大药房-库房门锁了"
       },
       {
+        showCondition: "_visit['益丰大药房-办公室闲聊'] > 0 && !_zhaoGuangchengDead && chasedByZombies <= 1",
+        text: "穿过库房，去办公室找赵广成",
+        nextScene: "益丰大药房-办公室歇脚",
+        effect: updateTime(2)
+      },
+      {
         text: "没什么好拿的，离开",
         nextScene: "三林路",
         effect: updateTime(1)
@@ -674,6 +680,32 @@ Object.assign(storyData,{
     ]
   },
 
+  "益丰大药房-办公室歇脚": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/办公室歇脚.png */,
+    onEnter: function(vars) { restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
+    text: function(vars) {
+      var desc;
+      if (vars._visit["益丰大药房-办公室歇脚"] <= 1) {
+        desc = "你敲了敲门，里面传来趿拉着拖鞋的脚步声。赵广成从门缝里看清是你，把门敞开：“又是你啊，年轻人。进来进来。”\n他给你挪出半张沙发，又从办公桌底下摸出一瓶矿泉水。你在这间拉着百叶窗的小办公室里坐下来，听他絮絮叨叨讲药行的旧事，眼皮越来越沉。\n他看你困成这样，把声音压了下去：“睡吧，我给你看着门。”\n你在沙发上眯了半小时——这几天里睡得最踏实的一觉。";
+      } else {
+        desc = "赵广成见你又来，也不多问，朝沙发抬了抬下巴。百叶窗拉得严严实实，冷白的灯光下，他隔着办公桌翻他那本卷了边的账本，偶尔压着嗓子搭一句话。\n你又眯了半小时。";
+      }
+      return desc + restHint(vars, "你回复1点体力");
+    },
+    choices: [
+      {
+        text: "再歇一会儿",
+        nextScene: "益丰大药房-办公室歇脚",
+        effect: updateTime(1)
+      },
+      {
+        text: "谢过赵广成，离开办公室",
+        nextScene: "益丰大药房",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
   "益丰大药房-选择离开的路": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/选择离开的路.png */,
     text: "你选择离开药房。赵广成在背后说了句：“拜拜~你是从正门进来的么？小心点，路上丧尸多。”",
@@ -750,6 +782,7 @@ Object.assign(storyData,{
 
   "益丰大药房-断电": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/断电.png */,
+    onEnter: { set: { _zhaoGuangchengDead: true } },
     text: "你按下几个黑色按钮，周围灯光一闪一闪的，然后一个个熄灭了。你听到远处传来了骂骂咧咧的声音，然后是开门声。\n\
 突然，传来一声尖叫，响声贯穿整个药房。你听到窸窸窣窣的脚步声。黑暗中隐约传来嘎吱嘎吱的声音。\n\
 你快速地关闭了配电箱。",// 赵广成办公室被你断电了，于是他出来看看发生什么了，正好碰上已经尸变的女学徒，尖叫声引来了门口的丧尸，卒

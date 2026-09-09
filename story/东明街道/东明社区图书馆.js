@@ -497,8 +497,10 @@ Object.assign(storyData, {
   // ==================== 休息 ====================
   "图书馆-小憩": {
     image: "images/placeholder.png" /* TODO: images/library/libraryRest.png */,
-    onEnter: { set: { _travelMinutes: 0 } },
-    text: "你在阅览室的沙发上坐下，闭上眼睛。窗帘拉着，门从里面锁着——这里暂时是安全的。\n你听了一会儿窗外的风声，让酸痛的腿休息一下。十分钟后，你感觉好了一些。",
+    onEnter: function(vars) { restRecover(vars, 1); return { set: { _travelMinutes: 0 } }; },
+    text: function(vars) {
+      return "你在阅览室的沙发上坐下，闭上眼睛。窗帘拉着，门从里面锁着——这里暂时是安全的。\n你听了一会儿窗外的风声，让酸痛的腿休息一下。十分钟后，你感觉好了一些。" + restHint(vars);
+    },
     choices: [
       {
         text: "继续",
