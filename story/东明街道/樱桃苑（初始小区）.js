@@ -577,8 +577,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/home/消防箱.png */,
     onEnter: { set: { positionAfterOperation: "1楼-电梯厅" } },
     text: "你打开消防箱。里面是一把红色的消防斧，挂在卡扣上，斧刃锃亮，一看就是没怎么用过的。\n\
-箱壁上贴着一张检查卡，最近的检查日期是6月中旬。\n\
-消防斧比普通的家伙结实得多——撬门、破门、劈丧尸都够用了。",
+箱壁上贴着一张检查卡，最近的检查日期是6月中旬。",
     choices: [
       {
         text: "拿走消防斧",
