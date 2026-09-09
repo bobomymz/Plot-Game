@@ -1715,7 +1715,7 @@ Object.assign(storyData, {
 
   "建平-食堂-煤气阀": {
     image: "images/placeholder.png",
-    text: "你摸到后厨的小隔间，找到了煤气阀。\n但几只穿着厨师服的丧尸堵在阀门前面——正是它们搞坏了煤气。",
+    text: "你摸到后厨的小隔间，找到了煤气阀。\n但几只穿着厨师服的丧尸堵在阀门前面。看起来是它们搞坏了煤气。",
     choices: [
       { text: "战斗！", nextScene: "建平-食堂-煤气阀-战斗" },
       { text: "退回后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) }
@@ -1724,7 +1724,7 @@ Object.assign(storyData, {
 
   "建平-食堂-煤气阀-战斗": {
     image: "images/placeholder.png",
-    onEnter: initMemoryGame(["红","蓝","绿"], 5, { set: { currentPos: "食堂后厨" } }),
+    onEnter: initMemoryGame(["红","蓝","绿"], 3, { set: { currentPos: "食堂后厨" } }),
     text: "厨师丧尸扑了过来！\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
     choices: [
       {
@@ -1733,7 +1733,7 @@ Object.assign(storyData, {
         condition: checkFlashAnswer,
         nextScene: "建平-食堂-煤气阀-关阀",
         elseScene: "结局-煤气中毒",
-        timeout: 12000,
+        timeout: 10000,
         timeoutScene: "结局-煤气中毒"
       }
     ]
@@ -1742,7 +1742,7 @@ Object.assign(storyData, {
   "建平-食堂-煤气阀-关阀": {
     image: "images/placeholder.png",
     onEnter: { set: { _gasValveClosed: true, _chefCleared: true } },
-    text: "你解决了厨师丧尸，冲到煤气阀前，用力拧紧了阀门。\n\"嘶——\"漏气声渐渐停息。空气里那股煤气味淡了下去。",
+    text: "你一脚踹飞了厨师丧尸，冲到煤气阀前，用力拧紧了阀门。\n\"嘶——\"漏气声渐渐停息。空气里那股煤气味淡了下去。嗯，好久没碰到这么好打的丧尸了。",
     choices: [
       { text: "回后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) }
     ]
@@ -1759,7 +1759,8 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "宿舍门口"; return { add: { chasedByZombies: 1 } }; },
-    text: function(vars) { return "学生宿舍楼。楼门半掩着，往里看黑洞洞的，隐约能听到走廊里拖沓的脚步声——这栋楼里的丧尸比外面多得多。\n如果能把它们清干净，这里倒是个能安心过夜的落脚点。\n" + describeWeather(vars); },
+    text: function(vars) { return "你来到了学生宿舍楼门口。楼门半掩着，往里看黑洞洞的，隐约能听到走廊里拖沓的脚步声——这栋楼里的丧尸比外面多得多。\n\
+如果能把它们清干净，这里倒是个能安心过夜的落脚点。\n" + describeWeather(vars); },
     choices: [
       { text: "进入宿舍", nextScene: "建平-宿舍-内部", effect: updateTime(1) },
       { text: "去操场", nextScene: "建平-操场", effect: updateTime(2) },
