@@ -16,8 +16,11 @@ Object.assign(storyData, {
       vars.currentPos = "浦锦路";
     },
     text: function(vars) {
-      var desc = "你下了高架，沿着一条两侧种满香樟的路前进。路边褪色的指示牌写着“仁济医院南院”，箭头指向路尽头的几栋白色建筑。\n\
-医院的轮廓安静得有些不真实。急诊楼前的通道上横七竖八地倒着几辆救护车和私家车，车门大开，路面上有干涸的暗红色痕迹。几个穿白大褂的身影瘫倒在草坪上，一动不动。\n\
+      var fromHospital = ["仁济南院-急诊大门", "仁济南院-救护车通道", "仁济南院-地下停车场"].indexOf(vars._lastScene) >= 0;
+      var desc = (fromHospital
+        ? "你退回浦锦路上。两侧的香樟还立在原地，医院那几栋白色建筑沉默地堵在路的尽头。\n"
+        : "你下了高架，沿着一条两侧种满香樟的路前进。路边褪色的指示牌写着“仁济医院南院”，箭头指向路尽头的几栋白色建筑。\n") +
+"医院的轮廓安静得有些不真实。急诊楼前的通道上横七竖八地倒着几辆救护车和私家车，车门大开，路面上有干涸的暗红色痕迹。几个穿白大褂的身影瘫倒在草坪上，一动不动。\n\
 整座医院像一个被突然抽走了声音的蜂巢。";
       return desc + "\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
@@ -221,8 +224,11 @@ Object.assign(storyData, {
   "仁济南院-后勤通道": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiBackhall.png */,
     onEnter: function(vars) { vars.showZombies = true; },
-    text: "你穿过地下停车场，摸到了医院的后勤通道。这里堆着手推车、氧气瓶和成箱的耗材，空气中弥漫着一股消毒水混合着霉味的气息。\n\
-通道尽头是一扇写着“检验科”的门，门旁有一条更窄的走道，通往住院部方向。另一头的墙边，立着一扇沉重的铁门，上面贴着褪色的“太平间”标识。",
+    text: function(vars) {
+      var head = vars._lastScene === "仁济南院-地下停车场" ? "你穿过地下停车场，摸到了医院的后勤通道。" : "你回到医院的后勤通道。";
+      return head + "这里堆着手推车、氧气瓶和成箱的耗材，空气中弥漫着一股消毒水混合着霉味的气息。\n\
+通道尽头是一扇写着“检验科”的门，门旁有一条更窄的走道，通往住院部方向。另一头的墙边，立着一扇沉重的铁门，上面贴着褪色的“太平间”标识。";
+    },
     choices: [
       {
         text: "看看这扇门",
@@ -254,7 +260,11 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiBackdoor.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
-      var desc = "检验科的后门关得严严实实——你推了推，纹丝不动，门是从里面反锁的。门上有一小块灰蒙蒙的玻璃观察窗。\n门外的通道上，一个穿着检验科白大褂的人倒在墙边——已经没了呼吸。她的工牌挂在胸前，上面的照片和名字在昏暗的光线下模糊可辨。\n";
+      var back = vars._lastScene === "仁济南院-检验科后门-窥视" || vars._lastScene === "仁济南院-检验科后门-方瑜";
+      var desc = (back
+        ? "你回到检验科后门。门还是关得严严实实——从里面反锁的，推不动。门上有一小块灰蒙蒙的玻璃观察窗。\n"
+        : "检验科的后门关得严严实实——你推了推，纹丝不动，门是从里面反锁的。门上有一小块灰蒙蒙的玻璃观察窗。\n") +
+"门外的通道上，一个穿着检验科白大褂的人倒在墙边——已经没了呼吸。她的工牌挂在胸前，上面的照片和名字在昏暗的光线下模糊可辨。\n";
       if (vars._fangyuFound) {
         desc += "你已经查看过她的工牌了。";
       } else {
@@ -1302,8 +1312,13 @@ Object.assign(storyData, {
   "仁济南院-电梯厅": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiElevator.png */,
     onEnter: function(vars) { vars.currentPos = "电梯厅"; return {}; },
-    text: "门诊楼的电梯厅里，两部电梯的门都开着，轿厢停在1楼。按钮面板上，几层楼的灯还亮着，只有5楼以上全灭了。\n\
-    你正要进去，头顶的应急灯闪了闪——这电梯也不知道还靠不靠得住。",
+    text: function(vars) {
+      if (vars._lastScene === "仁济南院-中医科" || vars._lastScene === "仁济南院-输液大厅") {
+        return "电梯缓缓下到1楼。你走出轿厢，回到门诊楼的电梯厅——头顶的应急灯又闪了闪。";
+      }
+      return "门诊楼的电梯厅里，两部电梯的门都开着，轿厢停在1楼。按钮面板上，几层楼的灯还亮着，只有5楼以上全灭了。\n\
+    你正要进去，头顶的应急灯闪了闪——这电梯也不知道还靠不靠得住。";
+    },
     choices: [
       {
         text: "坐电梯去2楼（输液大厅）",
@@ -1513,8 +1528,13 @@ Object.assign(storyData, {
   "仁济南院-楼梯-住院楼": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
     onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
-    text: "你来到住院大楼的楼梯间。楼梯比门诊楼的窄，扶手上包着防滑胶垫，墙根有几道干涸的血迹。\n\
-往上走了几层，楼层指示灯早已熄灭，你只能靠数台阶来记层数。越往上，走廊越安静——上面是特需病区。",
+    text: function(vars) {
+      if (vars._lastScene === "仁济南院-特需病房") {
+        return "你从特需病区下到楼梯间。楼梯比门诊楼的窄，扶手上包着防滑胶垫，墙根有几道干涸的血迹。往下走，回到住院部走廊。";
+      }
+      return "你来到住院大楼的楼梯间。楼梯比门诊楼的窄，扶手上包着防滑胶垫，墙根有几道干涸的血迹。\n\
+往上走了几层，楼层指示灯早已熄灭，你只能靠数台阶来记层数。越往上，走廊越安静——上面是特需病区。";
+    },
     choices: [
       {
         text: "上楼",
@@ -1533,8 +1553,11 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
     onEnter: function(vars) { vars.currentPos = "特需病房"; return {}; },
     text: function(vars) {
-      var desc = "这里是特需病房，走廊比普通病区宽敞，墙面上是暖色调的护墙板。\n\
-你推开一间没上锁的病房——独立卫浴，窗明几净，床头柜上放着一个相框，照片里一家三口笑得正开心。\n\
+      var fromDrink = vars._lastScene === "仁济南院-特需病房-功能饮料";
+      var desc = "这里是特需病房，走廊比普通病区宽敞，墙面上是暖色调的护墙板。\n" +
+(fromDrink
+        ? "你从那间开着门的病房里出来，空饮料瓶留在了床头柜上。\n"
+        : "你推开一间没上锁的病房——独立卫浴，窗明几净，床头柜上放着一个相框，照片里一家三口笑得正开心。\n") + "\
 窗外的城市灰蒙蒙一片，远处高架的轮廓在暮色里若隐若现。\n\
 床头的抽屉里有一封没写完的信，只写了个开头：“亲爱的，如果你们能收到这封信……”\n";
       if (!vars._renjiDrinkTaken) {
@@ -1607,7 +1630,12 @@ Object.assign(storyData, {
   "仁济南院-楼梯-门诊楼高": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
     onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
-    text: "你继续往上走。楼梯间越往上越暗，灯管有一截没一截地亮着。往上走两层是四楼。三楼的路被堵住了。",
+    text: function(vars) {
+      if (vars._lastScene === "仁济南院-中医科") {
+        return "你从四楼下来，回到这段楼梯的转角。楼梯间越往上越暗，灯管有一截没一截地亮着。三楼的路还是被堵着的。";
+      }
+      return "你继续往上走。楼梯间越往上越暗，灯管有一截没一截地亮着。往上走两层是四楼。三楼的路被堵住了。";
+    },
     choices: [
       {
         text: "上楼",

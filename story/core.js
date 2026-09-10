@@ -288,7 +288,7 @@ const storyData = {
       // 支持字符串表达式（推荐，简洁）
       gameMinutes: "((dd - 1) * 1440 + (hh - 8) * 60 + mm)",
       isNight:     "hh >= 19 || hh < 6",
-      minutesBetweenReduceStrength: "(hurtByZombie && hasCold) ? 15 : (hurtByZombie ? 20 : (hasCold ? 40 : 60))", // 受伤/感冒都会让体力掉更快，叠加更快
+      minutesBetweenReduceStrength: "(hurtByZombie && hasCold) ? 30 : (hurtByZombie ? 60 : (hasCold ? 80 : 120))", // 饥饿间隔（分钟）：健康2h扣1，受伤1h扣1，感冒80min，感冒+受伤30min（受伤/感冒都会让体力掉更快，叠加更快）
       canSee: function(v) { return canSee(v); },
       hasFood: function(v) { return hasFood(v); }, // 是否有食物
       zombieAtHomeDoor: function(v) { return zombieAtHomeDoor(v); }, // 丧尸还在门口
@@ -302,13 +302,19 @@ const storyData = {
 
     // ===== 2. 响应式规则：条件满足时自动触发 =====
     rules: [
-      // --- 每小时自动扣一点体力（饥饿） ---
+      // --- 按间隔自动扣一点体力（饥饿，间隔见 minutesBetweenReduceStrength：健康2h/受伤1h/感冒80min/叠加30min） ---
       {
         id: "starvation",
         condition:  "gameMinutes > minutesBetweenReduceStrength",
         triggerKey: "Math.floor(gameMinutes / minutesBetweenReduceStrength)",
         effect: { add: { strength: -1 } },   // 简单效果直接用对象
-        onTrigger: function(v) { flashStatusWarning("⚠ 体力 -1（饥饿）· 剩余 " + fmtStrength(v.strength)); }
+        onTrigger: function(v) {
+           // 饥饿扣点时附带状态提示：让玩家明白感冒/受伤会让体力掉得更快（可服用退烧药治感冒）
+           var hint = v.hurtByZombie && v.hasCold ? "（感冒+受伤，体力掉得最快）"
+                     : v.hurtByZombie ? "（受伤，体力掉得更快）"
+                     : v.hasCold ? "（感冒，体力掉得更快）" : "";
+           flashStatusWarning("⚠ 体力 -1（饥饿）· 剩余 " + fmtStrength(v.strength) + hint);
+        }
       },
 
       // --- 连续移动疲劳（20/36/48/56/60五档，间隔递减，每档-1体力，全程上限-5） ---

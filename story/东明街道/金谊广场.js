@@ -83,7 +83,11 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      var desc = "你走向龙头区的长廊。这是一条有顶的走廊，跨过小河通向商场3F。\n";
+      var head;
+      if (vars._lastScene === "金谊广场-3F") head = "你穿过三楼的玻璃门，回到长廊上。";
+      else if (vars._jinyiHasFoodForSurvivors) head = "你回到长廊上。";
+      else head = "你走向龙头区的长廊。";
+      var desc = head + "这是一条有顶的走廊，跨过小河通向商场3F。\n";
       if (vars._jinyiHasFoodForSurvivors) {
         // 交付瞬间——展示食物交付的剧情，然后清除标记
         desc += "你带着从B1奥乐齐找到的食物回到长廊。那个中年男人看到你手里的东西，眼睛亮了一下。\n";
@@ -153,9 +157,15 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/金谊广场/吉祥馄饨.jpg */,
     text: function(vars) {
       if (vars.dd == 1) {
-        var desc = "你推开吉祥馄饨半掩的卷帘门。店里不大——四张桌子、一个收银台、开放式厨房的灶台上还留着经年累月的油渍。\n";
-        desc += "墙上贴着一张褪色的价目表，最下面一行用圆珠笔加了一行字——“荠菜鲜肉（新品）”。笔迹和价目表上印的字不一样，是一个人手写的。\n";
-        desc += "一个戴着鸭舌帽的黑衣人蹲在厨房角落，正在翻一个旧纸箱。听到脚步声，他吓得一激灵，转过身警惕地看着你。\n";
+        var backFrom = vars._lastScene === "金谊广场-吉祥馄饨-看" || vars._lastScene === "金谊广场-吉祥馄饨-吃馄饨";
+        var desc;
+        if (backFrom) {
+          desc = "你回到吉祥馄饨店里。那个戴鸭舌帽的黑衣人还蹲在厨房角落翻他的旧纸箱。\n";
+        } else {
+          desc = "你推开吉祥馄饨半掩的卷帘门。店里不大——四张桌子、一个收银台、开放式厨房的灶台上还留着经年累月的油渍。\n";
+          desc += "墙上贴着一张褪色的价目表，最下面一行用圆珠笔加了一行字——“荠菜鲜肉（新品）”。笔迹和价目表上印的字不一样，是一个人手写的。\n";
+          desc += "一个戴着鸭舌帽的黑衣人蹲在厨房角落，正在翻一个旧纸箱。听到脚步声，他吓得一激灵，转过身警惕地看着你。\n";
+        }
         if (vars._chenmoRescued) {
           desc += "\n他嘴角微微动了一下——上次你帮他杀出停车场之后，他对你的态度明显不一样了。“好兄弟，你来啦？”";
         }
@@ -183,8 +193,6 @@ Object.assign(storyData, {
         return cs;
       } else {
         return [
-          { text: "跟他聊聊", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(3) },
-          { text: "看看店里", nextScene: "金谊广场-吉祥馄饨-看", effect: updateTime(2) },
           { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
         ];
       }
@@ -494,11 +502,12 @@ Object.assign(storyData, {
   "金谊广场-B2车库入口": {
     image: "images/金谊广场/B2车库入口.jpg" /* TODO: images/金谊广场/B2车库入口.jpg */,
     text: function(vars) {
+      var backFrom = ["金谊广场-B2摸到死路", "金谊广场-B2货梯间"].indexOf(vars._lastScene) >= 0;
       if (vars.hasTorch) {
-        return "你找到了地下车库的入口。坡道向下延伸，越往里越黑。\n\
-你打开手电筒——光束劈开黑暗，照亮了前方的岔路：右边似乎是通往更深处的车道，正前方是一扇半开的消防门。";
+        return (backFrom ? "你回到车库入口的坡道。" : "你找到了地下车库的入口。坡道向下延伸，越往里越黑。") + "\n\
+你举起手电筒——光束劈开黑暗，照亮了前方的岔路：右边似乎是通往更深处的车道，正前方是一扇半开的消防门。";
       }
-      return "你找到了地下车库的入口。坡道向下延伸，里面一片漆黑——伸手不见五指。\n\
+      return (backFrom ? "你摸回车库入口的坡道，里面还是漆黑一片。" : "你找到了地下车库的入口。坡道向下延伸，里面一片漆黑——伸手不见五指。") + "\n\
 你只能摸着墙壁慢慢往前走。脚下的地面湿漉漉的，踩上去有细碎的回声。\n黑暗中你摸到了岔路——但完全看不清哪条通向哪里。";
     },
     choices: function(vars) {
@@ -630,8 +639,9 @@ Object.assign(storyData, {
   "金谊广场-1F肯德基": {
     image: "images/金谊广场/肯德基.jpg",
     text: function(vars) {
-      var desc = "你走进肯德基。餐厅里一片狼藉——托盘和纸杯散落一地，点餐屏幕早就黑了。冰柜的门开着，化冻的水淌了一地，混着打翻的番茄酱，看起来像稀释的血。\n";
-      desc += "你推开后厨的门。炸锅里的油已经凝固成一层白膜。\n";
+      var fromChicken = vars._lastScene === "金谊广场-1F肯德基-吃鸡块";
+      var desc = (fromChicken ? "你回到肯德基。" : "你走进肯德基。") + "餐厅里一片狼藉——托盘和纸杯散落一地，点餐屏幕早就黑了。冰柜的门开着，化冻的水淌了一地，混着打翻的番茄酱，看起来像稀释的血。\n";
+      if (!fromChicken) desc += "你推开后厨的门。炸锅里的油已经凝固成一层白膜。\n";
       if (vars._visit['金谊广场-1F肯德基-吃鸡块'] > 0) {
         desc += "架子上只剩几包番茄酱——鸡块已经吃完了。光吃番茄酱可撑不了多久。";
       } else {
@@ -661,7 +671,13 @@ Object.assign(storyData, {
   // --- 2F 服装层 ---
   "金谊广场-2F": {
     image: "images/金谊广场/2F.jpg",
-    text: "你走上二楼。这一层是服装区——几家品牌店的橱窗模特东倒西歪，有的被推倒在地上，身上还穿着当季的新款。\n自动扶梯旁边有一家源氏木语家具店，里面的沙发和床垫看起来还完好——在这末世里，一个能安心躺下的地方比什么都珍贵。\n更里面是一家运动品牌折扣店，货架上还挂着几排没拆标签的T恤和运动鞋。",
+    text: function(vars) {
+      var head;
+      if (vars._lastScene === "金谊广场-3F") head = "你下到二楼。";
+      else if (["金谊广场-2F-休息", "金谊广场-2F-休息-休息完", "金谊广场-2F-换装"].indexOf(vars._lastScene) >= 0) head = "你回到二楼。";
+      else head = "你走上二楼。";
+      return head + "这一层是服装区——几家品牌店的橱窗模特东倒西歪，有的被推倒在地上，身上还穿着当季的新款。\n自动扶梯旁边有一家源氏木语家具店，里面的沙发和床垫看起来还完好——在这末世里，一个能安心躺下的地方比什么都珍贵。\n更里面是一家运动品牌折扣店，货架上还挂着几排没拆标签的T恤和运动鞋。";
+    },
     choices: [
       {
         text: "在源氏木语休息一会儿",
@@ -750,7 +766,10 @@ Object.assign(storyData, {
   "金谊广场-3F": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/3F入口.jpg */,
     text: function(vars) {
-      var desc = "你从长廊跨过小河，走进了商场三楼。这里是长廊的唯一入口——身后的玻璃门通向跨河的廊桥，脚下的地板砖还贴着“金谊广场欢迎您”的褪色地贴。\n";
+      var viaBridge = vars._lastScene === "金谊广场-龙头区长廊";
+      var desc = (viaBridge
+        ? "你从长廊跨过小河，走进了商场三楼。这里是长廊的唯一入口——身后的玻璃门通向跨河的廊桥，脚下的地板砖还贴着“金谊广场欢迎您”的褪色地贴。\n"
+        : "你来到商场三楼。这一层的地板砖上还贴着“金谊广场欢迎您”的褪色地贴，靠河的一侧，一扇玻璃门通向跨河的长廊。\n");
       desc += "自动扶梯已经停了，但楼梯还能走。往上通往4F，往下通往2F。\n";
       // 预留：落单幸存者剧情
       desc += "这一层很安静。餐饮区的桌椅还整齐地摆着，像是打烊后还没来得及收拾。\n";
@@ -892,7 +911,12 @@ Object.assign(storyData, {
 
   "金谊广场-4F-影院": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/4F影院大厅.jpg */,
-    text: "你走进影院大厅。爆米花机早就凉了，玻璃柜里还剩下半锅焦糖色的爆米花——硬得像石头。\n售票台上放着一杯没喝完的可乐，吸管上印着一个模糊的口红印。\n放映厅里，银幕还在亮着——循环播放着某部电影的片尾字幕。座椅上的尸体安静地坐着，像是在等彩蛋。\n你不知道他们死前在看什么电影。但你知道，他们没有等到彩蛋。",
+    text: function(vars) {
+      if (vars._lastScene === "金谊广场-4F-影院-吃爆米花") {
+        return "你回到影院大厅。爆米花机早就凉了，玻璃柜里还剩下半锅焦糖色的爆米花——硬得像石头。\n放映厅里，银幕还在亮着——循环播放着某部电影的片尾字幕。座椅上的尸体安静地坐着，像是在等彩蛋。\n你不知道他们死前在看什么电影。但你知道，他们没有等到彩蛋。";
+      }
+      return "你走进影院大厅。爆米花机早就凉了，玻璃柜里还剩下半锅焦糖色的爆米花——硬得像石头。\n售票台上放着一杯没喝完的可乐，吸管上印着一个模糊的口红印。\n放映厅里，银幕还在亮着——循环播放着某部电影的片尾字幕。座椅上的尸体安静地坐着，像是在等彩蛋。\n你不知道他们死前在看什么电影。但你知道，他们没有等到彩蛋。";
+    },
     choices: [
       { text: "啃几颗硬爆米花垫垫肚子", nextScene: "金谊广场-4F-影院-吃爆米花", effect: updateTime(1), showCondition: "!_visit['金谊广场-4F-影院-吃爆米花']" },
       { text: "离开影院", nextScene: "金谊广场-4F", effect: updateTime(1) }
@@ -936,8 +960,11 @@ Object.assign(storyData, {
   "金谊广场-5F": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/5F KTV.jpg */,
     text: function(vars) {
+      var fromDisinfect = vars._lastScene === "金谊广场-5F-酒精消毒";
       var desc = "五楼是一家KTV。走廊两侧是包间，门上的小窗透出微弱的走廊灯光。\n";
-      desc += "你推开最近的一扇门——包间里的电视还亮着，循环播放着一首没人点的歌的MV。茶几上散落着几个空啤酒瓶和半瓶没喝完的威士忌。\n";
+      if (!fromDisinfect) {
+        desc += "你推开最近的一扇门——包间里的电视还亮着，循环播放着一首没人点的歌的MV。茶几上散落着几个空啤酒瓶和半瓶没喝完的威士忌。\n";
+      }
       if (vars.hurtByZombie) {
         desc += "\n你手臂上的伤口还在隐隐作痛——也许这些酒能用来消毒。";
       }
@@ -985,8 +1012,11 @@ Object.assign(storyData, {
   "金谊广场-B1 心谊如意街": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1心谊如意街.jpg */,
     text: function(vars) {
-      var desc = "你走下楼梯，来到B1心谊如意街。这是一条地下商业街，两侧是各种店铺——京东电器、肯德基、坂吉屋……\n";
-      if (vars._lastScene === '金谊广场-地铁站厅' || vars._lastScene === '金谊广场-地铁站厅-失败') {
+      var fromMetro = vars._lastScene === '金谊广场-地铁站厅' || vars._lastScene === '金谊广场-地铁站厅-失败';
+      var fromShop = vars._lastScene === '金谊广场-B1奥乐齐' || vars._lastScene === '金谊广场-B1童涵春堂';
+      var head = fromShop ? "你回到B1心谊如意街的走廊。" : (fromMetro ? "你顺着通道走进B1心谊如意街。" : "你走下楼梯，来到B1心谊如意街。");
+      var desc = head + "这是一条地下商业街，两侧是各种店铺——京东电器、肯德基、坂吉屋……\n";
+      if (fromMetro) {
         desc += "走廊尽头是通往三林路地铁站的通道——你刚才就是从那边过来的。\n";
       } else {
         desc += "走廊尽头是通往三林路地铁站的通道，黑洞洞的，偶尔传出丧尸的喉音。\n";
@@ -1019,7 +1049,8 @@ Object.assign(storyData, {
     image: "images/金谊广场/奥乐齐.jpg" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
     text: function(vars) {
       if(vars._visit['金谊广场-B1奥乐齐'] > 3) return "你已经搜刮过奥乐齐好几遍了，没有新的东西了。";
-      var desc = "你走进奥乐齐。超市很大——货架上的东西被翻过，但还剩下不少。罐头区几乎没被动过，饮料区的矿泉水还有好几箱，零食区的薯片和饼干撒了一地但还有整袋的。\n";
+      var back = vars._lastScene === "金谊广场-B1奥乐齐-搜刮-吃完";
+      var desc = (back ? "你把包装纸收拢起来，环顾四周。奥乐齐超市很大——" : "你走进奥乐齐。超市很大——") + "货架上的东西被翻过，但还剩下不少。罐头区几乎没被动过，饮料区的矿泉水还有好几箱，零食区的薯片和饼干撒了一地但还有整袋的。\n";
       desc += "冷柜早就停了，里面的冷冻食品已经变质发臭。但干货区、罐头区和饮料区依然有充足的补给。\n";
       if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed) {
         desc += "\n这些食物足够长廊那些幸存者撑好几天了。";
@@ -1059,7 +1090,8 @@ Object.assign(storyData, {
   "金谊广场-B1童涵春堂": {
     image: "images/金谊广场/童涵春堂.jpg",
     text: function(vars) {
-      var desc = "你推开童涵春堂的玻璃门。药房里弥漫着中药的苦香味。\n";
+      var fromTake = vars._lastScene === "金谊广场-B1童涵春堂";
+      var desc = (fromTake ? "你把药瓶揣进口袋，转身环顾药房。" : "你推开童涵春堂的玻璃门。") + "药房里弥漫着中药的苦香味。\n";
       desc += "中药柜的抽屉被拉开了一大半，草药撒了一地。西药区的货架倒是整齐——大概没人觉得中药铺里有西药。\n";
       if (!vars.hasMercuryPill) {
         desc += "\n你在柜台后面的一个小抽屉里发现了一个白色塑料瓶。没有标签，瓶身上用记号笔写着一个模糊的化学符号——Hg。\n里面装着几十粒淡黄色的药丸，没有任何说明。";

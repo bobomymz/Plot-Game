@@ -321,7 +321,7 @@ onEnter: updateTime(15, { add: { strength: -1 } })   // 推进时间 + 扣1体�
 
 - 游戏时间：`dd`（天）、`hh`（小时）、`mm`（分钟），24小时制
 - 派生变量：`gameMinutes`（总分钟数）、`isNight`（`hh >= 20 || hh < 6`）
-- 响应式规则：每小时自动 -1 体力（饥饿系统）
+- 响应式规则：按间隔自动 -1 体力（饥饿系统：健康约2h扣1，受伤约1h扣1，感冒80min，感冒+受伤30min——见 `minutesBetweenReduceStrength`）
 
 ### 全局触发器（`_globalTriggers`）
 
@@ -593,7 +593,7 @@ Object.assign(storyData, {
 | 变量 | 范围/类型 | 说明 |
 |------|----------|------|
 | **基础数值** | | |
-| `strength` | 0–10 | 体力，初始 7。Reactive: 每小时 -1（饥饿）；< 3 → `isWeak` |
+| `strength` | 0–10 | 体力，初始 7。Reactive: 按间隔 -1（饥饿：健康2h/受伤1h）；< 3 → `isWeak` |
 | `dd` / `hh` / `mm` | int | Day/Hour/Minute，游戏时间，初始 Day1 8:00 |
 | `isWeak` | bool | `strength < 3` 自动置 true（reactive） |
 | `hurtByZombie` | bool | 被丧尸抓伤，加快饥饿掉体力节奏 |
