@@ -601,7 +601,7 @@ Object.assign(storyData, {
 | `weather` | `"晴"/"阴"/"雨"` | 雨天 `updateTime` 自动 ×1.3，影响场景文本 |
 | `windy` | bool | 是否有风 |
 | **尸潮 & 疲劳** | | |
-| `chasedByZombies` | 0–5 | 追击等级，5 秒杀。晴夜归零。高值影响 QTE 时间、战斗风险 |
+| `chasedByZombies` | 0–5 | 追击等级，5 秒杀。晴天进入户外场景归零（applyWeatherDrain，不分昼夜）。高值影响 QTE 时间、战斗风险 |
 | `_travelMinutes` | 0–… | 连续移动累积分钟（>6min 的 `updateTime` 累加）；20/36/48/56/60 五档各 -1 体力（reactive） |
 | **背包 & 物品** | | |
 | `itemCount` / `bagVolume` | int | 当前物品数 / 背包容量（初始 3） |

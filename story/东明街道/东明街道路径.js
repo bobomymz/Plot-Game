@@ -182,28 +182,28 @@ Object.assign(storyData, {
       onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
-      return "你来到了一个十字路口，你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\n\
+      return "你来到了一个十字路口。东面远处是杨高南路立交桥，西边沿三林路有一排商铺，南边通向安盛街，北面的环林东路上有一个公交车站。\n你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n"
  + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
-        text: "往东走",
+        text: "去杨高南路立交桥",
         nextScene: "杨高南路立交桥",
         effect: updateTime(20)
       },
       {
-        text: "往西走",
+        text: "去三林路商铺",
         nextScene: "三林路",
         effect: updateTime(10)
       },
       {
-        text: "往南走",
+        text: "去安盛街",
         nextScene: "安盛街东侧",
         effect: updateTime(7)
       },
       {
-        text: "往北走",
+        text: "去公交车站",
         nextScene: "公交车站（环林东路）",
         effect: updateTime(5)
       },
@@ -249,7 +249,9 @@ Object.assign(storyData, {
         nextScene: "三林路-躲藏"
       },
       {
-        text: "往前走",
+        text: function(vars) {
+          return vars._lastScene == "三林路-环林东路 十字路口" ? "去东明路路口" : "去环林东路路口";
+        },
         nextScene: function(vars) {
           if(vars._lastScene == "三林路-环林东路 十字路口") return "三林路-东明路 十字路口";
           return "三林路-环林东路 十字路口";
@@ -257,7 +259,9 @@ Object.assign(storyData, {
         effect: updateTime(10)
       },
       {
-        text: "往后走",
+        text: function(vars) {
+          return vars._lastScene == "三林路-环林东路 十字路口" ? "去环林东路路口" : "去东明路路口";
+        },
         nextScene: function(vars) {
           if(vars._lastScene == "三林路-环林东路 十字路口") return "三林路-环林东路 十字路口";
           return "三林路-东明路 十字路口";
@@ -355,22 +359,22 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "往西走",
+        text: "去金谊广场",
         nextScene: "前往金谊广场-1",
         effect: updateTime(30)
       },
       {
-        text: "往南走",
+        text: "去安盛街",
         nextScene: "安盛街西侧",
         effect: updateTime(10)
       },
       {
-        text: "往北走",
+        text: "去东明路",
         nextScene: "东明路-三林路",
         effect: updateTime(10)
       },
       {
-        text: "往东走",
+        text: "去三林路商铺",
         nextScene: "三林路",
         effect: updateTime(10)
       },
