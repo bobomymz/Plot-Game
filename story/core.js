@@ -99,6 +99,10 @@ const storyData = {
     _jinyiHasFoodForSurvivors: false, // 是否从B1奥乐齐带了食物给长廊幸存者
     _jinyiB2GasWarned: false,   // B2毒气是否已预警过
     _jinyiAlcoholUsed: false,   // KTV酒精是否已用于消毒
+    // 安居苑7号楼随机入户
+    _flat201: 0, _flat202: 0, _flat301: 0, _flat302: 0, _flat501: 0, _flat503: 0,
+    // 入户签：0未探 1空屋 2食物未搜 3食物已搜 4丧尸未清 5丧尸已清 6已搜空（首次进门掷签落变量，不重掷）
+    _flat401: 0,               // 7号楼4楼封堵门：0未破 1已破未吃 2已吃
 
     // --- 物品状态 ---
     // 常规物品
@@ -140,6 +144,10 @@ const storyData = {
     _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启
     fangTradeCount: 0,         // 方姐交易次数（上限3，满3次后她尸变，再进冷库深处即死）
     hasFrozenMeat: false,      // 是否有冻肉（菜市场方姐换的，体力回满，占1格）
+    hasInstantNoodle: false,   // 是否有泡面（全家货架，占1格；整理整理干嚼+3）
+    familyMartNoodleLeft: 3,   // 全家货架泡面剩余（包），身上限带1包，吃完可回拿
+    hasCannedFood: false,      // 是否有罐头（联华超市仓库，占1格；整理整理吃+4）
+    lianhuaCannedLeft: 2,      // 联华仓库罐头剩余（罐），身上限带1罐，吃完可回拿
     // 钥匙
     hasEbikeKey: false,        // 是否有电瓶车钥匙（民防设施告示纸后面）
     hasDoorKey1: false,        // 是否有门钥匙1（全家便利店员工通道）
@@ -676,6 +684,28 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
+        showCondition: "hasInstantNoodle",
+        text: "吃掉泡面（体力+3）",
+        nextScene: "整理整理-吃泡面"
+      },
+      {
+        showCondition: "hasInstantNoodle",
+        text: "丢下泡面",
+        effect: updateTime(1, { set : { hasInstantNoodle: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasCannedFood",
+        text: "吃掉罐头（体力+4）",
+        nextScene: "整理整理-吃罐头"
+      },
+      {
+        showCondition: "hasCannedFood",
+        text: "丢下罐头",
+        effect: updateTime(1, { set : { hasCannedFood: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
         showCondition: "hasMap",
         text: "丢下地图",
         effect: updateTime(1, { set : { hasMap: false }, add: { itemCount: -1 } }),
@@ -701,9 +731,19 @@ const storyData = {
       },
       {
         showCondition: "hasSnackCookie",
+        text: "吃掉味千小饼干（体力+1）",
+        nextScene: "整理整理-吃小饼干"
+      },
+      {
+        showCondition: "hasSnackCookie",
         text: "丢下味千小饼干",
         effect: updateTime(1, { set : { hasSnackCookie: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasHamSausage",
+        text: "吃掉火腿肠（体力+2）",
+        nextScene: "整理整理-吃火腿肠"
       },
       {
         showCondition: "hasHamSausage",
@@ -716,6 +756,11 @@ const storyData = {
         text: "丢下脆脆炒米",
         effect: updateTime(1, { set : { hasCatSnack: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasCracker",
+        text: "吃掉夹心饼干（体力+1）",
+        nextScene: "整理整理-吃夹心饼干"
       },
       {
         showCondition: "hasCracker",
@@ -977,6 +1022,51 @@ const storyData = {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 2, itemCount: -1 }, set: { hasCanteenFood: false } }),
     text: "你撬开一个罐头，就着干粮慢慢吃了一顿。罐头咸得齁人，干粮噎嗓子，但胃里有了实在的东西，身上也暖了些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃小饼干": {
+    image: "images/整理整理.webp",
+    onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasSnackCookie: false } }),
+    text: "你拆开味千拉面前台顺手拿的小饼干，一口一个。黄油的香气在嘴里化开，甜得有点腻——但这种时候，甜就是好东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃夹心饼干": {
+    image: "images/整理整理.webp",
+    onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasCracker: false } }),
+    text: "你掰开夹心饼干，先把中间的奶油夹心舔干净，再把饼干嚼碎咽下去。热量不高，但好歹压住了胃里那股空落落的感觉。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃火腿肠": {
+    image: "images/整理整理.webp",
+    onEnter: updateTime(1, { add: { strength: 2, itemCount: -1 }, set: { hasHamSausage: false } }),
+    text: "你撕开火腿肠的肠衣，两三口就解决了一根。咸香的肉味在嘴里散开——淀粉多肉少，但嚼着就是比饼干踏实。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃泡面": {
+    image: "images/整理整理.webp",
+    onEnter: updateTime(2, { add: { strength: 3, itemCount: -1 }, set: { hasInstantNoodle: false } }),
+    text: "没有热水，你把面饼掰成小块干嚼，调料包撕开个口，倒一点在手心里舔着就面吃。又咸又干，呛得直咳嗽，但碳水下肚的踏实感骗不了人。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃罐头": {
+    image: "images/整理整理.webp",
+    onEnter: updateTime(2, { add: { strength: 4, itemCount: -1 }, set: { hasCannedFood: false } }),
+    text: "你拉开罐头拉环，顾不上找筷子，直接用手捞着吃。油水混着肉块滑进胃里，连汤都喝得一滴不剩——这是这几天来最像样的一顿。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+4，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

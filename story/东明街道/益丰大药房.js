@@ -520,7 +520,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-被咬到了": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: { add: { strength: -1, mercuryLoad: 10 }, set: { hurtByZombie: true } },
     text: "你慢了半拍，她的牙齿咬进了你的小臂。你痛呼一声甩开她，鲜血顺着手臂往下淌。她嘴角沾着血，又退回了阴影里。\n\
 <span style='color: #ff4444; font-style: italic;'>【系统提示】你被咬伤了！体力 -1，当前体力：{strength}。</span>",
@@ -665,7 +665,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-办公室闲聊": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/办公室闲聊.png */,
+    image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/办公室闲聊.webp */,
     text: "赵广成给你递了一瓶没开封的矿泉水——从他办公桌底下箱子里拿出来的，外包装还贴着超市的打折标签。\n\
 他特别强调了一句：“这是我上星期买的，封好的，不是自来水灌的。自来水不干净，我跟利昂说过好几次了，最近水不对，他不听，老说烧开了就行。”\n\
 这好像打开了他的话匣子。“我卖药二十年了，这个事我跟你说，不对劲。二十七号开始就有人来买退烧药，一个两个就算了，来的都是那种\
@@ -739,7 +739,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-匀口饭吃": {
-    image: "images/小区周边/益丰大药房/办公室闲聊.png",
+    image: "images/小区周边/益丰大药房/办公室闲聊.webp",
     onEnter: function(vars) {
       vars._zhaoGuangchengFoodGiven++;
       restRecover(vars, 1);
@@ -764,7 +764,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-食物见底": {
-    image: "images/小区周边/益丰大药房/办公室闲聊.png",
+    image: "images/小区周边/益丰大药房/办公室闲聊.webp",
     text: "你又开口讨吃的。赵广成脸上的笑淡了下去，为难地搓了搓手：“小兄弟，不是我不给你……我这抽屉里也见底了，得省着点撑到日子头。这样吧，水、沙发、我都能给你看着。”",
     choices: [
       {
@@ -794,7 +794,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-丧尸偷袭，仓皇逃窜": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: {set: {hurtByZombie: true}, add: {mercuryLoad: 10}},
     text: "你穿过走廊，从库房走出。和阳光一起洒入药房的，还有无数丧尸的嘶吼。你仓皇逃出药房，还被抓了好几下。",
     choices: [

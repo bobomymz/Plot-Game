@@ -28,8 +28,23 @@ Object.assign(storyData, {
   },
 
   "图书馆-侧窗": {
-    image: "images/placeholder.png" /* TODO: images/library/librarySide.png */,
-    text: "你绕到图书馆侧面，一扇通风窗半开着。你垫脚往里看——里面是阅览室，几张长桌整齐排列着，角落里似乎坐着一个人。\n它没有动。",
+    image: function(vars) {
+      if (vars.libraryCleared) {
+        var f = timeImage({
+          morning: "images/图书馆/侧窗.webp",
+          night: "images/图书馆/侧窗-无丧尸-night.webp"
+        });
+      }
+      return timeImage({
+        morning: "images/图书馆/侧窗.webp",
+        night: "images/图书馆/侧窗-night.webp"
+      });
+    },
+    onEnter: {set: {showRain: true}},
+    text: function(vars) {
+      if (vars.libraryCleared) return "你绕到图书馆侧面，一扇通风窗半开着。你垫脚往里看——里面是阅览室，几张长桌整齐排列着。";
+      return "你绕到图书馆侧面，一扇通风窗半开着。你垫脚往里看——里面是阅览室，几张长桌整齐排列着，角落里似乎坐着一个人。\n它没有动。";
+    },
     choices: [
       {
         text: "翻窗进去",
@@ -45,10 +60,23 @@ Object.assign(storyData, {
 
   // ==================== 大厅 ====================
   "图书馆-大厅": {
-    image: "images/placeholder.png" /* TODO: images/library/libraryHall.png */,
+    image: function(vars) {
+      if (vars.libraryCleared) {
+        var f = timeImage({
+          morning: "images/图书馆/大厅-无丧尸.webp",
+          night: "images/图书馆/大厅-无丧尸-night.webp"
+        });
+      }
+      return timeImage({
+        morning: "images/图书馆/大厅.webp",
+        night: "images/图书馆/大厅-night.webp"
+      });
+    },
     text: function(vars) {
-      if (vars.libraryCleared) return "图书馆大厅空荡荡的。前台和还书机还在原地，但那只穿志愿者马甲的丧尸已经不见了——地上只剩一滩暗色的痕迹。\n阅览室在左侧，藏书区在右侧。";
-      return "图书馆大厅。正前方是前台和还书机，左手边是阅览室，右手边是藏书区的入口。大厅中央站着一只丧尸——穿着图书馆志愿者的马甲，正漫无目的地原地踱步。\n它还没注意到你。";
+      if (vars.libraryCleared) return "图书馆大厅空荡荡的。前台和还书机还在原地，但那只穿志愿者马甲的丧尸已经不见了——地上只剩一滩暗色的痕迹。\n\
+阅览室在左侧，藏书区在右侧。";
+      return "图书馆大厅。正前方是前台和还书机，左手边是阅览室，右手边是藏书区的入口。大厅中央站着一只丧尸——穿着图书馆志愿者的马甲，正漫无目的地原地踱步。\n\
+它还没注意到你。";
     },
     choices: [
         { text: "蹲下身子，从前台下方绕过去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-潜行", effect: updateTime(2) },
@@ -219,7 +247,7 @@ Object.assign(storyData, {
   },
 
   "图书馆-阅览室-徒手": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: { add: { strength: -2 } },
     text: "你只能用拳头。你躲开它挥舞的书，一拳打在它脸上——但自己也被它挠了一下，手臂上火辣辣地疼。\n你在阅览椅上磕绊着后退，抓起一把椅子挡在身前，总算把它顶开了一段距离。趁这个机会，你转身冲向了藏书区的方向。",
     choices: [
@@ -346,7 +374,7 @@ Object.assign(storyData, {
   },
 
   "图书馆-藏书区-扭打": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
     text: "你没能撞开它——你的体力不够。工装丧尸抓住了你的手臂，你和它扭打在一起。你咬紧牙关，用膝盖顶它的肚子，用手肘砸它的脸。\n终于，你挣脱了它，把它推进了旁边书架之间的缝隙里。你顾不上身上的抓伤，拉开通往办公室的门冲了进去，反手把门关上。",
     choices: [
@@ -455,7 +483,7 @@ Object.assign(storyData, {
   },
 
   "图书馆-办公室-受伤": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: { set: {hurtByZombie: true}, add: {mercuryLoad: 10} },
     text: "你看了看被压住的丧尸，又看了看自己手上——没有能干净利落解决它的东西。你犹豫了一下。\n\
 就是这一下犹豫——它猛地抽出了一只手，抓伤了你的脚踝。\n你踉跄了一下，但站稳了脚步，一脚踢开了它的手。脚上传来的刺痛告诉你，没法安心在这里待下去了。",

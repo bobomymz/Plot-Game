@@ -295,7 +295,7 @@ Object.assign(storyData, {
   },
 
   "家门外": {
-    image: "images/home/outsideHome.png",
+    image: "images/home/outsideHome.webp",
     text: "你打开门，面前是空荡荡的走廊。聒噪的蝉鸣从窗户灌入你的耳蜗。\n\
 ————————\n\
 你走到楼梯间准备下楼。",
@@ -1654,7 +1654,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "樱桃苑-4楼-失败": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: {hurtByZombie: true} },
     text: "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。\n\
 剧痛让你眼前一黑。你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。",

@@ -40,6 +40,11 @@ Object.assign(storyData, {
 前面的冷藏区放着一些牛奶、鲜肉盒、饮料，以及你常买来作为早餐的饭团。\n\
 中间的货架上排满了面包，以及薯片、糖果等各种零食。\n\
 柜台没有人，只有显示屏循环播放着会员套餐的广告。";
+      if (vars.familyMartNoodleLeft > 0) {
+        base += "\n靠收银台的促销货架上还码着" + vars.familyMartNoodleLeft + "包泡面，包装上落了一层薄灰。";
+      } else {
+        base += "\n靠收银台的促销货架已经空了——泡面一包不剩。";
+      }
       if (vars._visit["全家便利店（环林东路）"] && vars.hasBiscuit) {
         base += "\n<span style='color: #aaa;'>上次那只丧尸已经不在了。柜台后面的员工通道半开着，里面黑漆漆的，也许有什么有用的东西。</span>";
       }
@@ -81,9 +86,41 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
+        showCondition: "familyMartNoodleLeft > 0 && !hasInstantNoodle",
+        text: "拿一包泡面",
+        condition: "itemCount < bagVolume",
+        nextScene: "全家-拿泡面",
+        effect: { set: { positionAfterOperation: "全家便利店内部" } },
+        elseScene: "整理整理"
+      },
+      {
+        showCondition: "hasInstantNoodle && familyMartNoodleLeft > 0",
+        text: "货架上还有泡面，但你包里已经有一包了",
+        nextScene: "全家便利店内部"
+      },
+      {
         text: "离开",
         nextScene: "小区东门-整装待发"
       }
+    ]
+  },
+
+  "全家-拿泡面": {
+    image: "images/小区周边/全家和公交站/全家便利店内部.webp",
+    onEnter: function(vars) {
+      vars.hasInstantNoodle = true;
+      vars.itemCount += 1;
+      vars.familyMartNoodleLeft = Math.max(0, vars.familyMartNoodleLeft - 1);
+      return updateTime(1)(vars);
+    },
+    text: function(vars) {
+      var desc = "你从促销货架上拿了一包泡面，拍掉包装上的灰，塞进背包。没有热水也能掰碎了干嚼——在这种时候，它比货架上的薯片实在多了。";
+      if (vars.familyMartNoodleLeft > 0) desc += "\n货架上还剩" + vars.familyMartNoodleLeft + "包。";
+      else desc += "\n这是货架上最后一包了。";
+      return desc;
+    },
+    choices: [
+      { text: "继续", nextScene: "全家便利店内部" }
     ]
   },
 
@@ -154,7 +191,7 @@ Object.assign(storyData, {
   },
 
   "被丧尸咬": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: updateTime(1, { set : { hurtByZombie: true, FamilymartHasZombie: false }, add: { mercuryLoad: 10 } }),
     text: "你狠狠揍了丧尸几拳，它掐住你的脖子，和你纠缠在地上。你努力控住它的嘴，砰！砰！砰！终于，它倒下了，但你身上多了不少抓痕和咬痕，不知道有没有受伤。",
     choices: [

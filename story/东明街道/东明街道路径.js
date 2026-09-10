@@ -830,6 +830,8 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
       var desc = "你来到了超市仓库。仓库里堆着几箱饮料和一些滞销的零食。角落里有一扇活板门。";
       if (vars.supermarketWaterLeft > 0) desc += "\n货架深处靠墙放着一箱没开封的瓶装水——数了数，还有" + vars.supermarketWaterLeft + "瓶。";
       else desc += "\n货架深处那个装水的纸箱已经空了——里面的瓶装水都被你拿走了。";
+      if (vars.lianhuaCannedLeft > 0) desc += "\n饮料箱旁边的纸箱里还摞着几罐罐头，罐身印的红烧牛肉已经褪了色——数了数，" + vars.lianhuaCannedLeft + "罐。";
+      else desc += "\n饮料箱旁边那个装罐头的纸箱也空了。";
       if (vars._supermarketCompromised) desc += "活板门的铁栓已经被撬开了，门板歪在一边——下面的地下室已经暴露了，不再安全。";
       else desc += "活板门上面焊着一根铁栓——通往地下室。这是个干燥隐蔽的空间，万一晚上没地方去，这里也许能凑合一晚。";
       return desc;
@@ -841,6 +843,20 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
           text: "从箱子里拿一瓶水",
           nextScene: "联华超市-仓库-拿水",
           effect: updateTime(2)
+        });
+      }
+      if (vars.lianhuaCannedLeft > 0 && !vars.hasCannedFood) {
+        cs.push({
+          text: "拿一罐罐头",
+          condition: "itemCount < bagVolume",
+          nextScene: "联华超市-仓库-拿罐头",
+          effect: { set: { positionAfterOperation: "联华超市-仓库" } },
+          elseScene: "整理整理"
+        });
+      } else if (vars.hasCannedFood && vars.lianhuaCannedLeft > 0) {
+        cs.push({
+          text: "纸箱里还有罐头，但你包里已经有一罐了",
+          nextScene: "联华超市-仓库"
         });
       }
       cs.push({
@@ -861,6 +877,25 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
       }
       return cs;
     }
+  },
+
+  "联华超市-仓库-拿罐头": {
+    image: "images/小区周边/联华超市/仓库.webp",
+    onEnter: function(vars) {
+      vars.hasCannedFood = true;
+      vars.itemCount += 1;
+      vars.lianhuaCannedLeft = Math.max(0, vars.lianhuaCannedLeft - 1);
+      return updateTime(1)(vars);
+    },
+    text: function(vars) {
+      var desc = "你从纸箱里拿出一罐罐头，掂了掂——沉甸甸的，拉环完好。红烧牛肉味，保质期到后年。你把它塞进背包最里侧。";
+      if (vars.lianhuaCannedLeft > 0) desc += "\n纸箱里还剩" + vars.lianhuaCannedLeft + "罐。";
+      else desc += "\n这是纸箱里最后一罐了。";
+      return desc;
+    },
+    choices: [
+      { text: "继续", nextScene: "联华超市-仓库" }
+    ]
   },
 
   "联华超市-仓库-拿水": {

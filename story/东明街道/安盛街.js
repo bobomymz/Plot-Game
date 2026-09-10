@@ -531,7 +531,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-后巷 ====================
   "安盛街-后巷": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: {
       set: {hurtByZombie: true, showRain: true}, add: {mercuryLoad: 10}
     },

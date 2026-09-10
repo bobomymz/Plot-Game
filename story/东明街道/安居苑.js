@@ -1,6 +1,123 @@
 // ========== 三林安居苑剧情 ==========
 // 安盛街部分已拆分到安盛街.js
 
+// ========== 7号楼随机入户工厂 ==========
+// 签值：0未探 1空屋 2食物未搜 3食物已搜 4丧尸未清 5丧尸已清 6已搜空
+// 首次进门掷签落变量（空35% / 食物40% / 丧尸25%），之后反复进出不重掷、文案按签值承接。
+// opts.breakIn：门原本是锁死的（501/503），额外生成"砸门"节点供楼层场景引用。
+function makeFlatDoor(door, floorScene, flavor, opts) {
+  var key = "_flat" + door;
+  var hub = "三林安居苑-7号楼-" + door;
+  var scenes = {};
+
+  // —— 门户：掷签 + 按签值分流 ——
+  scenes[hub] = {
+    image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-入户.webp */
+    onEnter: function(vars) {
+      if (vars[key] === 0) {
+        var r = Math.random();
+        vars[key] = r < 0.35 ? 1 : (r < 0.75 ? 2 : 4);
+      }
+      return updateTime(1)(vars);
+    },
+    text: function(vars) {
+      var state = vars[key];
+      var desc = flavor.enter;
+      if (state === 1) return desc + "\n" + flavor.empty;
+      if (state === 2) return desc + "\n" + flavor.food;
+      if (state === 3) return desc + "\n厨房已经被你搜空了，连一点碎屑都没剩下。";
+      if (state === 4) return desc + "\n" + flavor.zombie;
+      desc += "\n那只丧尸直挺挺地倒在厨房门口，后脑的伤口已经发黑。";
+      if (state === 5) desc += "\n厨房还没搜——也许里面还有能吃的。";
+      else desc += "\n厨房已经被你搜空了。";
+      return desc;
+    },
+    choices: function(vars) {
+      var state = vars[key];
+      var cs = [];
+      if (state === 2) {
+        cs.push({ text: "去厨房找点吃的", nextScene: hub + "-厨房" });
+      } else if (state === 4) {
+        cs.push({
+          text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "迎战" : "握紧拳头迎战"; },
+          condition: "hasMeleeWeapon",
+          nextScene: hub + "-战斗",
+          elseScene: "结局-安居苑-入户被扑倒"
+        });
+        cs.push({ text: "不惊动它，轻轻带上门退出去", nextScene: floorScene });
+        return cs;
+      } else if (state === 5) {
+        cs.push({ text: "搜一下厨房", nextScene: hub + "-厨房" });
+      }
+      cs.push({ text: "离开", nextScene: floorScene });
+      return cs;
+    }
+  };
+
+  // —— 厨房：当场吃。食物门按天数腐败（+4/+3/+1）；丧尸门清剿后是密封存粮，固定+3 ——
+  scenes[hub + "-厨房"] = {
+    image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-厨房.webp */
+    onEnter: function(vars) {
+      var gain;
+      if (vars[key] >= 5) { gain = 3; vars[key] = 6; }
+      else { gain = vars.dd <= 1 ? 4 : (vars.dd === 2 ? 3 : 1); vars[key] = 3; }
+      return updateTime(3, { add: { strength: gain } })(vars);
+    },
+    text: function(vars) {
+      var tip = function(g) {
+        return "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+" + g + "，当前体力：{strength}。</span>";
+      };
+      if (vars[key] === 6) {
+        return "你绕过丧尸的尸体走进厨房，拉开橱柜——几包密封的挂面和两罐午餐肉，保质期还早得很。你撕开一包挂面干嚼，又开了一罐午餐肉，连汤都喝干净了。" + tip(3);
+      }
+      if (vars.dd <= 1) {
+        return "你打开冰箱——断电还不久，冷藏室里尚存一丝凉气。你把保鲜盒封好的剩菜和熟食划拉出来，就着半杯凉水吃了个精光，味道居然还不错。" + tip(4);
+      }
+      if (vars.dd === 2) {
+        return "冰箱里的东西已经开始变味了。你挑了几样闻着还算正常的，闭上眼睛咽下去，不敢细嚼，也不敢细想。" + tip(3);
+      }
+      return "冰箱里的东西彻底不能碰了——一开门那股酸臭差点把你熏个跟头。你捏着鼻子，只敢从橱柜里翻出几样密封的酱菜和饼干，勉强垫了垫肚子。" + tip(1);
+    },
+    choices: [
+      { text: "离开这户人家", nextScene: floorScene }
+    ]
+  };
+
+  // —— 战斗：武器点名快速击杀，清剿后门户状态置 5 ——
+  scenes[hub + "-战斗"] = {
+    image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-战斗.webp */
+    onEnter: function(vars) {
+      vars[key] = 5;
+      return updateTime(3)(vars);
+    },
+    text: function(vars) {
+      var w = meleeWeaponName(vars);
+      return "它扑过来的瞬间，你侧身让开，抡起" + w + "狠狠砸在它的后脑上。它晃了晃还没倒，你抢上一步又补了两下，直到它彻底瘫在地上不再动弹。\n\
+你拄着" + w + "喘了口气，侧耳听了听——楼道里没有别的动静。这间屋子，现在归你了。";
+    },
+    choices: [
+      { text: "继续", nextScene: hub }
+    ]
+  };
+
+  // —— 砸门（仅 opts.breakIn：501/503 这类锁死的门）——
+  if (opts && opts.breakIn) {
+    scenes[hub + "-砸门"] = {
+      image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-砸门.webp */
+      onEnter: updateTime(3, { add: { chasedByZombies: 1 } }),
+      text: function(vars) {
+        return "你抡起" + heavyWeaponName(vars) + "，对准门锁的位置狠狠砸下去。第一下门板凹了进去，第二下木屑崩飞，第三下，锁舌连带着半块门框弹了出去，门板撞在墙上发出一声巨响。\n\
+你停住动作侧耳听了听——楼下有拖沓的脚步声被动静吸引了。得抓紧时间。";
+      },
+      choices: [
+        { text: "进去", nextScene: hub }
+      ]
+    };
+  }
+
+  return scenes;
+}
+
 Object.assign(storyData, {
 
   // ==================== 三林安居苑（老小区） ====================
@@ -412,7 +529,7 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-藤蔓丧尸-被咬": {
-    image: "images/hurtByzombie.png" /* TODO: images/安居苑/vineZombieBite.png */,
+    image: "images/hurtByzombie.webp" /* TODO: images/安居苑/vineZombieBite.png */,
     text: "你刚把手伸过去，丧尸猛地扭头，一口咬住了你的手腕。\n剧烈的疼痛让你惨叫出声。藤蔓在挣扎中崩断了几根——丧尸挣脱了束缚，而你捂着手腕跌坐在地上，鲜血从指缝间涌出。\n\
 <span style='color: #ff4444;'>你被咬了。</span>",
     onEnter: updateTime(1, { set: { hurtByZombie: true, showRain: true }, add: { strength: -3, mercuryLoad: 10 } }),
@@ -1057,6 +1174,8 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     text: "你扶着锈迹斑斑的扶手走到二楼。楼梯拐角靠着一辆儿童自行车，车筐里塞着几个空的饮料瓶。窗台上那盆绿萝已经有些蔫了，叶片发卷，无精打采地垂着——看来这户人家走得匆忙，没人顾得上浇水。\n\
 其中一户的门上贴着一张褪色的老照片——一家三口站在迪士尼城堡前，笑得没心没肺。",
     choices: [
+      { text: "推开201的门", nextScene: "三林安居苑-7号楼-201" },
+      { text: "推开202的门", nextScene: "三林安居苑-7号楼-202" },
       { text: "继续上楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) },
       { text: "下楼", nextScene: "三林安居苑-7号楼-1楼", effect: updateTime(1) }
     ]
@@ -1068,6 +1187,8 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     text: "你走到三楼。一股馊掉的食物味从某扇门的门缝里飘出来，混杂着淡淡的腐臭——像是谁家的厨房在慌乱中来不及收拾，两天过去，已经彻底馊了。\n\
 另一扇门虚掩着，门缝里一片漆黑。你听不见里面有声音，但也不想凑近去确认。",
     choices: [
+      { text: "推开301的门", nextScene: "三林安居苑-7号楼-301" },
+      { text: "推开302的门", nextScene: "三林安居苑-7号楼-302" },
       { text: "继续上楼", nextScene: "三林安居苑-7号楼-4楼", effect: updateTime(1) },
       { text: "下楼", nextScene: "三林安居苑-7号楼-2楼", effect: updateTime(1) }
     ]
@@ -1076,9 +1197,29 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   "三林安居苑-7号楼-4楼": {
     image: "images/placeholder.png",
     onEnter: updateTime(1),
-    text: "你走到四楼。走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，而且躲得很急，像是爆发当天就把自己锁了进去。\n\
-你在门口站了一会儿。里面没有任何动静。",
+    text: function(vars) {
+      var desc = "你走到四楼。走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，而且躲得很急，像是爆发当天就把自己锁了进去。\n";
+      if (vars._flat401 > 0) {
+        desc += "你上次搬开的桌椅还歪在墙边，401的门虚掩着——里面已经没有任何秘密了。";
+      } else {
+        desc += "你在门口站了一会儿。里面没有任何动静。";
+        if (vars.hasAxe || vars.hasIronPipe || vars.hasCane || vars.hasMopHandle) {
+          desc += "\n你掂了掂手里的" + heavyWeaponName(vars) + "——这些桌椅铁丝，未必挡得住你。";
+        }
+      }
+      return desc;
+    },
     choices: [
+      {
+        showCondition: "(hasAxe || hasIronPipe || hasCane || hasMopHandle) && _flat401 == 0",
+        text: function(vars) { return "用" + heavyWeaponName(vars) + "撬开那扇堵死的门"; },
+        nextScene: "三林安居苑-7号楼-401-破门"
+      },
+      {
+        showCondition: "_flat401 > 0",
+        text: "走进401",
+        nextScene: "三林安居苑-7号楼-401"
+      },
       { text: "继续上楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) },
       { text: "下楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) }
     ]
@@ -1163,8 +1304,18 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         effect: updateTime(1),
         elseScene: "三林安居苑-5楼-门锁了"
       },
-      { text: "推开501的门", nextScene: "三林安居苑-5楼-门锁了", effect: updateTime(1) },
-      { text: "推开503的门", nextScene: "三林安居苑-5楼-门锁了", effect: updateTime(1) },
+      { text: "推开501的门", condition: "_flat501 > 0", nextScene: "三林安居苑-7号楼-501", elseScene: "三林安居苑-5楼-门锁了", effect: updateTime(1) },
+      {
+        showCondition: "(hasAxe || hasIronPipe || hasCane || hasMopHandle) && _flat501 == 0",
+        text: function(vars) { return "用" + heavyWeaponName(vars) + "砸开501的门"; },
+        nextScene: "三林安居苑-7号楼-501-砸门"
+      },
+      { text: "推开503的门", condition: "_flat503 > 0", nextScene: "三林安居苑-7号楼-503", elseScene: "三林安居苑-5楼-门锁了", effect: updateTime(1) },
+      {
+        showCondition: "(hasAxe || hasIronPipe || hasCane || hasMopHandle) && _flat503 == 0",
+        text: function(vars) { return "用" + heavyWeaponName(vars) + "砸开503的门"; },
+        nextScene: "三林安居苑-7号楼-503-砸门"
+      },
       {
         text: "继续上楼",
         nextScene: "三林安居苑-7号楼-6楼",
@@ -1479,3 +1630,109 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     "你钻进花坛的灌木丛深处。但枝条沙沙作响——一只变异猫正在灌木丛里穿梭。它没发现你，但它的动静引得一只丧尸朝这边走来。你只能从另一侧钻出来，换了个地方。",
     "你钻进花坛的灌木丛深处。枝条和叶片把你完全遮住了。透过叶缝你能看到丧尸在小区里游荡，但它们没有注意到这片浓密的绿植。等小区重新安静下来，你才从灌木中钻出。"),
 });
+
+// ==================== 7号楼随机入户（201/202/301/302/501/503） ====================
+// 工厂定义见文件头部。每扇门首次进入时掷签（空35% / 食物40% / 丧尸25%）。
+Object.assign(storyData,
+  makeFlatDoor("201", "三林安居苑-7号楼-2楼", {
+    enter: "你推开201的门——锁舌早就坏了，一推就开。玄关的软木板上钉着一张褪色的全家福，还有两张迪士尼的门票存根。",
+    empty: "屋里被翻得乱七八糟，抽屉全被拉出来倒扣在地上——有人比你先到过这里，而且走得很急。你里里外外看了一圈，连一粒米都没剩下。",
+    food: "客厅的茶几上还摆着没收的碗筷。你循着一丝残存的气味走进厨房——冰箱门虚掩着，里面的东西还没来得及全部坏掉。",
+    zombie: "你刚迈进客厅，卧室方向突然传来拖沓的脚步声。一只穿着居家服的丧尸从阴影里晃出来，领口干涸的血迹一直延伸到下巴。它看见你，喉咙里挤出嗬嗬的声音，径直扑了过来。"
+  }),
+  makeFlatDoor("202", "三林安居苑-7号楼-2楼", {
+    enter: "202的防盗门虚掩着。你轻轻推开——门口的鞋架上，一双儿童运动鞋还摆得整整齐齐。",
+    empty: "这户人家走得显然很从容：衣柜空了，证件抽屉空了，连厨房的米桶都见了底。他们把能带的都带走了，没给你剩下什么。",
+    food: "餐桌上扣着几个防蝇罩，底下的菜早就没人动过。厨房里飘出一股复杂的酸味——但密封的柜子里，也许还有能吃的。",
+    zombie: "客厅里的小推车翻倒在地，积木撒了一路，一直延伸到卧室门口。你顺着积木看过去——一只丧尸正背对你跪在卧室门口。听到动静，它缓缓转过头，嘴角还挂着暗红色的碎肉。"
+  }),
+  makeFlatDoor("301", "三林安居苑-7号楼-3楼", {
+    enter: "你推开301的门——楼道里那股馊味瞬间浓了十倍，熏得你眯起眼睛。源头是厨房：水槽里堆着没洗的碗，灶上那口锅里的东西已经看不出原形。",
+    empty: "你捂着鼻子在屋里转了一圈。这户人家大约是最先跑的那批——冰箱早被清空，橱柜大敞着，连半包盐都没留下。只有厨房那股馊味，忠实地守着这间空屋。",
+    food: "馊味主要来自灶台那口锅。你屏住呼吸拉开冰箱——冷藏室里还有几样用保鲜盒封好的剩菜，隔着盒子闻，居然还算正常。",
+    zombie: "馊味里混着一丝更甜腻的腐臭。你刚想细分辨，厨房的门帘猛地被撞开——一只丧尸顶着满身馊水扑了出来，指甲直取你的脸。"
+  }),
+  makeFlatDoor("302", "三林安居苑-7号楼-3楼", {
+    enter: "302的门虚掩着，门缝里一片漆黑。你推开门，等眼睛适应了黑暗，才看清玄关的轮廓——窗帘拉得严严实实，屋里比楼道还暗。",
+    empty: "你摸黑在屋里走了一圈。这家的主人大概把家底都搬空了——柜子全空，只剩几件家具沉默地立在黑暗里。",
+    food: "你在黑暗中摸到厨房，拉开橱柜——几袋挂面、一罐没开封的豆瓣酱，灶台上还罩着半锅米饭。米饭是不能吃了，但别的兴许还行。",
+    zombie: "黑暗里传来指甲刮擦地板的声音，由远及近。你还没看清那是什么，一双冰凉的手已经抓住了你的手腕——一张浮肿的脸从黑暗里探出来，腐臭的鼻息直喷在你脸上。"
+  }),
+  makeFlatDoor("501", "三林安居苑-7号楼-5楼", {
+    enter: "501的门被你砸开了。木屑和锁舌的碎片散了一地，你侧身挤进去，反手把门掩上。",
+    empty: "屋里整齐得过分，像是中介刚带人看完房。你拉开几个抽屉——空的。这户人家大概早就搬走了，只剩一屋子带不走的家具。",
+    food: "厨房的小阳台上堆着几箱没拆的快递。你拆开一看：整包的方便面、压缩饼干，还有一提矿泉水——这家人大概是个囤货爱好者。",
+    zombie: "你刚掩上门，客厅的沙发后面猛地立起一个黑影。这只丧尸又干又瘦，大概被困在屋里饿了太久——可它扑过来的力气，一点都不小。"
+  }, { breakIn: true }),
+  makeFlatDoor("503", "三林安居苑-7号楼-5楼", {
+    enter: "503的门锁应声而碎。你推门进去，一股密闭多日的浊气扑面而来。",
+    empty: "阳台上的花早就枯死了，客厅的婚纱照还挂在墙上。你把每个房间看了一遍——吃的、用的，一样没剩，只有照片里那对新人还在笑着。",
+    food: "餐桌上摆着一副没动过的碗筷。你走进厨房，吊柜里码着罐头和真空包装的腊肠——这户人家的存粮，比你想的体面得多。",
+    zombie: "卧室的床底下传来窸窸窣窣的声音。你刚弯下腰想看个究竟，一只枯手闪电般探出来——你猛地抽身退开，床底下那双浑浊的眼睛，正直勾勾地盯着你。"
+  }, { breakIn: true }),
+
+  // ==================== 4楼401：封堵门（固定大奖） ====================
+  {
+    "三林安居苑-7号楼-401-破门": {
+      image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-401-破门.webp */
+      onEnter: function(vars) {
+        vars._flat401 = 1;
+        return updateTime(5, { add: { chasedByZombies: 1 } })(vars);
+      },
+      text: function(vars) {
+        return "你把" + heavyWeaponName(vars) + "插进门缝，一点点撬。铁丝先崩断了，接着是抵门的桌腿——桌椅纸箱轰隆一声塌下来，动静在楼道里久久回荡。\n\
+你屏住呼吸听了一会儿。楼下似乎有什么东西被惊动了，拖沓的脚步声正在靠近。门，开了。";
+      },
+      choices: [
+        { text: "进去", nextScene: "三林安居苑-7号楼-401" }
+      ]
+    },
+
+    "三林安居苑-7号楼-401": {
+      image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-401.webp */
+      text: function(vars) {
+        var desc = "屋里拉着窗帘，空气里有一股密闭多日的酸腐味。你推开的这扇门背后，是一个末日里的保险箱——也是一个坟墓。\n\
+卧室的门开着。一个人蜷在床上，被子拉到胸口，像睡着了一样，只是露在被外的手已经干瘪发灰。床头柜上摆着一排空了的药板，和一张压在杯子底下的字条。\n\
+你展开字条，上面的字迹越到后面越抖：\n\
+“第三天被咬的。不敢去医院，也不敢死在外面。吃的都在墙角，留给后来的人。别学我。”\n\
+你顺着他指的方向看去——墙角整整齐齐码着半箱泡面、几罐午餐肉和一提矿泉水。他囤够了一个月的口粮，却没能熬过第一周。";
+        if (vars._flat401 >= 2) {
+          desc += "\n墙角的补给已经被你搬空了，只剩那张字条还压在杯子底下。";
+        }
+        return desc;
+      },
+      choices: [
+        {
+          showCondition: "_flat401 == 1",
+          text: "收下墙角的补给，先踏踏实实吃一顿",
+          nextScene: "三林安居苑-7号楼-401-补给"
+        },
+        { text: "离开", nextScene: "三林安居苑-7号楼-4楼" }
+      ]
+    },
+
+    "三林安居苑-7号楼-401-补给": {
+      image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-401.webp */
+      onEnter: function(vars) {
+        vars._flat401 = 2;
+        return updateTime(5, { add: { strength: 5 } })(vars);
+      },
+      text: "你对着那张字条站了一会儿，低声说了句“谢谢”。\n\
+然后你撕开一包泡面干嚼起来，又开了一罐午餐肉，拧开一瓶矿泉水连灌了大半瓶。密封包装的食物没有一丝变质的迹象——这是你这几天吃得最踏实的一顿。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+5，当前体力：{strength}。</span>",
+      choices: [
+        { text: "离开", nextScene: "三林安居苑-7号楼-4楼" }
+      ]
+    },
+
+    // ==================== 入户战斗失败：共享死亡结局 ====================
+    "结局-安居苑-入户被扑倒": {
+      image: "images/zombieKnockYouDown.webp",
+      onEnter: { set: { hurtByZombie: true }, add: { strength: -3, mercuryLoad: 10 } },
+      text: "你赤手空拳，却还是迎了上去。\n\
+它比你想象中快得多——你只觉得手腕一凉，整个人已经被扑倒在地。你用胳膊死死抵住它的下巴，腐臭的涎水一滴一滴落在你脸上。\n\
+力气正一点一点从胳膊里流走。黑暗里，似乎有更多脚步声，正朝这间屋子聚拢……\n\
+—— 结局：入户被扑倒 ——"
+    }
+  }
+);

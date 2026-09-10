@@ -1270,7 +1270,7 @@ Object.assign(storyData, {
   },
 
   "上实南校-后门-潜行失败": {
-    image: "images/hurtByzombie.png",
+    image: "images/hurtByzombie.webp",
     onEnter: { set: { showRain: true } },
     text: "你躲到垃圾箱后面——但位置太窄了，你挤不进去。值日教师冲了过来，在你反应过来之前抓住了你的手臂。\n你挣开了它，但手臂上多了一道深深的血痕。同学们翻过门来帮你，小陆用拖把杆砸了它的头——你们趁这个机会一起跑了出去。\n有人受了伤，但大家都出来了。",
     choices: [
