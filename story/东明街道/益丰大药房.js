@@ -725,9 +725,52 @@ Object.assign(storyData,{
         effect: updateTime(1)
       },
       {
+        text: "厚着脸皮，向赵广成要口吃的",
+        condition: "_zhaoGuangchengFoodGiven < 2",   // 他口粮有限，匀过两次后降级为婉拒
+        nextScene: "益丰大药房-匀口饭吃",
+        elseScene: "益丰大药房-食物见底"
+      },
+      {
         text: "谢过赵广成，离开办公室",
         nextScene: "益丰大药房",
         effect: updateTime(2)
+      }
+    ]
+  },
+
+  "益丰大药房-匀口饭吃": {
+    image: "images/小区周边/益丰大药房/办公室闲聊.png",
+    onEnter: function(vars) {
+      vars._zhaoGuangchengFoodGiven++;
+      restRecover(vars, 1);
+      return updateTime(5, { set: { _travelMinutes: 0 } })(vars);
+    },
+    text: function(vars) {
+      var head = vars._zhaoGuangchengFoodGiven > 1
+        ? "你又开口讨吃的。赵广成摇摇头，却还是从抽屉里摸出最后一块压缩饼干，掰了一半递给你：“省着点，就剩这些了。”"
+        : "你张嘴讨口吃的。赵广成没小气——从办公桌抽屉里摸出一包压缩饼干，掰了一大块塞进你手里：“拿去，出门在外多不容易。”";
+      if (vars._restBlocked) {
+        return head + "\n你就着矿泉水咽下去，早就不饿了，纯粹是尝个味。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经吃饱喝足，歇得很好了。</span>";
+      }
+      return head + "\n你就着矿泉水把饼干囫囵咽下，肚子里有了东西，人也有力气了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
+    },
+    choices: [
+      {
+        text: "谢过他，回沙发歇着",
+        nextScene: "益丰大药房-办公室歇脚",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "益丰大药房-食物见底": {
+    image: "images/小区周边/益丰大药房/办公室闲聊.png",
+    text: "你又开口讨吃的。赵广成脸上的笑淡了下去，为难地搓了搓手：“小兄弟，不是我不给你……我这抽屉里也见底了，得省着点撑到日子头。这样吧，水、沙发、我都能给你看着。”",
+    choices: [
+      {
+        text: "理解，回沙发歇着",
+        nextScene: "益丰大药房-办公室歇脚",
+        effect: updateTime(1)
       }
     ]
   },

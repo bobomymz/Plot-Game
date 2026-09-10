@@ -37,6 +37,7 @@ const storyData = {
     pharmacyApprenticeKilled: false, // 益丰大药房长发女学徒是否已被解脱
     _paraffinTaken: false,    // 益丰大药房库房石蜡油是否已被拿走（一次性守卫；交易掉后不可重拿）
     _zhaoGuangchengDead: false, // 益丰大药房店长赵广成是否已死（断电事故害死；死后办公室不再可回访歇脚）
+    _zhaoGuangchengFoodGiven: 0, // 益丰大药房赵广成已匀出的食物次数（最多 2 次/每次+1体力；他口粮有限，见底的婉拒靠它门控）
     libraryCleared: false,     // 是否清空了社区图书馆的丧尸
     defeatedOldMan: false,     // 是否已击败安盛街老头丧尸
     _supermarketCompromised: false, // 联华超市地下室是否已暴露不再安全
@@ -87,6 +88,8 @@ const storyData = {
     showRain: false,           // 是否展示雨滴叠加特效（B类场景 onEnter 控制）
     showZombies: false,        // 是否展示丧尸包围遮罩（路网节点 onEnter 控制）
     showPowerOut: false,       // 是否展示停电灰色遮罩（新达汇室内节点 onEnter 控制）
+    vmSmashed: false,          // 新达汇1F电梯厅自动售货机是否已砸开取水（全图唯一）
+    _vmReached: false,         // 玩家是否已徒手翻找过该售货机（防重复）
     wangGiveKey: false,        // 王老师是否给了钥匙
     _lastScene: "",            // 引擎自动记录的上一个场景ID（目标场景 text 用于差异化承接）
     // 金谊广场
@@ -131,7 +134,7 @@ const storyData = {
     bottleWater: 0,            // 水瓶还有几口水（0=空瓶，1=有水；饮水机可反复打满）
     waterToxic: false,         // 瓶里的水是否被甲基汞污染（金谊广场后厨接水为毒水）
     _waterDispenserUses: 0,    // 饮水机已使用次数（最多10次）
-    waterGivenToTeacher: 0,    // 给王老师的水次数（0→15，满15次信任达成）
+    waterGivenToTeacher: 0,    // 给王老师的水次数（0→5，满5次信任达成）
     supermarketWaterLeft: 12,  // 联华超市仓库瓶装水剩余（瓶）
     teacherStudentsDead: false, // 给王老师毒水后学生变丧尸的死局标记
     _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启

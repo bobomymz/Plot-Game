@@ -554,15 +554,24 @@ Object.assign(storyData, {
 
   "1楼-电梯厅": {
     image: "images/placeholder.png" /* TODO: images/home/1楼电梯厅.png */,
-    text: "大厅的一侧是电梯厅。两部电梯的门都开着，轿厢停在1楼，空荡荡的，只有低沉的嗡鸣声。\n\
-靠墙立着一个红色的消防箱，箱门的玻璃蒙着灰，但没碎。",
+    text: function(vars) {
+      var desc = "大厅的一侧是电梯厅。两部电梯的门都开着，轿厢停在1楼，空荡荡的，只有低沉的嗡鸣声。\n";
+      if (!vars.hasAxe) {
+        if (vars.hasTorch) {
+          desc += "手电筒的光扫过电梯厅尽头的墙角——那里靠墙立着一个红色的消防箱，箱门的玻璃蒙着灰，但没碎。";
+        } else {
+          desc += "尽头的墙角陷在一大片阴影里，光线到不了。你只能看见一个模糊的黑影轮廓，想看真切——得先找个光源。";
+        }
+      }
+      return desc;
+    },
     choices: [
       {
         text: "坐电梯",
         nextScene: "电梯"
       },
       {
-        showCondition: "!hasAxe",
+        showCondition: "hasTorch && !hasAxe",
         text: "打开消防箱",
         nextScene: "1楼-消防箱"
       },

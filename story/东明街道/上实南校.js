@@ -742,7 +742,7 @@ Object.assign(storyData, {
         nextScene: "上实南校-图书馆-给食物"
       },
       {
-        showCondition: "hasBottle && bottleWater > 0 && !teacherStudentsDead && waterGivenToTeacher < 15",
+        showCondition: "hasBottle && bottleWater > 0 && !teacherStudentsDead && waterGivenToTeacher < 5",
         text: "“我水瓶里有水，你们先喝。”",
         nextScene: "上实南校-图书馆-给水"
       },
@@ -828,8 +828,8 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       var wasToxic = vars.waterToxic;
       vars.waterGivenToTeacher = (vars.waterGivenToTeacher || 0) + 1;
-      if (vars.waterGivenToTeacher >= 15) {
-        vars.hasCarKey = true; // 15次信任达成，王老师给车钥匙
+      if (vars.waterGivenToTeacher >= 5) {
+        vars.hasCarKey = true; // 5次信任达成，王老师给车钥匙
         vars.itemCount ++;
         if(vars.itemCount > vars.bagVolume) { // 如果背包已满，丢弃水瓶
           vars.itemCount --;
@@ -854,15 +854,14 @@ Object.assign(storyData, {
       if (vars.teacherStudentsDead) {
         return "你把水瓶递给她。王老师接过去，分给了孩子们。\n她喝了一口水，又递给旁边那个最小的女孩。女孩咕咚咕咚灌了几口，抹了抹嘴，冲你笑了一下。\n王老师看着你，嘴唇动了动——你读不懂她眼里的神情。她没说什么。\n你转身离开的时候，身后传来孩子们细碎的喝水声。";
       }
-      if (n >= 15) {
+      if (n >= 5) {
         vars.wangGiveKey = true;
-        return "你再次把水瓶递给她——这是第十五次了。\n王老师怔怔地看着你手里的水瓶，没有接。\n片刻后，她笑了一下，眼眶有些发红。\n“十五次。”她低声说，“我记得我教过的每一个学生，但我从没想过有一天，会有一个学生这样一次次地给我送水。”\n\
+        return "你再次把水瓶递给她——这是第五次了。\n王老师怔怔地看着你手里的水瓶，没有接。\n片刻后，她笑了一下，眼眶有些发红。\n“五次。”她低声说，“我记得我教过的每一个学生，但我从没想过有一天，会有学生这样一次次地给我送水——这个节骨眼上，谁的水都比这个珍贵。”\n\
 她接过水，却没有喝——而是转身走到书架边，从最底层的夹层里摸出一串钥匙。\n“我本来想，也许用不上了。”她把钥匙放在你手心，“我车就停在附近——三林路边那辆，树荫底下。钥匙给你。你比我们更需要它。”\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】获得[轿车钥匙]，可以在三林路解锁那辆轿车。</span>\
 “那你们怎么办？”“我们？听天由命吧。你快走吧，不需要在我们这些砧板上的鱼肉身上再浪费时间了……";
       }
-      if (n >= 10) return "你把手里的水瓶递过去。王老师接过，没有立刻分——她先自己拧开瓶盖喝了一口，才转身分给孩子们。\n她回来时，声音里多了一丝你能察觉的柔软：“第" + n + "瓶了。孩子们现在能记住你的样子了——他们说，‘那个哥哥又来送水了’。”";
-      if (n >= 5) return "你把手里的水瓶递过去。王老师接过，道了声谢，转身分给孩子们。\n“第" + n + "瓶了。”她回来时低声说，声音里带着一丝疲惫，也带着一丝没有明说的感激。“水……比什么都重要。孩子们离不开这个。”";
+      if (n >= 3) return "你把手里的水瓶递过去。王老师接过，没有立刻分——她先自己拧开瓶盖喝了一口，才转身分给孩子们。\n她回来时，声音里多了一丝你能察觉的柔软：“第" + n + "瓶了。孩子们现在能记住你的样子了——他们说，‘那个哥哥又来送水了’。”";
       return "你把手里的水瓶递过去。王老师接过，道了声谢，转身分给孩子们。\n她回来时，你看到她的眼眶有些发红。“你……不用每次都跑这么远的。”她顿了顿，把一句更软的话咽了回去，“谢谢。”";
     },
     choices: function(vars) {

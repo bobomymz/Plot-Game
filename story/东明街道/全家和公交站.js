@@ -352,8 +352,12 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "继续前进",
+        text: "去十字路口",
         nextScene: "三林路-环林东路 十字路口"
+      },
+      {
+        text: "去全家",
+        nextScene: "全家便利店（环林东路）"
       },
       {
         text: "打开巴士门",

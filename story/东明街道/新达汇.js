@@ -829,8 +829,14 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
     text: function(vars) {
       if (vars._metGaoAtMall) {
-        if (vars._powerOut) return "华为体验店里一片漆黑。感应门没电了，你推开玻璃门走了进去。\n展示台前蹲着一个人——锅盖头，深色卫衣，手里攥着一台黑了屏的展示机。\n高锦睿抬头看到你，一脸绝望：\n“怎么没电了？！我刚下载好一个游戏——等了一下午才下完的。你知不知道商场的WiFi有多慢——不是，你知道拉电闸的是谁吗？”\n你说：“现在都这个样子了，你还想着玩游戏？”\n他愣了一秒，低头看了看手里黑屏的手机。\n“……不然还能干嘛呢。”\n这句话说得很轻。然后他把手机放回展示台，站了起来，咧嘴一笑：“算了算了，反正那游戏也不好玩——我看了评论才两星。”他拍了拍裤子上的灰，朝门口走去。\n“看到什么好东西记得喊我。”";
-        return "玻璃门自动滑开——“欢迎光临华为体验店！”\n高锦睿正坐在展示台前的一把转椅上，双眼死死盯着一台展示机。屏幕上是一款赛车游戏，他拇指在屏幕上狂划，嘴里念念有词。\n旁边的展示座上放着一瓶喝了一半的矿泉水——应该是从哪个自动贩卖机砸出来的。\n他看到你头都没抬：“等一下我这局快赢了——操，撞墙了。算了。”\n他把手机放下，转过来面对你。“这里面东西还挺多的，你逛了没？”";
+        if (vars._powerOut) return "华为体验店里一片漆黑。感应门没电了，你推开玻璃门走了进去。\n展示台前蹲着一个人——锅盖头，深色卫衣，手里攥着一台黑了屏的展示机。\n\
+高锦睿抬头看到你，一脸绝望：\n“怎么没电了？！我刚下载好一个游戏——等了一下午才下完的。你知不知道商场的WiFi有多慢——不是，你知道拉电闸的是谁吗？”\n\
+你说：“现在都这个样子了，你还想着玩游戏？过几天估计全城都要断水断电了。”\n\
+他愣了一秒，低头看了看手里黑屏的手机。\n“……不然还能干嘛呢。”\n\
+这句话说得很轻。然后他把手机放回展示台，站了起来，咧嘴一笑：“算了算了，反正那游戏也不好玩——我看了评论才两星。”他拍了拍裤子上的灰，朝门口走去。\n\
+“看到什么好东西记得喊我。”";
+        return "玻璃门自动滑开——“欢迎光临华为体验店！”\n高锦睿正坐在展示台前的一把转椅上，双眼死死盯着一台展示机。屏幕上是一款赛车游戏，他拇指在屏幕上狂划，嘴里念念有词。\n\
+旁边的展示座上放着一瓶喝了一半的矿泉水——应该是从哪个自动贩卖机砸出来的。\n他看到你头都没抬：“等一下我这局快赢了——操，撞墙了。算了。”\n他把手机放下，转过来面对你。“这里面东西还挺多的，你逛了没？”";
       }
       if (vars.hasPhone) return "华为店里没什么可看的了。";
       if (vars._powerOut) return "华为体验店里一片漆黑。感应门没电了。";
@@ -901,7 +907,7 @@ Object.assign(storyData, {
     text: function(vars) {
       if (vars._powerOut) return "电梯厅一片死寂，主电闸已经被你拉下来了。";
       if (vars._catChasing) return "电梯厅墙上的电箱面板在闪烁。";
-      return "三部直梯并排而立。按钮面板上B1~5F的按键都还亮着。";
+      return "三部直梯并排而立。按钮面板上B1~5F的按键都还亮着。玻璃门旁边，那台自动售货机的下半块玻璃被人撬开过一角，碎碴撒了一地。";
     },
     choices: [
       {
@@ -946,6 +952,11 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
+        text: "查看自动贩卖机",
+        nextScene: "新达汇-电梯厅贩卖机",
+        effect: updateTime(1),
+      },
+      {
         text: "前往1F中庭",
         nextScene: "新达汇-1F中庭",
         effect: updateTime(1),
@@ -968,6 +979,84 @@ Object.assign(storyData, {
       },
     ]
   },
+
+  // ==================== 1F电梯厅 · 自动贩售机（高锦睿那半瓶矿泉水的来路）====================
+  "新达汇-电梯厅贩卖机": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
+    text: function(vars) {
+      if (vars.vmSmashed) return "那台自动售货机彻底被你砸开了。玻璃断口参差，落货口里只剩碎的罐子、一只拧盖的空瓶。这里已经捞不出什么了。";
+      var desc = "电梯厅靠墙的角落里立着一部自动售货机。价签还贴着，货道里却透着狼藉——靠走廊这侧的下半块玻璃被人从外面撬开、裂成蛛网状，塞东西进去的动作很粗暴。";
+      if (vars._metGaoAtMall) desc += "\n你忽然想起华为体验店展示台上那半瓶矿泉水——原来就是打这儿砸出来的。他挑剩下的，都堆在落货口里。";
+      else desc += "\n透过豁口能看见落货口里堆着几个矿泉水瓶，全是空的，瓶盖却一只只拧好、摆得整整齐齐。";
+      desc += "\n更里面，隔着还完好的货道隔板，深处还躺着两瓶整的矿泉水——够得着眼馋，够不着手。想喝到那两瓶，得把玻璃彻底砸开。";
+      return desc;
+    },
+    choices: [
+      {
+        text: "把手伸进豁口翻一翻",
+        condition: "!_vmReached",
+        nextScene: "新达汇-电梯厅贩卖机-翻找",
+        elseScene: "新达汇-电梯厅贩卖机-空手",
+        effect: { set: { _vmReached: true } },
+      },
+      {
+        text: function(vars) {
+          var hw = heavyWeaponName(vars);
+          return hw ? "抡起" + hw + "砸玻璃" : "挥起" + meleeWeaponName(vars) + "用力去敲玻璃";
+        },
+        showCondition: function(vars) { return hasMeleeWeapon(vars); },
+        condition: function(vars) { return !!heavyWeaponName(vars); },
+        nextScene: "新达汇-电梯厅贩卖机-砸开",
+        elseScene: "新达汇-电梯厅贩卖机-砸不开",
+      },
+      {
+        text: "算了，回电梯厅",
+        nextScene: "新达汇-1F电梯厅",
+        effect: updateTime(1),
+      },
+    ]
+  },
+
+  "新达汇-电梯厅贩卖机-翻找": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
+    onEnter: updateTime(1),
+    text: "你把手探进撬开的豁口，在落货口里摸出一把：拧着盖的空矿泉水瓶——喝干后被人一支支拧好摆回去的；一罐敞开、跑光了气的黄色可乐；还有一张卷边、沾了糖浆的旧钞票，早不顶用了。\n没有水。你很清楚，真正的水在更里面的货道，隔着一层完好的玻璃——得砸开才拿得到。",
+    choices: [
+      { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
+    ]
+  },
+
+  "新达汇-电梯厅贩卖机-空手": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
+    onEnter: updateTime(1),
+    text: "你又伸进去摸了一遍——还是那几个空瓶、那罐跑气的可乐，没别的。",
+    choices: [
+      { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
+    ]
+  },
+
+  "新达汇-电梯厅贩卖机-砸开": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
+    onEnter: { set: { vmSmashed: true }, add: { strength: 2, chasedByZombies: 1 } },
+    text: function(vars) {
+      return "你抡起" + heavyWeaponName(vars) + "对准断口补了几下，整块玻璃哗啦啦塌下来。两瓶矿泉水顺着货道骨碌碌滚落，你一把捞起来，拧开灌了几大口——冰凉的甜水淌进喉咙，力气回了几分。\n可碎玻璃和摔罐的哐当声在空旷的商场里荡出去老远，铁栏后的丧尸被这动静勾了过来。<span style='color: #00fbffff; font-style: italic;'>【体力 +2 · 追击 +1】</span>";
+    },
+    choices: [
+      { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
+    ]
+  },
+
+  "新达汇-电梯厅贩卖机-砸不开": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
+    onEnter: { add: { chasedByZombies: 1 } },
+    text: function(vars) {
+      return "你挥起" + meleeWeaponName(vars) + "去找发力的角度——它太短太脆，敲在厚玻璃上只留下几道白印，反倒因为抡得狠，震得你整只手掌发麻。\n哐哐的声音在空荡荡的电梯厅里格外刺耳，铁栏后的丧尸被这动静引了过来，玻璃却纹丝没动。<span style='color: #ff5555; font-style: italic;'>【追击 +1 · 一无所获】</span>";
+    },
+    choices: [
+      { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
+    ]
+  },
+
   "新达汇-5F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
     text: "你推开防火门，走进楼梯间。墙上标着「5F」。从这里可以上屋顶或往下走。",

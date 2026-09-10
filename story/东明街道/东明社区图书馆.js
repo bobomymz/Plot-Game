@@ -7,15 +7,9 @@ Object.assign(storyData, {
   // ==================== 入口 ====================
   "图书馆": {
     outdoor: true,
-    image: function(vars) {
-      if (vars.weather === "雨") {
-        var f = timeImage({morning: "images/placeholder.png"
-});
-        return f(vars);
-      }
-      return "images/placeholder.png";
-    }, /* TODO: images/library/libraryFront.png */
+    image: timeImage({morning: "images/图书馆/门口.webp", night: "images/图书馆/门口-night.webp"}),
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.currentPlace = "东明路";
       vars.currentPos = "图书馆";
     },
@@ -35,7 +29,7 @@ Object.assign(storyData, {
 
   "图书馆-侧窗": {
     image: "images/placeholder.png" /* TODO: images/library/librarySide.png */,
-    text: "你绕到图书馆侧面。一扇通风窗半开着，窗沿上积了厚厚一层灰。你垫脚往里看——里面是阅览室，几张长桌整齐排列着，角落里似乎坐着一个人。\n它没有动。",
+    text: "你绕到图书馆侧面，一扇通风窗半开着。你垫脚往里看——里面是阅览室，几张长桌整齐排列着，角落里似乎坐着一个人。\n它没有动。",
     choices: [
       {
         text: "翻窗进去",

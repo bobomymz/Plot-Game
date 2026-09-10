@@ -1204,7 +1204,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "没时间了，离开",
+        text: "离开",
         nextScene: "安盛街西侧"
       }
     ]

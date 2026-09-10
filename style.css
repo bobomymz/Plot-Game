@@ -611,12 +611,20 @@ html, body {
   }
 
   #image-area {
-    flex: 0 0 42%;
+    flex: 0 0 auto;
+    width: 100%;
     height: auto;
+    aspect-ratio: 16 / 9;              /* 图片区跟随图片原生比例（63% 的图是 16:9），竖屏不再左右裁切 */
+    max-height: 42vh;                  /* 矮宽屏回退：保持旧的三段布局比例 */
+    max-height: 42dvh;
     min-height: 0;
     -webkit-touch-callout: none;       /* 长按图片不弹系统菜单 */
     user-select: none;
     -webkit-user-select: none;
+  }
+
+  #scene-image {
+    object-fit: contain;               /* 非 16:9 的图完整显示、两侧/上下补底色，永不裁内容 */
   }
 
   #text-area {
@@ -700,11 +708,11 @@ html, body {
     top: calc(env(safe-area-inset-top, 0px) + 136px);
   }
 
-  /* 丧尸包围遮罩收缩到图片区（top 42dvh），不再全屏延伸到文本/选项下面 */
+  /* 丧尸包围遮罩对齐图片区实际高度（16:9 宽度推算值 与 42dvh 上限取小），不再全屏延伸到文本/选项下面 */
   #screen-effect-overlay.zombie-surround-moderate::after,
   #screen-effect-overlay.zombie-surround-heavy::after {
     bottom: auto;
-    height: 42vh;
-    height: 42dvh;
+    height: min(56.25vw, 42vh);
+    height: min(56.25vw, 42dvh);
   }
 }
