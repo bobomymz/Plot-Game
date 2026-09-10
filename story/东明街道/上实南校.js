@@ -739,7 +739,7 @@ Object.assign(storyData, {
       {
         showCondition: "hasFood",
         text: "“我身上还有点吃的，先给你们。”",
-        nextScene: "上实南校-图书馆-给食物"
+        nextScene: "上实南校-图书馆-给食物-选择"
       },
       {
         showCondition: "hasBottle && bottleWater > 0 && !teacherStudentsDead && waterGivenToTeacher < 5",
@@ -774,10 +774,22 @@ Object.assign(storyData, {
     ]
   },
 
+  "上实南校-图书馆-给食物-选择": {
+    image: "images/placeholder.png" /* TODO: images/上实南校/library.png */,
+    text: "你翻了一下背包。孩子们还饿着，王老师也一天没正经吃东西了——得匀一份出来，可你也不宽裕。",
+    choices: foodGiftChoices({
+      pickText: "给她{名}",
+      pickScene: "上实南校-图书馆-给食物",
+      onPick: function(v) { v._knownSideDoorPassword = true; }, // 热心 + 从王老师处拿到侧门密码0731
+      cancelText: "算了，再等等",
+      cancelScene: "上实南校-图书馆-对话"
+    })
+  },
+
   "上实南校-图书馆-给食物": {
     image: "images/placeholder.png" /* TODO: images/上实南校/library.png */,
     onEnter: function(vars) {
-      if (vars.itemCount > 0) vars.itemCount -= 1;
+      // 扣掉的具体食物已经在"给食物-选择"里由 foodGiftChoices 处理（灭flag + itemCount-1）
       vars._knownSideDoorPassword = true;
       vars._travelMinutes = 0;
       vars.mm += 10;
