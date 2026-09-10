@@ -962,8 +962,10 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "先整理一下东西",
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
         nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-1F电梯厅" } }
       }
     ]
   },
@@ -1592,8 +1594,10 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "先整理一下东西",
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
         nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-2F电梯厅" } }
       }
     ]
   },
@@ -2050,8 +2054,10 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "先整理一下东西",
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
         nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-3F电梯厅" } }
       }
     ]
   },
@@ -2570,8 +2576,10 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "先整理一下东西",
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
         nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-4F电梯厅" } }
       }
     ]
   },
@@ -3020,8 +3028,10 @@ Object.assign(storyData, {
         effect: updateTime(1),
       },
       {
-        text: "先整理一下东西",
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
         nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-5F电梯厅" } }
       }
     ]
   },

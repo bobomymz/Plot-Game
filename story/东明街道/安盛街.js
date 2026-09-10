@@ -357,6 +357,12 @@ Object.assign(storyData, {
         text: "从后门离开",
         nextScene: "安盛街-后巷",
         effect: updateTime(1)
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "理发店-店内" } }
       }
     ]
   },
@@ -405,6 +411,12 @@ Object.assign(storyData, {
         text: "从后门离开",
         nextScene: "安盛街-后巷",
         effect: updateTime(1)
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "理发店-店内" } }
       }
     ]
   },
@@ -618,8 +630,9 @@ Object.assign(storyData, {
       },
       {
         showCondition: "itemCount > 0",
-        text: "先整理一下东西",
-        nextScene: "整理整理"
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "安盛街中段" } }
       },
       sprintAway(["安盛街-服装店", "安盛街-理发店", "安盛街西侧", "安盛街东侧", "安居苑后门"])
     ]
@@ -1559,8 +1572,9 @@ Object.assign(storyData, {
       },
       {
         showCondition: "itemCount > 0",
-        text: "先整理一下东西",
-        nextScene: "整理整理"
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "安盛街西侧" } }
       },
       {
         showCondition: "chasedByZombies > 1",

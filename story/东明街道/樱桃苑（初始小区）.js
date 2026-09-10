@@ -51,6 +51,12 @@ Object.assign(storyData, {
         nextScene: "床底的食物",
         condition: "foodUnderBed",
         elseScene: "什么都没有"
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "初始卧室" } }
       }
     ]
   },
@@ -225,6 +231,12 @@ Object.assign(storyData, {
       {
         text: "看看门口",
         nextScene: "玄关"
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "客厅" } }
       }
     ]
   },
@@ -1070,6 +1082,12 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         text: "回头离开",
         nextScene: "陌生的岔路口",
         effect: updateTime(1) // 查看东西的次数<=2次，才能回头离开
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "民防设施-等候区" } }
       }
     ]
   },
@@ -1556,7 +1574,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     choices: [
       {
         showCondition: "itemCount > 0",
-        text: "整理一下物品",
+        text: "🎒整理一下物品",
         nextScene: "整理整理",
       },
       {
@@ -1603,7 +1621,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     choices: [
       {
         showCondition: "itemCount > 0",
-        text: "整理一下物品",
+        text: "🎒整理一下物品",
         nextScene: "整理整理",
       },
       {

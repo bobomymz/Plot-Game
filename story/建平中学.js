@@ -248,7 +248,7 @@ Object.assign(storyData, {
       { text: "去前门看看", nextScene: "建平-前门", effect: updateTime(5) },
       { text: "绕去后门", nextScene: "建平-后门", effect: updateTime(10) },
       { text: "去门卫室", nextScene: "建平-门卫室", effect: updateTime(1) },
-      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-校园门口" } } },
+      { text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-校园门口" } } },
       { text: "查看路边的阀门箱", condition: "hasKeyRing", nextScene: "建平-崮山路-阀门箱", effect: updateTime(1), elseScene: "建平-崮山路-阀门箱-锁着" },
       { text: "离开这里", nextScene: "罗山路立交桥下", effect: updateTime(10) }
     ]
@@ -820,7 +820,7 @@ Object.assign(storyData, {
     text: function(vars) { return "这里是行政楼天台花园。以前只是听李彦青说行政楼楼顶有个校长的小花园，没想到这里真有。\n" + describeWeather(vars) + describeZombieWave(vars); },
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-天台" },
-      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-行政楼-天台" } } },
+      { text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-行政楼-天台" } } },
       { text: "回 3 楼", nextScene: "建平-行政楼-3F", effect: updateTime(1) }
     ]
   },
@@ -1470,7 +1470,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-物理办公室" },
-      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-3F-物理办公室" } } },
+      { text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-3F-物理办公室" } } },
       { text: "回 3 楼走廊", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
     ]
   },
@@ -1517,7 +1517,7 @@ Object.assign(storyData, {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-14班" });
       }
       cs.push({ text: "看看窗边", nextScene: "建平-远翔楼-4F-高三14班-窗边" });
-      cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-4F-高三14班" } } });
+      cs.push({ text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-4F-高三14班" } } });
       cs.push({ text: "回 4 楼走廊", nextScene: "建平-远翔楼-4F", effect: updateTime(1) });
       return cs;
     }
@@ -1717,7 +1717,7 @@ Object.assign(storyData, {
       { text: "去后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) },
       { text: "看看刘冠宇", nextScene: "建平-食堂-刘冠宇", effect: updateTime(1) },
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-食堂" },
-      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-食堂" } } }
+      { text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-食堂" } } }
     ]
   },
 
@@ -2003,7 +2003,7 @@ Object.assign(storyData, {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-电脑区" });
       }
       cs.push({ text: "看看窗边", nextScene: "建平-弘渊楼-4F-电脑区-窗边" });
-      cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-弘渊楼-4F-电脑区" } } });
+      cs.push({ text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-弘渊楼-4F-电脑区" } } });
       cs.push({ text: "回 4 楼走廊", nextScene: "建平-弘渊楼-4F", effect: updateTime(1) });
       return cs;
     }
@@ -2168,7 +2168,7 @@ Object.assign(storyData, {
         cs.push({ text: "查看那堆校服", nextScene: "建平-废弃小楼-3F-团委工作室-内胆" });
       }
       cs.push({ text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-团委工作室" });
-      cs.push({ text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-废弃小楼-3F-团委工作室" } } });
+      cs.push({ text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-废弃小楼-3F-团委工作室" } } });
       cs.push({ text: "回 3 楼走廊", nextScene: "建平-废弃小楼-3F", effect: updateTime(1) });
       return cs;
     }
@@ -2600,7 +2600,7 @@ Object.assign(storyData, {
     text: "挹芬楼 3 楼 · 机房。",
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-挹芬楼机房3F" },
-      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-挹芬楼-3F-机房" } } },
+      { text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-挹芬楼-3F-机房" } } },
       { text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) }
     ]
   },
@@ -2618,7 +2618,7 @@ Object.assign(storyData, {
     text: "挹芬楼 4 楼 · 机房。",
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-挹芬楼机房4F" },
-      { text: "整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-挹芬楼-4F-机房" } } },
+      { text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-挹芬楼-4F-机房" } } },
       { text: "回 4 楼走廊", nextScene: "建平-挹芬楼-4F", effect: updateTime(1) }
     ]
   },

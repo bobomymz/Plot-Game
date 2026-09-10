@@ -34,11 +34,13 @@ Object.assign(storyData, {
           morning: "images/小区周边/图书馆/侧窗.webp",
           night: "images/小区周边/图书馆/侧窗-无丧尸-night.webp"
         });
+        return f(vars);
       }
-      return timeImage({
+      var g = timeImage({
         morning: "images/小区周边/图书馆/侧窗.webp",
         night: "images/小区周边/图书馆/侧窗-night.webp"
       });
+      return g(vars);
     },
     onEnter: {set: {showRain: true}},
     text: function(vars) {
@@ -66,11 +68,13 @@ Object.assign(storyData, {
           morning: "images/小区周边/图书馆/大厅-无丧尸.webp",
           night: "images/小区周边/图书馆/大厅-无丧尸-night.webp"
         });
+        return f(vars);
       }
-      return timeImage({
+      var g = timeImage({
         morning: "images/小区周边/图书馆/大厅.webp",
         night: "images/小区周边/图书馆/大厅-night.webp"
       });
+      return g(vars);
     },
     text: function(vars) {
       if (vars.libraryCleared) return "图书馆大厅空荡荡的。前台和还书机还在原地，但那只穿志愿者马甲的丧尸已经不见了——地上只剩一滩暗色的痕迹。\n\
@@ -84,12 +88,21 @@ Object.assign(storyData, {
         { text: function(vars) { return hasMeleeWeapon(vars) ? "用" + meleeWeaponName(vars) + "上去解决它" : "抄起门口的铁质书立，上去解决它"; }, showCondition: "!libraryCleared", nextScene: "图书馆-大厅-战斗", condition: "hasMeleeWeapon || strength >= 3", elseScene: "结局-图书馆-大厅-徒劳" },
         { text: "前往阅览室", showCondition: "libraryCleared", nextScene: "图书馆-阅览室" },
         { text: "前往藏书区", showCondition: "libraryCleared", nextScene: "图书馆-藏书区" },
-        { text: "离开图书馆", showCondition: "libraryCleared", nextScene: "东明路-三林路" }
+        { text: "离开图书馆", showCondition: "libraryCleared", nextScene: "东明路-三林路" },
+        {
+          showCondition: "libraryCleared && itemCount > 0",
+          text: "🎒整理一下物品",
+          nextScene: "整理整理",
+          effect: { set: { positionAfterOperation: "图书馆-大厅" } }
+        }
     ]
   },
 
   "图书馆-大厅-潜行": {
-    image: "images/placeholder.png" /* TODO: images/library/libraryHall.png */,
+    image: timeImage({
+      morning: "images/小区周边/图书馆/大厅潜行.webp",
+      night: "images/小区周边/图书馆/大厅潜行-night.webp"
+    }),
     text: "你弯下腰，贴着前台边缘缓慢移动。志愿者丧尸在你几步之外来回踱步，你甚至能闻到它身上那股陈旧的霉味。\n你屏住呼吸，一点一点地挪到了阅览室入口的方向。它没有发现你。",
     choices: [
       {
@@ -101,7 +114,8 @@ Object.assign(storyData, {
 
   "图书馆-大厅-声东击西": {
     image: "images/placeholder.png" /* TODO: images/library/libraryBookThrow.png */,
-    text: "你随手从书架上抽出一本《浦东新区地方志》，朝大厅另一侧的走廊扔了过去。书砸在墙壁上，发出沉闷的啪嗒声。\n志愿者丧尸猛地转头，拖着步子朝声音的方向走去。\n你趁这个机会快速穿过了大厅。",
+    text: "你随手从书架上抽出一本《浦东新区地方志》，朝大厅另一侧的走廊扔了过去。书砸在墙壁上，发出沉闷的啪嗒声。\n\
+志愿者丧尸猛地转头，拖着步子朝声音的方向走去。\n\你趁这个机会快速穿过了大厅。",
     choices: [
       {
         text: "溜进阅览室",

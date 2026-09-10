@@ -184,10 +184,10 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "整理一下身上的东西",
+        showCondition: "chasedByZombies <= 1 && itemCount > 0",
+        text: "🎒整理一下物品",
         nextScene: "整理整理",
-        effect: updateTime(1),
-        effect: {set: {positionAfterOperation: "长者食堂-内部"}}
+        effect: updateTime(1, { set: { positionAfterOperation: "长者食堂-内部" } })
       },
       {
         text: "从门口离开",

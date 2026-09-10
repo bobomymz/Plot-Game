@@ -308,6 +308,12 @@ Object.assign(storyData, {
         nextScene: "三林安居苑-藤蔓丧尸",
         effect: updateTime(2)
       },
+      {
+        showCondition: "chasedByZombies <= 1 && itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-小广场" } }
+      },
     ]
   },
 
@@ -557,6 +563,12 @@ Object.assign(storyData, {
       {
         text: "退出去",
         nextScene: "三林安居苑-小区内部"
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-8号楼-1楼" } }
       }
     ]
   },
@@ -583,6 +595,12 @@ Object.assign(storyData, {
         text: "下楼",
         nextScene: "三林安居苑-8号楼-1楼",
         effect: updateTime(1)
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-8号楼-2楼" } }
       }
     ]
   },
@@ -1136,6 +1154,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       {
         text: "退出去",
         nextScene: "三林安居苑-小区内部"
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-7号楼-1楼" } }
       }
     ]
   },
@@ -1177,7 +1201,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       { text: "推开201的门", nextScene: "三林安居苑-7号楼-201" },
       { text: "推开202的门", nextScene: "三林安居苑-7号楼-202" },
       { text: "继续上楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) },
-      { text: "下楼", nextScene: "三林安居苑-7号楼-1楼", effect: updateTime(1) }
+      { text: "下楼", nextScene: "三林安居苑-7号楼-1楼", effect: updateTime(1) },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-7号楼-2楼" } }
+      }
     ]
   },
 
@@ -1190,7 +1220,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       { text: "推开301的门", nextScene: "三林安居苑-7号楼-301" },
       { text: "推开302的门", nextScene: "三林安居苑-7号楼-302" },
       { text: "继续上楼", nextScene: "三林安居苑-7号楼-4楼", effect: updateTime(1) },
-      { text: "下楼", nextScene: "三林安居苑-7号楼-2楼", effect: updateTime(1) }
+      { text: "下楼", nextScene: "三林安居苑-7号楼-2楼", effect: updateTime(1) },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-7号楼-3楼" } }
+      }
     ]
   },
 
@@ -1221,7 +1257,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         nextScene: "三林安居苑-7号楼-401"
       },
       { text: "继续上楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) },
-      { text: "下楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) }
+      { text: "下楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-7号楼-4楼" } }
+      }
     ]
   },
 
@@ -1247,6 +1289,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         cs.push({ text: "推开天台门", nextScene: "三林安居苑-7号楼-天台" });
       }
       cs.push({ text: "下楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) });
+      if (vars.itemCount > 0) {
+        cs.push({
+          text: "🎒整理一下物品",
+          nextScene: "整理整理",
+          effect: { set: { positionAfterOperation: "三林安居苑-7号楼-6楼" } }
+        });
+      }
       return cs;
     }
   },
@@ -1275,7 +1324,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         effect: updateTime(10, { set: { _travelMinutes: 0 } }),
         nextScene: "三林安居苑-7号楼-天台-歇脚"
       },
-      { text: "下楼", nextScene: "三林安居苑-7号楼-6楼", effect: updateTime(1) }
+      { text: "下楼", nextScene: "三林安居苑-7号楼-6楼", effect: updateTime(1) },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-7号楼-天台" } }
+      }
     ]
   },
 
@@ -1325,6 +1380,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         text: "下楼",
         nextScene: "三林安居苑-7号楼-4楼",
         effect: updateTime(1)
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-7号楼-5楼" } }
       }
     ]
   },
@@ -1372,6 +1433,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       {
         text: "离开502",
         nextScene: "三林安居苑-7号楼-5楼"
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "三林安居苑-502" } }
       }
     ]
   },

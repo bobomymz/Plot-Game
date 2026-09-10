@@ -49,6 +49,12 @@ Object.assign(storyData,{
         effect: updateTime(2)
       },
       {
+        showCondition: "pharmacyZombieKilled && chasedByZombies <= 1 && itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "益丰大药房" } }
+      },
+      {
         text: "没什么好拿的，离开",
         nextScene: "三林路",
         effect: updateTime(1)
@@ -671,6 +677,7 @@ Object.assign(storyData,{
     }),
     text: "赵广成给你递了一瓶没开封的矿泉水——从他办公桌底下箱子里拿出来的，外包装还贴着超市的打折标签。\n\
 他特别强调了一句：“这是我上星期买的，封好的，不是自来水灌的。自来水不干净，我跟利昂说过好几次了，最近水不对，他不听，老说烧开了就行。”\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}</span>\n\
 这好像打开了他的话匣子。“我卖药二十年了，这个事我跟你说，不对劲。二十七号开始就有人来买退烧药，一个两个就算了，来的都是那种\
 ——你晓得吧，不是普通发烧。脸通红，嘴唇干得裂口子，进来第一句话不是‘多少钱’，是‘有没有水’。我开药店又不是开水站。”\n\
 他摇了摇头。“利昂也注意到了。他跟我说‘老赵，最近退烧药走得快，要不要补货’。我当时还说他瞎操心，现在看来——”\n\

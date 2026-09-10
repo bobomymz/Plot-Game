@@ -638,6 +638,12 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         effect: updateTime(1)
       },
       {
+        showCondition: "chasedByZombies <= 1 && itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "银行-保安室" } }
+      },
+      {
         text: "太危险了，走吧",
         nextScene: "银行内部"
       }
@@ -749,6 +755,12 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         text: "在收银台边的长凳上歇一会儿",
         nextScene: "联华超市-歇脚",
         effect: updateTime(1)
+      },
+      {
+        showCondition: "chasedByZombies <= 1 && itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "联华超市" } }
       },
       {
         text: "离开",
@@ -863,6 +875,13 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         text: "记下这个位置，离开",
         nextScene: "联华超市"
       });
+      if (vars.chasedByZombies <= 1 && vars.itemCount > 0) {
+        cs.push({
+          text: "🎒整理一下物品",
+          nextScene: "整理整理",
+          effect: { set: { positionAfterOperation: "联华超市-仓库" } }
+        });
+      }
       if (vars.hasIronPipe) {
         cs.push({
           text: "用铁管撬开仓库角落那扇锈蚀的铁栅栏门",

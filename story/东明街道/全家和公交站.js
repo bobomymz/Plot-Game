@@ -99,6 +99,12 @@ Object.assign(storyData, {
         nextScene: "全家便利店内部"
       },
       {
+        showCondition: "chasedByZombies <= 1 && itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "全家便利店内部" } }
+      },
+      {
         text: "离开",
         nextScene: "小区东门-整装待发"
       }
