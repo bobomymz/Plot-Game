@@ -720,6 +720,7 @@ Object.assign(storyData, {
 ```
 
 `onActivate` / `onDeactivate` 让特效可以附带副作用（如随机选图、设 CSS 变量），引擎只负责 diff 调用，具体逻辑由数据层定义。
+**调用顺序是两阶段的**：一次 diff 中先跑完所有 `onDeactivate`，再跑所有 `onActivate`——否则两个操作同一资源（如丧尸两档共用 `--zombie-bg`）的特效换档时，新档设的值会被旧档的清理抹掉。
 
 **当前效果：**
 
@@ -742,6 +743,7 @@ Object.assign(storyData, {
 - 由 `showZombies` 变量控制开关（路网节点 `onEnter` 中置 `true`，引擎每场景重置为 `false`）
 - 图片分布在 `images/zombie-surround-m1~3.png`（轻度）和 `images/zombie-surround-h1~3.png`（重度）
 - 轻度 2~3 只丧尸剪影、颜色较浅；重度 4~5 只、颜色更深、密度更大
+- 手机端（`max-width: 767px`）遮罩收缩到图片区高度（42dvh），不延伸到文本/选项下方；桌面端仍全屏（详见 手机端适配.md）
 
 ### 层叠顺序（z-index）
 

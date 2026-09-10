@@ -212,12 +212,19 @@ function applyScreenEffects() {
   const oldClasses = overlay.className;
   const newClasses = activeClasses.join(' ');
   if (oldClasses !== newClasses) {
+    // 两阶段：先全部 onDeactivate、再全部 onActivate。
+    // 否则轻度→重度（或反向）切换时，新档 onActivate 设的 --zombie-bg
+    // 会被旧档 onDeactivate 的 removeProperty 抹掉（钩子是同一 CSS 变量的写/删）。
     for (const effect of effects) {
       const wasActive = oldClasses.indexOf(effect.className) >= 0;
       const nowActive = newClasses.indexOf(effect.className) >= 0;
       if (wasActive && !nowActive && effect.onDeactivate) {
         effect.onDeactivate(overlay);
       }
+    }
+    for (const effect of effects) {
+      const wasActive = oldClasses.indexOf(effect.className) >= 0;
+      const nowActive = newClasses.indexOf(effect.className) >= 0;
       if (!wasActive && nowActive && effect.onActivate) {
         effect.onActivate(overlay);
       }
