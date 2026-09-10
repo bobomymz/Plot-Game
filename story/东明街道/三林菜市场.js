@@ -23,11 +23,11 @@ Object.assign(storyData, {
   "菜市场-大厅": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        if(!vars._marketHallCleared) return "images/菜市场/大厅-雨.jpg";
-        return "images/菜市场/大厅-雨-无丧尸.jpg"
+        if(!vars._marketHallCleared) return "images/菜市场/大厅-雨.webp";
+        return "images/菜市场/大厅-雨-无丧尸.webp"
       } 
-      if(!vars._marketHallCleared) return "images/菜市场/大厅.jpg";
-      return "images/菜市场/大厅-无丧尸.jpg";
+      if(!vars._marketHallCleared) return "images/菜市场/大厅.webp";
+      return "images/菜市场/大厅-无丧尸.webp";
     },
     onEnter: function(vars) {
       vars.currentPlace = "三林菜市场";
@@ -85,8 +85,8 @@ Object.assign(storyData, {
   "菜市场-员工通道": {
     image: function(vars) {
       // 有照明能看清"安全出口"标志（图片上画在左侧通道）；没照明图很昏暗
-      if (vars.hasTorch) return "images/菜市场/员工通道-手电筒.jpg"; 
-      else if(vars.hasPhone && vars.phoneBattery > 0) return "images/菜市场/员工通道-手机.jpg";
+      if (vars.hasTorch) return "images/菜市场/员工通道-手电筒.webp"; 
+      else if(vars.hasPhone && vars.phoneBattery > 0) return "images/菜市场/员工通道-手机.webp";
       return "images/placeholder.png";
     },
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "员工通道", _marketEntry: "员工通道" } },
@@ -153,8 +153,8 @@ Object.assign(storyData, {
   // ==================== 冷库区 ====================
   "菜市场-冷库区": {
     image: timeImage({
-      morning: "images/菜市场/冷库区.jpg",
-      night: "images/菜市场/冷库区-night.jpg"
+      morning: "images/菜市场/冷库区.webp",
+      night: "images/菜市场/冷库区-night.webp"
     }),
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "冷库区" } },
     text: "你走进冷库区。温度明显低了下来，墙角一排冷库门上结着白霜，其中一扇虚掩着，门缝里漏出微弱的昏黄灯光，还有一股柴油的味道。\n\
@@ -177,7 +177,7 @@ Object.assign(storyData, {
   },
 
   "菜市场-冷库区-闭门羹": {
-    image: "images/placeholder.png" /* TODO: images/菜市场/冷库区.jpg */,
+    image: "images/placeholder.png" /* TODO: images/菜市场/冷库区.webp */,
     text: function(vars) {
       var met = vars._visit && vars._visit["菜市场-交易点"] > 0;
       if (!met) {
@@ -196,7 +196,7 @@ Object.assign(storyData, {
 
   // ==================== 交易点（冷库深处·方姐） ====================
   "菜市场-交易点": {
-    image: "images/菜市场/交易点.jpg" /* TODO: images/菜市场/交易点.jpg */,
+    image: "images/菜市场/交易点.webp" /* TODO: images/菜市场/交易点.webp */,
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "冷库深处" } },
     text: function(vars) {
       var desc = "你推开门，柴油发电机的嗡嗡声清晰起来。昏黄的灯泡下，一个围着脏围裙的中年女人正蹲在一台冷藏柜前翻着什么。听到动静她猛地回头——看到是你，才慢慢松了手里的砍骨刀。\n“进货的来了？”她站起来，抹了把汗，嗓音沙哑，“我这儿不白给，也不白拿。拿东西来换，肉、水、家伙，都有。”";
@@ -224,7 +224,7 @@ Object.assign(storyData, {
   },
 
   "菜市场-交易点-没东西": {
-    image: "images/placeholder.png" /* TODO: images/菜市场/交易点.jpg */,
+    image: "images/placeholder.png" /* TODO: images/菜市场/交易点.webp */,
     text: "你摸了摸身上——没有方姐要的东西。方姐看了你一眼，没说什么，又蹲回冷藏柜前。“等有货了再来。”",
     choices: [
       { text: "离开", nextScene: "菜市场-冷库区", effect: updateTime(1) }

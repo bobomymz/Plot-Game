@@ -125,7 +125,7 @@ Object.assign(storyData, {
   },
 
   "结局-图书馆-大厅-徒劳": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你冲向志愿者丧尸，但手里没有像样的武器——你只能用拳头。\n你一拳打在它胸口，它只是退了两步，然后猛地抓住了你的手臂。它的力气比你想象中大得多。\n你挣扎着想甩开它，但大厅里的动静引来了更多麻烦——藏书区方向传来了回应般的低吼。\n两只丧尸一前一后堵住了你的退路。\n\n—— 结局：图书馆-大厅-徒劳 ——"
   },
 

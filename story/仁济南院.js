@@ -1235,7 +1235,7 @@ Object.assign(storyData, {
   },
 
   "结局-仁济-尸潮围困": {
-    image: "images/zombieWaveSmashYouIntoPieces.png",
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "你朝着高架的方向冲去，想要离开这家医院。\n\
 但外面的尸潮比你想象中更密。你刚冲出浦锦路，就被从四面八方涌来的丧尸吞没——它们早已把这家医院围得水泄不通，就等着有人从里面出来。\n\
 你在震耳欲聋的嘶吼声中被撕碎。\n\

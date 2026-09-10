@@ -7,7 +7,7 @@ Object.assign(storyData, {
 
   // ==================== 入口：地面 → 站厅 ====================
   "11号线-三林东路站": {
-    image: "images/地铁站/入口.png",
+    image: "images/地铁站/入口.webp",
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     text: "你走进11号线三林东路站的1号口。台阶向下延伸，通向一片昏暗的站厅。应急灯亮着，投下惨白的冷光。\n\
 你低下头，看到的是触目惊心的场景————人堆。\n\
@@ -122,7 +122,7 @@ Object.assign(storyData, {
   },
 
   "结局-地铁站-站厅层-被发现": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你的体力不够撑住蹲姿太久——腿一软，手掌撑在地上发出一声响。靠在墙角的那只丧尸猛地转过头，嘶吼着朝你扑了过来。\n你还没来得及站起来就被扑倒了。\n\n—— 结局：地铁站-站厅层-被发现 ——"
   },
 
@@ -266,7 +266,7 @@ Object.assign(storyData, {
   },
 
   "结局-灭火器死亡": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你倒在地上，灭火器从手中脱落，咕噜噜地滚远了。白雾笼罩了你的视野，你什么都看不见——但你感觉到了它们的手抓住你的衣服、你的手臂、你的脖子。\n\n—— 结局：灭火器死亡 ——"
   },
 
@@ -312,7 +312,7 @@ Object.assign(storyData, {
 
   // ==================== 楼梯（QTE: 4s，可见） ====================
   "地铁站-楼梯": {
-    image: "images/地铁站/楼梯.jpg",
+    image: "images/地铁站/楼梯.webp",
     qte: {
       timeout: "4000 - chasedByZombies * 400",
       onTimeout: "地铁站-楼梯-犹豫"
@@ -379,7 +379,7 @@ Object.assign(storyData, {
   },
 
   "结局-地铁站-楼梯-摔倒": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你的体力不足以支撑你在湿滑的地面上保持平衡。你脚下一滑，膝盖重重磕在台阶的边缘上。\n剧痛让你一时间站不起来——而身后的脚步声正在迅速逼近。\n你想爬起来，但已经来不及了。\n\n—— 结局：地铁站-楼梯-摔倒 ——"
   },
 
@@ -432,7 +432,7 @@ Object.assign(storyData, {
 
   // ==================== 站台层（QTE: 3s，可见） ====================
   "地铁站-站台层": {
-    image: "images/地铁站/站台.jpg",
+    image: "images/地铁站/站台.webp",
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     qte: {
       timeout: "3000 - chasedByZombies * 300",
@@ -486,7 +486,7 @@ Object.assign(storyData, {
   },
 
   "地铁站-站台层-灭火器雾障": {
-    image: "images/地铁站/灭火器雾障.jpg",
+    image: "images/地铁站/灭火器雾障.webp",
     onEnter: { set: { _extinguisherUsed: true } },
     text: "你拔掉保险销，对着站台地面按下压把。白色的干粉喷涌而出，在站台上迅速蔓延开来。\n\
 你低身钻入雾中，沿着屏蔽墙快速移动。丧尸的吼叫声在白雾中变得闷钝而遥远——它们看不见你，你也看不见它们，但你记住了列车门的方向。\n\
@@ -527,7 +527,7 @@ Object.assign(storyData, {
 
   // ==================== 选择列车 ====================
   "地铁站-选择列车": {
-    image: "images/地铁站/车厢里.jpg" /* TODO: images/地铁站/trainInterior.png */,
+    image: "images/地铁站/车厢里.webp" /* TODO: images/地铁站/trainInterior.png */,
     onEnter: { set: { _extinguisherUsed: false } },
     text: "你踏进车厢。车厢里的灯还亮着，座椅上散落着几份报纸和一个水杯。穿过整节车厢，你能看到驾驶室的方向。\n车厢另一端的电子显示屏还在闪烁，显示着线路信息。",
     choices: [

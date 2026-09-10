@@ -470,9 +470,9 @@ const storyData = {
       className: "zombie-surround-moderate",
       onActivate: function(overlay) {
         var pool = [
-          "images/zombie-surround-m1.png",
-          "images/zombie-surround-m2.png",
-          "images/zombie-surround-m3.png"
+          "images/zombie-surround-m1.webp",
+          "images/zombie-surround-m2.webp",
+          "images/zombie-surround-m3.webp"
         ];
         overlay.style.setProperty('--zombie-bg', "url('" + pool[Math.floor(Math.random() * pool.length)] + "')");
       },
@@ -485,9 +485,9 @@ const storyData = {
       className: "zombie-surround-heavy",
       onActivate: function(overlay) {
         var pool = [
-          "images/zombie-surround-h1.png",
-          "images/zombie-surround-h2.png",
-          "images/zombie-surround-h3.png"
+          "images/zombie-surround-h1.webp",
+          "images/zombie-surround-h2.webp",
+          "images/zombie-surround-h3.webp"
         ];
         overlay.style.setProperty('--zombie-bg', "url('" + pool[Math.floor(Math.random() * pool.length)] + "')");
       },
@@ -502,17 +502,17 @@ const storyData = {
 
   // -------- 起始 / 全局节点 --------
   "结局-体力耗尽": {
-    image: "images/outOfStrength.png",
+    image: "images/outOfStrength.webp",
     text: "你的体力彻底耗尽……眼前一黑，倒在了冰冷的地面上。\n再也没有醒来。\n\n—— 结局：体力耗尽 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
   "物品太多啦": {
-    image: "images/tooMany.png",
+    image: "images/tooMany.webp",
     text: "你携带的物品太多啦，不能拿啦。你可以选择撤回哦~",
     style: "color: #ff4444; font-weight: bold;"
   },
   "直面尸潮": {
-    image: "images/youMeetZombies.png",
+    image: "images/youMeetZombies.webp",
     onEnter: { add : {chasedByZombies: 2} }, // 被丧尸突然袭击，+2
     text: "一群饥渴的丧尸从阴影中跳出，向你冲了过来，你得快点跑了",
     choices: [
@@ -523,12 +523,12 @@ const storyData = {
     ]
   },
   "结局-尸潮撕碎了你": {
-    image: "images/zombieWaveSmashYouIntoPieces.png",
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "尸潮彻底包围了你，你被撕碎了。\n\
 —— 结局：尸潮撕碎了你 ——"
   },
   "整理整理": { // 汇总一下物品
-    image: "images/整理整理.png" ,
+    image: "images/整理整理.webp" ,
     text: "你的东西也许有点多。把一些没用的东西丢掉，这样能拿更多有用的东西。",
     choices: [
       {
@@ -906,7 +906,7 @@ const storyData = {
 
   // ====== 整理整理-使用道具（独立描述节点） ======
   "整理整理-看时间": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     text: function(vars) {
       var hh = vars.hh, mm = vars.mm;
       var period = hh >= 6 && hh < 11 ? "上午" : (hh < 14 ? "中午" : (hh < 18 ? "下午" : "晚上"));
@@ -918,7 +918,7 @@ const storyData = {
   },
 
   "整理整理-喝水": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     onEnter: function(vars) {
       vars._drankToxicWater = !!vars.waterToxic; // 供 text 判断是否喝了毒水
       if (vars.waterToxic) vars.mercuryLoad = (vars.mercuryLoad || 0) + 10;
@@ -939,7 +939,7 @@ const storyData = {
   },
 
   "整理整理-吃冻肉": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     onEnter: function(vars) {
       vars.strength = 10;
       vars.hasFrozenMeat = false;
@@ -953,7 +953,7 @@ const storyData = {
   },
 
   "整理整理-吃饼干": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasBiscuit: false } }),
     text: "你拆开包装袋，掰了一块压缩饼干放进嘴里。干巴巴的，嚼起来有点硬，但那股麦香让你想起还没出事时的日子。你就着水咽了下去，胃里终于有了点东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
@@ -962,7 +962,7 @@ const storyData = {
   },
 
   "整理整理-吃磨牙饼干": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasTeethingBiscuit: false } }),
     text: "你拆开磨牙饼干的罐子，拿出一根咬了一口——硬得离谱，几乎没什么味道，只有一点淡淡的谷物甜。这是给没长牙的婴儿磨牙的东西。你嚼了很久才咽下去，居然还挺顶饿。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
@@ -971,7 +971,7 @@ const storyData = {
   },
 
   "整理整理-吃食堂干粮": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 2, itemCount: -1 }, set: { hasCanteenFood: false } }),
     text: "你撬开一个罐头，就着干粮慢慢吃了一顿。罐头咸得齁人，干粮噎嗓子，但胃里有了实在的东西，身上也暖了些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
@@ -980,7 +980,7 @@ const storyData = {
   },
 
   "整理整理-服药丸": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     onEnter: function(vars) {
       vars.mercuryLoad = Math.max(0, vars.mercuryLoad - 20);
       vars.hasMercuryPill = false;
@@ -994,7 +994,7 @@ const storyData = {
   },
 
   "整理整理-退烧": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     onEnter: function(vars) {
       vars.hasCold = false;
       vars._rainExposure = 0;
@@ -1010,7 +1010,7 @@ const storyData = {
 
   // ====== 整理整理-手机地图导航（导航表见 utils.js 的 NAV_TABLE） ======
   "整理整理-导航": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     text: "你摸出手机，点开离线地图。大半个屏幕是模糊的灰色，只有你走过的街道还标着清楚的名字。\n输入想去的地方，看看怎么走。",
     choices: [
       {
@@ -1025,7 +1025,7 @@ const storyData = {
   },
 
   "整理整理-导航-结果": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     text: function(vars) {
       var entry = navLookup(vars._input);
       return entry ? navRouteText(vars, entry) : "地图上找不到这个地方。";
@@ -1037,7 +1037,7 @@ const storyData = {
   },
 
   "整理整理-导航-查无": {
-    image: "images/整理整理.png",
+    image: "images/整理整理.webp",
     text: function(vars) {
       var q = String(vars._input || "").replace(/[{}]/g, "");
       return "你在搜索框里输入了“" + q + "”。\n地图上找不到这个地方。";
@@ -1049,7 +1049,7 @@ const storyData = {
   },
 
   "start": {
-    image: "images/gameStart.jpg",
+    image: "images/gameStart.webp",
     text: "游玩者请注意，本游戏有轻微闪烁画面，心脏病患者请勿尝试。",
     choices: [
       {
@@ -1063,7 +1063,7 @@ const storyData = {
   },
 
   "结局-汞中毒尸变": {
-    image: "images/zombiePounceOnYou.jpg",
+    image: "images/zombiePounceOnYou.webp",
     text: "你的手开始不受控制地颤抖。视野边缘在变暗，像有人从四周慢慢拉上帷幕。\n最后的清醒时刻，你低头看向自己的手——皮肤已经变成了暗灰色，在日光下泛着诡异的金属光泽。\n你张开嘴想喊什么，但喉咙里只发出了一声低沉的喉音。\n—— 结局：汞中毒尸变 ——"
   },
 };

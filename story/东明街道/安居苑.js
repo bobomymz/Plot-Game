@@ -9,16 +9,16 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({ // evening ~ midnight 统一为 night
-          morning: "images/安居苑/后门-雨天.png",
-          night: "images/安居苑/后门-雨天-night.png",
+          morning: "images/安居苑/后门-雨天.webp",
+          night: "images/安居苑/后门-雨天-night.webp",
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安居苑/后门.png",
-        evening: "images/安居苑/后门-evening.png",
-        night: "images/安居苑/后门-night.png",
-        midnight: "images/安居苑/后门-midnight.png"
+        morning: "images/安居苑/后门.webp",
+        evening: "images/安居苑/后门-evening.webp",
+        night: "images/安居苑/后门-night.webp",
+        midnight: "images/安居苑/后门-midnight.webp"
       });
       return f(vars);
     }, /* TODO: images/安居苑/anJuYuan.png */
@@ -84,9 +84,9 @@ Object.assign(storyData, {
   "三林安居苑-小区内部": {
     outdoor: true,
     image: timeImage({
-      morning: "images/安居苑/小区内部.jpg",
-      evening: "images/安居苑/小区内部-evening.jpg",
-      night: "images/安居苑/小区内部-night.jpg"
+      morning: "images/安居苑/小区内部.webp",
+      evening: "images/安居苑/小区内部-evening.webp",
+      night: "images/安居苑/小区内部-night.webp"
       // midnight直接复用night图片
     }), 
     onEnter: function(vars) {
@@ -140,9 +140,9 @@ Object.assign(storyData, {
   "三林安居苑-小广场": {
     outdoor: true,
     image: timeImage({
-      morning: "images/安居苑/小广场.jpg",
-      evening: "images/安居苑/小广场-evening.jpg",
-      night: "images/安居苑/小广场-night.jpg"
+      morning: "images/安居苑/小广场.webp",
+      evening: "images/安居苑/小广场-evening.webp",
+      night: "images/安居苑/小广场-night.webp"
       // midnight直接复用night图片
     }),
     onEnter: function(vars) {
@@ -196,9 +196,9 @@ Object.assign(storyData, {
 
   "三林安居苑-小广场-歇脚": {
     image: timeImage({
-      morning: "images/安居苑/小广场.jpg",
-      evening: "images/安居苑/小广场-evening.jpg",
-      night: "images/安居苑/小广场-night.jpg"
+      morning: "images/安居苑/小广场.webp",
+      evening: "images/安居苑/小广场-evening.webp",
+      night: "images/安居苑/小广场-night.webp"
       // midnight直接复用night图片
     }),
     onEnter: function(vars) {
@@ -225,9 +225,9 @@ Object.assign(storyData, {
 
   "三林安居苑-滑板车": {
     image: timeImage({
-      morning: "images/安居苑/滑板车.jpg",
-      evening: "images/安居苑/滑板车-evening.jpg",
-      night: "images/安居苑/滑板车-night.jpg"
+      morning: "images/安居苑/滑板车.webp",
+      evening: "images/安居苑/滑板车-evening.webp",
+      night: "images/安居苑/滑板车-night.webp"
       // midnight直接复用night图片
     }),
     onEnter: function(vars) {
@@ -252,14 +252,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if(!vars.hasKey502) {
         var f = timeImage({
-          morning: "images/安居苑/自行车.jpg",
-          night: "images/安居苑/自行车-night.jpg"
+          morning: "images/安居苑/自行车.webp",
+          night: "images/安居苑/自行车-night.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安居苑/鹅卵石路.jpg",
-        night: "images/安居苑/鹅卵石路-night.jpg"
+        morning: "images/安居苑/鹅卵石路.webp",
+        night: "images/安居苑/鹅卵石路-night.webp"
       });
       return f(vars);
     },
@@ -289,8 +289,8 @@ Object.assign(storyData, {
   // ========== 藤蔓丧尸（美工刀 + 地图） ==========
   "三林安居苑-藤蔓丧尸": {
     image: timeImage({
-      morning: "images/安居苑/藤蔓丧尸.jpg",
-      night: "images/安居苑/藤蔓丧尸-night.jpg"
+      morning: "images/安居苑/藤蔓丧尸.webp",
+      night: "images/安居苑/藤蔓丧尸-night.webp"
     }),
     onEnter: { set: { showRain: true } },
     text: function(vars) {
@@ -331,8 +331,8 @@ Object.assign(storyData, {
 
   "三林安居苑-割藤蔓": {
     image: timeImage({
-      morning: "images/安居苑/割藤蔓.jpg",
-      night: "images/安居苑/割藤蔓-night.jpg"
+      morning: "images/安居苑/割藤蔓.webp",
+      night: "images/安居苑/割藤蔓-night.webp"
     }),
     onEnter: updateTime(2, { set: { showRain: true, positionAfterOperation: "三林安居苑-小区内部" } }),
     text: "你掏出美工刀，推出刀片，小心地靠近丧尸。它朝着你嗬嗬叫着，但够不到你——藤蔓把它的手臂也缠住了一部分。\n\
@@ -360,8 +360,8 @@ Object.assign(storyData, {
 
   "三林安居苑-藤蔓丧尸-战斗": {
     image: timeImage({
-      morning: "images/安居苑/藤蔓丧尸扑来.jpg",
-      night: "images/安居苑/藤蔓丧尸扑来-night.jpg"
+      morning: "images/安居苑/藤蔓丧尸扑来.webp",
+      night: "images/安居苑/藤蔓丧尸扑来-night.webp"
     }),
     onEnter: { set: { showRain: true } },
     text: function(vars) {
@@ -389,8 +389,8 @@ Object.assign(storyData, {
 
   "三林安居苑-藤蔓丧尸-击杀": {
     image: timeImage({
-      morning: "images/安居苑/击倒藤蔓丧尸.jpg",
-      night: "images/安居苑/击倒藤蔓丧尸-night.jpg"
+      morning: "images/安居苑/击倒藤蔓丧尸.webp",
+      night: "images/安居苑/击倒藤蔓丧尸-night.webp"
     }),
     onEnter: { set: { positionAfterOperation: "三林安居苑-藤蔓丧尸-击杀", showRain: true } },
     text: function(vars) {
@@ -427,7 +427,7 @@ Object.assign(storyData, {
   // ========== 8号楼（老洪 & 王知筠） ==========
 
   "三林安居苑-8号楼-1楼": {
-    image: "images/安居苑/8号楼-1楼.jpg",
+    image: "images/安居苑/8号楼-1楼.webp",
     onEnter: { set: { currentPos: "8号楼" } },
     text: "8号楼的单元门虚掩着——门锁不知什么时候被人撬坏了，锁孔边缘有几道新鲜的划痕。你推开门，楼道里光线昏暗，只有尽头窗户透进来的光照出一道斜长的影子。\n\
 左手边是锈蚀的信箱，其中一格上的住户标签已经缺失，看起来是204室。走廊尽头的楼梯拐角处散落着几张报纸，日期停在了6月27日。",
@@ -445,7 +445,7 @@ Object.assign(storyData, {
   },
 
   "三林安居苑-8号楼-2楼": {
-    image: "images/安居苑/8号楼-2楼.jpg",
+    image: "images/安居苑/8号楼-2楼.webp",
     onEnter: { set: { currentPos: "8号楼2楼" } },
     text: "你走到二楼。走廊里很安静，只有风一下一下地拍打着窗框。\n\
 两扇门在眼前：203和204。\n\
@@ -473,7 +473,7 @@ Object.assign(storyData, {
   // ===== 203室——王知筠的家（空的） =====
 
   "三林安居苑-8号楼-203室": {
-    image: "images/安居苑/8号楼-203.jpg",
+    image: "images/安居苑/8号楼-203.webp",
     onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-2楼" } },
     text: function(vars) {
       var desc = "203的门没锁——你轻轻一拧就开了。\n\
@@ -787,7 +787,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   // ===== 204室——老洪 =====
 
   "三林安居苑-8号楼-204室": {
-    image: "images/安居苑/8号楼-204.jpg",
+    image: "images/安居苑/8号楼-204.webp",
     text: function(vars) {
       if (vars._visit['三林安居苑-8号楼-204室'] == 1) {
         return "你轻轻推开门。\n\
@@ -994,7 +994,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   // ========== 居民楼 ==========
 
   "三林安居苑-7号楼-1楼": {
-    image: "images/安居苑/居民楼1楼.jpg",
+    image: "images/安居苑/居民楼1楼.webp",
     onEnter: { set: { currentPos: "居民楼" } },
     text: function(vars) {
       var desc = "";
@@ -1151,7 +1151,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-7号楼-5楼": {
-    image: "images/安居苑/7号楼-5楼.jpg",
+    image: "images/安居苑/7号楼-5楼.webp",
     onEnter: { set: { currentPos: "居民楼" } },
     text: "五楼的走廊安静得有些压抑。地上铺着老式瓷砖，有几块已经裂成了蛛网状。并排三扇门：501、502、503，门牌号是那种老式的塑料字，502的“2”已经歪了。\n\
 502的门上贴着一张褪色的福字，边缘翘起，纸面发脆。门都是锁死的。",
@@ -1179,7 +1179,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-5楼-门锁了": {
-    image: "images/安居苑/7号楼-5楼-门开不了.jpg",
+    image: "images/安居苑/7号楼-5楼-门开不了.webp",
     text: "你握住门把手用力拧了一下——锁死了，纹丝不动。看来需要找到钥匙才行。",
     choices: [
       {
@@ -1192,7 +1192,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   // ========== 502室内部 ==========
 
   "三林安居苑-502": {
-    image: "images/安居苑/7号楼-502.jpg",
+    image: "images/安居苑/7号楼-502.webp",
     onEnter: { set: { currentPos: "502室" } },
     text: "钥匙在锁孔里转动了一圈，咔嗒一声，门开了。\n\
 屋里很暗，窗帘紧拉着，只有一道细缝透进外面昏黄的光线。这间屋子看起来就像很久没人住过一样。玄关的鞋架上还摆着几双拖鞋，整整齐齐，仿佛主人只是出了趟远门。\n\
@@ -1381,7 +1381,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-自行车": {
-    image: "images/安居苑/锈蚀的自行车.jpg",
+    image: "images/安居苑/锈蚀的自行车.webp",
     onEnter: { set: { showRain: true } },
     text: "你走到那辆自行车前。这是一辆老式的永久牌自行车，链条看起来有点生锈了。\n车身上贴着一张褪色的贴纸：”防锈润滑 WD-40 已保养”\
 ——日期是两周前，看来外表寒碜。",
@@ -1408,7 +1408,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-喜提新车": {
-    image: "images/安居苑/骑上自行车.jpg",
+    image: "images/安居苑/骑上自行车.webp",
     onEnter: { set: { showRain: true } },
     text: "你拿出润滑油擦拭了一下链条，骑上去试了试。嗯，手感还不错，看来可以加快点速度了",
     choices: [
@@ -1420,7 +1420,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   },
 
   "三林安居苑-骑车失败": {
-    image: "images/安居苑/骑车失败.jpg",
+    image: "images/安居苑/骑车失败.webp",
     onEnter: { set: { showRain: true } },
     text: "你跨上自行车，用力踩下踏板。链条发出刺耳的嘎吱声——车轮勉强转了一圈，然后卡住了，害得你摔在地上\n\
 链条锈得太厉害了，没有润滑油根本没法正常骑行。也许在什么地方能找到防锈液……",
@@ -1437,22 +1437,22 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     image: function(vars) {
       if (vars.weather === "雨") {ss
         var f = timeImage({
-          morning: "images/安居苑/前门-雨.jpg",
-          night: "images/安居苑/前门-雨-night.jpg"
+          morning: "images/安居苑/前门-雨.webp",
+          night: "images/安居苑/前门-雨-night.webp"
         });
         return f(vars);
       }
       if (vars.weather === "阴") {
         var f = timeImage({
-          morning: "images/安居苑/前门-阴.jpg",
-          night: "images/安居苑/前门-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+          morning: "images/安居苑/前门-阴.webp",
+          night: "images/安居苑/前门-night.webp" // 晚上看不出阴天，直接复用晴天图片
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安居苑/前门.jpg",
-        evening: "images/安居苑/前门-evening.jpg",
-        night: "images/安居苑/前门-night.jpg"
+        morning: "images/安居苑/前门.webp",
+        evening: "images/安居苑/前门-evening.webp",
+        night: "images/安居苑/前门-night.webp"
         // midnight省略不写了
       });
       return f(vars);
@@ -1472,10 +1472,10 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   // ========== 躲藏场景（安居苑区域） ==========
 
-  "三林安居苑-躲藏": hideOnLocation("images/躲藏.jpg",
+  "三林安居苑-躲藏": hideOnLocation("images/躲藏.webp",
     "你绕到门卫亭的窗台下蹲着，但一只丧尸慢悠悠地踱了过来——它似乎对墙角感兴趣。它看到了你，扑了过来。你侧身躲开，头也不回地跑了。",
     "你绕到门卫亭的窗台下，蹲在死角里。铁皮墙壁隔音效果不错，外面的声音变得闷闷的。你蜷缩着，等那些拖沓的脚步声都走远了，才站起来。"),
-  "三林安居苑-小区内部-躲藏": hideOnLocation("images/躲藏.jpg",
+  "三林安居苑-小区内部-躲藏": hideOnLocation("images/躲藏.webp",
     "你钻进花坛的灌木丛深处。但枝条沙沙作响——一只变异猫正在灌木丛里穿梭。它没发现你，但它的动静引得一只丧尸朝这边走来。你只能从另一侧钻出来，换了个地方。",
     "你钻进花坛的灌木丛深处。枝条和叶片把你完全遮住了。透过叶缝你能看到丧尸在小区里游荡，但它们没有注意到这片浓密的绿植。等小区重新安静下来，你才从灌木中钻出。"),
 });

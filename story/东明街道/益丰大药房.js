@@ -2,7 +2,7 @@ Object.assign(storyData,{
 
   // ==================== 益丰大药房 ====================
   "益丰大药房": {
-    image: "images/小区周边/益丰大药房/益丰大药房内部.png",
+    image: "images/小区周边/益丰大药房/益丰大药房内部.webp",
     onEnter: { set: { currentPlace: "三林路", currentPos: "益丰大药房" } },
     text: function(vars) {
       var insideBack = ["益丰大药房-击杀", "益丰大药房-柜台后-已清理", "益丰大药房-翻找", "益丰大药房-库房门锁了", "益丰大药房-办公室歇脚", "利昂药剂师的工牌"].indexOf(vars._lastScene) >= 0;
@@ -69,7 +69,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-柜台后": {
-    image: "images/小区周边/益丰大药房/白大褂.png" /* TODO: images/小区周边/益丰大药房/发现白大褂.png */,
+    image: "images/小区周边/益丰大药房/白大褂.webp" /* TODO: images/小区周边/益丰大药房/发现白大褂.webp */,
     text: "你绕到柜台侧面。一只穿着白大褂的丧尸突然窜了出来，你急忙闪开。它好像没看到你一样，蹲在地上，疯狂地撕咬一盒不知道什么的药。",
     choices: [
       {
@@ -87,7 +87,7 @@ Object.assign(storyData,{
   },
 
   "结局-益丰-被反杀": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: function(vars) {
       var hit = hasMeleeWeapon(vars)
         ? "你举起" + meleeWeaponName(vars) + "砸了下去，但手臂太软了——这一击只蹭到了它的后背。"
@@ -97,7 +97,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-击杀": {
-    image: "images/小区周边/益丰大药房/击杀白大褂.png",
+    image: "images/小区周边/益丰大药房/击杀白大褂.webp",
     onEnter: { add: { strength: 1 }, set: { hurtByZombie: false, pharmacyZombieKilled: true } },
     text: function(vars) {
       return "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。\n你蹲下来翻看它刚才啃咬的药箱——里面居然还有几盒没拆封的碘伏棉签和弹性绷带。柜台下面的抽屉里还有一瓶维生素片。\n\
@@ -118,7 +118,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-柜台后-已清理": {
-    image: "images/小区周边/益丰大药房/击杀白大褂.png",
+    image: "images/小区周边/益丰大药房/击杀白大褂.webp",
     text: "你绕过柜台，白大褂丧尸的尸体还静静趴在地上。上次从它身边搜刮的药箱已经空了，地上的血迹早已干涸发黑。\n你在柜台周围又翻了翻，确认没什么遗漏的东西。",
     choices: [
       {
@@ -130,7 +130,7 @@ Object.assign(storyData,{
   },
 
   "利昂药剂师的工牌": {
-    image: "images/小区周边/益丰大药房/利昂的工牌.png",
+    image: "images/小区周边/益丰大药房/利昂的工牌.webp",
     text: "你从白大衣的领口里取下了一张工牌。",
     choices: [
       {
@@ -142,7 +142,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-翻找": {
-    image: "images/小区周边/益丰大药房/找到维C.png",
+    image: "images/小区周边/益丰大药房/找到维C.webp",
     onEnter: { add: { strength: 1 } },
     text: "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱，拿起，放下，拿起，放下，你手快酸死了。\n\
 正准备放弃时，你在角落的货架底层发现了几瓶被遗忘的维生素片——日期还没过。\n\
@@ -230,7 +230,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-左边货架翻找": {
-    image: "images/小区周边/益丰大药房/找到医用石蜡油.png",
+    image: "images/小区周边/益丰大药房/找到医用石蜡油.webp",
     onEnter: { set: { positionAfterOperation: "益丰大药房-库房" } },
     text: function(vars) {
       if (vars._paraffinTaken || vars.hasLiquidParaffin) return "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱，但没再找到什么好东西。";
@@ -288,7 +288,7 @@ Object.assign(storyData,{
   },
 
   "益丰大药房-右边货架翻找": {
-    image: "images/小区周边/益丰大药房/库房的手机.png",
+    image: "images/小区周边/益丰大药房/库房的手机.webp",
     onEnter: { set: { positionAfterOperation: "益丰大药房-库房" } },
     text: "你埋头寻找，在地板上发现了一部手机。\n\
 它看起来是死机状态，一直卡在锁屏界面，显示的时间是23：47。\n\

@@ -46,7 +46,7 @@ Object.assign(storyData, {
   },
 
   "结局-累死我了" : {
-    image: "images/太阳.jpg",
+    image: "images/太阳.webp",
     text: "你走了很久，处处躲避丧尸聚集的地方。在高架上，你没有找到任何补给。最后，当太阳从云层中探出头来，你就倒在了烈日之下。\n—— 结局：累死我了 ——"
   },
 
@@ -74,7 +74,7 @@ Object.assign(storyData, {
   },
 
   "结局-被丧尸围殴致死" : {
-    image: "images/zombiesBeatYou.png",
+    image: "images/zombiesBeatYou.webp",
     text: "你并没有想象中那么灵活，被丧尸围殴至死。\n—— 结局：被丧尸围殴致死 ——"
   },
 

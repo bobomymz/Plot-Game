@@ -416,7 +416,7 @@ html, body {
   position: absolute;
   inset: 0;
   background-color: rgba(20, 35, 80, 0.15);
-  background-image: url('images/rain-overlay.png');
+  background-image: url('images/rain-overlay.webp');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   opacity: 0.45;

@@ -5,10 +5,10 @@ Object.assign(storyData, {
 
   "初始卧室": {
     image: timeImage({
-      morning:  "images/home/bedroom.png",
-      evening:  "images/home/bedroom-evening.png",
-      night:    "images/home/bedroom-night.png",
-      midnight: "images/home/bedroom-midnight.png"
+      morning:  "images/home/bedroom.webp",
+      evening:  "images/home/bedroom-evening.webp",
+      night:    "images/home/bedroom-night.webp",
+      midnight: "images/home/bedroom-midnight.webp"
     }),
     onEnter: {
       set: { currentPlace: "初始小区", currentPos: "我家"}
@@ -56,7 +56,7 @@ Object.assign(storyData, {
   },
 
   "什么都没有": {
-    image: "images/home/nothingUnderBed.png",
+    image: "images/home/nothingUnderBed.webp",
     text: "床底什么都没有，说了什么都没有。",
     onEnter: {
       add: { strength: -1 }
@@ -71,12 +71,12 @@ Object.assign(storyData, {
   },
 
   "结局-开幕雷击": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你打开房门，一个丧尸冲了进来————剧终\n你猜为什么游戏叫这个名字？:\n—— 结局：开幕雷击 ——"
   },
 
   "玄关": {
-    image: "images/home/foyer.png",
+    image: "images/home/foyer.webp",
     onEnter: updateTime(1), // 花1分钟走到玄关
     text: function(vars) {
       if(vars.zombieAtHomeDoor) { // 丧尸还在门口
@@ -109,7 +109,7 @@ Object.assign(storyData, {
   },
 
   "结局-丧尸的凝视": {
-    image: "images/home/eyeUnderDoor.png",
+    image: "images/home/eyeUnderDoor.webp",
     style: "font-size: 19px;",                      // ← 整体字号
     text: "你俯下身，侧脸几乎贴着冰凉的瓷砖……\
     <br><br><div style='color: rgba(8, 243, 47, 1); font-weight: bold; font-size: 22px;'>一只闪烁着绿光的眼睛正盯着你</div>\
@@ -119,10 +119,10 @@ Object.assign(storyData, {
 
   "窗外的风景": {
     image: timeImage({
-      morning:  "images/home/overlookNeighboorhood.png",
-      evening:  "images/home/overlookNeighboorhood-evening.png",
-      night:    "images/home/overlookNeighboorhood-night&midnight.png",
-      midnight: "images/home/overlookNeighboorhood-night&midnight.png"
+      morning:  "images/home/overlookNeighboorhood.webp",
+      evening:  "images/home/overlookNeighboorhood-evening.webp",
+      night:    "images/home/overlookNeighboorhood-night&midnight.webp",
+      midnight: "images/home/overlookNeighboorhood-night&midnight.webp"
     }),
     onEnter: updateTime(5), // 花5分钟看风景
     text: "你走到窗前。窗外是小区的风景，看起来还不错。你觉得可以下楼看看？",
@@ -139,7 +139,7 @@ Object.assign(storyData, {
   },
 
   "结局-自尽": {
-    image: "images/home/一跃解千愁.png",
+    image: "images/home/一跃解千愁.webp",
     text: "最明智的选择，尸潮什么的，与我无关——————————————\n—— 结局：自由落体 ——",
     choices: [
       {
@@ -150,7 +150,7 @@ Object.assign(storyData, {
   },
 
   "床底的食物": {
-    image: "images/home/foodUnderBed.png",
+    image: "images/home/foodUnderBed.webp",
     onEnter: {
       set: { foodUnderBed: false },
       add: { strength: 3 }
@@ -168,10 +168,10 @@ Object.assign(storyData, {
 
   "闹钟": {
     image: timeImage({
-      morning:  "images/home/clock.png",
-      evening:  "images/home/clock-evening.png",
-      night:    "images/home/clock-night&midnight.png",
-      midnight: "images/home/clock-night&midnight.png"
+      morning:  "images/home/clock.webp",
+      evening:  "images/home/clock-evening.webp",
+      night:    "images/home/clock-night&midnight.webp",
+      midnight: "images/home/clock-night&midnight.webp"
     }),
     text: "你走到闹钟。闹钟显示着7:30。你摇了摇闹钟，感觉里面有什么东西",
     choices: [
@@ -188,10 +188,10 @@ Object.assign(storyData, {
 
   "打开闹钟": {
     image: timeImage({
-      morning:  "images/home/clockInside.png",
-      evening:  "images/home/clockInside-evening.png",
-      night:    "images/home/clockInside-night&midnight.png",
-      midnight: "images/home/clockInside-night&midnight.png"
+      morning:  "images/home/clockInside.webp",
+      evening:  "images/home/clockInside-evening.webp",
+      night:    "images/home/clockInside-night&midnight.webp",
+      midnight: "images/home/clockInside-night&midnight.webp"
     }),
     text: "你打不开闹钟，搞不清楚里面有什么东西。也许只是钟坏了，你想。",
     choices: [
@@ -204,10 +204,10 @@ Object.assign(storyData, {
 
   "客厅": {
     image: timeImage({
-      morning:  "images/home/客厅.jpg",
-      evening:  "images/home/客厅-evening.jpg",
-      night:    "images/home/客厅-night&midnight.jpg",
-      midnight: "images/home/客厅-night&midnight.jpg"
+      morning:  "images/home/客厅.webp",
+      evening:  "images/home/客厅-evening.webp",
+      night:    "images/home/客厅-night&midnight.webp",
+      midnight: "images/home/客厅-night&midnight.webp"
     }),
     text: "你走到客厅。沙发、电视、弟弟的书桌，还有几把小凳子，静静地躺着。\n\
 爸爸早上应该带弟弟上篮球课去了。\n\
@@ -230,7 +230,7 @@ Object.assign(storyData, {
   },
 
   "沙发上的小熊": {
-    image: "images/home/建平小熊.png",
+    image: "images/home/建平小熊.webp",
     onEnter: updateTime(5),
     text: "你陷进沙发的柔软里。清晨的微凉伴着阳光，铺洒在你的身上。转头看看身旁，一个小熊玩偶静静地躺在那里。\n\
 它穿着建平标志性的校服————现在已经叫老校服了，你是穿这套校服的最后一届。\n\
@@ -245,7 +245,7 @@ Object.assign(storyData, {
 
   // 家门外的丧尸场景添加抖动效果
   "家门外的丧尸": {
-    image: "images/home/zombieOutsideHome.png",
+    image: "images/home/zombieOutsideHome.webp",
     text: "你按下把手，拉开家门，外面竟是一只蠢蠢欲动的丧尸！",
     qte: {
       timeout: 7000,              // 7 秒（开场第一个QTE，纯反应无权衡，给第一次玩的玩家留点余量）
@@ -267,7 +267,7 @@ Object.assign(storyData, {
   },
 
   "教程-识别颜色躲丧尸": {
-    image: "images/home/zombieOutsideHome.png",
+    image: "images/home/zombieOutsideHome.webp",
     text: "【教程】接下来，屏幕将会闪烁不同的颜色，你需要在规定时间内输入你看到的颜色。输入错误，你就会被丧尸扑倒咬死。",
     onEnter: initMemoryGame(["红","蓝"], 5),
     choices: [
@@ -285,12 +285,12 @@ Object.assign(storyData, {
   },
 
   "结局-颜色错误，被丧尸咬死": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你灵活地躲开丧尸的爪子，但反应慢了半拍，丧尸转身又扑了上来……你被丧尸咬死了。\n—— 结局：视力有待提高 ——"
   },
 
   "结局-丧尸破门而入": {
-    image: "images/home/zombieBreakDoor.png",
+    image: "images/home/zombieBreakDoor.webp",
     text: "突然，丧尸猛地撞开了门，你脑袋挨了重重一击，晕了过去。\n—— 结局：丧尸破门而入 ——"
   },
 
@@ -308,7 +308,7 @@ Object.assign(storyData, {
   },
 
   "家外楼梯间的抉择": {
-    image: "images/home/staircase.png",
+    image: "images/home/staircase.webp",
     onEnter: updateTime(1), // 花1分钟跑到楼梯间
     text: "你一路狂奔冲进楼梯间，胸口剧烈地起伏。一只丧尸突然闪到了你的身后！\n\
 你只能快速选择一个楼层离开，或者躲起来，祈祷丧尸不会追你……",
@@ -348,7 +348,7 @@ Object.assign(storyData, {
   },
 
   "家门口电梯": {
-    image: "images/home/lift.jpg",
+    image: "images/home/lift.webp",
     text: "你躲进了电梯，丧尸没有追上来。你显然不能继续待在你家的2楼，需要赶快选个楼层离开。\nF5的按钮被人撬掉了，按不了——不知道是谁干的。",
     onEnter: updateTime(1), // 花1分钟到达2楼
     qte: {
@@ -379,14 +379,14 @@ Object.assign(storyData, {
   },  
 
   "结局-电梯门开了": {
-    image: "images/home/电梯门开了.png",
+    image: "images/home/电梯门开了.webp",
     text: "电梯门突然开了，丧尸冲进来咬死了你。\n\
 想 必 你 下 次 会 更 加 果 断 吧。\n\
 —— 结局：电梯惊魂 ——"
   },
 
   "3楼-安全": {
-    image: "images/home/3楼.png",
+    image: "images/home/3楼.webp",
     text: "你走到3楼。这里不知何时已经堆满了家具，你无法进入。",
     choices: [
       {
@@ -398,7 +398,7 @@ Object.assign(storyData, {
   },
 
   "3楼": {
-    image: "images/home/3楼.png",
+    image: "images/home/3楼.webp",
     text: "你走到3楼。这里不知何时已经堆满了家具，你无法进入。",
     choices: [
       {
@@ -408,7 +408,7 @@ Object.assign(storyData, {
     ]
   },
   "结局-来自丧尸的惊吓": {
-    image: "images/home/zombieScare.png",
+    image: "images/home/zombieScare.webp",
     text: "突然，一只丧尸不知从什么地方窜了出来，向你扑来！\n—— 结局：衣柜丧尸 ——",
     qte: {
       timeout: "8000 - repeatedClickTimes * 2000 - foodUnderBed * 999", // 8 秒起，但每次点击减少2秒
@@ -429,7 +429,7 @@ Object.assign(storyData, {
   },
 
   "结局-反应太慢被咬死了": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "丧尸冲了上来，把你扑在地上。没来得及反应，你就被咬死了。\n\n—— 结局：反应太慢被咬死了 ——",
     choices: [
       {
@@ -440,7 +440,7 @@ Object.assign(storyData, {
   },
 
   "初遇陈默": {
-    image: "images/home/chenMoSaveYou.png",
+    image: "images/home/chenMoSaveYou.webp",
     onEnter: {
       set: { repeatedClickTimes: 0 }
     },
@@ -461,19 +461,19 @@ Object.assign(storyData, {
   },
 
   "结局-被丧尸扑倒咬死": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "丧尸冲了上来，猛地把你扑倒在地。没来得及反应，你就被咬死了。\n\
 —— 结局：被丧尸扑倒咬死 ——"
   },// 会自动给出重新开始按钮
 
   "结局-1楼-party": {
-    image: "images/home/1楼-party.png",
+    image: "images/home/1楼-party.webp",
     text: "你到了一楼大厅。一群丧尸正在开party，一看见你就<em><span style='color:red;'>非常热情</span></em>地围拢过来。\n你甚至来不及尖叫。\n\n—— 结局：一楼派对 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
 
   "B1": {
-    image: "images/home/B1.png",
+    image: "images/home/B1.webp",
     onEnter: { set: { currentPlace: "初始小区", currentPos: "地下车库" } },
     choices: [
       {
@@ -509,7 +509,7 @@ Object.assign(storyData, {
   },
 
   "B1-2nd": {
-    image: "images/home/B1.png",
+    image: "images/home/B1.webp",
     text: "你回到了你那栋楼的地底下。",
     choices: [
       {
@@ -537,7 +537,7 @@ Object.assign(storyData, {
   },
 
   "1楼-安全": {
-    image: "images/home/1楼-安全.png",
+    image: "images/home/1楼-安全.webp",
     text: "你到了一楼大厅。这里似乎有被火烧过的痕迹，地上还有很多脚印。",
 //开party的丧尸不小心点燃了什么易燃物体把自己烧死了
     choices: [
@@ -594,7 +594,7 @@ Object.assign(storyData, {
   },
 
   "电梯": {
-    image: "images/home/lift.jpg",
+    image: "images/home/lift.webp",
     text: "你走进电梯。轿厢的灯忽明忽暗，按钮面板上还有几层的灯亮着。\n\
 F5的按钮早就被撬掉了——不知道是谁干的。",
     choices: [
@@ -629,7 +629,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "小区道路": {
     outdoor: true,
     image: function(vars) {
-      var t = timeImage({morning: vars.weather === "雨" ? "images/home/小区道路-雨天.png" : "images/home/小区道路.png"
+      var t = timeImage({morning: vars.weather === "雨" ? "images/home/小区道路-雨天.webp" : "images/home/小区道路.webp"
 });
       return t(vars);
     },
@@ -665,7 +665,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "装睡的丧尸": {
-    image: "images/home/sleepyzombie.png",
+    image: "images/home/sleepyzombie.webp",
     text: "你靠近那个人，ta穿着连帽衫，看不到脸，两手戴着蓝色手套，交叉放于胸前。\n\
 你轻轻拍了拍，ta没有反应。\n\
 你决定？",
@@ -685,7 +685,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "结局-摇睡丧尸": {
-    image: "images/home/zombieAwake.png",
+    image: "images/home/zombieAwake.webp",
     onEnter: {shake: true},
     text: "你用更大的力气摇了摇ta，连帽衫的帽子掉了。你惊呆了，这是一只丧尸！\n\
 它突然抬起头来，眼睛瞪着你，向你扑来。\n\
@@ -693,7 +693,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "反杀老6": {
-    image: "images/home/老六偷袭未果.png",
+    image: "images/home/老六偷袭未果.webp",
     onEnter: { set: { _sleepingZombieGone: true } },
     text: "你对它丧失了兴趣，转身离开。\n\
 只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后<span style = 'font-weight: bold;'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
@@ -714,7 +714,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "结局-背后的偷袭": {
-    image: "images/home/zombieAwake.png",
+    image: "images/home/zombieAwake.webp",
     onEnter: {shake: true},
     text: "你对ta丧失了兴趣，转身离开。\n\
 只听得背后传来木头长椅的嘎吱一响，背后阴风袭来。你只感觉脖颈一痛，便失去了知觉。\n\
@@ -722,7 +722,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "西出口-丧尸堵路": {
-    image: "images/home/地库的丧尸.png",
+    image: "images/home/地库的丧尸.webp",
     onEnter: updateTime(1, { add: { visitExitTimes: 1 }}), // 花1分钟碰到丧尸
     text: "你走在前往西出口的路上。这里你轻车熟路，因为平时雨天你都会走这条路回家。\n\
 突然，一只丧尸从一根柱子后面闪了出来，你无法继续前进。",
@@ -743,7 +743,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "地下车库的丧尸": {
-    image: "images/home/地库丧尸扑来.png",
+    image: "images/home/地库丧尸扑来.webp",
     onEnter: {shake: true},
     text: "丧尸向你袭来，你要攻击它哪里？",
     qte: {
@@ -773,14 +773,14 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "结局-嘎吱嘎吱": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     onEnter: {shake: true},
     text: "你一脚踢出，被丧尸一口咬住，你被咬死了。\n\
 —— 结局：嘎吱嘎吱 ——"
   },
 
   "KO丧尸": {
-    image: "images/home/KOzombie.png",
+    image: "images/home/KOzombie.webp",
     text: "你一拳挥出，将丧尸击倒，又补了几脚，它不动了。看来一时半会儿不会有问题了。",
     onEnter: updateTime(1, { add: { strength: -1 } }), // 花1分钟揍丧尸
     choices: [
@@ -792,7 +792,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "陌生的岔路口": {
-    image: "images/home/地库的岔路口.png",
+    image: "images/home/地库的岔路口.webp",
     text: "现在你正处于一个陌生的岔路口，该往哪里走呢？",
     choices: [
       {
@@ -811,7 +811,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "地下非机动车停靠区": {
-    image: "images/home/nonMotorized.png",
+    image: "images/home/nonMotorized.webp",
     text: "你来到了地下非机动车停靠区，这里有不少自行车和电瓶车。楼梯上方隐约传来丧尸的低吼声……",
     choices: [
       {
@@ -840,7 +840,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "自行车上锁了" : {
-    image: "images/home/自行车上锁了.png",
+    image: "images/home/自行车上锁了.webp",
     text: "哎呀，这车上有锁，看来你是不能白嫖了。你看了旁边几辆，不是有锁，就是生锈太厉害，估计骑了得给自己摔个狗啃泥。",
     choices: [
       {
@@ -851,7 +851,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "电瓶车上锁了" : {
-    image: "images/home/电瓶车上锁了.png",
+    image: "images/home/电瓶车上锁了.webp",
     text: "哎呀，这车上有锁，看来你是不能白嫖了。",
     choices: [
       {
@@ -862,7 +862,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "骑车去西出口": {
-    image: "images/home/nonMotorized.png",
+    image: "images/home/nonMotorized.webp",
     onEnter: { set: { positionAfterOperation: "骑车去西出口" } },
     text: "你的运气很好，这辆车没锁。你可以骑上它向西出口前进。",
     choices: [
@@ -876,7 +876,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "击退丧尸": {
-    image: "images/home/一脚击退地库丧尸.png" ,
+    image: "images/home/一脚击退地库丧尸.webp" ,
     text: "你一拳打在丧尸胸口，将它击退，它踉跄几步，眼神凶狠，加快速度向你扑来",
     qte: {
       timeout: 7000,
@@ -894,7 +894,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "防爆门": {
-    image: "images/home/防爆门.jpg",
+    image: "images/home/防爆门.webp",
     text: "你仓皇逃窜，眼前是一道防爆门，关上它就能挡住丧尸！",
     qte: {
       timeout: 6000,              // 6秒（方向把手两选一仍保留盲猜的死亡幽默，只是别让玩家没看清就死）
@@ -913,13 +913,13 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "结局-防爆门没锁上": {
-    image: "images/home/防爆门失败.jpg",
+    image: "images/home/防爆门失败.webp",
     text: "你关上门转身想跑，丧尸突然撞开了门，向你扑来。你在劫难逃……\n\
 —— 结局：被丧尸扑倒咬死 ——"
   },
 
   "丧尸被防爆门夹扁": {
-    image: "images/home/防爆门成功.png",
+    image: "images/home/防爆门成功.webp",
     onEnter: { add: { strength: -1 } },
     text: "在丧尸冲过来时，你侧身把防爆门关上了，它的半只手臂夹在了中间，却仍不断挥舞着。\n\
 你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。",
@@ -938,14 +938,14 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: function(vars) {
       if(vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/home/西出口-雨天.jpg",
-          night: "images/home/西出口-雨天-night.jpg",
+          morning: "images/home/西出口-雨天.webp",
+          night: "images/home/西出口-雨天-night.webp",
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/home/西出口.jpg",
-        night: "images/home/西出口-night.jpg",
+        morning: "images/home/西出口.webp",
+        night: "images/home/西出口-night.webp",
       });
       return f(vars);
     },
@@ -960,7 +960,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "墙上的痕迹": {
-    image: "images/home/wallAd.png",
+    image: "images/home/wallAd.webp",
     text: "墙上贴满了广告：公积金贷款、下水道维修、黄色小卡片，中间还有张寻人启事，失踪者叫“林奇”。撕得零零碎碎的，更像是谁的收藏品展览。",
     choices: [
       {
@@ -971,7 +971,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "柱子上的纸张": {
-    image: "images/home/columnMap.png",
+    image: "images/home/columnMap.webp",
     /* 地图上写道：如果你看到这行字，你应该去东出口，西出口堵上了 */
     onEnter: updateTime(1),
     text: "你查看柱子上的纸张，发现这是一张地图。其中标注了西出口和东出口的位置，看来你可以少绕点路了。",
@@ -988,7 +988,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "东出口-废车堵路": {
-    image: "images/home/carBlock.png",
+    image: "images/home/carBlock.webp",
     onEnter: { add: { visitExitTimes: 1 } },
     text: "东出口被一辆报废面包车斜卡着，四个轮胎全瘪，活像一只死透的甲虫。\n\
 看来，只能指望西出口了（你总不会想和楼道里那些丧尸打吧）。\n\
@@ -1002,7 +1002,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "东出口": {
-    image: "images/home/eastExit.png",
+    image: "images/home/eastExit.webp",
     text: "你来到了东出口。不幸的是，地下车库的门关上了，你无法打开。右边的墙上有一个红色的按钮，左边有一扇铁门，里面黑漆漆的。",
     choices: [
       {
@@ -1017,7 +1017,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "没用的按钮": {
-    image: "images/home/button.png",
+    image: "images/home/button.webp",
     onEnter: updateTime(1), // 花1分钟按下按钮
     text: "你按下按钮，但是没有反应。此时，后面传来了脚步声。",
     choices: [
@@ -1029,7 +1029,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-等候区": {
-    image: "images/home/CDwaitingRoom.png",
+    image: "images/home/CDwaitingRoom.webp",
     text: "你在一个小房间里。这个房间空无一人，只有一张桌子和墙上的一些告示。",
     onEnter: { set: { currentPlace: "初始小区", currentPos: "民防设施" } },
     choices: [
@@ -1066,7 +1066,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "等候区的桌子": {
-    image: "images/home/books.png",
+    image: "images/home/books.webp",
     text: "你走向桌子，这里叠着几本小册子，有检修报告、民防守则、报纸等。这里看起来平时是有人的。\n\
 你仔细翻看了一下，发现其中夹着一本日记本。打开一看，里面是空白的。",
     onEnter: { add: { visitWaitingRoomTimes: 1 } },
@@ -1089,7 +1089,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "抽屉里的手电筒": {
-    image: "images/home/torch.png",
+    image: "images/home/torch.webp",
     onEnter: { add: { visitWaitingRoomTimes: 1 } },
     text: "你打开抽屉，发现里面有一个小手电筒。",
     choices: [
@@ -1106,7 +1106,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "等候区的扫帚": {
-    image: "images/home/broom.png",
+    image: "images/home/broom.webp",
     onEnter: { add: { visitWaitingRoomTimes: 1 } },
     text: "你拿起扫帚抖了抖，并没有什么发现。",
     choices: [
@@ -1127,7 +1127,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "墙上的民防告示": {
-    image: "images/home/notice.png",
+    image: "images/home/notice.webp",
     onEnter: { add: { visitWaitingRoomTimes: 1 } },
     text: "你查看了告示",
     qte: {
@@ -1144,7 +1144,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "告示后面的钥匙": {
-    image: "images/home/告示后的钥匙.png",
+    image: "images/home/告示后的钥匙.webp",
     onEnter: { set: { positionAfterOperation: "告示后面的钥匙" } },
     text: "你揭下了告示纸，后面掉出来一个小钥匙，像是电瓶车的车钥匙。",
     choices: [
@@ -1159,7 +1159,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-楼梯间": {
-    image: "images/home/等候室走廊.jpg",
+    image: "images/home/等候室走廊.webp",
     qte: {
       timeout: 8000,
       onTimeout: "结局-被丧尸扑倒咬死"
@@ -1178,7 +1178,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-紧急出口": {
-    image: "images/home/exit.png",
+    image: "images/home/exit.webp",
     text: "你来到了紧急出口，而丧尸已经近在眼前",
     choices: [
       {
@@ -1197,12 +1197,12 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "结局-门锁上了": {
-    image: "images/home/lock.png",
+    image: "images/home/lock.webp",
     text: "不好意思，门锁了。\n你还没来得及骂检修人员，就被丧尸创飞了。\n\n—— 结局：门锁上了 ——"
   },
 
   "结局-初遇毒气型丧尸": {
-    image: "images/home/gasZombie.jpg" ,
+    image: "images/home/gasZombie.webp" ,
     onEnter: updateTime(5), // 花5分钟躲在黑暗里
     text: "那只魁梧的丧尸像野兽一般朝你扑来，擦过你的后背，狠狠撞在紧急出口的门上。\n\
 门震了一下，一点油漆都没刮掉。\n\
@@ -1213,7 +1213,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-物资区": {
-    image: "images/home/物资区.png",
+    image: "images/home/物资区.webp",
     onEnter: { set: { positionAfterOperation: "民防设施-物资区" } },
     text: "你来到了物资区。这里堆着很多纸箱子，但不少都是空的。你在其中找到了一个老式防毒面具。这时，杂物堆方向传来窸窸窣窣的声音。",
     choices: [
@@ -1232,7 +1232,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物资区的丧尸": {
-    image: "images/home/storageRoom.png",
+    image: "images/home/storageRoom.webp",
     text: "你抬头一看，两只丧尸一前一后从杂物堆里走了出来，对你虎视眈眈。",
     qte: {
       timeout: 8000,
@@ -1264,13 +1264,13 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "结局-民防设施楼梯断裂": {
-    image: "images/home/踩塌台阶.png",
+    image: "images/home/踩塌台阶.webp",
     text: "你转头就跑，跳下楼梯，木板发出不堪重负的嘎吱声，随即断裂。你掉入了深邃的黑暗中，转眼便被丧尸吞噬。\n\
 —— 结局：看你还跳不跳 ——"
   },
 
   "民防设施-通风管道": {
-    image: "images/home/发现通风管道.png",
+    image: "images/home/发现通风管道.webp",
     onEnter: { add: { strength: -1 } }, // 一脚踹开箱子，费了点力气
     text: "你一脚踹开箱子，这里什么都没有，但是有个通风管道的格栅，看起来不太牢靠。",
     choices: [
@@ -1286,7 +1286,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-通风管道的抉择": {
-    image: "images/home/vent.png",
+    image: "images/home/vent.webp",
     text: "你钻进了通风管道，前面是岔路。",
     choices: [
       {
@@ -1301,13 +1301,13 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "结局-死路一条": {
-    image: "images/zombiePounceOnYou.jpg",
+    image: "images/zombiePounceOnYou.webp",
     text: "你走错了路，前面是死路一条。\n\
 丧尸的那绿色的眼睛是你最后的记忆。\n—— 结局：死路一条 ——"
   },
 
   "拳打脚踢": {
-    image: "images/home/1v2.png",
+    image: "images/home/1v2.webp",
     onEnter: { add: { strength: -1 } },
     text: "你率先发动了攻击。\n\
 前面那只丧尸向你缓缓走来，你一个滑铲闪过去，冲向后面那只愣神的丧尸，一拳正中脑门。\n\
@@ -1326,7 +1326,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "拳打脚踢2": {
-    image: "images/home/1v2KO.png",
+    image: "images/home/1v2KO.webp",
     onEnter: updateTime(3, { add: { strength: -1 } }), // 花3分钟再打一次
     text: "你从墙上掰下来一根长长的铁管，狠狠砸在丧尸们的脑袋上。\n\
 咚！咚！        \n\
@@ -1347,7 +1347,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-物资区-检修记录表": {
-    image: "images/home/检修记录表.png",
+    image: "images/home/检修记录表.webp",
     text: "你从纸箱里翻出一沓文件，掸了掸灰。这是一张《民防设施储藏区检修记录表》，盖着红章，填得还算规整：\n\n\
 ━━━━━ 民防设施储藏区检修记录表 ━━━━━\n\
 检修编号：MF-2024-0873\n\
@@ -1411,7 +1411,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-进风机房": {
-    image: "images/home/fanRoom.png",
+    image: "images/home/fanRoom.webp",
     text: "你来到了进风机房。\n\
 这里有大型电动脚踏两用风机，断电时可人力踩踏送风，配套庞大保温风管、电气控制箱，整间布满金属管道，密密麻麻，如同蜘蛛网。\n\
 外面传来砰砰砰的敲门声，你必须尽快做出抉择。",
@@ -1441,7 +1441,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "日记本的空白页": {
-    image: "images/home/diary-fanRoom.png",
+    image: "images/home/diary-fanRoom.webp",
     onEnter: updateTime(1, { add: {turnDiaryPages: 1}}), // 花1分钟翻一页
     text: "你拿出空白的日记本，随便翻开一页，这一页并没有字。",
     choices: [
@@ -1460,7 +1460,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "日记本的提示-打开鼓风机": {
-    image: "images/home/diary-fanRoom.png",
+    image: "images/home/diary-fanRoom.webp",
     onEnter: { set: {turnDiaryPages: 0}},
     text: "你发现这一页写了一篇日记。\n\
 7月14日（或者15日？我已经分不清了）\n\
@@ -1485,7 +1485,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-进风机房-安全": {
-    image: "images/home/fanRoom.png",
+    image: "images/home/fanRoom.webp",
     text: "吁，现在安全了。\n\
 你继续沿着通道走，经过了消毒室等房间，终于走了出去。",
     choices: [
@@ -1497,7 +1497,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "民防设施-进风机房-失败": {
-    image: "images/home/fanRoom-fail.png",
+    image: "images/home/fanRoom-fail.webp",
     text: "你成功地顶住了门。\n\
 吁，现在安全了。\n\
 你望着眼前的幽深走廊，犹豫片刻，向前走去。\n\
@@ -1518,18 +1518,18 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: function(vars) {
       if (vars.weather === "雨") {
         var rf = timeImage({
-        morning: "images/home/小区东门-雨天.png",
-        evening: "images/home/小区东门-雨天-evening.png",
-        night: "images/home/小区东门-雨天-night.png",
-        midnight: "images/home/小区东门-雨天-night.png"
+        morning: "images/home/小区东门-雨天.webp",
+        evening: "images/home/小区东门-雨天-evening.webp",
+        night: "images/home/小区东门-雨天-night.webp",
+        midnight: "images/home/小区东门-雨天-night.webp"
         });
         return rf(vars);
       }
       var f = timeImage({
-        morning: "images/home/小区东门.png",
-        evening: "images/home/小区东门-evening.png",
-        night: "images/home/小区东门-night.png",
-        midnight: "images/home/小区东门-midnight.png"
+        morning: "images/home/小区东门.webp",
+        evening: "images/home/小区东门-evening.webp",
+        night: "images/home/小区东门-night.webp",
+        midnight: "images/home/小区东门-midnight.webp"
       });
       return f(vars);
     },
@@ -1563,18 +1563,18 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: function(vars) {
       if (vars.weather === "雨") {
         var rf = timeImage({
-        morning: "images/home/小区西门-雨天.png",
-        evening: "images/home/小区西门-雨天-evening.png",
-        night: "images/home/小区西门-night-雨天.png",
-        midnight: "images/home/小区西门-雨天-midnight.png"
+        morning: "images/home/小区西门-雨天.webp",
+        evening: "images/home/小区西门-雨天-evening.webp",
+        night: "images/home/小区西门-night-雨天.webp",
+        midnight: "images/home/小区西门-雨天-midnight.webp"
         });
         return rf(vars);
       }
       var f = timeImage({
-        morning: "images/home/小区西门.png",
-        evening: "images/home/小区西门-evening.png",
-        night: "images/home/小区西门-night.png",
-        midnight: "images/home/小区西门-midnight.png"
+        morning: "images/home/小区西门.webp",
+        evening: "images/home/小区西门-evening.webp",
+        night: "images/home/小区西门-night.webp",
+        midnight: "images/home/小区西门-midnight.webp"
       });
       return f(vars);
     },
@@ -1608,7 +1608,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   // ========== 4楼：丧尸遭遇 + 记忆闪色 ==========
 
   "樱桃苑-4楼": {
-    image: "images/home/4楼.png",
+    image: "images/home/4楼.webp",
     onEnter: initMemoryGame(["红","蓝","绿","黄"], 4),
     text: "四楼的走廊比楼下更暗——声控灯坏了两盏，只剩远处一盏在忽明忽暗地挣扎。空气里弥漫着一股甜腻的腐味。\n走廊中段，三个身影正背对着你，弓着腰围在一扇门前，发出低沉的咀嚼声。\n\
 灯泡闪了一下。它们同时停了下来。\n然后缓缓转过头——不，不止三个。旁边的门半开着，里面又跌跌撞撞走出第四个。\n你需要快速做出反应！",
@@ -1627,7 +1627,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "樱桃苑-4楼-胜利": {
-    image: "images/home/4楼另一端.png",
+    image: "images/home/4楼另一端.webp",
     text: "你看穿了它们的攻击节奏。在第一个丧尸扑过来的瞬间，你侧身闪过，顺势把它推进了旁边的杂物堆。第二个被地上的尸体绊倒，你一脚踩住它的后背，借力跃过第三个伸来的手——第四个还在门口挣扎着挤出来，你一个箭步冲过了走廊。\n\
 身后传来碰撞和低吼声，但它们暂时追不上来了。",
     choices: [
@@ -1660,7 +1660,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   // ========== 5楼：孙阿姨 ==========
 
   "樱桃苑-5楼": {
-    image: "images/home/5楼.png",
+    image: "images/home/5楼.webp",
     onEnter: { set: { currentPos: "居民楼" } },
     text: "五楼走廊很安静。地面上铺着已经开始翘边的复合地板，踩上去嘎吱作响。并排三扇门：501、502、503，门牌是那种老式的蓝色塑料片，501的“5”已经歪了，快要掉下来。\n501的门上贴着一张褪色的“福”字，下面用透明胶粘着一个手写的纸牌——“如有人找，请打居委会电话”。字迹工整，像是练过毛笔字的老人写的。\n502门上没有任何装饰。503的门缝下面塞着一角超市传单，已经被踩得模糊了。",
     choices: [
@@ -1689,8 +1689,8 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "樱桃苑-5楼-501": {
     image: timeImage({ // 为了简便，此处用night指代evening+night+midnight
-      morning: "images/home/501.jpg",
-      night: "images/home/501-night.jpg"
+      morning: "images/home/501.webp",
+      night: "images/home/501-night.webp"
     }),
     onEnter: { set: { currentPos: "501室" } },
     text: function(vars) {
@@ -1724,8 +1724,8 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "樱桃苑-5楼-501-拿钥匙": {
     image: timeImage({// 为了简便，此处用night指代evening+night+midnight
-      morning: "images/home/501的钥匙.jpg",
-      night: "images/home/501的钥匙-night.jpg",
+      morning: "images/home/501的钥匙.webp",
+      night: "images/home/501的钥匙-night.webp",
     }),
     onEnter: { set: { positionAfterOperation: "樱桃苑-5楼" } },
     text: "你拿起那串钥匙。钥匙环上挂着三把——一把铜的、两把铝的，铜的那把已经磨得发亮。\n你看了藤椅上的老人最后一眼，轻轻带上了门。",
@@ -1739,8 +1739,8 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "樱桃苑-5楼-门锁了": {
     image: function(vars) {
-      if (vars._tryDoor === "502") return "images/home/502.png";
-      return "images/home/503的传单.jpg";
+      if (vars._tryDoor === "502") return "images/home/502.webp";
+      return "images/home/503的传单.webp";
     },
     text: function(vars) {
       if (vars._tryDoor === "502") return "502的门锁着。门把手上落了一层灰——很久没人动过了。门缝下面什么都没有。";
@@ -1759,7 +1759,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "小区草地": {
     outdoor: true,
     image: function(vars) {
-      var t = timeImage({morning: vars.weather === "雨" ? "images/home/小区草地-雨天.jpg" : "images/home/小区草地.jpg"
+      var t = timeImage({morning: vars.weather === "雨" ? "images/home/小区草地-雨天.webp" : "images/home/小区草地.webp"
 });
       return t(vars);
     },
@@ -1795,7 +1795,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "小区草地-安全": {
-    image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地-雨天-躲藏.png" : "images/home/小区草地-躲藏.png"; },
+    image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地-雨天-躲藏.webp" : "images/home/小区草地-躲藏.webp"; },
     text: "你低身躲到草丛后面，叶子遮住了你的身影。那些丧尸在草地上徘徊了一阵——你屏住呼吸，听着它拖沓的脚步声一下一下踩在石板上。\n\
 终于，脚步声远了。你从草丛后钻出来，拍了拍身上的草屑。",
     choices: [
@@ -1815,7 +1815,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "小区草地-被追": {
-    image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地被追-雨天.jpg" : "images/home/小区草地被追.png"; },
+    image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地被追-雨天.webp" : "images/home/小区草地被追.webp"; },
     onEnter: { add: { chasedByZombies: 2, strength: -1 } },
     text: "你犹豫太久了。一只丧尸已经走到了你面前，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。",
     choices: [
@@ -1829,9 +1829,9 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "物业楼": {
     image: function(vars) {
       if (vars.dd == 1 && vars.hh < 12) {
-        return "images/home/物业楼-有高锦睿.png";
+        return "images/home/物业楼-有高锦睿.webp";
       }
-      return "images/home/物业楼.png";
+      return "images/home/物业楼.webp";
     },
     onEnter: { set: { currentPos: "物业楼" } },
     text: function(vars) {
@@ -1868,7 +1868,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物业楼-居委会-门锁了": {
-    image: "images/home/物业楼.png",
+    image: "images/home/物业楼.webp",
     text: "你握住门把手用力往下按——锁死了，纹丝不动。那扇门上了锁，得找钥匙才打得开。",
     choices: [
       { text: "回物业楼", nextScene: "物业楼", effect: updateTime(1) }
@@ -1877,8 +1877,8 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "物业楼-居委会办公室": {
     image: timeImage({// 为了简便，此处用night指代evening+night+midnight
-      morning: "images/home/居委会办公室.jpg",
-      night: "images/home/居委会办公室-night.jpg",
+      morning: "images/home/居委会办公室.webp",
+      night: "images/home/居委会办公室-night.webp",
     }),
     onEnter: { set: { _committeeSearched: true, positionAfterOperation: "物业楼-居委会办公室" } },
     text: "钥匙转动——门开了。里面是一间不大的办公室，靠墙一排铁皮档案柜，桌上摊着几本翻开的台账。空气里飘着淡淡的樟脑丸味道。\n\
@@ -1901,7 +1901,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物业楼-居委会办公室-收起润滑油": {
-    image: "images/home/物业楼.png",
+    image: "images/home/物业楼.webp",
     onEnter: {set: {hasLubricant: true}, add: {itemCount: 1}},
     text: "你把链条润滑油收起来，以后也许用得上。",
     choices: [
@@ -1910,7 +1910,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物业楼-居委会-给高锦睿": {
-    image: "images/home/高锦睿给的地图.jpg",
+    image: "images/home/高锦睿给的地图.webp",
     onEnter: updateTime(2),
     text: "你把纸箱搬了过去，搁在高锦睿脚边。他低头看了一眼里面的东西，愣了一下。\n“不是吧——”他抓起那瓶链条油，摇了摇，眼里放光，“这东西我找了一上午了！”\n\
 他立刻拧开盖子往链条上滴了几滴，转动踏板——链条顺畅地滑过齿轮，那声难听的咔嗒咔嗒终于消失了。\n“谢了。”他把变干净的抹布往工具箱里一扔，拍了拍手，“对了——”他从背包侧兜翻出一张折叠的纸，递给你。\n\
@@ -1928,7 +1928,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物业楼-高锦睿": {
-    image: "images/home/物业楼和高锦睿聊天.png",
+    image: "images/home/物业楼和高锦睿聊天.webp",
     onEnter: { set: { currentPos: "物业楼" } },
     text: "高锦睿——你的初中同桌，万年不变的锅盖头，深色卫衣配运动短裤，脚上一双标签掉了一半的假Yeezy。他跟以前一模一样，好像外面世界末日了也跟他没什么关系。\n\
 他正在修他的红色美利达山地车，变速器卡了好几天了。旁边地上放着一个鼓鼓的背包，拉链半开着，能看到里面塞了半包辣条和一台大疆无人机。",
@@ -1954,7 +1954,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物业楼-高锦睿-聊": {
-    image: "images/home/物业楼和高锦睿聊天.png",
+    image: "images/home/物业楼和高锦睿聊天.webp",
     text: function(vars) {
       var desc = "“在家待了一天一夜，坐不住了——”他边拧螺丝边说，头也没抬。“反正待着也是待着，出去看看外面成啥样了。”\n\
 他告诉你他爸妈6/28出门后没回来。说这话的时候他手上的活没停，语气轻得像在说昨天食堂的饭不好吃。\n\
@@ -1980,7 +1980,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物业楼-高锦睿-时间": {
-    image: "images/home/高锦睿的手机.jpg",
+    image: "images/home/高锦睿的手机.webp",
     text: function(vars) {
       return "他掏出手机瞄了一眼。“现在" + vars.hh + "点" + (vars.mm < 10 ? "0" : "") + vars.mm + "分。”屏幕亮了一瞬——壁纸是个笑盈盈的女孩。他很快把手机塞回了口袋。";
     },
@@ -1997,7 +1997,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   },
 
   "物业楼-高锦睿-无人机": {
-    image: "images/home/俯瞰1003.png",
+    image: "images/home/俯瞰1003.webp",
     onEnter: { set: { _droneIntel: true } },
     text: "“还能飞一块电池——”他从背包里掏出无人机，熟练地开机、对频。小飞行器嗡地一声从窗户飞了出去。\n\
 他把遥控器屏幕转向你，画面里是小区东门的俯视图。你看到保安亭、歪倒的灯笼、还有那辆停在公交站台旁的公交车。车窗全碎了，里面人影憧憧——不是乘客，是尸群。\n\

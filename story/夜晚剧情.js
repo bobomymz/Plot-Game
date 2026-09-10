@@ -309,7 +309,7 @@ Object.assign(storyData, {
 
   // ==================== 安全屋 - 自己家（Day 1限定） ====================
   "过夜-自己家": {
-    image: "images/home/bedroom-night.png",
+    image: "images/home/bedroom-night.webp",
     onEnter: function(vars) {
       vars.dd += 1;
       vars.hh = 7;
@@ -396,7 +396,7 @@ Object.assign(storyData, {
 
   // ==================== 兜底 - 死亡 ====================
   "结局-过夜-街头死亡": {
-    image: "images/zombieWaveSmashYouIntoPieces.png",
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "你在街头试图找一个能躲藏的地方。但黑夜中你什么都看不清——当你意识到身边的“纸箱”其实是一只蹲着的丧尸时，已经太晚了。\n你在黑暗中发出最后一声惨叫，然后一切都安静了。\n\n—— 结局：露宿街头 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
@@ -455,7 +455,7 @@ Object.assign(storyData, {
   },
   // ==================== 死亡 - 自己家不再安全 ====================
   "结局-过夜-自己家不再安全": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你拼命跑回自己家，掏出钥匙——手抖得插了好几次才对准锁孔。\n门开了。但你还没来得及松一口气，一股熟悉的腐臭扑面而来。\n\
 玄关里站着一只丧尸——它穿着你妈妈的围裙。\n你愣在原地。\n它扑了上来。\n\n—— 结局：回家 ——",
     style: "color: #ff4444; font-weight: bold;"
@@ -463,14 +463,14 @@ Object.assign(storyData, {
 
   // ==================== 死亡 - 全家丧尸还在 ====================
   "结局-过夜-全家丧尸还在": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你摸黑溜进全家便利店。应急灯发出微弱的白光，货架的影子被拉得很长。\n你绕到收银台后面，还没碰到员工通道的门——\n身后传来一声货架摇晃的巨响。你还没来得及回头，就被一股力量扑倒在地上。\n那只迅捷丧尸——原来它还在店里。\n\n—— 结局：全家夜袭 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
 
   // ==================== 死亡 - 地下室暴露 ====================
   "结局-过夜-小超市暴露": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你摸黑来到联华超市，推开仓库的门。活板门还开着——你走的时候没来得及关上它。\n你打开手电筒往下照了照，地下室看起来和之前一样安静。\n但当你走下楼梯时，脚下踢到了什么东西——哐当一声。\n黑暗中有好几双眼睛同时亮了起来。\n它们一直在等你回来。\n\n—— 结局：地下室暴露 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
@@ -581,7 +581,7 @@ Object.assign(storyData, {
 
   // ==================== 死亡 - 摸黑离开失败 ====================
   "结局-仁济-摸黑离开失败": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你压低身子从医院侧门溜了出去，试图在夜色里甩开身后的尸潮。\n\
 但你没走多远，一只丧尸就从暗处扑了出来，把你按倒在地。\n\
 更多的脚步声从四面八方围了过来。\n\n—— 结局：夜逃失败 ——",
@@ -590,7 +590,7 @@ Object.assign(storyData, {
 
   // ==================== 死亡 - 检验科门锁被砸坏 ====================
   "结局-仁济-检验科失守": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你锁上检验科的门，靠在门边喘气。\n\
 但门锁已经坏了——白天你强行破门的时候，就把这扇门彻底毁了。\n\
 半夜，你被一阵拖沓的脚步声惊醒。门被推开了一条缝，几双灰白的手从门缝里伸了进来。\n\
@@ -620,7 +620,7 @@ Object.assign(storyData, {
 
   // ==================== 死亡 - 建平教室过夜 ====================
   "结局-过夜-建平教室": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你挑了间教室，把桌椅推到门口堵住。\n\
 后半夜，丧尸的嘶吼声越来越近——它们在走廊里徘徊，似乎嗅到了你的气味。\n\
 砰——门被撞开了。桌椅根本挡不住它们。\n\
@@ -630,7 +630,7 @@ Object.assign(storyData, {
 
   // ==================== 死亡 - 建平街头过夜 ====================
   "结局-过夜-建平街头": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你在校园的墙根下蜷缩着，用落叶和破布盖住自己。\n\
 凌晨的雾气里，一只丧尸发现了你——它没有嘶吼，只是安静地靠近。\n\
 等你察觉时，周围已经围满了。\n\n—— 结局：建平之夜 ——",
@@ -639,7 +639,7 @@ Object.assign(storyData, {
 
   // ==================== 死亡 - 建平宿舍未清理遇袭 ====================
   "结局-过夜-建平宿舍遇袭": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你摸黑进了宿舍，随便找了张床躺下，打算先凑合一晚。\n\
 深夜，走廊里传来拖沓的脚步声——你这才想起来，这栋楼的丧尸根本没清干净。\n\
 等你惊醒时，一张灰白的脸已经凑到了床边。\n\n—— 结局：宿舍惊魂 ——",

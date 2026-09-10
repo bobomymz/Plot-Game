@@ -15,10 +15,10 @@ Object.assign(storyData, {
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/上实南校/门口-morning.png",
-        evening: "images/上实南校/门口-evening.png",
-        night: "images/上实南校/门口-night.png",
-        midnight: "images/上实南校/门口-midnight.png",
+        morning: "images/上实南校/门口-morning.webp",
+        evening: "images/上实南校/门口-evening.webp",
+        night: "images/上实南校/门口-night.webp",
+        midnight: "images/上实南校/门口-midnight.webp",
       });
       return f(vars);
     },

@@ -4,8 +4,8 @@ Object.assign(storyData, {
   "全家便利店（环林东路）": {
     outdoor: true,
     image: function(vars) {
-      if (vars.weather === "雨") return "images/小区周边/全家和公交站/全家便利店门口-night.jpg";
-      return "images/小区周边/全家和公交站/全家便利店门口.jpg";
+      if (vars.weather === "雨") return "images/小区周边/全家和公交站/全家便利店门口-night.webp";
+      return "images/小区周边/全家和公交站/全家便利店门口.webp";
     },
     onEnter: function(vars) {
       vars.currentPlace = "初始小区";
@@ -34,7 +34,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店内部": {
-    image: "images/小区周边/全家和公交站/全家便利店内部.jpg",
+    image: "images/小区周边/全家和公交站/全家便利店内部.webp",
     text: function(vars) {
       var base = "你走进熟悉又陌生的便利店。\n\
 前面的冷藏区放着一些牛奶、鲜肉盒、饮料，以及你常买来作为早餐的饭团。\n\
@@ -88,7 +88,7 @@ Object.assign(storyData, {
   },
 
   "结局-全家便利店-员工通道-丧尸的偷袭": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你走进员工通道，里面是一个小仓库，货架都空了，冷库里只有些零星的冰棍和奶制品，而且已经停电了，估计都不能吃了。\n\
 你转身看看别处，手电筒的光照亮了货架深处，一只丧尸的脸出现在你面前。\n\
 刚想找武器，脚下踩到一块纸皮，嘎吱一声，那只丧尸已如鬼魅般闪现到你的面前。\n\
@@ -180,13 +180,13 @@ Object.assign(storyData, {
   },
 
   "结局-你太慢啦": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你抬脚准备离开，那只丧尸转过身来，像一道闪电一样闪现到你面前。\n\
 <span style='color: red; font-weight: bold;'>GAME OVER</span>\n\n—— 结局：你太慢啦 ——"
   },
 
   "结局-脚步声太大啦": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你转身躲了起来，大气也不敢喘，缓慢地向门口挪动身子。\n\
 突然，脚下的地板发出嘎吱一声。\n\
 那只丧尸蹭的一下直起身来，猛地向你的位置扑来。\n\
@@ -219,7 +219,7 @@ Object.assign(storyData, {
   },
 
   "日记本的提示-迅捷丧尸": {
-    image: "images/小区周边/全家和公交站/日记本.jpg",
+    image: "images/小区周边/全家和公交站/日记本.webp",
     text: "你打开了日记本，上面赫然多了一页日记：\n\
 7/15 傍晚 空气里有股腥臭味\n\
 今晚八点零三分，我躲在一栋单单元门里。\n\
@@ -294,7 +294,7 @@ Object.assign(storyData, {
   },
 
   "全家-吃面包": {
-    image: "images/小区周边/全家和公交站/面包.jpg",
+    image: "images/小区周边/全家和公交站/面包.webp",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些面包，感觉肚子有了一些能量。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
@@ -307,7 +307,7 @@ Object.assign(storyData, {
   },
 
   "全家-吃饭团": {
-    image: "images/小区周边/全家和公交站/饭团.jpg",
+    image: "images/小区周边/全家和公交站/饭团.webp",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些饭团，感觉肚子有了一些能量。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
@@ -320,7 +320,7 @@ Object.assign(storyData, {
   },
 
   "结局-全家-喝饮料腹泻": {
-    image: "images/小区周边/全家和公交站/公厕里的丧尸.png",
+    image: "images/小区周边/全家和公交站/公厕里的丧尸.webp",
     onEnter: updateTime(2),
     text: "你随手从冰柜里抓起一瓶冰凉的柠檬水，咕嘟咕嘟一饮而尽。片刻之后，你感觉胃部传来一阵绞痛。\n\
 ——你已经一个早上没吃饭了，现在这么快灌下去，怕是又要拉肚子了。\n\
@@ -334,10 +334,10 @@ Object.assign(storyData, {
     outdoor: true,
     image: function(vars) {
       var f = timeImage({
-        morning: "images/小区周边/全家和公交站/公交车站.png",
-        evening: "images/小区周边/全家和公交站/公交车站-evening.png",
-        night: "images/小区周边/全家和公交站/公交车站-night.jpg",
-        midnight: "images/小区周边/全家和公交站/公交车站-midnight.jpg"
+        morning: "images/小区周边/全家和公交站/公交车站.webp",
+        evening: "images/小区周边/全家和公交站/公交车站-evening.webp",
+        night: "images/小区周边/全家和公交站/公交车站-night.webp",
+        midnight: "images/小区周边/全家和公交站/公交车站-midnight.webp"
       });
       return f(vars);
     }, /* TODO: images/小区周边/全家和公交站/bus.png */
@@ -366,7 +366,7 @@ Object.assign(storyData, {
   },
 
   "结局-被尸潮群殴": {
-    image: "images/zombiesBeatYou.png",
+    image: "images/zombiesBeatYou.webp",
     text: "<span style='color: #ff4444; font-weight: bold;'>丧尸一拥而上，把你撕成了碎片。</span>\n\n—— 结局：被尸潮群殴 ——"
   },
 
@@ -529,13 +529,13 @@ Object.assign(storyData, {
   },
 
   "结局-员工通道-迅捷丧尸咬死": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。\n\n—— 结局：员工通道的迅捷丧尸 ——"
   },
 
 // ===== 妈妈的遗物：门口那辆倒下的早点车（回收自己的手机） =====
   "全家门口-妈妈的遗物": {
-    image: "images/小区周边/全家和公交站/全家便利店门口.jpg",
+    image: "images/小区周边/全家和公交站/全家便利店门口.webp",
     onEnter: function(vars) {
       vars.foundMomRemains = true;
       vars.positionAfterOperation = "全家门口-妈妈的遗物";
@@ -560,7 +560,7 @@ Object.assign(storyData, {
   },
 
   "全家门口-收好手机": {
-    image: "images/小区周边/全家和公交站/全家便利店门口.jpg",
+    image: "images/小区周边/全家和公交站/全家便利店门口.webp",
     onEnter: function(vars) {
       vars.hasPhone = true; vars.phoneBattery = 5;vars.itemCount ++; 
     },

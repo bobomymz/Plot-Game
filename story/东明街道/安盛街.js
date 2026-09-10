@@ -11,30 +11,30 @@ Object.assign(storyData, {
       if(vars._lastScene === "三林路-环林东路 十字路口") {
         if (vars.weather === "雨") {
           var f = timeImage({
-            morning: "images/安盛街/东侧入口-雨.jpg",
-            night: "images/安盛街/东侧入口-雨-night.jpg",
+            morning: "images/安盛街/东侧入口-雨.webp",
+            night: "images/安盛街/东侧入口-雨-night.webp",
           });
           return f(vars);
         }
         var f = timeImage({
-          morning: "images/安盛街/东侧入口.jpg",
-          evening: "images/安盛街/东侧入口-evening.jpg",
+          morning: "images/安盛街/东侧入口.webp",
+          evening: "images/安盛街/东侧入口-evening.webp",
           night: "images/安盛街/东侧入口-night.jpg"
         });
         return f(vars);
       }
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/东侧街面-雨天.png",
-          night: "images/安盛街/东侧街面-雨天-night.png",
+          morning: "images/安盛街/东侧街面-雨天.webp",
+          night: "images/安盛街/东侧街面-雨天-night.webp",
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/东侧街面.jpg",
-        evening: "images/安盛街/东侧街面-evening.png",
-        night: "images/安盛街/东侧街面-night.png",
-        midnight: "images/安盛街/东侧街面-midnight.png"
+        morning: "images/安盛街/东侧街面.webp",
+        evening: "images/安盛街/东侧街面-evening.webp",
+        night: "images/安盛街/东侧街面-night.webp",
+        midnight: "images/安盛街/东侧街面-midnight.webp"
       });
       return f(vars);
     }, 
@@ -93,16 +93,16 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/东侧街面-雨天.png",
-          night: "images/安盛街/东侧街面-雨天-night.png",
+          morning: "images/安盛街/东侧街面-雨天.webp",
+          night: "images/安盛街/东侧街面-雨天-night.webp",
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/东侧街面.jpg", // 原图格式JPG，修改后变为PNG
-        evening: "images/安盛街/东侧街面-evening.png",
-        night: "images/安盛街/东侧街面-night.png",
-        midnight: "images/安盛街/东侧街面-midnight.png"
+        morning: "images/安盛街/东侧街面.webp", // 原图格式JPG，修改后变为PNG
+        evening: "images/安盛街/东侧街面-evening.webp",
+        night: "images/安盛街/东侧街面-night.webp",
+        midnight: "images/安盛街/东侧街面-midnight.webp"
       });
       return f(vars);
     },
@@ -131,8 +131,8 @@ Object.assign(storyData, {
   "遭遇老头丧尸": {
     image: function(vars) {
       var f = timeImage({
-        morning: "images/安盛街/老头丧尸.png",
-        night: "images/安盛街/老头丧尸-night.jpg",
+        morning: "images/安盛街/老头丧尸.webp",
+        night: "images/安盛街/老头丧尸-night.webp",
       });
       return f(vars);
     },
@@ -163,15 +163,15 @@ Object.assign(storyData, {
   },
 
   "结局-老头丧尸砸死你": {
-    image: "images/zombieWaveSmashYouIntoPieces.png",
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "你冲上去的瞬间，老头丧尸举起拐杖狠狠砸了下来。\n它的力气大得惊人——你眼前一黑，倒在了冰冷的地面上。\n你为自己莽撞的攻击付出了代价。\n\n—— 结局：老头丧尸 ——"
   },
 
   "遭遇老头丧尸-犹豫": {
     image: function(vars) {
       var f = timeImage({
-        morning: "images/安盛街/老头丧尸袭来.png",
-        night: "images/安盛街/老头丧尸袭来-night.jpg",
+        morning: "images/安盛街/老头丧尸袭来.webp",
+        night: "images/安盛街/老头丧尸袭来-night.webp",
       });
       return f(vars);
     },
@@ -193,8 +193,8 @@ Object.assign(storyData, {
 
   "安盛街-踹倒老头丧尸": {
     image: timeImage({
-      morning: "images/安盛街/老头丧尸倒下.jpg",
-      night: "images/安盛街/老头丧尸倒下-night.jpg"
+      morning: "images/安盛街/老头丧尸倒下.webp",
+      night: "images/安盛街/老头丧尸倒下-night.webp"
     }),
     onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true, showRain: true } }),
     text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。",
@@ -214,8 +214,8 @@ Object.assign(storyData, {
 
   "安盛街-获得拐杖": {
     image: timeImage({
-      morning: "images/安盛街/老头丧尸倒下.jpg",
-      night: "images/安盛街/老头丧尸倒下-night.jpg"
+      morning: "images/安盛街/老头丧尸倒下.webp",
+      night: "images/安盛街/老头丧尸倒下-night.webp"
     }),
     onEnter: { set: { positionAfterOperation: "安盛街-获得拐杖", showRain: true } },
     text: "老头丧尸的拐杖掉在地上，是一根金属材质的——沉甸甸的，虽然不是什么神兵利器，但总比空手强。\n老头丧尸在地上扭动着，朝你发出嘶哑的吼声。",
@@ -236,7 +236,7 @@ Object.assign(storyData, {
   },
 
   "绕过老头丧尸": {
-    image: "images/安盛街/绕过老头丧尸.jpg",
+    image: "images/安盛街/绕过老头丧尸.webp",
     onEnter: updateTime(1, { set: { defeatedOldMan: true, showRain: true } }),
     text: "你侧身一闪，从老头丧尸的左边绕了过去。它挥舞拐杖试图够到你，但动作太慢了，你轻松躲开，头也不回地朝前走去。",
     choices: [
@@ -257,16 +257,16 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/理发店门口-雨天.png",
-          night: "images/安盛街/理发店门口-雨天-night.png",
+          morning: "images/安盛街/理发店门口-雨天.webp",
+          night: "images/安盛街/理发店门口-雨天-night.webp",
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/理发店门口.png",
-        evening: "images/安盛街/理发店门口-evening.png",
-        night: "images/安盛街/理发店门口-night.png",
-        midnight: "images/安盛街/理发店门口-midnight.png"
+        morning: "images/安盛街/理发店门口.webp",
+        evening: "images/安盛街/理发店门口-evening.webp",
+        night: "images/安盛街/理发店门口-night.webp",
+        midnight: "images/安盛街/理发店门口-midnight.webp"
       });
       return f(vars);
     },
@@ -554,18 +554,18 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/中段-雨天.jpg",
-          evening: "images/安盛街/中段-雨天-evening.jpg",
-          night:"images/安盛街/中段-雨天-night.jpg",
-          midnight:"images/安盛街/中段-雨天-midnight.jpg"
+          morning: "images/安盛街/中段-雨天.webp",
+          evening: "images/安盛街/中段-雨天-evening.webp",
+          night:"images/安盛街/中段-雨天-night.webp",
+          midnight:"images/安盛街/中段-雨天-midnight.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/中段.jpg",
-        evening: "images/安盛街/中段-evening.jpg",
-        night:"images/安盛街/中段-night.jpg",
-        midnight:"images/安盛街/中段-midnight.png"
+        morning: "images/安盛街/中段.webp",
+        evening: "images/安盛街/中段-evening.webp",
+        night:"images/安盛街/中段-night.webp",
+        midnight:"images/安盛街/中段-midnight.webp"
       });
       return f(vars);
     },
@@ -629,18 +629,18 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/中段-雨天.jpg",
-          evening: "images/安盛街/中段-雨天-evening.jpg",
-          night:"images/安盛街/中段-雨天-night.jpg",
-          midnight:"images/安盛街/中段-雨天-midnight.jpg"
+          morning: "images/安盛街/中段-雨天.webp",
+          evening: "images/安盛街/中段-雨天-evening.webp",
+          night:"images/安盛街/中段-雨天-night.webp",
+          midnight:"images/安盛街/中段-雨天-midnight.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/中段.jpg",
-        evening: "images/安盛街/中段-evening.jpg",
-        night:"images/安盛街/中段-night.jpg",
-        midnight:"images/安盛街/中段-midnight.png"
+        morning: "images/安盛街/中段.webp",
+        evening: "images/安盛街/中段-evening.webp",
+        night:"images/安盛街/中段-night.webp",
+        midnight:"images/安盛街/中段-midnight.webp"
       });
       return f(vars);
     }, 
@@ -665,14 +665,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/晨光文具店/晨光文具店-雨天.jpg",
-          night: "images/安盛街/晨光文具店/晨光文具店-雨天-night.png"
+          morning: "images/安盛街/晨光文具店/晨光文具店-雨天.webp",
+          night: "images/安盛街/晨光文具店/晨光文具店-雨天-night.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/晨光文具店/晨光文具店.png",
-        night: "images/安盛街/晨光文具店/晨光文具店-night.jpg"
+        morning: "images/安盛街/晨光文具店/晨光文具店.webp",
+        night: "images/安盛街/晨光文具店/晨光文具店-night.webp"
       });
       return f(vars);
     },
@@ -715,8 +715,8 @@ Object.assign(storyData, {
 
   "安盛街-收银台": {
     image: function(vars) {
-      if(vars._stationeryZombieDead) return "images/安盛街/晨光文具店/晨光文具店内部.png";
-      return "images/安盛街/晨光文具店/晨光文具店内部-有丧尸.jpg";
+      if(vars._stationeryZombieDead) return "images/安盛街/晨光文具店/晨光文具店内部.webp";
+      return "images/安盛街/晨光文具店/晨光文具店内部-有丧尸.webp";
     },
     text: function(vars) {
       if (vars._stationeryZombieDead) return "收银台后面空空荡荡，只有地上残留的水彩笔印证明这里曾经有过什么。";
@@ -740,7 +740,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店击杀": {
-    image: "images/安盛街/晨光文具店/丧尸被砸倒.jpg",
+    image: "images/安盛街/晨光文具店/丧尸被砸倒.webp",
     onEnter: { add: { strength: -1 }, set: { _stationeryZombieDead: true } },
     text: function(vars) {
       let weaponDesc = "你举起" + (meleeWeaponName(vars) || "手中的家伙");
@@ -761,7 +761,7 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-文具店被反杀": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: function(vars) {
       return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，但你的手臂发软，这一击只擦过了丧尸的肩膀。\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
 你太虚弱了，根本无力招架。\n\
@@ -770,7 +770,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店搜刮": { // 本节点限进入一次
-    image: "images/安盛街/晨光文具店/发现美工刀.jpg",
+    image: "images/安盛街/晨光文具店/发现美工刀.webp",
     text: "你看着门口附近凌乱的货架。铅笔橡皮撒了一地，收银台下面似乎有什么东西在闪光。",
     choices: [
       {
@@ -787,7 +787,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店搜刮-快速": {
-    image: "images/安盛街/晨光文具店/发现美工刀.jpg",
+    image: "images/安盛街/晨光文具店/发现美工刀.webp",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-快速" } },
     text: function(vars) {
       if (vars.hasCutter) return "你在笔和本子堆里又翻到了那把美工刀——但你口袋里已经有一把了，没必要再带一把占地方。";
@@ -816,7 +816,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店搜刮-仔细": {
-    image: "images/安盛街/晨光文具店/美工刀+传单.jpg",
+    image: "images/安盛街/晨光文具店/美工刀+传单.webp",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店搜刮-仔细" } },
     text: function(vars) {
       var desc = "你蹲下身，从货架底层开始一排一排地翻。铅笔、橡皮、尺子——都不是你要的。";
@@ -875,7 +875,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店仓库": {
-    image: "images/安盛街/晨光文具店/仓库.jpg",
+    image: "images/安盛街/晨光文具店/仓库.webp",
     text: "你推开吱嘎作响的铁门，走进文具店后面的小仓库。货架上堆满了各种文具和办公用品，墙角有几箱没拆封的打印纸。\n\
 你的目光落在角落的一个铁柜上——上面贴着“员工物品”的标签，柜门虚掩着。",
     choices: [
@@ -897,7 +897,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜": {
-    image: "images/安盛街/晨光文具店/仓库的铁柜.jpg",
+    image: "images/安盛街/晨光文具店/仓库的铁柜.webp",
     onEnter: {set: {positionAfterOperation: "安盛街-文具店铁柜"}},
     text: function(vars) {
       if (vars.hasBag) return "你打开铁柜。帆布袋已经被你拿走了，柜子里只剩那半包饼干和一瓶没开过的矿泉水。";
@@ -923,7 +923,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜-吃喝": {
-    image: "images/安盛街/晨光文具店/仓库吃补给.png",
+    image: "images/安盛街/晨光文具店/仓库吃补给.webp",
     onEnter: { add: { strength: 2 } },
     text: "你拧开矿泉水瓶盖，咕嘟咕嘟喝了几大口，又撕开饼干包装吃了两块。虽然不是什么美餐，但足够补充体力了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
@@ -935,7 +935,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-文具店铁柜-拿走帆布袋": {
-    image: "images/安盛街/晨光文具店/仓库拿帆布袋.png",
+    image: "images/安盛街/晨光文具店/仓库拿帆布袋.webp",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店" } },
     text: "你提起那只帆布袋，掸了掸上面的灰。帆布厚实，肩带完好，袋口还有一根抽绳——比空手强多了。\n你把它斜挎在肩上，腾出手来。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】背包容量+1，当前容量：{bagVolume}。</span>",
@@ -951,11 +951,11 @@ Object.assign(storyData, {
   "安盛街-服装店": {
     image: function(vars) {
       if (vars.weather == "雨") {
-        return "images/安盛街/服装店/门口-雨天.jpg";
+        return "images/安盛街/服装店/门口-雨天.webp";
       }
       var f = timeImage({
-        morning: "images/安盛街/服装店/门口.jpg",
-        night: "images/安盛街/服装店/门口-night.jpg"
+        morning: "images/安盛街/服装店/门口.webp",
+        night: "images/安盛街/服装店/门口-night.webp"
       });
       return f(vars);
     }, 
@@ -997,7 +997,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店-304柜": {
-    image: "images/安盛街/服装店/304柜.jpg",
+    image: "images/安盛街/服装店/304柜.webp",
     onEnter: { set: { positionAfterOperation: "安盛街-服装店-304柜" } },
     text: function(vars) {
       if (vars._visit['安盛街-服装店-304柜'] > 1) {
@@ -1024,7 +1024,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店-304柜-换衣": {
-    image: "images/安盛街/服装店/换新衣.jpg",
+    image: "images/安盛街/服装店/换新衣.webp",
     onEnter: { add: { strength: 1 }, set: { shirt: "深蓝夹克" } },
     text: "你脱下半路上沾了灰的衣服，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。已换上：{shirt}。</span>",
     choices: [
@@ -1042,9 +1042,9 @@ Object.assign(storyData, {
   "安盛街-服装店-304柜-纸条": {
     image: function(vars) {
       if (vars._visit['安盛街-服装店-304柜-换衣']) {
-        return "images/安盛街/服装店/看纸条-已换新衣.jpg";
+        return "images/安盛街/服装店/看纸条-已换新衣.webp";
       }
-      return "images/安盛街/服装店/看纸条.jpg";
+      return "images/安盛街/服装店/看纸条.webp";
     },
     text: "你拿起那张纸条。边缘已经卷起，字迹有些模糊：\n<em>“东明路那边有家图书馆，里面有人在守着，有水有吃的，我去看看。”</em>\n\
 落款处没有名字。",
@@ -1061,7 +1061,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店试衣间": {
-    image: "images/安盛街/服装店/试衣间的丧尸.jpg",
+    image: "images/安盛街/服装店/试衣间的丧尸.webp",
     qte: {
       timeout: 5000,
       onTimeout: "结局-安盛街-试衣间丧尸扑脸"
@@ -1087,12 +1087,12 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-试衣间丧尸扑脸": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "丧尸猛地扑到你身上，你失去平衡仰面摔倒。\n还没来得及挣扎，它已经咬了下来。\n\n—— 结局：试衣间丧尸 ——"
   },
 
   "安盛街-服装店反击": {
-    image: "images/安盛街/服装店/试衣间反击.jpg",
+    image: "images/安盛街/服装店/试衣间反击.webp",
     onEnter: { add: { strength: -1 } },
     text: "你一脚正中丧尸的胸口，它被踹回了试衣间，撞在墙上发出沉闷的声响。\n趁它还没爬起来，你头也不回地冲出了服装店。",
     choices: [
@@ -1106,11 +1106,11 @@ Object.assign(storyData, {
   "安盛街-服装店逃出": {
     image: function(vars) {
       if (vars.weather == "雨") {
-        return "images/安盛街/服装店/门口-雨天.jpg";
+        return "images/安盛街/服装店/门口-雨天.webp";
       }
       var f = timeImage({
-        morning: "images/安盛街/服装店/门口.jpg",
-        night: "images/安盛街/服装店/门口-night.jpg"
+        morning: "images/安盛街/服装店/门口.webp",
+        night: "images/安盛街/服装店/门口-night.webp"
       });
       return f(vars);
     },
@@ -1125,7 +1125,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店收银台": {
-    image: "images/安盛街/服装店/收银台.jpg",
+    image: "images/安盛街/服装店/收银台.webp",
     text: "你翻找收银台。收银机已经被撬开了，里面一分钱都没有——但这年头钱也没什么用。柜台下面的抽屉半开着，里面塞着一堆票据和杂物。",
     choices: [
       {
@@ -1146,7 +1146,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-服装店收银台-仔细": {
-    image: "images/安盛街/服装店/收银台.jpg",
+    image: "images/安盛街/服装店/收银台.webp",
     onEnter: { set: { positionAfterOperation: "安盛街-服装店收银台-仔细" } },
     text: function(vars) {
       let basicDes = "你把抽屉整个拉了出来，把里面的东西倒在地上。一堆过期的会员卡、几张外卖单、半管护手霜";
@@ -1179,14 +1179,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/食品店/清美生鲜门口-雨天.jpg",
-          night: "images/安盛街/食品店/清美生鲜门口-雨天-night.jpg"
+          morning: "images/安盛街/食品店/清美生鲜门口-雨天.webp",
+          night: "images/安盛街/食品店/清美生鲜门口-雨天-night.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/食品店/清美生鲜门口.jpg",
-        night: "images/安盛街/食品店/清美生鲜门口-night.png"
+        morning: "images/安盛街/食品店/清美生鲜门口.webp",
+        night: "images/安盛街/食品店/清美生鲜门口-night.webp"
       });
       return f(vars);
     }, 
@@ -1215,15 +1215,15 @@ Object.assign(storyData, {
       // 击杀过店员丧尸后，店里已经没有丧尸了
       if(vars._visit['安盛街-食品店战斗']) {
         var f = timeImage({
-          morning: "images/安盛街/食品店/进门景象.jpg",
-          night: "images/安盛街/食品店/进门景象-night.jpg"
+          morning: "images/安盛街/食品店/进门景象.webp",
+          night: "images/安盛街/食品店/进门景象-night.webp"
         });
         return f(vars);
       }
       // 丧尸还在店里
       var f = timeImage({
-        morning: "images/安盛街/食品店/进门景象-有丧尸.png",
-        night: "images/安盛街/食品店/进门景象-有丧尸-night.png"
+        morning: "images/安盛街/食品店/进门景象-有丧尸.webp",
+        night: "images/安盛街/食品店/进门景象-有丧尸-night.webp"
       });
       return f(vars);
     },
@@ -1274,8 +1274,8 @@ Object.assign(storyData, {
 
   "安盛街-食品店得手": { // 一个有时限的无限补给点，可供玩家不断补给
     image: timeImage({
-        morning: "images/安盛街/食品店/门口喝水.png",
-        night: "images/安盛街/食品店/门口喝水-night.png"
+        morning: "images/安盛街/食品店/门口喝水.webp",
+        night: "images/安盛街/食品店/门口喝水-night.webp"
     }),
     onEnter: updateTime(1, { add: { strength: 1 }, set: {showRain: true} }),
     text: "你飞快地抓起离你最近的一瓶水和一包饼干，转身就跑。店员丧尸慢悠悠地从柜台后面绕出来，但你已经在门外了。\n\
@@ -1293,7 +1293,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品店战斗": {
-    image: "images/安盛街/食品店/丧尸被打倒.png" /* TODO: images/anshengStreet/convenienceFight.png */,
+    image: "images/安盛街/食品店/丧尸被打倒.webp" /* TODO: images/anshengStreet/convenienceFight.png */,
     onEnter: { add: { strength: -1 } },
     text: function(vars) {
       return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，一下子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
@@ -1310,8 +1310,8 @@ Object.assign(storyData, {
 
   "安盛街-食品店战斗-吃喝": {
     image: timeImage({
-      morning: "images/安盛街/食品店/门口喝水-没丧尸.png",
-      night: "images/安盛街/食品店/门口喝水-没丧尸-night.png"
+      morning: "images/安盛街/食品店/门口喝水-没丧尸.webp",
+      night: "images/安盛街/食品店/门口喝水-没丧尸-night.webp"
     }),
     onEnter: { add: { strength: 4 } },
     text: "你拧开一瓶水，就着饼干和午餐肉吃了一顿。虽然冷了点，但能填饱肚子就是好事。\n\
@@ -1325,7 +1325,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-食品店逃跑": {
-    image: "images/安盛街/食品店/逃跑.jpg",
+    image: "images/安盛街/食品店/逃跑.webp",
     onEnter: updateTime(1),
     text: "你转身就跑，店员丧尸慢吞吞地跟在后面，但还没追到门口就放弃了——它似乎被什么东西绊倒了，哗啦一声摔在地上。\n管他呢，跑就对了。",
     choices: [
@@ -1337,13 +1337,13 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-食品店被咬": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你在货架前犹豫了太久。店员丧尸悄无声息地走到了你身后——\n等你察觉到脖子上传来的凉意时，已经太晚了。\n\n—— 结局：食品店被咬 ——"
   },
 
   // ==================== 安盛街-尸潮遭遇战 ====================
   "安盛街-尸潮来袭": {
-    image: "images/youMeetZombies.png",
+    image: "images/youMeetZombies.webp",
     onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
     text: "你正走着，突然听到身后传来一阵密集的脚步声。\n回头一看，一群丧尸从十字路口的方向涌了过来——至少二三十只，像潮水一样塞满了整条街道。它们看到了你，发出嘶哑的吼声，加快了速度。\n你必须马上决定往哪跑！",
     qte: {
@@ -1370,7 +1370,7 @@ Object.assign(storyData, {
   },
 
   "结局-安盛街-被尸潮吞没": {
-    image: "images/zombiesBeatYou.png",
+    image: "images/zombiesBeatYou.webp",
     text: "你在街道中央犹豫了太久。\n尸潮像一面墙一样压了过来，无数双手抓住了你的衣服、手臂、脖子……\n你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\n—— 结局：被尸潮吞没 ——"
   },
 
@@ -1391,8 +1391,8 @@ Object.assign(storyData, {
 
   "安盛街-躲进店铺": {
     image: timeImage({
-      morning: "images/安盛街/躲在小店.jpg",
-      night: "images/安盛街/躲在小店-night.jpg"
+      morning: "images/安盛街/躲在小店.webp",
+      night: "images/安盛街/躲在小店-night.webp"
     }),
     onEnter: updateTime(5, { set: { showRain: true }, add: { chasedByZombies: -2 } }),
     text: "你一头扎进路边一家不知名的店铺，蹲在柜台后面，用手捂住嘴巴。\n\
@@ -1424,7 +1424,7 @@ Object.assign(storyData, {
 
   // ==================== 安盛街-被包围 ====================
   "安盛街-被包围": {
-    image: "images/youMeetZombies.png",
+    image: "images/youMeetZombies.webp",
     onEnter: { set: { showRain: true }, add: { chasedByZombies: 2 } },
     text: "你走到一半，发现事情不太对——丧尸不只从后面来。\n\
 前面、左边的小巷、右边的店铺里，都有丧尸在向你靠近。它们不知道什么时候绕到了你的前方，形成了一个松散的包围圈。\n\
@@ -1453,14 +1453,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if(vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/后巷-雨天.jpg",
-          night: "images/安盛街/后巷-雨天-night.jpg",
+          morning: "images/安盛街/后巷-雨天.webp",
+          night: "images/安盛街/后巷-雨天-night.webp",
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/后巷.jpg",
-        night: "images/安盛街/后巷-night.jpg",
+        morning: "images/安盛街/后巷.webp",
+        night: "images/安盛街/后巷-night.webp",
       });
       return f(vars);
     },
@@ -1480,7 +1480,7 @@ Object.assign(storyData, {
   },
 
   "安盛街-冲出包围": {
-    image: "images/安盛街/冲出包围圈.jpg",
+    image: "images/安盛街/冲出包围圈.webp",
     onEnter: updateTime(2, { set: { showRain: true }, add: { strength: -1, chasedByZombies: 1 } }),
     text: "你深吸一口气，朝着最薄弱的缺口猛冲过去。一只丧尸伸手抓向你的衣领，被你一肘击翻；另一只从侧面扑来，你侧身闪过。\n\
 你的肺部在燃烧，腿像灌了铅一样沉重——但你不能停。\n\
@@ -1499,16 +1499,16 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/安盛街/西侧-雨天.jpg",
-          night: "images/安盛街/西侧-雨天-night.jpg",
+          morning: "images/安盛街/西侧-雨天.webp",
+          night: "images/安盛街/西侧-雨天-night.webp",
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/安盛街/西侧.jpg",
-        evening: "images/安盛街/西侧-evening.jpg",
-        night: "images/安盛街/西侧-night.jpg",
-        midnight: "images/安盛街/西侧-midnight.jpg",
+        morning: "images/安盛街/西侧.webp",
+        evening: "images/安盛街/西侧-evening.webp",
+        night: "images/安盛街/西侧-night.webp",
+        midnight: "images/安盛街/西侧-midnight.webp",
       });
       return f(vars);
     }, /* TODO: images/安盛街/西侧*.png */

@@ -1,8 +1,8 @@
 Object.assign(storyData, {
   "长者食堂": {
     image: timeImage({
-      morning: "images/小区周边/长者食堂/门口.jpg",
-      night: "images/小区周边/长者食堂/门口-night.jpg"
+      morning: "images/小区周边/长者食堂/门口.webp",
+      night: "images/小区周边/长者食堂/门口-night.webp"
     }),
     onEnter: function(vars) {
       vars.showRain = true;
@@ -44,7 +44,7 @@ Object.assign(storyData, {
   },
 
   "结局-闭目养神": {
-    image: "images/zombiePounceOnYou.jpg",
+    image: "images/zombiePounceOnYou.webp",
     text: "你闭目养神，休息了一会儿。门外的雨声淅沥淅沥，在这末世下似乎是唯一的慰藉。\n\
 你感觉到一丝不安。\n\
 睁开眼，一只红眼的丧尸向你扑了过来。\n\
@@ -52,7 +52,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-休息": {
-    image: "images/小区周边/长者食堂/坐在地上.png",
+    image: "images/小区周边/长者食堂/坐在地上.webp",
     onEnter: function(vars) { restRecover(vars, 1); return updateTime(5, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
         if(vars._visit["长者食堂-休息"] > 1) return "你决定继续休息一会儿。" + describeWeather(vars) + restHint(vars);
@@ -73,7 +73,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-关门": {
-    image: "images/小区周边/长者食堂/内部.png",
+    image: "images/小区周边/长者食堂/内部.webp",
     text: "你关上了门。店里的椅子东倒西歪，打饭区好像没有剩下什么食物。你摇了摇头，看向旁边的墙壁。\n\
 “扫码注册充值，即可享用美食。”\n\
 砰砰砰————！\n\
@@ -155,7 +155,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-内部": {
-    image: "images/小区周边/长者食堂/内部.png",
+    image: "images/小区周边/长者食堂/内部.webp",
     text: "你在长者食堂的内部。店里的椅子东倒西歪，打饭区好像没有剩下什么食物。厨房里有什么东西在嘀、嘀、嘀地响。",
     choices: [
       {
@@ -202,7 +202,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-打饭区": {
-    image: "images/小区周边/长者食堂/打饭区.jpg",
+    image: "images/小区周边/长者食堂/打饭区.webp",
     text: function(vars) {
       if (vars._visit['长者食堂-吃饭'] > 0) return "你在长者食堂的打饭区，这里没有食物了。";
       return "你在长者食堂的打饭区。看起来还有些剩余的食物，但闻起来有点奇怪，你要吃吗？";
@@ -223,7 +223,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-吃饭": {
-    image: "images/小区周边/长者食堂/吃饭.jpg",
+    image: "images/小区周边/长者食堂/吃饭.webp",
     onEnter: {add: {strength: -1}},
     text: "你感觉有点饿，把剩余的一点食物一扫而空。过了一会儿，肚子便疼了起来。\n\
 可恶，这些食物已经不新鲜了。",
@@ -237,7 +237,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-后厨": {
-    image: "images/小区周边/长者食堂/后厨.jpg",
+    image: "images/小区周边/长者食堂/后厨.webp",
     text: "你在长者食堂的后厨。灶台上的锅具东倒西歪，几口炒锅里残留着干涸的菜汤，案板上还搁着半棵蔫了的白菜。\n\
 墙上写着标语：厨房重地，闲人免入。\n\
 你翻找了一圈——调味料倒是齐全，但带不走也煮不了。冷藏室的门虚掩着，门缝里飘出一股冷气和一丝说不清的甜味。\n\
@@ -257,7 +257,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-饮水机": {
-    image: "images/小区周边/长者食堂/饮水机.jpg",
+    image: "images/小区周边/长者食堂/饮水机.webp",
     text: function(vars) {
       if (!vars.hasBottle) {
         return "饮水机还在运行，滤芯指示灯闪着绿光。不锈钢水槽里积着浅浅一层水渍——之前应该有不少人来这里打过水。\n但你没有容器。嘴对嘴喝的话，你的脖子大概要扭到断掉的程度。";
@@ -285,7 +285,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-窗口": {
-    image: "images/小区周边/长者食堂/窗口.jpg",
+    image: "images/小区周边/长者食堂/窗口.webp",
     text: function(vars) {
       if (vars.dd > 1) {
         return "供汤窗口的保温桶已经断电了。你掀开桶盖——里面的紫菜蛋花汤已经凉透，表面凝了一层灰白的油膜，散发着一股馊掉的酸味。\n不能喝了。";
@@ -309,7 +309,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-窗口-喝汤": {
-    image: "images/小区周边/长者食堂/窗口.jpg",
+    image: "images/小区周边/长者食堂/窗口.webp",
     onEnter: {add: {strength: 5}},
     text: "你喝掉了紫菜蛋花汤。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+5，当前体力：{strength}。</span>",
@@ -322,7 +322,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-办公室": {
-    image: "images/小区周边/长者食堂/办公室.jpg",
+    image: "images/小区周边/长者食堂/办公室.webp",
     text: function(vars) {
       var desc = "你穿过用餐区往深处走去，后面有一扇半掩的门，里面是间不到五平米的小办公室。桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。\n";
       if(vars._visit['长者食堂-办公室']) desc = "办公室桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。";
@@ -349,7 +349,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-打开路由器": {
-    image: "images/小区周边/长者食堂/打开路由器.jpg",
+    image: "images/小区周边/长者食堂/打开路由器.webp",
     text: "你按住了路由器背后的小黑钮三秒，路由器指示灯开始闪着规律的绿光。",
     choices: [
       {
@@ -360,7 +360,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-签到机": {
-    image: "images/小区周边/长者食堂/人脸识别消费机.jpg",
+    image: "images/小区周边/长者食堂/人脸识别消费机.webp",
     text: "你走向门口那台刷脸签到机。摄像头下方的屏幕还亮着，蓝光一闪一闪。屏幕一侧有个读卡槽——平时老人刷老年卡就能签到。\n\
 屏幕停在签到界面，最近的几条记录还留在上面：\n\
   6月25日（晴）\n\
@@ -381,7 +381,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-手机信息": {
-    image: "images/小区周边/长者食堂/手机信息.jpg",
+    image: "images/小区周边/长者食堂/手机信息.webp",
     text: "你连上了食堂的WiFi。手机震动了一下——\n\
 信号很弱，但还能用。大部分网站已经打不开了——服务器大概早就断了电。\n\
 只有几个页面还能加载出来：\n\

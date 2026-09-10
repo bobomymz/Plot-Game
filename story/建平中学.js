@@ -357,7 +357,7 @@ Object.assign(storyData, {
   },
 
   "结局-前门失守": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你记错了颜色的顺序——等你回过神来，丧尸已经扑到了你身上。\n—— 结局：前门失守 ——"
   },
 
@@ -507,7 +507,7 @@ Object.assign(storyData, {
   },
 
   "结局-后门失守": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你在丧尸群里乱了阵脚——它们扑上来，把你撕成了碎片。\n—— 结局：后门失守 ——"
   },
 
@@ -976,7 +976,7 @@ Object.assign(storyData, {
   },
 
   "结局-挹芬楼失守": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你记错了颜色的顺序——挹芬楼的丧尸潮水般涌来，把你吞没了。\n—— 结局：挹芬楼失守 ——"
   },
   "建平-挹芬楼-2F": {
@@ -1272,7 +1272,7 @@ Object.assign(storyData, {
   },
 
   "结局-被老吴咬死": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你没能招架住老吴的丧尸——它把你扑倒在地，一口咬在喉咙上。\n—— 结局：被老吴咬死 ——"
   },
 
@@ -1928,7 +1928,7 @@ Object.assign(storyData, {
     ]
   },
   "结局-宿舍失守": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你记错了颜色的顺序——宿舍里的丧尸扑了上来，把你堵在了墙角。\n—— 结局：宿舍失守 ——"
   },
 

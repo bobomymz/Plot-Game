@@ -8,8 +8,8 @@ Object.assign(storyData, {
   "五金店": {
     outdoor: true,
     image: timeImage({
-      morning: "images/小区周边/五金店/门口.jpg",
-      night: "images/小区周边/五金店/门口-night.jpg"
+      morning: "images/小区周边/五金店/门口.webp",
+      night: "images/小区周边/五金店/门口-night.webp"
     }),
     onEnter: function(vars) {
       vars.showRain = true;
@@ -42,7 +42,7 @@ Object.assign(storyData, {
 
   // ==================== 正门路线 ====================
   "五金店-正门": {
-    image: "images/小区周边/五金店/进正门.png",
+    image: "images/小区周边/五金店/进正门.webp",
     text: "你拉开卷帘门，钻进五金店。店里很暗，只有几缕光线从落满灰的窗户透进来。货架歪七扭八地排列着，上面散落着各种工具和零件。\n\
 你身后传来嘎吱一声——卷帘门自己滑了下来，卡住了。你拉了两下，拉不动。\n退路断了。你只能往前。\n空气里有股化工品的味道，混着一丝若有若无的腥甜——整家店安静得不像话，像是你正站在什么东西的嘴里。",
     onEnter: updateTime(2), // 花2分钟钻进店内并环顾四周
@@ -60,7 +60,7 @@ Object.assign(storyData, {
   },
 
   "五金店-正门-摸黑": {
-    image: "images/小区周边/五金店/掉进检修口.jpg",
+    image: "images/小区周边/五金店/掉进检修口.webp",
     onEnter: updateTime(3), // 花3分钟在黑暗中摸索前行
     text: "你伸手探路，在黑暗中缓慢前进。脚下踢到了什么东西——哐当一声，像是一桶油漆被踢翻了。\n\
 你继续走了两步，突然脚下一空——地板有一块检修口没盖盖子。你整个人掉进了地沟里，膝盖磕在水泥地上，疼得你眼前发黑。\n\
@@ -74,13 +74,13 @@ Object.assign(storyData, {
   },
 
   "结局-五金店-地沟": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "你的手在黑暗中摸到了一根铁管——但你还没来得及抓稳，它已经扑到了你身上。它的速度太快了。\n\
   你的喉咙被咬住的时候，最后一个念头是：它是什么时候从五金店里冒出来的？\n—— 结局：五金店地沟 ——"
   },
 
   "五金店-正门-照明": {
-    image: "images/小区周边/五金店/收银台旁.jpg",
+    image: "images/小区周边/五金店/收银台旁.webp",
     onEnter: updateTime(1), // 花1分钟掏出手电筒照明
     text: "你打开手电筒。惨白的光照亮了五金店的内部——货架上凌乱地摆着扳手、螺丝刀、电线和各种五金零件。地上散落着一些碎玻璃和空纸箱。\n\
 你看到前方有一个通道，上面贴着“工具区”的牌子。左手边是柜台，柜台后面的架子上似乎放着一些瓶瓶罐罐。",
@@ -97,7 +97,7 @@ Object.assign(storyData, {
   },
 
   "结局-五金店-工具区": {
-    image: "images/小区周边/五金店/丧尸扑下来.jpg",
+    image: "images/小区周边/五金店/丧尸扑下来.webp",
     qte: {
       timeout: 10000,
       onTimeout: "结局-五金店-迅捷"
@@ -109,12 +109,12 @@ Object.assign(storyData, {
   },
 
   "结局-五金店-迅捷": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "它的牙齿刺入你脖子的那一刻，你甚至没有感觉到疼痛——太快了。你最后的意识是手电筒落在地上，光照着天花板上的一道裂缝。\n—— 结局：五金店迅捷丧尸 ——"
   },
 
   "五金店-前台": {
-    image: "images/小区周边/五金店/收银台后.jpg" ,
+    image: "images/小区周边/五金店/收银台后.webp" ,
     text: "你绕过柜台。后面的架子上确实放着一些瓶瓶罐罐——油漆、松节油、润滑剂……但你还没来得及看清具体的标签，就感到一阵眩晕。\n\
 你低头——柜台下方正冒出淡淡的绿色气体。\n\
 你已经吸进去了。你的视野开始模糊，腿发软。你想后退，但身体不听使唤。你摔倒在地上，离那扇紧闭的卷帘门只有几步之遥，但你连抬手的力气都没有了。",
@@ -127,7 +127,7 @@ Object.assign(storyData, {
   },
 
   "结局-五金店-毒气": {
-    image: "images/小区周边/五金店/收银台爬出丧尸.jpg",
+    image: "images/小区周边/五金店/收银台爬出丧尸.webp",
     text: "你一寸一寸地爬向门口，手指扣着地面的缝隙。但气体比你更快——它弥漫在整个空间里，你的每一次呼吸都让意识更加模糊。\n\
 在你失去知觉前的最后一刻，你看到柜台下方有什么东西动了。一只穿着深蓝色工装的手从柜台下面伸了出来。\n\
 原来……它……一直……就……在那里……\n—— 结局：五金店毒气 ——"
@@ -136,8 +136,8 @@ Object.assign(storyData, {
   // ==================== 侧窗路线 ====================
   "五金店-侧窗": {
     image: timeImage({
-      morning: "images/小区周边/五金店/侧窗.jpg",
-      night: "images/小区周边/五金店/侧窗-night.jpg"
+      morning: "images/小区周边/五金店/侧窗.webp",
+      night: "images/小区周边/五金店/侧窗-night.webp"
     }),
     onEnter: updateTime(3), // 花3分钟绕到侧面+翻窗
     text: "你绕到五金店侧面。那扇破窗开在离地面大约一米五的高度，窗框上还残留着几片碎玻璃。里面看起来是工具区——墙上挂着各种工具，地上堆着一些纸箱。\n\
@@ -152,8 +152,8 @@ Object.assign(storyData, {
 
   "五金店-侧窗-探索": {
     image: timeImage({
-      morning: "images/小区周边/五金店/工具区.jpg",
-      night: "images/小区周边/五金店/工具区-night.jpg"
+      morning: "images/小区周边/五金店/工具区.webp",
+      night: "images/小区周边/五金店/工具区-night.webp"
     }),
     onEnter: updateTime(2), // 花2分钟审视墙上工具
     text: "你环顾工具区。墙上挂着一排扳手和螺丝刀，上面沾着机油和灰，但没生锈——五金店的东西保养得还行。你挑了一把趁手的扳手——虽然不是什么神兵利器，但总比空手强。\n\
@@ -171,7 +171,7 @@ Object.assign(storyData, {
   },
 
   "五金店-货架躲藏": {
-    image: "images/小区周边/五金店/货架躲藏.png",
+    image: "images/小区周边/五金店/货架躲藏.webp",
     text: "你蹲下来，缩进两排货架之间的缝隙里。透过货架上的空隙，你看向工具区门的方向。\n\
 门没有被推开。但你注意到脚边的地板上正在渗出一种绿色的气体——它从地板缝里一丝一丝地冒出来，像干冰一样贴着地面蔓延。\n\
 你捂住口鼻，但太晚了。你已经吸了一口。你的喉咙开始收缩，视野边缘开始模糊。你想站起来，但腿已经完全不听使唤了。\n\
@@ -187,8 +187,8 @@ Object.assign(storyData, {
   // ==================== 后巷路线 ====================
   "五金店-后巷": {
     image: timeImage({
-      morning: "images/小区周边/五金店/后巷.jpg",
-      night: "images/小区周边/五金店/后巷-night.jpg"
+      morning: "images/小区周边/五金店/后巷.webp",
+      night: "images/小区周边/五金店/后巷-night.webp"
     }),
     onEnter: updateTime(2, { set: { showRain: true } }), // 花2分钟绕到后巷
     text: "你绕到五金店后面的小巷。后巷堆满了废弃的纸箱和空油桶，地面上有一层黏糊糊的黑色油渍。这里有两扇门，都是厚重的铁皮门，右边那扇锁着——但锁看起来不太结实，另一扇没有锁。\n\
@@ -216,7 +216,7 @@ Object.assign(storyData, {
 
 
   "五金店-后巷-撬锁": {
-    image: "images/小区周边/五金店/后门的丧尸.jpg",
+    image: "images/小区周边/五金店/后门的丧尸.webp",
     onEnter: updateTime(5), // 花5分钟撬锁
     text: "你把铁棍插进门缝，用力一撬。锁头发出一声闷响，弹开了。\n\
 你推开铁皮门——门后站着一个人。一个女人。不，一只穿着店员围裙的女丧尸，就贴在门后站着，像是早就知道你会从这里进来。\n\
@@ -230,12 +230,12 @@ Object.assign(storyData, {
   },
 
   "结局-五金店-开门杀": {
-    image: "images/zombieKnockYouDown.png",
+    image: "images/zombieKnockYouDown.webp",
     text: "它离你太近了——不到一个手臂的距离。你屏住呼吸想要后退，但它伸出双臂抱住了你，像一个僵硬而冰冷的拥抱。\n它的嘴贴着你的脸，呼出的气体直接喷在你的口鼻上。你只撑了不到五秒，意识就像被关掉的灯一样熄灭了。\n—— 结局：五金店开门杀 ——"
   },
 
   "五金店-后巷-偷看左门": {
-    image: "images/小区周边/五金店/看看门缝.png",
+    image: "images/小区周边/五金店/看看门缝.webp",
     text: "里面一片漆黑，什么也看不见",
     choices: [
       {
@@ -254,13 +254,13 @@ Object.assign(storyData, {
   },
 
   "结局-配电房": {
-    image: "images/小区周边/五金店/配电房.jpg",
+    image: "images/小区周边/五金店/配电房.webp",
     text: "你打开门，里面乱七八糟有一堆电线。突然，头顶一根电线掉了下来，滋滋冒着黄色的火花。你被电穿了。\n\
 —— 结局：配电房 ——"
   },
 
   "五金店-后巷-偷看右门": {
-    image: "images/小区周边/五金店/看看门缝.png",
+    image: "images/小区周边/五金店/看看门缝.webp",
     onEnter: updateTime(2), // 花2分钟趴下+调整角度偷看
     text: function(vars) {
       let basicText = "";
@@ -278,14 +278,14 @@ Object.assign(storyData, {
   },
 
   "结局-五金店-对视": {
-    image: "images/小区周边/五金店/丧尸的俯视.jpg",
+    image: "images/小区周边/五金店/丧尸的俯视.webp",
     text: "一只手从门后猛地伸出来，抓住了你的衣领，把你整个人拽了进去。你摔在冰冷的水泥地上，翻滚了两圈才停下来。当你抬起头时，它已经站在了你面前——那只丧尸，围裙上沾满了机油和暗褐色的污渍。\n\
 它的速度快得惊人。你听到的最后声音是你自己的颈椎断裂的声音。\n—— 结局：五金店对视 ——"
   },
 
   // ==================== 联华超市地下室 → 暗道 → 五金店仓库（唯一生路） ====================
   "联华超市-地下室-撬锁": {
-    image: "images/小区周边/五金店/地下室.png",
+    image: "images/小区周边/五金店/地下室.webp",
     onEnter: updateTime(5, { add: { strength: -1 } }), // 花5分钟撬铁栅栏门，很费体力
     text: function(vars) {
       var breakChance = 0.5 - (vars.strength - 5) * 0.05;
@@ -311,7 +311,7 @@ Object.assign(storyData, {
   },
 
   "联华超市-地下室-破锁": {
-    image: "images/小区周边/五金店/地下室.png",
+    image: "images/小区周边/五金店/地下室.webp",
     onEnter: updateTime(3),  // 抡斧劈锁，比撬更快更稳
     text: "你抡起斧头，对准铁栅栏门锁环的根部劈下去。\n铛！第一下——锈蚀的铁条迸出一串火星，震得你虎口发麻。\n铛！第二下——锁环崩开一道裂纹。\n你抬脚一踹，铁栅栏门吱呀一声弹开。斧头劈铁的动静在逼仄的地下室里嗡嗡作响——好在没有引来什么。\n你没有停留，侧身钻了进去。",
     choices: [
@@ -320,7 +320,7 @@ Object.assign(storyData, {
   },
 
   "五金店-暗道": {
-    image: "images/小区周边/五金店/暗道.jpg",
+    image: "images/小区周边/五金店/暗道.webp",
     onEnter: updateTime(1), // 花1分钟走暗道+观察岔路
     text: "你钻过铁栅栏门，进入一条狭窄的房间。墙壁是粗糙的水泥，头顶有管道穿过，偶尔传来水管里咕噜噜的水声。脚下能踩到细碎的砂石，发出沙沙的声响。\n\
 前方出现了一个岔路。右边的通道更宽一些，能隐约听到风声——好像通向外面。左边的楼梯不知道通向什么房间。",
@@ -337,7 +337,7 @@ Object.assign(storyData, {
   },
 
   "结局-五金店-地铁": {
-    image: "images/小区周边/五金店/地铁撞来.jpg",
+    image: "images/小区周边/五金店/地铁撞来.webp",
     onEnter: updateTime(5), // 花5分钟走到地铁隧道
     text: "你沿着右边的通道走了一段。通道越来越宽，墙上的管道越来越粗。空气变得潮湿而阴冷。\n\
 前方出现了亮光——不是日光，是一种昏黄的灯光。你走过去，发现通道尽头是一个检修口，通向一条宽阔的隧道。轨道。\n是地铁隧道。\n\
@@ -348,9 +348,9 @@ Object.assign(storyData, {
   "五金店-暗道-仓库": {
     image: function(vars) {
       if(vars.hasLubricant) {
-        return "images/小区周边/五金店/仓库.jpg";
+        return "images/小区周边/五金店/仓库.webp";
       }
-      return "images/小区周边/五金店/仓库-没有润滑油.jpg";
+      return "images/小区周边/五金店/仓库-没有润滑油.webp";
     },
     onEnter: function(vars) {
       vars.positionAfterOperation = "五金店-暗道-仓库";
@@ -389,7 +389,7 @@ WD-40 防锈润滑剂。";
   },
 
   "五金店-暗道-返回": {
-    image: "images/小区周边/联华超市/地下室.jpg",
+    image: "images/小区周边/联华超市/地下室.webp",
     onEnter: updateTime(4, { add: { strength: -1 } }), // 花4分钟原路返回，来回一趟体力消耗不小
     text: function(vars) {
       let basicDes = "你原路返回，穿过暗道，爬回联华超市的地下室。铁栅栏门的锁环还断在那里——你没有把它修好，也不可能修好。";

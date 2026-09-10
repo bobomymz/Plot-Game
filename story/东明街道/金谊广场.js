@@ -278,8 +278,8 @@ Object.assign(storyData, {
   "金谊广场-地面停车场": {
     outdoor: true,
     image: timeImage({
-      morning: "images/金谊广场/地面停车场.jpg",
-      night: "images/金谊广场/地面停车场-night.jpg"
+      morning: "images/金谊广场/地面停车场.webp",
+      night: "images/金谊广场/地面停车场-night.webp"
     }),
     onEnter: function(vars) {
       vars.showZombies = true;
@@ -343,7 +343,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-停车场-救完": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.jpg */,
+    image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.webp */,
     text: function(vars) {
       var desc = "你和陈默合力清掉了挡路的几只丧尸。他靠在面包车上喘了几口气，用袖子擦了擦菜刀上的血。\n";
       if (vars._visit['初遇陈默']) {
@@ -364,7 +364,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-停车场-搜刮": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.jpg */,
+    image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.webp */,
     text: function(vars) {
       if (vars._visit['金谊广场-停车场-搜刮'] > 1) {
         var again = "你又绕着停车场走了一圈。能拉的车门都拉过了——除了那辆老桑塔纳，其余的全锁着。";
@@ -392,7 +392,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-停车场-搜刮-拿到水": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.jpg */,
+    image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.webp */,
     text: "你捡起后备箱里那半瓶矿泉水，拧开盖子凑到鼻尖闻了闻——没有杂味，应该是安全的。你拧紧瓶盖收进背包。\n\
 瓶里还有大半罐水，够解一阵渴了。喝完了就剩个空瓶——以后再想打水，得先找个干净的水源。河边那些水，你不想碰。",
     choices: [
@@ -406,14 +406,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if(vars.weaather == '雨') {
         var f = timeImage({
-          morning: "images/金谊广场/正门-雨.jpg",
-          night: "images/金谊广场/正门-雨-night.jpg"
+          morning: "images/金谊广场/正门-雨.webp",
+          night: "images/金谊广场/正门-雨-night.webp"
         });
         return f;
       }
       var f = timeImage({
-        morning: "images/金谊广场/正门.jpg",
-        night: "images/金谊广场/正门-night.jpg"
+        morning: "images/金谊广场/正门.webp",
+        night: "images/金谊广场/正门-night.webp"
       })
       return f;
     },
@@ -464,7 +464,7 @@ Object.assign(storyData, {
         return f;
       }
       var f = timeImage({
-        morning: "images/金谊广场/旋转门大战.jpg",
+        morning: "images/金谊广场/旋转门大战.webp",
         night: "images/金谊广场/旋转门大战-night.jpg"
       })
       return f;
@@ -526,7 +526,7 @@ Object.assign(storyData, {
 
   // --- B2车库入口（??? 盲选） ---
   "金谊广场-B2车库入口": {
-    image: "images/金谊广场/B2车库入口.jpg" /* TODO: images/金谊广场/B2车库入口.jpg */,
+    image: "images/金谊广场/B2车库入口.webp" /* TODO: images/金谊广场/B2车库入口.webp */,
     text: function(vars) {
       var backFrom = ["金谊广场-B2摸到死路", "金谊广场-B2货梯间"].indexOf(vars._lastScene) >= 0;
       if (vars.hasTorch) {
@@ -568,7 +568,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-B2货梯间": {
-    image: "images/金谊广场/B2货梯.jpg",
+    image: "images/金谊广场/B2货梯.webp",
     text: function(vars) {
       var desc = "你找到了货梯间。货梯的门开着，轿厢里的应急灯还亮着——发出微弱的黄光。\n";
       desc += "你注意到货梯间角落的通风口附近，有一层淡淡的白雾在缓缓飘动。\n";
@@ -598,7 +598,7 @@ Object.assign(storyData, {
 
   // --- 地铁站厅（记忆闪色战斗） ---
   "金谊广场-地铁站厅": {
-    image: "images/金谊广场/地铁站厅.jpg",
+    image: "images/金谊广场/地铁站厅.webp",
     onEnter: initMemoryGame(["红","蓝","绿"], 8),
     text: function(vars) {
       var desc = "你从坍塌的吊顶缝隙钻进了三林路地铁站的站厅。大片吊顶塌了下来，裸露的线缆和通风管道垂在半空。\n";
@@ -663,7 +663,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-1F肯德基": {
-    image: "images/金谊广场/肯德基.jpg",
+    image: "images/金谊广场/肯德基.webp",
     text: function(vars) {
       var fromChicken = vars._lastScene === "金谊广场-1F肯德基-吃鸡块";
       var desc = (fromChicken ? "你回到肯德基。" : "你走进肯德基。") + "餐厅里一片狼藉——托盘和纸杯散落一地，点餐屏幕早就黑了。冰柜的门开着，化冻的水淌了一地，混着打翻的番茄酱，看起来像稀释的血。\n";
@@ -686,7 +686,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-1F肯德基-吃鸡块": {
-    image: "images/金谊广场/吃鸡块.jpg",
+    image: "images/金谊广场/吃鸡块.webp",
     onEnter: { add: { strength: 3 } },
     text: "你拆开一盒鸡块，撕开番茄酱的小包。\n冷掉了，但还能吃。你坐在油腻的地板上，把两盒鸡块一扫而光。\n胃里终于有了点实在的东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
     choices: [
@@ -696,7 +696,7 @@ Object.assign(storyData, {
 
   // --- 2F 服装层 ---
   "金谊广场-2F": {
-    image: "images/金谊广场/2F.jpg",
+    image: "images/金谊广场/2F.webp",
     text: function(vars) {
       var head;
       if (vars._lastScene === "金谊广场-3F") head = "你下到二楼。";
@@ -828,7 +828,7 @@ Object.assign(storyData, {
 
   // 3F落单幸存者——小林
   "金谊广场-3F-幸存者": {
-    image: "images/金谊广场/夸父炸串.jpg",
+    image: "images/金谊广场/夸父炸串.webp",
     text: function(vars) {
       if (vars._visit['金谊广场-3F-幸存者'] > 1) {
         var short = "小林还蹲在吧台下面。他看到是你，眼神没那么紧张了，只是点了点头。\n";
@@ -906,7 +906,7 @@ Object.assign(storyData, {
   },
   // --- 4F 餐饮/影院 ---
   "金谊广场-4F": {
-    image: "images/金谊广场/4F.jpg" /* TODO: images/金谊广场/4F影院.jpg */,
+    image: "images/金谊广场/4F.webp" /* TODO: images/金谊广场/4F影院.jpg */,
     text: function(vars) {
       var desc = "你来到四楼。华夏金谊影院的招牌还亮着——不知道是发电机在转还是备用电源。大厅里循环播放着一段片尾字幕，在空无一人的影院里反复回响。\n";
       desc += "放映厅的门半开着，你能看到座椅上坐着几个人——不，是几具尸体。他们躲进来等电影，最后死在了座位上。\n";
@@ -959,7 +959,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-4F-后厨": {
-    image: "images/金谊广场/坂吉屋后厨.jpg",
+    image: "images/金谊广场/坂吉屋后厨.webp",
     text: function(vars) {
       var desc = "你推开坂吉屋后厨的门。灶台上还放着几盘三文鱼。\n";
       desc += "水槽里积着半池浑浊的水，表面漂着一层油光。你拧开水龙头——自来水哗哗地流了出来，清亮得很，和灾前没什么两样。\n";
@@ -1072,7 +1072,7 @@ Object.assign(storyData, {
 
   // --- B1 奥乐齐大超市 ---
   "金谊广场-B1奥乐齐": {
-    image: "images/金谊广场/奥乐齐.jpg" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
+    image: "images/金谊广场/奥乐齐.webp" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
     text: function(vars) {
       if(vars._visit['金谊广场-B1奥乐齐'] > 3) return "你已经搜刮过奥乐齐好几遍了，没有新的东西了。";
       var back = vars._lastScene === "金谊广场-B1奥乐齐-搜刮-吃完";
@@ -1114,7 +1114,7 @@ Object.assign(storyData, {
 
   // --- B1 童涵春堂药房 ---
   "金谊广场-B1童涵春堂": {
-    image: "images/金谊广场/童涵春堂.jpg",
+    image: "images/金谊广场/童涵春堂.webp",
     text: function(vars) {
       var fromTake = vars._lastScene === "金谊广场-B1童涵春堂";
       var desc = (fromTake ? "你把药瓶揣进口袋，转身环顾药房。" : "你推开童涵春堂的玻璃门。") + "药房里弥漫着中药的苦香味。\n";
@@ -1142,7 +1142,7 @@ Object.assign(storyData, {
 
   // --- B2 地下车库（毒气丧尸区） ---
   "金谊广场-B2 地下车库": {
-    image: "images/金谊广场/B2地下车库.jpg",
+    image: "images/金谊广场/B2地下车库.webp",
     text: function(vars) {
       var desc = "你走进B2地下车库。这里比上面更暗，只有几盏应急灯在远处的柱子上发出微弱的黄光。\n";
       desc += "车库里的空气很闷，带着一股说不清的甜腻味——和货梯间闻到的一样。\n";
@@ -1174,7 +1174,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-B2-搜刮": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/B2地下车库.jpg */,
+    image: "images/placeholder.png" /* TODO: images/金谊广场/B2地下车库.webp */,
     text: "你戴紧面具，在车库里搜索。大部分车的车门都锁着，但有一辆SUV的后备箱没关——里面放着一个急救箱和一个备用轮胎。\n\
 急救箱里有绷带、碘伏和几片止痛药。\n你在车库的角落里还看到一只黑皮丧尸——它靠在柱子上，一动不动。它的皮肤像干涸的沥青一样漆黑发亮，在应急灯下泛着诡异的光泽。\n\
 它已经死了——被这座车库里无孔不入的毒气熏死的。",
@@ -1185,7 +1185,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-B2-搜刮-搜完": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/B2地下车库.jpg */,
+    image: "images/placeholder.png" /* TODO: images/金谊广场/B2地下车库.webp */,
     onEnter: { add: { maskRemainingUses: -1 } },
     text: function(vars) {
       if (vars.maskRemainingUses <= 0) {
@@ -1201,7 +1201,7 @@ Object.assign(storyData, {
 
   // --- 天台 ---
   "金谊广场-天台": {
-    image: "images/金谊广场/天台.jpg",
+    image: "images/金谊广场/天台.webp",
     text: function(vars) {
       var desc = "你推开天台的门。风很大，吹得你眯起了眼睛。\n";
       desc += "从这里能看得很远——往西，黄浦江的轮廓在灰白的天空下若隐若现。江面上没有船，只有一片死寂的灰色水面。\n";

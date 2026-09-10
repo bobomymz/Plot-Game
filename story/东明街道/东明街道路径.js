@@ -6,44 +6,44 @@ function sanLinRoadImage(vars) {
   if (vars._lastScene == "三林路-环林东路 十字路口") {
     if (vars.weather === "雨") {
       var f = timeImage({
-        morning: "images/小区周边/三林路-西-雨.jpg",
-        night: "images/小区周边/三林路-西-雨-night.jpg"
+        morning: "images/小区周边/三林路-西-雨.webp",
+        night: "images/小区周边/三林路-西-雨-night.webp"
       });
       return f(vars);
     }
     if (vars.weather === "阴") {
       var f = timeImage({
-        morning: "images/小区周边/三林路-西-阴.jpg",
-        night: "images/小区周边/三林路-西-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+        morning: "images/小区周边/三林路-西-阴.webp",
+        night: "images/小区周边/三林路-西-night.webp" // 晚上看不出阴天，直接复用晴天图片
       });
       return f(vars);
     }
     var f = timeImage({
-      morning: "images/小区周边/三林路-西.jpg",
-      evening: "images/小区周边/三林路-西-evening.jpg",
-      night: "images/小区周边/三林路-西-night.jpg"
+      morning: "images/小区周边/三林路-西.webp",
+      evening: "images/小区周边/三林路-西-evening.webp",
+      night: "images/小区周边/三林路-西-night.webp"
       // midnight省略不写了
     });
   }
   else {
     if (vars.weather === "雨") {
       var f = timeImage({
-        morning: "images/小区周边/三林路-东-雨.jpg",
-        night: "images/小区周边/三林路-东-雨-night.jpg"
+        morning: "images/小区周边/三林路-东-雨.webp",
+        night: "images/小区周边/三林路-东-雨-night.webp"
       });
       return f(vars);
     }
     if (vars.weather === "阴") {
       var f = timeImage({
-        morning: "images/小区周边/三林路-东-阴.png",
-        night: "images/小区周边/三林路-东-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+        morning: "images/小区周边/三林路-东-阴.webp",
+        night: "images/小区周边/三林路-东-night.webp" // 晚上看不出阴天，直接复用晴天图片
       });
       return f(vars);
     }
     var f = timeImage({
-      morning: "images/小区周边/三林路-东.jpg",
-      evening: "images/小区周边/三林路-东-evening.jpg",
-      night: "images/小区周边/三林路-东-night.jpg"
+      morning: "images/小区周边/三林路-东.webp",
+      evening: "images/小区周边/三林路-东-evening.webp",
+      night: "images/小区周边/三林路-东-night.webp"
       // midnight省略不写了
     });
   }
@@ -56,26 +56,26 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/home/小区东门-雨天.png",
-          evening: "images/home/小区东门-雨天-evening.png",
-          night: "images/home/小区东门-雨天-night.png"
+          morning: "images/home/小区东门-雨天.webp",
+          evening: "images/home/小区东门-雨天-evening.webp",
+          night: "images/home/小区东门-雨天-night.webp"
         });
         return f(vars);
       }
       else if (vars.weather === "阴") {
         var f = timeImage({
-          morning: "images/home/小区东门-阴天.jpg",
-          evening: "images/home/小区东门-阴天-evening.jpg",
-          night: "images/home/小区东门-night.png", // 晚上分不清晴天和阴天，索性复用了
-          midnight: "images/home/小区东门-midnight.png"// 晚上分不清晴天和阴天，索性复用了
+          morning: "images/home/小区东门-阴天.webp",
+          evening: "images/home/小区东门-阴天-evening.webp",
+          night: "images/home/小区东门-night.webp", // 晚上分不清晴天和阴天，索性复用了
+          midnight: "images/home/小区东门-midnight.webp"// 晚上分不清晴天和阴天，索性复用了
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/home/小区东门.png",
-        evening: "images/home/小区东门-evening.png",
-        night: "images/home/小区东门-night.png",
-        midnight: "images/home/小区东门-midnight.png"
+        morning: "images/home/小区东门.webp",
+        evening: "images/home/小区东门-evening.webp",
+        night: "images/home/小区东门-night.webp",
+        midnight: "images/home/小区东门-midnight.webp"
       });
       return f(vars);
     },
@@ -119,27 +119,27 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/home/小区西门-雨天.png",
-          evening: "images/home/小区西门-雨天-evening.png",
-          night: "images/home/小区西门-night-雨天.png",
-          midnight: "images/home/小区西门-雨天-midnight.png"
+          morning: "images/home/小区西门-雨天.webp",
+          evening: "images/home/小区西门-雨天-evening.webp",
+          night: "images/home/小区西门-night-雨天.webp",
+          midnight: "images/home/小区西门-雨天-midnight.webp"
         });
         return f(vars);
       }
       else if (vars.weather === "阴") {
         var f = timeImage({
-          morning: "images/home/小区西门-阴天.jpg",
-          evening: "images/home/小区西门-阴天-evening.jpg",
-          night: "images/home/小区西门-night.png", // 晚上分不清晴天和阴天，索性复用了
-          midnight: "images/home/小区西门-midnight.png" // 晚上分不清晴天和阴天，索性复用了
+          morning: "images/home/小区西门-阴天.webp",
+          evening: "images/home/小区西门-阴天-evening.webp",
+          night: "images/home/小区西门-night.webp", // 晚上分不清晴天和阴天，索性复用了
+          midnight: "images/home/小区西门-midnight.webp" // 晚上分不清晴天和阴天，索性复用了
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/home/小区西门.png",
-        evening: "images/home/小区西门-evening.jpg",
-        night: "images/home/小区西门-night.png",
-        midnight: "images/home/小区西门-midnight.png"
+        morning: "images/home/小区西门.webp",
+        evening: "images/home/小区西门-evening.webp",
+        night: "images/home/小区西门-night.webp",
+        midnight: "images/home/小区西门-midnight.webp"
       });
       return f(vars);
     },
@@ -159,15 +159,15 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/小区周边/十字路口-雨天.jpg",
-          night: "images/小区周边/十字路口-雨天-night.jpg"
+          morning: "images/小区周边/十字路口-雨天.webp",
+          night: "images/小区周边/十字路口-雨天-night.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/小区周边/十字路口.jpg",
-        evening: "images/小区周边/十字路口-evening.jpg",
-        night: "images/小区周边/十字路口-night.jpg"
+        morning: "images/小区周边/十字路口.webp",
+        evening: "images/小区周边/十字路口-evening.webp",
+        night: "images/小区周边/十字路口-night.webp"
       });
       return f(vars);
     },
@@ -322,22 +322,22 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/小区周边/十字路口2-雨天.jpg",
-          night: "images/小区周边/十字路口2-雨天-night.jpg"
+          morning: "images/小区周边/十字路口2-雨天.webp",
+          night: "images/小区周边/十字路口2-雨天-night.webp"
         });
         return f(vars);
       }
       if (vars.weather === "阴") {
         var f = timeImage({
-          morning: "images/小区周边/十字路口2-阴天.jpg",
-          night: "images/小区周边/十字路口2-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+          morning: "images/小区周边/十字路口2-阴天.webp",
+          night: "images/小区周边/十字路口2-night.webp" // 晚上看不出阴天，直接复用晴天图片
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/小区周边/十字路口2.jpg",
-        evening: "images/小区周边/十字路口2-evening.jpg",
-        night: "images/小区周边/十字路口2-night.jpg"
+        morning: "images/小区周边/十字路口2.webp",
+        evening: "images/小区周边/十字路口2-evening.webp",
+        night: "images/小区周边/十字路口2-night.webp"
       });
       return f(vars);
     },
@@ -411,14 +411,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if(vars.wangGiveKey) {
         var f = timeImage({
-          morning: "images/小区周边/路边的车-银色速腾.png",
-          night: "images/小区周边/路边的车-night-银色速腾.png"
+          morning: "images/小区周边/路边的车-银色速腾.webp",
+          night: "images/小区周边/路边的车-night-银色速腾.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/小区周边/路边的车.jpg",
-        night: "images/小区周边/路边的车-night.jpg"
+        morning: "images/小区周边/路边的车.webp",
+        night: "images/小区周边/路边的车-night.webp"
       });
       return f(vars);
     },
@@ -444,14 +444,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if(vars.wangGiveKey) {
         var f = timeImage({
-          morning: "images/小区周边/路边的车-银色速腾.png",
-          night: "images/小区周边/路边的车-night-银色速腾.png"
+          morning: "images/小区周边/路边的车-银色速腾.webp",
+          night: "images/小区周边/路边的车-night-银色速腾.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/小区周边/路边的车.jpg",
-        night: "images/小区周边/路边的车-night.jpg"
+        morning: "images/小区周边/路边的车.webp",
+        night: "images/小区周边/路边的车-night.webp"
       });
       return f(vars);
     },
@@ -472,22 +472,22 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({
-          morning: "images/小区周边/东明路-三林路-雨.jpg",
-          night: "images/小区周边/东明路-三林路-雨-night.jpg"
+          morning: "images/小区周边/东明路-三林路-雨.webp",
+          night: "images/小区周边/东明路-三林路-雨-night.webp"
         });
         return f(vars);
       }
       if (vars.weather === "阴") {
         var f = timeImage({
-          morning: "images/小区周边/东明路-三林路-阴.png",
-          night: "images/小区周边/东明路-三林路-night.jpg" // 晚上看不出阴天，直接复用晴天图片
+          morning: "images/小区周边/东明路-三林路-阴.webp",
+          night: "images/小区周边/东明路-三林路-night.webp" // 晚上看不出阴天，直接复用晴天图片
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/小区周边/东明路-三林路.jpg",
-        evening: "images/小区周边/东明路-三林路-evening.jpg",
-        night: "images/小区周边/东明路-三林路-night.jpg"
+        morning: "images/小区周边/东明路-三林路.webp",
+        evening: "images/小区周边/东明路-三林路-evening.webp",
+        night: "images/小区周边/东明路-三林路-night.webp"
         // midnight省略不写了
       });
       return f(vars); // ← 修复：晴天分支之前漏掉了 return，导致 image 函数返回 undefined，图片被引擎隐藏
@@ -536,7 +536,7 @@ Object.assign(storyData, {
   },
 
   "结局-丧尸的围殴": {
-    image: "images/zombiesBeatYou.png",
+    image: "images/zombiesBeatYou.webp",
     text: "你反应太慢啦，被丧尸围殴至死。\n\
 想 必 下 次 你 会 快 点 选 吧 ~\n\
 —— 结局：丧尸的围殴 ——"
@@ -548,10 +548,10 @@ Object.assign(storyData, {
     outdoor: true,
     image: function(vars) {
       var f = timeImage({
-        morning: "images/小区周边/银行/银行门口.jpg",
-        evening: "images/小区周边/银行/银行门口-evening.png",
-        night: "images/小区周边/银行/银行门口-night.png",
-        midnight: "images/小区周边/银行/银行门口-midnight.png",
+        morning: "images/小区周边/银行/银行门口.webp",
+        evening: "images/小区周边/银行/银行门口-evening.webp",
+        night: "images/小区周边/银行/银行门口-night.webp",
+        midnight: "images/小区周边/银行/银行门口-midnight.webp",
       });
       return f(vars);
     },
@@ -576,7 +576,7 @@ Object.assign(storyData, {
   },
 
   "银行内部": {
-    image: "images/小区周边/银行/银行内部.png",
+    image: "images/小区周边/银行/银行内部.webp",
     onEnter: { set: { currentPlace: "三林路", currentPos: "银行", positionAfterOperation: "银行内部" } },
     text: function(vars) {
       if (["银行-保安室", "银行-保安室-歇脚", "银行-拿水", "银行-金库", "银行-存款凭条", "整理整理"].indexOf(vars._lastScene) >= 0) {
@@ -610,7 +610,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "银行-保安室": {
-    image: "images/小区周边/银行/保安室.jpg",
+    image: "images/小区周边/银行/保安室.webp",
     text: function(vars) {
       if (vars._visit["银行-保安室"] > 1) {
         return "保安室的灯还亮着。那只保安丧尸还卡在办公椅底下——不知蹬了几天了，吱——吱——的摩擦声就没停过，那把椅子愣是没散架。\n这间屋子就这么大点地方，你都熟了。";
@@ -645,7 +645,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "银行-保安室-歇脚": {
-    image: "images/小区周边/银行/保安室.jpg",
+    image: "images/小区周边/银行/保安室.webp",
     onEnter: function(vars) { restRecover(vars, 1); return updateTime(15, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
       return "你把墙角那把备用的值班椅拖过来，隔着办公桌，背对那只卡住的保安丧尸坐下。\n它蹬椅子的吱吱声单调又规律，听久了竟有点像老式挂钟——你盯着一片漆黑的监控墙，居然就这么眯着了。\n只要那把椅子不散架，它就永远够不到你。" + restHint(vars);
@@ -665,7 +665,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "银行-拿水": {
-    image: "images/小区周边/银行/拿到矿泉水瓶.jpg",
+    image: "images/小区周边/银行/拿到矿泉水瓶.webp",
     onEnter: { add: { strength: 1 } },
     text: "你贴着墙壁，翻过柜子，小心翼翼地绕到办公桌旁。保安丧尸在你身后徒劳地嘶吼着，但你够到了那瓶水。\n\
 你赶忙翻回来，大松一口气坐在椅子上，椅背嘎吱作响。\n\
@@ -683,7 +683,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "银行-金库": {
-    image: "images/小区周边/银行/金库大门.jpg",
+    image: "images/小区周边/银行/金库大门.webp",
     text: "你走到门前，这是金库的门，银灰色的金属表面反射着冰冷的光。\n\
 你把耳朵贴到门上听了听，里面没有任何声音。\n\
 你用力拉了拉把手，纹丝不动。这种级别的金库，没有专业设备根本打不开。不过……如果哪天能通上电，也许还能回来试试。\n你在心里记下了这个位置。",
@@ -696,7 +696,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "银行-存款凭条": {
-    image: "images/小区周边/银行/存款凭条.png",
+    image: "images/小区周边/银行/存款凭条.webp",
     onEnter: { set: { hasBankSlip: true }, add: { itemCount: 1 } },
     text: "你蹲下来，从满地的宣传单页和碎纸中捡起一张还算完整的单据。\n\
 是一张建设银行的存款凭条——大概是6月28日上午柜台上还没来得及收起来的。\n\
@@ -722,7 +722,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 
   // ==================== 联华超市 ====================
   "联华超市": {
-    image: "images/小区周边/联华超市/内部.jpg",
+    image: "images/小区周边/联华超市/内部.webp",
     onEnter: { set: { currentPlace: "三林路", currentPos: "联华超市" } },
     text: function(vars) {
       if (["小超市-香肠", "联华超市-吃香肠", "联华超市-补给", "联华超市-歇脚", "联华超市-仓库"].indexOf(vars._lastScene) >= 0) {
@@ -758,7 +758,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "小超市-香肠": {
-    image: "images/小区周边/联华超市/内部.jpg",
+    image: "images/小区周边/联华超市/内部.webp",
     onEnter: { set: { positionAfterOperation: "小超市-香肠" } },
     text: "散货架角落挂着几根散装香肠，真空包装完好的还剩1根。你拿了一根在手里掂了掂。",
     choices: [
@@ -769,7 +769,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "联华超市-吃香肠": {
-    image: "images/小区周边/联华超市/吃香肠.jpg",
+    image: "images/小区周边/联华超市/吃香肠.webp",
     onEnter: { set: { positionAfterOperation: "联华超市-吃香肠" } },
     text: "你吃了一根香肠。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
@@ -783,7 +783,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "联华超市-补给": {
-    image: "images/小区周边/联华超市/吃雪饼喝脉动.jpg",
+    image: "images/小区周边/联华超市/吃雪饼喝脉动.webp",
     onEnter: { add: { strength: 1 }, set: { _supermarketSuppliesTaken: true } },
     text: "你撕开一包旺旺雪饼，就着一瓶脉动吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n\
 旺旺雪饼熟悉的味道在空气中弥漫开，又迅速散去。\n\
@@ -805,7 +805,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "联华超市-歇脚": {
-    image: "images/小区周边/联华超市/内部.jpg",
+    image: "images/小区周边/联华超市/内部.webp",
     onEnter: function(vars) { restRecover(vars, 1); return updateTime(15, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
       return "你把收银台旁顾客休息长凳上的传单拨到地上，坐了下来。头顶的日光灯管还剩两根在亮，惨白的光照着一排排半空的货架。\n身后那排冰柜早就断电了，外壳倒还是凉的。你靠着它，盯着货架之间那条空荡荡的过道，歇了十五分钟——一家没人的超市，比想象中安静得多。" + restHint(vars);
@@ -825,7 +825,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "联华超市-仓库": {
-    image: "images/小区周边/联华超市/仓库.jpg",
+    image: "images/小区周边/联华超市/仓库.webp",
     text: function(vars) {
       var desc = "你来到了超市仓库。仓库里堆着几箱饮料和一些滞销的零食。角落里有一扇活板门。";
       if (vars.supermarketWaterLeft > 0) desc += "\n货架深处靠墙放着一箱没开封的瓶装水——数了数，还有" + vars.supermarketWaterLeft + "瓶。";
@@ -864,7 +864,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   },
 
   "联华超市-仓库-拿水": {
-    image: "images/小区周边/联华超市/仓库.jpg" /* TODO: images/小区周边/supermarketWarehouse.png */,
+    image: "images/小区周边/联华超市/仓库.webp" /* TODO: images/小区周边/supermarketWarehouse.png */,
     onEnter: function(vars) {
       vars.hasBottle = true;
       vars.bottleWater = 1;
@@ -887,19 +887,19 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 
   // ========== 躲藏场景（东明街道区域） ==========
 
-  "小区东门-整装待发-躲藏": hideOnLocation("images/躲藏.jpg",
+  "小区东门-整装待发-躲藏": hideOnLocation("images/躲藏.webp",
     "你绕到保安亭的背面蹲下，但一群丧尸漫无目的地游荡过来，把保安亭围住了。它们没有发现你，但你也出不去了——你被困了十多分钟，最后只能趁它们稍微散开时冲出去。慌乱中你被一只丧尸抓了一下。",
     "你绕到保安亭的背面，蹲在墙根和灌木丛之间的空隙里。保安亭的玻璃上映着远处丧尸摇晃的影子，但它们看不见你。\n你等了不知多久，外面的声音渐渐稀疏了。你探出头，街道上已经空了不少。"),
-  "三林路-环林东路十字路口-躲藏": hideOnLocation("images/躲藏.jpg",
+  "三林路-环林东路十字路口-躲藏": hideOnLocation("images/躲藏.webp",
     "你蹲在一辆被追尾的面包车后面，但一队丧尸挤挤挨挨地从车旁经过，其中一只撞到了侧视镜——啪地一声。它被声音吸引，摇摇晃晃绕到了车后……你只能一脚踹开它夺路而逃。",
     "你蹲在一辆被追尾的面包车后面，透过破碎的车窗观察着路口。丧尸群在你刚才站的地方徘徊了一会儿，然后朝不同的方向散去了。你等了一刻钟，确认安全后才站起来。"),
-  "三林路-躲藏": hideOnLocation("images/躲藏.jpg",
+  "三林路-躲藏": hideOnLocation("images/躲藏.webp",
     "你闪进一家门锁坏掉的小店门廊深处，缩在黑暗里。但今天运气不好——一队丧尸直接朝你这边涌来。它们不是发现了你，只是恰好走了这条路……狭小的门廊无处可躲，你只能冲出去。",
     "你闪进一家门锁坏掉的小店门廊深处，缩在黑暗里。外面的脚步声来来回回，但没人注意到这个凹陷处。过了不知多久，声音远去了。你活动了一下发麻的腿，走了出来。街道安静了许多。"),
-  "三林路-东明路十字路口-躲藏": hideOnLocation("images/躲藏.jpg",
+  "三林路-东明路十字路口-躲藏": hideOnLocation("images/躲藏.webp",
     "你蜷缩在路口配电箱和绿化带的夹缝里。但一只丧尸晃晃悠悠走到配电箱旁就不动了——它就一直站在那里。你等了很久它还是不走，夹缝里又闷又窄。你只能冒险冲出去。",
     "你蜷缩在路口配电箱和绿化带的夹缝里，用枝叶盖住自己。一只丧尸走到配电箱旁，离你伸手可及，但它没有低头看。它站了一会儿，慢悠悠地走了。你等一切安静后才钻出来。"),
-  "东明路-三林路-躲藏": hideOnLocation("images/躲藏.jpg",
+  "东明路-三林路-躲藏": hideOnLocation("images/躲藏.webp",
     "你蹲在一棵粗大的法国梧桐后面，但尸群太密集了——它们像潮水一样涌过，树干根本挡不住你。你只能提前暴露，在丧尸反应过来之前冲出去。慌乱中你被一根树枝绊了一下，擦伤了手臂。",
     "你蹲在一棵粗大的法国梧桐后面。树干的阴影把你完全吞没了。几只丧尸拖沓着经过，其中一只在树干上蹭了蹭背，然后慢悠悠地走开了。你屏住呼吸等它们走远，才从树后探出头。"),
 });
