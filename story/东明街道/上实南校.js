@@ -58,10 +58,9 @@ Object.assign(storyData, {
       },
       {
         text: "沿东明路向北去警察局",
-        // 北段废弃车辆堵路：只有轻便车（电瓶车/自行车/滑板车）钻得过车缝；轿车/步行过不去
+        // 东明路北段被废弃车辆堵死，只有掌握陈默的路线图（_hasPoliceMap）才绕得过去，否则车阵里找不到路折返
         nextScene: function(vars) {
-          return (vars.hasEbike || vars.hasRustyBike || vars.hasScooter)
-            ? "警察局-北段-骑车穿行" : "警察局-北段-步行尝试";
+          return vars._hasPoliceMap ? "警察局-北段-持图穿行" : "警察局-北段-无图路口";
         }
       }
     ]

@@ -117,6 +117,7 @@ const storyData = {
     hasCharger: false,         // 是否有充电器（图书馆藏书区，解锁王知筠笔记本）
     hasBiscuit: false,         // 是否有饼干（安盛街便利店）
     hasMap: false,             // 是否有交通地图（三林安居苑藤蔓丧尸）
+    _hasPoliceMap: false,      // 是否掌握去警察局的穿行路线（金谊广场陈默地图，解锁上实南校北段车阵）
     hasLubricant: false,       // 是否有润滑油（五金店仓库，可带到安居苑修车）
     hasCrumpledLeaflet: false, // 是否有揉皱的传单
     _leafletUsed: false,       // 是否已用传单打开过服装店304柜（传单使命完成）
