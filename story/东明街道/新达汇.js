@@ -128,6 +128,12 @@ Object.assign(storyData, {
 山地车被他随手锁在了喷泉边的路灯杆上。“反正也没人偷。”"; },
     choices: [
       {
+        text: "“确定没人偷？现在可没警察盯着。”",
+        nextScene: "新达汇-喷泉广场-高锦睿-路霸",
+        effect: updateTime(1),
+        showCondition: "!_visit['新达汇-喷泉广场-高锦睿-路霸']"
+      },
+      {
         text: "“你小心点。”",
         nextScene: "新达汇-喷泉广场",
         effect: updateTime(1)
@@ -3055,6 +3061,7 @@ Object.assign(storyData, {
   },
   "新达汇-屋顶花园": {
     outdoor: true,
+    onEnter: function(vars) { refreshQuackSpot(vars); return {}; },
     image: function(vars) {
       if (vars.weather === "雨") {
         var f = timeImage({morning: "images/placeholder.png"
@@ -3071,6 +3078,12 @@ Object.assign(storyData, {
       return desc + "\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
+      {
+        text: "屋顶花园避风角好像蹲着个人影，过去看看",
+        nextScene: "天台-卖药郎中",
+        effect: updateTime(1),
+        showCondition: "_quackSpot == 2",
+      },
       {
         text: "用手机扫描无人机二维码",
         nextScene: "新达汇-屋顶花园-扫码",

@@ -58,7 +58,7 @@ Object.assign(storyData, {
       },
       {
         text: "离开金谊广场",
-        nextScene: "三林路-东明路 十字路口",
+        nextScene: function(v) { return roadBullBlocked(v) ? "三林路-路霸-堵路" : "三林路-东明路 十字路口"; },
         effect: updateTime(30)
       }
     ]
@@ -1202,6 +1202,7 @@ Object.assign(storyData, {
   // --- 天台 ---
   "金谊广场-天台": {
     image: "images/金谊广场/天台.webp",
+    onEnter: function(vars) { refreshQuackSpot(vars); return {}; },
     text: function(vars) {
       var desc = "你推开天台的门。风很大，吹得你眯起了眼睛。\n";
       desc += "从这里能看得很远——往西，黄浦江的轮廓在灰白的天空下若隐若现。江面上没有船，只有一片死寂的灰色水面。\n";
@@ -1214,6 +1215,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
+      { text: "天台避风角好像蹲着个人影，过去看看", nextScene: "天台-卖药郎中", effect: updateTime(1), showCondition: "_quackSpot == 1" },
       { text: "下5F", nextScene: "金谊广场-5F", effect: updateTime(1) }
     ]
   }

@@ -249,6 +249,17 @@ const storyData = {
     hasHamSausage: false,     // 火腿肠（联华"小超市"货架，占格；可吃+1 / 喂橘猫）
     hasCracker: false,        // 夹心饼干（挹芬楼6F自习教室，样板改可收集，占格；可吃+1 / 喂橘猫）
     hasTeethingBiscuit: false, // 磨牙饼干（新达汇3F爱婴室，占格；可吃+1 / 喂猫）
+    // ---- 反派NPC：三林路路霸 + 天台卖假药的郎中 ----
+    hasFakeAntidote: false,   // 假解毒剂（天台骗子卖的，占格；服用无效果/黑色幽默，物非所值）
+    _roadBull: 0,             // 路霸状态：0堵着 / 1已被打死（永久解除堵卡）
+    _roadBullBeatenDay: 0,    // 路霸被打跑的当天（当天放行，次日恢复堵）
+    _roadBullPaidDay: 0,      // 交食物买路的那天（当天放行往返，次日恢复）
+    _bullBack: false,         // 路霸遭遇时的来向：true=从金谊返回（解决后回十字路口），false=从十字路口来（续走金谊）
+    _quackSpot: 0,            // 卖假药的郎中当天所在天台：0没在 / 1金谊天台 / 2新达汇屋顶
+    _quackDay: 0,             // 郎中方位最近一次刷新所在天（跨天重摇）
+    _quackTradedDay: 0,       // 上次跟郎中交易的天（同一天防重复买）
+    askRoadBullInfo: false,   // 周师傅是否已提过三林路/天台的事（防重复给情报）
+    _fangWarnRoadBull: false, // 方姐是否已提醒过路霸（防重复）
     _stairKillNote: "",       // 堵路强丧尸清场旁白（武器effect写入，楼梯text展示后清除，一次性）
     _pryTool: "",             // 上实南校天桥撬门轴实际用的工具名（选项effect写入，硬砸场景text展示）
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
@@ -706,6 +717,17 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
+        showCondition: "hasFakeAntidote",
+        text: "服下“解毒剂”",
+        nextScene: "整理整理-吃假解毒剂"
+      },
+      {
+        showCondition: "hasFakeAntidote",
+        text: "丢下解毒剂",
+        effect: updateTime(1, { set : { hasFakeAntidote: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
         showCondition: "hasMap",
         text: "丢下地图",
         effect: updateTime(1, { set : { hasMap: false }, add: { itemCount: -1 } }),
@@ -1067,6 +1089,15 @@ const storyData = {
     image: "images/整理整理.webp",
     onEnter: updateTime(2, { add: { strength: 4, itemCount: -1 }, set: { hasCannedFood: false } }),
     text: "你拉开罐头拉环，顾不上找筷子，直接用手捞着吃。油水混着肉块滑进胃里，连汤都喝得一滴不剩——这是这几天来最像样的一顿。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+4，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃假解毒剂": {
+    image: "images/整理整理.webp",
+    onEnter: updateTime(1, { add: { itemCount: -1 }, set: { hasFakeAntidote: false } }),
+    text: "你拧开那瓶所谓的“解毒剂”，凑到鼻尖闻了闻——一股说不清道不明的味道，像兑了水的止咳糖浆混着点泥腥气。你犹豫了一下，还是仰头灌了下去。\n什么也没有发生。既没变好，也没变糟。那东西真要说的话，就是一瓶加了点糖精和面粉的凉水——你白白用一口粮食换来的，可能就是几十块钱的安慰。\n你捏着空瓶，一时不知道是该骂那个骗你的老头，还是该笑自己居然会上这种当。",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

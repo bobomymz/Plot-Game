@@ -238,12 +238,14 @@ Object.assign(storyData, {
       vars.fangTradeCount += 1;
       vars.hasLubricant = false;
       vars.hasFrozenMeat = true;
+      vars._fangWarnRoadBull = true; // 方姐这次会顺口提一嘴三林路上拦路的
       vars.itemCount = Math.max(0, vars.itemCount - 1 + 1); // 润滑油-1，冻肉+1，净0
       return {};
     },
     text: function(vars) {
       var desc = "方姐接过润滑油，凑到灯下看了看，又拧开盖子闻了闻，点了点头。“好东西，能让我那台发电机多转几天。”\n她拉开冷藏柜，从最里面摸出一大块冻得梆硬的肉，用油纸裹了，塞给你。“五花肉，化冻了煎着吃、炖着吃都行——你这体力亏空，得吃顿实的。”";
       if (vars.fangTradeCount >= 3) desc += "\n她把肉递给你的时候，你注意到她的手指在微微发抖，指甲缝里有一点已经发黑的淤青。她飞快地把手缩回了围裙底下。";
+      else if (vars.fangTradeCount === 1) desc += "\n把肉递过来时，方姐像是想起什么，压低声音：“对了，你要往三林走，走三林路当心点——路口往金谊那一截，有个把道的熊人，专堵落单的讨吃的。你兜里备点吃的消灾，要么就绕道新达汇那条辅路去。”";
       return desc;
     },
     choices: function(vars) {

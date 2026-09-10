@@ -441,6 +441,12 @@ Object.assign(storyData, {
         effect: { set: { askTunnelLore: true } }
       },
       {
+        showCondition: "!askRoadBullInfo",
+        text: "“周师傅，最近三林路上太平吗？”",
+        nextScene: "理发店-打听路况",
+        effect: { set: { askRoadBullInfo: true } }
+      },
+      {
         text: "“谢谢你，周师傅”",
         nextScene: "理发店-店内"
       },

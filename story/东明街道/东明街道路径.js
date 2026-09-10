@@ -360,7 +360,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "去金谊广场",
-        nextScene: "前往金谊广场-1",
+        nextScene: function(v) { return roadBullBlocked(v) ? "三林路-路霸-堵路" : "前往金谊广场-1"; },
         effect: updateTime(30)
       },
       {

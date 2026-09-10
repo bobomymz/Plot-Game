@@ -379,8 +379,63 @@ function hideOnLocation(image, failText, successText) {
   };
 }
 
+// 可当口粮"给出去/吃掉/交给路霸或假郎中"的食物清单一处维护（[flag, 显示名]）。
+// 水、猫粮、假解毒剂不算口粮。
+var FOOD_GIFTS = [
+  ["hasBiscuit", "压缩饼干"], ["hasInstantNoodle", "方便面"], ["hasCannedFood", "罐头"],
+  ["hasSnackCookie", "味千小饼干"], ["hasHamSausage", "火腿肠"], ["hasCracker", "夹心饼干"],
+  ["hasTeethingBiscuit", "磨牙饼干"], ["hasCanteenFood", "食堂干粮"], ["hasFrozenMeat", "冻肉"]
+];
+
+// 身上是否有"能当口粮给出去/吃掉"的实打实食物（水、猫粮、假解毒剂不算）
+// 供路霸讨要、天台假郎中交换等"掏食物"判定使用
 function hasFood(vars) {
-  return vars.hasBiscuit; // 后续补充
+  for (var i = 0; i < FOOD_GIFTS.length; i++) {
+    if (vars[FOOD_GIFTS[i][0]]) return true;
+  }
+  return false;
+}
+
+// 生成"从背包挑一份食物给出去"的选项列表（玩家自选给哪样，且只扣对应那一格）。
+// opts: {
+//   pickText: "给他{名}",        // {名} 会被替换为食物显示名
+//   pickScene: "交易成功场景",    // 选中后跳转
+//   onPick: function(vars, flag), // 选中某食物后的额外结算（如路霸记当天买路、郎中得假药）
+//   cancelText: "算了，不给了",
+//   cancelScene: "返回场景"
+// }
+// 返回可直接当 scene.choices 的 choices 函数。以后新增"给食物"剧情直接复用，不用重写循环。
+function foodGiftChoices(opts) {
+  return function(vars) {
+    var cs = [];
+    for (var i = 0; i < FOOD_GIFTS.length; i++) {
+      (function(flag, label) {
+        if (vars[flag]) {
+          cs.push({
+            text: opts.pickText.replace("{名}", label),
+            nextScene: opts.pickScene,
+            effect: function(v) {
+              v[flag] = false;
+              v.itemCount = Math.max(0, v.itemCount - 1);
+              if (opts.onPick) opts.onPick(v, flag);
+              return {};
+            }
+          });
+        }
+      })(FOOD_GIFTS[i][0], FOOD_GIFTS[i][1]);
+    }
+    cs.push({ text: opts.cancelText, nextScene: opts.cancelScene });
+    return cs;
+  };
+}
+
+// 路霸是否正堵着"十字路口↔金谊"的三林路直达线。
+// 没被永久打死(_roadBull!=1)，且当天既没被打跑也没交过买路钱 → 堵着。
+function roadBullBlocked(vars) {
+  if (vars._roadBull === 1) return false;
+  if (vars._roadBullBeatenDay === vars.dd) return false;
+  if (vars._roadBullPaidDay === vars.dd) return false;
+  return true;
 }
 
 function zombieAtHomeDoor(vars) { // 丧尸还在家门口

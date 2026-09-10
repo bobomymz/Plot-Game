@@ -113,9 +113,12 @@ Object.assign(storyData, {
   },
 
   "图书馆-大厅-声东击西": {
-    image: "images/placeholder.png" /* TODO: images/library/libraryBookThrow.png */,
-    text: "你随手从书架上抽出一本《浦东新区地方志》，朝大厅另一侧的走廊扔了过去。书砸在墙壁上，发出沉闷的啪嗒声。\n\
-志愿者丧尸猛地转头，拖着步子朝声音的方向走去。\n\你趁这个机会快速穿过了大厅。",
+    image: timeImage({
+      morning: "images/小区周边/图书馆/大厅声东击西.webp",
+      night: "images/小区周边/图书馆/大厅声东击西-night.webp"
+    }),
+    text: "你随手从前台拿起一本《浦东新区地方志》，朝大厅另一侧的书架扔了过去。书砸在墙壁上，发出沉闷的啪嗒声。\n\
+志愿者丧尸猛地转头，拖着步子朝声音的方向扑过去。\n你趁这个机会快速穿过了大厅。",
     choices: [
       {
         text: "溜进阅览室",
