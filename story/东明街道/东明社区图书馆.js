@@ -7,7 +7,7 @@ Object.assign(storyData, {
   // ==================== 入口 ====================
   "图书馆": {
     outdoor: true,
-    image: timeImage({morning: "images/图书馆/门口.webp", night: "images/图书馆/门口-night.webp"}),
+    image: timeImage({morning: "images/小区周边/图书馆/门口.webp", night: "images/小区周边/图书馆/门口-night.webp"}),
     onEnter: function(vars) {
       vars.showRain = true;
       vars.currentPlace = "东明路";
@@ -31,13 +31,13 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.libraryCleared) {
         var f = timeImage({
-          morning: "images/图书馆/侧窗.webp",
-          night: "images/图书馆/侧窗-无丧尸-night.webp"
+          morning: "images/小区周边/图书馆/侧窗.webp",
+          night: "images/小区周边/图书馆/侧窗-无丧尸-night.webp"
         });
       }
       return timeImage({
-        morning: "images/图书馆/侧窗.webp",
-        night: "images/图书馆/侧窗-night.webp"
+        morning: "images/小区周边/图书馆/侧窗.webp",
+        night: "images/小区周边/图书馆/侧窗-night.webp"
       });
     },
     onEnter: {set: {showRain: true}},
@@ -63,13 +63,13 @@ Object.assign(storyData, {
     image: function(vars) {
       if (vars.libraryCleared) {
         var f = timeImage({
-          morning: "images/图书馆/大厅-无丧尸.webp",
-          night: "images/图书馆/大厅-无丧尸-night.webp"
+          morning: "images/小区周边/图书馆/大厅-无丧尸.webp",
+          night: "images/小区周边/图书馆/大厅-无丧尸-night.webp"
         });
       }
       return timeImage({
-        morning: "images/图书馆/大厅.webp",
-        night: "images/图书馆/大厅-night.webp"
+        morning: "images/小区周边/图书馆/大厅.webp",
+        night: "images/小区周边/图书馆/大厅-night.webp"
       });
     },
     text: function(vars) {
