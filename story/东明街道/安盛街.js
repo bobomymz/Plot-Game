@@ -327,6 +327,9 @@ Object.assign(storyData, {
         }
         return desc;
       }
+      if (vars._lastScene === "安盛街-逃回理发店") {
+        return "周师傅把门重新锁好，拉上窗帘。你靠在理发椅上大口喘气，心脏还在狂跳。这里还是老样子。";
+      }
       return "你推门走进理发店，顺手把门带上。这里还是老样子。";
     },
     choices: [
@@ -675,7 +678,12 @@ Object.assign(storyData, {
     },
     onEnter: function(vars) { vars.currentPlace = "安盛街"; vars.currentPos = "文具店"; },
     text: function(vars) {
-      if (vars._stationeryZombieDead) return "你推开吱呀作响的玻璃门，走进文具店。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
+      var insideBack = ["安盛街-收银台", "安盛街-文具店击杀", "安盛街-文具店搜刮-快速", "安盛街-文具店搜刮-仔细", "安盛街-文具店铁柜", "安盛街-文具店铁柜-吃喝", "安盛街-文具店铁柜-拿走帆布袋"].indexOf(vars._lastScene) >= 0;
+      if (vars._stationeryZombieDead) {
+        if (insideBack) return "你回到店堂里。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
+        return "你推开吱呀作响的玻璃门，走进文具店。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
+      }
+      if (insideBack) return "你回到店堂里。货架还是歪歪扭扭的，本子、笔、修正带散落一地。收银台后面窸窸窣窣的动静还在。";
       return "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n\
 收银台后面有动静——像是什么东西在翻找东西。";
     },
@@ -754,9 +762,11 @@ Object.assign(storyData, {
 
   "结局-安盛街-文具店被反杀": {
     image: "images/zombieKnockYouDown.png",
-    text: "你举起手中的家伙，但它太重了，你的手臂发软，这一击只擦过了丧尸的肩膀。\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
+    text: function(vars) {
+      return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，但你的手臂发软，这一击只擦过了丧尸的肩膀。\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
 你太虚弱了，根本无力招架。\n\
-—— 结局：文具店被反杀 ——"
+—— 结局：文具店被反杀 ——";
+    }
   },
 
   "安盛街-文具店搜刮": { // 本节点限进入一次
@@ -949,8 +959,13 @@ Object.assign(storyData, {
       });
       return f(vars);
     }, 
-    text: "你走进服装店。这家小店叫做珍奥，平时只是路过，从来没进去看过。模特假人歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。\n\
-这家店看起来已经被洗劫过了，货架被推得东倒西歪。",
+    text: function(vars) {
+      if (["安盛街-服装店收银台", "安盛街-服装店收银台-仔细", "安盛街-服装店-304柜", "安盛街-服装店-304柜-换衣", "安盛街-服装店-304柜-纸条"].indexOf(vars._lastScene) >= 0) {
+        return "你回到店堂中央。模特假人还歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。";
+      }
+      return "你走进服装店。这家小店叫做珍奥，平时只是路过，从来没进去看过。模特假人歪倒在地上，衣物被扯得乱七八糟。试衣间的帘子半开着，里面黑漆漆的，什么都看不清。\n\
+这家店看起来已经被洗劫过了，货架被推得东倒西歪。";
+    },
     choices: [
       {
         text: "检查试衣间",
@@ -985,7 +1000,7 @@ Object.assign(storyData, {
     image: "images/安盛街/服装店/304柜.jpg",
     onEnter: { set: { positionAfterOperation: "安盛街-服装店-304柜" } },
     text: function(vars) {
-      if (vars._visit['安盛街-服装店-304柜-换衣']) {
+      if (vars._visit['安盛街-服装店-304柜'] > 1) {
         return "你回到304柜前。柜门敞着，柜里还压着那张纸条。";
       }
       return "你绕过被推倒的模特，走到男装区最里侧。货架角落立着一组半人高的展示柜，柜角贴着一张泛黄的标签——\"304\"。\n\
@@ -1214,6 +1229,9 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if(vars._visit['安盛街-食品店战斗']) {
+        if (vars._lastScene === "安盛街-食品店战斗-吃喝") {
+          return "你把吃完的包装收拢到柜台上，回到店堂里。货架已经空了——你把这里扫荡了一遍，冰柜里的霉味一阵阵往外冒。没什么值得拿的了。";
+        }
         return "你推开门，门上的风铃发出清脆的响声。\n货架已经空了——你上次把这里扫荡了一遍，柜台前面还留着店员丧尸被打翻在地的痕迹，冰柜里的霉味比上次更浓了。没什么值得拿的了。";
       }
       return "你推开门，门上的风铃发出清脆的响声。\n\
@@ -1236,7 +1254,7 @@ Object.assign(storyData, {
       },
       {
         showCondition: "!_visit['安盛街-食品店战斗']",
-        text: "抄家伙打它",
+        text: function(vars) { return "抄起" + meleeWeaponName(vars) + "打它"; },
         condition: "hasMeleeWeapon",
         nextScene: "安盛街-食品店战斗",
         elseScene: "结局-被丧尸扑倒咬死"
@@ -1277,8 +1295,10 @@ Object.assign(storyData, {
   "安盛街-食品店战斗": {
     image: "images/安盛街/食品店/丧尸被打倒.png" /* TODO: images/anshengStreet/convenienceFight.png */,
     onEnter: { add: { strength: -1 } },
-    text: "你举起手中的家伙，一下子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
-你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。",
+    text: function(vars) {
+      return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，一下子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
+你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。";
+    },
     choices: [
       {
         text: "吃喝补充体力",
@@ -1445,10 +1465,12 @@ Object.assign(storyData, {
       return f(vars);
     },
     onEnter: updateTime(2, { add: { strength: -1 } }),
-    text: "你举起手中的家伙，对准店铺门的锁狠狠砸了下去。一下，两下——锁头终于崩开了。\n\
+    text: function(vars) {
+      return "你举起" + (heavyWeaponName(vars) || "手中的家伙") + "，对准店铺门的锁狠狠砸了下去。一下，两下——锁头终于崩开了。\n\
 你踹开门冲了进去，反手把门顶上。\
 外面传来丧尸撞门的声音，但这扇铁门足够结实。\n\
-你穿过黑漆漆的店铺，从另一侧的门钻了出来，发现自己到了安盛街的后巷。",
+你穿过黑漆漆的店铺，从另一侧的门钻了出来，发现自己到了安盛街的后巷。";
+    },
     choices: [
       {
         text: "继续前进",

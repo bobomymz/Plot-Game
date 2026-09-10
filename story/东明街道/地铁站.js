@@ -527,18 +527,14 @@ Object.assign(storyData, {
 
   // ==================== 选择列车 ====================
   "地铁站-选择列车": {
-    image: "images/placeholder.png" /* TODO: images/地铁站/trainInterior.png */,
+    image: "images/地铁站/车厢里.jpg" /* TODO: images/地铁站/trainInterior.png */,
     onEnter: { set: { _extinguisherUsed: false } },
     text: "你踏进车厢。车厢里的灯还亮着，座椅上散落着几份报纸和一个水杯。穿过整节车厢，你能看到驾驶室的方向。\n车厢另一端的电子显示屏还在闪烁，显示着线路信息。",
     choices: [
       {
-        text: "往迪士尼方向",
+        text: "去迪士尼",
         nextScene: "地铁站-迪士尼方向",
         effect: updateTime(5)
-      },
-      {
-        text: "往嘉定北方向",
-        nextScene: "地铁站-嘉定北方向"
       },
       {
         text: "看看车厢里的线路图",
@@ -553,7 +549,7 @@ Object.assign(storyData, {
 
   "地铁站-线路图": {
     image: "images/placeholder.png" /* TODO: images/地铁站/trainMap.png */,
-    text: "你凑到线路图前。11号线贯穿上海西北到东南：嘉定北→……→三林东路→迪士尼。中间有几个换乘站，但大部分线路都显示着灰色——可能已经停运了。\n迪士尼方向是唯一还在闪烁的绿色线段。",
+    text: "你凑到线路图前。11号线贯穿上海西北到东南：嘉定北→……→三林东路→浦三路→御桥→迪士尼。",
     choices: [
       {
         text: "去迪士尼",

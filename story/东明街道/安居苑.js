@@ -47,7 +47,7 @@ Object.assign(storyData, {
       },
       {
         showCondition: "hasMeleeWeapon",
-        text: "挥舞武器吓唬它们",
+        text: function(vars) { return "挥舞" + meleeWeaponName(vars) + "吓唬它们"; },
         nextScene: "三林安居苑-驱赶变异猫",
         effect: updateTime(2)
       },
@@ -63,9 +63,11 @@ Object.assign(storyData, {
   "三林安居苑-驱赶变异猫": {
     image: "images/placeholder.png" /* TODO: images/安居苑/mutantCat.png */,
     onEnter: { set: { showRain: true }, add: { strength: -1 } },
-    text: "你挥舞手中的家伙，朝那些变异猫大声吼叫。它们弓起背，发出愤怒的嘶吼，但并没有扑上来——它们似乎还保留着一丝对人类的畏惧。\n\
+    text: function(vars) {
+      return "你挥舞" + (meleeWeaponName(vars) || "手中的家伙") + "，朝那些变异猫大声吼叫。它们弓起背，发出愤怒的嘶吼，但并没有扑上来——它们似乎还保留着一丝对人类的畏惧。\n\
 对峙了几秒后，带头的那只大猫转身跑进了花坛深处，其他的也跟着散了。\n\
-这一通虚张声势耗得你不轻——吼得嗓子发干，胳膊也抡酸了。\n小区暂时安全了，至少入口是。",
+这一通虚张声势耗得你不轻——吼得嗓子发干，胳膊也抡酸了。\n小区暂时安全了，至少入口是。";
+    },
     choices: [
       {
         text: "进入小区",
@@ -297,7 +299,7 @@ Object.assign(storyData, {
       if (vars.hasCutter) {
         desc += "\n<span style='color: #ffaa00;'>口袋里的美工刀正好可以用来割断这些藤蔓。</span>";
       } else if (vars.hasAxe || vars.hasCane || vars.hasMopHandle || vars.hasIronPipe) {
-        desc += "\n你没带刀，但手里的家伙足够长——可以试着拨开藤蔓，或者直接给它一下。";
+        desc += "\n你没带刀，但手里的" + heavyWeaponName(vars) + "足够长——可以试着拨开藤蔓，或者直接给它一下。";
       }
       return desc;
     },
@@ -316,14 +318,7 @@ Object.assign(storyData, {
       },
       {
         showCondition: "hasAxe || hasCane || hasMopHandle || hasIronPipe",
-        text: function(vars) {
-          let wea = "";
-          if(vars.hasAxe) wea = "斧头";
-          else if(vars.hasCane) wea = "拐杖";
-          else if(vars.hasMopHandle) wea = "拖把杆";
-          else if(vars.hasIronPipe) wea = "铁管";
-          return `用${wea}拨开藤蔓`;
-        },
+        text: function(vars) { return "用" + heavyWeaponName(vars) + "拨开藤蔓"; },
         nextScene: "三林安居苑-藤蔓丧尸-战斗",
         effect: updateTime(1, {set: {fightWithVineZombie: true}})
       },
@@ -369,8 +364,10 @@ Object.assign(storyData, {
       night: "images/安居苑/藤蔓丧尸扑来-night.jpg"
     }),
     onEnter: { set: { showRain: true } },
-    text: "你用手中的家伙小心地拨开藤蔓。丧尸的手臂突然挣脱了一截，朝你猛地抓来——还好你早有准备，侧身闪开了。\n\
-藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。",
+    text: function(vars) {
+      return "你用" + heavyWeaponName(vars) + "小心地拨开藤蔓。丧尸的手臂突然挣脱了一截，朝你猛地抓来——还好你早有准备，侧身闪开了。\n\
+藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。";
+    },
     choices: [
       {
         showCondition: "meleeWeaponTier >= 2",

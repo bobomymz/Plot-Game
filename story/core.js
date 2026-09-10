@@ -35,6 +35,7 @@ const storyData = {
     pharmacyZombieKilled: false, // 益丰大药房白大褂丧尸是否已被击杀
     pharmacyApprenticeWatered: false, // 益丰大药房长发女学徒是否已被喂水
     pharmacyApprenticeKilled: false, // 益丰大药房长发女学徒是否已被解脱
+    _paraffinTaken: false,    // 益丰大药房库房石蜡油是否已被拿走（一次性守卫；交易掉后不可重拿）
     _zhaoGuangchengDead: false, // 益丰大药房店长赵广成是否已死（断电事故害死；死后办公室不再可回访歇脚）
     libraryCleared: false,     // 是否清空了社区图书馆的丧尸
     defeatedOldMan: false,     // 是否已击败安盛街老头丧尸
@@ -237,6 +238,7 @@ const storyData = {
     hasCracker: false,        // 夹心饼干（挹芬楼6F自习教室，样板改可收集，占格；可吃+1 / 喂橘猫）
     hasTeethingBiscuit: false, // 磨牙饼干（新达汇3F爱婴室，占格；可吃+1 / 喂猫）
     _stairKillNote: "",       // 堵路强丧尸清场旁白（武器effect写入，楼梯text展示后清除，一次性）
+    _pryTool: "",             // 上实南校天桥撬门轴实际用的工具名（选项effect写入，硬砸场景text展示）
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除

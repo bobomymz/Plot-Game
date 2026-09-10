@@ -266,7 +266,8 @@ Object.assign(storyData, {
       let basicText = "";
       if(vars._lastScene == "五金店-后巷-偷看左门") basicText = "你转身走到右边那扇门，门确实打不开。";
       basicText += "你趴下身子，把眼睛凑到门缝处。\n一开始你什么都看不到——太暗了。然后你看到里面有什么东西在动，一个模糊的轮廓正在门后面缓缓移动。\n\
-      你调整了一下角度，想看清楚——然后你看到了一只眼睛。就在门缝的另一侧，也在看着你。\n你僵住了。它也僵住了。\n然后门被猛地拉开了。"; 
+      你调整了一下角度，想看清楚——然后你看到了一只眼睛。就在门缝的另一侧，也在看着你。\n你僵住了。它也僵住了。\n然后门被猛地拉开了。";
+      return basicText;
     },
     choices: [
       {
@@ -329,7 +330,7 @@ Object.assign(storyData, {
         nextScene: "结局-五金店-地铁"
       },
       {
-        text: "走前面——上楼梯",
+        text: "走左边——上楼梯",
         nextScene: "五金店-暗道-仓库"
       }
     ]
@@ -356,8 +357,14 @@ Object.assign(storyData, {
       return updateTime(3, { add: { strength: -1 } })(vars);
     },
     text: function(vars) {
-      let basicDes = "你钻进右边的通道，从一处破旧的通风口钻了出来。你站在五金店后方的仓库里。\n\
+      let basicDes;
+      if (vars._lastScene === "整理整理") {
+        basicDes = "你回到仓库中央。\n\
 货架上堆满了各种货物——成箱的螺丝钉、卷成捆的电线、落满灰的灯泡。";
+      } else {
+        basicDes = "你顺着左边的楼梯上去，推开头顶一扇虚掩的木板活门——你站在五金店后方的仓库里。\n\
+货架上堆满了各种货物——成箱的螺丝钉、卷成捆的电线、落满灰的灯泡。";
+      }
       if (vars.hasLubricant) basicDes += "真是破败不堪。"
       else {
         basicDes += "\n你环顾四周，在一个角落的货架上看到了几个熟悉的蓝色罐子。\n\

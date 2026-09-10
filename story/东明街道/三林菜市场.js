@@ -35,7 +35,9 @@ Object.assign(storyData, {
       vars._marketEntry = "大厅";
     },
     text: function(vars) {
-      var desc = "你从卷帘门下的缝隙里钻进了菜市场。头顶的日光灯早就熄了，只有棚顶漏进来的天光把摊位间的过道照得明暗交错。\n\
+      var fromCold = vars._lastScene === "菜市场-冷库区" || vars._lastScene === "菜市场-冷库区-闭门羹";
+      var desc = (fromCold ? "你从冷库区那头折回大厅。" : "你从卷帘门下的缝隙里钻进了菜市场。")
+        + "头顶的日光灯早就熄了，只有棚顶漏进来的天光把摊位间的过道照得明暗交错。\n\
 鱼摊、肉摊、菜摊……冰柜的玻璃门蒙着厚厚的雾气，看不清里面还剩什么。";
       if (!vars._marketHallCleared) {
         desc += "\n过道中间趴着一具穿着围裙的尸体，正以一种奇怪的姿势抽搐着——它还有一口气。看到你，它开始往你的方向爬。";
@@ -48,7 +50,7 @@ Object.assign(storyData, {
       var cs = [];
       if (!vars._marketHallCleared) {
         cs.push({ text: "绕开它，从摊位底下钻过去", nextScene: "菜市场-大厅-潜行", effect: updateTime(2) });
-        cs.push({ showCondition: "hasMeleeWeapon", text: "抄家伙把它彻底解决", nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
+        cs.push({ showCondition: "hasMeleeWeapon", text: function(vars) { return "用" + meleeWeaponName(vars) + "把它彻底解决"; }, nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
         cs.push({ text: "太危险了，退回去", nextScene: "安盛街西侧", effect: updateTime(1) });
       } else {
         cs.push({ text: "前往冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) });
@@ -89,13 +91,25 @@ Object.assign(storyData, {
     },
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "员工通道", _marketEntry: "员工通道" } },
     text: function(vars) {
+      var fromKitchen = vars._lastScene === "长者食堂-后厨";
+      // 开场句按来路区分：后厨进门 / 从通道深处折回 / 从冷库区折回
+      var head;
+      if (vars._lastScene === "菜市场-冷库区" || vars._lastScene === "菜市场-冷库区-闭门羹") {
+        head = "你从冷库区那头折回这条堆着空菜筐的过道。";
+      } else if (vars._lastScene === "菜市场-通道迷路") {
+        head = "你摸回岔路口。";
+      } else {
+        head = "你穿过长者食堂后厨那道冷藏室的门，走进一条堆着空菜筐的过道。";
+      }
       if (vars.hasTorch || (vars.hasPhone && vars.phoneBattery > 0)) {
-        return "你穿过长者食堂后厨那道冷藏室的门，走进一条堆着空菜筐的过道。头顶的灯管蒙着灰，但借着你手里的光，通道里的情况还算看得清。\n前方分岔出三条通道——左边堆着几只倒扣的塑料周转箱，中间是一条直道，右边好像通向一个小房间。";
+        return head + "头顶的灯管蒙着灰，但借着你手里的光，通道里的情况还算看得清。\n前方分岔出三条通道——左边堆着几只倒扣的塑料周转箱，中间是一条直道，右边好像通向一个小房间。";
       }
       if (vars.hasPhone && vars.phoneBattery <= 0) {
-        return "你推开冷藏室的门，走进一条堆着空菜筐的过道。你摁亮手机想照个亮——屏幕闪了一下就黑了，电量见底。\n你只能摸黑往前挪，脚下踩到一只滚落的菜筐，差点绊倒。前方好像分出了岔路，但你什么也看不清。";
+        var phoneLine = fromKitchen ? "你摁亮手机想照个亮——屏幕闪了一下就黑了，电量见底。\n" : "";
+        return head + phoneLine + "你只能摸黑往前挪，脚下踩到一只滚落的菜筐，差点绊倒。前方好像分出了岔路，但你什么也看不清。";
       }
-      return "你推开冷藏室的门，走进一条堆着空菜筐的过道。门在身后咔哒一声合上——你面前一片漆黑。\n你摸黑往前走了几步，脚下踩到一只滚落的菜筐，差点绊倒。手边似乎摸到了几面墙，前方好像分出了岔路，但你什么也看不清。";
+      var doorLine = fromKitchen ? "门在身后咔哒一声合上——" : "";
+      return head + doorLine + "你面前一片漆黑。\n你摸黑往前走了几步，脚下踩到一只滚落的菜筐，差点绊倒。手边似乎摸到了几面墙，前方好像分出了岔路，但你什么也看不清。";
     },
     choices: [
       {
@@ -182,7 +196,7 @@ Object.assign(storyData, {
 
   // ==================== 交易点（冷库深处·方姐） ====================
   "菜市场-交易点": {
-    image: "images/placeholder.png" /* TODO: images/菜市场/交易点.jpg */,
+    image: "images/菜市场/交易点.jpg" /* TODO: images/菜市场/交易点.jpg */,
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "冷库深处" } },
     text: function(vars) {
       var desc = "你推开门，柴油发电机的嗡嗡声清晰起来。昏黄的灯泡下，一个围着脏围裙的中年女人正蹲在一台冷藏柜前翻着什么。听到动静她猛地回头——看到是你，才慢慢松了手里的砍骨刀。\n“进货的来了？”她站起来，抹了把汗，嗓音沙哑，“我这儿不白给，也不白拿。拿东西来换，肉、水、家伙，都有。”";

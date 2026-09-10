@@ -5,8 +5,15 @@ Object.assign(storyData,{
     image: "images/小区周边/益丰大药房/益丰大药房内部.png",
     onEnter: { set: { currentPlace: "三林路", currentPos: "益丰大药房" } },
     text: function(vars) {
+      var insideBack = ["益丰大药房-击杀", "益丰大药房-柜台后-已清理", "益丰大药房-翻找", "益丰大药房-库房门锁了", "益丰大药房-办公室歇脚", "利昂药剂师的工牌"].indexOf(vars._lastScene) >= 0;
       if (vars.pharmacyZombieKilled) {
+        if (insideBack) {
+          return "你回到药房待客区。柜台后面，白大褂丧尸的尸体还静静躺在原地，地上的血迹还没干。角落里有几只蟑螂在散落的药盒间爬来爬去，在安静的空间里发出细微的窸窣声。\n货架上的药品依旧东倒西歪，能搜刮的基本都拿过了。";
+        }
         return "你再次走进药房。柜台后面，白大褂丧尸的尸体还静静躺在原地，地上的血迹已经干涸发黑。角落里有几只蟑螂在散落的药盒间爬来爬去，在安静的空间里发出细微的窸窣声。\n货架上的药品依旧东倒西歪，能搜刮的上次基本都拿过了。";
+      }
+      if (insideBack) {
+        return "你回到药房待客区，脚下的药盒被踩得沙沙作响。柜台后面那阵窸窸窣窣的声音还在——那东西还在老地方。";
       }
       return "你走进药房，脚踩在散落的药盒上发出细微的声响。货架上的药品东倒西歪，但还有些零散的盒子散落在地上。\n柜台后面传来窸窸窣窣的声音——好像有什么东西蹲在那里。";
     },
@@ -81,15 +88,22 @@ Object.assign(storyData,{
 
   "结局-益丰-被反杀": {
     image: "images/zombieKnockYouDown.png",
-    text: "你举起手中的家伙砸了下去，但手臂太软了——这一击只蹭到了它的后背。\n白大褂丧尸猛地转过身，张开嘴朝你的手臂咬了下来。\n剧烈的疼痛让你眼前发黑……\n\n—— 结局：益丰-被反杀 ——"
+    text: function(vars) {
+      var hit = hasMeleeWeapon(vars)
+        ? "你举起" + meleeWeaponName(vars) + "砸了下去，但手臂太软了——这一击只蹭到了它的后背。"
+        : "你赤手空拳地扑了上去，但手臂太软了——这一拳只蹭到了它的后背。";
+      return hit + "\n白大褂丧尸猛地转过身，张开嘴朝你的手臂咬了下来。\n剧烈的疼痛让你眼前发黑……\n\n—— 结局：益丰-被反杀 ——";
+    }
   },
 
   "益丰大药房-击杀": {
     image: "images/小区周边/益丰大药房/击杀白大褂.png",
     onEnter: { add: { strength: 1 }, set: { hurtByZombie: false, pharmacyZombieKilled: true } },
-    text: "你一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。\n你蹲下来翻看它刚才啃咬的药箱——里面居然还有几盒没拆封的碘伏棉签和弹性绷带。柜台下面的抽屉里还有一瓶维生素片。\n\
+    text: function(vars) {
+      return "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。\n你蹲下来翻看它刚才啃咬的药箱——里面居然还有几盒没拆封的碘伏棉签和弹性绷带。柜台下面的抽屉里还有一瓶维生素片。\n\
 你撕开碘伏棉签，清理了身上的伤口——至少那些抓痕不会感染了。又把维生素片丢进嘴里嚼了嚼，苦涩中带着一丝甜味。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
+    },
     choices: [
       {
         text: "继续",
@@ -145,8 +159,13 @@ Object.assign(storyData,{
 
   "益丰大药房-库房": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/益丰大药房库房.png */,
-    text: "你推开一扇毛玻璃门，走进平时顾客的禁地————药房库房。这里和待客区完全不同，灯光昏暗，货架上摆满了纸箱。\n\
-你不知道这里是怎么分类的，如果要找到好东西，或许要几个小时。头顶的白炽灯微微摇晃着，仿佛等待着你的决定。",
+    text: function(vars) {
+      if (["益丰大药房-退烧药", "益丰大药房-左边货架翻找", "益丰大药房-右边货架翻找", "整理整理"].indexOf(vars._lastScene) >= 0) {
+        return "你回到库房中央。头顶的白炽灯还在微微摇晃，货架上还是那些纸箱。要找到好东西，恐怕还得花上不少时间。";
+      }
+      return "你推开一扇毛玻璃门，走进平时顾客的禁地——药房库房。这里和待客区完全不同，灯光昏暗，货架上摆满了纸箱。\n\
+你不知道这里是怎么分类的，如果要找到好东西，或许要几个小时。头顶的白炽灯微微摇晃着，仿佛等待着你的决定。";
+    },
     choices: [
       {
         text: "离开药房",
@@ -154,13 +173,11 @@ Object.assign(storyData,{
         effect: updateTime(5)
       },
       {
-        showCondition: "_visit['益丰大药房-左边货架翻找'] > 0",
         text: "在左边的货架上翻找",
         nextScene: "益丰大药房-左边货架翻找",
         effect: updateTime(1)
       },
       {
-        showCondition: "_visit['益丰大药房-右边货架翻找'] > 0",
         text: "在右边的货架上翻找",
         nextScene: "益丰大药房-右边货架翻找",
         effect: updateTime(1)
@@ -216,7 +233,7 @@ Object.assign(storyData,{
     image: "images/小区周边/益丰大药房/找到医用石蜡油.png",
     onEnter: { set: { positionAfterOperation: "益丰大药房-库房" } },
     text: function(vars) {
-      if(vars._visit['益丰大药房-左边货架翻找'] > 1) return "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱，但没再找到什么好东西。";
+      if (vars._paraffinTaken || vars.hasLiquidParaffin) return "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱，但没再找到什么好东西。";
       let basicDes = "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱。\n\
 正准备放弃时，你在角落里发现了一瓶医用石蜡油。标签如下：\n\
 医用石蜡油\n\
@@ -256,10 +273,10 @@ Object.assign(storyData,{
     choices: [
       {
         text: "拿上石蜡油",
-        showCondition: "!_visit['益丰大药房-左边货架翻找']",
+        showCondition: "!_paraffinTaken",
         nextScene: "益丰大药房-库房",
         condition: "itemCount < bagVolume",
-        effect: updateTime(5, {add: { itemCount: 1}, set: { hasLiquidParaffin: true }}),
+        effect: updateTime(5, {add: { itemCount: 1}, set: { hasLiquidParaffin: true, _paraffinTaken: true }}),
         elseScene: "整理整理"
       },
       {
@@ -393,12 +410,19 @@ Object.assign(storyData,{
   "益丰大药房-背后偷袭的丧尸": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/背后偷袭的丧尸.png */,
     text: function(vars) {
-      var t = "你用力撞了几下门，门锁纹丝不动。身后的脚步声突然加快，你回头一看，一个长发遮面的人向你一步一顿地走了过来。\n她？的动作看起来摇摇晃晃，像喝醉酒了一样。她抬起头来，脸色蜡黄，嘴巴微张，发出咯咯咯的声音。没等你反应过来，她又别过头去。";
+      var t;
+      if (vars.pharmacyApprenticeWatered) {
+        // 喂过水后她是安分的，无论从哪条路回到这里
+        t = "她靠在墙边，呼吸比刚才平稳了一些。" + (vars._lastScene === "益丰大药房-喂水" ? "看到你回来，" : "看到你，") + "她抬手指了指走廊深处。";
+      } else if (vars._lastScene === "益丰大药房-沟通躲开") {
+        t = "她还在货架边上踉跄着没缓过来，长发散乱地遮着半张脸，喉咙里发出断断续续的咯咯声。";
+      } else if (vars._lastScene === "益丰大药房-被咬到了") {
+        t = "她退回了阴影里，嘴角还沾着你的血。你和她隔着几步远对峙着，谁都没有再动。";
+      } else {
+        t = "你用力撞了几下门，门锁纹丝不动。身后的脚步声突然加快，你回头一看，一个长发遮面的人向你一步一顿地走了过来。\n她？的动作看起来摇摇晃晃，像喝醉酒了一样。她抬起头来，脸色蜡黄，嘴巴微张，发出咯咯咯的声音。没等你反应过来，她又别过头去。";
+      }
       if (vars.hurtByZombie) {
         t += "\n\n你手臂上的伤口还在隐隐作痛。";
-      }
-      if (vars.pharmacyApprenticeWatered) {
-        t += "\n她靠在墙边，呼吸比刚才平稳了一些。看到你回来，她抬手指了指走廊深处。";
       }
       return t;
     },
@@ -527,7 +551,9 @@ Object.assign(storyData,{
   "益丰大药房-解脱学徒": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/背后偷袭的丧尸.png */,
     onEnter: { set: { pharmacyApprenticeKilled: true } },
-    text: "你握紧武器走上前。\n她没有后退，也没有攻击——只是抬起头，用一种几乎称得上平静的眼神看着你。\n你动手了。\n她倒下去的时候很轻，像一袋衣服从挂钩上滑落。走廊安静了下来。",
+    text: function(vars) {
+      return "你握紧" + meleeWeaponName(vars) + "走上前。\n她没有后退，也没有攻击——只是抬起头，用一种几乎称得上平静的眼神看着你。\n你动手了。\n她倒下去的时候很轻，像一袋衣服从挂钩上滑落。走廊安静了下来。";
+    },
     choices: [
       {
         text: "蹲下来翻翻她的口袋",

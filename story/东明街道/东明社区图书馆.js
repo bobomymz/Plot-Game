@@ -59,7 +59,7 @@ Object.assign(storyData, {
     choices: [
         { text: "蹲下身子，从前台下方绕过去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-潜行", effect: updateTime(2) },
         { text: "从书架上抽一本书，朝另一侧扔出去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-声东击西", effect: updateTime(1) },
-        { text: "抄起门口的铁质书立，上去解决它", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-战斗", condition: "hasMeleeWeapon || strength >= 3", elseScene: "结局-图书馆-大厅-徒劳" },
+        { text: function(vars) { return hasMeleeWeapon(vars) ? "用" + meleeWeaponName(vars) + "上去解决它" : "抄起门口的铁质书立，上去解决它"; }, showCondition: "!libraryCleared", nextScene: "图书馆-大厅-战斗", condition: "hasMeleeWeapon || strength >= 3", elseScene: "结局-图书馆-大厅-徒劳" },
         { text: "前往阅览室", showCondition: "libraryCleared", nextScene: "图书馆-阅览室" },
         { text: "前往藏书区", showCondition: "libraryCleared", nextScene: "图书馆-藏书区" },
         { text: "离开图书馆", showCondition: "libraryCleared", nextScene: "东明路-三林路" }
@@ -185,7 +185,7 @@ Object.assign(storyData, {
         elseScene: "结局-图书馆-书堆"
       },
       {
-        text: "用家伙招呼它",
+        text: function(vars) { return "用" + meleeWeaponName(vars) + "招呼它"; },
         nextScene: "图书馆-阅览室-战斗",
         condition: "hasMeleeWeapon",
         elseScene: "图书馆-阅览室-徒手"
@@ -422,9 +422,11 @@ Object.assign(storyData, {
   "图书馆-办公室-清场": {
     image: "images/placeholder.png" /* TODO: images/library/libraryOffice.png */,
     onEnter: { set: { libraryCleared: true } },
-    text: "你举起手中的家伙，干脆利落地给了被压住的丧尸一下。它终于安静了。\n\
+    text: function(vars) {
+      return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，干脆利落地给了被压住的丧尸一下。它终于安静了。\n\
 办公室里安静了下来。你环顾四周——文件柜里有一些没开封的瓶装水，办公桌抽屉里还有半包压缩饼干。虽然不多，但够你撑一阵子。\n\
-更重要的是——你现在可以锁上图书馆的门，把这里变成一个安全的落脚点。窗户结实，大门能锁，只有一道消防通道需要守住。\n你花了些时间把大厅和阅览室的窗帘拉上，把前门反锁。这个小小的图书馆，在这座沦陷的城市里，成了你暂时的庇护所。",
+更重要的是——你现在可以锁上图书馆的门，把这里变成一个安全的落脚点。窗户结实，大门能锁，只有一道消防通道需要守住。\n你花了些时间把大厅和阅览室的窗帘拉上，把前门反锁。这个小小的图书馆，在这座沦陷的城市里，成了你暂时的庇护所。";
+    },
     choices: [
       {
         text: "检查一下消防通道的门锁",

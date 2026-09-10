@@ -132,7 +132,7 @@ Object.assign(storyData, {
   "新达汇-B1下沉广场入口": {
     onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/b1Entry.png */,
-    text: function(vars) { return "下沉广场入口。阶梯从地面延伸下来，这里的比上面暗了不少，应急灯发出惨白的光。广场中央的绿植绿意盎然，周围几把户外桌椅东倒西歪。\n前方就是B1美食广场的入口。\n" + describeZombieWave(vars); },
+    text: function(vars) { return "下沉广场入口。阶梯从地面延伸下来，这里比上面暗了不少，应急灯发出惨白的光。广场中央的绿植绿意盎然，周围几把户外桌椅东倒西歪。\n前方就是B1美食广场的入口。\n" + describeZombieWave(vars); },
     choices: [
       {
         text: "进入美食广场",
@@ -262,7 +262,7 @@ Object.assign(storyData, {
   // ==================== B1 值班室 / 保安室 ====================
   "新达汇-B1值班过道": {
     onEnter: { set: { showPowerOut: true } },
-    image: "images/placeholder.png" /* TODO: images/新达汇/B1值班过道.jpg */,
+    image: "images/新达汇/值班过道.jpg",
     text: function(vars) {
       if (vars._powerOut && !canSee(vars)) {
         return "过道里一片黑。你扶着墙走到尽头，指尖碰到一扇虚掩的门。\n" + describeZombieWave(vars);
@@ -351,8 +351,7 @@ Object.assign(storyData, {
     onEnter: { set: { _powerOut: true, _catChasing: false, showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/拉闸.jpg */,
     text: "你双手扣住总闸的胶木把手，往下一压。\n\
-咔的一声闷响，脚下某处传来电流退去的嗡鸣。头顶的应急灯闪了两下，灭了。整个地下层沉进黑里，只有配电柜深处溅了几点橘红的火花。\n\
-你摸着墙往回走，脑子里冒出来一些乱七八糟的念头——电梯这下是别想坐了；屋顶那架无人机的充电座，这会儿多半也黑了，要用趁早；还有，接下来推哪家店的门，大概都不会再响那声“欢迎光临”了。",
+咔的一声闷响，脚下某处传来电流退去的嗡鸣。头顶的应急灯闪了两下，灭了。整个地下层沉进黑里，只有配电柜深处溅了几点橘红的火花。",
     choices: [
       {
         text: "摸黑回到值班室",
@@ -373,10 +372,23 @@ Object.assign(storyData, {
     choices: [
       {
         text: "把桃酥吃了",
-        nextScene: "新达汇-B1保安室",
-        effect: updateTime(3, { set: { _mallGuardSnack: true }, add: { strength: 2 } }),
+        nextScene: "新达汇-B1保安室-抽屉-吃桃酥",
+        effect: updateTime(3, { set: { _mallGuardSnack: true }}),
         showCondition: "!_mallGuardSnack",
       },
+      {
+        text: "合上抽屉",
+        nextScene: "新达汇-B1保安室",
+        effect: updateTime(1),
+      },
+    ]
+  },
+
+  "新达汇-B1保安室-抽屉-吃桃酥": {
+    onEnter: { set: { showPowerOut: true }, add: { strength: 2 }  },
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1值班台抽屉-吃桃酥.jpg */,
+    text: "你把桃酥吃掉了。<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，甩掉了一些追兵。当前体力：{strength}。</span>",
+    choices: [
       {
         text: "合上抽屉",
         nextScene: "新达汇-B1保安室",
@@ -965,7 +977,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到5F走廊",
+        text: "去5F走廊",
         nextScene: "新达汇-5F北走廊东",
         effect: updateTime(1),
       },
@@ -987,7 +999,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到4F走廊",
+        text: "去4F走廊",
         nextScene: "新达汇-4F北走廊东",
         effect: updateTime(1),
       },
@@ -1015,7 +1027,7 @@ Object.assign(storyData, {
         showCondition: "!_got3fExtinguisher",
       },
       {
-        text: "回到3F走廊",
+        text: "去3F走廊",
         nextScene: "新达汇-3F北走廊东",
         effect: updateTime(1),
       },
@@ -1037,7 +1049,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到2F走廊",
+        text: "去2F走廊",
         nextScene: "新达汇-2F北走廊东",
         effect: updateTime(1),
       },
@@ -1059,7 +1071,7 @@ Object.assign(storyData, {
         effect: updateTime(2),
       },
       {
-        text: "回到1F走廊",
+        text: "去1F走廊",
         nextScene: "新达汇-1F北走廊东",
         effect: updateTime(1),
       },
@@ -1129,9 +1141,9 @@ Object.assign(storyData, {
       if(canSee(vars)) { // 看得见
         desc += "海澜之家(HLA)白色的门头就在走廊边。"
         if (!vars._2f_chairsCleared) {
-          desc += "\n走廊上堆着十几把等位椅，歪七扭八地挡住了去路。看起来是餐厅的人堆在这里的。";
+          desc += "\n十几把等位椅歪七扭八地堆在海澜之家门口，把玻璃门堵了个严实——不知道是谁搬来的，也不知道想防着什么。";
         } else {
-          desc += "\n之前堆在走廊上的椅子已经被你搬开了，畅通无阻。";
+          desc += "\n海澜之家门口那堆等位椅已经难不住你了。";
         }
       }
       else desc += "你看不见旁边有什么店，不敢贸然行动。"
@@ -1151,19 +1163,19 @@ Object.assign(storyData, {
         showCondition: "_2f_chairsCleared",
       },
       {
-        text: "一把一把搬开椅子（安静但慢）",
+        text: "把门口的椅子一把一把搬开（安静但慢）",
         nextScene: "新达汇-2F北走廊中-搬椅",
         effect: updateTime(3),
         showCondition: "!_2f_chairsCleared && canSee",
       },
       {
-        text: "从旁边缝隙侧身钻过去",
+        text: "侧身从椅子缝里钻到店门口",
         nextScene: "新达汇-2F北走廊中-钻缝",
         effect: updateTime(1),
         showCondition: "!_2f_chairsCleared && canSee",
       },
       {
-        text: "直接翻过去",
+        text: "直接翻过门口的椅子堆",
         nextScene: "新达汇-2F北走廊中-翻椅",
         effect: updateTime(1),
         showCondition: "!_2f_chairsCleared && canSee",
@@ -1184,7 +1196,7 @@ Object.assign(storyData, {
   "新达汇-2F北走廊中-搬椅": {
     image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
     onEnter: { set: { showPowerOut: true,  _2f_chairsCleared: true } },
-    text: "你一把一把地把椅子搬到旁边。塑料椅腿碰在一起发出轻微的咔嗒声，但整体还算安静。花了些时间，但路通了。",
+    text: "你把门口的椅子一把一把搬到墙边。塑料椅腿碰在一起发出轻微的咔嗒声，但整体还算安静。花了些时间，门口总算清出来了。",
     choices: [
       {
         text: "继续",
@@ -1196,7 +1208,7 @@ Object.assign(storyData, {
   "新达汇-2F北走廊中-钻缝": {
     image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
     onEnter: { set: { showPowerOut: true,  _2f_chairsCleared: true } },
-    text: "你侧身挤进椅子之间的缝隙，屏住呼吸一点一点挪过去。虽然姿势不太雅观，但没有碰到任何一把椅子。",
+    text: "你侧身挤进椅子堆的缝隙，屏住呼吸一点一点挪到店门口。虽然姿势不太雅观，但没有碰到任何一把椅子。",
     choices: [
       {
         text: "继续走",
@@ -1208,7 +1220,7 @@ Object.assign(storyData, {
   "新达汇-2F北走廊中-翻椅": {
     image: "images/placeholder.png" /* TODO: images/新达汇/2fNorth.png */,
     onEnter: { set: { showPowerOut: true,  _2f_chairsCleared: true }, add: { chasedByZombies: 2, strength: -1 } },
-    text: "你双手撑住椅背准备翻过去——但一把椅子的腿被你的膝盖碰了一下，哗啦一声倒在了旁边的椅子堆上。几把椅子像多米诺骨牌一样倒了下去，在走廊里发出不小的声响。",
+    text: "你双手撑住椅背，准备直接翻到店门口——但一把椅子的腿被你的膝盖碰了一下，哗啦一声倒在了旁边的椅子堆上。几把椅子像多米诺骨牌一样倒了下去，在走廊里发出不小的声响。",
     choices: [
       {
         text: "快走",

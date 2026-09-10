@@ -270,6 +270,16 @@ function meleeWeaponName(vars) {
   return "";
 }
 
+// 按"分量/长度"返回适合砸锁、撬门轴、拨藤蔓的武器名（斧头 > 铁管 > 拐杖 > 拖把杆；美工刀/匕首太短太脆不算），无则空串
+// 用于此类动作的选项/剧情文本点名武器；相关场景门槛 condition 也只认这四样
+function heavyWeaponName(vars) {
+  if (vars.hasAxe) return "斧头";
+  if (vars.hasIronPipe) return "铁管";
+  if (vars.hasCane) return "拐杖";
+  if (vars.hasMopHandle) return "拖把杆";
+  return "";
+}
+
 // 近战武器档位：弱(1 美工刀/拖把杆) 中(2 拐杖/铁管) 强(3 匕首/斧头)，无(0)
 // 强丧尸用 condition: "meleeWeaponTier >= N" 挡弱武器
 function meleeWeaponTier(vars) {

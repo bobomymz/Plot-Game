@@ -130,17 +130,20 @@ Object.assign(storyData, {
       {
         showCondition: "hasIronPipe",
         text: "用铁管撬开",
-        nextScene: "上实南校-天桥-硬砸"
+        nextScene: "上实南校-天桥-硬砸",
+        effect: { set: { _pryTool: "铁管" } }
       },
       {
         showCondition: "hasCane",
         text: "用拐杖撬开",
-        nextScene: "上实南校-天桥-硬砸"
+        nextScene: "上实南校-天桥-硬砸",
+        effect: { set: { _pryTool: "拐杖" } }
       },
       {
         showCondition: "hasMopHandle",
         text: "用拖把杆撬开",
-        nextScene: "上实南校-天桥-硬砸"
+        nextScene: "上实南校-天桥-硬砸",
+        effect: { set: { _pryTool: "拖把杆" } }
       },
       {
         text: "算了，离开这里吧",
@@ -165,7 +168,9 @@ Object.assign(storyData, {
   "上实南校-天桥-硬砸": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolBridge.png */,
     onEnter: { add: { chasedByZombies: 1 } },
-    text: "你举起手中的家伙狠狠砸了几下门轴。铁锈簌簌地往下掉——门终于松动了。你用力撞开门，但金属撞击声在天桥之间回荡，肯定引起了注意。",
+    text: function(vars) {
+      return "你举起" + (vars._pryTool || "手中的家伙") + "狠狠砸了几下门轴。铁锈簌簌地往下掉——门终于松动了。你用力撞开门，但金属撞击声在天桥之间回荡，肯定引起了注意。";
+    },
     choices: [
       {
         text: "赶紧进去",
@@ -196,7 +201,7 @@ Object.assign(storyData, {
     choices: [
       {
         showCondition: "!_metPETeacher",
-        text: "握紧武器冲上去",
+        text: function(vars) { return hasMeleeWeapon(vars) ? "握紧" + meleeWeaponName(vars) + "冲上去" : "握紧拳头冲上去"; },
         nextScene: "结局-上实南校-第一次-战斗"
       },
       {
@@ -229,9 +234,17 @@ Object.assign(storyData, {
 
   "结局-上实南校-第一次-战斗": {
     image: "images/placeholder.png" /* TODO: images/上实南校/peTeacher.png */,
-    text: "你握紧手中的家伙冲了上去。\n体育老师丧尸看到你冲来，抡起旗杆就是一个横扫。你试图格挡——但它的力量大得惊人。旗杆砸在你的武器上，震得你手臂发麻，然后第二下直接砸在了你的头上。\n\
+    text: function(vars) {
+      if (hasMeleeWeapon(vars)) {
+        var wpn = meleeWeaponName(vars);
+        return "你握紧" + wpn + "冲了上去。\n体育老师丧尸看到你冲来，抡起旗杆就是一个横扫。你试图格挡——但它的力量大得惊人。旗杆砸在你的" + wpn + "上，震得你手臂发麻，然后第二下直接砸在了你的头上。\n\
 你最后的意识是它面无表情地举起旗杆，又砸了一下。\n\
-—— 结局：上实南校-第一次-战斗 ——"
+—— 结局：上实南校-第一次-战斗 ——";
+      }
+      return "你握紧拳头冲了上去。\n体育老师丧尸看到你冲来，抡起旗杆就是一个横扫。你下意识抬臂去挡——但它的力量大得惊人。旗杆直接砸在你的手臂上，骨头发出一声闷响，然后第二下直接砸在了你的头上。\n\
+你最后的意识是它面无表情地举起旗杆，又砸了一下。\n\
+—— 结局：上实南校-第一次-战斗 ——";
+    }
   },
 
   "结局-上实南校-第一次-跑": {
@@ -541,7 +554,7 @@ Object.assign(storyData, {
         nextScene: "上实南校-二次-桌椅"
       },
       {
-        text: "握紧武器迎战",
+        text: function(vars) { return hasMeleeWeapon(vars) ? "握紧" + meleeWeaponName(vars) + "迎战" : "握紧拳头迎战"; },
         nextScene: "结局-上实南校-二次-战斗"
       },
       {
@@ -576,7 +589,13 @@ Object.assign(storyData, {
 
   "结局-上实南校-二次-战斗": {
     image: "images/placeholder.png" /* TODO: images/上实南校/peTeacher.png */,
-    text: "你举起武器迎了上去。旗杆和你的武器撞在一起，发出刺耳的金属声——你挡住了第一下，但手臂被震得几乎失去知觉。\n第二下你没能挡住。\n\n—— 结局：上实南校-二次-战斗 ——"
+    text: function(vars) {
+      if (hasMeleeWeapon(vars)) {
+        var wpn = meleeWeaponName(vars);
+        return "你举起" + wpn + "迎了上去。旗杆和你的" + wpn + "撞在一起，发出刺耳的金属声——你挡住了第一下，但手臂被震得几乎失去知觉。\n第二下你没能挡住。\n\n—— 结局：上实南校-二次-战斗 ——";
+      }
+      return "你赤手空拳迎了上去。旗杆横扫过来，你抬起手臂去挡——骨头发出一声闷响，整条手臂瞬间失去了知觉。\n第二下你没能挡住。\n\n—— 结局：上实南校-二次-战斗 ——";
+    }
   },
 
   "结局-上实南校-二次-跑": {
@@ -889,7 +908,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "握紧武器迎战",
+        text: function(vars) { return hasMeleeWeapon(vars) ? "握紧" + meleeWeaponName(vars) + "迎战" : "握紧拳头迎战"; },
         nextScene: "结局-上实南校-体育馆-战斗"
       }
     ]
@@ -1157,7 +1176,7 @@ Object.assign(storyData, {
       },
       {
         condition: "hasAxe || hasIronPipe || hasCane || hasMopHandle",
-        text: "用家伙砸断锁链",
+        text: function(vars) { return "用" + heavyWeaponName(vars) + "砸断锁链"; },
         nextScene: "上实南校-后门-砸锁",
         elseScene: "上实南校-后门-无工具"
       },
@@ -1196,11 +1215,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
     onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
     text: function(vars) {
-      let wpn = "手中的家伙";
-      if (vars.hasAxe) wpn = "斧头";
-      else if (vars.hasIronPipe) wpn = "铁管";
-      else if (vars.hasCane) wpn = "拐杖";
-      else if (vars.hasMopHandle) wpn = "拖把杆";
+      let wpn = heavyWeaponName(vars) || "手中的家伙";
       return "你举起" + wpn + "，对准锁链的连接处狠狠砸了下去。金属碰撞声在校园里回荡——第一下没砸开。你又砸了一下。锁链上的铁环变形了，但还是没断。\n值日教师被声音吸引，朝后门这边走来。\n第三下——锁链终于崩断了。铁环弹飞出去，砸在地上叮当作响。\n你拉开门，四个人冲了出去。值日教师已经走到巷子中间，离你们只有几米远——但你们已经出了校门，顺着窄巷跑了出去。它在后面追了几步，然后停住了。\n你们终于离开了学校。";
     },
     choices: [

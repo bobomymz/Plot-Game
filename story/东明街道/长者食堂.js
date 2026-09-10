@@ -14,7 +14,10 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      return "你来到了东明社区食堂。平时偶尔回来这里吃一次，饭菜也挺好的，经常能看到老年人来吃。现在这里已经空了。" + describeWeather(vars);
+      if (vars._lastScene === "长者食堂-签到机") {
+        return "你从签到机前退开，重新站回食堂门口。玻璃门里还是一片安静。" + describeWeather(vars);
+      }
+      return "你来到了东明社区食堂。平时偶尔回这里吃一次，饭菜也挺好的，经常能看到老年人来吃。现在这里已经空了。" + describeWeather(vars);
     },
     choices: [
       {
@@ -287,7 +290,8 @@ Object.assign(storyData, {
       if (vars.dd > 1) {
         return "供汤窗口的保温桶已经断电了。你掀开桶盖——里面的紫菜蛋花汤已经凉透，表面凝了一层灰白的油膜，散发着一股馊掉的酸味。\n不能喝了。";
       }
-      return "供汤窗口的不锈钢台面上放着一只保温桶，电磁炉还在低功率保温。你掀开桶盖——小半桶紫菜蛋花汤，热气扑在脸上，带着紫菜和蛋花的咸香。\n\
+      if(vars._visit['长者食堂-窗口-喝汤'] > 0) return "你已经喝完了紫菜蛋花汤。";
+      return "供汤窗口的不锈钢台面上放着一只保温柜，电磁炉还在低功率保温。你打开柜门——一碗小紫菜蛋花汤，热气扑在脸上，带着紫菜和蛋花的咸香。\n\
 旁边摞着一叠不锈钢碗，食堂的标准配置。";
     },
     choices: [

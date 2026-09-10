@@ -480,7 +480,7 @@ function clearQTE() {
 // 但闪色播放的那几秒是"白给"的，不该跟着放大——所以只对输入型选项、
 // 且只对"扣掉闪色时长之后的敲字时间"乘系数，"颜色越多时限越紧"的原设计不变。
 // 调这个常量即可调松紧，设为 1 等于关闭该补时。
-const TOUCH_INPUT_FACTOR = 2;
+const TOUCH_INPUT_FACTOR = 1.5;
 const IS_TOUCH = !!(window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches);
 
 // ====== QTE 倒计时浮层（场景级 / 选项级共用；样式见 style.css 的 #qte-timer） ======
