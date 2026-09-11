@@ -16,23 +16,23 @@ Object.assign(storyData, {
       vars.currentPos = "浦锦路";
     },
     text: function(vars) {
-      var fromHospital = ["仁济南院-急诊大门", "仁济南院-救护车通道", "仁济南院-地下停车场"].indexOf(vars._lastScene) >= 0;
+      var fromHospital = ["仁济南院-门诊大门", "仁济南院-救护车通道", "仁济南院-地下停车场"].indexOf(vars._lastScene) >= 0;
       var desc = (fromHospital
         ? "你退回浦锦路上。两侧的香樟还立在原地，医院那几栋白色建筑沉默地堵在路的尽头。\n"
         : "你下了高架，沿着一条两侧种满香樟的路前进。路边的指示牌写着“仁济医院南院”，箭头指向路尽头的几栋白色建筑。\n") +
-"医院的轮廓安静得有些不真实。急诊楼前的通道上横七竖八地倒着几辆救护车和私家车，车门大开，路面上有干涸的暗红色痕迹。几个穿白大褂的身影瘫倒在草坪上，一动不动。\n\
+"医院的轮廓安静得有些不真实。门诊大楼前的广场上横七竖八地倒着几辆私家车，车门大开，路面上有干涸的暗红色痕迹。几个穿白大褂的身影瘫倒在草坪上，一动不动。\n\
 整座医院像一个被突然抽走了声音的蜂巢。";
       return desc + "\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
-        text: "从急诊正门进",
-        nextScene: "仁济南院-急诊大门",
+        text: "从门诊正门进",
+        nextScene: "仁济南院-门诊大门",
         effect: updateTime(5)
       },
       {
         text: "绕到侧面看看",
-        nextScene: "仁济南院-门诊大厅",
+        nextScene: "仁济南院-急诊大门",
         effect: updateTime(8)
       },
       {
@@ -52,55 +52,42 @@ Object.assign(storyData, {
 
   "仁济南院-急诊大门": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
     onEnter: function(vars) { vars.showZombies = true; },
-    text: function(vars) {
-      var desc = "急诊大厅的玻璃门半敞着，门上糊着报纸和胶带——有人试图封住它，又放弃了。门前的空地上倒着几具尸体，苍蝇在低空盘旋。旋转门的格子里卡着一个人，玻璃上全是血手印。\n";
-      if (vars.dd >= 6) {
-        desc += "更糟的是，医院外围的尸潮不知道什么时候围了上来——正门外的空地已经被一群游荡的丧尸堵死，挤也挤不进去。\n<span style='color: #ffaa00;'>【提示】正门已被尸潮堵死，只能另找入口。</span>";
-      } else {
-        desc += "门缝里透出黑黢黢的走廊，看不清里面。要进去，得先对付门口这些游荡的丧尸。";
-      }
-      return desc + "\n" + describeZombieWave(vars);
-    },
+    text: "你绕到了医院的侧面。急诊入口比正门窄不少，玻璃门虚掩着，门前的台阶下散落着几具尸体，苍蝇在低空盘旋——但没看到有丧尸。\n\
+安静，太安静了。",
     choices: [
       {
-        showCondition: "dd < 6",
-        text: "硬闯急诊大门",
-        condition: "!_renjiERCleared",
-        nextScene: "仁济南院-大门-记忆闪色",
-        elseScene: "仁济南院-急诊大厅"
+        text: "进去",
+        nextScene: "仁济南院-急诊大厅"
       },
       {
-        showCondition: "!hasBandage",
-        text: "翻看门口那具医护人员的遗体",
-        nextScene: "仁济南院-大门-绷带",
-        effect: updateTime(2)
+        text: "往救护车通道方向走",
+        nextScene: "仁济南院-救护车通道"
       },
       {
-        text: "去浦锦路",
-        nextScene: "仁济南院-浦锦路",
-        effect: updateTime(5)
+        text: "往门诊正门方向走",
+        nextScene: "仁济南院-门诊大门"
       }
     ]
   },
 
   "仁济南院-大门-绷带": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-急诊大门" } },
+    onEnter: { set: { positionAfterOperation: "仁济南院-门诊大门" } },
     text: "你蹲下来，翻看那具瘫倒在门口的遗体。是个年轻的护士，白大褂下摆沾满干涸的血。她的口袋里鼓鼓的——你摸出几卷还没拆封的绷带。\n\
 你轻声说了句抱歉，把绷带收好。",
     choices: [
       {
         text: "拿走绷带",
         condition: "itemCount < bagVolume",
-        nextScene: "仁济南院-急诊大门",
+        nextScene: "仁济南院-门诊大门",
         effect: { set: { hasBandage: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
         text: "算了，不拿",
-        nextScene: "仁济南院-急诊大门"
+        nextScene: "仁济南院-门诊大门"
       }
     ]
   },
@@ -108,7 +95,7 @@ Object.assign(storyData, {
   "仁济南院-大门-记忆闪色": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
     onEnter: initMemoryGame(["红", "蓝", "绿"], 9),
-    text: "你压低身子，朝急诊大厅冲过去。门口的丧尸被你的动静惊动，摇摇晃晃地围了过来。\n\
+    text: "你压低身子，朝门诊大楼的正门冲过去。门口的丧尸被你的动静惊动，摇摇晃晃地围了过来。\n\
 你必须盯紧每一个扑上来的影子，记清它们的轮廓，才能从缝隙里钻过去。",
     choices: [
       {
@@ -126,12 +113,12 @@ Object.assign(storyData, {
 
   "仁济南院-大门-记忆闪色-成功": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
-    onEnter: { set: { _renjiERCleared: true } },
-    text: "你一脚踹飞堵路的几只丧尸，成功地闯进了急诊大厅。",
+    onEnter: { set: { _renjiGateCleared: true } },
+    text: "你一脚踹飞堵路的几只丧尸，成功地闯进了门诊大厅。",
     choices: [
       {
         text: "继续",
-        nextScene: "仁济南院-急诊大厅"
+        nextScene: "仁济南院-门诊大厅"
       }
     ]
   },
@@ -143,34 +130,47 @@ Object.assign(storyData, {
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
     },
     text: function(vars) {
-      return "你没能及时看清——一只丧尸从斜刺里扑上来，爪子划过你的手臂。你踉跄着冲出重围，跌跌撞撞地摔进了急诊大厅。" + weaponBrokeText(vars);
+      return "你没能及时看清——一只丧尸从斜刺里扑上来，爪子划过你的手臂。你踉跄着冲出重围，跌跌撞撞地摔进了门诊大厅。" + weaponBrokeText(vars);
     },
     choices: [
       {
         text: "继续",
-        nextScene: "仁济南院-急诊大厅"
+        nextScene: "仁济南院-门诊大厅"
       }
     ]
   },
 
   "仁济南院-门诊大门": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
     onEnter: function(vars) { vars.showZombies = true; },
-    text: "你来到了门诊大门门口。这里遍地尸体，苍蝇在低空盘旋，但没看到有丧尸。\n\
-安静，太安静了。",
+    text: function(vars) {
+      var desc = "门诊大楼的正门半敞着，玻璃门上糊着报纸和胶带——有人试图封住它，又放弃了。门前的空地上倒着几具尸体，苍蝇在低空盘旋。旋转门的格子里卡着一个人，玻璃上全是血手印。\n";
+      if (vars.dd >= 6) {
+        desc += "更糟的是，医院外围的尸潮不知道什么时候围了上来——大门外的空地已经被一群游荡的丧尸堵死，挤也挤不进去。\n<span style='color: #ffaa00;'>【提示】大门已被尸潮堵死，只能另找入口。</span>";
+      } else {
+        desc += "门缝里透出黑黢黢的大厅，看不清里面。要进去，得先对付门口这些游荡的丧尸。";
+      }
+      return desc + "\n" + describeZombieWave(vars);
+    },
     choices: [
       {
-        text: "进去",
-        nextScene: "仁济南院-门诊大厅"
+        showCondition: "dd < 6",
+        text: "硬闯门诊正门",
+        condition: "!_renjiGateCleared",
+        nextScene: "仁济南院-大门-记忆闪色",
+        elseScene: "仁济南院-门诊大厅"
       },
       {
-        text: "往左走",
-        nextScene: "仁济南院-救护车通道"
+        showCondition: "!hasBandage",
+        text: "翻看门口那具医护人员的遗体",
+        nextScene: "仁济南院-大门-绷带",
+        effect: updateTime(2)
       },
       {
-        text: "往右走",
-        nextScene: "仁济南院-急诊大门"
+        text: "去浦锦路",
+        nextScene: "仁济南院-浦锦路",
+        effect: updateTime(5)
       }
     ]
   },
@@ -180,7 +180,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
     onEnter: function(vars) { vars.showZombies = true; },
     text: "你来到了救护车通道门口。铁门半掩着，一辆救护车堵在门口，车门大开，车内的担架翻落在地。通道深处的应急灯一闪一闪，投下忽明忽暗的影子。\n\
-这里比正门安静一些，但前方仍有两三只丧尸在游荡。",
+这里比大门安静一些，但前方仍有两三只丧尸在游荡。",
     choices: [
       {
         text: "悄悄穿过，进入急诊大厅",
@@ -385,7 +385,7 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       {
-        text: "从正门离开",
+        text: "从大门离开",
         nextScene: "仁济南院-急诊大门",
         effect: updateTime(3)
       }

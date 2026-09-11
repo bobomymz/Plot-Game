@@ -522,10 +522,21 @@ Object.assign(storyData, {
       vars.currentPos = "后门辅路";
       if (vars._backGateOpened && !vars._teacherLeft && !vars._xinDead && vars.chasedByZombies >= 3) {
         vars._xinDead = true;
+        vars._xinDeathVisit = vars._visit['建平-后门辅路'] || 0;  // 记下死亡发生的访问轮次，本次展示目击死亡
       }
     },
     text: function(vars) {
       if (vars._xinDead) {
+        var witnessed = vars._xinDeathVisit > 0 && vars._visit['建平-后门辅路'] === vars._xinDeathVisit;
+        if (witnessed) {
+          if (vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
+            return "你沿着后门辅路走，被你引来的尸群在身后穷追不舍。\n前面那辆亮着车灯的轿车旁，忻老师刚拉开车门。他看见了你，也看见了你身后漫过来的黑影，脸色骤变。\n\
+他还没来得及钻进车里，尸群已经把他团团围住。他挥着手臂挣扎，嘶喊着什么，很快就被扑倒在地，惨叫声淹没在成片的低吼里。你被剩下的丧尸撵着，连靠近的机会都没有。\n\
+——是你把它们带过来的。";
+          }
+          return "你沿着后门辅路走，被你引来的尸群在身后穷追不舍。\n路边一辆亮着车灯的轿车旁，一个中年男人刚拉开车门，就被漫过来的尸群团团围住。他挣扎了几下就被扑倒在地，惨叫声淹没在成片的低吼里。\n\
+你顾不上他，只能绕开继续跑。";
+        }
         if (vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
           return "你沿着后门辅路走。\n轿车还停在原地，车门大开，引擎已经熄了。忻老师倒靠在车旁，后颈有深深的咬伤，手里还攥着钥匙。\n\
 ——丧尸从后门漫进来了。你来晚了一步。";

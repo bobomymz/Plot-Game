@@ -184,6 +184,7 @@ const storyData = {
     _wangLaptopBooted: false,   // 安居苑203室王知筠笔记本是否已用充电器通电开机
     _wangLaptopUnlocked: false, // 安居苑203室王知筠笔记本是否已输入开机密码解锁（Dr.Earthworm）
     // 仁济医院 - 状态
+    _renjiGateCleared: false,   // 门诊正门门口尸群是否清除（浦锦路直通的大门是门诊部）
     _renjiERCleared: false,     // 急诊大厅丧尸是否清除
     _renjiLabCleared: false,    // 检验科守卫丧尸是否清除
     _renjiWardCleared: false,   // 住院部丧尸是否清除
@@ -214,6 +215,7 @@ const storyData = {
     _yifenEastCleared: false,   // 挹芬楼1F东侧走廊丧尸是否已清（强制记忆闪色）
     _teacherLeft: false,        // 忻老师是否已开车离开（跟去复旦后为 true）
     _xinDead: false,            // 忻老师是否已被丧尸杀死（ch>=3 进入后门辅路时触发）
+    _xinDeathVisit: 0,          // 忻老师死亡发生在后门辅路的第几次访问（用于首访展示目击死亡文本）
     hasMultimeter: false,       // 万用表（老吴杂物室，修14班电脑用）
     _dormCleared: false,        // 建平宿舍丧尸是否已清理（记忆闪色，安全过夜前置）
     _liuCorpse: false,          // 刘冠宇是否已死（锁存：在食堂观察到尸体后永久保持，关煤气阀不复活）
