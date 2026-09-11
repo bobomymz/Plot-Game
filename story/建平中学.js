@@ -527,7 +527,8 @@ Object.assign(storyData, {
     text: function(vars) {
       if (vars._xinDead) {
         if (vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
-          return "你沿着后门辅路走。\n轿车还停在原地，车门大开，引擎已经熄了。忻老师倒靠在车旁，后颈有深深的咬伤，手里还攥着钥匙。\n——丧尸从后门漫进来了。你来晚了一步。";
+          return "你沿着后门辅路走。\n轿车还停在原地，车门大开，引擎已经熄了。忻老师倒靠在车旁，后颈有深深的咬伤，手里还攥着钥匙。\n\
+——丧尸从后门漫进来了。你来晚了一步。";
         }
         return "你沿着后门辅路走。\n一辆轿车停在路边，车门大开，引擎熄了。一个中年男人倒靠在车旁，已经没了气息。";
       }
@@ -540,7 +541,6 @@ Object.assign(storyData, {
       var cs = [];
       if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && !vars._xinDead && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         cs.push({ text: "跟忻老师上车（去复旦）", nextScene: "建平-前往复旦", effect: function(v) { v._teacherLeft = true; v.hasCar = false; v.hasEbike = false; v.hasRustyBike = false; v.hasScooter = false; return {}; } });
-        cs.push({ text: "算了，我还有事", nextScene: "建平-食堂", effect: updateTime(2) });
       }
       cs.push({ text: "去后门", nextScene: "建平-后门", effect: updateTime(2) });
       cs.push({ text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) });
@@ -1995,10 +1995,12 @@ Object.assign(storyData, {
           desc += "\n电脑区空无一人，角落里那台电脑还亮着。";
         }
       } else {
-        desc += "\n蔡镜晓坐在那台亮着的电脑前，戴着耳机打明日方舟，屏幕上闪烁着作战画面。";
+        desc += "\n蔡镜晓坐在那台亮着的电脑前，专心致志地打着明日方舟，屏幕上闪烁着怪物和各种粒子效果。";
         if (vars._pengGalCleared) {
-          desc += "\n彭奕宸也占了旁边一台电脑，玩得正起劲——这俩家伙，一个图书馆一个教室，满学校乱窜。";
+          desc += "\n彭奕宸也占了旁边一台电脑，玩得正起劲——这俩家伙，一个图书馆一个教室，满学校乱窜。\n\
+“这都什么时候了，你俩还搁这打舟呢？”蔡镜晓说：“不然呢？能活一天是一天呗。反正丧尸不会上来。”";
         }
+        
       }
       return desc;
     },
@@ -2020,10 +2022,14 @@ Object.assign(storyData, {
 
   "建平-弘渊楼-4F-电脑区-窗边": {
     image: "images/placeholder.png" /* TODO: images/jianping/windowGushanRd.png */,
+    onEnter: function(vars) { restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
-      return "你走到电脑区靠窗的位子，拨开窗帘往下看。\n隔着操场和校门，校门口那条崮山路上，几辆歪在路边的车堵着半幅路面。行道树的树冠探过墙头，更远处的十字路口空荡荡的，只有风卷着纸屑在路面上打旋。\n你要是想离开学校，崮山路是绕不开的一段——这会儿看着还算安静，要走宜早不宜晚。\n" + describeWeather(vars);
+      return "你走到电脑区靠窗的位子，拨开窗帘往下看，顺手把椅子拖过来坐下。\n\
+隔着操场和校门，校门口那条崮山路上，几辆歪在路边的车堵着半幅路面。行道树的树冠探过墙头，更远处的十字路口空荡荡的，只有风卷着纸屑在路面上打旋。\n\
+你要是想离开学校，崮山路是绕不开的一段——这会儿看着还算安静，要走宜早不宜晚。\n" + describeWeather(vars) + restHint(vars, "你回复1点体力");
     },
     choices: [
+      { text: "在窗边再坐一会儿", nextScene: "建平-弘渊楼-4F-电脑区-窗边", effect: updateTime(1) },
       { text: "拉上窗帘，回到座位", nextScene: "建平-弘渊楼-4F-电脑区", effect: updateTime(1) }
     ]
   },
@@ -2106,17 +2112,33 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "济美楼4F音乐教室"; },
     text: function(vars) {
       if (jpPengAtPiano(vars, 3)) {
-        return "济美楼 4 楼 · 音乐教室。\n彭奕宸正坐在钢琴前，十指在琴键上轻轻起落，断断续续地弹着一首曲子。听见你进来，他头也不回地说：\"坐，这首我还没弹熟。\"";
+        return "你走进了音乐教室。\n彭奕宸正坐在钢琴前，十指在琴键上轻轻起落，断断续续地弹着一首曲子。听见你进来，他吓得一激灵，抬头看见是你，叹了口气，说：\n\
+“好久没见着活人了。我来这里弹会儿钢琴散散心，你想听吗？”";
       }
       if (vars._pengGalCleared) {
         var galLine = vars._pengGalResult === "true" ? "刚才那隐藏结局，谢了啊。" : "刚才那局，谢了啊。";
-        return "济美楼 4 楼 · 音乐教室。\n彭奕宸正靠着钢琴翻手机，看见你，咧嘴一笑：\"哟，来了。" + galLine + "\"\n\
-他拍了拍身边的凳子示意你坐，又自顾自念叨着——这家伙果然满学校乱窜，教室、图书馆、这儿，没个准点。";
+        return "彭奕宸正靠着钢琴发呆，看见你，咧嘴一笑：\"哟，你来了。" + galLine + "\"\n\
+他低头，继续弹起一首曲子。\n\
+“你这么做不怕丧尸过来吗？”\n\
+“不怕。它们怕3层楼不得累死。”\n\
+确实，济美楼的楼梯实在陡峭。";
       }
-      return "济美楼 4 楼 · 音乐教室。一架旧钢琴蒙着灰，谱架上的乐谱被风吹乱了几页。";
+      return "你走进了4楼的音乐教室————好久没来过了，之前的音乐课都在操场上。一架旧钢琴蒙着灰，谱架上的乐谱被风吹乱了几页。几排折叠椅错落有序，空无一人。";
     },
     choices: [
+      { text: "休息一下，听音乐", nextScene: "建平-济美楼-4F-音乐教室-听音乐", effect: updateTime(1) },
       { text: "回 4 楼走廊", nextScene: "建平-济美楼-4F", effect: updateTime(1) }
+    ]
+  },
+  "建平-济美楼-4F-音乐教室-听音乐": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
+    text: function(vars) {
+      return "彭奕宸十指在琴键上轻轻起落，一首《命运交响曲》从指尖流出。你挑了张折叠椅坐下，闭上眼，任由琴声把你裹住——紧绷的神经一点点松了下来。" + restHint(vars, "你回复1点体力");
+    },
+    choices: [
+      { text: "再听一会儿", nextScene: "建平-济美楼-4F-音乐教室-听音乐", effect: updateTime(1) },
+      { text: "继续", nextScene: "建平-济美楼-4F-音乐教室", effect: updateTime(1) }
     ]
   },
 
@@ -2222,7 +2244,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       var desc = "那个身影堵住了你的去路——是 Harsh，那个生前以严厉著称的年级组长。\n\
-她歪着头站在那儿，喉咙里发出低哑的嘶声。她挥臂朝你抓来——但动作很慢，你轻易就躲开了。\n\
+她歪着头站在那儿，长着血盆大口，喉咙里发出低哑的嘶声。她挥臂朝你抓来——但动作很慢，你轻易就躲开了。\n\
 可就在这时，她仰起头，发出一声凄厉的嚎叫——那声音在空旷的校园里回荡，引来四面八方的丧尸！";
       if (vars._harshEncounters >= 2) {
         desc += "\n<span style='color:#ffaa00;'>这已经是她第二次追上你了。</span>";
@@ -2262,9 +2284,12 @@ Object.assign(storyData, {
       vars._harshActive = false;
       vars._harshTrack = [];
       vars._harshLag = 6;
+      if(vars.chasedByZombies < 4) vars.chasedByZombies ++;
       return {};
     },
-    text: "你举起火把，火舌舔上她伸来的手臂——她猛地一缩，随即发出一声凄厉到不像是人能的尖啸。\n你后退半步，把火把整个掷了过去。火苗顺着她的旧外套蹿起来，很快就吞没了她。她在火光里挣扎、踉跄，最后缓缓倒了下去，不再动弹。\n那声尖啸远远传了出去——四面八方的丧尸正循声朝这边涌来。你不能在这里久留。",
+    text: "你举起火把，火舌舔上她伸来的手臂——她猛地一缩，随即发出一声凄厉到不像是人能的尖啸。\n\
+你后退半步，把火把整个掷了过去。火苗顺着她的旧外套蹿起来，很快就吞没了她。她在火光里挣扎、踉跄，最后缓缓倒了下去，不再动弹。\n\
+那声尖啸远远传了出去——四面八方的丧尸正循声朝这边涌来。你不能在这里久留。",
     choices: [
       { text: "趁尸群还没围拢，快离开", nextScene: function(vars) { return vars._harshReturn || "建平-金苹果大道"; }, effect: updateTime(2) }
     ]
@@ -2331,7 +2356,8 @@ Object.assign(storyData, {
   "建平-橘猫-相遇": {
     image: "images/placeholder.png" /* TODO: images/jianping/orangeCat.png */,
     onEnter: function(vars) { vars._catReturn = vars._lastScene || "建平-金苹果大道"; return {}; },
-    text: "一只橘猫蹲在不远处，圆滚滚的，毛色油亮。它歪头看了你两秒，才慢慢走过来，在你脚边坐下，仰头望着你，轻轻喵了一声——那眼神明摆着：你有吃的吗？",
+    text: "一只橘猫蹲在不远处，圆滚滚的，毛色油亮。它歪头看了你两秒，才慢慢走过来，在你脚边坐下，仰头望着你，轻轻喵了一声。\n\
+喵————",
     choices: function(vars) {
       var cs = jpCatFoods(vars).map(function(f) {
         return {
@@ -2347,14 +2373,14 @@ Object.assign(storyData, {
           })(f.flag)
         };
       });
-      cs.push({ text: "算了，先不给", nextScene: function(v) { return v._catReturn || "建平-金苹果大道"; } });
+      cs.push({ text: "不理它", nextScene: function(v) { return v._catReturn || "建平-金苹果大道"; } });
       return cs;
     }
   },
 
   "建平-橘猫-亲近": {
     image: "images/placeholder.png" /* TODO: images/jianping/orangeCatEat.png */,
-    text: "它凑过来，低头小口小口地把吃的咽下去，末了还意犹未尽地舔了舔嘴。\n然后它蹭了蹭你的裤腿，抬头看你一眼，转身往前走了两步，又停下回头——那意思再明显不过：跟我来。",
+    text: "它凑过来，低头小口小口地把吃的咽下去，末了还意犹未尽地舔了舔嘴。\n然后它蹭了蹭你的小腿，抬头看你一眼，转身往前走了两步，又停下回头",
     choices: [
       { text: "跟它走", nextScene: "建平-橘猫-带路", effect: updateTime(15) },
       { text: "由它去吧", nextScene: function(v) { return v._catReturn || "建平-金苹果大道"; }, effect: updateTime(1) }

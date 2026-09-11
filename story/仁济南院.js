@@ -390,7 +390,7 @@ Object.assign(storyData, {
         effect: updateTime(3)
       }
     ]
-  },
+  }, 
 
   "仁济南院-急诊大厅-战斗": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiER.png */,

@@ -440,7 +440,10 @@ Object.assign(storyData, {
 
   // ==================== 办公室（最终战） ====================
   "图书馆-办公室": {
-    image: "images/placeholder.png" /* TODO: images/library/libraryOffice.png */,
+    image: timeImage({
+      morning: "images/小区周边/图书馆/办公室.webp",
+      night: "images/小区周边/图书馆/办公室-night.webp"
+    }),
     text: "你走进办公室。房间不大，一张办公桌、一个文件柜、墙上挂着一串钥匙。窗外是图书馆的后巷。\n\
 办公桌旁边倒着一个铁皮柜子，下面压着什么——一只穿着深蓝色裤子的丧尸。柜子下面传来含混的呻吟声，被压住的那只丧尸正徒劳地试图抽出手臂。\n\
 墙上的钥匙串在日光灯下反射着光——上面挂着几把不同的钥匙，其中一把看起来像是消防通道的。",
