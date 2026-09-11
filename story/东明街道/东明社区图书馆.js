@@ -182,7 +182,7 @@ Object.assign(storyData, {
     text: function(vars) {
       if (vars.libraryCleared) return "阅览室。几排长桌整齐排列，日光灯管还在微弱地闪烁。靠窗那个座位已经空了——椅子歪着，桌上一本摊开的书被风吹得翻过了好几页。";
       return "你进入了阅览室。几排长桌整齐排列，桌面上散落着几本书和借阅登记表。日光灯管还在微弱地闪烁，发出嗡嗡的电流声。\n\
-靠窗的座位上坐着一个人——一只穿着格子衬衫的丧尸。它低着头，双手捧着一本摊开的书，像在阅读一样。\n你没出声，但它似乎感觉到了什么，翻页的动作停了一下。";
+角落的座位上坐着一个人——一只穿着格子衬衫的丧尸。它低着头，双手捧着一本摊开的书，像在阅读一样。\n你没出声，但它似乎感觉到了什么，翻页的动作停了一下。";
     },
     choices: [
       {
@@ -233,7 +233,7 @@ Object.assign(storyData, {
         elseScene: "结局-图书馆-书堆"
       },
       {
-        text: function(vars) { return "用" + meleeWeaponName(vars) + "招呼它"; },
+        text: function(vars) { return hasMeleeWeapon(vars) ? "用" + meleeWeaponName(vars) + "招呼它" : "赤手空拳迎上去"; },
         nextScene: "图书馆-阅览室-战斗",
         condition: "hasMeleeWeapon",
         elseScene: "图书馆-阅览室-徒手"

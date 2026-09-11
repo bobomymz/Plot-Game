@@ -1273,7 +1273,7 @@ Object.assign(storyData, {
       },
       {
         showCondition: "!_visit['安盛街-食品店战斗']",
-        text: function(vars) { return "抄起" + meleeWeaponName(vars) + "打它"; },
+        text: function(vars) { return hasMeleeWeapon(vars) ? "抄起" + meleeWeaponName(vars) + "打它" : "赤手空拳跟它拼了"; },
         condition: "hasMeleeWeapon",
         nextScene: "安盛街-食品店战斗",
         elseScene: "结局-被丧尸扑倒咬死"

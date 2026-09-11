@@ -65,7 +65,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "往里面走",
+        text: "起身",
         nextScene: "长者食堂-内部",
         effect: updateTime(1)
       }
@@ -316,7 +316,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "继续",
-        nextScene: "长者食堂-窗口"
+        nextScene: "长者食堂-内部"
       }
     ]
   },

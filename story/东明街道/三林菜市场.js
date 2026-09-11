@@ -128,7 +128,10 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "摸黑退回去",
+        text: function(vars) {
+          if(canSee(vars)) return "摸黑退回去";
+          return "原路退回";
+        },
         nextScene: "长者食堂-后厨",
         effect: updateTime(1)
       }
@@ -182,15 +185,14 @@ Object.assign(storyData, {
       var met = vars._visit && vars._visit["菜市场-交易点"] > 0;
       if (!met) {
         // 第一次来，不知道这里平时有人——只觉得没人
-        return "你推开门——冷库里黑黢黢的，只有发电机低沉的嗡嗡声。昏黄的灯光熄了，冷藏柜的门虚掩着，冷气从门缝里丝丝地往外冒，但人不在。\n你合上门。这里没人。";
+        return "你推开门——冷库里黑黢黢的，只有发电机低沉的嗡嗡声。昏黄的灯光熄了，冷藏柜的门虚掩着，冷气从门缝里丝丝地往外冒。\n你合上门。这里没人。";
       }
       // 见过方姐后，才知道她是分时间交易的
       return "你推开门——冷库里黑黢黢的，发电机还在嗡嗡地转，但人不在。方姐没在这里。\n你合上门，心里记下：下次挑日头正毒、外面丧尸都蔫了的时候再来碰碰运气。";
     },
     choices: [
-      { text: "离开冷库区", nextScene: function(vars) {
-        return vars._marketEntry === "员工通道" ? "菜市场-员工通道" : "菜市场-大厅";
-      }, effect: updateTime(2) }
+      { text: "去菜市场", nextScene: "菜市场-大厅", effect: updateTime(2) },
+      { text: "去员工通道", nextScene: "菜市场-员工通道", effect: updateTime(2) }
     ]
   },
 
