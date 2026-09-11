@@ -92,6 +92,7 @@ const storyData = {
     _vmReached: false,         // 玩家是否已徒手翻找过该售货机（防重复）
     wangGiveKey: false,        // 王老师是否给了钥匙
     _lastScene: "",            // 引擎自动记录的上一个场景ID（目标场景 text 用于差异化承接）
+    _seqScene: "",             // 引擎记录的记忆闪色序列属主场景ID（回溯/读档落回该场景时重播原序列）
     // 金谊广场
     _chenmoRescued: false,      // 是否在停车场救了陈默
     _jinyiSurvivorsFed: false,  // 是否给长廊幸存者送了食物

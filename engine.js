@@ -300,7 +300,7 @@ function applyMemoryFlash(vars) {
       overlay.style.background = 'transparent';
       applyScreenEffects();  // 闪色结束后恢复屏幕特效（暗角/雨滴等），不再硬编码 display:none
       vars._seqPlayed = true;
-      vars._currentSeq = [];  // 释放内存
+      // 序列不清空：回溯/读档落回本场景时需重播原序列（见 renderScene 的 _seqScene 判定）
       return;
     }
     overlay.style.background = colorMap[seq[index]] || '#ffffff';
@@ -532,7 +532,10 @@ function parseRedirectTarget(target, state) {
 function pushHistory() {
   historyStack.push({
     sceneId: currentScene,
-    gameState: snapshotState(gameState)  // 深拷贝（Set 会被正确还原为 Set）
+    gameState: snapshotState(gameState),  // 深拷贝（Set 会被正确还原为 Set）
+    // 规则节流状态必须随快照走：gameState 回到过去而节流记录留在"未来"的话，
+    // 回溯后饥饿/疲劳规则会按错位的 triggerKey 错扣、漏扣体力（同存档要存 reactiveState 的道理）
+    reactiveState: Object.assign({}, _reactiveState)
   });
   //backtrackBtn.style.display = 'inline-block';  // 有历史就显示顶部按钮
 }
@@ -544,6 +547,8 @@ function backtrack() {
   clearMemoryFlash(); // 终止记忆闪色动画
   const prev = historyStack.pop();
   gameState = prev.gameState;
+  // 旧存档的历史项没有 reactiveState：保留当前节流记录比清空安全（清空会让已付过的规则立刻重新武装）
+  if (prev.reactiveState) _reactiveState = prev.reactiveState;
   currentScene = prev.sceneId;
 
   // 历史清空则隐藏顶部按钮
@@ -551,8 +556,8 @@ function backtrack() {
     backtrackBtn.style.display = 'none';
   }
 
-  // 回溯时跳过 onEnter，避免效果重复触发
-  renderScene(currentScene, true);   // skipOnEnter = true，depth 默认为 0
+  // 回溯时跳过 onEnter，避免效果重复触发；遮罩标志（雨/丧尸包围/停电）按快照补回
+  renderRestoredScene(currentScene);   // 内部即 renderScene(sceneId, true) + 恢复遮罩
 }
 
 // 显示文本插值：把 {变量名} 替换为 gameState 当前值，并应用 _display 格式化
@@ -626,8 +631,12 @@ function renderChoices(scene, sceneId) {
     qteTimer = setTimeout(() => {
       clearQTE();
       if (onTimeout) {
-        pushHistory();
-        renderScene(parseRedirectTarget(onTimeout, gameState));
+        // 无选项的纯过场节点（travelScene 类：hidden QTE 自动播放）不入历史——
+        // 玩家在此没有任何抉择，入档会让回溯落回过场节点并无输入地重走致命路径；
+        // 有选项的 QTE 场景照常入档（超时 = 玩家没来得及选，回溯回去重选）
+        if (_choices && _choices.length > 0) pushHistory();
+        currentScene = parseRedirectTarget(onTimeout, gameState);
+        renderScene(currentScene);
       } else {
         console.warn("QTE 超时，但没有定义 onTimeout 场景");
       }
@@ -837,6 +846,7 @@ function renderChoices(scene, sceneId) {
           const target = parseRedirectTarget(timedChoice.timeoutScene, gameState);
           if (target) {
             pushHistory();
+            currentScene = target;
             renderScene(target);
           }
         } else {
@@ -930,14 +940,25 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   }
 
   // 解析进入效果（支持函数模式）
+  // ⚠ skipOnEnter 时必须连函数调用一起跳过：函数型 onEnter 普遍带直接改 gameState 的
+  // 副作用（transit 回头检测 +ch、updateTime 闭包推进时间/累计疲劳、initMemoryGame 重掷序列等），
+  // 只拦 applyEffect 拦不住这些——回溯/读档恢复时副作用会重复执行（曾有回溯落地即再次触发
+  // 全局触发器回到死亡节点、疲劳被重复扣档的 bug）。
+  const prevSeq = gameState._currentSeq;  // 闪色序列快照（识别本场景是否新生成了序列）
   let enterEffect = scene.onEnter;
   if (typeof enterEffect === "function") {
-    enterEffect = enterEffect(gameState);
+    enterEffect = skipOnEnter ? null : enterEffect(gameState);
   }
 
   // 进入效果（回溯时跳过）
   if (enterEffect && !skipOnEnter) {
     applyEffect(enterEffect);
+  }
+
+  // 记忆闪色：本场景 onEnter 生成了新序列 → 记录属主场景 ID，
+  // 供回溯/读档恢复时判断"这个序列是不是当前场景的"，避免在无关场景误播旧序列
+  if (!skipOnEnter && gameState._currentSeq && gameState._currentSeq !== prevSeq) {
+    gameState._seqScene = sceneId;
   }
 
   // 全局触发器：在状态更改后立即检查是否有触发
@@ -998,6 +1019,12 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     textArea.style.visibility = 'hidden';
   } else {
     textArea.style.visibility = 'visible';
+  }
+
+  // 回溯/读档（skipOnEnter）落回闪色战斗场景：序列保持原样（时间倒流，答案不变），但重播动画——
+  // 否则没记住序列的玩家会被永久卡死。放在全局触发器检查之后，避免重定向到的场景误播。
+  if (skipOnEnter && gameState._seqScene === sceneId && Array.isArray(gameState._currentSeq) && gameState._currentSeq.length > 0) {
+    gameState._seqPlayed = false;
   }
 
   const hasQte = typeof scene.qte === 'function' ? scene.qte(gameState) : scene.qte;

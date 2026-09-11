@@ -733,8 +733,9 @@ Object.assign(storyData, {
 
 **引擎函数（engine.js）：**
 
-- `applyMemoryFlash(vars, onDone)` — 检测 `gameState._currentSeq`，依次在 `#screen-effect-overlay` 上闪烁颜色，播完后设 `_seqPlayed = true` 并回调
+- `applyMemoryFlash(vars, onDone)` — 检测 `gameState._currentSeq`，依次在 `#screen-effect-overlay` 上闪烁颜色，播完后设 `_seqPlayed = true`（序列**保留**不清空）
 - `clearMemoryFlash()` — 清理动画定时器、重置遮罩
+- 序列属主记录：场景 onEnter 生成新序列时引擎把场景 ID 写入 `_seqScene`；**回溯/读档（skipOnEnter）落回该场景时重播原序列**（序列不变、动画重放，避免没记住的玩家被卡死；按 `_seqScene === sceneId` 判定，不会在无关场景误播旧序列）
 
 **工具函数（utils.js）：**
 
