@@ -298,7 +298,10 @@ Object.assign(storyData, {
 
   "结局-颜色错误，被丧尸咬死": {
     image: "images/zombieKnockYouDown.webp",
-    text: "你灵活地躲开丧尸的爪子，但反应慢了半拍，丧尸转身又扑了上来……你被丧尸咬死了。\n—— 结局：视力有待提高 ——"
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 闪色失败按档位概率损坏武器（共享节点，覆盖所有汇入此处的闪色失败）
+    text: function(vars) {
+      return "你灵活地躲开丧尸的爪子，但反应慢了半拍，丧尸转身又扑了上来……你被丧尸咬死了。" + weaponBrokeText(vars) + "\n—— 结局：视力有待提高 ——";
+    }
   },
 
   "结局-丧尸破门而入": {
@@ -474,8 +477,11 @@ Object.assign(storyData, {
 
   "结局-被丧尸扑倒咬死": {
     image: "images/zombieKnockYouDown.webp",
-    text: "丧尸冲了上来，猛地把你扑倒在地。没来得及反应，你就被咬死了。\n\
-—— 结局：被丧尸扑倒咬死 ——"
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 被扑倒时按档位概率损坏武器（共享节点，覆盖所有汇入此处的战斗失败/QTE超时）
+    text: function(vars) {
+      return "丧尸冲了上来，猛地把你扑倒在地。没来得及反应，你就被咬死了。" + weaponBrokeText(vars) + "\n\
+—— 结局：被丧尸扑倒咬死 ——";
+    }
   },// 会自动给出重新开始按钮
 
   "结局-1楼-party": {
@@ -1673,9 +1679,14 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "樱桃苑-4楼-失败": {
     image: "images/hurtByzombie.webp",
-    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: {hurtByZombie: true} },
-    text: "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。\n\
-剧痛让你眼前一黑。你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。",
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
+      return { add: { strength: -2, mercuryLoad: 10 }, set: {hurtByZombie: true} };
+    },
+    text: function(vars) {
+      return "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。\n\
+剧痛让你眼前一黑。你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "退回楼梯间",

@@ -577,7 +577,10 @@ Object.assign(storyData, {
 
   "结局-员工通道-迅捷丧尸咬死": {
     image: "images/zombieKnockYouDown.webp",
-    text: "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。\n\n—— 结局：员工通道的迅捷丧尸 ——"
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。" + weaponBrokeText(vars) + "\n\n—— 结局：员工通道的迅捷丧尸 ——";
+    }
   },
 
 // ===== 妈妈的遗物：门口那辆倒下的早点车（回收自己的手机） =====

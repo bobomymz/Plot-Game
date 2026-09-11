@@ -137,9 +137,14 @@ Object.assign(storyData, {
 
   "警察局-北段-持图失败": {
     image: "images/placeholder.png" /* TODO: images/警察局/northRoadRide.png */,
-    onEnter: updateTime(25, { add: { strength: -2, chasedByZombies: 1 } }),
-    text: "你一恍神，走岔了图上那条线，正撞上从车缝里扑出来的丧尸。你连滚带爬地从车底钻出去，掉头就逃，一路晃到学校门口，胳膊和小腿划了好几道血口子。\n\
-车阵还在那儿——路线记住了，但得缓一缓再试。",
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 穿行失败按档位概率损坏武器
+      return updateTime(25, { add: { strength: -2, chasedByZombies: 1 } })(vars);
+    },
+    text: function(vars) {
+      return "你一恍神，走岔了图上那条线，正撞上从车缝里扑出来的丧尸。你连滚带爬地从车底钻出去，掉头就逃，一路晃到学校门口，胳膊和小腿划了好几道血口子。\n\
+车阵还在那儿——路线记住了，但得缓一缓再试。" + weaponBrokeText(vars);
+    },
     choices: [
       { text: "退回上实南校门口", nextScene: "上实南校门口" }
     ]

@@ -138,8 +138,13 @@ Object.assign(storyData, {
 
   "仁济南院-大门-记忆闪色-失败": {
     image: "images/hurtByzombie.webp",
-    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
-    text: "你没能及时看清——一只丧尸从斜刺里扑上来，爪子划过你的手臂。你踉跄着冲出重围，跌跌撞撞地摔进了急诊大厅。",
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
+    },
+    text: function(vars) {
+      return "你没能及时看清——一只丧尸从斜刺里扑上来，爪子划过你的手臂。你踉跄着冲出重围，跌跌撞撞地摔进了急诊大厅。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "继续",
@@ -419,9 +424,14 @@ Object.assign(storyData, {
 
   "仁济南院-急诊大厅-受伤": {
     image: "images/hurtByzombie.webp",
-    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiERCleared: true } },
-    text: "它的爪子划过了你的肩膀。你踉跄着躲开，反手一击，终于把它打倒在地。\n\
-它不再动了，但你的肩膀火辣辣地疼。",
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiERCleared: true } };
+    },
+    text: function(vars) {
+      return "它的爪子划过了你的肩膀。你踉跄着躲开，反手一击，终于把它打倒在地。\n\
+它不再动了，但你的肩膀火辣辣地疼。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "继续",
@@ -681,9 +691,14 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-守卫战-受伤": {
     image: "images/hurtByzombie.webp",
-    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiLabCleared: true } },
-    text: "它抓伤了你的手臂，但你最终还是把它打倒了。\n\
-它瘫在操作台边不再动弹。你喘着粗气，手臂上火辣辣地疼。",
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiLabCleared: true } };
+    },
+    text: function(vars) {
+      return "它抓伤了你的手臂，但你最终还是把它打倒了。\n\
+它瘫在操作台边不再动弹。你喘着粗气，手臂上火辣辣地疼。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "继续搜刮",

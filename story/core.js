@@ -261,7 +261,11 @@ const storyData = {
     askRoadBullInfo: false,   // 周师傅是否已提过三林路/天台的事（防重复给情报）
     _fangWarnRoadBull: false, // 方姐是否已提醒过路霸（防重复）
     _stairKillNote: "",       // 堵路强丧尸清场旁白（武器effect写入，楼梯text展示后清除，一次性）
-    _pryTool: "",             // 上实南校天桥撬门轴实际用的工具名（选项effect写入，硬砸场景text展示）
+    _pryTool: "",             // 撬砸类动作实际用的工具名（useHeavyTool 或选项effect写入，动作场景text展示——损坏后 heavyWeaponName 会指向次优武器，不能靠它回读）
+    _weaponJustBroke: "",     // 刚损坏的武器名（tryBreakWeapon/useHeavyTool 写入，承接场景 text 用 weaponBrokeText 读后清除，一次性）
+    _heavyUseIronPipe: 0,     // 铁管撬砸类重活已用次数（上限3次损坏；武器损坏/重新获得后归零）
+    _heavyUseCane: 0,         // 拐杖撬砸类重活已用次数（上限3次损坏）
+    _heavyUseMopHandle: 0,    // 拖把杆撬砸类重活已用次数（上限1次损坏）
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除

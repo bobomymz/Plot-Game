@@ -508,7 +508,10 @@ Object.assign(storyData, {
 
   "结局-后门失守": {
     image: "images/zombieKnockYouDown.webp",
-    text: "你在丧尸群里乱了阵脚——它们扑上来，把你撕成了碎片。\n—— 结局：后门失守 ——"
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "你在丧尸群里乱了阵脚——它们扑上来，把你撕成了碎片。" + weaponBrokeText(vars) + "\n—— 结局：后门失守 ——";
+    }
   },
 
   "建平-后门辅路": {
@@ -1273,7 +1276,10 @@ Object.assign(storyData, {
 
   "结局-被老吴咬死": {
     image: "images/zombieKnockYouDown.webp",
-    text: "你没能招架住老吴的丧尸——它把你扑倒在地，一口咬在喉咙上。\n—— 结局：被老吴咬死 ——"
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "你没能招架住老吴的丧尸——它把你扑倒在地，一口咬在喉咙上。" + weaponBrokeText(vars) + "\n—— 结局：被老吴咬死 ——";
+    }
   },
 
   "建平-致真楼-2F-化学实验室": {
@@ -1929,7 +1935,10 @@ Object.assign(storyData, {
   },
   "结局-宿舍失守": {
     image: "images/zombieKnockYouDown.webp",
-    text: "你记错了颜色的顺序——宿舍里的丧尸扑了上来，把你堵在了墙角。\n—— 结局：宿舍失守 ——"
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "你记错了颜色的顺序——宿舍里的丧尸扑了上来，把你堵在了墙角。" + weaponBrokeText(vars) + "\n—— 结局：宿舍失守 ——";
+    }
   },
 
   // ==================== 弘渊楼 / 图书馆（4 层 · 1 楼梯 · 3 入口） ====================

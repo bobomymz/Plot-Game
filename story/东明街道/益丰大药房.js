@@ -527,9 +527,14 @@ Object.assign(storyData,{
 
   "益丰大药房-被咬到了": {
     image: "images/hurtByzombie.webp",
-    onEnter: { add: { strength: -1, mercuryLoad: 10 }, set: { hurtByZombie: true } },
-    text: "你慢了半拍，她的牙齿咬进了你的小臂。你痛呼一声甩开她，鲜血顺着手臂往下淌。她嘴角沾着血，又退回了阴影里。\n\
-<span style='color: #ff4444; font-style: italic;'>【系统提示】你被咬伤了！体力 -1，当前体力：{strength}。</span>",
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
+      return { add: { strength: -1, mercuryLoad: 10 }, set: { hurtByZombie: true } };
+    },
+    text: function(vars) {
+      return "你慢了半拍，她的牙齿咬进了你的小臂。你痛呼一声甩开她，鲜血顺着手臂往下淌。她嘴角沾着血，又退回了阴影里。" + weaponBrokeText(vars) + "\n\
+<span style='color: #ff4444; font-style: italic;'>【系统提示】你被咬伤了！体力 -1，当前体力：{strength}。</span>";
+    },
     choices: [
       {
         text: "继续",

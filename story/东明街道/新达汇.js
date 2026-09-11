@@ -84,10 +84,15 @@ Object.assign(storyData, {
 
   "新达汇-喷泉广场-高锦睿-被救": {
     image: "images/新达汇/被高锦睿救.webp",
-    onEnter: { set: { hurtByZombie: true, showRain: true }, add: { strength: -2, mercuryLoad: 10 } },
-    text: "你记错了——一只丧尸从你侧面扑过来，你来不及反应。\n一根金属管从你耳边呼啸而过，咚地一声砸在丧尸脸上。那只丧尸踉跄着栽进了排水沟里。\n\
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
+      return { set: { hurtByZombie: true, showRain: true }, add: { strength: -2, mercuryLoad: 10 } };
+    },
+    text: function(vars) {
+      return "你记错了——一只丧尸从你侧面扑过来，你来不及反应。\n一根金属管从你耳边呼啸而过，咚地一声砸在丧尸脸上。那只丧尸踉跄着栽进了排水沟里。\n\
 高锦睿拽着你的手把你拉了起来：\
-”别愣着啊！走吧！“\n你低头一看——手臂上多了一道抓痕。",
+”别愣着啊！走吧！“\n你低头一看——手臂上多了一道抓痕。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "跟他撤到商场入口",
@@ -4119,13 +4124,19 @@ Object.assign(storyData, {
   // ==================== 保安组暗线结局 ====================
   "结局-维修工的最后一单": {
     image: "images/zombieKnockYouDown.webp",
-    text: "他手里的活扳手比你想象的快得多。\n你倒下去之前，最后看清的是他胸前晃动的工牌。\n派工单的背面，铅笔的“正”字旁边，又多了一笔。\n\
-—— 结局：维修工的最后一单 ——"
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "他手里的活扳手比你想象的快得多。\n你倒下去之前，最后看清的是他胸前晃动的工牌。\n派工单的背面，铅笔的“正”字旁边，又多了一笔。" + weaponBrokeText(vars) + "\n\
+—— 结局：维修工的最后一单 ——";
+    }
   },
   "结局-等水的人": {
     image: "images/zombiePounceOnYou.webp",
-    text: "你没能拦住他。\n他扑上来的时候甚至没有咬你——他把脸死死埋进你的颈侧，像是要喝水一样地贴着，喉咙里的嘶声一点点平息下来，满足得像叹了口气。\n在这间不到四平米的房间里，一个渴了很多天的人，终于等到了自己走进门来的水。\n\
-—— 结局：等水的人 ——"
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "你没能拦住他。\n他扑上来的时候甚至没有咬你——他把脸死死埋进你的颈侧，像是要喝水一样地贴着，喉咙里的嘶声一点点平息下来，满足得像叹了口气。\n在这间不到四平米的房间里，一个渴了很多天的人，终于等到了自己走进门来的水。" + weaponBrokeText(vars) + "\n\
+—— 结局：等水的人 ——";
+    }
   }
 });
 

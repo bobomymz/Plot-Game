@@ -289,6 +289,60 @@ function meleeWeaponTier(vars) {
   return 0;
 }
 
+// ====== 武器耐久（方案C：损坏即降档，无连续耐久条） ======
+// 武器只有"断/不断"：断了 hasXxx=false、itemCount-1，meleeWeaponName/meleeWeaponTier 自动降档、
+// 次优武器补位；各拾取点的 !hasXxx 守卫随之重新开放——断了能回原处再淘一把，是预期行为，不是 bug。
+// _weaponJustBroke 记录刚断的武器名，承接场景 text 用 weaponBrokeText(vars) 拼装（读后清除，一次性）。
+
+var WEAPON_FLAG = { "斧头": "hasAxe", "匕首": "hasDagger", "铁管": "hasIronPipe", "拐杖": "hasCane", "拖把杆": "hasMopHandle", "美工刀": "hasCutter" };
+var COMBAT_BREAK_CHANCE = { 1: 0.5, 2: 0.25, 3: 0.1 }; // 战斗闪色失败/超时损坏概率：弱1/中2/强3 档
+var HEAVY_USE_VAR = { "铁管": "_heavyUseIronPipe", "拐杖": "_heavyUseCane", "拖把杆": "_heavyUseMopHandle" };
+var HEAVY_USE_LIMIT = { "铁管": 3, "拐杖": 3, "拖把杆": 1 }; // 撬砸重活寿命；斧头无限不计，美工刀/匕首不算重工具
+
+// 内部：损坏指定武器。置 flag=false、itemCount-1、清重活计数（重新获得后从0计）、记 _weaponJustBroke
+function breakWeaponByName(vars, name) {
+  var flag = WEAPON_FLAG[name];
+  if (!flag || !vars[flag]) return;
+  vars[flag] = false;
+  vars.itemCount = Math.max(0, vars.itemCount - 1);
+  var useVar = HEAVY_USE_VAR[name];
+  if (useVar) vars[useVar] = 0;
+  vars._weaponJustBroke = name;
+}
+
+// 战斗闪色失败/超时节点 onEnter 调用：按当前最优近战武器档位概率判定损坏，返回是否真断了。
+// 只挂在失败上（打输可能赔武器），成功不耗——不惩罚正常游玩。
+function tryBreakWeapon(vars) {
+  var name = meleeWeaponName(vars);
+  if (!name) return false;
+  var tier = meleeWeaponTier(vars);
+  if (Math.random() >= (COMBAT_BREAK_CHANCE[tier] || 0)) return false;
+  breakWeaponByName(vars, name);
+  return true;
+}
+
+// 撬砸类重活动作节点 onEnter 调用：给实际使用的重武器计一次，到上限即损坏（斧头无限不计）。
+// 返回使用的武器名；调用方应存 vars._pryTool 供 text 点名——武器断后 heavyWeaponName 会指向次优武器，不能靠它回读。
+function useHeavyTool(vars) {
+  var name = heavyWeaponName(vars);
+  if (!name) return "";
+  vars._pryTool = name;
+  var useVar = HEAVY_USE_VAR[name];
+  if (!useVar) return name; // 斧头：无限寿命
+  vars[useVar] = (vars[useVar] || 0) + 1;
+  if (vars[useVar] >= HEAVY_USE_LIMIT[name]) breakWeaponByName(vars, name);
+  return name;
+}
+
+// 断武器承接文本：有刚断的武器返回一句报废旁白并清除标记（一次性），没有返回空串。
+// 用法：结果/失败场景 text 函数末尾拼上 weaponBrokeText(vars)。
+function weaponBrokeText(vars) {
+  var name = vars._weaponJustBroke;
+  if (!name) return "";
+  vars._weaponJustBroke = "";
+  return "\n" + name + "在这场折腾里彻底报废了，你只好把它扔了。";
+}
+
 // ====== 记忆闪色辅助函数 ======
 
 function randSeq(colors, len) {
