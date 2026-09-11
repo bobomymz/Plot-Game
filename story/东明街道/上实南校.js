@@ -166,9 +166,12 @@ Object.assign(storyData, {
 
   "上实南校-天桥-硬砸": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolBridge.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: function(vars) {
+      countHeavyUse(vars, vars._pryTool); // 选项已点名具体工具，计数跟着玩家选择走
+      return { add: { chasedByZombies: 1 } };
+    },
     text: function(vars) {
-      return "你举起" + (vars._pryTool || "手中的家伙") + "狠狠砸了几下门轴。铁锈簌簌地往下掉——门终于松动了。你用力撞开门，但金属撞击声在天桥之间回荡，肯定引起了注意。";
+      return "你举起" + (vars._pryTool || "手中的家伙") + "狠狠砸了几下门轴。铁锈簌簌地往下掉——门终于松动了。你用力撞开门，但金属撞击声在天桥之间回荡，肯定引起了注意。" + weaponBrokeText(vars);
     },
     choices: [
       {
@@ -1223,10 +1226,14 @@ Object.assign(storyData, {
 
   "上实南校-后门-砸锁": {
     image: "images/placeholder.png" /* TODO: images/上实南校/backGate.png */,
-    onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
+    onEnter: function(vars) {
+      vars.showRain = true;
+      useHeavyTool(vars); // 撬砸计数：到上限武器损坏，_pryTool 记下实际工具
+      return { add: { chasedByZombies: 1 } };
+    },
     text: function(vars) {
-      let wpn = heavyWeaponName(vars) || "手中的家伙";
-      return "你举起" + wpn + "，对准锁链的连接处狠狠砸了下去。金属碰撞声在校园里回荡——第一下没砸开。你又砸了一下。锁链上的铁环变形了，但还是没断。\n值日教师被声音吸引，朝后门这边走来。\n第三下——锁链终于崩断了。铁环弹飞出去，砸在地上叮当作响。\n你拉开门，四个人冲了出去。值日教师已经走到巷子中间，离你们只有几米远——但你们已经出了校门，顺着窄巷跑了出去。它在后面追了几步，然后停住了。\n你们终于离开了学校。";
+      let wpn = vars._pryTool || heavyWeaponName(vars) || "手中的家伙";
+      return "你举起" + wpn + "，对准锁链的连接处狠狠砸了下去。金属碰撞声在校园里回荡——第一下没砸开。你又砸了一下。锁链上的铁环变形了，但还是没断。\n值日教师被声音吸引，朝后门这边走来。\n第三下——锁链终于崩断了。铁环弹飞出去，砸在地上叮当作响。\n你拉开门，四个人冲了出去。值日教师已经走到巷子中间，离你们只有几米远——但你们已经出了校门，顺着窄巷跑了出去。它在后面追了几步，然后停住了。\n你们终于离开了学校。" + weaponBrokeText(vars);
     },
     choices: [
       {

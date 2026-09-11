@@ -217,10 +217,15 @@ Object.assign(storyData, {
 
   "五金店-后巷-撬锁": {
     image: "images/小区周边/五金店/后门的丧尸.webp",
-    onEnter: updateTime(5), // 花5分钟撬锁
-    text: "你把铁棍插进门缝，用力一撬。锁头发出一声闷响，弹开了。\n\
+    onEnter: function(vars) {
+      countHeavyUse(vars, "铁管"); // 撬锁算一次重活：第3次铁管报废
+      return updateTime(5)(vars); // 花5分钟撬锁
+    },
+    text: function(vars) {
+      return "你把铁棍插进门缝，用力一撬。锁头发出一声闷响，弹开了。\n\
 你推开铁皮门——门后站着一个人。一个女人。不，一只穿着店员围裙的女丧尸，就贴在门后站着，像是早就知道你会从这里进来。\n\
-它张开了嘴。你闻到了一股熟悉的、甜腻的气味——从它的嘴里呼出的气体。",
+它张开了嘴。你闻到了一股熟悉的、甜腻的气味——从它的嘴里呼出的气体。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "屏住呼吸想后退，但太近了",
@@ -296,11 +301,13 @@ Object.assign(storyData, {
       if (broke) {
         desc += "\n铁管发出一声刺耳的金属呻吟——然后啪地一声断了。半截铁管掉在地上，叮叮当当滚到了角落。你看着手里剩下的半截，愣住了。\n\
 锁环没有断——你的铁管倒是先断了。而且刚才那声巨响……肯定引起了什么东西的注意。现在这扇铁栅栏门也没撬开，地下室的位置也暴露了，真是两头不讨好。";
-        vars.hasIronPipe = false;
-        vars.itemCount = Math.max(0, vars.itemCount - 1);
+        breakWeaponByName(vars, "铁管"); // 走统一损坏入口（顺带重置撬砸计数）；本场景已有 inline 旁白，不再拼 weaponBrokeText
+        vars._weaponJustBroke = "";
         vars._supermarketCompromised = true;
       } else {
         desc += "\n铁管在你的用力下发出嘎吱嘎吱的声音——锁环开始变形了。你又加了一把力，只听咔嚓一声，锁环崩断了。铁栅栏门吱呀一声弹开了一条缝。";
+        countHeavyUse(vars, "铁管"); // 撬开也算一次重活：若正好是第3次，门开了但铁管也报废了
+        desc += weaponBrokeText(vars);
       }
       return desc;
     },

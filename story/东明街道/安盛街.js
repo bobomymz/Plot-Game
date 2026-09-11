@@ -1483,12 +1483,15 @@ Object.assign(storyData, {
       });
       return f(vars);
     },
-    onEnter: updateTime(2, { add: { strength: -1 } }),
+    onEnter: function(vars) {
+      useHeavyTool(vars); // 撬砸计数：到上限武器损坏，_pryTool 记下实际工具（无重武器则空手，返回""不影响）
+      return updateTime(2, { add: { strength: -1 } })(vars);
+    },
     text: function(vars) {
-      return "你举起" + (heavyWeaponName(vars) || "手中的家伙") + "，对准店铺门的锁狠狠砸了下去。一下，两下——锁头终于崩开了。\n\
+      return "你举起" + (vars._pryTool || heavyWeaponName(vars) || "手中的家伙") + "，对准店铺门的锁狠狠砸了下去。一下，两下——锁头终于崩开了。\n\
 你踹开门冲了进去，反手把门顶上。\
 外面传来丧尸撞门的声音，但这扇铁门足够结实。\n\
-你穿过黑漆漆的店铺，从另一侧的门钻了出来，发现自己到了安盛街的后巷。";
+你穿过黑漆漆的店铺，从另一侧的门钻了出来，发现自己到了安盛街的后巷。" + weaponBrokeText(vars);
     },
     choices: [
       {

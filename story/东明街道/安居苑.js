@@ -104,10 +104,13 @@ function makeFlatDoor(door, floorScene, flavor, opts) {
   if (opts && opts.breakIn) {
     scenes[hub + "-砸门"] = {
       image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-砸门.webp */
-      onEnter: updateTime(3, { add: { chasedByZombies: 1 } }),
+      onEnter: function(vars) {
+        useHeavyTool(vars); // 撬砸计数：到上限武器损坏，_pryTool 记下实际工具
+        return updateTime(3, { add: { chasedByZombies: 1 } })(vars);
+      },
       text: function(vars) {
-        return "你抡起" + heavyWeaponName(vars) + "，对准门锁的位置狠狠砸下去。第一下门板凹了进去，第二下木屑崩飞，第三下，锁舌连带着半块门框弹了出去，门板撞在墙上发出一声巨响。\n\
-你停住动作侧耳听了听——楼下有拖沓的脚步声被动静吸引了。得抓紧时间。";
+        return "你抡起" + (vars._pryTool || heavyWeaponName(vars)) + "，对准门锁的位置狠狠砸下去。第一下门板凹了进去，第二下木屑崩飞，第三下，锁舌连带着半块门框弹了出去，门板撞在墙上发出一声巨响。\n\
+你停住动作侧耳听了听——楼下有拖沓的脚步声被动静吸引了。得抓紧时间。" + weaponBrokeText(vars);
       },
       choices: [
         { text: "进去", nextScene: hub }
@@ -486,10 +489,14 @@ Object.assign(storyData, {
       morning: "images/安居苑/藤蔓丧尸扑来.webp",
       night: "images/安居苑/藤蔓丧尸扑来-night.webp"
     }),
-    onEnter: { set: { showRain: true } },
+    onEnter: function(vars) {
+      vars.showRain = true;
+      useHeavyTool(vars); // 拨藤蔓算撬砸重活：计数，到上限武器损坏
+      return {};
+    },
     text: function(vars) {
-      return "你用" + heavyWeaponName(vars) + "小心地拨开藤蔓。丧尸的手臂突然挣脱了一截，朝你猛地抓来——还好你早有准备，侧身闪开了。\n\
-藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。";
+      return "你用" + (vars._pryTool || heavyWeaponName(vars)) + "小心地拨开藤蔓。丧尸的手臂突然挣脱了一截，朝你猛地抓来——还好你早有准备，侧身闪开了。\n\
+藤蔓被你这么一搅，松动了些。丧尸大半个身子都滑了出来，在地上扭动着朝你爬过来。" + weaponBrokeText(vars);
     },
     choices: [
       {
@@ -1744,11 +1751,12 @@ Object.assign(storyData,
       image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-401-破门.webp */
       onEnter: function(vars) {
         vars._flat401 = 1;
+        useHeavyTool(vars); // 撬砸计数：到上限武器损坏，_pryTool 记下实际工具
         return updateTime(5, { add: { chasedByZombies: 1 } })(vars);
       },
       text: function(vars) {
-        return "你把" + heavyWeaponName(vars) + "插进门缝，一点点撬。铁丝先崩断了，接着是抵门的桌腿——桌椅纸箱轰隆一声塌下来，动静在楼道里久久回荡。\n\
-你屏住呼吸听了一会儿。楼下似乎有什么东西被惊动了，拖沓的脚步声正在靠近。门，开了。";
+        return "你把" + (vars._pryTool || heavyWeaponName(vars)) + "插进门缝，一点点撬。铁丝先崩断了，接着是抵门的桌腿——桌椅纸箱轰隆一声塌下来，动静在楼道里久久回荡。\n\
+你屏住呼吸听了一会儿。楼下似乎有什么东西被惊动了，拖沓的脚步声正在靠近。门，开了。" + weaponBrokeText(vars);
       },
       choices: [
         { text: "进去", nextScene: "三林安居苑-7号楼-401" }

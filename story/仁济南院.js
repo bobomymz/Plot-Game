@@ -628,11 +628,18 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-撬门-失败": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-检验科" } },
-    text: "铁棍滑了一下，你一个趔趄，手被门边划出一道口子。门还是纹丝不动。\n\
-你喘了几口气——这锁比想象中结实。",
+    onEnter: function(vars) {
+      vars.positionAfterOperation = "仁济南院-检验科";
+      countHeavyUse(vars, "铁管"); // 每次撬算一次重活：第3次铁管报废
+      return {};
+    },
+    text: function(vars) {
+      return "铁棍滑了一下，你一个趔趄，手被门边划出一道口子。门还是纹丝不动。\n\
+你喘了几口气——这锁比想象中结实。" + weaponBrokeText(vars);
+    },
     choices: [
       {
+        showCondition: "hasIronPipe", // 铁管撬报废了就没了再试的本钱
         text: "再撬一次",
         nextScene: "仁济南院-检验科-撬门",
         effect: updateTime(1)
@@ -647,9 +654,14 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-撬开了": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
-    onEnter: { set: { _renjiNoise: true, positionAfterOperation: "仁济南院-检验科" } },
-    text: "门锁“啪”地一声弹开了——你的胳膊酸得几乎抬不起来。动静不小，但好歹是把门撬开了。\n\
-你冲进去，迎面就是那只丧尸。",
+    onEnter: function(vars) {
+      countHeavyUse(vars, "铁管"); // 撬开的这一下也算：可能门开了铁管也到头了
+      return { set: { _renjiNoise: true, positionAfterOperation: "仁济南院-检验科" } };
+    },
+    text: function(vars) {
+      return "门锁“啪”地一声弹开了——你的胳膊酸得几乎抬不起来。动静不小，但好歹是把门撬开了。\n\
+你冲进去，迎面就是那只丧尸。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "迎战这只丧尸",
@@ -980,9 +992,14 @@ Object.assign(storyData, {
 
   "仁济南院-住院部走廊-受伤": {
     image: "images/hurtByzombie.webp",
-    onEnter: { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiWardCleared: true } },
-    text: "你被它抓了一下，但最终还是把它打倒了。\n\
-伤口火辣辣地疼。",
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiWardCleared: true } };
+    },
+    text: function(vars) {
+      return "你被它抓了一下，但最终还是把它打倒了。\n\
+伤口火辣辣地疼。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "继续",
@@ -1238,9 +1255,14 @@ Object.assign(storyData, {
 
   "仁济南院-太平间-黑皮丧尸-受伤": {
     image: "images/hurtByzombie.webp",
-    onEnter: { add: { strength: -3, mercuryLoad: 15 }, set: { hurtByZombie: true, _morgueCleared: true } },
-    text: "它的力气大得惊人，你被它撞在墙上，肩膀一阵剧痛。但你还是拼尽全力把它解决了。\n\
-它瘫在地上不动了。你靠着墙，剧烈地喘着气。",
+    onEnter: function(vars) {
+      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
+      return { add: { strength: -3, mercuryLoad: 15 }, set: { hurtByZombie: true, _morgueCleared: true } };
+    },
+    text: function(vars) {
+      return "它的力气大得惊人，你被它撞在墙上，肩膀一阵剧痛。但你还是拼尽全力把它解决了。\n\
+它瘫在地上不动了。你靠着墙，剧烈地喘着气。" + weaponBrokeText(vars);
+    },
     choices: [
       {
         text: "继续",

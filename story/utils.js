@@ -321,17 +321,24 @@ function tryBreakWeapon(vars) {
   return true;
 }
 
-// 撬砸类重活动作节点 onEnter 调用：给实际使用的重武器计一次，到上限即损坏（斧头无限不计）。
-// 返回使用的武器名；调用方应存 vars._pryTool 供 text 点名——武器断后 heavyWeaponName 会指向次优武器，不能靠它回读。
+// 给指定重武器计一次撬砸，到上限即损坏（斧头/匕首不在表中，无限寿命直接返回）。
+// 用于选项已点名具体武器的场景（如上实南校天桥"用铁管撬开/用拐杖撬开"），计数跟着玩家实际选择走。
+function countHeavyUse(vars, name) {
+  var useVar = HEAVY_USE_VAR[name];
+  if (!useVar) return name;
+  vars[useVar] = (vars[useVar] || 0) + 1;
+  if (vars[useVar] >= HEAVY_USE_LIMIT[name]) breakWeaponByName(vars, name);
+  return name;
+}
+
+// 撬砸类重活动作节点 onEnter 调用：给当前最优重武器计一次，到上限即损坏（斧头无限不计）。
+// 返回使用的武器名并写入 vars._pryTool 供 text 点名——武器断后 heavyWeaponName 会指向次优武器，不能靠它回读。
+// 选项已点名具体武器时不要用这个，改用 countHeavyUse(vars, vars._pryTool)。
 function useHeavyTool(vars) {
   var name = heavyWeaponName(vars);
   if (!name) return "";
   vars._pryTool = name;
-  var useVar = HEAVY_USE_VAR[name];
-  if (!useVar) return name; // 斧头：无限寿命
-  vars[useVar] = (vars[useVar] || 0) + 1;
-  if (vars[useVar] >= HEAVY_USE_LIMIT[name]) breakWeaponByName(vars, name);
-  return name;
+  return countHeavyUse(vars, name);
 }
 
 // 断武器承接文本：有刚断的武器返回一句报废旁白并清除标记（一次性），没有返回空串。

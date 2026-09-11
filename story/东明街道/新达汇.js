@@ -492,13 +492,22 @@ Object.assign(storyData, {
       {
         text: "用铁管撬开味千拉面的卷帘门",
         nextScene: "新达汇-1F味千拉面",
-        effect: updateTime(3, { set: { _ramenVisited: true } }),
+        effect: function(vars) {
+          // 撬卷帘门算一次重活：用最好的杠杆（斧头使不上撬劲，不参与；断了在味千拉面店内承接）
+          vars._pryTool = vars.hasIronPipe ? "铁管" : vars.hasCane ? "拐杖" : "拖把杆";
+          countHeavyUse(vars, vars._pryTool);
+          return updateTime(3, { set: { _ramenVisited: true } })(vars);
+        },
         showCondition: "(hasIronPipe || hasCane || hasMopHandle) && !_ramenVisited && chasedByZombies <= 1",
       },
       {
         text: "快撬开味千拉面的卷帘门躲进去！",
         nextScene: "新达汇-1F味千拉面",
-        effect: updateTime(2, { set: { _ramenVisited: true } }),
+        effect: function(vars) {
+          vars._pryTool = vars.hasIronPipe ? "铁管" : vars.hasCane ? "拐杖" : "拖把杆";
+          countHeavyUse(vars, vars._pryTool);
+          return updateTime(2, { set: { _ramenVisited: true } })(vars);
+        },
         showCondition: "(hasIronPipe || hasCane || hasMopHandle) && !_ramenVisited && chasedByZombies >= 2",
       },
       {
@@ -580,6 +589,7 @@ Object.assign(storyData, {
       var desc = "你钻进卷帘门，来到味千拉面店内。\n灶台上的汤锅已经冷透了，汤面凝了一层白色的油脂。后厨的操作台上散落着几包未拆封的袋装拉面——不是店里的货，看起来是员工自己囤的。";
       if (vars._ramenVisited) desc += "\n你之前已经来过这里，卷帘门还维持着你离开时的样子。";
       desc += "\n" + describeZombieWave(vars);
+      desc += weaponBrokeText(vars); // 撬卷帘门把工具撬报废了（仅损坏发生的当次进入会拼上这句）
       return desc;
     },
     choices: [
@@ -1050,9 +1060,12 @@ Object.assign(storyData, {
 
   "新达汇-电梯厅贩卖机-砸开": {
     image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
-    onEnter: { set: { vmSmashed: true }, add: { strength: 2, chasedByZombies: 1 } },
+    onEnter: function(vars) {
+      useHeavyTool(vars); // 撬砸计数：到上限武器损坏，_pryTool 记下实际工具
+      return { set: { vmSmashed: true }, add: { strength: 2, chasedByZombies: 1 } };
+    },
     text: function(vars) {
-      return "你抡起" + heavyWeaponName(vars) + "对准断口补了几下，整块玻璃哗啦啦塌下来。两瓶矿泉水顺着货道骨碌碌滚落，你一把捞起来，拧开灌了几大口——冰凉的甜水淌进喉咙，力气回了几分。\n可碎玻璃和摔罐的哐当声在空旷的商场里荡出去老远，铁栏后的丧尸被这动静勾了过来。<span style='color: #00fbffff; font-style: italic;'>【体力 +2 · 追击 +1】</span>";
+      return "你抡起" + (vars._pryTool || heavyWeaponName(vars)) + "对准断口补了几下，整块玻璃哗啦啦塌下来。两瓶矿泉水顺着货道骨碌碌滚落，你一把捞起来，拧开灌了几大口——冰凉的甜水淌进喉咙，力气回了几分。\n可碎玻璃和摔罐的哐当声在空旷的商场里荡出去老远，铁栏后的丧尸被这动静勾了过来。<span style='color: #00fbffff; font-style: italic;'>【体力 +2 · 追击 +1】</span>" + weaponBrokeText(vars);
     },
     choices: [
       { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },

@@ -916,6 +916,9 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   gameState.showRain = false;
   gameState.showZombies = false;
   gameState.showPowerOut = false;
+  // 武器损坏标记同样每场景清零：onEnter（tryBreakWeapon/useHeavyTool）写入，本场景 text 用 weaponBrokeText 承接，
+  // 保证"断了"的旁白只出现在损坏发生的那个场景，不会隔几个场景突然弹出旧账
+  gameState._weaponJustBroke = "";
   // 标记当前场景是否户外：供 updateTime 判断"连续移动疲劳"只累计户外跋涉
   gameState._isOutdoor = !!scene.outdoor;
 

@@ -40,6 +40,7 @@ explorer index.html
 | computed/每小时规则/屏幕特效/全局触发器 | core.js `_reactive` / `_screenEffects` / `_globalTriggers` |
 | 引擎支持的条件/QTE/闪色/输入框写法 | CLAUDE.md 数据格式节 → 拿不准再读 engine.js |
 | 工具函数/工厂用法（updateTime/timeImage/travelScene/initMemoryGame/hasMeleeWeapon…） | utils.js（函数旁注释即文档） |
+| 武器耐久规则/新战斗或撬砸节点怎么挂损耗 | CLAUDE.md「武器耐久」节 + utils.js 武器耐久节 |
 | 某区域剧情/场景结构 | 对应 story 文件 + 顶部注释 |
 | 路网/立交/出城衔接 | 设计细节.md |
 | NPC 人设/去向 | 人物档案.md + 对应场景 |
@@ -67,7 +68,7 @@ story/
 images/             → 场景图（PNG/JPG），按区域存放
 ```
 
-### 核心架构：数据驱动
+## 核心架构：数据驱动
 
 游戏是**纯数据驱动**的：引擎读取 `storyData`（一个大对象），每个场景是 `storyData` 的一个 key。
 
@@ -585,6 +586,7 @@ Object.assign(storyData, {
   ]
 }
 ```
+## 变量
 
 ### 游戏状态变量
 
@@ -632,6 +634,7 @@ Object.assign(storyData, {
 - 回溯、QTE 超时、全局触发器跳转同样会更新 `_lastScene`（取真实离开的那个场景）。
 - 引擎不参与业务逻辑，只负责记账；接不承接、承接什么完全由剧情数据决定。
 
+## 通用方法
 ### 物品管理
 
 物品相关的 flag 变量（`hasBroom` 等）和 `itemCount` 计数是**手动维护**的——效果中没有自动管理计数的逻辑。
@@ -640,6 +643,37 @@ Object.assign(storyData, {
 
 - `set: { hasXxx: true }`
 - `add: { itemCount: 1 }`
+
+### 武器耐久（方案C：损坏即降档，无连续耐久条）
+
+武器只有"断/不断"两种状态。断了 = `hasXxx` 置 false、`itemCount` -1——`meleeWeaponName`/`meleeWeaponTier` 自动降档、
+次优武器补位；各拾取点的 `!hasXxx` 守卫随之重新开放。**武器断了能回原拾取点再拿一把，是预期行为，不是 bug，勿修。**
+
+**损耗规则表：**
+
+| 触发时机 | 弱（美工刀/拖把杆） | 中（拐杖/铁管） | 强（匕首/斧头） |
+|---|---|---|---|
+| 战斗闪色失败/超时 | 50% 断 | 25% 断 | 10% 断 |
+| 撬砸类重活（砸锁/撬门/拨藤蔓） | 1 次断 | 3 次断 | 无限 |
+
+**辅助函数（utils.js 武器耐久节）：**
+
+| 函数 | 用法 |
+|---|---|
+| `tryBreakWeapon(vars)` | 闪色战斗**失败/超时**节点 onEnter 里调用，按当前最优近战武器档位概率损坏。只挂失败，成功不耗。死亡结局节点同样可加（回溯会还原，纯黑色幽默风味） |
+| `useHeavyTool(vars)` | 撬砸动作节点 onEnter 里调用：给最优重武器（`heavyWeaponName`）计一次，写入 `_pryTool` 供 text 点名 |
+| `countHeavyUse(vars, name)` | 选项已点名具体武器时改用这个（如上实南校天桥"用铁管撬开"），计数跟着玩家实际选择走 |
+| `weaponBrokeText(vars)` | text 函数末尾拼上：有刚断的武器返回一句报废旁白（一次性），没有返回空串 |
+| `breakWeaponByName(vars, name)` | 剧情杀式损坏的统一入口（如联华超市铁管撬门），顺带重置重活计数 |
+
+**写法规范：**
+
+1. **失败节点承接**：`onEnter: function(vars) { tryBreakWeapon(vars); return { add: {...} }; }`，text 转函数末尾 `+ weaponBrokeText(vars)`。
+2. **撬砸节点承接**：`useHeavyTool(vars)` 后，text 里点名用 `vars._pryTool || heavyWeaponName(vars)`——武器断后 `heavyWeaponName` 已指向次优武器，直接用它回读会张冠李戴。
+3. **共享死亡结局**（"结局-被丧尸扑倒咬死"等）已在节点上统一挂了 `tryBreakWeapon`——新的战斗失败分支直接跳这些节点即自动获得耐久判定，无需重复处理。
+4. `_weaponJustBroke` 由**引擎每场景渲染前自动清零**（同 `showRain`），所以承接旁白只会出现在损坏发生的那个场景；别手动存它做长期状态。
+5. 重活计数 `_heavyUseIronPipe/_heavyUseCane/_heavyUseMopHandle` 已注册在 `_variables`；武器损坏/重新获得时自动归零。斧头不参与计数（无限寿命）；美工刀/匕首不算重工具，撬砸门槛本就不认它们。
+6. 例外节点：仁济太平间外的"结局-煤气中毒"是 gasIndex 全局触发器的目标，非纯战斗失败，**不要**挂耐久判定；专属剧情杀（联华超市撬锁）用 `breakWeaponByName` 单独立绘，不走概率。
 
 ### 整理整理自由入口（"🎒整理一下物品"）
 
@@ -811,9 +845,9 @@ C类（户外暴露地形）：绝不出现 — 街道、十字路口、高架�
 ## Update Plot
 ### 添加新剧情
 
-1. 新建 `story/xxx.js` 文件，也可以把story分出更细的一层子目录
-2. 用 `Object.assign(storyData, { ... })` 添加场景
-3. 在 `index.html` 的 `<!-- 先加载剧情数据，再加载引擎 -->` 区域按顺序添加 `<script>` 标签（**必须在** **`engine.js`** **之前**）
+1. 可选：新建 `story/xxx.js` 文件，也可以把story分出更细的一层子目录
+2. 可选：用 `Object.assign(storyData, { ... })` 添加场景
+3. 可选：在 `index.html` 的 `<!-- 先加载剧情数据，再加载引擎 -->` 区域按顺序添加 `<script>` 标签（**必须在** **`engine.js`** **之前**）
 4. 如果涉及新地点，在 `images/` 下创建对应目录存放场景图，图片一般由用户进行生成，AI只需写入images/placeholder.png进行占位
 5. 注意文本表述：开放式场景选路时，选项不要用相对方位词，如“继续走”“往回走”，应该用绝对方位词，如“往北走”。剧情文本text里不要写\n\n；剧情描述和选项不要剧透；text文本里的引号必须用“”。
 6. 任何物品获取前需判断它是否占背包容量（仅立刻使用的食物、饮料、急救药品和交通工具等不占）。获取物品时需检查背包容量，参考”showCondition vs condition 最佳实践”。
