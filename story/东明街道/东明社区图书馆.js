@@ -215,7 +215,10 @@ Object.assign(storyData, {
   },
 
   "图书馆-阅览室-看书名": {
-    image: "images/placeholder.png" /* TODO: images/library/libraryReadingRoom.png */,
+    image: timeImage({
+      morning: "images/小区周边/图书馆/阅览室-你在看什么.webp",
+      night: "images/小区周边/图书馆/阅览室-你在看什么-night.webp"
+    }),
     text: "你眯起眼睛，试图看清它手里的书脊。《霍乱时期的爱情》。\n真讽刺。\n你再往前凑了半步——椅子突然发出了吱嘎一声。\n格子衬衫丧尸猛地合上书，站了起来。",
     choices: [
       {
@@ -226,7 +229,10 @@ Object.assign(storyData, {
   },
 
   "图书馆-阅览室-惊醒": {
-    image: "images/placeholder.png" /* TODO: images/library/libraryZombieStandUp.png */,
+    image: timeImage({
+      morning: "images/小区周边/图书馆/阅览室-惊醒.webp",
+      night: "images/小区周边/图书馆/阅览室-惊醒-night.webp"
+    }),
     text: "格子衬衫丧尸直直地盯着你。它合上书，朝你迈了一步——手里的书攥得紧紧的，像是要拿它砸你。\n随后它低吼一声，朝你扑了过来。",
     choices: [
       {
@@ -251,7 +257,9 @@ Object.assign(storyData, {
   "图书馆-阅览室-书架倒": {
     image: "images/placeholder.png" /* TODO: images/library/libraryFallingShelf.png */,
     onEnter: { add: { strength: -1 } },
-    text: "你侧身闪过它的扑击，肩膀狠狠撞在旁边的书架上。书架晃了晃——你又加了一把力。\n沉重的书架朝格子衬衫丧尸倒了下去，把它连带着旁边的桌椅一起压在了下面。书页像雪花一样在空中飞舞。\n书架下面传来低沉的嘶吼声，但很快就没有动静了。",
+    text: "你侧身闪过它的扑击，肩膀狠狠撞在旁边的书架上。书架晃了晃——你又加了一把力。\n\
+沉重的书架朝格子衬衫丧尸倒了下去，把它连带着旁边的桌椅一起压在了下面。书页像雪花一样在空中飞舞。\n\
+书架下面传来低沉的嘶吼声，但很快就没有动静了。",
     choices: [
       {
         text: "穿过阅览室继续前进",
@@ -324,8 +332,12 @@ Object.assign(storyData, {
 
   // ==================== 藏书区入口 ====================
   "图书馆-藏书区入口": {
-    image: "images/placeholder.png" /* TODO: images/library/libraryBookshelf.png */,
-    text: "你站在藏书区的入口。两排高耸的书架之间是一条狭窄的通道，尽头拐向办公室。\n身后传来拖沓的脚步声——大厅里那只志愿者丧尸，或者别的什么东西，跟上来了。声音越来越近。",
+    image: timeImage({
+      morning: "images/小区周边/图书馆/藏书区.webp",
+      night: "images/小区周边/图书馆/藏书区-night.webp"
+    }),
+    text: "你站在藏书区的入口。左边是一些高耸的书架，面前一条通道直通办公室。\n\
+身后传来拖沓的脚步声——大厅里那只志愿者丧尸，或者别的什么东西，跟上来了。声音越来越近。",
     qte: {
       timeout: "6000 - chasedByZombies * 500",
       hidden: true,
@@ -338,7 +350,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "沿着右边主通道快跑",
+        text: "去右边的主通道",
         nextScene: "图书馆-藏书区-右",
         effect: updateTime(1)
       },
@@ -430,7 +442,7 @@ Object.assign(storyData, {
   "图书馆-办公室": {
     image: "images/placeholder.png" /* TODO: images/library/libraryOffice.png */,
     text: "你走进办公室。房间不大，一张办公桌、一个文件柜、墙上挂着一串钥匙。窗外是图书馆的后巷。\n\
-办公桌旁边倒着一个铁皮柜子，下面压着什么——一条穿着深蓝色裤子的腿。柜子下面传来含混的呻吟声，被压住的那只丧尸正徒劳地试图抽出手臂。\n\
+办公桌旁边倒着一个铁皮柜子，下面压着什么——一只穿着深蓝色裤子的丧尸。柜子下面传来含混的呻吟声，被压住的那只丧尸正徒劳地试图抽出手臂。\n\
 墙上的钥匙串在日光灯下反射着光——上面挂着几把不同的钥匙，其中一把看起来像是消防通道的。",
     choices: [
       {
