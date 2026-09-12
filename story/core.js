@@ -262,6 +262,7 @@ const storyData = {
     _quackDay: 0,             // 郎中方位最近一次刷新所在天（跨天重摇）
     _quackTradedDay: 0,       // 上次跟郎中交易的天（同一天防重复买）
     askRoadBullInfo: false,   // 周师傅是否已提过三林路/天台的事（防重复给情报）
+    _metZhouSupermarket: false, // 是否已在联华超市仓库遇见周师傅翻找鸟食（Day2中午一次性氛围彩蛋，防重复触发）
     _fangWarnRoadBull: false, // 方姐是否已提醒过路霸（防重复）
     _stairKillNote: "",       // 堵路强丧尸清场旁白（武器effect写入，楼梯text展示后清除，一次性）
     _pryTool: "",             // 撬砸类动作实际用的工具名（useHeavyTool 或选项effect写入，动作场景text展示——损坏后 heavyWeaponName 会指向次优武器，不能靠它回读）
