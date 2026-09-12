@@ -343,7 +343,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-停车场-救完": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.webp */,
+    image: "images/youKillZombies.webp",
     text: function(vars) {
       var desc = "你和陈默合力清掉了挡路的几只丧尸。他靠在面包车上喘了几口气，用袖子擦了擦菜刀上的血。\n";
       if (vars._visit['初遇陈默']) {
@@ -511,7 +511,7 @@ Object.assign(storyData, {
   },
 
   "金谊广场-正门硬闯-成功": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/正门硬闯.jpg */,
+    image: "images/youKillZombies.webp",
     text: function(vars) {
       var lead = "你撞开一只当先扑来的丧尸，";
       if (vars._gateWeapon === "斧") lead = "你抡起斧头，把扑到门前的丧尸劈开一道缺口，";

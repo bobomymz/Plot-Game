@@ -8,7 +8,20 @@ Object.assign(storyData, {
 
   "仁济南院-浦锦路": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiRoad.png */,
+    image: function(vars) {
+      if(vars.weather == '雨') {
+        var f = timeImage({
+          morning: "images/仁济南院/浦锦路远望-雨.webp",
+          night: "images/仁济南院/浦锦路远望-雨-night.webp"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/仁济南院/浦锦路远望.webp",
+        night: "images/仁济南院/浦锦路远望-night.webp"
+      });
+      return f(vars);
+    },
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentArea = "仁济南院";
@@ -73,7 +86,10 @@ Object.assign(storyData, {
   },
 
   "仁济南院-大门-绷带": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
+    image: timeImage({
+      morning: "images/仁济南院/护士尸体.webp",
+      night: "images/仁济南院/护士尸体-night.webp"
+    }),
     onEnter: { set: { positionAfterOperation: "仁济南院-门诊大门" } },
     text: "你蹲下来，翻看那具瘫倒在门口的遗体。是个年轻的护士，白大褂下摆沾满干涸的血。她的口袋里鼓鼓的——你摸出几卷还没拆封的绷带。\n\
 你轻声说了句抱歉，把绷带收好。",
@@ -92,7 +108,7 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-大门-记忆闪色": {
+  "仁济南院-门诊大门-记忆闪色": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
     onEnter: initMemoryGame(["红", "蓝", "绿"], 9),
     text: "你压低身子，朝门诊大楼的正门冲过去。门口的丧尸被你的动静惊动，摇摇晃晃地围了过来。\n\
@@ -102,17 +118,17 @@ Object.assign(storyData, {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝2绿2黄1白" },
         condition: checkFlashAnswer,
-        nextScene: "仁济南院-大门-记忆闪色-成功",
+        nextScene: "仁济南院-门诊大门-记忆闪色-成功",
         effect: updateTime(3),
-        elseScene: "仁济南院-大门-记忆闪色-失败",
+        elseScene: "仁济南院-门诊大门-记忆闪色-失败",
         timeout: 20000,
-        timeoutScene: "仁济南院-大门-记忆闪色-失败"
+        timeoutScene: "仁济南院-门诊大门-记忆闪色-失败"
       }
     ]
   },
 
-  "仁济南院-大门-记忆闪色-成功": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
+  "仁济南院-门诊大门-记忆闪色-成功": {
+    image: "images/youKillZombies.webp",
     onEnter: { set: { _renjiGateCleared: true } },
     text: "你一脚踹飞堵路的几只丧尸，成功地闯进了门诊大厅。",
     choices: [
@@ -123,8 +139,8 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-大门-记忆闪色-失败": {
-    image: "images/hurtByzombie.webp",
+  "仁济南院-门诊大门-记忆闪色-失败": {
+    image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
@@ -142,8 +158,11 @@ Object.assign(storyData, {
 
   "仁济南院-门诊大门": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
-    onEnter: function(vars) { vars.showZombies = true; },
+    image: timeImage({
+      morning: "images/仁济南院/门诊大门.webp",
+      night: "images/仁济南院/门诊大门-night.webp"
+    }),
+    onEnter: function(vars) { vars.showZombies = vars.showRain = true; },
     text: function(vars) {
       var desc = "门诊大楼的正门半敞着，玻璃门上糊着报纸和胶带——有人试图封住它，又放弃了。门前的空地上倒着几具尸体，苍蝇在低空盘旋。旋转门的格子里卡着一个人，玻璃上全是血手印。\n";
       if (vars.dd >= 6) {
@@ -158,7 +177,7 @@ Object.assign(storyData, {
         showCondition: "dd < 6",
         text: "硬闯门诊正门",
         condition: "!_renjiGateCleared",
-        nextScene: "仁济南院-大门-记忆闪色",
+        nextScene: "仁济南院-门诊大门-记忆闪色",
         elseScene: "仁济南院-门诊大厅"
       },
       {

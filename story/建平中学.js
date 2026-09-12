@@ -348,7 +348,7 @@ Object.assign(storyData, {
   },
 
   "建平-前门-清场": {
-    image: "images/placeholder.png" /* TODO: images/jianping/frontGate.png */,
+    image: "images/youKillZombies.webp",
     onEnter: { set: { _frontGateCleared: true, showZombies: true, currentPos: "前门" } },
     text: "你趁丧尸合围的间隙闪身冲过了前门，一头扎进校园。\n身后的丧尸扑了个空，被你甩在门外——它们一时半会儿追不上来。",
     choices: [
@@ -449,7 +449,7 @@ Object.assign(storyData, {
   },
 
   "建平-后门-斧头-胜利": {
-    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    image: "images/youKillZombies.webp",
     text: "你抡起斧头一路劈砍，斧刃所过之处，丧尸纷纷倒下。\n你踩着满地的残肢和污血，从门边杀了出去，踏上后门辅路。身后的铁门内外，剩余的丧尸嘶吼着，一时追不上来。",
     choices: [
       { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
@@ -474,7 +474,7 @@ Object.assign(storyData, {
   },
 
   "建平-后门-匕首-胜利": {
-    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    image: "images/youKillZombies.webp",
     text: "你握着匕首左冲右突，专挑丧尸的下颚和太阳穴下手。\n等回过神来，你已经从门边挤了出来，踏上后门辅路。身后的铁门内外乱作一团，丧尸们一时追不上来。",
     choices: [
       { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
@@ -498,7 +498,7 @@ Object.assign(storyData, {
     ]
   },
   "建平-后门-开打-胜利": {
-    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    image: "images/youKillZombies.webp",
     text: "你贴着门框闪身，避开当头扑来的一只丧尸，顺势把另一只撞进了尸堆里。趁它们纠缠成一团的空当，你从门边挤了出去，跌跌撞撞踏上后门辅路。\n\
 身后的铁门内外乱作一团——丧尸们互相挤撞着，一时半会儿追不上来。",
     choices: [
@@ -911,7 +911,7 @@ Object.assign(storyData, {
   },
 
   "建平-挹芬楼-1F-西侧走廊-清场": {
-    image: "images/placeholder.png",
+    image: "images/youKillZombies.webp",
     text: "你抄起墙边一截断掉的水管横扫出去，把扑到面前的丧尸逼开。几只丧尸被砸得连连后退，绊在一起跌倒在地。\n等走廊重新安静下来，你喘着气——这一段总算清了。",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
@@ -963,7 +963,7 @@ Object.assign(storyData, {
   },
 
   "建平-挹芬楼-1F-东侧走廊-清场": {
-    image: "images/placeholder.png",
+    image: "images/youKillZombies.webp",
     text: "你侧身躲过楼梯口扑来的丧尸，顺势一脚把它踹翻，又用肩膀撞开了从休息区方向挤过来的另一只。\n等走廊安静下来，你浑身是汗——这一段算是清干净了。",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
@@ -1938,7 +1938,7 @@ Object.assign(storyData, {
   },
 
   "建平-宿舍-内部-清场": {
-    image: "images/placeholder.png",
+    image: "images/youKillZombies.webp",
     text: "你贴着墙根冲进走廊，接连闪过几具丧尸的扑抓，一路把散在各处的它们引到楼梯口，反手将防火门猛地带上。\n门后传来沉闷的撞击声，渐渐弱了下去。你靠着门喘匀了气——这栋宿舍总算安静了。",
     choices: [
       { text: "继续", nextScene: "建平-宿舍-内部", effect: updateTime(1) }
