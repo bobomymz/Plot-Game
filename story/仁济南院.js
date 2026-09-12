@@ -67,12 +67,12 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
     onEnter: function(vars) { vars.showZombies = true; },
-    text: "你绕到了医院的侧面。急诊入口比正门窄不少，玻璃门虚掩着，门前的台阶下散落着几具尸体，苍蝇在低空盘旋——但没看到有丧尸。\n\
-安静，太安静了。",
+    text: "你绕到了医院的侧面。急诊入口比正门窄不少，玻璃门虚掩着，门前的台阶下散落着几具尸体，苍蝇在低空盘旋。\n\
+透过没擦干净的玻璃往里看——分诊台和挂号区之间几乎看不到空地，密密麻麻挤着一大片摇晃的人形，正无声地朝着门缝的方向聚拢。",
     choices: [
       {
         text: "进去",
-        nextScene: "仁济南院-急诊大厅"
+        nextScene: "结局-仁济-急诊门厅"
       },
       {
         text: "往救护车通道方向走",
@@ -198,20 +198,120 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulance.png */,
     onEnter: function(vars) { vars.showZombies = true; },
-    text: "你来到了救护车通道门口。铁门半掩着，一辆救护车堵在门口，车门大开，车内的担架翻落在地。通道深处的应急灯一闪一闪，投下忽明忽暗的影子。\n\
-这里比大门安静一些，但前方仍有两三只丧尸在游荡。",
-    choices: [
-      {
-        text: "悄悄穿过，进入急诊大厅",
-        nextScene: "仁济南院-急诊大厅",
-        effect: updateTime(3)
-      },
-      {
+    text: function(vars) {
+      if (vars._renjiGateOpen) {
+        return vars._renjiYardCleared
+          ? "铁门已经被撞塌，斜倒在一边，底下压着几只再也不会动的丧尸。铁门后的空地空空荡荡，通往急诊大厅的路敞开着。"
+          : "铁门被打开了一道缝，勉强能容一个人钻过去。铁门后的空地上，那几只丧尸还在游荡——刚才那一声枪响，已经让它们直直地转过头来。";
+      }
+      var desc = "你来到了救护车通道门口。铁门用一根铁链和挂锁锁着，门框上端的铰链已经开裂，整扇铁门微微向外倾斜——看着随时会倒下来砸到人。铁门外歪停着一辆救护车，车门大开，车内的担架翻落在地。透过门缝，能看到铁门后的空地上有两三只丧尸在游荡。";
+      if (vars._renjiAmbulanceChecked) desc += "\n你已经检查过那辆救护车——车厢里的急救用品被搬空了，但钥匙还插在点火开关上，没被拔走。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._renjiGateOpen) {
+        if (!vars._renjiAmbulanceChecked) {
+          cs.push({
+            text: "上救护车检查一下",
+            nextScene: "仁济南院-救护车-检查",
+            effect: updateTime(2)
+          });
+        } else {
+          cs.push({
+            text: "坐进驾驶室，挂上倒挡撞开铁门",
+            nextScene: "仁济南院-救护车-倒车撞门",
+            effect: updateTime(2)
+          });
+        }
+        if (vars.hasGun && vars.gunAmmo > 0) {
+          cs.push({
+            text: "对准挂锁开一枪",
+            nextScene: "仁济南院-救护车-枪击开锁"
+          });
+        }
+        var heavy = heavyWeaponName(vars);
+        if (heavy) {
+          cs.push({
+            text: "用" + heavy + "撬断挂锁",
+            nextScene: "结局-仁济-铁门砸死"
+          });
+        }
+        cs.push({
+          text: "徒手推铁门",
+          nextScene: "仁济南院-救护车-推门",
+          effect: updateTime(1)
+        });
+      } else {
+        cs.push({
+          text: vars._renjiYardCleared ? "穿过倒塌的铁门，进入急诊大厅" : "趁着丧尸没围上来，冲进急诊大厅",
+          nextScene: "仁济南院-急诊大厅",
+          effect: updateTime(3)
+        });
+      }
+      cs.push({
         text: "去浦锦路",
         nextScene: "仁济南院-浦锦路",
         effect: updateTime(8)
-      }
+      });
+      return cs;
+    }
+  },
+
+  "仁济南院-救护车-检查": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulanceCheck.png */,
+    onEnter: { set: { _renjiAmbulanceChecked: true } },
+    text: "你拉开变形的车门，爬进后厢检查。储物格全被翻空了——纱布、担架带，一点急救用品都没留下。\n\
+你正要退出来，眼角瞥到驾驶室那边点火开关上还挂着一串钥匙——车主走得太急，忘了拔。",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-救护车通道" }
     ]
+  },
+
+  "仁济南院-救护车-倒车撞门": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulanceRam.png */,
+    onEnter: { set: { _renjiGateOpen: true, _renjiYardCleared: true } },
+    text: "你钻进驾驶室，拧动钥匙——引擎意外地还能打着火。你一脚挂上倒挡，狠狠踩下油门。\n\
+救护车猛地向后蹿去，车尾狠狠撞在铁门上——铰链彻底断裂，整扇铁门带着刺耳的金属声轰然倒下，正好砸在门后那几只丧尸身上。\n\
+引擎盖裂开一条缝，冷却液顺着车底往外渗——这辆车是走不了了，但门开了。",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-救护车通道" }
+    ]
+  },
+
+  "仁济南院-救护车-枪击开锁": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiGunLock.png */,
+    onEnter: function(vars) {
+      vars.gunAmmo = Math.max(0, vars.gunAmmo - 1);
+      vars._renjiGateOpen = true;
+      return { add: { chasedByZombies: 2 } };
+    },
+    text: "枪声在门框上炸开一团铁屑——挂锁被打得四分五裂，铁门晃了两下，勉强能推开一道缝。\n\
+可这一声枪响在空地上格外刺耳，铁门后那几只丧尸已经直直地朝这边转过头来。",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-救护车通道" }
+    ]
+  },
+
+  "仁济南院-救护车-推门": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiGateStuck.png */,
+    text: "你双手抵住铁门，用力一推——挂锁死死卡着，铁门只是晃了两下，纹丝不动。\n\
+你退后看了一眼那道往外倾斜的门缝，觉得再这么推下去，倒下来的说不定是自己。",
+    choices: [
+      { text: "算了", nextScene: "仁济南院-救护车通道" }
+    ]
+  },
+
+  "结局-仁济-铁门砸死": {
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    onEnter: function(vars) { useHeavyTool(vars); return {}; },
+    text: function(vars) {
+      var tool = vars._pryTool || "手里的工具";
+      return "你把" + tool + "伸进挂锁里，用力一撬。挂锁“咔”地断开——但你没料到，那扇早已开裂的铰链根本撑不住这一下震动。\n\
+整扇铁门朝你的方向轰然倒下，你甚至没能看清发生了什么。\n\
+\n—— 结局：铁门砸死 ——";
+    },
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-地下停车场": {
@@ -404,8 +504,9 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       {
-        text: "从大门离开",
-        nextScene: "仁济南院-急诊大门",
+        showCondition: "_renjiGateOpen",
+        text: "从救护车通道出去",
+        nextScene: "仁济南院-救护车通道",
         effect: updateTime(3)
       }
     ]
@@ -1296,6 +1397,14 @@ Object.assign(storyData, {
 但外面的尸潮比你想象中更密。你刚冲出浦锦路，就被从四面八方涌来的丧尸吞没——它们早已把这家医院围得水泄不通，就等着有人从里面出来。\n\
 你在震耳欲聋的嘶吼声中被撕碎。\n\
 \n—— 结局：仁济围困 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
+  "结局-仁济-急诊门厅": {
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    text: "你推开虚掩的玻璃门，弯腰钻了进去。\n\
+门厅里的丧尸几乎是同一时刻转过身来——密密麻麻的一片，堵住了你退出去的路。你甚至没能拔出武器。\n\
+\n—— 结局：急诊门厅 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
 

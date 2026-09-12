@@ -197,6 +197,9 @@ const storyData = {
     _renjiGlucoseTaken: false,  // 护士站葡萄糖是否已喝（一次性+1体力）
     _renjiPeeked: false,        // 是否透过检验科后门玻璃窗窥视过
     _renjiDrinkTaken: false,    // 特需病房功能饮料是否已喝（一次性+1体力）
+    _renjiGateOpen: false,      // 救护车通道铁门是否已打开（车撞开/枪打开锁均可，持久）
+    _renjiYardCleared: false,   // 铁门后空地丧尸是否已被压死（仅倒车解法为true；枪解法丧尸仍在，需硬闯）
+    _renjiAmbulanceChecked: false, // 是否已上救护车检查过（发现车钥匙插在点火开关上，解锁"倒车撞门"选项）
     // 建平中学 - 状态
     _frontGateCleared: false,   // 前门丧尸是否已清（记忆闪色，成功后一次性进出）
     _backGateOpened: false,     // 后门是否已开（开门引走丧尸，忻老师后门逃脱的铺垫）
