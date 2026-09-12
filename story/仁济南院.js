@@ -262,8 +262,11 @@ Object.assign(storyData, {
   },
 
   "仁济南院-救护车-检查": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulanceCheck.png */,
-    onEnter: { set: { _renjiAmbulanceChecked: true } },
+    image: timeImage({
+      morning: "images/仁济南院/救护车后门.webp",
+      night: "images/仁济南院/救护车后门-night.webp"
+    }),
+    onEnter: { set: { _renjiAmbulanceChecked: true, showZombies: true, showRain: true } },
     text: "你拉开变形的车门，爬进后厢检查。储物格全被翻空了——纱布、担架带，一点急救用品都没留下。\n\
 你眼角瞥到驾驶室那边点火开关上还挂着一串钥匙——车主走得太急，忘了拔。",
     choices: [
@@ -283,11 +286,14 @@ Object.assign(storyData, {
   },
 
   "仁济南院-救护车-枪击开锁": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiGunLock.png */,
+    image: timeImage({
+      morning: "images/仁济南院/手枪开锁.webp",
+      night: "images/仁济南院/手枪开锁-night.webp"
+    }),
     onEnter: function(vars) {
       vars.gunAmmo = Math.max(0, vars.gunAmmo - 1);
       vars._renjiGateOpen = true;
-      return { add: { chasedByZombies: 2 } };
+      return { add: { chasedByZombies: 1 } };
     },
     text: "枪声在门框上炸开一团铁屑——挂锁被打得四分五裂，铁门晃了两下，勉强能推开一道缝。\n\
 可这一声枪响在空地上格外刺耳，铁门后那几只丧尸已经直直地朝这边转过头来。",
@@ -306,7 +312,7 @@ Object.assign(storyData, {
   },
 
   "结局-仁济-铁门砸死": {
-    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    image: "images/placeholder.png", /* TODO: images/仁济南院/renjiGateSmash.png */
     onEnter: function(vars) { useHeavyTool(vars); return {}; },
     text: function(vars) {
       var tool = vars._pryTool || "手里的工具";
