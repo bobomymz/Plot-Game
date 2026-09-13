@@ -1444,7 +1444,7 @@ Object.assign(storyData, {
   // ==================== 冗余探索区（环境叙事 · 不承载关键剧情） ====================
 
   "仁济南院-门诊大厅": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiHall.png */,
+    image: "images/仁济南院/门诊大厅.webp",
     onEnter: function(vars) { vars.currentPos = "门诊大厅"; return {}; },
     text: "门诊楼的大厅比急诊还要空旷。挂号机全部黑屏，排队用的伸缩栏杆东倒西歪，地上散落着病历本、医保卡和几张撕碎的处方单。\n\
 缴费窗口的玻璃碎了一角，里面搁着一张没坐过人的转椅。\n\
@@ -1500,7 +1500,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-电梯厅": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiElevator.png */,
+    image: "images/仁济南院/电梯厅.webp",
     onEnter: function(vars) { vars.currentPos = "电梯厅"; return {}; },
     text: function(vars) {
       if (vars._lastScene === "仁济南院-中医科" || vars._lastScene === "仁济南院-输液大厅") {
@@ -1529,11 +1529,11 @@ Object.assign(storyData, {
   },
 
   "仁济南院-影像科": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiRadiology.png */,
+    image: "images/仁济南院/影像科.webp",
     onEnter: function(vars) { vars.currentPos = "影像科"; return {}; },
-    text: "影像科的门半掩着。CT室的金属门虚掩，门缝里透出一点微光。X光片散落在地上，踩上去嘎吱作响。\n\
+    text: "影像科的门半掩着。CT室的金属门虚掩，X光片散落在地上，踩上去嘎吱作响。\n\
 操作台旁瘫着一个穿白大褂的人，已经死了——胸口还别着放射科的胸牌。\n\
-墙上贴着一张辐射警告标志，红色的三叶形图案在昏暗里格外醒目。",
+墙上贴着一张辐射警告标志，黑色的三叶形图案格外醒目。",
     choices: [
       {
         text: "去门诊大厅",
