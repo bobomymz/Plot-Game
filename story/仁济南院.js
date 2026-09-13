@@ -324,7 +324,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-地下停车场": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiParking.png */,
+    image: "images/仁济南院/地下停车场.webp",
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
       var desc = "地下停车场的入口坡道黑黢黢的，往下看不到底。入口处横着一辆失控的轿车，挡风玻璃碎了一半。\n";
@@ -355,16 +355,17 @@ Object.assign(storyData, {
   },
 
   "仁济南院-后勤通道": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiBackhall.png */,
+    image: "images/仁济南院/后勤走廊.webp",
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
       var head = vars._lastScene === "仁济南院-地下停车场" ? "你穿过地下停车场，摸到了医院的后勤通道。" : "你回到医院的后勤通道。";
       return head + "这里堆着手推车、氧气瓶和成箱的耗材，空气中弥漫着一股消毒水混合着霉味的气息。\n\
+这里游荡着几只丧尸，你趁它们不注意，小心地穿了过去。\n\
 通道尽头是一扇写着“检验科”的门，门旁有一条更窄的走道，通往住院部方向。另一头的墙边，立着一扇沉重的铁门，上面贴着一块发黄的“太平间”标识。";
     },
     choices: [
       {
-        text: "看看这扇门",
+        text: "看看检验科的门",
         nextScene: "仁济南院-检验科后门",
         effect: updateTime(2)
       },
@@ -390,7 +391,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科后门": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiBackdoor.png */,
+    image: "images/仁济南院/检验科后门.webp",
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
       var back = vars._lastScene === "仁济南院-检验科后门-窥视" || vars._lastScene === "仁济南院-检验科后门-方瑜";
@@ -427,7 +428,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-检验科后门-窥视": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
+    image: "images/仁济南院/检验科后门-窗口观察.webp",
     onEnter: { set: { _renjiPeeked: true, positionAfterOperation: "仁济南院-检验科后门" } },
     text: "你垫起脚，把脸凑到那块灰蒙蒙的玻璃窗前，屏住呼吸往里看。\n\
 检验科的应急灯还亮着，把操作台上的东西照得清清楚楚——离心机、试剂架、散落的培养皿。\n\
@@ -1447,17 +1448,11 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "门诊大厅"; return {}; },
     text: "门诊楼的大厅比急诊还要空旷。挂号机全部黑屏，排队用的伸缩栏杆东倒西歪，地上散落着病历本、医保卡和几张撕碎的处方单。\n\
 缴费窗口的玻璃碎了一角，里面搁着一张没坐过人的转椅。\n\
-大厅一侧有个带玻璃窗口的房间，玻璃上贴着价目表；另一侧有扇门半掩着，门边贴着黄色的警告标志。\n\
-墙上贴着陈旧的科室索引——大部分科室的门都锁着。",
+墙上贴着一张陈旧的楼层导览图，大部分科室的门都锁着。",
     choices: [
       {
-        text: "看看那个有玻璃窗口的房间",
-        nextScene: "仁济南院-门诊药房",
-        effect: updateTime(1)
-      },
-      {
-        text: "看看那扇贴着警告标志的门",
-        nextScene: "仁济南院-影像科",
+        text: "看导览图",
+        nextScene: "仁济南院-门诊大厅-导览图",
         effect: updateTime(1)
       },
       {
@@ -1479,6 +1474,27 @@ Object.assign(storyData, {
         text: "从门口离开",
         nextScene: "仁济南院-门诊大门",
         effect: updateTime(1)
+      }
+    ]
+  },
+
+  "仁济南院-门诊大厅-导览图": {
+    image: "images/仁济南院/门诊导览图.webp",
+    text: "你凑近墙边，看起了那张楼层导览图。边缘有些卷起，字迹还算清楚。",
+    choices: [
+      {
+        text: "去门诊药房",
+        nextScene: "仁济南院-门诊药房",
+        effect: updateTime(1)
+      },
+      {
+        text: "去影像科",
+        nextScene: "仁济南院-影像科",
+        effect: updateTime(1)
+      },
+      {
+        text: "离开",
+        nextScene: "仁济南院-门诊大厅"
       }
     ]
   },
