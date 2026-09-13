@@ -1585,7 +1585,7 @@ Object.assign(storyData, {
   },
 
   "结局-仁济-电梯召唤": {
-    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    image: "images/仁济南院/好奇心害死猫.webp",
     text: "你按下召唤钮。灯亮了一下，井道里传来沉闷的运行声——停在B1的那部电梯，居然真的动了。\n\
 数字从B1跳到1。叮。门开了。\n\
 轿厢里挤满了丧尸。它们几乎是涌着扑出来的。\n\
@@ -1642,7 +1642,10 @@ Object.assign(storyData, {
   "仁济南院-中医科": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiTCM.png */,
     onEnter: function(vars) { vars.currentPos = "中医科"; return {}; },
-    text: "四楼的中医坐诊区。墙上挂着一幅针灸穴位图，几根银针还插在图上的穴位上。诊桌上摊着几本翻开的病历，笔迹工整，像是坐诊的人走时很从容。\n\
+    text: "这里是四楼的中医坐诊区。\n\上方挂着黑底金字牌匾，写着中医科三个大字。\n\
+左侧一块巨大的中医宣传海报文字写着 “疼痛 您还需忍耐多久？”，画面上还有人体经络示意图。\n\
+翻倒滚落的红色灯笼散落一地，丢弃的口罩、药瓶、纸张、绷带、文件夹杂乱铺在地面。\n\
+远处天花板的筒灯仍亮着微弱白光，狭长的通道向深处延伸，光线越来越暗。\n\
 坐诊区两侧各有一扇门——一侧是针灸推拿室，一侧是中草药房。",
     choices: [
       {

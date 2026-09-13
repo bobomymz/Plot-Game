@@ -155,7 +155,7 @@ const storyData = {
     hasDoorKey2: false,        // 是否有门钥匙2（新达汇B1配电房黄铜钥匙，王建国遗物）
     hasDoorKey3: false,        // 是否有门钥匙3（新达汇3F金宝贝前门钥匙牌，配电房抽屉）
     hasCarKey: false,          // 是否有轿车钥匙
-    hasCatSnack: false,        // 是否有脆脆炒米（新达汇4F大渝火锅门口，猫零食）
+    hasCatSnack: false,        // 脆脆炒米（新达汇4F大渝火锅门口等位零食，口粮：可吃+1 / 可喂猫）
     hasKey502: false,          // 是否有502钥匙（鹅卵石路自行车）
     hasCommitteeKey: false,    // 是否有居委会钥匙（樱桃苑5楼孙阿姨）
     hasRenjiCard: false,       // 是否有仁济检验科门禁卡（安居苑203室双肩包夹层，钥匙类）
@@ -260,7 +260,7 @@ const storyData = {
     _roadBull: 0,             // 路霸状态：0堵着 / 1已被打死（永久解除堵卡）
     _roadBullBeatenDay: 0,    // 路霸被打跑的当天（当天放行，次日恢复堵）
     _roadBullPaidDay: 0,      // 交食物买路的那天（当天放行往返，次日恢复）
-    _bullBack: false,         // 路霸遭遇时的来向：true=从金谊返回（解决后回十字路口），false=从十字路口来（续走金谊）
+    _bullBack: "",            // 路霸遭遇时的来向：非空=从金谊某场景来（存其场景ID；解决后续走十字路口、折返退回该场景），空=从十字路口来（续走金谊）
     _quackSpot: 0,            // 卖假药的郎中当天所在天台：0没在 / 1金谊天台 / 2新达汇屋顶
     _quackDay: 0,             // 郎中方位最近一次刷新所在天（跨天重摇）
     _quackTradedDay: 0,       // 上次跟郎中交易的天（同一天防重复买）
@@ -786,6 +786,11 @@ const storyData = {
       },
       {
         showCondition: "hasCatSnack",
+        text: "吃掉脆脆炒米（体力+1）",
+        nextScene: "整理整理-吃炒米"
+      },
+      {
+        showCondition: "hasCatSnack",
         text: "丢下脆脆炒米",
         effect: updateTime(1, { set : { hasCatSnack: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
@@ -1037,6 +1042,15 @@ const storyData = {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasBiscuit: false } }),
     text: "你拆开包装袋，掰了一块压缩饼干放进嘴里。干巴巴的，嚼起来有点硬，但那股麦香让你想起还没出事时的日子。你就着水咽了下去，胃里终于有了点东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃炒米": {
+    image: "images/整理整理.webp",
+    onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasCatSnack: false } }),
+    text: "你撕开脆脆炒米的包装袋，抓了一把扔进嘴里。米粒爆得酥脆，咸香里带点海苔味，就是干得噎人，你捶着胸口顺了半天气。以前火锅店门口拿来打发排队客的小零嘴，现在也成了正经口粮。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

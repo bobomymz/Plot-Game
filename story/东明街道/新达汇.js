@@ -1898,37 +1898,30 @@ Object.assign(storyData, {
       if (vars._catChasing) return "你又来到了卡通尼乐园。那只变异猫不知什么时候回来了，蹲在滑梯顶上，尾巴缓缓摆动。它看到你，没有跑——只是盯着你。";
       return "你又来到了卡通尼乐园。这里空荡荡的，没什么有用的东西。";
     },
-    choices: [
-      {
-        text: "推开前门回到商场走廊",
-        nextScene: "新达汇-3F南走廊西",
-        effect: updateTime(1),
-      },
-      {
-        text: "钻进员工区去后勤走廊",
-        nextScene: "新达汇-3F后勤走廊东",
-        effect: updateTime(2),
-        showCondition: "_backhallEntered",
-      },
-      {
-        text: "掏出口袋里的饼干，试探性地伸向猫",
-        nextScene: "新达汇-卡通尼乐园-喂猫",
-        effect: { set: { hasBiscuit: false, _catChasing: false, _catFed: true }, add: { itemCount: -1 } },
-        showCondition: function(vars) { return vars._catChasing && vars.hasBiscuit && vars._visit["新达汇-3F大型综合儿童乐园"] > 1; },
-      },
-      {
-        text: "掏出那包脆脆炒米，撕开包装晃了晃",
-        nextScene: "新达汇-卡通尼乐园-喂猫",
-        effect: { set: { hasCatSnack: false, _catChasing: false, _catFed: true }, add: { itemCount: -1 } },
-        showCondition: function(vars) { return vars._catChasing && vars.hasCatSnack && vars._visit["新达汇-3F大型综合儿童乐园"] > 1; },
-      },
-      {
-        text: "掏出婴儿磨牙饼干，在猫眼前晃了晃",
-        nextScene: "新达汇-卡通尼乐园-喂猫",
-        effect: { set: { hasTeethingBiscuit: false, _catChasing: false, _catFed: true }, add: { itemCount: -1 } },
-        showCondition: function(vars) { return vars._catChasing && vars.hasTeethingBiscuit && vars._visit["新达汇-3F大型综合儿童乐园"] > 1; },
-      },
-    ]
+    choices: function(vars) {
+      var cs = [
+        {
+          text: "推开前门回到商场走廊",
+          nextScene: "新达汇-3F南走廊西",
+          effect: updateTime(1),
+        },
+        {
+          text: "钻进员工区去后勤走廊",
+          nextScene: "新达汇-3F后勤走廊东",
+          effect: updateTime(2),
+          showCondition: "_backhallEntered",
+        }
+      ];
+      // 变异猫尾随时可掏吃的喂它：口粮走统一"给食物"模板（FOOD_GIFTS 全清单，含脆脆炒米）
+      if (vars._catChasing && vars._visit["新达汇-3F大型综合儿童乐园"] > 1) {
+        cs = cs.concat(foodGiftChoices({
+          pickText: "掏出{名}，试探性地伸向猫",
+          pickScene: "新达汇-卡通尼乐园-喂猫",
+          onPick: function(v) { v._catChasing = false; v._catFed = true; }
+        })(vars));
+      }
+      return cs;
+    }
   },
   "新达汇-卡通尼乐园-喂猫": {
     onEnter: { set: { showPowerOut: true } },

@@ -440,15 +440,15 @@ function hideOnLocation(image, failText, successText) {
   };
 }
 
-// 可当口粮"给出去/吃掉/交给路霸或假郎中"的食物清单一处维护（[flag, 显示名]）。
-// 水、猫粮、假解毒剂不算口粮。
+// 可当口粮"给出去/吃掉/喂猫/交给路霸或假郎中"的食物清单一处维护（[flag, 显示名]）。
+// 水、假解毒剂不算口粮。
 var FOOD_GIFTS = [
   ["hasBiscuit", "压缩饼干"], ["hasInstantNoodle", "方便面"], ["hasCannedFood", "罐头"],
   ["hasSnackCookie", "味千小饼干"], ["hasHamSausage", "火腿肠"], ["hasCracker", "夹心饼干"],
-  ["hasTeethingBiscuit", "磨牙饼干"], ["hasCanteenFood", "食堂干粮"], ["hasFrozenMeat", "冻肉"]
+  ["hasTeethingBiscuit", "磨牙饼干"], ["hasCatSnack", "脆脆炒米"], ["hasCanteenFood", "食堂干粮"], ["hasFrozenMeat", "冻肉"]
 ];
 
-// 身上是否有"能当口粮给出去/吃掉"的实打实食物（水、猫粮、假解毒剂不算）
+// 身上是否有"能当口粮给出去/吃掉"的实打实食物（水、假解毒剂不算）
 // 供路霸讨要、天台假郎中交换等"掏食物"判定使用
 function hasFood(vars) {
   for (var i = 0; i < FOOD_GIFTS.length; i++) {
@@ -461,9 +461,9 @@ function hasFood(vars) {
 // opts: {
 //   pickText: "给他{名}",        // {名} 会被替换为食物显示名
 //   pickScene: "交易成功场景",    // 选中后跳转
-//   onPick: function(vars, flag), // 选中某食物后的额外结算（如路霸记当天买路、郎中得假药）
-//   cancelText: "算了，不给了",
-//   cancelScene: "返回场景"
+//   onPick: function(vars, flag), // 选中某食物后的额外结算（如路霸记当天买路、郎中得假药、喂猫解除尾随）
+//   cancelText: "算了，不给了",   // 可选：不传则不生成"算了"项。走独立"给食物"子场景的用法（路霸/郎中/王老师）
+//   cancelScene: "返回场景"       //   需要取消项；选项直接嵌在父场景里（新达汇喂变异猫）则不用传
 // }
 // 返回可直接当 scene.choices 的 choices 函数。以后新增"给食物"剧情直接复用，不用重写循环。
 function foodGiftChoices(opts) {
@@ -485,7 +485,7 @@ function foodGiftChoices(opts) {
         }
       })(FOOD_GIFTS[i][0], FOOD_GIFTS[i][1]);
     }
-    cs.push({ text: opts.cancelText, nextScene: opts.cancelScene });
+    if (opts.cancelText) cs.push({ text: opts.cancelText, nextScene: opts.cancelScene });
     return cs;
   };
 }

@@ -143,27 +143,14 @@ function jpChaseQTE(pred) {
 // ===== 建平橘猫向导（B 支线） =====
 // 橘猫游走于校园各点；玩家用任一"猫食"喂它 → 它带你去致真楼（给新玩家"下一步去哪"的指引），
 // 喂过后它成为 Harsh 的"软预警"（jpHarshHint 里比玩家直觉早一档提示）。
-// 可喂的猫食：脆脆炒米 / 饼干 / 味千小饼干 / 火腿肠 / 挹芬楼6F夹心饼干 / 磨牙饼干（各具名占格）。
-function jpCatFoods(vars) {
-  var list = [];
-  if (vars.hasCatSnack)    list.push({ flag: "hasCatSnack",    name: "脆脆炒米" });
-  if (vars.hasBiscuit)     list.push({ flag: "hasBiscuit",     name: "饼干" });
-  if (vars.hasSnackCookie) list.push({ flag: "hasSnackCookie", name: "味千小饼干" });
-  if (vars.hasHamSausage)  list.push({ flag: "hasHamSausage",  name: "火腿肠" });
-  if (vars.hasCracker)     list.push({ flag: "hasCracker",     name: "夹心饼干" });
-  if (vars.hasTeethingBiscuit) list.push({ flag: "hasTeethingBiscuit", name: "磨牙饼干" });
-  return list;
-}
-function jpHasCatFood(vars) {
-  return jpCatFoods(vars).length > 0;
-}
+// 可喂的猫食走统一口粮清单 FOOD_GIFTS（utils.js 的 foodGiftChoices / hasFood），不再本地维护。
 
 // 遇猫选项：push 进各游走节点 choices。只有"还没喂过 + 手上正好有猫食"才会见到它，
 // 免得玩家看见猫却只能干瞪眼；没喂前它会一直在这些点等你。
 function jpCatOption(whereText) {
   return {
     text: "一只橘猫蹲在" + whereText + "，正舔着爪子，看见你也不躲。",
-    showCondition: function(v) { return !v._jianpingCatFed && jpHasCatFood(v); },
+    showCondition: function(v) { return !v._jianpingCatFed && hasFood(v); },
     nextScene: "建平-橘猫-相遇"
   };
 }
@@ -2370,20 +2357,11 @@ Object.assign(storyData, {
     text: "一只橘猫蹲在不远处，圆滚滚的，毛色油亮。它歪头看了你两秒，才慢慢走过来，在你脚边坐下，仰头望着你，轻轻喵了一声。\n\
 喵————",
     choices: function(vars) {
-      var cs = jpCatFoods(vars).map(function(f) {
-        return {
-          text: "喂它" + f.name,
-          nextScene: "建平-橘猫-亲近",
-          effect: (function(flag) {
-            return function(v) {
-              v[flag] = false;
-              v.itemCount = Math.max(0, v.itemCount - 1);
-              v._jianpingCatFed = true;
-              return {};
-            };
-          })(f.flag)
-        };
-      });
+      var cs = foodGiftChoices({
+        pickText: "喂它{名}",
+        pickScene: "建平-橘猫-亲近",
+        onPick: function(v) { v._jianpingCatFed = true; }
+      })(vars);
       cs.push({ text: "不理它", nextScene: function(v) { return v._catReturn || "建平-金苹果大道"; } });
       return cs;
     }
