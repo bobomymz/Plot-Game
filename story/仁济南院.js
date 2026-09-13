@@ -329,9 +329,9 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "地下停车场的入口坡道黑黢黢的，往下看不到底。入口处横着一辆失控的轿车，挡风玻璃碎了一半。\n";
       if (vars.hasTorch) {
-        desc += "你打开照明，光线勉强能照清前方几米——这条潜行路线通向医院的后勤区。";
+        desc += "你打开照明，光线勉强能照清前方几米——墙边一块指示牌写着“门诊电梯←”，箭头指向车库深处；另一侧的通道则通向医院的后勤区。";
       } else if(vars.hasPhone && vars.phoneBattery > 0) {
-        desc += "你打开手机，屏幕的微光勉强能照清前方几米——这条潜行路线通向医院的后勤区。手机电量还剩 " + vars.phoneBattery + "%。";
+        desc += "你打开手机，屏幕的微光勉强能照清前方几米——墙边一块指示牌写着“门诊电梯←”，箭头指向车库深处；另一侧的通道则通向医院的后勤区。手机电量还剩 " + vars.phoneBattery + "%。";
       } else if(vars.hasPhone) {
         desc += "你摁亮手机——屏幕闪了一下就黑了。电量见底，和没有一样。";
       } else {
@@ -342,9 +342,15 @@ Object.assign(storyData, {
     choices: [
       {
         condition: "hasTorch || (hasPhone && phoneBattery > 0)",
-        text: "进去看看",
+        text: "往后勤区方向走",
         nextScene: "仁济南院-后勤通道",
         effect: function(vars) { return updateTime(5, { add: { phoneBattery: vars.hasTorch ? 0 : -5 } })(vars); }
+      },
+      {
+        condition: "hasTorch || (hasPhone && phoneBattery > 0)",
+        text: "跟着指示牌去坐电梯",
+        nextScene: "仁济南院-地下停车场-电梯口",
+        effect: function(vars) { return updateTime(3, { add: { phoneBattery: vars.hasTorch ? 0 : -5 } })(vars); }
       },
       {
         text: "去浦锦路",
@@ -352,6 +358,51 @@ Object.assign(storyData, {
         effect: updateTime(6)
       }
     ]
+  },
+
+  "仁济南院-地下停车场-电梯口": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/地下停车场-电梯口.webp */,
+    onEnter: function(vars) { vars.showZombies = true; },
+    text: function(vars) {
+      if (vars._lastScene === "仁济南院-地下停车场-电梯-坏钮") {
+        return "你收回手，重新打量这两部电梯。一部门关得死死的，召唤钮还是黑的；另一部的门缝里，那些晃动的影子还在。";
+      }
+      return "你顺着指示牌走到电梯口。两部电梯并排立着，各自有一套上下召唤钮。\n\
+左边那部的门关着，楼层显示屏灭着——它的上行按钮裂了一道缝，按下去没有任何反应，灯也不亮。右边那部的门半开着，楼层显示停在 B1。门缝里透出一点昏暗，隐约能看见轿厢里挤着几个摇晃的人影，脚边的地板湿漉漉的。";
+    },
+    choices: [
+      {
+        text: "拉开右边那部半开的电梯门",
+        nextScene: "结局-仁济-电梯轿厢"
+      },
+      {
+        text: "再按一下左边那部的上行按钮",
+        nextScene: "仁济南院-地下停车场-电梯-坏钮",
+        effect: updateTime(1)
+      },
+      {
+        text: "退回坡道",
+        nextScene: "仁济南院-地下停车场",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  "仁济南院-地下停车场-电梯-坏钮": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/地下停车场-电梯口.webp */,
+    text: "你又按了一次。塑料壳子松动了一下，里面隐约响了声空电流的滋滋——灯还是不亮，轿厢也没有下来的动静。\n\
+这部电梯的召唤钮是坏的。",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-地下停车场-电梯口" }
+    ]
+  },
+
+  "结局-仁济-电梯轿厢": {
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    text: "你抓住门缝用力一拉。门滑开的瞬间，几只丧尸几乎是叠在一起从轿厢里倒出来——它们早就挤在门口，只差你这一下。\n\
+你甚至没能转身跑回坡道。\n\
+\n—— 结局：电梯轿厢 ——",
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-后勤通道": {
@@ -1506,8 +1557,8 @@ Object.assign(storyData, {
       if (vars._lastScene === "仁济南院-中医科" || vars._lastScene === "仁济南院-输液大厅") {
         return "电梯缓缓下到1楼。你走出轿厢，回到门诊楼的电梯厅——头顶的应急灯又闪了闪。";
       }
-      return "门诊楼的电梯厅里，两部电梯的门都开着，轿厢停在1楼。按钮面板上，几层楼的灯还亮着，只有5楼以上全灭了。\n\
-    你正要进去，头顶的应急灯闪了闪——这电梯也不知道还靠不靠得住。";
+      return "门诊楼的电梯厅里，两部电梯并排。一部轿厢停在1楼，门开着，面板上2楼、4楼的灯还亮着，B1的键是灭的；另一部的门关着，楼层显示屏停在B1，怎么按都叫不上来。\n\
+你正要进那部停在1楼的，头顶的应急灯闪了闪——这电梯也不知道还靠不靠得住。";
     },
     choices: [
       {
@@ -1544,7 +1595,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-输液大厅": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiInfusion.png */,
+    image: "images/仁济南院/输液区.webp",
     onEnter: function(vars) { vars.currentPos = "输液大厅"; return {}; },
     text: "二楼的输液大厅里，成排的输液椅还保持着原样，吊瓶架倒了一地，药液已经干涸。\n\
 地上散落着几样小东西——一个塑料小汽车、一只掉了鞋带的小鞋。\n\
