@@ -312,7 +312,7 @@ Object.assign(storyData, {
   },
 
   "结局-仁济-铁门砸死": {
-    image: "images/placeholder.png", /* TODO: images/仁济南院/renjiGateSmash.png */
+    image: "images/仁济南院/被铁门砸死.webp",
     onEnter: function(vars) { useHeavyTool(vars); return {}; },
     text: function(vars) {
       var tool = vars._pryTool || "手里的工具";
