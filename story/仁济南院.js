@@ -1555,21 +1555,26 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "电梯厅"; return {}; },
     text: function(vars) {
       if (vars._lastScene === "仁济南院-中医科" || vars._lastScene === "仁济南院-输液大厅") {
-        return "电梯缓缓下到1楼。你走出轿厢，回到门诊楼的电梯厅——头顶的应急灯又闪了闪。";
+        return "电梯缓缓下到1楼。你走出轿厢，回到门诊楼的电梯厅——头顶的应急灯又闪了闪。旁边那部门关着的电梯，楼层显示还是停在B1。";
       }
-      return "门诊楼的电梯厅里，两部电梯并排。一部轿厢停在1楼，门开着，面板上2楼、4楼的灯还亮着，B1的键是灭的；另一部的门关着，楼层显示屏停在B1，怎么按都叫不上来。\n\
-你正要进那部停在1楼的，头顶的应急灯闪了闪——这电梯也不知道还靠不靠得住。";
+      return "门诊楼的电梯厅里，两部电梯并排。一部轿厢停在1楼，门开着，面板上2楼、4楼的灯还亮着，B1的键是灭的。\n\
+另一部的门关着，楼层显示屏停在B1——它的召唤钮却还亮着一点微弱的光，像是随时能按。\n\
+头顶的应急灯闪了闪。";
     },
     choices: [
       {
-        text: "坐电梯去2楼（输液大厅）",
+        text: "坐面前这部电梯去2楼（输液大厅）",
         nextScene: "仁济南院-输液大厅",
         effect: updateTime(1)
       },
       {
-        text: "坐电梯去4楼（中医科）",
+        text: "坐面前这部电梯去4楼（中医科）",
         nextScene: "仁济南院-中医科",
         effect: updateTime(2)
+      },
+      {
+        text: "按下旁边那部电梯的召唤钮",
+        nextScene: "结局-仁济-电梯召唤"
       },
       {
         text: "去门诊大厅",
@@ -1577,6 +1582,15 @@ Object.assign(storyData, {
         effect: updateTime(1)
       }
     ]
+  },
+
+  "结局-仁济-电梯召唤": {
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    text: "你按下召唤钮。灯亮了一下，井道里传来沉闷的运行声——停在B1的那部电梯，居然真的动了。\n\
+数字从B1跳到1。叮。门开了。\n\
+轿厢里挤满了丧尸。它们几乎是涌着扑出来的。\n\
+\n—— 结局：电梯召唤 ——",
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-影像科": {
