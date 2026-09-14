@@ -102,18 +102,6 @@ function jpElevator(prefix, label, floors, floorOverrides) {
   };
 }
 
-// 房间节点（封闭空间，无丧尸描述）。label 为完整显示名，backScene 为返回的楼层场景。
-function jpRoom(label, backScene) {
-  return {
-    image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = label; },
-    text: label + "。",
-    choices: [
-      { text: "离开", nextScene: backScene, effect: updateTime(1) }
-    ]
-  };
-}
-
 // 饭点判断：午餐 11-13、晚餐 17-19（彭奕宸/蔡镜晓的移动时间）
 function jpIsMealTime(vars) {
   return (vars.hh >= 11 && vars.hh <= 13) || (vars.hh >= 17 && vars.hh <= 19);
@@ -234,7 +222,6 @@ Object.assign(storyData, {
     choices: [
       { text: "去前门看看", nextScene: "建平-前门", effect: updateTime(5) },
       { text: "绕去后门", nextScene: "建平-后门", effect: updateTime(10) },
-      { text: "去门卫室", nextScene: "建平-门卫室", effect: updateTime(1) },
       { text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-校园门口" } } },
       { text: "查看路边的阀门箱", condition: "hasKeyRing", nextScene: "建平-崮山路-阀门箱", effect: updateTime(1), elseScene: "建平-崮山路-阀门箱-锁着" },
       { text: "离开这里", nextScene: "罗山路立交桥下", effect: updateTime(10) }
@@ -295,9 +282,22 @@ Object.assign(storyData, {
 
   "建平-前门": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/jianping/frontGate.png */,
+    image: function(vars) {
+      if (vars._frontGateCleared) {
+        var f = timeImage({
+          morning: "images/仁济南院/前门-清场.webp",
+          night: "images/仁济南院/前门-清场-night.webp"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/仁济南院/前门.webp",
+        night: "images/仁济南院/前门-night.webp"
+      });
+      return f(vars);
+    },
     onEnter: function(vars) {
-      vars.showZombies = true;
+      vars.showZombies = vars.showRain = true;
       vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "前门";
       if (!vars._frontGateCleared) {
         var seq = randSeq(["红","蓝","绿"], 5);
@@ -584,7 +584,8 @@ Object.assign(storyData, {
       { text: "去挹芬楼北门", nextScene: "建平-挹芬楼北门", effect: updateTime(2) },
       { text: "去致真楼", nextScene: "建平-致真楼-1F", effect: updateTime(2) },
       { text: "去金苹果大道", nextScene: "建平-金苹果大道", effect: updateTime(3) },
-      { text: "下地下车库", nextScene: "建平-地下车库-西口", effect: updateTime(1) }
+      { text: "下地下车库", nextScene: "建平-地下车库-西口", effect: updateTime(1) },
+      { text: "去门卫室", nextScene: "建平-门卫室", effect: updateTime(1) }
     ]
   },
 

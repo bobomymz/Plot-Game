@@ -196,7 +196,10 @@ const storyData = {
     _renjiHerbalTaken: false,   // 中医科草药是否已拿（一次性+1体力）
     _renjiGlucoseTaken: false,  // 护士站葡萄糖是否已喝（一次性+1体力）
     _renjiPeeked: false,        // 是否透过检验科后门玻璃窗窥视过
-    _renjiDrinkTaken: false,    // 特需病房功能饮料是否已喝（一次性+1体力）
+    _renjiDrinkTaken: false,    // 特需病房脉动/功能饮料是否已喝（一次性+1体力）
+    _renjiVipChartRead: false,  // 特需病房是否看过墙上病历（与便签任一即可获得警觉）
+    _renjiVipNoteRead: false,   // 特需病房是否看过茶几便签
+    _renjiVipZombieCleared: false, // 特需病房储物柜丧尸是否已清除（警觉秒杀或沙发引袭后）
     _renjiGateOpen: false,      // 救护车通道铁门是否已打开（车撞开/枪打开锁均可，持久）
     _renjiYardCleared: false,   // 铁门后空地丧尸是否已被压死（仅倒车解法为true；枪解法丧尸仍在，需硬闯）
     _renjiAmbulanceChecked: false, // 是否已上救护车检查过（发现车钥匙插在点火开关上，解锁"倒车撞门"选项）

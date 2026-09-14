@@ -1672,7 +1672,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-针灸推拿": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAcupuncture.png */,
+    image: "images/仁济南院/针灸推拿室.webp",
     onEnter: function(vars) { vars.currentPos = "针灸推拿"; return {}; },
     text: "针灸推拿室里，几张治疗床并排摆着，床头柜上放着没拆封的银针盒和一排艾灸条。\n\
 空气里残留着一股淡淡的艾草焦香，像是有人在这里一直坐到很晚才离开。",
@@ -1703,7 +1703,7 @@ Object.assign(storyData, {
     choices: [
       {
         showCondition: "!_renjiHerbalTaken",
-        text: "泡一壶花茶喝下（体力+1）",
+        text: "泡一壶花茶喝下",
         nextScene: "仁济南院-中草药房-喝花茶"
       },
       {
@@ -1763,7 +1763,7 @@ Object.assign(storyData, {
     choices: [
       {
         showCondition: "!_renjiGlucoseTaken",
-        text: "喝掉那瓶葡萄糖（体力+1）",
+        text: "喝掉那瓶葡萄糖",
         nextScene: "仁济南院-护士站-喝葡萄糖"
       },
       {
@@ -1811,46 +1811,243 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
     onEnter: function(vars) { vars.currentPos = "特需病房"; return {}; },
     text: function(vars) {
-      var fromDrink = vars._lastScene === "仁济南院-特需病房-功能饮料";
-      var desc = "这里是特需病房，走廊比普通病区宽敞，墙面上是暖色调的护墙板。\n" +
-(fromDrink
-        ? "你从那间开着门的病房里出来，空饮料瓶留在了床头柜上。\n"
-        : "你推开一间没上锁的病房——独立卫浴，窗明几净，床头柜上放着一个相框，照片里一家三口笑得正开心。\n") + "\
-窗外的城市灰蒙蒙一片，远处高架的轮廓在暮色里若隐若现。\n\
-床头的抽屉里有一封没写完的信，只写了个开头：“亲爱的，如果你们能收到这封信……”\n";
-      if (!vars._renjiDrinkTaken) {
-        desc += "床头柜的小冰箱里，还放着一瓶没开封的功能饮料——特需病房的待遇，连这种时候都透着讲究。";
+      var desc = "特需病房里一股刺鼻的血腥味。地上有一大摊血，窗明几净的单人间此刻乱得像刚被掀过。\n\
+房间中央是一张沾血的病床，被褥撕扯得凌乱，床单下鼓着一块凸起。右侧医疗设备旁的墙上挂着病历夹，大半被血手印糊住。靠墙摆着一张紫色沙发，坐垫塌陷；沙发前的小圆茶几上散落着碎纸片。左侧门边，矮柜柜门半开，柜体沾着血。";
+      if (vars._renjiVipZombieCleared) {
+        desc += "\n储物柜旁的地板上，多了一具不再动弹的尸体。";
+      }
+      if (vars._lastScene === "仁济南院-特需病房-功能饮料") {
+        desc += "\n空脉动瓶滚在床沿边。";
       }
       return desc;
     },
-    choices: [
-      {
-        showCondition: "!_renjiDrinkTaken",
-        text: "喝掉那瓶功能饮料（体力+1）",
-        nextScene: "仁济南院-特需病房-功能饮料"
-      },
-      {
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._renjiDrinkTaken) {
+        cs.push({ text: "搜索病床", nextScene: "仁济南院-特需病房-病床", effect: updateTime(1) });
+      } else {
+        cs.push({ text: "再看一眼病床（已经空了）", nextScene: "仁济南院-特需病房-病床-空", effect: updateTime(1) });
+      }
+      cs.push({
+        text: vars._renjiVipChartRead ? "再看墙上的病历夹" : "查看墙上的病历夹",
+        nextScene: "仁济南院-特需病房-病历",
+        effect: updateTime(1)
+      });
+      cs.push({
+        text: "搜索紫色沙发",
+        nextScene: function(v) {
+          if (!v._renjiVipZombieCleared && !v._renjiVipChartRead && !v._renjiVipNoteRead) {
+            return "仁济南院-特需病房-沙发-偷袭";
+          }
+          return "仁济南院-特需病房-沙发";
+        },
+        effect: updateTime(1)
+      });
+      cs.push({
+        text: vars._renjiVipNoteRead ? "再看茶几上的碎纸" : "搜索小圆茶几",
+        nextScene: "仁济南院-特需病房-茶几",
+        effect: updateTime(1)
+      });
+      cs.push({
+        text: "搜索门口储物柜",
+        nextScene: function(v) {
+          if (!v._renjiVipZombieCleared && !v._renjiVipChartRead && !v._renjiVipNoteRead) {
+            return "结局-仁济-特需偷袭";
+          }
+          if (!v._renjiVipZombieCleared) {
+            return "仁济南院-特需病房-储物柜-警觉";
+          }
+          return "仁济南院-特需病房-储物柜";
+        },
+        effect: updateTime(1)
+      });
+      cs.push({
         text: "下楼",
         nextScene: "仁济南院-楼梯-住院楼",
         effect: updateTime(2)
+      });
+      return cs;
+    }
+  },
+
+  "仁济南院-特需病房-病床": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    text: "你掀开凌乱的被褥。床单下鼓起的地方，是一瓶没开封的脉动——瓶子还凉，不知道谁塞在这里的。",
+    choices: [
+      {
+        text: "当场喝掉",
+        nextScene: "仁济南院-特需病房-功能饮料"
+      },
+      {
+        text: "算了，放回去",
+        nextScene: "仁济南院-特需病房"
       }
+    ]
+  },
+
+  "仁济南院-特需病房-病床-空": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    text: "床单掀开过，底下已经空了。只剩一点干涸的饮料渍。",
+    choices: [
+      { text: "离开", nextScene: "仁济南院-特需病房" }
     ]
   },
 
   "仁济南院-特需病房-功能饮料": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
     onEnter: { set: { _renjiDrinkTaken: true }, add: { strength: 1 } },
-    text: "你拧开那瓶功能饮料，喝了几口——冰凉的、带着人工甜味的液体顺着喉咙滑下去，是你这几天喝到的最像样的东西。\n\
+    text: "你拧开脉动，灌了几口——冰凉的、带着人工甜味的液体顺着喉咙滑下去，是你这几天喝到的最像样的东西。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "仁济南院-特需病房" }
     ]
   },
 
+  "仁济南院-特需病房-病历": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    onEnter: { set: { _renjiVipChartRead: true } },
+    text: "你凑近血糊糊的病历夹。大半字迹被手印盖住了，边缘还能辨认几行：\n\
+病人 302……高烧、狂躁……6/29 护工失联。\n\
+后面的记录戛然而止。墨水在纸上晕开一截，像是写的人忽然甩开了笔。",
+    choices: [
+      { text: "离开", nextScene: "仁济南院-特需病房" }
+    ]
+  },
+
+  "仁济南院-特需病房-茶几": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    onEnter: { set: { _renjiVipNoteRead: true } },
+    text: function(vars) {
+      if (vars._visit["仁济南院-特需病房-茶几"] > 1) {
+        return "碎纸片还摊在茶几上。那几行字你已经看过了——“不要回答，不要回答，不要回答”。";
+      }
+      return "茶几上散着几片撕碎的便签。你把能拼上的凑在一起，歪歪扭扭写着同一句话：\n\
+“不要回答，不要回答，不要回答”。\n\
+笔迹越到后面越用力，纸都划破了。";
+    },
+    choices: [
+      { text: "离开", nextScene: "仁济南院-特需病房" }
+    ]
+  },
+
+  "仁济南院-特需病房-沙发-偷袭": {
+    image: "images/hurtByzombie.webp",
+    onEnter: function(vars) {
+      vars._renjiVipZombieCleared = true;
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
+    },
+    text: "你按住塌陷的坐垫往下翻——沙发架子发出一声刺耳的嘎吱。\n\
+门边矮柜里猛地撞出一个人影。它扑过来时你只来得及抬起胳膊挡了一下，爪子还是擦过小臂，火辣辣地疼。你一脚踹开它，它后脑磕在柜角上，抽搐了几下，不动了。\n\
+<span style='color: #ffaa00; font-style: italic;'>【系统提示】你受了伤。伤口会加快体力消耗。</span>",
+    choices: [
+      { text: "继续翻沙发", nextScene: "仁济南院-特需病房-沙发" },
+      { text: "先缓一缓", nextScene: "仁济南院-特需病房" }
+    ]
+  },
+
+  "仁济南院-特需病房-沙发": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    onEnter: { set: { positionAfterOperation: "仁济南院-特需病房-沙发" } },
+    text: function(vars) {
+      if (vars.hasAlcohol) {
+        return "坐垫底下已经空了。你把手收回来，指尖还沾着一点布面的灰。";
+      }
+      return "你把手伸进塌陷的坐垫缝里，摸到一个冰凉的玻璃瓶——医用消毒酒精，瓶身完好，标签还在。\n\
+受伤的话，整理背包时可以用它给伤口消毒。";
+    },
+    choices: [
+      {
+        showCondition: "!hasAlcohol",
+        text: "拿走消毒酒精",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-特需病房",
+        effect: { set: { hasAlcohol: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      },
+      {
+        showCondition: "hasAlcohol",
+        text: "已经有酒精了，不拿",
+        nextScene: "仁济南院-特需病房"
+      },
+      {
+        showCondition: "!hasAlcohol",
+        text: "先不拿",
+        nextScene: "仁济南院-特需病房"
+      }
+    ]
+  },
+
+  "仁济南院-特需病房-储物柜-警觉": {
+    image: "images/youKillZombies.webp",
+    onEnter: { set: { _renjiVipZombieCleared: true, positionAfterOperation: "仁济南院-特需病房-储物柜-警觉" } },
+    text: "你想起病历和便签上的不对劲，拉开柜门时侧身让开半步，抬脚就踹。\n\
+里面蜷着的东西刚要扑出，被你一脚钉回柜壁，后脑撞上隔板，软软地滑到地上，不再动了。\n\
+柜子深处还躺着一样东西。",
+    choices: [
+      {
+        showCondition: "!hasTorch",
+        text: "拿走手电筒",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-特需病房",
+        effect: { set: { hasTorch: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      },
+      {
+        showCondition: "hasTorch",
+        text: "已经有手电筒了，不拿",
+        nextScene: "仁济南院-特需病房"
+      },
+      {
+        showCondition: "!hasTorch",
+        text: "先不拿",
+        nextScene: "仁济南院-特需病房"
+      }
+    ]
+  },
+
+  "仁济南院-特需病房-储物柜": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    onEnter: { set: { positionAfterOperation: "仁济南院-特需病房-储物柜" } },
+    text: function(vars) {
+      if (vars.hasTorch) {
+        return "柜门还半开着。里面已经空了——丧尸倒在旁边，手电筒你也拿过了。";
+      }
+      return "柜门半开着。里面那具不再动弹的身体被你拖到一边——角落里还横着一支手电筒，开关能亮。";
+    },
+    choices: [
+      {
+        showCondition: "!hasTorch",
+        text: "拿走手电筒",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-特需病房",
+        effect: { set: { hasTorch: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      },
+      {
+        showCondition: "hasTorch",
+        text: "离开",
+        nextScene: "仁济南院-特需病房"
+      },
+      {
+        showCondition: "!hasTorch",
+        text: "先不拿",
+        nextScene: "仁济南院-特需病房"
+      }
+    ]
+  },
+
+  "结局-仁济-特需偷袭": {
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    text: "你随手拉开半开的柜门。\n\
+里面蜷着的东西几乎是弹出来的——牙齿先碰到你的喉咙。你甚至没看清它的脸。\n\
+\n—— 结局：特需偷袭 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
   // ==================== 楼梯间（连接楼层 · 可上可下） ====================
 
   "仁济南院-楼梯-急诊楼": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
+    image: "images/仁济南院/急诊楼梯.webp",
     onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
     text: "你来到急诊医技楼的楼梯间。水泥台阶上散落着碎玻璃和几团染血的纱布，墙角堆着几把扫帚。\n往上走一层是二楼，往下回到大厅。",
     choices: [
@@ -1868,7 +2065,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-楼梯-门诊楼低": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
+    image: "images/仁济南院/门诊楼梯.webp",
     onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
     text: "你来到门诊楼的楼梯间。台阶很宽，扶手上落了灰——好几天没人擦过了。往上一层是二楼。",
     choices: [
@@ -1886,7 +2083,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-楼梯-门诊楼高": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiStairs.png */,
+    image: "images/仁济南院/门诊楼梯.webp",
     onEnter: function(vars) { vars.currentPos = "楼梯间"; return {}; },
     text: function(vars) {
       if (vars._lastScene === "仁济南院-中医科") {
