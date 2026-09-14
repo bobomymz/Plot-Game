@@ -1640,7 +1640,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-中医科": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiTCM.png */,
+    image: "images/仁济南院/中医科.webp",
     onEnter: function(vars) { vars.currentPos = "中医科"; return {}; },
     text: "这里是四楼的中医坐诊区。\n\上方挂着黑底金字牌匾，写着中医科三个大字。\n\
 左侧一块巨大的中医宣传海报文字写着 “疼痛 您还需忍耐多久？”，画面上还有人体经络示意图。\n\
