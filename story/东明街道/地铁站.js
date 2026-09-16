@@ -6,11 +6,11 @@
 Object.assign(storyData, {
 
   // ==================== 入口：地面 → 站厅 ====================
-  "11号线-三林东路站": {
+  "11号线-三林东站": {
     image: "images/地铁站/入口.webp",
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     text: function(vars) {
-      if (vars._visit["11号线-三林东路站"] && vars._visit["11号线-三林东路站"] > 1) {
+      if (vars._visit["11号线-三林东站"] && vars._visit["11号线-三林东站"] > 1) {
         return "闸机还是敞开着，地上那几摊干涸的血迹和杂物没变。站厅里安静得过头，只听见站台方向传来一阵阵成群移动的回音——你加快脚步，想快点穿过这片空地。";
       }
       return [
