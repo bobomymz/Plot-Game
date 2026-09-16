@@ -279,6 +279,63 @@ const storyData = {
     gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除
+    // ---- 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） ----
+    _hongBottleLabel: false,   // 手上水瓶是否是老洪204那只（瓶身有「芜湖 6.25」字迹标签）；送人/丢瓶重置，仅倒水不重置
+    _bottleFilledBySon: false, // 标签瓶是否已在动力站灌过纯水（情感节拍一次性标记）
+    _metJinbao: false,         // 是否已见过洪金宝（在场版）
+    _toldJinbaoTruth: "",      // 道德拷问结果：""未谈 / "truth"如实告知 / "lie"善意谎言 / "silent"沉默 / "confessed"事后补救
+    _jinbaoCommission: false,  // K0：洪金宝是否已拜托玩家回三林看他爸
+    _jinbaoFriendCommission: false, // 洪金宝是否已拜托玩家顺路看曹睿泽（上科大）
+    _jinbaoCaseComplete: false,// 是否拿到案例记录表（确证版，真相链物证）
+    _jinbaoFriendTold: false,  // 是否已向洪金宝回报过曹睿泽的死讯
+    _jinbaoPhotoShown: false,  // 是否已给洪金宝看过曹睿泽的合照
+    _jinbaoDieselAsked: false, // 柴油任务是否已接过（Day3+洪金宝/厂务开口）
+    _dieselDelivered: false,   // 柴油是否已送达动力站（送达→洪金宝撤离顺延一天）
+    _jinbaoReportRead: false,  // 是否已给洪金宝看过检测中心报告
+    _jinbaoFed: false,         // 谎言线的加班补给是否已给过（泡面/功能饮料）
+    hasDieselCan: false,       // 柴油铁皮桶（占1格；加油站/方姐两来源互斥 !hasDieselCan）
+    _hasFabKeycard: false,     // fab 门禁卡（科创老师复制的华大访客卡，进厂唯一途径）
+    _readAirlockRules: false,  // 是否读过外部厂区墙上的《风淋室操作规程》
+    _wearingCleanSuit: false,  // 是否穿着无尘服（灰区更衣柜穿/脱；穿着时不能进食饮水）
+    _fabAlert: 0,              // fab 警报等级 0-2（风淋误操作2/3各+1：白区围攻与恐慌员工闪色加长、人影更躁动）
+    _airlockOuterClosed: false,// 风淋舱：外门是否已关
+    _airlockBlowing: false,    // 风淋舱：是否正在吹风
+    _airlockInnerOpen: false,  // 风淋舱：倒计时是否结束（内门解锁）
+    _airlockStartFails: 0,     // 风淋舱：未关外门强启的连续报错次数（2次触发初级警报）
+    _airlockLockedOut: false,  // 风淋舱：强撬内门后系统锁死（须等复位才能重试）
+    _airlockLeakRounds: 0,     // 风淋舱：AMC 泄漏已困轮数（面具减半用）
+    _airlockAlarmZombie: false,// 风淋初级警报是否引来丧尸进外走廊（此后连廊多一场遭遇）
+    _airlockAlarmRang: false, // 风淋警报是否刚在本场景响过（强启失败场景 text 分支用，读后由下次进入覆盖）
+    _leakSolved: false,        // 泄漏乱拍是否恰好蒙对（nextScene 分流用，临时）
+    _leakJustHurt: false,      // 泄漏本轮是否实际扣了体力（text 分支用，临时）
+    _airlockZombieDone: false, // 连廊那场遭遇是否已解决
+    _fabSwarmDone: false,      // 白区围攻是否已被打穿（打穿后可自由穿行）
+    _fabFigAObs: false, _fabFigBObs: false, _fabFigCObs: false, // 白区三工位人影是否已观察过
+    _fabFigADone: false, _fabFigBDone: false, _fabFigCDone: false, // 白区三工位人影是否已了结（杀/误杀/对话过）
+    _fabFigBKilled: false,    // 白区工位B（老陈·活人）是否被玩家失手打死（误杀：仅文本回声，无机械后果）
+    _panicEmployeeState: "unmet", // 恐慌员工（小刘）：unmet未遇 / calmed虚惊相认 / injured打昏 / dead失手打死
+    _plenumPeeked: false,      // 是否已在送风夹层格栅上俯瞰过白区（白区线索预知）
+    _fabOfficeDeskSeen: false, // 是否已看过办公区贴满便利贴的工位（案例表旁证）
+    _knowsReportRoom: false,   // 是否翻到检测中心台账（知道检测三室房间号）
+    _labAlert: 0,              // 检测中心噪声等级（瞎摸/摔柜门各+1：检测员闪色加长、撤离多一场遭遇）
+    _labWeakened: false,       // 检测员是否被试剂柜门摔脸削弱（闪色-2位）
+    _labZombieDead: false,     // 检测员是否已被制服
+    _labExitFought: false,     // 撤离遭遇是否已打过
+    _reportCopiedToDiary: false, // 是否已把报告关键数据抄进日记本
+    _bridgeFrom: "",           // 川杨河大桥上桥方向："南"=南岸上（往北）/"北"=北岸上（往南），北落场景用它分流
+    _metTeacher: false,        // 是否已与科创老师重逢（张江AI岛机房）
+    _teacherFriendTold: false, // 是否已向老师回报过曹睿泽的死讯
+    _teacherReportRead: false, // 老师是否已看过检测中心报告
+    _foundFriend: false,       // 是否已发现曹睿泽的尸体（上科大宿舍）
+    _hasFriendPhoto: false,    // 曹睿泽与洪金宝的合照（不占背包，可给老师/洪金宝看）
+    _dormFoodTaken: false,     // 曹睿泽宿舍的火腿肠是否已拿过（一次性守卫）
+    _gasShedZombieDead: false, // 张江加油站铁皮棚的工装丧尸是否已被击杀
+    _hasTestReport: false,     // 上海市检测中心的盖章报告（不占背包，L3物证）
+    _noteRead: false,          // 断电版动力站的字条是否已读过
+    _remediedFromLie: false,   // 补救前是否走的谎言线（补救场景 text 分支用）
+    _bridgeStage: 0,           // 川杨河大桥进度：0未上桥 1/2/3=已过第1/2/3段（结局文本分段用）
+    _fangDieselGiven: false,   // 方姐的柴油交易是否已给过（张江还有活人的消息换，一次性）
+
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
     gameMemorySet: new Set(),         // 目前已获得的游戏记忆集合
@@ -333,6 +390,7 @@ const storyData = {
       hasMeleeWeapon: function(v) { return hasMeleeWeapon(v); }, // 是否有近战武器（普通+斧头/匕首，含在 string condition 里直接引用）
       meleeWeaponTier: function(v) { return meleeWeaponTier(v); }, // 近战武器档位 0-3，强丧尸用 "meleeWeaponTier >= N" 挡弱武器
       zombieOutsideHome: function(v) { return zombieOutsideHome(v); }, // 丧尸在门口
+      _jinbaoLeft: "dd >= (_dieselDelivered ? 6 : 5)", // 洪金宝是否已撤离（张江设计稿§五：送达柴油顺延一天；人走=楼黑=风淋/门禁断电）
       // 也支持函数（复杂逻辑）
       // fatigue: function(v) { return Math.max(0, 10 - v.strength); }
     },
@@ -600,16 +658,28 @@ const storyData = {
       {
         showCondition: "hasBottle",
         text: "丢下水瓶",
-        effect: updateTime(1, { set : { hasBottle: false, bottleWater: 0, waterToxic: false }, add: { itemCount: -1 } }),
+        effect: updateTime(1, { set : { hasBottle: false, bottleWater: 0, waterToxic: false, _hongBottleLabel: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasBottle && bottleWater > 0",
+        showCondition: "hasBottle && bottleWater > 0 && !_wearingCleanSuit",
         text: "喝水（体力+1）",
         nextScene: "整理整理-喝水"
       },
       {
-        showCondition: "hasFrozenMeat",
+        showCondition: "hasDieselCan",
+        text: "放下柴油桶（沉得要命）",
+        effect: updateTime(1, { set : { hasDieselCan: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "_wearingCleanSuit",
+        text: "脱下无尘服（面罩闷得慌，吃不了东西）",
+        effect: updateTime(1, { set: { _wearingCleanSuit: false } }),
+        nextScene: "整理整理-脱无尘服"
+      },
+      {
+        showCondition: "hasFrozenMeat && !_wearingCleanSuit",
         text: "吃掉冻肉（体力回满）",
         nextScene: "整理整理-吃冻肉"
       },
@@ -698,7 +768,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasBiscuit",
+        showCondition: "hasBiscuit && !_wearingCleanSuit",
         text: "吃掉饼干（体力+1）",
         nextScene: "整理整理-吃饼干"
       },
@@ -709,7 +779,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasInstantNoodle",
+        showCondition: "hasInstantNoodle && !_wearingCleanSuit",
         text: "吃掉泡面（体力+3）",
         nextScene: "整理整理-吃泡面"
       },
@@ -720,7 +790,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasCannedFood",
+        showCondition: "hasCannedFood && !_wearingCleanSuit",
         text: "吃掉罐头（体力+4）",
         nextScene: "整理整理-吃罐头"
       },
@@ -731,7 +801,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasFakeAntidote",
+        showCondition: "hasFakeAntidote && !_wearingCleanSuit",
         text: "服下“解毒剂”",
         nextScene: "整理整理-吃假解毒剂"
       },
@@ -766,7 +836,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasSnackCookie",
+        showCondition: "hasSnackCookie && !_wearingCleanSuit",
         text: "吃掉味千小饼干（体力+1）",
         nextScene: "整理整理-吃小饼干"
       },
@@ -777,7 +847,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasHamSausage",
+        showCondition: "hasHamSausage && !_wearingCleanSuit",
         text: "吃掉火腿肠（体力+2）",
         nextScene: "整理整理-吃火腿肠"
       },
@@ -788,7 +858,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasCatSnack",
+        showCondition: "hasCatSnack && !_wearingCleanSuit",
         text: "吃掉脆脆炒米（体力+1）",
         nextScene: "整理整理-吃炒米"
       },
@@ -799,7 +869,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasCracker",
+        showCondition: "hasCracker && !_wearingCleanSuit",
         text: "吃掉夹心饼干（体力+1）",
         nextScene: "整理整理-吃夹心饼干"
       },
@@ -810,7 +880,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasTeethingBiscuit",
+        showCondition: "hasTeethingBiscuit && !_wearingCleanSuit",
         text: "吃掉磨牙饼干（体力+1）",
         nextScene: "整理整理-吃磨牙饼干"
       },
@@ -822,7 +892,7 @@ const storyData = {
       },
       // 建平·占格道具的丢弃项（钥匙串/管线图为关键线索且合占 1 格，参照王知筠线索不设丢弃）
       {
-        showCondition: "hasCanteenFood",
+        showCondition: "hasCanteenFood && !_wearingCleanSuit",
         text: "吃掉食堂干粮（体力+2）",
         nextScene: "整理整理-吃食堂干粮"
       },
@@ -857,7 +927,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasMercuryPill && mercuryLoad > 0",
+        showCondition: "hasMercuryPill && mercuryLoad > 0 && !_wearingCleanSuit",
         text: "服用无标签药丸（作用未知）",
         nextScene: "整理整理-服药丸"
       },
@@ -891,7 +961,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasFeverMed && hasCold",
+        showCondition: "hasFeverMed && hasCold && !_wearingCleanSuit",
         text: "服用退烧药",
         nextScene: "整理整理-退烧"
       },
@@ -1021,6 +1091,26 @@ const storyData = {
         return "你拧开瓶盖喝了几口。水面上浮着一层淡淡的油光，味道也说不上新鲜——你皱了皱眉，还是咽了下去。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
       }
       return "你拧开瓶盖，仰头喝了几口。微凉的水顺着喉咙流下，干渴的身体舒服了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+    },
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-脱无尘服": {
+    image: "images/整理整理.webp",
+    onEnter: function(vars) {
+      vars._wearingCleanSuit = false;
+      return {};
+    },
+    text: function(vars) {
+      var desc = "你解开连体服背后的卡扣，把面罩掀开，一层层剥下来——闷了半天的汗气散出去，凉气贴上后背，你打了个激灵。\n";
+      if (vars.currentArea == "张江") {
+        desc += "这身衣服留在你手里，一团白布。想再穿，得回 fab 灰区的更衣柜去。\n";
+      } else {
+        desc += "这身衣服留在你手里，一团白布。\n";
+      }
+      return desc + "<span style='color: #00fbffff; font-style: italic;'>【系统提示】已脱下无尘服，现在可以进食饮水了。</span>";
     },
     choices: [
       { text: "继续", nextScene: "整理整理" }

@@ -120,8 +120,24 @@ Object.assign(storyData, {
 风从高处灌下来，吹得衣摆猎猎作响。高架桥下是成片灰扑扑的屋顶，再远一点，几栋高楼像墓碑一样立在天际线下。\n\
 这里难得空旷，你反而更不安了——太安静了。",
     choices: [
-      { text: "继续沿外环往东", nextScene: "张江立交桥", effect: updateTime(20) },
+      { text: "继续沿外环往东", nextScene: "北蔡镇罗山立交桥", effect: updateTime(10) },
       { text: "往回走", nextScene: "杨高南路立交桥", effect: updateTime(30) }
+    ]
+  },
+
+  // 北蔡镇罗山立交桥：外环罗山路立交与张江立交之间的新节点（张江设计稿§九）
+  // 下高架 = 张江河南岸主线唯一入口；选项不剧透桥下有什么。
+  "北蔡镇罗山立交桥": {
+    outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/highway/beicaiLuoshan.png */,
+    onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
+    text: "外环在前方又跨上另一条主干道，几条匝道在半空绞成一团，像被随手丢下的灰色绳子。\n\
+桥下的建筑渐渐变了样子——成片的居民楼退开去，换成一栋栋低矮的玻璃幕墙房子，围着一圈圈规整的绿化。这一片安静得反常，连风声都显得突兀。\n\
+右侧一条下高架的匝道空着，路面干净得像刚铺完。",
+    choices: [
+      { text: "下高架", nextScene: "张江-落地坡道", effect: updateTime(5) },
+      { text: "继续沿外环往东", nextScene: "张江立交桥", effect: updateTime(10) },
+      { text: "往回走", nextScene: "外环罗山路立交桥", effect: updateTime(10) }
     ]
   },
 
@@ -133,6 +149,7 @@ Object.assign(storyData, {
 匝道口堵着几辆撞成一团的货车，货厢门敞开着，货物散了一地，早被人翻得乱七八糟。有几只丧尸蹲在车缝里，听到你的脚步声，慢慢抬起了头。",
     choices: [
       { text: "继续往东", nextScene: "罗山路立交桥下", effect: updateTime(20) },
+      { text: "下高架", nextScene: "张江-北岸落地", effect: updateTime(5) },
       { text: "往回走", nextScene: "外环罗山路立交桥", effect: updateTime(20) }
     ]
   },

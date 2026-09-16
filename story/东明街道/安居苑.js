@@ -1038,7 +1038,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         text: "拿走空水瓶",
         condition: "itemCount < bagVolume",
         nextScene: "三林安居苑-8号楼-204室",
-        effect: { set: { hasBottle: true, bottleWater: 0 }, add: { itemCount: 1 } },
+        effect: { set: { hasBottle: true, bottleWater: 0, _hongBottleLabel: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {

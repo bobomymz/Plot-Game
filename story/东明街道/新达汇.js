@@ -262,8 +262,23 @@ Object.assign(storyData, {
   },
   "新达汇-B1消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
-    text: "你推开消防通道的门。步梯间里回荡着你的脚步声，墙上的应急出口标志泛着绿光。从这里可以步行上到各楼层。",
+    text: function(vars) {
+      var desc = "你推开消防通道的门。步梯间里回荡着你的脚步声，墙上的应急出口标志泛着绿光。从这里可以步行上到各楼层。";
+      if (!vars.hasAxe) {
+        if (vars.hasTorch) {
+          desc += "\n手电筒的光扫过步梯平台的墙面——那里嵌着一个消防箱，箱门的玻璃蒙着灰，但没碎。";
+        } else {
+          desc += "\n绿光之外，步梯平台的墙角沉在黑暗里，看不真切。";
+        }
+      }
+      return desc;
+    },
     choices: [
+      {
+        showCondition: "hasTorch && !hasAxe",
+        text: "打开消防箱",
+        nextScene: "新达汇-B1消防箱"
+      },
       {
         text: "上到1F（体力-1）",
         nextScene: "新达汇-1F消防通道",
@@ -274,6 +289,26 @@ Object.assign(storyData, {
         nextScene: "新达汇-B1走廊",
         effect: updateTime(1),
       },
+    ]
+  },
+
+  "新达汇-B1消防箱": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/B1消防箱.png */,
+    onEnter: { set: { positionAfterOperation: "新达汇-B1消防通道" } },
+    text: "你打开箱门——里面是一把红色的消防斧，挂在卡扣上，斧刃锃亮，一看就是没怎么用过的。\n\
+箱壁上贴着一张检查卡，最近的检查日期是6月中旬。",
+    choices: [
+      {
+        text: "拿走消防斧",
+        condition: "itemCount < bagVolume",
+        nextScene: "新达汇-B1消防通道",
+        effect: { set: { hasAxe: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      },
+      {
+        text: "算了，不拿",
+        nextScene: "新达汇-B1消防通道"
+      }
     ]
   },
 

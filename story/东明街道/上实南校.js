@@ -852,6 +852,7 @@ Object.assign(storyData, {
         }
       }
       vars.hasBottle = false;
+      vars._hongBottleLabel = false; // 瓶送给王老师了，父亲手写的标签不再随行
       vars.bottleWater = 0;
       vars.waterToxic = false;
       vars.itemCount = Math.max(0, vars.itemCount - 1);

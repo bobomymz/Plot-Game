@@ -217,6 +217,10 @@ Object.assign(storyData, {
       if (vars.hasGasMask) {
         cs.push({ text: "“我有个防毒面具，想换根铁棍。”", nextScene: "菜市场-交易-铁棍", effect: updateTime(2) });
       }
+      // 柴油（张江支线）：听过老陈开口（动力站 Day3+ 接任务）才能想到方姐；拿“张江还有活人”的消息换，不占货
+      if (vars._jinbaoDieselAsked && !vars.hasDieselCan && !vars._fangDieselGiven) {
+        cs.push({ text: "“不换吃的。跟你打听个货——柴油，有吗？”", nextScene: "菜市场-交易-柴油", effect: updateTime(2) });
+      }
       if (cs.length === 0) {
         cs.push({ text: "“我现在没什么能换的。”", nextScene: "菜市场-交易点-没东西", effect: updateTime(1) });
       }
@@ -301,6 +305,37 @@ Object.assign(storyData, {
       }
       return [{ text: "继续交易", nextScene: "菜市场-交易点" }, { text: "离开", nextScene: "菜市场-冷库区" }];
     }
+  },
+
+  // 柴油交易（张江支线）：不要货，要“张江还有活人”的消息。占 fangTradeCount 一次，与冻肉/水/铁棍抢次数。
+  "菜市场-交易-柴油": {
+    image: "images/placeholder.png" /* TODO: images/菜市场/交易-柴油.jpg */,
+    onEnter: function(vars) {
+      vars.currentPos = "冷库深处";
+      vars.positionAfterOperation = "菜市场-交易-柴油";
+      return {};
+    },
+    text: "“柴油？”方姐眯起眼睛，上下打量你，“要那玩意儿干什么？又不能喝。”\n你把张江的事拣着说了——华大半导体，还有活人守着发电机，油快见底了。\n她沉默了一会儿，转身朝冷库后面走：“跟我来。”\n库房最里头，叉车旁边立着一只铁皮油桶，桶身落了层薄灰。她拍了拍：“收破烂捎回来的，柴油，满的。死沉。”\n“不要你的肉，也不要你的水。”她盯着你，“我要的是你刚才那句话——张江还有活人。这几天到我这儿来的人，一个个都当这世上没别人了。你这句话，值一只桶。”",
+    choices: [
+      {
+        text: "拎走柴油桶",
+        condition: "itemCount < bagVolume",
+        nextScene: "菜市场-冷库区",
+        effect: function(v) {
+          v.hasDieselCan = true;
+          v._fangDieselGiven = true;
+          v.fangTradeCount += 1;
+          v.itemCount += 1;
+          return {};
+        },
+        elseScene: "整理整理"
+      },
+      {
+        text: "“桶先给我留着，我去腾腾地方。”",
+        nextScene: "菜市场-冷库区",
+        effect: updateTime(1)
+      }
+    ]
   },
 
   // ==================== 方姐尸变（死局） ====================

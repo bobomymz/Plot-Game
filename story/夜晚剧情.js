@@ -36,6 +36,13 @@ Object.assign(storyData, {
         }
       } else if (vars.currentArea === "建平中学") {
         desc += "校园在夜色里格外安静——只有风穿过空荡荡的教学楼发出的呜咽声。远处偶尔传来几声丧尸的拖步声。\n你必须找个地方熬过今晚。";
+      } else if (vars.currentArea === "张江") {
+        desc += "张江的夜静得反常——没有路灯，没有火光，只有玻璃幕墙上流动的一点点天光。这片科技园区在夜里，更像一座空了的展馆。\n";
+        if (!vars._jinbaoLeft) {
+          desc += "东边，华大那栋楼还亮着灯。在这片黑透了的园区里，那点光亮得扎眼。\n你必须找个地方过夜。";
+        } else {
+          desc += "东边那栋楼黑着，和四周的夜融成一片。\n你必须找个地方过夜。";
+        }
       } else {
         desc += "四周一片漆黑，你必须找个地方过夜。";
       }
@@ -187,14 +194,36 @@ Object.assign(storyData, {
         nextScene: "结局-过夜-建平宿舍遇袭"
       },
 
-      // ===== 兜底（始终可用，排除医院/建平） =====
+      // ===== 张江 =====
       {
-        showCondition: "dd < 3 && currentArea != '仁济南院' && currentArea != '建平中学'",
+        showCondition: "currentArea == '张江' && _metTeacher",
+        text: "回人工智能岛，去机房过夜",
+        nextScene: "过夜-张江-机房"
+      },
+      {
+        showCondition: "currentArea == '张江' && _visit['张江-华大-动力站'] > 0",
+        text: "摸回华大动力站过夜",
+        nextScene: "过夜-张江-动力站"
+      },
+      {
+        showCondition: "currentArea == '张江'",
+        text: "去上科大，找间空宿舍过夜",
+        nextScene: "过夜-张江-上科大"
+      },
+      {
+        showCondition: "currentArea == '张江'",
+        text: "就在园区里对付一夜",
+        nextScene: "结局-张江-街头过夜"
+      },
+
+      // ===== 兜底（始终可用，排除医院/建平/张江） =====
+      {
+        showCondition: "dd < 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江'",
         text: "冒险在街头找地方躲一晚",
         nextScene: "过夜-街头兜底"
       },
       {
-        showCondition: "dd >= 3 && currentArea != '仁济南院' && currentArea != '建平中学'",
+        showCondition: "dd >= 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江'",
         text: "在街头寻找掩体",
         nextScene: "结局-过夜-街头死亡"
       }
@@ -643,6 +672,80 @@ Object.assign(storyData, {
     text: "你摸黑进了宿舍，随便找了张床躺下，打算先凑合一晚。\n\
 深夜，走廊里传来拖沓的脚步声——你这才想起来，这栋楼的丧尸根本没清干净。\n\
 等你惊醒时，一张灰白的脸已经凑到了床边。\n\n—— 结局：宿舍惊魂 ——",
+    style: "color: #ff4444; font-weight: bold;"
+  },
+
+  // ==================== 安全屋 - 张江·AI岛机房（A类） ====================
+  "过夜-张江-机房": {
+    image: "images/placeholder.png" /* TODO: images/张江/AI岛-机房.webp */,
+    onEnter: function(vars) {
+      vars.currentArea = "张江";
+      vars.currentPlace = "人工智能岛";
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      return {};
+    },
+    text: "老师给你在机柜之间支了张行军床，又扔给你一件防静电外套当被子。\n“睡吧。风扇响就当白噪音——总比外头那些动静强。”他在操作台前坐下，显示器的光把他的影子投在机柜上。\n你醒来时，他正就着保温杯喝热水。“早。监控看了一遍，夜里没东西靠近这栋楼。”",
+    choices: [
+      { text: "继续", nextScene: "张江-AI岛-机房" }
+    ]
+  },
+
+  // ==================== 安全屋 - 张江·华大动力站（A类，断电后仍可） ====================
+  "过夜-张江-动力站": {
+    image: "images/placeholder.png" /* TODO: images/张江/华大-动力站-休息.webp */,
+    onEnter: function(vars) {
+      vars.currentArea = "张江";
+      vars.currentPlace = "华大半导体";
+      vars.currentPos = "动力站";
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      return {};
+    },
+    text: function(vars) {
+      if (vars._jinbaoLeft) {
+        return "动力站里没有人了。你摸黑拖开一张行军床，就着安全出口指示牌那点绿光躺下。\n发电机哑着，屋里静得能听见自己的血在耳朵里走。那几只白水桶立在墙边，像一排哨兵陪你到天亮。\n你醒了。字条还压在搪瓷缸底下。";
+      }
+      var desc = "洪金宝给你匀了半张行军床。发电机的轰鸣整夜没停，稳得像心跳。";
+      if (vars._panicEmployeeState === "calmed") desc += "小刘在地铺那头打着轻鼾。\n";
+      desc += "半夜你迷迷糊糊醒过一次，看见他还坐在仪表台前，笔记本摊开，就着绿灯一行一行地看。\n天亮了。他递给你半杯纯水：“醒醒。今天想干什么，想好了再走。”";
+      return desc;
+    },
+    choices: [
+      { text: "继续", nextScene: "张江-华大-动力站" }
+    ]
+  },
+
+  // ==================== 安全屋 - 张江·上科大空宿舍（B类） ====================
+  "过夜-张江-上科大": {
+    image: "images/placeholder.png" /* TODO: images/张江/上科大-空宿舍过夜.webp */,
+    onEnter: function(vars) {
+      vars.currentArea = "张江";
+      vars.currentPlace = "上科大";
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      vars.strength = Math.max(0, vars.strength - 1);
+      return {};
+    },
+    text: "你摸黑往西边走。校园比街面上还黑，只有教学楼的玻璃幕墙泛着一点天光。\n研究生公寓的单元门还那么敞着。你摸上二楼，避开 214，挑了那间被搬空的宿舍——床垫是竖着的，你把它放倒，和衣躺下。\n这一觉睡得很浅，楼道里每一声轻响都把你惊醒一次。\n天亮了。浑身酸得像被人捶过一遍，但你还活着。",
+    choices: [
+      { text: "继续", nextScene: "张江-上科大-公寓走廊" }
+    ]
+  },
+
+  // ==================== 死亡 - 张江街头过夜 ====================
+  "结局-张江-街头过夜": {
+    image: "images/zombieKnockYouDown.webp",
+    text: "你在一栋写字楼的大堂里找了张长椅，和衣躺下。\n玻璃幕墙外没有路灯，这里黑得像口井。后半夜，你听见玻璃门被推开的声音——不是风。风不会蹑手蹑脚。\n这片科技园区白天安静得像座空城，你躺下之前忘了问自己一句：空掉的城，人都去哪儿了。\n—— 结局：空城之夜 ——",
     style: "color: #ff4444; font-weight: bold;"
   },
 

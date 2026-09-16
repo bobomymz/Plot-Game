@@ -564,58 +564,28 @@ Object.assign(storyData, {
         nextScene: "小区道路"
       },
       {
-        text: "看看电梯厅",
-        nextScene: "1楼-电梯厅"
-      }
-    ]
-  },
-
-  "1楼-电梯厅": {
-    image: "images/placeholder.png" /* TODO: images/home/1楼电梯厅.png */,
-    text: function(vars) {
-      var desc = "大厅的一侧是电梯厅。电梯的门关着，轿厢停在1楼，空荡荡的，只有低沉的嗡鸣声，像是在召唤你。\n";
-      if (!vars.hasAxe) {
-        if (vars.hasTorch) {
-          desc += "手电筒的光扫过电梯厅尽头的墙角——那里靠墙立着一个红色的消防箱，箱门的玻璃蒙着灰，但没碎。";
-        } else {
-          desc += "天花板的灯坏了，这里一片漆黑。";
-        }
-      }
-      return desc;
-    },
-    choices: [
+        text: "看看楼栋告示栏",
+        nextScene: "楼栋告示栏"
+      },
       {
-        text: "坐电梯",
+        text: "去坐电梯",
         nextScene: "电梯"
-      },
-      {
-        showCondition: "hasTorch && !hasAxe",
-        text: "打开消防箱",
-        nextScene: "1楼-消防箱"
-      },
-      {
-        text: "离开电梯厅",
-        nextScene: "1楼-安全"
       }
     ]
   },
 
-  "1楼-消防箱": {
-    image: "images/placeholder.png" /* TODO: images/home/消防箱.png */,
-    onEnter: { set: { positionAfterOperation: "1楼-电梯厅" } },
-    text: "你打开消防箱。里面是一把红色的消防斧，挂在卡扣上，斧刃锃亮，一看就是没怎么用过的。\n\
-箱壁上贴着一张检查卡，最近的检查日期是6月中旬。",
+  "楼栋告示栏": {
+    image: "images/home/placeholder.png",
+    text: "你走到楼栋告示栏前。上面贴着几张通知，有什么“反诈宣传”“消防通道勿堆杂物”。有一张写着停水通知的纸已经被烧掉了一半。\n\
+1-5号楼 6/25 8:00-17:00 停水\n\
+6-10号楼 6/26 8:00-17:00 停水\n\
+11-15号楼 6/27 8:00-17:00 停水\n\
+……\n\
+之前忘记说了，你住的是20号楼。你有2个初中同学分别住在24号和31号楼。",
     choices: [
       {
-        text: "拿走消防斧",
-        condition: "itemCount < bagVolume",
-        nextScene: "1楼-电梯厅",
-        effect: { set: { hasAxe: true }, add: { itemCount: 1 } },
-        elseScene: "整理整理"
-      },
-      {
-        text: "算了，不拿",
-        nextScene: "1楼-电梯厅"
+        text: "继续",
+        nextScene: "1楼-安全"
       }
     ]
   },
