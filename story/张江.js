@@ -5,9 +5,16 @@
 // 结构总览：
 //   路网落点：北蔡镇罗山立交桥（上海市区路径.js，下高架）→ 张江-落地坡道 → 张江-人工智能岛闸机外（南岸枢纽）
 //             张江立交桥下高架 → 张江-北岸落地 → 张江-河北岸-街口（L3，见文末块）
-//   南岸：加油站（柴油来源①·L2） / 人工智能岛（科创老师·门禁卡·监控） / 上科大（曹睿泽宿舍）
-//         华大半导体 fab（风淋状态机/白区/夹层/动力站·洪金宝，见后续块）
-//   L3：川杨河南岸堤 → 川杨河大桥（3 段闪色各耗 1 弹，单向）→ 河北岸 → 上海市检测中心
+//   南岸街网（闸机外不一步直达各地块，各地块间有横向环路）：
+//     东线：闸机外 → 华科路（无人配送车）→ 华大大门
+//     西线：闸机外 → 街角（有轨电车，南岔→加油站）→ 科苑路 → 上科大校门   ← 加油站挂共享路段
+//     北线：闸机外 → 滨河绿道（远观河沿尸群）→ 川杨河南岸堤
+//     环路：华大动力站卸油门 ↔ 厂界便道 ↔ 滨河绿道（卸油门只能从厂内侧推开，_freightDoorOpen 前从绿道侧是死路，
+//           防止绕开大门门禁）
+//   南岸：加油站（柴油来源①·L2） / 人工智能岛（科创老师·门禁卡·监控·食堂/停车场冗余）
+//         上科大（曹睿泽宿舍·教学楼/食堂冗余） / 华大半导体 fab（厂区广场/风淋状态机/白区/夹层/动力站·洪金宝）
+//   L3：川杨河南岸堤 → 川杨河大桥（3 段闪色各耗 1 弹，单向）→ 河北岸（街口沿街铺面冗余）
+//       → 上海市检测中心（正门/卸货区侧门双入口，侧门直插走廊暗段，走廊两端可互通）
 //
 // 知识分层（§八，勿在文本里向未获知者剧透）：
 //   K0 未去过安居苑204 → 洪金宝自我介绍、反向委托；K1 去过 204 → 拷问触发；
@@ -22,7 +29,7 @@ Object.assign(storyData, {
 
   "张江-落地坡道": travelScene(
     "你贴着护栏走下匝道，坡道尽头横着一辆侧翻的电瓶车，你跨过去，踏上了张江的地面。\n\
-匝道口立着一块蓝底白字的指示牌：人工智能岛 →，上海科技大学 ←。路对面是一座加油站，罩棚下几台加油机的显示屏全黑着。\n\
+匝道口立着一块蓝底白字的指示牌：人工智能岛 →，上海科技大学 ←。西南方向，一座加油站的罩棚从树梢后面探出来，罩棚下几台加油机的显示屏全黑着。\n\
 这一带是科技园区，楼都不高，玻璃幕墙干干净净——干净得像还没人来得及弄脏它。街上很静，静得能听见红绿灯变换时那一声轻微的咔哒。",
     "张江-人工智能岛闸机外",
     {
@@ -48,7 +55,8 @@ Object.assign(storyData, {
       vars.currentPos = "闸机外";
     },
     text: function(vars) {
-      var desc = "你站在人工智能岛的闸机外。闸机的挡板大敞着，断电之后就再没合上过。岛上一栋栋小楼围着一圈绿化带，大多黑着窗，只有风吹动招牌的轻响。";
+      var desc = "你站在人工智能岛的闸机外。闸机的挡板大敞着，断电之后就再没合上过。岛上一栋栋小楼围着一圈绿化带，大多黑着窗，只有风吹动招牌的轻响。\n\
+西边路口探出有轨电车的车头；西南方向，加油站的罩棚白了一角。";
       if (vars.isNight) {
         if (!vars._jinbaoLeft) {
           if (vars.dd >= 3) {
@@ -65,11 +73,100 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "过闸机，进园区", nextScene: "张江-AI岛-园区内", effect: updateTime(3) },
-      { text: "往东，去华大半导体", nextScene: "张江-华大-大门", effect: updateTime(10) },
-      { text: "往西，去上海科技大学", nextScene: "张江-上科大-校门", effect: updateTime(15) },
-      { text: "往北，去川杨河边看看", nextScene: "张江-川杨河南岸堤", effect: updateTime(15) },
-      { text: "往西南，去那座加油站", nextScene: "张江-加油站", effect: updateTime(8) },
+      { text: "往东，沿华科路去华大半导体", nextScene: "张江-华科路", effect: updateTime(7) },
+      { text: "往西，去街角", nextScene: "张江-街角", effect: updateTime(4) },
+      { text: "往北，去川杨河边", nextScene: "张江-滨河绿道", effect: updateTime(8) },
       { text: "上高架，回西边", nextScene: "北蔡镇罗山立交桥", effect: updateTime(10) }
+    ]
+  },
+
+  // ==================== 南岸街道（闸机外通往各地块的“路程”节点 + 横向环路） ====================
+  // 多入口节点，文本一律按方位锚定（东=华大 / 西=上科大 / 北=川杨河），不以来路定向。
+
+  "张江-华科路": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/华科路.webp（智慧灯杆、斑马线前停摆的无人配送车） */
+    onEnter: function(vars) {
+      vars.currentPlace = "张江";
+      vars.currentPos = "华科路";
+    },
+    text: function(vars) {
+      var desc = "华科路东西向地铺开，把人工智能岛和华大半导体的围墙连在一起。路两边的智慧灯杆一根根立着，杆身上的显示屏全黑了。\n\
+马路当中，一辆无人配送车斜停在斑马线前，货舱门敞着。它大概是执行完最后一单，就没再等到下一单的指令。\n\
+东边，华大的围墙已经出现在路的尽头。";
+      if (vars.isNight && !vars._jinbaoLeft) {
+        desc += "\n夜里，围墙后面那栋厂房亮着灯，白惨惨的一片，像这条街上唯一还活着的东西。";
+      }
+      return desc + "\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "去看看那辆配送车", nextScene: "张江-华科路-配送车", effect: updateTime(2) },
+      { text: "往东，去华大大门", nextScene: "张江-华大-大门", effect: updateTime(3) },
+      { text: "往西，去闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(7) }
+    ]
+  },
+
+  "张江-华科路-配送车": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/配送车.webp */
+    onEnter: function(vars) { vars.currentPos = "华科路配送车旁"; },
+    text: function(vars) {
+      var desc = "你绕着配送车走了一圈。车身蒙着薄灰，车顶的激光雷达还在慢慢地转——不知靠的哪块余电，像在原地等一个永远不会变绿的绿灯。\n\
+货舱里剩最后一件包裹：一只生鲜保温箱，箱底冰早就化干了。你没敢打开看。";
+      if (vars._visit['张江-华科路-配送车'] > 1) desc = "配送车还停在斑马线前，货舱门敞着。车顶的激光雷达不知什么时候也停了。";
+      return desc;
+    },
+    choices: [
+      { text: "去华科路", nextScene: "张江-华科路", effect: updateTime(1) }
+    ]
+  },
+
+  // 街角（西线岔口）：东↔闸机外，南岔→加油站（环路），西→科苑路→上科大。
+
+  "张江-街角": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/街角.webp（斜停在路口的有轨电车） */
+    onEnter: function(vars) {
+      vars.currentPlace = "张江";
+      vars.currentPos = "南岸街角";
+    },
+    text: function(vars) {
+      return "街角的斑马线中央，斜停着一列两节的有轨电车，受电弓还搭在电线上。车门全敞着，车厢里空荡荡的，一只口罩落在踏板边上。\n\
+站牌上写着“张江有轨电车 1 号线”，发车时刻表停在 6 月 27 日最后一班。\n\
+南边的路口外，加油站的罩棚探出一角；往西，科苑路两侧的行道树一直铺到看不见的地方。\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "上电车看看", nextScene: "张江-街角-电车", effect: updateTime(2) },
+      { text: "往南，去加油站", nextScene: "张江-加油站", effect: updateTime(7) },
+      { text: "往西，沿科苑路去上科大", nextScene: "张江-科苑路", effect: updateTime(8) },
+      { text: "往东，去闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(4) }
+    ]
+  },
+
+  "张江-街角-电车": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/电车.webp（车厢内部） */
+    onEnter: function(vars) { vars.currentPos = "有轨电车上"; },
+    text: "你踩着踏板进了车厢。地板上滚着几枚硬币，扶手杆上还挂着一只没人拿的环保袋。\n\
+司机室的门开着，操纵台上贴着一张便签：“老张，交完班记得充电。”\n\
+座位上有一份乘客落下的报纸，6 月 27 日的。头版的角落里登着一则短讯：某路段供水管网例行检修，请沿线居民提前储水。",
+    choices: [
+      { text: "下车，去街角", nextScene: "张江-街角", effect: updateTime(1) }
+    ]
+  },
+
+  "张江-科苑路": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/科苑路.webp（行道树、撞上护栏的白色轿车） */
+    onEnter: function(vars) { vars.currentPos = "科苑路"; },
+    text: function(vars) {
+      var desc = "科苑路又直又长，两排梧桐把天光筛成碎片。路边歪着一辆撞上护栏的白色轿车，车门开着，钥匙还插着，后座上散落着几件叠好的衣物——像有人装到一半，忽然改了主意。\n\
+往西，上科大的校门和教学楼群在树梢后面露出灰白的边。";
+      return desc + "\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "往西，去上科大校门", nextScene: "张江-上科大-校门", effect: updateTime(3) },
+      { text: "往东，去街角", nextScene: "张江-街角", effect: updateTime(8) }
     ]
   },
 
@@ -90,7 +187,7 @@ Object.assign(storyData, {
     choices: [
       { text: "进便利店看看", nextScene: "张江-加油站-便利店", effect: updateTime(2) },
       { text: "绕到后场的铁皮棚", nextScene: "张江-加油站-棚子", effect: updateTime(2) },
-      { text: "往东北，回闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(8) }
+      { text: "往东北，去街角", nextScene: "张江-街角", effect: updateTime(7) }
     ]
   },
 
@@ -101,7 +198,7 @@ Object.assign(storyData, {
 货架被搬空了大半，地上滚着踩扁的薯片袋。收银机的抽屉开着，里面躺着几张没人要的零钱。冰柜早断了电，柜门里糊着一层化了又干的巧克力印子。\n\
 柜台后面贴着值班表，最后一个签到的是 6 月 27 日晚班。",
     choices: [
-      { text: "出去", nextScene: "张江-加油站", effect: updateTime(1) }
+      { text: "出便利店，去罩棚下", nextScene: "张江-加油站", effect: updateTime(1) }
     ]
   },
 
@@ -125,7 +222,7 @@ Object.assign(storyData, {
           nextScene: "张江-加油站-棚子-战斗",
           effect: updateTime(1)
         });
-        cs.push({ text: "退出去，别惊动它", nextScene: "张江-加油站", effect: updateTime(1) });
+        cs.push({ text: "出棚子，去罩棚下，别惊动它", nextScene: "张江-加油站", effect: updateTime(1) });
       } else {
         cs.push({
           showCondition: "!hasDieselCan",
@@ -194,13 +291,19 @@ Object.assign(storyData, {
   // ==================== 人工智能岛（科创老师 · 轻量线） ====================
 
   "张江-AI岛-园区内": {
+    outdoor: true,
     image: "images/placeholder.png", /* TODO: images/张江/AI岛-园区内.webp */
     onEnter: function(vars) { vars.currentPos = "园区内"; },
-    text: "过了闸机，园区里比街上还要静。一栋栋小楼隔着草坪排开，玻璃门里的大厅黑洞洞的，前台的白字招牌在昏光里泛着灰。\n\
-只有靠里那栋楼的一层，窗帘缝里漏出一线很弱的光——不是电灯，更像是哪种设备上的指示灯，绿的，一闪一闪。",
+    text: function(vars) {
+      return "过了闸机，园区里比街上还要静。一栋栋小楼隔着草坪排开，玻璃门里的大厅黑洞洞的，前台的白字招牌在昏光里泛着灰。\n\
+东边一栋两层小楼挂着“智慧餐厅”的招牌，招牌黑着；南侧空地是一片带充电桩的停车场。\n\
+只有靠里那栋楼的一层，窗帘缝里漏出一线很弱的光——不是电灯，更像是哪种设备上的指示灯，绿的，一闪一闪。\n" + describeWeather(vars);
+    },
     choices: [
       { text: "去那栋有微光的楼", nextScene: "张江-AI岛-公司前台", effect: updateTime(2) },
-      { text: "回闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(2) }
+      { text: "去东边的智慧餐厅", nextScene: "张江-AI岛-食堂", effect: updateTime(2) },
+      { text: "去南边的停车场", nextScene: "张江-AI岛-停车场", effect: updateTime(2) },
+      { text: "出闸机，去闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(2) }
     ]
   },
 
@@ -212,7 +315,7 @@ Object.assign(storyData, {
 门缝底下透出一线光，还有服务器风扇那种持续的、低低的嗡嗡声。",
     choices: [
       { text: "推开那扇门", nextScene: "张江-AI岛-机房", effect: updateTime(2) },
-      { text: "退回园区", nextScene: "张江-AI岛-园区内", effect: updateTime(1) }
+      { text: "去园区", nextScene: "张江-AI岛-园区内", effect: updateTime(1) }
     ]
   },
 
@@ -399,6 +502,34 @@ Object.assign(storyData, {
     ]
   },
 
+  // ---- 园区冗余：智慧餐厅 / 停车场（纯环境叙事，无战斗无补给） ----
+
+  "张江-AI岛-食堂": {
+    image: "images/placeholder.png", /* TODO: images/张江/AI岛-食堂.webp（倒扣的椅子、黑屏的点餐屏） */
+    onEnter: function(vars) { vars.currentPos = "园区食堂"; },
+    text: "智慧餐厅里，椅子倒扣在桌上，扣了一半——有几桌还没来得及扣。取餐线上方的电子菜价屏黑着，玻璃罩子里的菜早就干成了标本。\n\
+结算台上贴着“全程无接触·扫码就餐”的提示，一排二维码，齐齐整整。\n\
+后厨的传菜口里递出来一块小白板，上面是值班的交班记录，最后一行写着：“6/28 中午人手不足，先关冷库。谁最后走，记得关灯。”",
+    choices: [
+      { text: "出餐厅，去园区", nextScene: "张江-AI岛-园区内", effect: updateTime(1) }
+    ]
+  },
+
+  "张江-AI岛-停车场": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/AI岛-停车场.webp（充电桩、塌了半边的纸箱猫窝） */
+    onEnter: function(vars) { vars.currentPos = "园区停车场"; },
+    text: function(vars) {
+      var desc = "停车场上大半的车都还在——这年头，车再多也没地方开。充电桩的指示灯全灭了，只有一台枪线还插在车上的桩，屏幕定格着一行报错：充电中止，请检查连接。\n\
+最靠里那个车位的地面上放着一只塑料食盆，旁边纸箱做的窝塌了半边，窝里粘着些白色的猫毛。";
+      if (vars._metTeacher) desc += "\n老师提过他喂的那只猫。食盆空了好几天了——猫也不来了。";
+      return desc + "\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "去园区", nextScene: "张江-AI岛-园区内", effect: updateTime(1) }
+    ]
+  },
+
   // ==================== 上科大（曹睿泽宿舍 · 好友线） ====================
 
   "张江-上科大-校门": {
@@ -415,7 +546,8 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "往西，去生活区的宿舍楼", nextScene: "张江-上科大-研究生公寓", effect: updateTime(5) },
-      { text: "往东，回人工智能岛", nextScene: "张江-人工智能岛闸机外", effect: updateTime(15) }
+      { text: "往北，去教学区看看", nextScene: "张江-上科大-教学楼门厅", effect: updateTime(5) },
+      { text: "往东，去科苑路", nextScene: "张江-科苑路", effect: updateTime(3) }
     ]
   },
 
@@ -423,12 +555,15 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png", /* TODO: images/张江/研究生公寓.webp */
     onEnter: function(vars) { vars.currentPos = "研究生公寓楼下"; },
-    text: "研究生公寓是一栋六层的板楼。单元门上的玻璃碎了一块，门就这么敞着。\n\
+    text: function(vars) {
+      return "研究生公寓是一栋六层的板楼。单元门上的玻璃碎了一块，门就这么敞着。\n\
 楼下的自行车棚里东倒西歪停着几辆车，有的钥匙还插在锁上。公告栏上贴着六月的海报——学术讲座、跳蚤市场、毕业季合影，纸角都翘了起来。\n\
-门禁机黑着屏。你侧身进了单元门。",
+门禁机黑着屏。你侧身进了单元门。\n" + describeWeather(vars);
+    },
     choices: [
       { text: "上楼看看", nextScene: "张江-上科大-公寓走廊", effect: updateTime(2) },
-      { text: "回校门", nextScene: "张江-上科大-校门", effect: updateTime(5) }
+      { text: "去旁边的食堂", nextScene: "张江-上科大-食堂", effect: updateTime(3) },
+      { text: "往东，去校门", nextScene: "张江-上科大-校门", effect: updateTime(5) }
     ]
   },
 
@@ -450,7 +585,7 @@ Object.assign(storyData, {
 另一间的门缝里塞着一张物业催缴单，别的什么也没有。\n\
 这条走廊上，只有 214 是敞着的。",
     choices: [
-      { text: "回走廊", nextScene: "张江-上科大-公寓走廊", effect: updateTime(1) },
+      { text: "去走廊", nextScene: "张江-上科大-公寓走廊", effect: updateTime(1) },
       { text: "下楼离开", nextScene: "张江-上科大-研究生公寓", effect: updateTime(2) }
     ]
   },
@@ -521,12 +656,124 @@ Object.assign(storyData, {
         effect: { set: { hasHamSausage: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
-      { text: "不拿了，出去", nextScene: "张江-上科大-曹睿泽宿舍" }
+      { text: "不拿了，去宿舍", nextScene: "张江-上科大-曹睿泽宿舍" }
     ]
   },
 
+  // ---- 校园冗余：教学楼门厅 / 食堂（环境叙事，无补给） ----
+
+  "张江-上科大-教学楼门厅": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/教学楼门厅.webp（锁死的玻璃门、倒地的易拉宝） */
+    onEnter: function(vars) { vars.currentPos = "教学楼门厅外"; },
+    text: function(vars) {
+      return "教学楼的玻璃大门锁得死死的。门内的旋转门停在一半，大厅深处的导览屏黑着，只有高窗给地面留了一格一格的亮。\n\
+门上贴着一张 A4 纸，打印的：《关于暂停一切线下教学活动的通知》，落款日期 6 月 28 日，公章鲜红。\n\
+门口一座“毕业季合影”的易拉宝倒在地上，没人扶。你隔着玻璃往里看了一会儿——楼梯间的防火门后面，黑得深不见底。你没想硬闯。\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "往南，去校门", nextScene: "张江-上科大-校门", effect: updateTime(5) }
+    ]
+  },
+
+  "张江-上科大-食堂": {
+    image: "images/placeholder.png", /* TODO: images/张江/上科大食堂.webp（翻倒的餐车、堆在墙角的空水桶） */
+    onEnter: function(vars) { vars.currentPos = "上科大食堂"; },
+    text: function(vars) {
+      var desc = "食堂的卷帘门拉了一半，你弯腰钻了进去。就餐区的桌上还摆着没收的餐盘，盘子里的东西干得发白；一台餐车翻在过道里，轮子朝天。\n\
+你绕到饮水区——空的。开水器的柜门敞着，里面一排空桶；墙角堆着十几只换下来的水桶，一只挨一只，全都空了，桶壁上的水渍干成了白圈。\n\
+最先被搬空的，永远是水。你想起这件事的时候，胃里沉了一下。";
+      if (!vars._sistKitchenZombieDead) desc += "\n后厨的传菜口黑着，里面偶尔传来一声金属碰瓷的轻响——风，或者别的什么。";
+      else desc += "\n后厨那头已经安静了。";
+      return desc;
+    },
+    choices: [
+      { text: "去后厨看看", nextScene: "张江-上科大-食堂-后厨", effect: updateTime(2) },
+      { text: "出食堂，去公寓楼下", nextScene: "张江-上科大-研究生公寓", effect: updateTime(3) }
+    ]
+  },
+
+  "张江-上科大-食堂-后厨": {
+    image: "images/placeholder.png", /* TODO: images/张江/上科大食堂-后厨.webp（扣着的大锅、发蔫的青菜） */
+    onEnter: function(vars) { vars.currentPos = "上科大食堂后厨"; vars.positionAfterOperation = "张江-上科大-食堂-后厨"; },
+    text: function(vars) {
+      if (!vars._sistKitchenZombieDead) {
+        return "后厨比外面更暗。灶台上一排大锅扣着，案板上还摊着没切完的青菜，叶子已经发蔫。\n\
+你刚踏过门槛，储物柜后面立起一个人——白衣、围裙，胸口的工牌反着光。它手里还攥着一把勺子，勺面磕在不锈钢台面上，当的一声。";
+      }
+      var desc = "后厨安静着。储物柜门开着，最里层的铁架上还剩几包没拆的夹心饼干，大概是员工私藏，没来得及被搬走。";
+      if (vars.hasCracker) desc += "\n你已经有夹心饼干了，不必再拿。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._sistKitchenZombieDead) {
+        cs.push({
+          text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "迎战" : "握紧拳头迎战"; },
+          nextScene: "张江-上科大-食堂-后厨-战斗",
+          effect: updateTime(1)
+        });
+        cs.push({ text: "去就餐区，别惊动它", nextScene: "张江-上科大-食堂", effect: updateTime(1) });
+        return cs;
+      }
+      cs.push({
+        showCondition: "!hasCracker",
+        text: "收下夹心饼干",
+        condition: "itemCount < bagVolume",
+        nextScene: "张江-上科大-食堂-后厨",
+        effect: { set: { hasCracker: true }, add: { itemCount: 1 } },
+        elseScene: "整理整理"
+      });
+      cs.push({ text: "去就餐区", nextScene: "张江-上科大-食堂", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "张江-上科大-食堂-后厨-战斗": {
+    image: "images/placeholder.png", /* TODO: images/张江/上科大食堂-后厨-战斗.webp */
+    onEnter: initMemoryGame(["红", "蓝", "绿"], 4),
+    text: "它绕过案板扑过来，勺子甩出去，当啷一声滚进下水道口。后厨的瓷砖把脚步声放大了一圈。\n\
+别被逼到灶台和墙的夹角里。",
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：3红2蓝" },
+        condition: checkFlashAnswer,
+        nextScene: "张江-上科大-食堂-后厨-胜利",
+        elseScene: "结局-张江-上科大食堂",
+        timeout: 9000,
+        timeoutScene: "结局-张江-上科大食堂"
+      }
+    ]
+  },
+
+  "张江-上科大-食堂-后厨-胜利": {
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) {
+      vars._sistKitchenZombieDead = true;
+      vars.positionAfterOperation = "张江-上科大-食堂-后厨";
+      return updateTime(2)(vars);
+    },
+    text: function(vars) {
+      return "你侧身让过第一扑，把它撞在储物柜上。柜门砰地关上，它滑下去，围裙的带子散开，工牌掉在油污的地上：餐饮中心 · 临时工。\n\
+后厨里只剩抽油烟机不知从哪来的一点余响。" + weaponBrokeText(vars);
+    },
+    choices: [
+      { text: "去翻储物柜", nextScene: "张江-上科大-食堂-后厨" }
+    ]
+  },
+
+  "结局-张江-上科大食堂": {
+    image: "images/zombieKnockYouDown.webp",
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
+    text: function(vars) {
+      return "你被它按在案板上。没切完的青菜贴上脸，叶子已经发蔫，还带着一点没散尽的水汽。\n\
+勺子不知滚到了哪里。后厨的地漏里，缓缓冒着一股馊味。\n—— 结局：上科大食堂 ——" + weaponBrokeText(vars);
+    }
+  },
+
   // ==================== 华大半导体 · 外部厂区 ====================
-  // 动线：大门（刷卡/断电推开）→ 保安亭 → 连廊（风淋规程贴墙上）→ 灰区
+  // 动线：大门（刷卡/断电推开）→ 厂区广场（监控人影落地；白天绕行，警报后抄近路有遭遇）→ 保安亭 → 连廊 → 灰区
   //       办公区从连廊侧门进（可选轻探索，案例表旁证）。
 
   "张江-华大-大门": {
@@ -538,7 +785,10 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       var desc = "华大半导体的厂区大门比你想象中朴素——一道伸缩门，一根黄黑相间的闸杆，门柱上嵌着读卡器，旁边钉着“访客请登记”的牌子。\n\
-大门里侧是一大片厂区广场，水泥地坪干净得发白。远处厂房的玻璃幕墙一层层排开，像一块竖起来的电路板。";
+大门里侧是一大片厂区广场，水泥地坪干净得发白。";
+      if (vars._plazaFought) desc += "\n透过伸缩门的缝，广场空着。东北角的地上躺着几团不动的影子。";
+      else desc += "\n透过伸缩门的缝，能看见广场上有几条人影在慢慢地晃——隔着这道门，看不清是人是尸。";
+      desc += "\n远处厂房的玻璃幕墙一层层排开，像一块竖起来的电路板。";
       if (vars._jinbaoLeft) {
         desc += "\n读卡器的指示灯灭了。你伸手推了推伸缩门——门轮子锈住了，吱呀一声，居然让出半米宽的缝。\n电没了，电磁锁比一只手都拦不住。";
       } else {
@@ -550,12 +800,12 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (vars._jinbaoLeft) {
-        cs.push({ text: "从门缝里挤进去", nextScene: "张江-华大-保安亭", effect: updateTime(2) });
+        cs.push({ text: "从门缝里挤进去", nextScene: "张江-华大-厂区广场", effect: updateTime(2) });
       } else {
         cs.push({
           showCondition: "_hasFabKeycard",
           text: "把门禁卡贴上读卡器",
-          nextScene: "张江-华大-保安亭",
+          nextScene: "张江-华大-厂区广场",
           effect: updateTime(2)
         });
         cs.push({
@@ -565,7 +815,7 @@ Object.assign(storyData, {
           effect: updateTime(2)
         });
       }
-      cs.push({ text: "往西，回闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(10) });
+      cs.push({ text: "往西，去华科路", nextScene: "张江-华科路", effect: updateTime(3) });
       return cs;
     }
   },
@@ -586,6 +836,113 @@ Object.assign(storyData, {
     ]
   },
 
+  // ---- 厂区广场：大门↔保安亭之间的过渡。老师监控里“门前广场上慢慢晃的人影”在此落地。 ----
+
+  "张江-华大-厂区广场": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/厂区广场.webp（白水泥地坪、旗杆、远处幕墙、几条人影） */
+    onEnter: function(vars) { vars.currentPos = "厂区广场"; },
+    text: function(vars) {
+      var alerted = vars._fabAlert > 0 || vars._airlockAlarmZombie;
+      var desc = "进了伸缩门，厂区广场在眼前铺开——一大片水泥地坪，白得发亮，几道黄色的导引线画到一半就没了必要。一排旗杆立在广场东侧，旗绳抽打着空杆。\n\
+厂房的玻璃幕墙在广场对面立起来，一层压一层，像一块竖起来的电路板。";
+      if (vars._plazaFought) {
+        desc += "\n东北角那几条人影已经倒在导引线边上，不会再晃了。";
+      } else if (alerted) {
+        desc += "\n警报把东北角那几条人影从梦游里拽醒了。它们不再原地晃，散开了几步，脑袋齐齐朝厂房方向转——西沿那条绕路，比刚才窄了一截。";
+      } else {
+        desc += "\n广场东北角，离你几十米，几条人影在原地慢慢地晃。隔着这么远，看不清衣着，只看得出它们哪儿也不去。";
+      }
+      if (vars.isNight && !vars._jinbaoLeft && !vars._plazaFought) desc += "\n夜里，幕墙里侧的窗户一层层亮着灯。那几条人影晃在灯影和黑暗的交界上，像被光钉住了。";
+      if (vars._jinbaoLeft && !vars._plazaFought) desc += "\n灯灭了。幕墙黑成一整块，那几条人影还站在老地方——比这片广场上任何东西都有耐心。";
+      return desc + "\n" + describeWeather(vars);
+    },
+    choices: function(vars) {
+      var cs = [];
+      var alerted = vars._fabAlert > 0 || vars._airlockAlarmZombie;
+      if (!vars._plazaFigSeen && !alerted) {
+        cs.push({
+          text: "凑近点，看看那几条人影",
+          nextScene: "张江-华大-广场-人影",
+          effect: updateTime(2)
+        });
+      }
+      if (alerted && !vars._plazaFought) {
+        cs.push({
+          text: "抄近路，从广场中间穿过去",
+          nextScene: "张江-华大-广场-近路",
+          effect: updateTime(1)
+        });
+      }
+      cs.push({ text: "沿广场西沿，绕去保安亭", nextScene: "张江-华大-保安亭", effect: updateTime(alerted && !vars._plazaFought ? 5 : 3) });
+      cs.push({ text: "往西，去大门", nextScene: "张江-华大-大门", effect: updateTime(2) });
+      return cs;
+    }
+  },
+
+  "张江-华大-广场-人影": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/厂区广场-人影.webp（反光背心、制服裤的丧尸远景） */
+    onEnter: { set: { _plazaFigSeen: true } },
+    text: function(vars) {
+      var desc = "你贴着导引线挪近，在二十来米外停住。\n\
+三条人影。一个穿着门卫的制服裤，一个套着访客用的反光背心，还有一个——连领带都没解。它们在原地轻轻摇晃，脑袋一下一下地朝两边划，谁也不理谁。\n\
+这几天，它们就在这片广场上晃，再没走进厂房。";
+      if (vars._visit && vars._visit['张江-AI岛-机房-监控'] > 0) {
+        desc += "\n（你在老师的监控墙上看过这个广场。画面里慢慢晃的那几条，就是它们。）";
+      }
+      return desc;
+    },
+    choices: [
+      { text: "别再靠近了", nextScene: "张江-华大-厂区广场", effect: updateTime(1) }
+    ]
+  },
+
+  "张江-华大-广场-近路": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/厂区广场-近路.webp（反光背心人影扑近） */
+    onEnter: initMemoryGame(["红", "蓝", "绿"], 4),
+    text: "你抄近路穿过广场。警报把那几条人影从梦游里拽醒了——它们不再原地晃，齐齐朝你转过来。反光背心在日光里刺一下眼。\n\
+来不及退回西沿了。",
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：3红2蓝" },
+        condition: checkFlashAnswer,
+        nextScene: "张江-华大-广场-近路-胜",
+        elseScene: "结局-张江-厂区广场",
+        timeout: 9000,
+        timeoutScene: "结局-张江-厂区广场"
+      }
+    ]
+  },
+
+  "张江-华大-广场-近路-胜": {
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) {
+      vars._plazaFought = true;
+      vars._plazaFigSeen = true;
+      return updateTime(2)(vars);
+    },
+    text: function(vars) {
+      return "你把最前面那条穿着反光背心的撞翻在导引线上，另外两条还在转头——就这半拍，你抢到西沿的墙根。\n\
+旗绳还在空杆上抽。广场又大又白，空得能听见自己的喘气。" + weaponBrokeText(vars);
+    },
+    choices: [
+      { text: "沿西沿，去保安亭", nextScene: "张江-华大-保安亭", effect: updateTime(2) },
+      { text: "去厂区广场", nextScene: "张江-华大-厂区广场" }
+    ]
+  },
+
+  "结局-张江-厂区广场": {
+    image: "images/zombieKnockYouDown.webp",
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
+    text: function(vars) {
+      return "你被按倒在发白的水泥地上。反光背心罩下来，旗绳还在空杆上抽。\n\
+伸缩门外就是华科路。你看见了，够不着。\n—— 结局：厂区广场 ——" + weaponBrokeText(vars);
+    }
+  },
+
   "张江-华大-保安亭": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-保安亭.webp（翻倒的椅子、值班表、黑掉的监控屏） */
     onEnter: function(vars) { vars.currentPos = "保安亭"; },
@@ -594,7 +951,7 @@ Object.assign(storyData, {
 监控屏全黑了，对讲机的充电座空着——对讲机本身不见了，像有人走的时候顺手带走了最重要的东西。",
     choices: [
       { text: "沿广场往里走，进连廊", nextScene: "张江-华大-连廊", effect: updateTime(3) },
-      { text: "出大门", nextScene: "张江-华大-大门", effect: updateTime(2) }
+      { text: "去厂区广场", nextScene: "张江-华大-厂区广场", effect: updateTime(3) }
     ]
   },
 
@@ -626,7 +983,7 @@ Object.assign(storyData, {
       }
       cs.push({ text: "推开尽头那扇门", nextScene: "张江-华大-灰区", effect: updateTime(1) });
       cs.push({ text: "从侧门进办公楼", nextScene: "张江-华大-办公区", effect: updateTime(2) });
-      cs.push({ text: "出连廊，回保安亭", nextScene: "张江-华大-保安亭", effect: updateTime(3) });
+      cs.push({ text: "出连廊，去保安亭", nextScene: "张江-华大-保安亭", effect: updateTime(3) });
       return cs;
     }
   },
@@ -2009,8 +2366,12 @@ Object.assign(storyData, {
       vars.currentPos = "动力站";
     },
     text: function(vars) {
+      var fromFreight = vars._lastScene === "张江-厂界便道";
       if (vars._jinbaoLeft) {
-        var dark = "动力站空了。发电机哑着，仪表黑着，几只行军床叠在墙角，床下的鞋印还是新的。\n\
+        var dark = fromFreight
+          ? "你从卸油门的缝里钻进来。动力站空了。发电机哑着，仪表黑着，几只行军床叠在墙角，床下的鞋印还是新的。\n\
+纯水系统停了机。系统旁边，一字排开几只白色的大水桶，桶身上是马克笔的字：“给可能会来的人。”"
+          : "动力站空了。发电机哑着，仪表黑着，几只行军床叠在墙角，床下的鞋印还是新的。\n\
 纯水系统停了机。系统旁边，一字排开几只白色的大水桶，桶身上是马克笔的字：“给可能会来的人。”";
         if (!vars._noteRead) dark += "\n\
 值班桌上压着一张字条，用一只搪瓷缸镇着。";
@@ -2018,7 +2379,10 @@ Object.assign(storyData, {
 那张字条还压在搪瓷缸底下。";
         return dark;
       }
-      var desc = "动力站是这栋楼的心脏——发电机低吼着，水泵喘着，一排滤柱的仪表上，数字绿得发亮。\n\
+      var desc = fromFreight
+        ? "你从卸油门钻进来，柴油味和机油味一起撞上脸。动力站是这栋楼的心脏——发电机低吼着，水泵喘着，一排滤柱的仪表上，数字绿得发亮。\n\
+洪金宝守在仪表台前，那个写满名字和日期的笔记本就摊在手边。\n"
+        : "动力站是这栋楼的心脏——发电机低吼着，水泵喘着，一排滤柱的仪表上，数字绿得发亮。\n\
 洪金宝守在仪表台前，那个写满名字和日期的笔记本就摊在手边。\n";
       if (vars._panicEmployeeState === "calmed") desc += "小刘在地铺上坐着，见你进来，咧嘴笑了笑，又赶紧把手指竖在嘴前——嘘，洪工在看数据。\n";
       else if (vars._panicEmployeeState === "injured") desc += "小刘抱着膝盖缩在地铺角落，后脑勺上的肿包还没消。看见你，他往被子里又缩了半个身位。\n";
@@ -2047,8 +2411,16 @@ Object.assign(storyData, {
           nextScene: "整理整理",
           effect: { set: { positionAfterOperation: "张江-华大-动力站" } }
         });
-        cs.push({ text: "往西，穿过车间回白区", nextScene: "张江-华大-白区", effect: updateTime(4) });
+        cs.push({ text: "往西，穿过车间去白区", nextScene: "张江-华大-白区", effect: updateTime(4) });
         cs.push({ text: "爬检修口，进送风夹层", nextScene: "张江-华大-夹层", effect: updateTime(2) });
+        cs.push({
+          text: "从北边的卸油门出去，到厂后便道",
+          nextScene: "张江-厂界便道",
+          effect: function(v) {
+            v._freightDoorOpen = true;
+            return updateTime(3)(v);
+          }
+        });
         return cs;
       }
       var cs2 = [];
@@ -2067,8 +2439,16 @@ Object.assign(storyData, {
         nextScene: "整理整理",
         effect: { set: { positionAfterOperation: "张江-华大-动力站" } }
       });
-      cs2.push({ text: "往西，穿过车间回白区", nextScene: "张江-华大-白区", effect: updateTime(4) });
+      cs2.push({ text: "往西，穿过车间去白区", nextScene: "张江-华大-白区", effect: updateTime(4) });
       cs2.push({ text: "爬检修口，进送风夹层", nextScene: "张江-华大-夹层", effect: updateTime(2) });
+      cs2.push({
+        text: "从北边的卸油门出去，到厂后便道",
+        nextScene: "张江-厂界便道",
+        effect: function(v) {
+          v._freightDoorOpen = true;
+          return updateTime(3)(v);
+        }
+      });
       return cs2;
     }
   },
@@ -2472,6 +2852,60 @@ Object.assign(storyData, {
     ]
   },
 
+  // ==================== 滨河绿道（闸机外↔南岸堤的北线路程 + 华大环路东口） ====================
+
+  "张江-滨河绿道": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/滨河绿道.webp（发白的塑胶步道、北侧堤坝、东侧排风立管） */
+    onEnter: function(vars) {
+      vars.currentPlace = "张江";
+      vars.currentPos = "滨河绿道";
+    },
+    text: function(vars) {
+      var desc = "滨河路贴着川杨河南岸铺开。塑胶步道被晒得发白，两旁的草坪没人剪，齐齐地漫过路缘。堤坝并不高——从路沿上就能看见河。\n\
+河面浑黄，缓缓往东流。贴着河沿，黑压压的一片人影蹲着、立着，脸全朝着水。隔着这一段堤坡，它们还不理会路上的活物。风里有一股甜腻的味道，说不清是河还是它们。\n\
+东边，华大半导体的围栏沿着绿道铺过去，围栏里一排排排风立管高出围墙" +
+        (vars._jinbaoLeft ? "。白汽没有了，管口只是对着天，一动不动。" : "，正往天上吐着一缕缕白汽。");
+      return desc + "\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "往北，爬上堤坝", nextScene: "张江-川杨河南岸堤", effect: updateTime(7) },
+      { text: "沿围栏往东，走厂界便道", nextScene: "张江-厂界便道", effect: updateTime(7) },
+      { text: "往南，去闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(8) }
+    ]
+  },
+
+  // ==================== 厂界便道（华大动力站卸油门 ↔ 滨河绿道 · 环路） ====================
+  // 卸油门只能从厂内侧推开：_freightDoorOpen 置位前，从绿道方向是死路——防止绕开大门门禁。
+
+  "张江-厂界便道": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/厂界便道.webp（围栏下窄便道、卸油卷帘门） */
+    onEnter: function(vars) { vars.currentPos = "华大厂界便道"; },
+    text: function(vars) {
+      var desc = "一条窄窄的水泥便道贴着华大的北围栏走，路面上压着深深浅浅的胎印——送柴油的槽罐车，以前就打这儿过。\n\
+北侧隔着铁网就是滨河路。河面浑黄，贴着河沿那片黑压压的人影从这儿也能看见，一个挨一个，脸朝着水。\n" +
+        (vars._jinbaoLeft
+          ? "围栏里头静悄悄的。那台发电机不知从哪天起，就再没震动过，你脚底下只剩川杨河的风声。\n"
+          : "围栏里头，动力站那台发电机的震动顺着地面传到你脚底，嗡嗡的，像踩在一头打盹的牲口背上。\n") +
+        "便道东头，围栏根下开着一道卸油用的卷帘门。";
+      if (vars._freightDoorOpen) {
+        desc += "\n你上次顶门的那半块砖还在，卷帘底下留着半人高的一道缝。";
+      } else {
+        desc += "\n卷帘门落得死死的。你在门外转了一圈——这门从外头连个把手都没留，撬都没处下撬。";
+      }
+      return desc + "\n" + describeWeather(vars);
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars._freightDoorOpen) {
+        cs.push({ text: "钻进卸油门，进动力站", nextScene: "张江-华大-动力站", effect: updateTime(3) });
+      }
+      cs.push({ text: "往西，去滨河绿道", nextScene: "张江-滨河绿道", effect: updateTime(7) });
+      return cs;
+    }
+  },
+
   // ==================== L3 · 川杨河南岸堤（过桥门槛） ====================
   // 硬门槛（§七）：hasGasMask && hasGun && gunAmmo >= 3，缺一不可上桥。
   // 桥只连南北两岸地面；回程走高架（张江立交 → 外环罗山路 → 北蔡镇罗山下）。
@@ -2510,7 +2944,7 @@ Object.assign(storyData, {
         nextScene: "结局-张江-川杨河",
         effect: { set: { _bridgeStage: 0 } }
       });
-      cs.push({ text: "往南，回闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(15) });
+      cs.push({ text: "往南，下堤去绿道", nextScene: "张江-滨河绿道", effect: updateTime(7) });
       return cs;
     }
   },
@@ -2529,7 +2963,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
-      { text: "退回堤上", nextScene: "张江-川杨河南岸堤", effect: updateTime(1) }
+      { text: "下引桥，去堤上", nextScene: "张江-川杨河南岸堤", effect: updateTime(1) }
     ]
   },
 
@@ -2741,6 +3175,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       cs.push({ text: "往东，去上海市检测中心", nextScene: "张江-检测中心-大门", effect: updateTime(8) });
+      cs.push({ text: "去路边的铺面看看", nextScene: "张江-河北岸-沿街铺面", effect: updateTime(2) });
       cs.push({
         showCondition: "hasGasMask && hasGun && gunAmmo >= 3",
         text: "戴好防毒面具，数足三发子弹，上桥回南岸",
@@ -2750,6 +3185,24 @@ Object.assign(storyData, {
       cs.push({ text: "上张江立交的匝道，回高架", nextScene: "张江立交桥", effect: updateTime(5) });
       return cs;
     }
+  },
+
+  // ---- 北岸冗余：沿街铺面（便利店/打印店门口，纯环境叙事） ----
+
+  "张江-河北岸-沿街铺面": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/沿街铺面.webp（拉死的卷帘门、门缝传单） */
+    onEnter: function(vars) { vars.currentPos = "街口沿街铺面"; },
+    text: function(vars) {
+      return "便利店的卷帘门拉得死死的，门缝里塞满塞歪了的传单。卷帘门上用记号笔写着一行字：“回家看看，过两天就回。——6/28”\n\
+你隔着门缝往里望：货架的影子立在暗处，收银台上还亮着一点绿光——应急电源撑着的一台小监控，不知在录给谁看。\n\
+隔壁打印店的卷帘门没关严，留着一尺高的缝。你蹲下去：里头的打印机黑着，地上摊开一卷印好的横幅，红底黄字，只印了一半——\n\
+“食品安全宣传周”。\n\
+你把横幅卷了回去。\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "去街口", nextScene: "张江-河北岸-街口", effect: updateTime(1) }
+    ]
   },
 
   // ==================== 上海市检测中心（L3 真相物证点） ====================
@@ -2772,7 +3225,29 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "从门缝里侧身进去", nextScene: "张江-检测中心-大厅", effect: updateTime(2) },
-      { text: "往西，回街口", nextScene: "张江-河北岸-街口", effect: updateTime(8) }
+      { text: "沿围墙绕到楼后，去卸货区", nextScene: "张江-检测中心-卸货区", effect: updateTime(4) },
+      { text: "往西，去街口", nextScene: "张江-河北岸-街口", effect: updateTime(8) }
+    ]
+  },
+
+  // ---- 卸货区（侧门入口 · 环路）：直插实验区走廊中段的暗处，不经过大堂。 ----
+
+  "张江-检测中心-卸货区": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/检测中心-卸货区.webp（卸货平台、手推车、垫砖的铁侧门） */
+    onEnter: function(vars) {
+      vars.currentPlace = "检测中心";
+      vars.currentPos = "卸货区";
+    },
+    text: function(vars) {
+      return "楼的北侧是卸货区：一座齐腰高的卸货平台，两只铁皮垃圾桶并排靠着，桶盖盖着，倒是一丝没乱。\n\
+平台上停着一辆手推车，车上捆着几只空样品箱，收件联还夹在箱把上，一张都没撕。\n\
+平台尽头的墙上开着一扇铁侧门，门底下垫着半块砖——不知是谁出来的时候，不想让门锁死。\n\
+从平台边上望出去，南边的川杨河大桥引桥贴着天际线，桥面上的影子密密麻麻，微微地动。\n" + describeWeather(vars);
+    },
+    choices: [
+      { text: "推门进楼", nextScene: "张江-检测中心-走廊", effect: updateTime(2) },
+      { text: "沿围墙去大门", nextScene: "张江-检测中心-大门", effect: updateTime(4) }
     ]
   },
 
@@ -2821,9 +3296,13 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/检测中心-走廊.webp（长走廊、编号门牌、尽头昏暗） */
     onEnter: function(vars) { vars.currentPos = "实验区走廊"; },
     text: function(vars) {
-      var desc = "实验区的走廊又长又直，两侧是一模一样的门，门上钉着编号牌。靠窗那一侧还有天光，越往里走越暗，走廊尽头沉在一片灰蒙蒙的昏暗里。\n\
-安静。安静得过分。你的脚步声敲在地砖上，一声一声，全是回音。\n\
-301 · 理化前处理室。302 · 微生物室。303 · 天平室——这几块的牌子，你借天光看得清清楚楚。再往里，就看不清了。";
+      var desc = "实验区的走廊又长又直。大厅那头漏着天光，卸货侧门这头沉在昏暗里。两侧门上钉着编号牌。\n\
+安静。安静得过分。你的脚步声敲在地砖上，一声一声，全是回音。";
+      if (vars._lastScene === "张江-检测中心-卸货区") {
+        desc = "你从侧门挤进来，反手把门带回。眼前是黑沉沉的半截走廊，天光远远落在另一头，像隧道口。\n" + desc;
+      } else {
+        desc += "\n301 · 理化前处理室。302 · 微生物室。303 · 天平室——亮处这几块牌子看得清。再往暗处，只剩轮廓。";
+      }
       if (vars._labAlert > 0) desc += "\n不知哪里传来一声轻响。这栋楼里醒着的，不止你一个。";
       return desc;
     },
@@ -2835,12 +3314,26 @@ Object.assign(storyData, {
         cs.push({ text: "走廊尽头黑得看不清——挨个房间摸过去", nextScene: "张江-检测中心-瞎摸", effect: updateTime(4) });
       }
       cs.push({
-        text: "离开实验区",
+        text: "沿亮处走，去大厅",
         nextScene: function(v) {
           if (v._labAlert > 0 && !v._labExitFought) return "张江-检测中心-撤离遭遇";
           return "张江-检测中心-大厅";
         },
-        effect: updateTime(2)
+        effect: function(v) {
+          v._labExitTo = "张江-检测中心-大厅";
+          return updateTime(2)(v);
+        }
+      });
+      cs.push({
+        text: "去卸货区侧门",
+        nextScene: function(v) {
+          if (v._labAlert > 0 && !v._labExitFought) return "张江-检测中心-撤离遭遇";
+          return "张江-检测中心-卸货区";
+        },
+        effect: function(v) {
+          v._labExitTo = "张江-检测中心-卸货区";
+          return updateTime(2)(v);
+        }
       });
       return cs;
     }
@@ -2887,7 +3380,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "去 305 门口", nextScene: "张江-检测中心-三室外", effect: updateTime(1) },
-      { text: "先退回走廊口", nextScene: "张江-检测中心-走廊", effect: updateTime(1) }
+      { text: "去走廊", nextScene: "张江-检测中心-走廊", effect: updateTime(1) }
     ]
   },
 
@@ -2913,7 +3406,7 @@ Object.assign(storyData, {
         });
       }
       cs.push({ text: "推门进去", nextScene: "张江-检测中心-三室内", effect: updateTime(1) });
-      cs.push({ text: "退回走廊", nextScene: "张江-检测中心-走廊", effect: updateTime(1) });
+      cs.push({ text: "去走廊", nextScene: "张江-检测中心-走廊", effect: updateTime(1) });
       return cs;
     }
   },
@@ -2952,7 +3445,7 @@ Object.assign(storyData, {
       { text: "蹑手蹑脚绕过去，抡起试剂柜的柜门砸向他", nextScene: "张江-检测中心-摔柜门", effect: updateTime(1) },
       { text: "试着喊一声：“有人吗？”", nextScene: "张江-检测中心-检测员战", effect: updateTime(1) },
       { text: "直接冲上去动手", nextScene: "张江-检测中心-检测员战", effect: updateTime(1) },
-      { text: "悄悄退出去", nextScene: "张江-检测中心-走廊", effect: updateTime(1) }
+      { text: "去走廊", nextScene: "张江-检测中心-走廊", effect: updateTime(1) }
     ]
   },
 
@@ -3036,8 +3529,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/检测中心-撤离遭遇.webp（走廊口白大褂） */
     onEnter: initMemoryGame(["红", "蓝", "绿"], 5),
     text: function(vars) {
-      return "你刚走回走廊口，天光就在前面——\n\
-侧面那扇没有窗的黑门里，又一条白大褂的影子挤了出来。它堵在你和大堂之间，头颅以一种别扭的角度歪着。\n\
+      return "你刚要离开这条走廊，侧面那扇没有窗的黑门里，又一条白大褂的影子挤了出来。它堵在你和出口之间，头颅以一种别扭的角度歪着。\n\
 这座楼里加班的，不止一个。";
     },
     choices: [
@@ -3060,11 +3552,18 @@ Object.assign(storyData, {
       return updateTime(2)(vars);
     },
     text: function(vars) {
-      return "你抄起墙边的灭火器迎面砸过去，它抱着头栽进门框里。你没再看第二眼，撒腿冲进大堂的天光里。\n\
-身后的走廊黑沉沉的，什么声音都没有了。" + weaponBrokeText(vars);
+      var tail = vars._labExitTo === "张江-检测中心-卸货区"
+        ? "你没再看第二眼，反手推开侧门，跌进卸货平台的天光里。\n身后的走廊黑沉沉的，什么声音都没有了。"
+        : "你没再看第二眼，撒腿冲进大堂的天光里。\n身后的走廊黑沉沉的，什么声音都没有了。";
+      return "你抄起墙边的灭火器迎面砸过去，它抱着头栽进门框里。\n" + tail + weaponBrokeText(vars);
     },
     choices: [
-      { text: "出大门", nextScene: "张江-检测中心-大门", effect: updateTime(1) }
+      {
+        text: function(v) {
+          return v._labExitTo === "张江-检测中心-卸货区" ? "出卸货区侧门" : "去大厅";
+        },
+        nextScene: function(v) { return v._labExitTo || "张江-检测中心-大厅"; }
+      }
     ]
   },
 

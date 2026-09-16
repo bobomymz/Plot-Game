@@ -256,7 +256,7 @@ const storyData = {
     _catReturn: "",           // 橘猫相遇时来自哪个游走节点（喂后"算了/由它去"回这里）
     hasSnackCookie: false,    // 味千小饼干（占格；可拆吃+1 / 喂橘猫）
     hasHamSausage: false,     // 火腿肠（联华"小超市"货架，占格；可吃+1 / 喂橘猫）
-    hasCracker: false,        // 夹心饼干（挹芬楼6F自习教室，样板改可收集，占格；可吃+1 / 喂橘猫）
+    hasCracker: false,        // 夹心饼干（挹芬楼6F自习教室 / 上科大食堂后厨，占格；可吃+1 / 喂橘猫）
     hasTeethingBiscuit: false, // 磨牙饼干（新达汇3F爱婴室，占格；可吃+1 / 喂猫）
     // ---- 反派NPC：三林路路霸 + 天台卖假药的郎中 ----
     hasFakeAntidote: false,   // 假解毒剂（天台骗子卖的，占格；服用无效果/黑色幽默，物非所值）
@@ -336,6 +336,11 @@ const storyData = {
     _remediedFromLie: false,   // 补救前是否走的谎言线（补救场景 text 分支用）
     _bridgeStage: 0,           // 川杨河大桥进度：0未上桥 1/2/3=已过第1/2/3段（结局文本分段用）
     _fangDieselGiven: false,   // 方姐的柴油交易是否已给过（张江还有活人的消息换，一次性）
+    _freightDoorOpen: false,   // 华大动力站卸油门是否已从厂内侧推开过（厂界便道↔动力站捷径是否打通）
+    _plazaFigSeen: false,      // 是否已凑近看过华大厂区广场的人影（一次性观察）
+    _plazaFought: false,       // 厂区广场警报后近路遭遇是否已解决
+    _sistKitchenZombieDead: false, // 上科大食堂后厨丧尸是否已击杀
+    _labExitTo: "",            // 检测中心撤离遭遇后的落点（大厅 / 卸货区）
 
     // 记忆（不占背包）
     gameMemoryThres: 10,        // 解锁A结局所需游戏记忆的个数
