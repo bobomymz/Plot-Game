@@ -479,7 +479,7 @@ Object.assign(storyData, {
 |------|------|
 | `text` | 过场文字（纯文本或带 HTML） |
 | `nextScene` | 显示完后自动跳转的场景 ID |
-| `options` | 可选。`{ image, onEnter }`：`image` 场景图；`onEnter` 为 effect 对象或函数（如 `{ set: { showRain: true } }`） |
+| `options` | 可选。`{ image, onEnter, outdoor }`：`image` 场景图；`onEnter` 为 effect 对象或函数；`outdoor: true` 时走户外天气结算（匝道/街道过场应打开） |
 
 机制要点：
 - 内部用 `qte: { hidden: true, typewriter: true, onTimeout: nextScene }` 实现——隐藏进度条、保留打字机、超时自动前进。

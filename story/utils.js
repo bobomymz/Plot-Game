@@ -511,7 +511,8 @@ function zombieAtHomeDoor(vars) { // 丧尸还在家门口
 // 文字逐字显示（打字机），显示完后按字数停留，超时自动前进到 nextScene。
 // qte.typewriter: true 让 QTE 场景保留打字机效果（默认 QTE 会跳过打字机、文字一次性全显）。
 // 过场节点不生成 choices 按钮——引擎将其识别为非结局节点（有 qte），纯自动播放，超时跳 nextScene。
-// options（可选）：{ image, onEnter }。onEnter 为 effect 对象或函数，如 { set: { showRain: true } }。
+// options（可选）：{ image, onEnter, outdoor }。onEnter 为 effect 对象或函数，如 { set: { showRain: true } }。
+// outdoor: true 时走户外天气结算（applyWeatherDrain）。过场若发生在匝道/街道上应打开。
 // 用法：Object.assign(storyData, { "节点ID": travelScene("沿途文字……", "下一个场景ID", { onEnter: { set: { showRain: true } } }) })
 function travelScene(text, nextScene, options) {
   options = options || {};
@@ -523,6 +524,7 @@ function travelScene(text, nextScene, options) {
     text: text
   };
   if (options.onEnter) scene.onEnter = options.onEnter;
+  if (options.outdoor) scene.outdoor = true;
   return scene;
 }
 

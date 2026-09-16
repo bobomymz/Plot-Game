@@ -22,6 +22,11 @@ function isBottleConfront(vars) {
   return !!(vars._hongBottleLabel && vars._metJinbao && !vars._jinbaoLeft && vars._toldJinbaoTruth === "");
 }
 
+// 老陈还在白区工位B（见过、没谈完、没误杀）→ 动力站不该同时蹲着他。
+function chenInWorkshop(vars) {
+  return !vars._fabFigBKilled && !vars._fabFigBDone && vars._visit && vars._visit['张江-华大-白区-工位B'] > 0;
+}
+
 Object.assign(storyData, {
 
   // ==================== 路网落点（河南岸主线） ====================
@@ -33,6 +38,7 @@ Object.assign(storyData, {
     "张江-人工智能岛闸机外",
     {
       image: "images/placeholder.png", /* TODO: images/张江/落地坡道.webp */
+      outdoor: true,
       onEnter: function(vars) {
         vars.currentArea = "张江";
         vars.currentPlace = "人工智能岛";
@@ -220,7 +226,7 @@ Object.assign(storyData, {
 门缝底下透出一线光，还有服务器风扇那种持续的、低低的嗡嗡声。",
     choices: [
       { text: "推开那扇门", nextScene: "张江-AI岛-机房", effect: updateTime(2) },
-      { text: "退回园区", nextScene: "张江-AI岛-园区内", effect: updateTime(1) }
+      { text: "去园区", nextScene: "张江-AI岛-园区内", effect: updateTime(1) }
     ]
   },
 
@@ -768,7 +774,7 @@ Object.assign(storyData, {
         nextScene: "整理整理",
         effect: { set: { positionAfterOperation: "张江-华大-灰区" } }
       });
-      cs.push({ text: "退回连廊", nextScene: "张江-华大-连廊", effect: updateTime(1) });
+      cs.push({ text: "去连廊", nextScene: "张江-华大-连廊", effect: updateTime(1) });
       return cs;
     }
   },
@@ -858,7 +864,7 @@ Object.assign(storyData, {
       if (vars._jinbaoLeft) {
         return [
           { text: "穿过风淋舱", nextScene: "张江-华大-洁净主走廊", effect: updateTime(1) },
-          { text: "退回灰区", nextScene: "张江-华大-灰区", effect: updateTime(1) }
+          { text: "去灰区", nextScene: "张江-华大-灰区", effect: updateTime(1) }
         ];
       }
       var cs = [];
@@ -1178,7 +1184,7 @@ Object.assign(storyData, {
     choices: [
       { text: "进核心工艺区（白区）", nextScene: "张江-华大-白区", effect: updateTime(2) },
       { text: "进辅助运维区", nextScene: "张江-华大-运维区", effect: updateTime(2) },
-      { text: "回风淋舱那头", nextScene: "张江-华大-风淋舱", effect: updateTime(2) }
+      { text: "去风淋舱那头", nextScene: "张江-华大-风淋舱", effect: updateTime(2) }
     ]
   },
 
@@ -1213,7 +1219,7 @@ Object.assign(storyData, {
           nextScene: "张江-华大-白区-围攻",
           effect: updateTime(1)
         });
-        cs.push({ text: "退回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
+        cs.push({ text: "去洁净主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
         return cs;
       }
       if (!vars._fabFigADone) cs.push({ text: "靠近光刻机那台设备边的人影", nextScene: "张江-华大-白区-工位A", effect: updateTime(2) });
@@ -1223,7 +1229,7 @@ Object.assign(storyData, {
       if (!vars._fabFigCDone) cs.push({ text: "靠近化学清洗槽边的人影", nextScene: "张江-华大-白区-工位C", effect: updateTime(2) });
       else cs.push({ text: "再走一趟清洗槽那边", nextScene: "张江-华大-白区-工位C", effect: updateTime(1) });
       cs.push({ text: "往东，穿过车间去动力站", nextScene: "张江-华大-动力站-初遇", effect: updateTime(4) });
-      cs.push({ text: "回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
+      cs.push({ text: "去洁净主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
       return cs;
     }
   },
@@ -1262,7 +1268,7 @@ Object.assign(storyData, {
 你靠着墙喘气，白区的方向再没有动静。这一片，算是被你打穿了。" + weaponBrokeText(vars);
     },
     choices: [
-      { text: "回主走廊缓口气", nextScene: "张江-华大-洁净主走廊" }
+      { text: "去洁净主走廊缓口气", nextScene: "张江-华大-洁净主走廊" }
     ]
   },
 
@@ -1377,8 +1383,7 @@ Object.assign(storyData, {
 没有人知道你对他做了什么。这间车间里也不会有人再喊他名字了。";
       }
       if (vars._fabFigBDone) {
-        return "老陈回到他的设备边上，继续盯着沉积速率的曲线，笔尖在记录本上一下一下地顿。\n\
-他朝你这边点了点头——不多说话，但也不躲了。";
+        return "薄膜沉积机还开着。记录板摊在椅子上，笔帽没扣——人已经不在。南墙根去动力站的通道上，脚印还是新的。";
       }
       if (vars._jinbaoLeft) {
         return "薄膜沉积机已经停机，屏幕黑着。设备边的椅子推得整整齐齐，桌上一副老花镜压着个本子，翻在最后一页。\n\
@@ -1590,7 +1595,7 @@ Object.assign(storyData, {
           nextScene: "张江-华大-设备密室",
           effect: updateTime(2)
         });
-        cs.push({ text: "回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
+        cs.push({ text: "去洁净主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
         return cs;
       }
       if (vars._panicEmployeeState === "unmet") {
@@ -1612,7 +1617,7 @@ Object.assign(storyData, {
         nextScene: "张江-华大-设备密室",
         effect: updateTime(2)
       });
-      cs.push({ text: "回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
+      cs.push({ text: "去洁净主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
       return cs;
     }
   },
@@ -1710,7 +1715,7 @@ Object.assign(storyData, {
     text: "运维区尽头有一扇加厚的钢门，门牌上只有两个字：机要。门禁读卡器亮着红灯，锁得死死的。\n\
 （作者尚未更新此处）",
     choices: [
-      { text: "回头", nextScene: "张江-华大-运维区", effect: updateTime(1) }
+      { text: "去运维区", nextScene: "张江-华大-运维区", effect: updateTime(1) }
     ]
   },
 
@@ -1755,7 +1760,7 @@ Object.assign(storyData, {
 四下里全是一个质地的黑，方向感以肉眼可见的速度蒸发。你摸索着退回检修口，后背已经湿透。\n\
 这里没有光，就走不了。",
     choices: [
-      { text: "退回灰区", nextScene: "张江-华大-灰区", effect: updateTime(2) }
+      { text: "去灰区", nextScene: "张江-华大-灰区", effect: updateTime(2) }
     ]
   },
 
@@ -1777,7 +1782,7 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       { text: "沿夹层往东，去动力站方向的检修口", nextScene: "张江-华大-动力站-初遇", effect: updateTime(6) },
-      { text: "原路退回灰区", nextScene: "张江-华大-灰区", effect: updateTime(4) }
+      { text: "沿夹层往西，去灰区检修口", nextScene: "张江-华大-灰区", effect: updateTime(4) }
     ]
   },
 
@@ -1836,7 +1841,7 @@ Object.assign(storyData, {
 门开了一条缝，先探出来的是一根钢管，然后才是一只布满血丝的眼睛。看清小刘身后的你，那只眼睛瞪圆了。";
       } else if (vars._jinbaoIntroVia === "夹层") {
         desc = "你顺着检修口的爬梯下到底，掀开一块格栅板——底下就是动力站。\n\
-一个正蹲在仪表前的人猛地回头，手里的扳手差点脱手：“夹、夹层？!你从上面下来的？!”";
+一个正蹲在仪表前的人猛地回头，手里的扳手差点脱手：“夹、夹层？！你从上面下来的？！”";
       } else {
         desc = "你穿过车间东侧的气密门，走进一间被机器轰鸣填满的厂房。发电机、水泵、成排的滤柱，指示灯一明一灭。\n\
 一个蹲在仪表前的人猛地站起来，顺手抄起了手边的钢管。";
@@ -1994,6 +1999,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars._toldJinbaoTruth = "lie";
       vars._jinbaoFed = true;
+      vars._wearingCleanSuit = false; // 当场吃面：连体服帽子得揭开，与整理整理进食门槛一致
       vars.strength = Math.min(10, vars.strength + 3); // 当场吃下的泡面
       vars._travelMinutes = 0;                          // 吃东西按惯例清行程疲劳
       return {};
@@ -2067,18 +2073,21 @@ Object.assign(storyData, {
       if (vars._panicEmployeeState === "calmed" && vars._liuLedYou) desc += "小刘在地铺上坐着，见你进来，咧嘴笑了笑，又赶紧把手指竖在嘴前——嘘，洪工在看数据。\n";
       else if (vars._panicEmployeeState === "calmed") desc += "“外头辅助区那个守泵的，姓刘。”洪金宝朝西边偏了偏头，“他愿意给你带路，就跟着他走，别自己穿车间。”\n";
       else if (vars._panicEmployeeState === "injured") desc += "“小刘上回在辅助区让人开了瓢。”洪金宝摇摇头，“打那以后就缩在那边不肯挪窝，见着白影就躲。”\n";
-      else if (vars._panicEmployeeState === "dead") desc += "“小刘说出去巡检，到现在没回来。”洪金宝提了一句，眉头拧着，“外头那些东西，越来越不老实了。”\n";
+      else if (vars._panicEmployeeState === "dead") desc += "“小刘到现在没回辅助区的话。”洪金宝看了看西边那扇门，眉头拧着，没再往下问。\n";
       else desc += "“外头辅助区还守着个人，姓刘。”洪金宝提了一句，“你要走那边，报我的名字。”\n";
       if (vars._fabFigBKilled) desc += "发电机上搁着一只老陈的茶缸，茶早凉透了。没人收。\n";
+      else if (chenInWorkshop(vars)) desc += "老陈那只茶缸搁在发电机边上，还温着——人这会儿在车间盯他那台薄膜机。\n";
       else desc += "老陈蹲在发电机边上，就着灯光听那台机器的动静，像老中医号脉——这台机器和车间里他那台薄膜机，他一天要来回跑好几趟。\n";
       if (vars.dd >= 3 && !vars._dieselDelivered && !vars._jinbaoDieselAsked) {
-        desc += vars._fabFigBKilled
+        desc += (vars._fabFigBKilled || chenInWorkshop(vars))
           ? "洪金宝拿指关节敲了两下发电机的油位表，敲完盯着那根针没说话——像在盘算一句难开口的话。\n"
           : "老陈忽然抬头看了你一眼，嘴唇动了动，又低下头去——像有话想说。\n";
       } else if (vars.dd < 3 && !vars._dieselDelivered) {
         desc += vars._fabFigBKilled
           ? "没人再拍那台发电机的外壳跟它说话了。油位表上的针，比昨天又低了一点。\n"
-          : "老陈拍了拍发电机外壳：“油还够几天。省着烧。”\n";
+          : chenInWorkshop(vars)
+            ? "油位表上的针又低了一点。没人拍那台机器的外壳跟它说话。\n"
+            : "老陈拍了拍发电机外壳：“油还够几天。省着烧。”\n";
       }
       if (vars._toldJinbaoTruth === "silent") desc += "洪金宝没有再看你。自打你说“不清楚”之后，他和你说话，都是隔着仪表说的。\n";
       return desc;
@@ -2105,7 +2114,7 @@ Object.assign(storyData, {
       cs2.push({ text: "去纯水系统接水", nextScene: "张江-华大-动力站-纯水", effect: updateTime(1) });
       if (vars.dd >= 3 && !vars._jinbaoDieselAsked && !vars._dieselDelivered) {
         cs2.push({
-          text: vars._fabFigBKilled ? "问洪金宝在盘算什么" : "问老陈想说什么",
+          text: (vars._fabFigBKilled || chenInWorkshop(vars)) ? "问洪金宝在盘算什么" : "问老陈想说什么",
           nextScene: "张江-华大-动力站-柴油-接",
           effect: updateTime(2)
         });
@@ -2187,7 +2196,7 @@ Object.assign(storyData, {
       }
       if (vars._panicEmployeeState === "dead") {
         desc += "\n\
-“还有小刘……出去巡检，到现在没回来。”他盯着仪表，声音低下去，“我就不该让他一个人去。”";
+“还有小刘……辅助区的泵还在转，人却不在工位上。”他盯着仪表，声音低下去。";
       } else if (vars._panicEmployeeState === "injured") {
         desc += "\n\
 “小刘上回在辅助区，让一个闯进来的‘东西’开了瓢。”他摇摇头，“打那以后，见着白影就躲。也好，怕死才活得长。”\n\
@@ -2339,6 +2348,13 @@ Object.assign(storyData, {
         return "洪金宝把你拉到发电机边上，压着那台机器的轰鸣说话。\n\
 “冒昧问一句。”他指了指油位表上那根快贴到底的针，“外面……还找得到柴油吗？”\n\
 “这点油撑不过三天了。它一停，纯水系统停，灯灭——我们就得摸黑走人。”他顿了顿，“本来这话该老陈跟你说，他管设备，比我会算。可他回车间盯货去了，两天没回来。”\n\
+“北蔡镇罗山立交下来，有个加油站。”他补了一句，“再有就是……你要是认识搞冷链的、开货车的，他们手里兴许有存货。”\n\
+他看着你：“一桶就行。多大代价，我们认。”";
+      }
+      if (chenInWorkshop(vars)) {
+        return "洪金宝把你拉到发电机边上，压着那台机器的轰鸣说话。\n\
+“冒昧问一句。”他指了指油位表上那根快贴到底的针，“外面……还找得到柴油吗？”\n\
+“这点油撑不过三天了。它一停，纯水系统停，灯灭——我们就得摸黑走人。”他朝西边偏了偏头，“老陈这会儿在车间盯他那台薄膜机。这话本该他来问你——他比我会算油。”\n\
 “北蔡镇罗山立交下来，有个加油站。”他补了一句，“再有就是……你要是认识搞冷链的、开货车的，他们手里兴许有存货。”\n\
 他看着你：“一桶就行。多大代价，我们认。”";
       }
@@ -2615,7 +2631,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
-      { text: "退回堤上", nextScene: "张江-川杨河南岸堤", effect: updateTime(1) }
+      { text: "去南岸堤", nextScene: "张江-川杨河南岸堤", effect: updateTime(1) }
     ]
   },
 
@@ -2801,6 +2817,7 @@ Object.assign(storyData, {
     "张江-河北岸-街口",
     {
       image: "images/placeholder.png", /* TODO: images/张江/北岸落地.webp */
+      outdoor: true,
       onEnter: function(vars) {
         vars.currentArea = "张江";
         vars.currentPlace = "张江北岸";
@@ -2973,7 +2990,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "去 305 门口", nextScene: "张江-检测中心-三室外", effect: updateTime(1) },
-      { text: "先退回走廊口", nextScene: "张江-检测中心-走廊", effect: updateTime(1) }
+      { text: "去走廊口", nextScene: "张江-检测中心-走廊", effect: updateTime(1) }
     ]
   },
 
@@ -2999,7 +3016,7 @@ Object.assign(storyData, {
         });
       }
       cs.push({ text: "推门进去", nextScene: "张江-检测中心-三室内", effect: updateTime(1) });
-      cs.push({ text: "退回走廊", nextScene: "张江-检测中心-走廊", effect: updateTime(1) });
+      cs.push({ text: "去走廊", nextScene: "张江-检测中心-走廊", effect: updateTime(1) });
       return cs;
     }
   },

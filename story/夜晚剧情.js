@@ -206,7 +206,7 @@ Object.assign(storyData, {
         nextScene: "过夜-张江-动力站"
       },
       {
-        showCondition: "currentArea == '张江'",
+        showCondition: "currentArea == '张江' && chasedByZombies <= 1",
         text: "去上科大，找间空宿舍过夜",
         nextScene: "过夜-张江-上科大"
       },
@@ -713,7 +713,7 @@ Object.assign(storyData, {
         return "动力站里没有人了。你摸黑拖开一张行军床，就着安全出口指示牌那点绿光躺下。\n发电机哑着，屋里静得能听见自己的血在耳朵里走。那几只白水桶立在墙边，像一排哨兵陪你到天亮。\n你醒了。字条还压在搪瓷缸底下。";
       }
       var desc = "洪金宝给你匀了半张行军床。发电机的轰鸣整夜没停，稳得像心跳。";
-      if (vars._panicEmployeeState === "calmed") desc += "小刘在地铺那头打着轻鼾。\n";
+      if (vars._panicEmployeeState === "calmed" && vars._liuLedYou) desc += "小刘在地铺那头打着轻鼾。\n";
       desc += "半夜你迷迷糊糊醒过一次，看见他还坐在仪表台前，笔记本摊开，就着绿灯一行一行地看。\n天亮了。他递给你半杯纯水：“醒醒。今天想干什么，想好了再走。”";
       return desc;
     },
