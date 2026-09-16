@@ -282,6 +282,7 @@ const storyData = {
     // ---- 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） ----
     _hongBottleLabel: false,   // 手上水瓶是否是老洪204那只（瓶身有「芜湖 6.25」字迹标签）；送人/丢瓶重置，仅倒水不重置
     _bottleFilledBySon: false, // 标签瓶是否已在动力站灌过纯水（情感节拍一次性标记）
+    _enteredHong204: false,    // 是否已蹲下查看过程204的洪金宝（老洪支线「检查老人」选项守卫）
     _metJinbao: false,         // 是否已见过洪金宝（在场版）
     _toldJinbaoTruth: "",      // 道德拷问结果：""未谈 / "truth"如实告知 / "lie"善意谎言 / "silent"沉默 / "confessed"事后补救
     _jinbaoCommission: false,  // K0：洪金宝是否已拜托玩家回三林看他爸
