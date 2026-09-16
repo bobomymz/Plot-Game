@@ -64,6 +64,7 @@ story/
   东明街道/         → 东明街道主区域（樱桃苑/东明街道路径/新达汇/金谊广场/安盛街/安居苑/上实南校/图书馆/菜市场/益丰/全家/五金店/长者食堂/地铁站/警察局 等，一文件一区域）
   仁济南院.js       → 仁济医院（西南线真相线）
   建平中学.js       → 建平中学（北线营救）
+  张江.js           → 张江（北线洪金宝支线：加油站/AI岛机房/上科大/华大半导体fab/川杨河大桥/市检测中心）
   上海市区路径.js   → 高架/立交/城市级连接
 images/             → 场景图（PNG/JPG），按区域存放
 ```
@@ -767,7 +768,8 @@ Object.assign(storyData, {
 
 - `randSeq(colors, len)` — 生成随机颜色序列，如 `randSeq(["红","蓝","绿"], 5)` → `["红","蓝","红","红","蓝"]`
 - `seqToAnswer(seq)` — 翻译为标准答案字符串，如 `["红","蓝","红","红","蓝"]` → `"3红2蓝"`
-- `initMemoryGame(colors, len)` — 工厂函数，返回记忆闪色场景的标准 `onEnter`，用法 `onEnter: initMemoryGame(["红","蓝","绿"], 5)`
+- `initMemoryGame(colors, len)` — 工厂函数，返回记忆闪色场景的标准 `onEnter`，用法 `onEnter: initMemoryGame(["红","蓝","绿"], 5)`。`len` 也可写成函数 `(vars) => 数字`，按状态动态调难度（如 `initMemoryGame(["红","蓝","绿","黄"], function(v){ return 6 + Math.min(1, v._fabAlert); })`）
+  - ⚠ **长度算出 NaN/0 = 空序列，而空答案和任何输入都"相等"——闪色战斗会变成随便输什么都算赢，且屏幕一次都不闪**。`len` 表达式里读 `_visit[...]` 这类可能为 undefined 的值时务必兜底；`initMemoryGame` 现在会在长度非法时 `console.error`
 - `normalizeColorAnswer(str)` — 标准化颜色输入，无论"3红2蓝"还是"2蓝3红"都转为"蓝:2,红:3"（按颜色名排序）
 - `checkFlashAnswer(vars)` — 标准判定函数：比对 `vars._input` 与 `vars._currentAnswer`（经 normalizeColorAnswer 标准化），直接用作输入选项的 `condition`
 

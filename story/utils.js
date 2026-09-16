@@ -369,9 +369,13 @@ function seqToAnswer(seq) {
 
 // 工厂函数：生成记忆闪色场景的 onEnter
 // 用法同 updateTime：onEnter: initMemoryGame(["红","蓝","绿"], 5)
+// len 也可写成函数 (vars) => 数字，用于按状态动态调整难度（如 fab 警报等级加长序列）
 function initMemoryGame(colors, len, effect = {}) {
   return function(vars) {
-    const seq = randSeq(colors, len);
+    const n = (typeof len === 'function') ? len(vars) : len;
+    // 长度非法会生成空序列，而空答案与任何输入都"相等"——闪色战斗会变成白给，必须吼出来
+    if (!(n > 0)) console.error('initMemoryGame: 序列长度非法', len);
+    const seq = randSeq(colors, n);
     vars._currentSeq = seq;
     vars._currentAnswer = seqToAnswer(seq);
     vars._seqPlayed = false;

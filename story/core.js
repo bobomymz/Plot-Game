@@ -282,7 +282,10 @@ const storyData = {
     // ---- 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） ----
     _hongBottleLabel: false,   // 手上水瓶是否是老洪204那只（瓶身有「芜湖 6.25」字迹标签）；送人/丢瓶重置，仅倒水不重置
     _bottleFilledBySon: false, // 标签瓶是否已在动力站灌过纯水（情感节拍一次性标记）
+    _foundHongContact: false,  // 是否在老洪204室翻到儿子的联系方式/未发短信（张江.js 用字符串条件读它，必须注册）
     _metJinbao: false,         // 是否已见过洪金宝（在场版）
+    _jinbaoIntroVia: "",       // 初遇动线："刘"小刘带路 / "夹层"送风夹层爬下 / "自己"独自穿车间（会面文本分支用）
+    _liuLedYou: false,         // 小刘是否已带你去动力站（带路后他跟着到动力站，辅助运维区就空了）
     _toldJinbaoTruth: "",      // 道德拷问结果：""未谈 / "truth"如实告知 / "lie"善意谎言 / "silent"沉默 / "confessed"事后补救
     _jinbaoCommission: false,  // K0：洪金宝是否已拜托玩家回三林看他爸
     _jinbaoFriendCommission: false, // 洪金宝是否已拜托玩家顺路看曹睿泽（上科大）

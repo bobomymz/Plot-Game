@@ -16,6 +16,12 @@
 // 本文件用到的变量需在 story/core.js _variables 的“张江”区块注册（见 core.js 内注释清单）。
 // 图片全部占位，TODO 注释标出建议路径（用户生图后替换）。
 
+// 标签瓶（老洪 204 的空瓶）是否会在动力站当场逼出「我爸呢」这道题：
+// 需要他在场、且拷问还没发生过。灌水节点的 onEnter / text / choices 共用同一判断，别各写一份。
+function isBottleConfront(vars) {
+  return !!(vars._hongBottleLabel && vars._metJinbao && !vars._jinbaoLeft && vars._toldJinbaoTruth === "");
+}
+
 Object.assign(storyData, {
 
   // ==================== 路网落点（河南岸主线） ====================
@@ -109,7 +115,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/加油站-棚子.webp */
     onEnter: function(vars) { vars.currentPos = "加油站铁皮棚"; },
     text: function(vars) {
-      var desc = "后场的铁皮棚半开着。棚子深处码着几只铁皮油桶，有的空了，歪倒在一边——但最里面那只立得笔直，你试着掂了掂把手，掂不动；摇一摇，里面哗啦作响，是满的。";
+      var desc = vars.hasDieselCan
+        ? "后场的铁皮棚半开着。棚子深处那几只铁皮油桶全空了，歪倒在一边——满的那只已经在你手上。"
+        : "后场的铁皮棚半开着。棚子深处码着几只铁皮油桶，有的空了，歪倒在一边——但最里面那只立得笔直，你试着掂了掂把手，掂不动；摇一摇，里面哗啦作响，是满的。";
       if (!vars._gasShedZombieDead) {
         desc += "\n你刚要往里走，油桶后面的阴影里慢慢立起一个人形——穿着站里的工装外套，前襟一大片发黑的血迹。它转过头，朝你张开了嘴。";
       } else {
@@ -814,7 +822,7 @@ Object.assign(storyData, {
 
   "张江-华大-灰区-风淋复位": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-配电箱.webp */
-    onEnter: { set: { _airlockLockedOut: false, _airlockOuterClosed: false, _airlockBlowing: false, _airlockInnerOpen: false } },
+    onEnter: { set: { _airlockLockedOut: false, _airlockOuterClosed: false, _airlockBlowing: false, _airlockInnerOpen: false, _airlockLeakRounds: 0, _airlockStartFails: 0 } },
     text: "你循着红色指示灯找到墙边的配电箱，翻开盖板，里面的复位钮蒙着灰。按下去，等了几秒——\n\
 “咔哒”一声，风淋舱面板的红灯转成了待机的黄。互锁解除了。\n\
 折腾这几分钟，够你在长凳上喘匀三口气。",
@@ -838,7 +846,8 @@ Object.assign(storyData, {
       }
       var desc = "你走进风淋舱。舱不大，两三个人并肩的宽度，四面墙布满喇叭口似的喷嘴。外门在你身后合拢到一半，内门那边亮着一块红色的小牌：联锁。\n\
 面板就在手边，一块不大的屏幕，下面两个键——【风淋启动】【紧急复位】。";
-      if (vars._airlockInnerOpen) desc += "\n面板上的倒计时走完了，屏幕定格在一个绿色的“完成”，内门的红牌变成了绿灯。";
+      if (vars._airlockLockedOut) desc += "\n面板一片红——互锁过载，两个键按下去都只是“哔”一声。系统没复位，这舱就是一口关不上也开不动的铁盒子。";
+      else if (vars._airlockInnerOpen) desc += "\n面板上的倒计时走完了，屏幕定格在一个绿色的“完成”，内门的红牌变成了绿灯。";
       else if (vars._airlockBlowing) desc += "\n风正在吹。气流从四面八方喷出来，打得连体服啪啪作响。";
       else if (vars._airlockOuterClosed) desc += "\n外门关得严严实实。面板屏幕上是一行待机字样：外门已关闭，等待启动。";
       else desc += "\n外门还开着一条缝，风从缝里灌进来，面板屏幕上一行小字：请关闭外门。";
@@ -853,6 +862,11 @@ Object.assign(storyData, {
         ];
       }
       var cs = [];
+      if (vars._airlockLockedOut) {
+        // 互锁过载/泄漏之后必须去灰区配电箱复位，舱内面板一个键都不认
+        cs.push({ text: "退出风淋舱，去找地方复位", nextScene: "张江-华大-灰区", effect: updateTime(1) });
+        return cs;
+      }
       if (vars._airlockInnerOpen) {
         cs.push({ text: "推开设绿灯的内门", nextScene: "张江-华大-风淋舱-完成", effect: updateTime(1) });
       } else if (vars._airlockBlowing) {
@@ -933,6 +947,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars._airlockBlowing = true;
       vars._airlockOuterClosed = true;
+      vars._airlockLeakRounds = 0; // 每次重新起风都是一轮新的吹风周期
       return updateTime(1)(vars);
     },
     text: function(vars) {
@@ -991,7 +1006,7 @@ Object.assign(storyData, {
         nextScene: "张江-华大-灰区",
         effect: updateTime(2),
         condition: "strength > 0.01",
-        elseScene: "结局-张江-风淋舱"
+        elseScene: "结局-体力耗尽" // 这里是气流击退，不是酸雾——别复用风淋舱那段毒死文本
       }
     ]
   },
@@ -1001,8 +1016,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-风淋舱-泄漏.webp（酸雾） */
     onEnter: function(vars) {
       vars._airlockBlowing = false;
-      vars._airlockLeakRounds = 0;
       vars._airlockLockedOut = true;
+      // 注意：_airlockLeakRounds 不在这里归零——本节点是逐轮循环的落点，
+      // 归零会让面具的"每两轮 -1"永远停在第 1 轮（等于无伤），已在吹风节点重置。
       return {};
     },
     text: function(vars) {
@@ -1121,6 +1137,9 @@ Object.assign(storyData, {
       vars._airlockBlowing = false;
       vars._airlockOuterClosed = false;
       vars._airlockInnerOpen = false;
+      vars._airlockLockedOut = false; // 紧急复位/乱拍蒙对之后门锁解开，舱子恢复待机
+      vars._airlockLeakRounds = 0;
+      vars._airlockStartFails = 0;
       vars._fabAlert = Math.min(2, (vars._fabAlert || 0) + 1);
       return {};
     },
@@ -1198,12 +1217,12 @@ Object.assign(storyData, {
         return cs;
       }
       if (!vars._fabFigADone) cs.push({ text: "靠近光刻机那台设备边的人影", nextScene: "张江-华大-白区-工位A", effect: updateTime(2) });
-      else cs.push({ text: "光刻机边（已了结）", nextScene: "张江-华大-白区-工位A", effect: updateTime(1) });
+      else cs.push({ text: "再走一趟光刻机那边", nextScene: "张江-华大-白区-工位A", effect: updateTime(1) });
       if (!vars._fabFigBDone) cs.push({ text: "靠近薄膜沉积设备边的人影", nextScene: "张江-华大-白区-工位B", effect: updateTime(2) });
-      else cs.push({ text: "薄膜设备边（已了结）", nextScene: "张江-华大-白区-工位B", effect: updateTime(1) });
+      else cs.push({ text: "再走一趟薄膜设备那边", nextScene: "张江-华大-白区-工位B", effect: updateTime(1) });
       if (!vars._fabFigCDone) cs.push({ text: "靠近化学清洗槽边的人影", nextScene: "张江-华大-白区-工位C", effect: updateTime(2) });
-      else cs.push({ text: "清洗槽边（已了结）", nextScene: "张江-华大-白区-工位C", effect: updateTime(1) });
-      cs.push({ text: "往东，穿过车间去动力站", nextScene: "张江-华大-动力站", effect: updateTime(4) });
+      else cs.push({ text: "再走一趟清洗槽那边", nextScene: "张江-华大-白区-工位C", effect: updateTime(1) });
+      cs.push({ text: "往东，穿过车间去动力站", nextScene: "张江-华大-动力站-初遇", effect: updateTime(4) });
       cs.push({ text: "回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
       return cs;
     }
@@ -1554,11 +1573,12 @@ Object.assign(storyData, {
       if (vars._panicEmployeeState === "unmet") {
         desc += "\n配电柜的后面，隐约露着半截白色的身影——蹲着，抱着什么，在发抖。";
       } else if (vars._panicEmployeeState === "calmed") {
-        desc += "\n小刘蹲在配电柜边上，看见你进来，朝你比了个大拇指，又竖起一根手指抵在面罩前——嘘。";
+        if (vars._liuLedYou) desc += "\n配电柜边上空着——小刘把你领去动力站之后，就再没回这一区守泵了。他那具灭火器还立在柜子边。";
+        else desc += "\n小刘蹲在配电柜边上，看见你进来，朝你比了个大拇指，又竖起一根手指抵在面罩前——嘘。";
       } else if (vars._panicEmployeeState === "injured") {
         desc += "\n小刘抱着灭火器缩在角落，头上的肿包消了些。看见你，他往柜子后面又缩了半个身位。";
       } else {
-        desc += "\n配电柜后面空了。他不会再回来了。";
+        desc += "\n他还倒在配电柜脚下，无尘服的胸口朝上，面罩裂着。你从他身边绕了过去。";
       }
       return desc;
     },
@@ -1579,9 +1599,13 @@ Object.assign(storyData, {
         } else {
           cs.push({ text: "绕过配电柜看看", nextScene: "张江-华大-运维区-虚惊", effect: updateTime(1) });
         }
-      } else if (vars._panicEmployeeState === "calmed") {
+      } else if (vars._panicEmployeeState === "calmed" && !vars._liuLedYou) {
         cs.push({ text: "跟小刘聊聊", nextScene: "张江-华大-运维区-闲聊", effect: updateTime(2) });
-        cs.push({ text: "请他带路去动力站", nextScene: "张江-华大-动力站-初遇", effect: updateTime(6) });
+        cs.push({
+          text: "请他带路去动力站",
+          nextScene: "张江-华大-动力站-初遇",
+          effect: updateTime(6, { set: { _liuLedYou: true } })
+        });
       }
       cs.push({
         text: "去设备密室那扇门看看",
@@ -1602,7 +1626,11 @@ Object.assign(storyData, {
 他腿一软坐在地上，灭火器哐啷滚到一边：“我当是它们……哥，你可别怪我，这几天我看见白色的就头皮炸。”\n\
 他姓刘，进厂第三年的操作员，声音还在抖：“厂里活下来的都缩在东头动力站。你要过去吗？我认路——中间那片车间别自己走，贴着我。”",
     choices: [
-      { text: "请他带路去动力站", nextScene: "张江-华大-动力站-初遇", effect: updateTime(6) },
+      {
+        text: "请他带路去动力站",
+        nextScene: "张江-华大-动力站-初遇",
+        effect: updateTime(6, { set: { _liuLedYou: true } })
+      },
       { text: "先自己转转", nextScene: "张江-华大-运维区", effect: updateTime(1) }
     ]
   },
@@ -1655,7 +1683,11 @@ Object.assign(storyData, {
 他挠了挠头：“就是这几天油不多了。发电机一停，这些统统完蛋。”\n\
 他朝密室那扇门努努嘴：“那边门锁着，钥匙在陈工那儿，我一次也没进去过。”",
     choices: [
-      { text: "请他带路去动力站", nextScene: "张江-华大-动力站-初遇", effect: updateTime(6) },
+      {
+        text: "请他带路去动力站",
+        nextScene: "张江-华大-动力站-初遇",
+        effect: updateTime(6, { set: { _liuLedYou: true } })
+      },
       { text: "回运维区", nextScene: "张江-华大-运维区", effect: updateTime(1) }
     ]
   },
@@ -1676,7 +1708,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-设备密室.webp */
     onEnter: function(vars) { vars.currentPos = "设备密室门口"; },
     text: "运维区尽头有一扇加厚的钢门，门牌上只有两个字：机要。门禁读卡器亮着红灯，锁得死死的。\n\
-（作者尚未想好这里面藏着什么。）",
+（作者尚未更新此处）",
     choices: [
       { text: "回头", nextScene: "张江-华大-运维区", effect: updateTime(1) }
     ]
@@ -1781,6 +1813,12 @@ Object.assign(storyData, {
       vars.currentArea = "张江";
       vars.currentPlace = "华大半导体";
       vars.currentPos = "动力站";
+      // 记下走的是哪条路：_lastScene 到了「会面」就被本场景覆盖了，分支必须在这里定死
+      if (!vars._metJinbao) {
+        if (vars._lastScene === "张江-华大-运维区-虚惊" || vars._lastScene === "张江-华大-运维区-闲聊" || vars._lastScene === "张江-华大-运维区") vars._jinbaoIntroVia = "刘";
+        else if (vars._lastScene === "张江-华大-夹层") vars._jinbaoIntroVia = "夹层";
+        else vars._jinbaoIntroVia = "自己";
+      }
     },
     text: function(vars) {
       if (vars._jinbaoLeft) {
@@ -1793,10 +1831,10 @@ Object.assign(storyData, {
         return back;
       }
       var desc = "";
-      if (vars._lastScene === "张江-华大-运维区-虚惊" || vars._lastScene === "张江-华大-运维区-闲聊" || vars._lastScene === "张江-华大-运维区") {
+      if (vars._jinbaoIntroVia === "刘") {
         desc = "小刘领着你贴墙穿过车间连廊，在一扇厚重的防火门前停下，敲了三长两短。\n\
 门开了一条缝，先探出来的是一根钢管，然后才是一只布满血丝的眼睛。看清小刘身后的你，那只眼睛瞪圆了。";
-      } else if (vars._lastScene === "张江-华大-夹层") {
+      } else if (vars._jinbaoIntroVia === "夹层") {
         desc = "你顺着检修口的爬梯下到底，掀开一块格栅板——底下就是动力站。\n\
 一个正蹲在仪表前的人猛地回头，手里的扳手差点脱手：“夹、夹层？!你从上面下来的？!”";
       } else {
@@ -1819,9 +1857,8 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-会面.webp */
     onEnter: { set: { _metJinbao: true } },
     text: function(vars) {
-      var viaLiu = vars._lastScene === "张江-华大-运维区-虚惊" || vars._lastScene === "张江-华大-运维区-闲聊" || vars._lastScene === "张江-华大-运维区";
       var desc = "";
-      if (viaLiu) {
+      if (vars._jinbaoIntroVia === "刘") {
         desc += "“人！是活人！”小刘先喊出了声，一屁股坐在纸箱上，拍着胸口直喘。\n\
 拿钢管的人迟疑了两秒，把家伙放回仪表台上。四十来岁，工装洗得发白，眼窝陷得很深，但眼神是清醒的。\n\
 “华大半导体，动力部，洪金宝。”他扯了扯嘴角，算是笑，“这栋楼里还喘气的，都到齐了——我，盯设备的老陈，加上这个守泵的。”";
@@ -1958,6 +1995,7 @@ Object.assign(storyData, {
       vars._toldJinbaoTruth = "lie";
       vars._jinbaoFed = true;
       vars.strength = Math.min(10, vars.strength + 3); // 当场吃下的泡面
+      vars._travelMinutes = 0;                          // 吃东西按惯例清行程疲劳
       return {};
     },
     text: function(vars) {
@@ -2026,16 +2064,21 @@ Object.assign(storyData, {
       }
       var desc = "动力站是这栋楼的心脏——发电机低吼着，水泵喘着，一排滤柱的仪表上，数字绿得发亮。\n\
 洪金宝守在仪表台前，那个写满名字和日期的笔记本就摊在手边。\n";
-      if (vars._panicEmployeeState === "calmed") desc += "小刘在地铺上坐着，见你进来，咧嘴笑了笑，又赶紧把手指竖在嘴前——嘘，洪工在看数据。\n";
-      else if (vars._panicEmployeeState === "injured") desc += "小刘抱着膝盖缩在地铺角落，后脑勺上的肿包还没消。看见你，他往被子里又缩了半个身位。\n";
-      else if (vars._panicEmployeeState === "dead") desc += "“小刘前天说出去巡检，到现在没回来。”洪金宝提了一句，眉头拧着，“外头那些东西，越来越不老实了。”\n";
+      if (vars._panicEmployeeState === "calmed" && vars._liuLedYou) desc += "小刘在地铺上坐着，见你进来，咧嘴笑了笑，又赶紧把手指竖在嘴前——嘘，洪工在看数据。\n";
+      else if (vars._panicEmployeeState === "calmed") desc += "“外头辅助区那个守泵的，姓刘。”洪金宝朝西边偏了偏头，“他愿意给你带路，就跟着他走，别自己穿车间。”\n";
+      else if (vars._panicEmployeeState === "injured") desc += "“小刘上回在辅助区让人开了瓢。”洪金宝摇摇头，“打那以后就缩在那边不肯挪窝，见着白影就躲。”\n";
+      else if (vars._panicEmployeeState === "dead") desc += "“小刘说出去巡检，到现在没回来。”洪金宝提了一句，眉头拧着，“外头那些东西，越来越不老实了。”\n";
       else desc += "“外头辅助区还守着个人，姓刘。”洪金宝提了一句，“你要走那边，报我的名字。”\n";
       if (vars._fabFigBKilled) desc += "发电机上搁着一只老陈的茶缸，茶早凉透了。没人收。\n";
-      else if (!vars._jinbaoLeft) desc += "老陈蹲在发电机边上，就着灯光听那台机器的动静，像老中医号脉。\n";
+      else desc += "老陈蹲在发电机边上，就着灯光听那台机器的动静，像老中医号脉——这台机器和车间里他那台薄膜机，他一天要来回跑好几趟。\n";
       if (vars.dd >= 3 && !vars._dieselDelivered && !vars._jinbaoDieselAsked) {
-        desc += "老陈忽然抬头看了你一眼，嘴唇动了动，又低下头去——像有话想说。\n";
+        desc += vars._fabFigBKilled
+          ? "洪金宝拿指关节敲了两下发电机的油位表，敲完盯着那根针没说话——像在盘算一句难开口的话。\n"
+          : "老陈忽然抬头看了你一眼，嘴唇动了动，又低下头去——像有话想说。\n";
       } else if (vars.dd < 3 && !vars._dieselDelivered) {
-        desc += "老陈拍了拍发电机外壳：“油还够几天。省着烧。”\n";
+        desc += vars._fabFigBKilled
+          ? "没人再拍那台发电机的外壳跟它说话了。油位表上的针，比昨天又低了一点。\n"
+          : "老陈拍了拍发电机外壳：“油还够几天。省着烧。”\n";
       }
       if (vars._toldJinbaoTruth === "silent") desc += "洪金宝没有再看你。自打你说“不清楚”之后，他和你说话，都是隔着仪表说的。\n";
       return desc;
@@ -2061,7 +2104,11 @@ Object.assign(storyData, {
       cs2.push({ text: "和洪金宝聊聊", nextScene: "张江-华大-动力站-聊天", effect: updateTime(2) });
       cs2.push({ text: "去纯水系统接水", nextScene: "张江-华大-动力站-纯水", effect: updateTime(1) });
       if (vars.dd >= 3 && !vars._jinbaoDieselAsked && !vars._dieselDelivered) {
-        cs2.push({ text: "问老陈想说什么", nextScene: "张江-华大-动力站-柴油-接", effect: updateTime(2) });
+        cs2.push({
+          text: vars._fabFigBKilled ? "问洪金宝在盘算什么" : "问老陈想说什么",
+          nextScene: "张江-华大-动力站-柴油-接",
+          effect: updateTime(2)
+        });
       }
       if (vars.hasDieselCan && !vars._dieselDelivered) {
         cs2.push({ text: "把柴油桶搬进来", nextScene: "张江-华大-动力站-柴油-交", effect: updateTime(3) });
@@ -2140,14 +2187,15 @@ Object.assign(storyData, {
       }
       if (vars._panicEmployeeState === "dead") {
         desc += "\n\
-“还有小刘……前天出去巡检，到现在没回来。”他盯着仪表，声音低下去，“我就不该让他一个人去。”";
+“还有小刘……出去巡检，到现在没回来。”他盯着仪表，声音低下去，“我就不该让他一个人去。”";
       } else if (vars._panicEmployeeState === "injured") {
         desc += "\n\
 “小刘上回在辅助区，让一个闯进来的‘东西’开了瓢。”他摇摇头，“打那以后，见着白影就躲。也好，怕死才活得长。”\n\
-地铺角落里，小刘把脸埋进了被子。开你瓢的正是你。";
+你点了点头。那个闯进去的“东西”，就是你。";
       } else if (vars._panicEmployeeState === "calmed") {
-        desc += "\n\
-“小刘是个好孩子。就是吓破了胆。”他压低声音，“多亏他把你领进来——不然我这根钢管，可能就先跟你打招呼了。”";
+        desc += vars._liuLedYou
+          ? "\n“小刘是个好孩子。就是吓破了胆。”他压低声音，“多亏他把你领进来——不然我这根钢管，可能就先跟你打招呼了。”"
+          : "\n“小刘是个好孩子。就是吓破了胆。”他压低声音，“他还敢在外头守泵，比我想的硬气。”";
       } else {
         desc += "\n\
 “还有个小刘，在外头辅助区守着泵。胆子小，人机灵。”";
@@ -2286,11 +2334,20 @@ Object.assign(storyData, {
   "张江-华大-动力站-柴油-接": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-柴油.webp */
     onEnter: { set: { _jinbaoDieselAsked: true } },
-    text: "老陈把你拉到发电机边上，压着那台机器的轰鸣说话。\n\
+    text: function(vars) {
+      if (vars._fabFigBKilled) {
+        return "洪金宝把你拉到发电机边上，压着那台机器的轰鸣说话。\n\
+“冒昧问一句。”他指了指油位表上那根快贴到底的针，“外面……还找得到柴油吗？”\n\
+“这点油撑不过三天了。它一停，纯水系统停，灯灭——我们就得摸黑走人。”他顿了顿，“本来这话该老陈跟你说，他管设备，比我会算。可他回车间盯货去了，两天没回来。”\n\
+“北蔡镇罗山立交下来，有个加油站。”他补了一句，“再有就是……你要是认识搞冷链的、开货车的，他们手里兴许有存货。”\n\
+他看着你：“一桶就行。多大代价，我们认。”";
+      }
+      return "老陈把你拉到发电机边上，压着那台机器的轰鸣说话。\n\
 “小伙子。”他搓着手，搓出老茧摩擦的沙沙声，“冒昧问一句——外面……还找得到柴油吗？”\n\
 他拍了拍发电机：“这桶油，撑不过三天了。它一停，纯水系统停，灯灭——洪工他们仨，就得摸黑走人。”\n\
 “北蔡镇罗山立交下来，有个加油站。”洪金宝在旁边补了一句，“再有就是……你要是认识搞冷链的、开货车的，他们手里兴许有存货。”\n\
-老陈看着你，浑浊的眼睛里全是光：“一桶就行。多大代价，我们认。”",
+老陈看着你，浑浊的眼睛里全是光：“一桶就行。多大代价，我们认。”";
+    },
     choices: [
       { text: "记下了", nextScene: "张江-华大-动力站", effect: updateTime(1) }
     ]
@@ -2300,12 +2357,22 @@ Object.assign(storyData, {
   "张江-华大-动力站-柴油-交": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-柴油-交.webp */
     onEnter: { set: { hasDieselCan: false, _dieselDelivered: true }, add: { itemCount: -1 } },
-    text: "你把那只死沉的铁皮桶挪进动力站，桶底在地上犁出一道白印。\n\
+    text: function(vars) {
+      if (vars._fabFigBKilled) {
+        return "你把那只死沉的铁皮桶挪进动力站，桶底在地上犁出一道白印。\n\
+洪金宝拧开桶盖闻了一口，闭上眼睛，很久才吐出那口气。\n\
+“满的。”他说，“这能烧到五天。”\n\
+他一个人插管、泵油，动作熟得不用看。机器的轰鸣沉了半拍，又稳稳地接上——像一个人缓过来的一口气。\n\
+“这活儿本来是老陈干的。”他拍了拍桶身，没再往下说。\n\
+他在你肩上按了一下。但这栋楼里的灯，今晚是踏实的。";
+      }
+      return "你把那只死沉的铁皮桶挪进动力站，桶底在地上犁出一道白印。\n\
 老陈扑过来的速度不像他那个岁数的人。他拧开桶盖闻了一口，眼睛眯起来，像闻到了陈年的好酒。\n\
 “满的！还是满的！”他冲洪金宝喊，嗓子都劈了，“洪工！三天——不，这能烧到五天！”\n\
 洪金宝帮着你把桶抬到发电机边上，插管，泵油。机器的轰鸣沉了半拍，又稳稳地接上——像一个人缓过来的一口气。\n\
 “这一桶，”老陈抹了把脸，不知是汗还是泪，“够它再唱一天。”\n\
-洪金宝在你肩上按了一下，什么也没说。但这栋楼里的灯，今晚是踏实的。",
+洪金宝在你肩上按了一下，什么也没说。但这栋楼里的灯，今晚是踏实的。";
+    },
     choices: [
       { text: "值了", nextScene: "张江-华大-动力站", effect: updateTime(2) }
     ]
@@ -2316,14 +2383,22 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-纯水.webp */
     onEnter: function(vars) { vars.currentPos = "动力站纯水间"; },
     text: function(vars) {
+      var desc;
       if (vars._jinbaoLeft) {
-        return "几只白色大水桶沿墙一字排开，桶身透亮，水清得能看见桶底。\n\
+        desc = "几只白色大水桶沿墙一字排开，桶身透亮，水清得能看见桶底。\n\
 每只桶身上都是同一行马克笔字，写得端端正正：“给可能会来的人。”\n\
 桶太重，带是带不走的。但至少——这里的水，比这个世上的任何水都干净。";
-      }
-      return "纯水系统的出水口在滤柱阵列后面，一根亮闪闪的不锈钢管。洪金宝拧开取样阀，清亮的水柱注进量筒。\n\
+      } else {
+        desc = "纯水系统的出水口在滤柱阵列后面，一根亮闪闪的不锈钢管。洪金宝拧开取样阀，清亮的水柱注进量筒。\n\
 “喝吧。”他说，“电阻率十八个兆的水——你们在外面，打着灯笼也找不着第二口。”\n\
 仪表上的数字绿得发亮，稳稳地，一格都不跳。";
+      }
+      if (vars._lastScene === "张江-华大-动力站-纯水") {
+        desc += vars._restBlocked
+          ? "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经喝得肚子发胀了——再灌也变不成力气。</span>"
+          : "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】咕咚咕咚灌了个饱，体力+1，当前体力：{strength}。</span>";
+      }
+      return desc;
     },
     choices: function(vars) {
       var cs = [];
@@ -2335,12 +2410,12 @@ Object.assign(storyData, {
           effect: updateTime(2)
         });
       }
-      // 现场喝水（不能穿无尘服）
+      // 现场喝水（不能穿无尘服）；水管够，但体力回复走休息点同一道门槛，防无限刷
       if (!vars._wearingCleanSuit) {
         cs.push({
           text: "捧起来喝个痛快（体力+1）",
           nextScene: "张江-华大-动力站-纯水",
-          effect: function(v) { v.strength = Math.min(10, v.strength + 1); return updateTime(2)(v); }
+          effect: function(v) { restRecover(v, 1); return updateTime(2)(v); }
         });
       }
       // 没瓶 → 取样瓶
@@ -2361,11 +2436,17 @@ Object.assign(storyData, {
   // 灌水：标签瓶强制破题（若拷问尚未发生）或情感收束（已发生）
   "张江-华大-动力站-灌水": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-灌水.webp */
-    onEnter: { set: { bottleWater: 1, waterToxic: false } },
+    onEnter: function(vars) {
+      vars.bottleWater = 1;
+      vars.waterToxic = false;
+      // 认瓶破题只在"他在场、且这道题还没问出口"时发生；其余情况这一灌就是情感收束
+      if (vars._hongBottleLabel && !isBottleConfront(vars)) vars._bottleFilledBySon = true;
+      return {};
+    },
     text: function(vars) {
       var desc = "你拧开瓶盖，把瓶子接到出水口底下。水柱注进瓶身，咕咚咕咚，把瓶壁上的空气一丝丝挤上去。\n";
-      if (vars._hongBottleLabel && !vars._bottleFilledBySon) {
-        if (vars._toldJinbaoTruth === "" && vars._metJinbao && !vars._jinbaoLeft) {
+      if (vars._hongBottleLabel) {
+        if (isBottleConfront(vars)) {
           desc += "\n\
 一只手伸过来，按住了你的瓶盖。\n\
 洪金宝站在你身后。他不知道什么时候过来的，目光钉在瓶身那行圆珠笔字上——“芜湖 6.25”。\n\
@@ -2381,7 +2462,6 @@ Object.assign(storyData, {
               : "洪金宝看了那只瓶子一眼，又移开了目光。瓶身上的字，他没有问。"))
           + "\n\
 水满了。你拧紧瓶盖。这一瓶水干净得发光。";
-          vars._bottleFilledBySon = true;
         }
       } else {
         desc += "水满了。你拧紧瓶盖。这一瓶水干净得发光。";
@@ -2389,7 +2469,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: function(vars) {
-      if (vars._hongBottleLabel && !vars._bottleFilledBySon && vars._toldJinbaoTruth === "" && !vars._jinbaoLeft) {
+      if (isBottleConfront(vars)) {
         return [{ text: "迎着他的目光", nextScene: "张江-华大-动力站-拷问", effect: updateTime(1) }];
       }
       return [{ text: "收好水瓶", nextScene: "张江-华大-动力站", effect: updateTime(1) }];
