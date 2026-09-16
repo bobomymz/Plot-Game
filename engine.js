@@ -95,6 +95,62 @@ function typeText(element, fullText, speed = 80, onComplete) {
   }, speed);
 }
 
+// ====== 分段文本 ======
+const SEGMENT_MS_PER_CHAR = 50;   // 段间停留：每字毫秒数（仿 travelScene 惯例）
+const SEGMENT_MIN_PAUSE = 1200;   // 段间停留：最短下限(ms)
+let segmentToken = 0;             // 代际令牌：renderScene 顶部递增，旧分段链路全部作废
+let segmentActive = false;        // 分段播放中（含段间停留等待）
+let segmentAdvance = null;        // 段间停留时点击文本 → 立即进入下一段
+let segmentDwellTimer = null;     // 段间停留定时器
+
+function clearSegments() {
+  segmentToken++;
+  segmentActive = false;
+  segmentAdvance = null;
+  if (segmentDwellTimer) { clearTimeout(segmentDwellTimer); segmentDwellTimer = null; }
+}
+
+// 分段播放：每段走打字机，打完停留 max(SEGMENT_MIN_PAUSE, 去标签字数*SEGMENT_MS_PER_CHAR)，
+// 清空后进下一段；最后一段完成后调用 onComplete（即原有 renderChoices+applyMemoryFlash 回调）。
+// 全链路用 token 守卫：切场景后（renderScene 顶部 clearSegments 已 token++），
+// 旧链的一切回调（打字完成/停留到期）静默作废，不再碰 DOM、不再调度定时器。
+function typeSegments(element, segments, speed, onComplete) {
+  clearSegments();   // 保险（正常流程 renderScene 顶部已清过）
+  const token = segmentToken;
+  segmentActive = true;
+  let index = 0;
+
+  function playCurrent() {
+    if (token !== segmentToken) return;
+    const seg = String(segments[index++]);
+    const isLast = index >= segments.length;
+    typeText(element, seg, speed, function onSegmentDone() {
+      if (token !== segmentToken) return;
+      if (isLast) {
+        segmentActive = false;
+        segmentAdvance = null;
+        onComplete();
+        return;
+      }
+      const plain = seg.replace(/<[^>]*>/g, "");
+      const pause = Math.max(SEGMENT_MIN_PAUSE, plain.length * SEGMENT_MS_PER_CHAR);
+      const proceed = function() {
+        if (token !== segmentToken) return;
+        segmentDwellTimer = null;
+        segmentAdvance = null;
+        element.innerHTML = "";
+        playCurrent();
+      };
+      segmentDwellTimer = setTimeout(proceed, pause);
+      segmentAdvance = function() {   // 停留期点击 → 立即切段
+        if (segmentDwellTimer) { clearTimeout(segmentDwellTimer); segmentDwellTimer = null; }
+        proceed();
+      };
+    });
+  }
+  playCurrent();
+}
+
 sceneText.addEventListener("click", () => {
   // 状态1：正在打字 → 停止打字，立即显示全文
   if (typingTimer) {
@@ -113,6 +169,12 @@ sceneText.addEventListener("click", () => {
       typingCallback = null;
       cb();
     }
+    return;
+  }
+
+  // 状态1.5：分段播放的段间停留 → 点击立即进入下一段
+  if (segmentActive && typeof segmentAdvance === "function") {
+    segmentAdvance();
     return;
   }
 
@@ -890,6 +952,7 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     console.error("全局触发器递归层数过多，已中断");
     return;
   }
+  clearSegments();   // 必须在 stopTyping 之前：token 先作废，stopTyping 触发旧分段回调时静默失效
   stopTyping();
 
   // 进入新场景时重置展开状态
@@ -994,12 +1057,20 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   choicesArea.style.display = "none";
 
   let displayText = "";
+  let textIsSegmented = false;
   if (typeof scene.text === "function") {
     displayText = scene.text(gameState);          // 把当前状态传给函数
   } else {
     displayText = scene.text || "";
   }
-  displayText = interpolateDisplay(displayText, gameState);
+  if (Array.isArray(displayText)) {
+    // 分段文本：text 数组（函数返回数组同样生效），每段独立做 {变量} 插值
+    textIsSegmented = true;
+    displayText = displayText.map(s => interpolateDisplay(String(s), gameState));
+    if (displayText.length === 0) { textIsSegmented = false; displayText = ""; }
+  } else {
+    displayText = interpolateDisplay(displayText, gameState);
+  }
 
   sceneText.style.cssText = '';
   if (scene.style) {
@@ -1014,8 +1085,9 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   }
 
   const textArea = document.getElementById("text-area");
-  // 文本框是否显示？
-  if (displayText === "") {
+  // 文本框是否显示？（分段文本：所有段都为空才隐藏）
+  const textEmpty = textIsSegmented ? displayText.every(s => s === "") : displayText === "";
+  if (textEmpty) {
     textArea.style.visibility = 'hidden';
   } else {
     textArea.style.visibility = 'visible';
@@ -1028,7 +1100,14 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   }
 
   const hasQte = typeof scene.qte === 'function' ? scene.qte(gameState) : scene.qte;
-  if (hasQte && !hasQte.typewriter) {
+  if (textIsSegmented) {
+    // 分段文本：逐段打字+停留；最后一段完成后才渲染选项/闪色，QTE 倒计时自此开始。
+    // 分段文本总是走打字机节奏（即使场景有 qte 且未声明 typewriter——分段本身就意味着节奏化阅读）
+    typeSegments(sceneText, displayText, 80, () => {
+      renderChoices(scene, sceneId);
+      applyMemoryFlash(gameState);
+    });
+  } else if (hasQte && !hasQte.typewriter) {
     // QTE 场景直接显示文字，跳过打字机效果
     sceneText.innerHTML = displayText;
     sceneText.classList.remove("typing");
