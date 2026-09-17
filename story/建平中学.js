@@ -223,40 +223,59 @@ Object.assign(storyData, {
       { text: "去前门看看", nextScene: "建平-前门", effect: updateTime(5) },
       { text: "绕去后门", nextScene: "建平-后门", effect: updateTime(10) },
       { text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-校园门口" } } },
-      { text: "查看路边的阀门箱", condition: "hasKeyRing", nextScene: "建平-崮山路-阀门箱", effect: updateTime(1), elseScene: "建平-崮山路-阀门箱-锁着" },
+      { text: "查看旁边", nextScene: "建平-崮山路-井盖", effect: updateTime(1) },
       { text: "离开这里", nextScene: "罗山路立交桥下", effect: updateTime(10) }
     ]
   },
 
-  "建平-崮山路-阀门箱": {
+  "建平-崮山路-井盖": {
     outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/jianping/manhole.png */,
+    onEnter: function(vars) { vars.currentPos = "崮山路"; },
+    text: function(vars) {
+      var desc = "你贴着行道树，打量校门口旁边的人行道。\n\
+人行道边有一只市政井盖，铸铁盖面上铸着「上水」两个字，盖沿一圈留着几道新鲜的撬痕——有人比你来得更早，而且很急。\n\
+撬痕旁边的地面上还散着小半截被踩灭的烟头，看上去没几天。\n";
+      if (vars.hasKeyRing) {
+        desc += "你想起了老吴那串钥匙——上面除了工具间的钥匙，好像还有几把你没对上号的。\n";
+      }
+      return desc + describeWeather(vars);
+    },
+    choices: [
+      { text: "翻开下去", nextScene: "建平-崮山路-阀门箱", effect: updateTime(3) },
+      { text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-崮山路-阀门箱": {
     image: "images/placeholder.png" /* TODO: images/jianping/valveBox.png */,
     onEnter: function(vars) { vars.currentPos = "崮山路"; },
     text: function(vars) {
       if (vars._valveBoxOpened) {
-        return "崮山路边的市政阀门箱还敞着。你已经看过里面的东西了。\n" + describeWeather(vars);
+        return "你踩着井壁上的爬梯下到井底。阀门箱还敞着，你刚才看过里面的东西了。头顶只剩井口漏下来的一小块天光。";
       }
-      return "你蹲到人行道上那只漆成蓝灰色的铁皮阀门箱前。箱子上印着「上海市自来水 · 抢修」的铭牌，挂锁已经被人撬开过——锁舌上留着新鲜的工具痕。\n你用钥匙串上的一把试了试，咔哒一声，锁彻底开了。\n" + describeWeather(vars);
+      return "你弓着背钻过井口，踩着井壁上的爬梯下到井底。这是一处自来水阀门井——两根管道从井壁两侧穿过，潮气贴着后颈往衣领里钻，头顶只剩井口漏下来的一小块天光。\n\
+靠墙立着一只漆成蓝灰色的铁皮阀门箱，箱面上印着「上海市自来水 · 抢修」的铭牌。铭牌下挂着一把挂锁，锁舌上留着新鲜的工具痕——有人撬过它，但没撬开。";
     },
     choices: function(vars) {
       var cs = [];
       if (!vars._valveBoxOpened) {
-        cs.push({ text: "打开箱门查看", nextScene: "建平-崮山路-阀门箱-查看" });
+        cs.push({ text: "打开箱门查看", condition: "hasKeyRing", nextScene: "建平-崮山路-阀门箱-查看", elseScene: "建平-崮山路-阀门箱-锁着" });
       }
-      cs.push({ text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) });
+      cs.push({ text: "爬上去回地面", nextScene: "建平-崮山路-井盖", effect: updateTime(2) });
       return cs;
     }
   },
 
   "建平-崮山路-阀门箱-锁着": {
-    outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/valveBox.png */,
-    onEnter: updateTime(1, { set: { currentPos: "崮山路" } }),
+    onEnter: { set: { currentPos: "崮山路" } },
     text: function(vars) {
-      return "你蹲到人行道上那只漆成蓝灰色的铁皮阀门箱前。「上海市自来水 · 抢修」的铭牌下挂着一把挂锁，锁舌上留着新鲜的工具痕——有人撬过它，但没撬开。\n你拽了拽锁梁，纹丝不动。看来得有钥匙才打得开。\n" + describeWeather(vars);
+      return "你凑到那只蓝灰色的铁皮阀门箱前。「上海市自来水 · 抢修」的铭牌下挂着一把挂锁，锁舌上留着新鲜的工具痕——有人撬过它，但没撬开。\n\
+你拽了拽锁梁，纹丝不动。看来得有钥匙才打得开——撬它的人最后大概也是这么想的。";
     },
     choices: [
-      { text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) }
+      { text: "爬上去回地面", nextScene: "建平-崮山路-井盖", effect: updateTime(2) }
     ]
   },
 
@@ -264,17 +283,18 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: { set: { _valveBoxOpened: true } },
     text: function(vars) {
-      var desc = "你打开箱门。里面是一组分管阀门和一个取样龙头，管道上还挂着一只采样用的旧玻璃瓶——瓶底沉着一点洗不掉的灰。";
+      var desc = "你把钥匙串上的钥匙一把一把地试。试到第三把，咔哒一声，锁开了。\n\
+打开箱门——里面是一组分管阀门和一个取样龙头，管道上还挂着一只采样用的旧玻璃瓶——瓶底沉着一点洗不掉的灰。";
       if (vars.hasPipelineMap) {
         desc += "\n箱门内侧被人用马克笔潦草地画了几道线，标着「支线」两个字——是老吴的笔迹。\n你掏出他的管线图对比——图上标注「水有毒，别喝」的那一段，正是眼前这根支管。\n\
-<span style='color:#ffaa00;'>老吴不是尝出来的——他修了十七年水管，是从直饮水里带出的泥沙和那股说不上来的不对劲，才一路追到这里。真正害人的东西无色无味，他没能带走那个水样。</span>";
+<span style='color:#ffaa00;'>老吴不是尝出来的——他修了十七年水管，是从直饮水里带出的泥沙和那股说不上来的不对劲，才一路追到这口井里的。真正害人的东西无色无味，他没能带走那个水样。</span>";
       } else {
         desc += "\n箱门内侧被人用马克笔潦草地画了几道线，标着「支线」两个字。";
       }
       return desc;
     },
     choices: [
-      { text: "关上箱门", nextScene: "建平-校园门口", effect: updateTime(2) }
+      { text: "关上箱门", nextScene: "建平-崮山路-阀门箱", effect: updateTime(1) }
     ]
   },
 

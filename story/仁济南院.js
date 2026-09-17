@@ -90,7 +90,7 @@ Object.assign(storyData, {
       morning: "images/仁济南院/护士尸体.webp",
       night: "images/仁济南院/护士尸体-night.webp"
     }),
-    onEnter: { set: { positionAfterOperation: "仁济南院-门诊大门" } },
+    onEnter: { set: { positionAfterOperation: "仁济南院-大门-绷带" } },
     text: "你蹲下来，翻看那具瘫倒在门口的遗体。是个年轻的护士，白大褂下摆沾满干涸的血。她的口袋里鼓鼓的——你摸出几卷还没拆封的绷带。\n\
 你轻声说了句抱歉，把绷带收好。",
     choices: [
@@ -480,7 +480,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科后门-窥视": {
     image: "images/仁济南院/检验科后门-窗口观察.webp",
-    onEnter: { set: { _renjiPeeked: true, positionAfterOperation: "仁济南院-检验科后门" } },
+    onEnter: { set: { _renjiPeeked: true } },
     text: [
       "你垫起脚，把脸凑到那块灰蒙蒙的玻璃窗前，屏住呼吸往里看。\n\
 检验科的应急灯还亮着，把操作台上的东西照得清清楚楚——离心机、试剂架、散落的培养皿。\n\
@@ -497,13 +497,13 @@ Object.assign(storyData, {
   },
 
   "仁济南院-检验科后门-方瑜": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiBackdoor.png */,
-    onEnter: { set: { _fangyuFound: true, positionAfterOperation: "仁济南院-检验科后门" } },
+    image: "images/仁济南院/工牌.webp",
+    onEnter: { set: { _fangyuFound: true } },
     text: [
       "你蹲下来，翻看她的工牌——仁济医院南院，检验科，方瑜。",
       "她的手机屏幕还亮着最后一点微光，你按了一下，微信聊天记录停在最后两行：",
-      "王知筠（18:47）：“到了，后门等我”\n方瑜：“好”",
-      "时间停在 6月28日。她等在这里，却没能等到人，也没能等到撤离。"
+      "王知筠（18:47）：“到了，后门等我”\n方瑜：“好”\n\
+时间停在 6月28日。她等在这里，却没能等到人，也没能等到撤离。"
     ],
     choices: [
       {
@@ -626,7 +626,7 @@ Object.assign(storyData, {
 
   "仁济南院-门诊药房": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPharmacy.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-门诊大厅" } },
+    onEnter: { set: { positionAfterOperation: "仁济南院-门诊药房" } },
     text: function(vars) {
       var desc = "门诊药房的玻璃窗被砸开了一个口子，货架上的药盒散落一地，大部分已经被翻得七零八落。\n";
       if (vars.hasAntibiotic && vars.hasPainkiller && vars.hasAlcohol) {
@@ -668,7 +668,7 @@ Object.assign(storyData, {
 
   "仁济南院-门诊药房-抗生素": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPharmacy.png */,
-    onEnter: { set: { hasAntibiotic: true, positionAfterOperation: "仁济南院-门诊药房" }, add: { itemCount: 1 } },
+    onEnter: { set: { hasAntibiotic: true }, add: { itemCount: 1 } },
     text: "你拿起那盒抗生素。阿莫西林，还没拆封，说明书齐全。\n\
 在这个缺医少药的世道里，这盒药能救一条命。",
     choices: [
@@ -678,7 +678,7 @@ Object.assign(storyData, {
 
   "仁济南院-门诊药房-止痛药": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPharmacy.png */,
-    onEnter: { set: { hasPainkiller: true, positionAfterOperation: "仁济南院-门诊药房" }, add: { itemCount: 1 } },
+    onEnter: { set: { hasPainkiller: true }, add: { itemCount: 1 } },
     text: "你拿起那瓶止痛药。布洛芬，瓶身完整。\n\
 疼得受不了的时候，它能让你缓一缓。",
     choices: [
@@ -688,7 +688,7 @@ Object.assign(storyData, {
 
   "仁济南院-门诊药房-酒精": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPharmacy.png */,
-    onEnter: { set: { hasAlcohol: true, positionAfterOperation: "仁济南院-门诊药房" }, add: { itemCount: 1 } },
+    onEnter: { set: { hasAlcohol: true }, add: { itemCount: 1 } },
     text: "你拿起那瓶医用酒精，拧开瓶盖闻了闻——很冲。\n\
 如果受了伤，这瓶酒精能用来给伤口消毒。",
     choices: [
@@ -751,7 +751,6 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-锁着": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-检验科" } },
     text: "你用力推了推门——纹丝不动。电子锁死死卡着。\n\
 门上没有密码键盘，只有一个刷卡槽。你得找一张门禁卡，或者用点更粗暴的办法。",
     choices: [
@@ -765,7 +764,6 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-进入": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-检验科" } },
     text: "你把门禁卡在刷卡槽上一刷——“滴”的一声，电子锁绿灯亮起，门缓缓滑开。\n\
 没有惊动任何东西。你侧身闪了进去。\n\
 刚进去，你就撞见了它——一只穿着检验科白大褂的丧尸，正站在操作台前，缓缓转过头来。它的皮肤透着一层不正常的灰白。",
@@ -779,7 +777,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-破门": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
-    onEnter: { set: { _renjiNoise: true, positionAfterOperation: "仁济南院-检验科" } },
+    onEnter: { set: { _renjiNoise: true } },
     text: "你抡起斧头，狠狠砸在门锁上。金属撞击的声音在空荡荡的走廊里回荡——这一下，整层楼大概都听见了。\n\
 门锁被砸开了。你一脚踹开门，里面的丧尸已经朝门口扑来。",
     choices: [
@@ -792,7 +790,6 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-撬门": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-检验科" } },
     text: "你把铁棍插进门缝，用力撬。门锁发出令人牙酸的嘎吱声——\n",
     choices: [
       {
@@ -811,7 +808,6 @@ Object.assign(storyData, {
   "仁济南院-检验科-撬门-失败": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
     onEnter: function(vars) {
-      vars.positionAfterOperation = "仁济南院-检验科";
       countHeavyUse(vars, "铁管"); // 每次撬算一次重活：第3次铁管报废
       return {};
     },
@@ -838,7 +834,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
     onEnter: function(vars) {
       countHeavyUse(vars, "铁管"); // 撬开的这一下也算：可能门开了铁管也到头了
-      return { set: { _renjiNoise: true, positionAfterOperation: "仁济南院-检验科" } };
+      return { set: { _renjiNoise: true } };
     },
     text: function(vars) {
       return "门锁“啪”地一声弹开了——你的胳膊酸得几乎抬不起来。动静不小，但好歹是把门撬开了。\n\
@@ -961,7 +957,6 @@ Object.assign(storyData, {
         vars.hasWangPhone = true;
         vars.wangPhoneBattery = Math.max(0, 15 - (vars.dd - 3) * 3);
       }
-      vars.positionAfterOperation = "仁济南院-检验科-内部";
       return {};
     },
     text: function(vars) {
@@ -1005,7 +1000,6 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPhone.png */,
     onEnter: function(vars) {
       vars.wangPhoneBattery = 15;
-      vars.positionAfterOperation = "仁济南院-检验科-内部";
       return {};
     },
     text: "你插上充电器，屏幕重新亮了起来，电量缓缓回升。\n\
@@ -1025,7 +1019,6 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-手机-视频": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPhone.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-检验科-内部" } },
     text: "视频开始播放。一个戴银框圆眼镜的年轻女人坐在检验科的台面前，对着镜头说话，语速偏快，有点紧张但逻辑清晰：\n\
 \n\
 “如果你看到这条视频，说明我可能已经出事了。先说结论：这不是病毒，是甲基汞中毒。\n\
@@ -1050,7 +1043,6 @@ Object.assign(storyData, {
       if (!vars.hasWangNotebook) {
         vars.hasWangNotebook = true;
       }
-      vars.positionAfterOperation = "仁济南院-检验科-内部";
       return {};
     },
     text: [
@@ -1069,7 +1061,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-碘伏": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLabInside.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-检验科-内部" } },
+    onEnter: { set: { positionAfterOperation: "仁济南院-检验科-碘伏" } },
     text: "你在试剂架上翻找，在最里层的角落找到一瓶还没开封的碘伏。\n\
 消毒用的，瓶身标签完好。",
     choices: [
@@ -1211,7 +1203,7 @@ Object.assign(storyData, {
 
   "仁济南院-住院部走廊-幸存者-救": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiWard.png */,
-    onEnter: { set: { _renjiSurvivorSaved: true, positionAfterOperation: "仁济南院-住院部走廊" } },
+    onEnter: { set: { _renjiSurvivorSaved: true } },
     text: "你放低声音，告诉他你是正常人，来医院找药的。\n\
 他慢慢放下输液架，眼圈发红：“我、我是这里的护工，爆发那天躲进来的。外面……外面怎么样了？”\n\
 \n\
@@ -1230,7 +1222,7 @@ Object.assign(storyData, {
 
   "仁济南院-手术供应室": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiSupply.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-检验科-内部" } },
+    onEnter: { set: { positionAfterOperation: "仁济南院-手术供应室" } },
     text: function(vars) {
       var desc = "你来到手术供应室。这里的器械柜大多还锁着，但有几个抽屉被人撬开了。\n";
       if (vars.hasSutureKit && vars.hasTourniquet && vars.hasAnesthetic) {
@@ -1272,7 +1264,7 @@ Object.assign(storyData, {
 
   "仁济南院-手术供应室-缝合包": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiSupply.png */,
-    onEnter: { set: { hasSutureKit: true, positionAfterOperation: "仁济南院-手术供应室" }, add: { itemCount: 1 } },
+    onEnter: { set: { hasSutureKit: true }, add: { itemCount: 1 } },
     text: "你拿起一个无菌缝合包，里面有缝合针、线和持针器。\n\
 有了它，深一点的伤口也能处理。",
     choices: [
@@ -1282,7 +1274,7 @@ Object.assign(storyData, {
 
   "仁济南院-手术供应室-止血带": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiSupply.png */,
-    onEnter: { set: { hasTourniquet: true, positionAfterOperation: "仁济南院-手术供应室" }, add: { itemCount: 1 } },
+    onEnter: { set: { hasTourniquet: true }, add: { itemCount: 1 } },
     text: "你拿起一根止血带。\n\
 大出血的时候，这东西能救命。",
     choices: [
@@ -1292,7 +1284,7 @@ Object.assign(storyData, {
 
   "仁济南院-手术供应室-麻醉剂": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiSupply.png */,
-    onEnter: { set: { hasAnesthetic: true, positionAfterOperation: "仁济南院-手术供应室" }, add: { itemCount: 1 } },
+    onEnter: { set: { hasAnesthetic: true }, add: { itemCount: 1 } },
     text: "你拿起一支麻醉剂。\n\
 这玩意儿在有些场合，比武器还管用。",
     choices: [
@@ -1355,7 +1347,6 @@ Object.assign(storyData, {
 
   "仁济南院-太平间-通风": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
-    onEnter: { set: { positionAfterOperation: "仁济南院-太平间" } },
     text: "你贴着墙，避开那股浓烈的气味，看到墙上有一个通风系统的控制面板。上面有一个绿色的按钮。",
     choices: [
       {
@@ -1372,7 +1363,7 @@ Object.assign(storyData, {
 
   "仁济南院-太平间-通风开启": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
-    onEnter: { set: { _morgueVentOn: true, positionAfterOperation: "仁济南院-太平间" } },
+    onEnter: { set: { _morgueVentOn: true } },
     text: "你按下按钮。头顶的通风管道嗡嗡地响了起来，新鲜的空气灌了进来，那股甜腻的尸臭被一点点冲散。\n\
 你等了一会儿，直到能正常呼吸为止。",
     choices: [
@@ -1385,7 +1376,7 @@ Object.assign(storyData, {
 
   "仁济南院-太平间-戴面具": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
-    onEnter: { add: { maskRemainingUses: -1 }, set: { positionAfterOperation: "仁济南院-太平间" } },
+    onEnter: { add: { maskRemainingUses: -1 } },
     text: "你戴上防毒面具，过滤后的空气带着一股活性炭的干涩味。\n\
 你朝角落的阴影走去。",
     choices: [
@@ -1468,7 +1459,6 @@ Object.assign(storyData, {
       if (!vars.hasMercuryReport) {
         vars.hasMercuryReport = true;
       }
-      vars.positionAfterOperation = "仁济南院-太平间";
       return {};
     },
     text: "你翻找角落的柜子，在最里层的档案格里摸到一个牛皮纸袋。\n打开一看，是一份检测报告，落款是“仁济医院南院 检验科”。报告上是一串数据：\n\

@@ -239,7 +239,7 @@ const storyData = {
     hasCSGun: false,            // 真人CS枪（废弃小楼1F纸箱，占背包，化学实验室拆成手电筒）
     hasScrewdriver: false,      // 螺丝刀（物理实验室/老吴杂物室锁柜，钥匙串开，拆CS枪用，全图唯一）
     _podiumFood3F: false,       // 挹芬楼3F高一教室锁讲台食物是否已拿（钥匙串开，+3体力）
-    _valveBoxOpened: false,     // 崮山路市政阀门箱是否已开（钥匙串开，验水）
+    _valveBoxOpened: false,     // 崮山路井盖下阀门井里的阀门箱是否已开（钥匙串开，验水）
     _pengPiano: 0,              // 彭奕宸弹琴位置：1=远翔楼圆厅 2=挹芬楼休息区 3=音乐教室；0=不在钢琴
     _yifenStudentSaved: false,  // 挹芬楼5F幸存学生是否已救活（退烧药，无奖励）
     _yifenFood2F: false,        // 挹芬楼2F高一教室食品是否已拿

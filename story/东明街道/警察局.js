@@ -9,6 +9,7 @@ Object.assign(storyData, {
       vars.currentPlace = "警察局";
       vars.currentPos = "警察局";
       vars.showZombies = true;
+      vars.positionAfterOperation = "警察局";   // 拾取背包满 → 整理整理 → 跳回本场景重试
     },
     text: function(vars) {
       var desc = "你沿着东明路一直往北，在路口看到了派出所的蓝白招牌。围墙的铁门半开着，门内的停车场里停着几辆警车，车身上有抓痕，轮胎瘪了大半。\n\
@@ -57,7 +58,7 @@ Object.assign(storyData, {
 
   "警察局-武器-斧头": {
     image: "images/placeholder.png" /* TODO: images/警察局/policeStation.png */,
-    onEnter: { set: { hasAxe: true, positionAfterOperation: "警察局" }, add: { itemCount: 1 } },
+    onEnter: { set: { hasAxe: true }, add: { itemCount: 1 } },
     text: "你在警械室里找到一把警用消防斧，斧刃磨得很锋利，手柄上缠着黑色电工胶带。掂了掂——比想象中的重，但挥起来很有分量。\n\
 有了它，撬门、破门、劈丧尸都够用了。",
     choices: [
@@ -76,7 +77,7 @@ Object.assign(storyData, {
         v._policeGunTaken = true;
         v.gunAmmo = 3;
       }
-      return { set: { hasGun: true, positionAfterOperation: "警察局" }, add: { itemCount: 1 } };
+      return { set: { hasGun: true }, add: { itemCount: 1 } };
     },
     text: function(vars) {
       return "你在值班室的抽屉里找到一把手枪，弹匣里压着三发子弹。枪身冰凉，保险还开着。\n\
@@ -93,7 +94,7 @@ Object.assign(storyData, {
 
   "警察局-武器-匕首": {
     image: "images/placeholder.png" /* TODO: images/警察局/policeStation.png */,
-    onEnter: { set: { hasDagger: true, positionAfterOperation: "警察局" }, add: { itemCount: 1 } },
+    onEnter: { set: { hasDagger: true }, add: { itemCount: 1 } },
     text: "你在警械柜里找到一把战术匕首，刀刃闪着冷光，刀鞘上有一个快拆扣。\n\
 小巧锋利，适合近身格斗，也比大件的家伙好收。",
     choices: [
