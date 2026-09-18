@@ -146,8 +146,8 @@ Object.assign(storyData, {
         cs.push({
           text: "拔枪朝它开一枪",
           // 空枪仍可选——无弹扣扳机即死（被扑倒咬死）
-          nextScene: function(v) { return v.gunAmmo > 0 ? "三林路-东明路 十字路口" : "结局-被丧尸扑倒咬死"; },
-          effect: function(v) { if (v.gunAmmo > 0) { v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; } return {}; }
+          nextScene: function(v) { return v._lastShotFired ? "三林路-东明路 十字路口" : "结局-被丧尸扑倒咬死"; },
+          effect: function(v) { v._lastShotFired = v.gunAmmo > 0; if (v._lastShotFired) { v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; } return {}; }
         });
       }
       return cs;

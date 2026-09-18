@@ -15,20 +15,21 @@ function timeImage(map) {
 function updateTime(addMinutes, extraEffect = {}) { // 更新时间
   addMinutes = addMinutes || 0;
   return function(vars) {
-    if (vars.weather === "雨") addMinutes = Math.round(addMinutes * 1.3);
+    var mins = addMinutes;
+    if (vars.weather === "雨") mins = Math.round(mins * 1.3);
     var oldHh = vars.hh;
-    vars.mm += addMinutes;
+    vars.mm += mins;
     vars.hh += Math.floor(vars.mm / 60);
     vars.mm %= 60;
     vars.dd += Math.floor(vars.hh / 24);
     vars.hh %= 24;
     // 天气：跨越整点时更新
-    if (vars.hh !== oldHh || addMinutes >= 60) {
+    if (vars.hh !== oldHh || mins >= 60) {
       updateWeather(vars);
     }
     // 疲劳系统：>6分钟的户外移动累加到连续移动时间（当前场景 scene.outdoor 为真才计）
-    if (addMinutes > 6 && vars._isOutdoor) {
-      vars._travelMinutes = (vars._travelMinutes || 0) + addMinutes;
+    if (mins > 6 && vars._isOutdoor) {
+      vars._travelMinutes = (vars._travelMinutes || 0) + mins;
     }
     return extraEffect;
   }

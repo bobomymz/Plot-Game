@@ -522,10 +522,11 @@ Object.assign(storyData, {
           cs.push({
             text: "拔枪朝黑影扣下扳机",
             // 空枪仍可选——无弹扣扳机即死（迅捷丧尸咬死）
-            nextScene: function(v) { return v.gunAmmo > 0 ? "全家便利店-员工通道-武器放倒" : "结局-员工通道-迅捷丧尸咬死"; },
+            nextScene: function(v) { return v._lastShotFired ? "全家便利店-员工通道-武器放倒" : "结局-员工通道-迅捷丧尸咬死"; },
             effect: function(v) {
+              v._lastShotFired = v.gunAmmo > 0;
               v._employeeWeapon = "枪";
-              if (v.gunAmmo > 0) v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1);
+              if (v._lastShotFired) v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1);
               return updateTime(2, { add: { strength: -1, chasedByZombies: 2 } })(v);
             }
           });

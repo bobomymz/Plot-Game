@@ -140,7 +140,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/警察局/northRoadRide.png */,
     onEnter: function(vars) {
       tryBreakWeapon(vars); // 穿行失败按档位概率损坏武器
-      return updateTime(25, { add: { strength: -2, chasedByZombies: 1 } })(vars);
+      return updateTime(25, { add: { strength: -2, chasedByZombies: 1, mercuryLoad: 10 }, set: { hurtByZombie: true } })(vars);
     },
     text: function(vars) {
       return "你一恍神，走岔了图上那条线，正撞上从车缝里扑出来的丧尸。你连滚带爬地从车底钻出去，掉头就逃，一路晃到学校门口，胳膊和小腿划了好几道血口子。\n\

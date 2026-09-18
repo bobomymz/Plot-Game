@@ -334,8 +334,8 @@ Object.assign(storyData, {
         cs.push({
           text: "拔枪崩掉最近那只丧尸",
           // 空枪仍可选——无弹扣扳机即死（被扑倒咬死）
-          nextScene: function(v) { return v.gunAmmo > 0 ? "金谊广场-停车场-救完" : "结局-被丧尸扑倒咬死"; },
-          effect: function(v) { if (v.gunAmmo > 0) { v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; } return {}; }
+          nextScene: function(v) { return v._lastShotFired ? "金谊广场-停车场-救完" : "结局-被丧尸扑倒咬死"; },
+          effect: function(v) { v._lastShotFired = v.gunAmmo > 0; if (v._lastShotFired) { v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; } return {}; }
         });
       }
       return cs;
@@ -499,9 +499,10 @@ Object.assign(storyData, {
         cs.push({
           text: "拔枪崩开合围",
           // 空枪仍可选——无弹扣扳机即死（被扑倒咬死）
-          nextScene: function(v) { return v.gunAmmo > 0 ? "金谊广场-正门硬闯-成功" : "结局-被丧尸扑倒咬死"; },
+          nextScene: function(v) { return v._lastShotFired ? "金谊广场-正门硬闯-成功" : "结局-被丧尸扑倒咬死"; },
           effect: function(v) {
-            if (v.gunAmmo > 0) { v._gateWeapon = "枪"; v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; }
+            v._lastShotFired = v.gunAmmo > 0;
+            if (v._lastShotFired) { v._gateWeapon = "枪"; v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1); return { add: { chasedByZombies: 2 } }; }
             return {};
           }
         });

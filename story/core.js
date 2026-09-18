@@ -271,12 +271,14 @@ const storyData = {
     _metZhouSupermarket: false, // 是否已在联华超市仓库遇见周师傅翻找鸟食（Day2中午一次性氛围彩蛋，防重复触发）
     _fangWarnRoadBull: false, // 方姐是否已提醒过路霸（防重复）
     _stairKillNote: "",       // 堵路强丧尸清场旁白（武器effect写入，楼梯text展示后清除，一次性）
+    _jpStairFloor: 0,         // 楼梯间当前层（从走廊/楼层进入时写入；清场自跳后 _lastScene 变成楼梯自己，靠它记住层）
+    _lastShotFired: false,    // 开枪选项：effect 先记“扣扳机前有没有弹”，再扣弹；nextScene 读这个，避免最后一发被当成空枪
     _pryTool: "",             // 撬砸类动作实际用的工具名（useHeavyTool 或选项effect写入，动作场景text展示——损坏后 heavyWeaponName 会指向次优武器，不能靠它回读）
     _weaponJustBroke: "",     // 刚损坏的武器名（tryBreakWeapon/useHeavyTool 写入，承接场景 text 用 weaponBrokeText 读后清除，一次性）
     _heavyUseIronPipe: 0,     // 铁管撬砸类重活已用次数（上限3次损坏；武器损坏/重新获得后归零）
     _heavyUseCane: 0,         // 拐杖撬砸类重活已用次数（上限3次损坏）
     _heavyUseMopHandle: 0,    // 拖把杆撬砸类重活已用次数（上限1次损坏）
-    gasIndex: 0,                // 煤气指数（后厨累积，>=100 中毒死亡）
+    gasIndex: 0,                // 煤气指数（建平后厨累积，封顶 80；关阀战斗失败才进结局-煤气中毒）
     _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除
     // ---- 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） ----
@@ -529,7 +531,7 @@ const storyData = {
       // --- 彭奕宸钢琴游走：午餐后13-14、放学16-17，每小时 roll 一次去哪架钢琴 ---
       {
         id: "peng-piano",
-        condition: function(v) { return v.hh === 13 || v.hh === 16; },
+        condition: function(v) { return v.hh === 13 || v.hh === 16; }, // 13 点已过午餐窗（11-12），避免和 14 班方便面分身
         triggerKey: "hh",
         effect: function(v) {
           var opts = [1, 3];                    // 远翔楼圆厅、音乐教室
@@ -544,7 +546,6 @@ const storyData = {
   // -------- 全局触发器 --------
   _globalTriggers: [
     { condition: "strength <= 0.01", targetScene: "结局-体力耗尽", priority: 10 },
-    { condition: "gasIndex >= 100", targetScene: "结局-煤气中毒", priority: 5 },
     { condition: "_harshCaught", targetScene: "建平-Harsh堵住", priority: 8 },
     { condition: "mercuryLoad >= 70", targetScene: "结局-汞中毒尸变", priority: 9 },
     { condition: "chasedByZombies >= 5", targetScene: "结局-尸潮撕碎了你", priority: 8 },
