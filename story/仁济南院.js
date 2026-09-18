@@ -611,8 +611,10 @@ Object.assign(storyData, {
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiERCleared: true } };
     },
     text: function(vars) {
-      return "它的爪子划过了你的肩膀。你踉跄着躲开，反手一击，终于把它打倒在地。\n\
-它不再动了，但你的肩膀火辣辣地疼。" + weaponBrokeText(vars);
+      return [
+        "它的爪子划过了你的肩膀。你踉跄着躲开，反手一击，终于把它打倒在地。" + weaponBrokeText(vars),
+        "<strong>它不再动了——这只丧尸已经被你解决。</strong>但你的肩膀火辣辣地疼。"
+      ];
     },
     choices: [
       {
@@ -886,8 +888,10 @@ Object.assign(storyData, {
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiLabCleared: true } };
     },
     text: function(vars) {
-      return "它抓伤了你的手臂，但你最终还是把它打倒了。\n\
-它瘫在操作台边不再动弹。你喘着粗气，手臂上火辣辣地疼。" + weaponBrokeText(vars);
+      return [
+        "它抓伤了你的手臂，但你最终还是把它打倒了。" + weaponBrokeText(vars),
+        "<strong>它瘫在操作台边，不再动弹——这只丧尸已经被你解决。</strong>你喘着粗气，手臂上火辣辣地疼。"
+      ];
     },
     choices: [
       {
@@ -1163,8 +1167,10 @@ Object.assign(storyData, {
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiWardCleared: true } };
     },
     text: function(vars) {
-      return "你被它抓了一下，但最终还是把它打倒了。\n\
-伤口火辣辣地疼。" + weaponBrokeText(vars);
+      return [
+        "你被它抓了一下。" + weaponBrokeText(vars),
+        "<strong>但最终还是把它打倒了——它倒在走廊上，不再动弹。</strong>伤口火辣辣地疼。"
+      ];
     },
     choices: [
       {
@@ -1298,7 +1304,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
     onEnter: function(vars) { vars.currentPos = "太平间"; return {}; },
     text: function(vars) {
-      var desc = "太平间在地下，一进来就是一股浓重的、甜腻中带着腐臭的气息——比医院别处都更让人作呕。\n\
+      var desc = "太平间在地下，一进来就是一股浓重的、甜腻中带着腐臭的气息——比医院别处都更让人作呕。这味道甜得不正常，是烂了太久、已经生蛆的尸体才有的。\n\
 冷藏柜的门大多敞着，几具尸体被拖出来横在地上。角落的阴影里，有什么东西在缓慢地挪动。\n\
 太平间的另一头有一扇门，通向医院的后勤区。\n";
       if (vars._morgueCleared) {
@@ -1368,8 +1374,8 @@ Object.assign(storyData, {
 你等了一会儿，直到能正常呼吸为止。",
     choices: [
       {
-        text: "进去处理那只丧尸",
-        nextScene: "仁济南院-太平间-黑皮丧尸"
+        text: "继续",
+        nextScene: "仁济南院-太平间"
       }
     ]
   },
@@ -1425,8 +1431,10 @@ Object.assign(storyData, {
       return { add: { strength: -3, mercuryLoad: 15 }, set: { hurtByZombie: true, _morgueCleared: true } };
     },
     text: function(vars) {
-      return "它的力气大得惊人，你被它撞在墙上，肩膀一阵剧痛。但你还是拼尽全力把它解决了。\n\
-它瘫在地上不动了。你靠着墙，剧烈地喘着气。" + weaponBrokeText(vars);
+      return [
+        "它的力气大得惊人，你被它撞在墙上，肩膀一阵剧痛。但你还是拼尽全力把它解决了。" + weaponBrokeText(vars),
+        "<strong>它瘫在地上不动了。太平间重新安静下来。</strong>你靠着墙，剧烈地喘着气。"
+      ];
     },
     choices: [
       {

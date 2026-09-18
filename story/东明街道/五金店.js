@@ -224,7 +224,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你把铁棍插进门缝，用力一撬。锁头发出一声闷响，弹开了。\n\
 你推开铁皮门——门后站着一个人。一个女人。不，一只穿着店员围裙的女丧尸，就贴在门后站着，像是早就知道你会从这里进来。\n\
-它张开了嘴。你闻到了一股熟悉的、甜腻的气味——从它的嘴里呼出的气体。" + weaponBrokeText(vars);
+它张开了嘴。你闻到了一股熟悉的甜腥——化工品混着腐臭，从它嘴里呼出来的气体。" + weaponBrokeText(vars);
     },
     choices: [
       {
