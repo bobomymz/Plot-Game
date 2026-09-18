@@ -1058,6 +1058,11 @@ const storyData = {
         nextScene: "整理整理-看时间"
       },
       {
+        showCondition: "hasWangPhone",
+        text: "翻看王知筠的手机",
+        nextScene: "整理整理-王知筠手机"
+      },
+      {
         showCondition: "hasPhone",
         text: "用手机查地图导航",
         nextScene: "整理整理-导航"
@@ -1080,6 +1085,59 @@ const storyData = {
     },
     choices: [
       { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-王知筠手机": {
+    image: "images/整理整理.webp",
+    text: function(vars) {
+      return wangPhoneLockscreenText(vars, true);
+    },
+    choices: [
+      {
+        showCondition: "wangPhoneBattery >= 6",
+        text: "播放相册里的视频",
+        nextScene: "整理整理-王知筠手机-视频",
+        effect: updateTime(7)
+      },
+      {
+        showCondition: "wangPhoneBattery < 6 && hasCharger",
+        text: "用充电器给手机充电",
+        nextScene: "整理整理-王知筠手机-充电",
+        effect: updateTime(3)
+      },
+      {
+        text: "收起手机",
+        nextScene: "整理整理"
+      }
+    ]
+  },
+
+  "整理整理-王知筠手机-充电": {
+    image: "images/整理整理.webp",
+    onEnter: function(vars) {
+      vars.wangPhoneBattery = 15;
+      return {};
+    },
+    text: "你找了个还能出电的插座，插上充电器。屏幕重新亮了，电量缓缓回升。\n一会儿的功夫，电量回到了 15%——足够看一段视频了。",
+    choices: [
+      {
+        text: "播放相册里的视频",
+        nextScene: "整理整理-王知筠手机-视频",
+        effect: updateTime(7)
+      },
+      {
+        text: "收起手机",
+        nextScene: "整理整理"
+      }
+    ]
+  },
+
+  "整理整理-王知筠手机-视频": {
+    image: "images/整理整理.webp",
+    text: wangPhoneVideoText,
+    choices: [
+      { text: "放下手机", nextScene: "整理整理" }
     ]
   },
 

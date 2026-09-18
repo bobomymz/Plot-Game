@@ -1,7 +1,23 @@
 // -------- 仁济南院（西南线 · 真相主通道 · 第一梯队） --------
 // 规划基线：设计细节.md §13.9 / 仁济南院设计稿.md
 // 已实现：到达路线 + 外部入口 + 医院内部（急诊大厅/检验科/门诊药房/住院部走廊/手术供应室/太平间/检验科后门）
-// TODO: 逗留过久 → 尸潮围拢 → 强制过夜（夜晚剧情.js）
+// 尸潮围拢：core.js renji-siege；过夜：夜晚剧情.js（检验科清场/噪音分支）
+// 室内封闭躲藏：降 chased 2，不失败（对齐建平 jpHide reduceLevel 2）
+function renjiHide(image, successText, returnScene) {
+  return {
+    image: image || "images/placeholder.png",
+    onEnter: function(vars) {
+      updateTime(30)(vars);
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 2);
+      return {};
+    },
+    text: successText,
+    choices: [
+      { text: "继续", nextScene: returnScene }
+    ]
+  };
+}
 
 Object.assign(storyData, {
   // ==================== 外部：到达与入口 ====================
@@ -53,6 +69,7 @@ Object.assign(storyData, {
         nextScene: "仁济南院-地下停车场",
         effect: updateTime(6)
       },
+      sprintAway(["仁济南院-门诊大门", "仁济南院-急诊大门", "仁济南院-地下停车场"]),
       {
         text: "去高架",
         condition: "chasedByZombies < 4",
@@ -116,7 +133,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "输入你看到的颜色分布",
-        input: { placeholder: "例如：2红2蓝2绿2黄1白" },
+        input: { placeholder: "例如：3红4蓝2绿" },
         condition: checkFlashAnswer,
         nextScene: "仁济南院-门诊大门-记忆闪色-成功",
         effect: updateTime(3),
@@ -140,10 +157,10 @@ Object.assign(storyData, {
   },
 
   "仁济南院-门诊大门-记忆闪色-失败": {
-    image: "images/youKillZombies.webp",
+    image: "images/hurtByzombie.webp",
     onEnter: function(vars) {
       tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
-      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiGateCleared: true } };
     },
     text: function(vars) {
       return "你没能及时看清——一只丧尸从斜刺里扑上来，爪子划过你的手臂。你踉跄着冲出重围，跌跌撞撞地摔进了门诊大厅。" + weaponBrokeText(vars);
@@ -167,6 +184,8 @@ Object.assign(storyData, {
       var desc = "门诊大楼的正门半敞着，玻璃门上糊着报纸和胶带——有人试图封住它，又放弃了。门前的空地上倒着几具尸体，苍蝇在低空盘旋。旋转门的格子里卡着一个人，玻璃上全是血手印。\n";
       if (vars.dd >= 6) {
         desc += "更糟的是，医院外围的尸潮不知道什么时候围了上来——大门外的空地已经被一群游荡的丧尸堵死，挤也挤不进去。\n<span style='color: #ffaa00;'>【提示】大门已被尸潮堵死，只能另找入口。</span>";
+      } else if (vars._renjiGateCleared) {
+        desc += "门口那些游荡的丧尸已经被你解决了。正门半敞着，可以直接进大厅。";
       } else {
         desc += "门缝里透出黑黢黢的大厅，看不清里面。要进去，得先对付门口这些游荡的丧尸。";
       }
@@ -175,7 +194,9 @@ Object.assign(storyData, {
     choices: [
       {
         showCondition: "dd < 6",
-        text: "硬闯门诊正门",
+        text: function(vars) {
+          return vars._renjiGateCleared ? "从正门进（门口已经清干净）" : "硬闯门诊正门";
+        },
         condition: "!_renjiGateCleared",
         nextScene: "仁济南院-门诊大门-记忆闪色",
         elseScene: "仁济南院-门诊大厅"
@@ -236,7 +257,7 @@ Object.assign(storyData, {
         var heavy = heavyWeaponName(vars);
         if (heavy) {
           cs.push({
-            text: "用" + heavy + "撬断挂锁",
+            text: "用" + heavy + "撬断挂锁（那扇门看着随时会塌）",
             nextScene: "结局-仁济-铁门砸死"
           });
         }
@@ -276,10 +297,10 @@ Object.assign(storyData, {
 
   "仁济南院-救护车-倒车撞门": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulanceRam.png */,
-    onEnter: { set: { _renjiGateOpen: true, _renjiYardCleared: true } },
+    onEnter: { set: { _renjiGateOpen: true, _renjiYardCleared: true }, add: { chasedByZombies: 1 } },
     text: "你钻进驾驶室，拧动钥匙——引擎意外地还能打着火。你一脚挂上倒挡，狠狠踩下油门。\n\
 救护车猛地向后蹿去，车尾狠狠撞在铁门上——铰链彻底断裂，整扇铁门带着刺耳的金属声轰然倒下，正好砸在门后那几只丧尸身上。\n\
-引擎盖裂开一条缝，冷却液顺着车底往外渗——这辆车是走不了了，但门开了。",
+引擎盖裂开一条缝，冷却液顺着车底往外渗——这辆车是走不了了，但门开了。空地这边安静了，可引擎的轰鸣已经滚进楼里，远处有什么东西被惊动，低低地应了一声。",
     choices: [
       { text: "继续", nextScene: "仁济南院-救护车通道" }
     ]
@@ -316,8 +337,8 @@ Object.assign(storyData, {
     onEnter: function(vars) { useHeavyTool(vars); return {}; },
     text: function(vars) {
       var tool = vars._pryTool || "手里的工具";
-      return "你把" + tool + "伸进挂锁里，用力一撬。挂锁“咔”地断开——但你没料到，那扇早已开裂的铰链根本撑不住这一下震动。\n\
-整扇铁门朝你的方向轰然倒下，你甚至没能看清发生了什么。\n\
+      return "你把" + tool + "伸进挂锁里，用力一撬。挂锁“咔”地断开——那道已经开裂的铰链果然撑不住这一下。\n\
+整扇铁门朝你的方向轰然倒下。\n\
 \n—— 结局：铁门砸死 ——";
     },
     style: "color: #ff4444; font-weight: bold;"
@@ -441,7 +462,6 @@ Object.assign(storyData, {
   // ==================== 检验科后门（方瑜遇难） ====================
 
   "仁济南院-检验科后门": {
-    outdoor: true,
     image: "images/仁济南院/检验科后门.webp",
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
@@ -453,7 +473,7 @@ Object.assign(storyData, {
       if (vars._fangyuFound) {
         desc += "你已经查看过她的工牌了。";
       } else {
-        desc += "她的手里还攥着一部手机，屏幕早就黑了。";
+        desc += "她的手里还攥着一部手机。";
       }
       return desc;
     },
@@ -525,7 +545,7 @@ Object.assign(storyData, {
     qte: function(vars) {
       if (vars._renjiERCleared) return null;
       return {
-        timeout: "10000 - chasedByZombies * 1000",
+        timeout: "15000 - chasedByZombies * 1000",
         onTimeout: "仁济南院-急诊大厅-战斗"
       };
     },
@@ -767,7 +787,7 @@ Object.assign(storyData, {
   "仁济南院-检验科-进入": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
     text: "你把门禁卡在刷卡槽上一刷——“滴”的一声，电子锁绿灯亮起，门缓缓滑开。\n\
-没有惊动任何东西。你侧身闪了进去。\n\
+里面的东西并没注意到门开了。你侧身闪了进去。\n\
 刚进去，你就撞见了它——一只穿着检验科白大褂的丧尸，正站在操作台前，缓缓转过头来。它的皮肤透着一层不正常的灰白。",
     choices: [
       {
@@ -925,6 +945,23 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
+        showCondition: "hasWangPhone",
+        text: "翻看王知筠的手机",
+        nextScene: "仁济南院-检验科-手机",
+        effect: updateTime(1)
+      },
+      {
+        showCondition: "chasedByZombies > 0",
+        text: "关上门，躲一会儿",
+        nextScene: "仁济南院-检验科-躲藏"
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "仁济南院-检验科-内部" } }
+      },
+      {
         showCondition: "!hasWangNotebook",
         text: "拿起实验记录本",
         nextScene: "仁济南院-检验科-记录本",
@@ -959,26 +996,12 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       if (!vars.hasWangPhone) {
         vars.hasWangPhone = true;
-        vars.wangPhoneBattery = Math.max(0, 15 - (vars.dd - 3) * 3);
+        vars.wangPhoneBattery = Math.max(0, Math.min(15, 15 - (vars.dd - 3) * 3));
       }
       return {};
     },
     text: function(vars) {
-      var tips = "你拿起那部手机。屏幕自动亮了起来，电量还剩 " + vars.wangPhoneBattery + "%。\n\
-锁屏上停着一条没发出去的动态草稿：";
-      var draft = "\n\
-“我刚从仁济南院拿到脑脊液样本的数据，甲基汞含量超过正常值40倍。这不是病毒，是汞中毒。扩散路径是自来水。”";
-      var mid = "\n\
-发送按钮永远停在了那个界面。";
-      var tail;
-      if (vars.wangPhoneBattery >= 6) {
-        tail = "\n相册里还有一段视频，电量还够，也许能看。";
-      } else if (vars.wangPhoneBattery >= 1) {
-        tail = "\n相册里还有一段视频，但这点电量估计撑不到播放完。";
-      } else {
-        tail = "\n屏幕闪了一下就黑了——电量彻底耗尽。得先充上电。";
-      }
-      return tips + draft + mid + tail;
+      return wangPhoneLockscreenText(vars, (vars._visit["仁济南院-检验科-手机"] || 0) > 1);
     },
     choices: [
       {
@@ -1062,6 +1085,12 @@ Object.assign(storyData, {
       }
     ]
   },
+
+  "仁济南院-检验科-躲藏": renjiHide(
+    "images/placeholder.png" /* TODO: images/仁济南院/renjiLabInside.png */,
+    "你把门从里面扣上，蹲在操作台后面。走廊里的拖步声贴着门缝过去，又远了。检验科里只剩下应急灯的嗡嗡声。",
+    "仁济南院-检验科-内部"
+  ),
 
   "仁济南院-检验科-碘伏": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLabInside.png */,
@@ -1264,6 +1293,17 @@ Object.assign(storyData, {
         text: "离开",
         nextScene: "仁济南院-检验科-内部",
         effect: updateTime(2)
+      },
+      {
+        showCondition: "chasedByZombies > 0",
+        text: "关上门，躲一会儿",
+        nextScene: "仁济南院-手术供应室-躲藏"
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "仁济南院-手术供应室" } }
       }
     ]
   },
@@ -1297,6 +1337,12 @@ Object.assign(storyData, {
       { text: "收好", nextScene: "仁济南院-手术供应室" }
     ]
   },
+
+  "仁济南院-手术供应室-躲藏": renjiHide(
+    "images/placeholder.png" /* TODO: images/仁济南院/renjiSupply.png */,
+    "你带上供应室的门，缩进一排器械柜后面。外面有什么东西在走廊里蹭过去，过了很久才安静。这里隔音不算好，但足够你喘口气。",
+    "仁济南院-手术供应室"
+  ),
 
   // ==================== 太平间（高危 · 黑皮丧尸） ====================
 
@@ -1345,9 +1391,19 @@ Object.assign(storyData, {
       },
       {
         text: "去检验科",
+        condition: "_renjiLabCleared",
         nextScene: "仁济南院-检验科-内部",
+        elseScene: "仁济南院-太平间-检验科门",
         effect: updateTime(3)
       }
+    ]
+  },
+
+  "仁济南院-太平间-检验科门": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
+    text: "太平间这一头还有一扇通向检验科的门。你试着推了推——从那边锁死了，门板里隐约传来金属摩擦的声音。",
+    choices: [
+      { text: "先不管", nextScene: "仁济南院-太平间" }
     ]
   },
 
@@ -1801,6 +1857,9 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "特需病房里一股刺鼻的血腥味。地上有一大摊血，窗明几净的单人间此刻乱得像刚被掀过。\n\
 房间中央是一张沾血的病床，被褥撕扯得凌乱，床单下鼓着一块凸起。右侧医疗设备旁的墙上挂着病历夹，大半被血手印糊住。靠墙摆着一张紫色沙发，坐垫塌陷；沙发前的小圆茶几上散落着碎纸片。左侧门边，矮柜柜门半开，柜体沾着血。";
+      if (!vars._renjiVipZombieCleared) {
+        desc += "\n门边矮柜里，断断续续传出指甲刮木头的轻响。";
+      }
       if (vars._renjiVipZombieCleared) {
         desc += "\n储物柜旁的地板上，多了一具不再动弹的尸体。";
       }
@@ -1968,9 +2027,19 @@ Object.assign(storyData, {
   "仁济南院-特需病房-储物柜-警觉": {
     image: "images/youKillZombies.webp",
     onEnter: { set: { _renjiVipZombieCleared: true, positionAfterOperation: "仁济南院-特需病房-储物柜-警觉" } },
-    text: "你想起病历和便签上的不对劲，拉开柜门时侧身让开半步，抬脚就踹。\n\
+    text: function(vars) {
+      var clue;
+      if (vars._renjiVipChartRead && vars._renjiVipNoteRead) {
+        clue = "病历和便签上的不对劲";
+      } else if (vars._renjiVipChartRead) {
+        clue = "病历上的不对劲";
+      } else {
+        clue = "便签上的不对劲";
+      }
+      return "你想起" + clue + "，拉开柜门时侧身让开半步，抬脚就踹。\n\
 里面蜷着的东西刚要扑出，被你一脚钉回柜壁，后脑撞上隔板，软软地滑到地上，不再动了。\n\
-柜子深处还躺着一样东西。",
+柜子深处还躺着一样东西。";
+    },
     choices: [
       {
         showCondition: "!hasTorch",
