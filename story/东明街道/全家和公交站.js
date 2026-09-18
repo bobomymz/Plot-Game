@@ -45,7 +45,7 @@ Object.assign(storyData, {
       } else {
         base += "\n靠收银台的促销货架已经空了——泡面一包不剩。";
       }
-      if (vars._visit["全家便利店（环林东路）"] && vars.hasBiscuit) {
+      if (vars._visit["全家便利店（环林东路）"] && (!vars.FamilymartHasZombie || vars._visit["全家便利店-饼干引路"] > 0)) {
         base += "\n<span style='color: #aaa;'>上次那只丧尸已经不在了。柜台后面的员工通道半开着，里面黑漆漆的，也许有什么有用的东西。</span>";
       }
       return base;
@@ -198,7 +198,7 @@ Object.assign(storyData, {
 
   "被丧尸咬": {
     image: "images/hurtByzombie.webp",
-    onEnter: updateTime(1, { set : { hurtByZombie: true, FamilymartHasZombie: false }, add: { mercuryLoad: 10 } }),
+    onEnter: updateTime(1, { set : { hurtByZombie: true, FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" }, add: { mercuryLoad: 10 } }),
     text: "你狠狠揍了丧尸几拳，它掐住你的脖子，和你纠缠在地上。你努力控住它的嘴，砰！砰！砰！终于，它倒下了，但你身上多了不少抓痕和咬痕，不知道有没有受伤。",
     choices: [
       {
@@ -302,7 +302,7 @@ Object.assign(storyData, {
 
   "一拳KO": {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/pipeAttack.png */,
-    onEnter: { set: { FamilymartHasZombie: false} },
+    onEnter: { set: { FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" } },
     text: "你猛地出拳，正中丧尸面门，右手生疼，而丧尸已经倒地不起。\n\
 一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。",
     choices: [
@@ -320,7 +320,7 @@ Object.assign(storyData, {
 
   "棒打丧尸腿": {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/pipeAttack.png */,
-    onEnter: { set: { FamilymartHasZombie: false} },
+    onEnter: { set: { FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" } },
     text: "你回手掏出钢管，狠狠地抽在它腿上。只听得嘎吱一声脆响，不知是钢管还是它骨头断裂的声音。那只丧尸已经瘫倒在了地上，像一条扭曲的蛆在蠕动。\
 一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。",
     choices: [
