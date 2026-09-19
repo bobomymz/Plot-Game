@@ -67,7 +67,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "继续往前",
+        text: "往西走",
         nextScene: function(vars) { return vars.defeatedOldMan ? "安盛街-理发店" : "遭遇老头丧尸"; },
         effect: updateTime(1)
       },
