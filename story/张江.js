@@ -112,7 +112,8 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "华科路配送车旁"; },
     text: function(vars) {
       var desc = "你绕着配送车走了一圈。车身蒙着薄灰，车顶的激光雷达还在慢慢地转——不知靠的哪块余电，像在原地等一个永远不会变绿的绿灯。\n\
-货舱里剩最后一件包裹：一只生鲜保温箱，箱底冰早就化干了。你没敢打开看。";
+货舱里剩最后一件包裹：一只生鲜保温箱，箱底冰早就化干了。你没敢打开看。\n\
+万一————对吧。你没想太多。";
       if (vars._visit['张江-华科路-配送车'] > 1) desc = "配送车还停在斑马线前，货舱门敞着。车顶的激光雷达不知什么时候也停了。";
       return desc;
     },
@@ -1537,7 +1538,7 @@ Object.assign(storyData, {
       if (vars._jinbaoLeft) {
         desc += "\n通风停了。走廊里安静得能听见自己的心跳，空气闷得像盖了层湿被子。";
       } else if (vars._fabAlert > 0) {
-        desc += "\n远处什么地方传来一声金属的轻响——像是有什么东西被警报惊动了，正在设备之间挪动。";
+        desc += "\n远处什么地方传来一声金属的轻响。有东西在设备之间挪动。";
       }
       return desc;
     },
@@ -1935,7 +1936,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "辅助运维区"; },
     text: function(vars) {
       var desc = "辅助运维区比白区窄得多，两边是轰隆隆的水泵和一排配电柜，管道从头顶横穿过去，滴着冷凝水。\n\
-地上摊着一只撬开的工具箱，扳手、万用表撒了一地——像是有人匆忙翻找过什么。";
+地上摊着一只撬开的工具箱，扳手、万用表撒了一地。";
       if (vars._jinbaoLeft) {
         desc += "\n水泵停了。这一区安静得只剩下你自己的脚步声，工具还摊在原地，蒙了层薄灰。";
         return desc;
@@ -2877,7 +2878,7 @@ Object.assign(storyData, {
 水留给你们。喝干净的水，比什么都强。”";
       }
       var tail = "\n\
-（字条的末尾还有一行，像是临走前补的：）\n\
+（字条的末尾还有一行，墨迹更新：）\n\
 “我从设备夹层走的——上面那条道通灰区，黑，但干净。”\n\
 “去松江大学城。那边有人收。”";
       if (vars._dieselDelivered) {

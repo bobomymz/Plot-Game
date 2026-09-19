@@ -236,7 +236,7 @@ Object.assign(storyData, {
       morning: "images/小区周边/图书馆/阅览室-惊醒.webp",
       night: "images/小区周边/图书馆/阅览室-惊醒-night.webp"
     }),
-    text: "格子衬衫丧尸直直地盯着你。它合上书，朝你迈了一步——手里的书攥得紧紧的，像是要拿它砸你。\n随后它低吼一声，朝你扑了过来。",
+    text: "格子衬衫丧尸直直地盯着你。它合上书，朝你迈了一步——手里的书攥得紧紧的，举到齐肩。\n随后它低吼一声，朝你扑了过来。",
     choices: [
       {
         text: "侧身闪开，推倒书架挡住它",
@@ -585,7 +585,7 @@ Object.assign(storyData, {
   "图书馆-藏书区": {
     image: "images/placeholder.png" /* TODO: images/library/libraryShelves.png */,
     text: function(vars) {
-      var desc = "你走进藏书区。清场后的图书馆安静得有些空旷，两排高耸的书架之间是一条通道，书架上的书东倒西歪，地上散落着几本被踩过的书。\n\
+      var desc = "你走进藏书区。两排高耸的书架夹出一条窄通道，脚步声被书脊吸掉了。架子上的书东倒西歪，地上散落着几本被踩过的书。\n\
 靠窗的一张长桌上摊着一本翻开的《上海地图册》，旁边放着一根充电线，一头连着墙上的插座，另一头随意搭在桌沿。";
       if (vars.hasCharger) desc += "\n充电器你已经拿走了。";
       return desc;

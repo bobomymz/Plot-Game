@@ -132,7 +132,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/highway/beicaiLuoshan.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
     text: "外环在前方又跨上另一条主干道，几条匝道在半空绞成一团，像被随手丢下的灰色绳子。\n\
-桥下的建筑渐渐变了样子——成片的居民楼退开去，换成一栋栋低矮的玻璃幕墙房子，围着一圈圈规整的绿化。这一片安静得反常，连风声都显得突兀。\n\
+桥下的建筑渐渐变了样子——成片的居民楼退开去，换成一栋栋低矮的玻璃幕墙房子，围着一圈圈规整的绿化。这一片没有人声，风刮过玻璃幕墙都听得见。\n\
 右侧一条下高架的匝道空着，路面干净得像刚铺完。",
     choices: [
       { text: "下高架", nextScene: "张江-落地坡道", effect: updateTime(5) },
@@ -158,7 +158,7 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/luoshanExit.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
-    text: "高架在这里缓缓下降，一个下高架的匝道口出现在右侧。匝道口没有堵死——只横着一辆侧翻的出租车，车头瘪进去一块，驾驶室的门大敞着，像是有人仓皇弃车而逃。\n\
+    text: "高架在这里缓缓下降，一个下高架的匝道口出现在右侧。匝道口没有堵死——只横着一辆侧翻的出租车，车头瘪进去一块，驾驶室的门大敞着，人已经跑了。\n\
 你贴着护栏往下望：这一片是宽阔的马路、成片的居民区，还有几所学校的操场。安静得让人心里发毛。",
     choices: [
       { text: "下高架", nextScene: "建平-校园门口", effect: updateTime(10) },
@@ -196,7 +196,7 @@ Object.assign(storyData, {
 
   "上海交通大学": {
     image: "images/placeholder.png",
-    text: "你过了徐浦大桥，来到上海交通大学门口。校门前散落着几只行李箱，闸机大开，校园里静得反常。\n（作者尚未更新此处）",
+    text: "你过了徐浦大桥，来到上海交通大学门口。校门前散落着几只行李箱，闸机大开，风从通道灌进来，吹得一只箱子的轮子轻轻转了一下。\n（作者尚未更新此处）",
     choices: [
       { text: "掉头返回", nextScene: "济阳路跨线桥" }
     ]

@@ -1360,7 +1360,7 @@ Object.assign(storyData, {
       } else if (vars.hasKeyRing) {
         desc += "\n角落里，老吴的尸体还趴在原地。钥匙串已经不在他手里了。";
       } else if (vars.dd >= 3) {
-        desc += "\n角落里，老吴趴在地上，一动不动，像是睡着了。";
+        desc += "\n角落里，老吴趴在地上，一动不动。看不出还在不在呼吸。";
       } else {
         desc += "\n角落里，老吴趴在地上，一动不动。空气里有股淡淡的血腥味。";
       }
@@ -2198,7 +2198,7 @@ Object.assign(storyData, {
     }),
     onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
     text: function(vars) {
-      return "你又躺了回去。再睁眼时脑子还是沉的。翻身撑起来，手底下压着一张狼人杀手牌。金色镶边，一个红眼的狼人画在上面，黑毛飘飘，张牙舞爪，像是在嘶吼。\n\
+      return "你又躺了回去。再睁眼时脑子还是沉的。翻身撑起来，手底下压着一张狼人杀手牌。金色镶边，一个红眼的狼人画在上面，黑毛飘飘，张牙舞爪。\n\
 这应该是学生们的遗产吧。\n\
 此时，你仿佛听到远处传来一声嚎叫。\n\
 " + restHint(vars, "你回复1点体力");
@@ -2229,9 +2229,23 @@ Object.assign(storyData, {
   // ==================== 弘渊楼 / 图书馆（4 层 · 1 楼梯 · 3 入口） ====================
 
   "建平-弘渊楼-1F": {
-    image: "images/placeholder.png",
+    image: function(vars) {
+      if(vars._lastScene == "建平-水池") {
+        var f = timeImage({
+          morning: "images/建平/图书馆1楼-前门.webp",
+          night: "images/建平/图书馆1楼-前门-night.webp"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/建平/图书馆1楼-后门.webp",
+        night: "images/建平/图书馆1楼-后门-night.webp"
+      });
+      return f(vars);
+
+    },
     onEnter: function(vars) { vars.currentPos = "弘渊楼1F"; return jpHubChase(vars, "建平-弘渊楼-1F"); },
-    text: function(vars) { return "弘渊楼（图书馆）1 楼。临水的一层潮气重，丧尸贴着墙根和书架缝隙聚集，比楼上密得多。"; },
+    text: "你走进了弘渊楼（图书馆）的1楼。丧尸聚集在墙根和书架缝隙里，暂时还没有冲上来。咦，潮气怎么这么重。",
     choices: [
       { text: "从前门出去", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "从后门出去", nextScene: "建平-操场", effect: updateTime(2) },
@@ -2460,7 +2474,7 @@ Object.assign(storyData, {
   },
   "建平-廊桥-锁门": {
     image: "images/placeholder.png",
-    text: "廊桥尽头的铁门挂着一把锈迹斑斑的挂锁，纹丝不动。\n需要钥匙才能打开。",
+    text: "廊桥尽头的铁门挂着一把锈迹斑斑的挂锁，锁梁锈死在门环里。\n需要钥匙才能打开。",
     choices: [
       { text: "退回", nextScene: function(v) { return v._lastScene || "建平-废弃小楼-3F"; }, effect: updateTime(1) }
     ]
@@ -2760,7 +2774,7 @@ Object.assign(storyData, {
   "建平-远翔楼-3F-高三教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "远翔楼3F高三教室"; },
-    text: "高三教室。走廊这侧的几间教室门都敞着，书包散落在地上，饮水机的水桶已经空了。有人把几张课桌拼在一起，像是在这里睡过。",
+    text: "高三教室。走廊这侧的几间教室门都敞着，书包散落在地上，饮水机的水桶已经空了。有人把几张课桌拼在一起，桌上还摊着一件校服外套。",
     choices: [
       { text: "离开", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
     ]
@@ -2784,7 +2798,7 @@ Object.assign(storyData, {
   "建平-弘渊楼-2F-藏书区": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "弘渊楼2F藏书区"; },
-    text: "藏书区。一排排书架静默地立着，书脊上积了薄薄一层灰。几本书被抽出来丢在地上，翻开的书页被踩满了脚印——像是有人在这里匆忙地找过什么。",
+    text: "藏书区。一排排书架静默地立着，书脊上积了薄薄一层灰。几本书被抽出来丢在地上，翻开的书页被踩满了脚印，有人在这儿翻过。",
     choices: [
       { text: "离开", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
     ]
@@ -2867,7 +2881,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼3F高一教室"; },
     text: function(vars) {
-      var desc = "高一教室。地上散落着书包和课本，几张课桌被拼在一起，像是有人在这里熬过夜。";
+      var desc = "高一教室。地上散落着书包和课本，几张课桌被拼在一起，桌缝里还夹着一只空水瓶。";
       if (!vars._podiumFood3F) {
         if (vars.hasKeyRing) desc += "\n讲台的抽屉上了锁——或许钥匙串能打开。";
         else desc += "\n讲台的抽屉上了锁。";
@@ -2890,7 +2904,7 @@ Object.assign(storyData, {
   "建平-挹芬楼-3F-高一教室-讲台": {
     image: "images/placeholder.png",
     onEnter: { set: { _podiumFood3F: true }, add: { strength: 3 } },
-    text: "你用钥匙串打开了讲台的抽屉。里面放着几包饼干、一盒午餐肉和一瓶没开封的水——像是老师悄悄囤的。\n你撕开午餐肉就着饼干吃了些，胃里终于有了点实在的东西。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复3点体力，当前体力：{strength}。</span>",
+    text: "你用钥匙串打开了讲台的抽屉。里面放着几包饼干、一盒午餐肉和一瓶没开封的水——老师塞抽屉里的。\n你撕开午餐肉就着饼干吃了些，胃里终于有了点实在的东西。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复3点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(3) }
     ]
@@ -2899,7 +2913,7 @@ Object.assign(storyData, {
   "建平-挹芬楼-3F-高一教室-纸条": {
     image: "images/placeholder.png",
     onEnter: { set: { _yifenNote3F: true } },
-    text: "你捡起桌上那张揉皱的纸条，上面用圆珠笔匆匆写着几行字：\n「他们说外面都是那种东西。老师让把门顶死，谁也别出去。\n楼下的声音越来越大了……」\n字迹到这里就断了，最后一笔拖出长长一道，像是写的人被什么打断了。",
+    text: "你捡起桌上那张揉皱的纸条，上面用圆珠笔匆匆写着几行字：\n「他们说外面都是那种东西。老师让把门顶死，谁也别出去。\n楼下的声音越来越大了……」\n字迹到这里就断了，最后一笔拖出长长一道，没写完。",
     choices: [
       { text: "放下纸条", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(1) }
     ]
@@ -2936,7 +2950,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼5F高二教室"; },
     text: function(vars) {
-      var desc = "高二教室。桌椅被推到墙边，中间空出一块，像是有人把这里当成了临时据点。";
+      var desc = "高二教室。桌椅被推到墙边，中间空出一块，地上还有几团用过的纸巾。";
       if (vars.dd >= 3 && !vars._yifenStudentSaved) {
         desc += "\n靠墙的角落里，蜷缩着一个男生——他低着头，一动不动。";
       } else if (vars._yifenStudentSaved) {
@@ -3174,7 +3188,7 @@ Object.assign(storyData, {
   "建平-废弃小楼-2F-活动室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "废弃小楼2F活动室"; },
-    text: "活动室。几把椅子东倒西歪，角落堆着没拆完的横幅和彩带，桌上散落着几本社团的招新册子。这里曾经很热闹，如今只剩下灰尘和寂静。",
+    text: "活动室。几把椅子东倒西歪，角落堆着没拆完的横幅和彩带，桌上散落着几本社团的招新册子。",
     choices: [
       { text: "离开", nextScene: "建平-废弃小楼-2F", effect: updateTime(1) }
     ]
@@ -3185,7 +3199,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "门卫室。墙上挂着全校班级的钥匙板，挂钩空了一大片——钥匙被人成串摘走了。桌上摆着一部没信号的座机，风扇还在无力地转着。";
       if (!vars._guardTakeoutTaken) {
-        desc += "\n靠门的桌上放着一个外卖纸袋——看着像是出事当天送到、还没来得及取的。";
+        desc += "\n靠门的桌上放着一个外卖纸袋——袋口还封着，汤渍没干透。";
       } else if (vars._guardTakeoutTaken) {
         desc += "\n桌上那个外卖纸袋已经被你处理掉了。";
       }
