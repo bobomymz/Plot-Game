@@ -19,6 +19,10 @@ Object.assign(storyData, {
       vars.currentPos = "龙头区";
       return {};
     },
+    qte: {
+      timeout: "18000 - chasedByZombies * 2000",
+      onTimeout: "结局-丧尸的围殴"
+    },
     text: function(vars) {
       var desc = "你来到了金谊广场的龙头区。这里有一条廊桥直达商场3F，因为入口做了个龙头形状的装饰，所以这里被称为“龙头区”。\n";
       if (vars._visit['新达汇-喷泉广场'] > 0) {
@@ -172,7 +176,7 @@ Object.assign(storyData, {
         else if (vars._visit['初遇陈默']) {
           desc += "\n他盯着你看了两秒，忽然认出来了——“是你？在小区里救了你，你居然也杀到这来了。”";
         }
-        else desc += "“呦，竟然是个活人。”";
+        else if(!backFrom) desc += "“呦，竟然是个活人。”";
         return desc;
       } else {
         return "吉祥馄饨的卷帘门锁死了。你透过门缝往里看——桌椅还在，灶台还在，墙上的价目表还在。但厨房角落那个旧纸箱不见了。\n地上只剩一层薄灰，和几个模糊的脚印。\n有人来过，然后走了。";
@@ -189,13 +193,20 @@ Object.assign(storyData, {
         }
         var wontonLabel = vars._visit['金谊广场-吉祥馄饨-聊'] > 0 ? "让陈默煮碗馄饨" : "让他帮忙煮碗馄饨";
         cs.push({ text: wontonLabel, nextScene: "金谊广场-吉祥馄饨-吃馄饨", effect: updateTime(2), showCondition: "!_visit['金谊广场-吉祥馄饨-吃馄饨']" });
-        cs.push({ text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) });
-        return cs;
-      } else {
-        return [
-          { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) }
-        ];
+        
       }
+
+      cs.push(
+          { text: "离开", nextScene: "金谊广场-地面停车场", effect: updateTime(1) },
+          {
+            showCondition: "itemCount > 0",
+            text: "🎒整理一下物品",
+            nextScene: "整理整理",
+            effect: { set: { positionAfterOperation: "金谊广场-吉祥馄饨" } }
+          }
+      );
+
+      return cs;
     }
   },
 
@@ -284,6 +295,10 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.showRain = true;
+    },
+    qte: {
+      timeout: "18000 - chasedByZombies * 2000",
+      onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
       var desc = "你走进地面停车场。这里紧邻小河，挨着一个新建的“泽宇北岸球场”，空气中弥漫着潮湿的水汽和一股淡淡的腥味。\n";
@@ -420,6 +435,10 @@ Object.assign(storyData, {
     },
     onEnter: function(vars) {
       vars.showZombies = true;
+    },
+    qte: {
+      timeout: "18000 - chasedByZombies * 2000",
+      onTimeout: "结局-丧尸的围殴"
     },
     text: function(vars) {
       var desc = "你来到金谊广场的正门。旋转门的一个格子里卡着一具尸体——它大概是被人群挤进去的，手臂以不自然的角度折在身后，脸上的皮肤已经干瘪发黑。\n";
@@ -665,6 +684,12 @@ Object.assign(storyData, {
         text: "从正门出去",
         nextScene: "金谊广场地面入口",
         effect: updateTime(2)
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "金谊广场-1F 门面层" } }
       }
     ]
   },
@@ -731,6 +756,12 @@ Object.assign(storyData, {
         text: "下1F",
         nextScene: "金谊广场-1F 门面层",
         effect: updateTime(1)
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "金谊广场-2F" } }
       }
     ]
   },
@@ -829,6 +860,12 @@ Object.assign(storyData, {
         text: "回长廊",
         nextScene: "金谊广场-龙头区长廊",
         effect: updateTime(2)
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "金谊广场-3F" } }
       }
     ]
   },
@@ -938,6 +975,9 @@ Object.assign(storyData, {
       }
       choices.push({ text: "上5F", nextScene: "金谊广场-5F", effect: updateTime(1) });
       choices.push({ text: "下3F", nextScene: "金谊广场-3F", effect: updateTime(1) });
+      if (vars.itemCount > 0) {
+        choices.push({ text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "金谊广场-4F" } } });
+      }
       return choices;
     }
   },
@@ -1014,6 +1054,9 @@ Object.assign(storyData, {
       }
       choices.push({ text: "去天台", nextScene: "金谊广场-天台", effect: updateTime(1) });
       choices.push({ text: "下4F", nextScene: "金谊广场-4F", effect: updateTime(1) });
+      if (vars.itemCount > 0) {
+        choices.push({ text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "金谊广场-5F" } } });
+      }
       return choices;
     }
   },
@@ -1073,6 +1116,12 @@ Object.assign(storyData, {
         text: "上1F",
         nextScene: "金谊广场-1F 门面层",
         effect: updateTime(2)
+      },
+      {
+        showCondition: "itemCount > 0 && chasedByZombies <= 1",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "金谊广场-B1 心谊如意街" } }
       }
     ]
   },
