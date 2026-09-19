@@ -263,7 +263,7 @@ Object.assign(storyData, {
 厨房的灶台上，排烟罩的边缘还挂着一层陈年油垢——是那种天天开火才会积出来的厚度。\n\
 角落里放着一个保温杯，杯身上印的字已经磨得快看不清了——只剩一个模糊的“加油”和一颗褪色的红心。\n这是一家曾经有人认真经营过的店。",
     choices: function(vars) {
-      var label = vars._visit['金谊广场-吉祥馄饨-聊'] > 0 ? "回去找陈默" : "回去找他";
+      var label = vars._visit['金谊广场-吉祥馄饨-聊'] > 0 ? "去和陈默聊聊" : "去和黑衣人聊聊";
       return [
         { text: label, nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(1) },
         { text: "继续", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) }

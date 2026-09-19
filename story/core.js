@@ -556,8 +556,7 @@ const storyData = {
     { condition: "mercuryLoad >= 70", targetScene: "结局-汞中毒尸变", priority: 9 },
     { condition: "chasedByZombies >= 5", targetScene: "结局-尸潮撕碎了你", priority: 8 },
     { condition: "_backhallDead", targetScene: "结局-后勤通道被堵", priority: 7 },
-    { condition: "hh >= 19", targetScene: "天黑必须过夜", priority: 5 },
-    { condition: "itemCount > bagVolume", targetScene: "物品太多啦", priority: 2 }
+    { condition: "hh >= 19", targetScene: "天黑必须过夜", priority: 5 }
     // 未来可继续添加
     // {
     //   condition: "sanity <= 0",
@@ -611,11 +610,6 @@ const storyData = {
   "结局-体力耗尽": {
     image: "images/outOfStrength.webp",
     text: "你的体力彻底耗尽……眼前一黑，倒在了冰冷的地面上。\n再也没有醒来。\n\n—— 结局：体力耗尽 ——",
-    style: "color: #ff4444; font-weight: bold;"
-  },
-  "物品太多啦": {
-    image: "images/tooMany.webp",
-    text: "你携带的物品太多啦，不能拿啦。你可以选择撤回哦~",
     style: "color: #ff4444; font-weight: bold;"
   },
   "直面尸潮": {
