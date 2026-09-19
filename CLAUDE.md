@@ -39,8 +39,8 @@ explorer index.html
 | 某物品在哪拿/被用 | grep `hasXxx` 全 story/ |
 | computed/每小时规则/屏幕特效/全局触发器 | core.js `_reactive` / `_screenEffects` / `_globalTriggers` |
 | 引擎支持的条件/QTE/闪色/输入框写法 | CLAUDE.md 数据格式节 → 拿不准再读 engine.js |
-| 工具函数/工厂用法（updateTime/timeImage/travelScene/initMemoryGame/hasMeleeWeapon…） | utils.js（函数旁注释即文档） |
-| 武器耐久规则/新战斗或撬砸节点怎么挂损耗 | CLAUDE.md「武器耐久」节 + utils.js 武器耐久节 |
+| 工具函数/工厂用法（updateTime/timeImage/travelScene/initMemoryGame/hasMeleeWeapon/combatDrain…） | utils.js（函数旁注释即文档） |
+| 武器耐久规则/新战斗或撬砸节点怎么挂损耗/战斗体力消耗 | CLAUDE.md「武器耐久」「战斗体力消耗」节 + utils.js 对应节 |
 | 某区域剧情/场景结构 | 对应 story 文件 + 顶部注释 |
 | 路网/立交/出城衔接 | 设计细节.md |
 | NPC 人设/去向 | 人物档案.md + 对应场景 |
@@ -675,6 +675,26 @@ Object.assign(storyData, {
 4. `_weaponJustBroke` 由**引擎每场景渲染前自动清零**（同 `showRain`），所以承接旁白只会出现在损坏发生的那个场景；别手动存它做长期状态。
 5. 重活计数 `_heavyUseIronPipe/_heavyUseCane/_heavyUseMopHandle` 已注册在 `_variables`；武器损坏/重新获得时自动归零。斧头不参与计数（无限寿命）；美工刀/匕首不算重工具，撬砸门槛本就不认它们。
 6. 例外节点：建平食堂后厨的"结局-煤气中毒"走关阀战斗失败/超时，非闪色失败通用结局，**不要**挂耐久判定；专属剧情杀（联华超市撬锁）用 `breakWeaponByName` 单独立绘，不走概率。后厨反复进出只累加 `gasIndex`（封顶 80）并走窒息赶出，不靠全局触发器秒杀。
+
+### 战斗体力消耗（成功也累）
+
+近战/空手打赢要耗体力；**开枪不耗体力**（耗弹+引尸潮已是代价），射击场景不要调用本组函数。
+体力成本两档，挂在 `meleeWeaponTier` 档位体系上：空手(tier0)/弱(美工刀/拖把杆 tier1) → **-2**；中(铁管/拐杖 tier2)/强(匕首/斧头 tier3) → **-1**。
+
+**辅助函数（utils.js 战斗体力消耗节）：**
+
+| 函数 | 用法 |
+|---|---|
+| `combatCost(vars)` | 当前最优近战武器档位打一场的体力成本（1 或 2） |
+| `combatDrain(vars)` | 胜利节点 onEnter 开头调用：实扣体力（直接改 `vars.strength`，同 tryBreakWeapon 模式）并把扣值记入 `_lastCombatDrain` |
+| `combatDrainText(vars)` | 胜利节点 text 函数末尾拼接：有消耗返回一行橙色【系统提示】并清除标记（一次性，同 `weaponBrokeText` 模式），没有返回空串 |
+
+**写法规范：**
+
+1. **消耗绝不预告**——选项/QTE 输入框上一律不写"（体力-N）"；玩家打完才从胜利节点的剧情文本里得知。前期（东明街道）既有固定扣值战斗的提示同样只出现在战斗结果节点 text（共享结果节点用 `_lastScene` / 武器 flag 守卫，只在扣费路径显示）。
+2. **挂法**：`onEnter: function(vars) { combatDrain(vars); ...原有逻辑... }` + `text: function(vars) { return "原文" + combatDrainText(vars); }`。静态 onEnter 对象改函数并 return 原对象；静态 text 改函数拼接；text 数组拼到最后一段。
+3. **适用范围**：QTE 缠斗型战斗的胜利节点。**不挂**：开枪战斗、选择式速杀（一击必杀/剧情杀）、非挥武器特殊战（关阀/抵门/躲闪沟通）。失败节点不挂——失败惩罚（受伤/死亡）另算且同样不预告。
+4. `_lastCombatDrain` 已注册在 `_variables`；每次 combatDrain 覆盖写入、text 读后清零，忘拼提示也不会在下一场误显示。回溯 skipOnEnter 不会重复扣；扣到 0 走全局触发器"体力耗尽猝死"（打赢了却累瘫，预期黑色幽默）。
 
 ### 整理整理自由入口（"🎒整理一下物品"）
 

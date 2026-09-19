@@ -181,12 +181,12 @@ Object.assign(storyData, {
       {
         text: "打头",
         nextScene: "被丧尸咬",
-        effect: { add : { strength: -2 } }
+        effect: { add : { strength: -2 }, set: { _lastCombatDrain: 2 } } // 标记扣值供被丧尸咬 text 事后提示（打腿elseScene入口0消耗不标）
       },
       {
         text: "打身体",
         nextScene: "被丧尸咬",
-        effect: { add : { strength: -2 } }
+        effect: { add : { strength: -2 }, set: { _lastCombatDrain: 2 } } // 标记扣值供被丧尸咬 text 事后提示（打腿elseScene入口0消耗不标）
       },
       {
         text: "打腿",
@@ -199,7 +199,9 @@ Object.assign(storyData, {
   "被丧尸咬": {
     image: "images/hurtByzombie.webp",
     onEnter: updateTime(1, { set : { hurtByZombie: true, FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" }, add: { mercuryLoad: 10 } }),
-    text: "你狠狠揍了丧尸几拳，它掐住你的脖子，和你纠缠在地上。你努力控住它的嘴，砰！砰！砰！终于，它倒下了，但你身上多了不少抓痕和咬痕，不知道有没有受伤。",
+    text: function(vars) {
+      return "你狠狠揍了丧尸几拳，它掐住你的脖子，和你纠缠在地上。你努力控住它的嘴，砰！砰！砰！终于，它倒下了，但你身上多了不少抓痕和咬痕，不知道有没有受伤。" + combatDrainText(vars);
+    },
     choices: [
       {
         text: "继续",
@@ -289,7 +291,7 @@ Object.assign(storyData, {
       {
         text: "打身体",
         nextScene: "被丧尸咬",
-        effect: { add : { strength: -2 } }
+        effect: { add : { strength: -2 }, set: { _lastCombatDrain: 2 } } // 标记扣值供被丧尸咬 text 事后提示（打腿elseScene入口0消耗不标）
       },
       {
         text: "打腿",
@@ -304,7 +306,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/pipeAttack.png */,
     onEnter: { set: { FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" } },
     text: "你猛地出拳，正中丧尸面门，右手生疼，而丧尸已经倒地不起。\n\
-一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。",
+一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-3，当前体力：{strength}。</span>",
     choices: [
       {
         text: "拿上工牌",
@@ -321,8 +323,14 @@ Object.assign(storyData, {
   "棒打丧尸腿": {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/pipeAttack.png */,
     onEnter: { set: { FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" } },
-    text: "你回手掏出钢管，狠狠地抽在它腿上。只听得嘎吱一声脆响，不知是钢管还是它骨头断裂的声音。那只丧尸已经瘫倒在了地上，像一条扭曲的蛆在蠕动。\
-一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。",
+    text: function(vars) {
+      var desc = "你回手掏出钢管，狠狠地抽在它腿上。只听得嘎吱一声脆响，不知是钢管还是它骨头断裂的声音。那只丧尸已经瘫倒在了地上，像一条扭曲的蛆在蠕动。\
+一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。";
+      if (vars._lastScene === "邦邦邦") { // 迅捷线"打腿"入口不扣体力，不提示
+        desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return desc;
+    },
     choices: [
       {
         text: "拿上工牌",
@@ -527,7 +535,7 @@ Object.assign(storyData, {
               v._lastShotFired = v.gunAmmo > 0;
               v._employeeWeapon = "枪";
               if (v._lastShotFired) v.gunAmmo = Math.max(0, (v.gunAmmo || 0) - 1);
-              return updateTime(2, { add: { strength: -1, chasedByZombies: 2 } })(v);
+              return updateTime(2, { add: { chasedByZombies: 2 } })(v); // 开枪耗弹不耗体力
             }
           });
         }
@@ -545,7 +553,7 @@ Object.assign(storyData, {
       if (vars._employeeWeapon === "斧") {
         return "黑暗中你抡起斧头，对准那道扑来的黑影横扫过去。斧刃劈进它的脖颈，它闷声栽倒，抽搐了几下不再动了。\n\
 你喘着粗气，把斧刃上的污血在墙边蹭了蹭——这一斧动静不小，得赶紧离开。\n\
-你抹黑退了出来，回到了便利店。";
+你抹黑退了出来，回到了便利店。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       if (vars._employeeWeapon === "枪") {
         return "你拔枪对准黑影扣下扳机——\n\
@@ -554,7 +562,7 @@ Object.assign(storyData, {
       }
       return "那道黑影扑到半空时，你早已攥紧匕首反手迎上——刀尖刺进它的下颚，直贯而入。它僵在你面前，随即软了下去。\n\
 你甩开尸体，屏着气听了一会儿——还好，没引来更多动静。\n\
-你抹黑退了出来，回到了便利店。";
+你抹黑退了出来，回到了便利店。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -567,7 +575,7 @@ Object.assign(storyData, {
   "全家便利店-员工通道-踢飞丧尸": {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/员工通道-暗.png */,
     onEnter: updateTime(1, { set: { FamilymartHasZombie: false } }),
-    text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱哗啦啦地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n砰——门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。",
+    text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱哗啦啦地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n砰——门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",

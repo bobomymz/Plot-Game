@@ -138,8 +138,14 @@ Object.assign(storyData, {
       hidden: true,
       onTimeout: "地铁站-安检区-犹豫"
     },
-    text: "你来到安检区。X光安检机的传送带静止着，几件行李还卡在入口处。安检门后方的通道通向下一层——楼梯口就在前面大约二十米处。\n\
-但在你前方，七八只丧尸聚集在安检通道周围，有的正在翻行李，有的漫无目的地在通道里踱步。\n它们暂时还没看到你。墙边有一个红色的消防栓箱，玻璃面反射着应急灯的光。旁边挂着一个灭火器。",
+    text: function(vars) {
+      var desc = "你来到安检区。X光安检机的传送带静止着，几件行李还卡在入口处。安检门后方的通道通向下一层——楼梯口就在前面大约二十米处。\n\
+但在你前方，七八只丧尸聚集在安检通道周围，有的正在翻行李，有的漫无目的地在通道里踱步。\n它们暂时还没看到你。墙边有一个红色的消防栓箱，玻璃面反射着应急灯的光。旁边挂着一个灭火器。";
+      if (vars._lastScene === "地铁站-站厅层-犹豫") { // 仅"撞开左边的丧尸冲过去"入口扣了1体力
+        desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return desc;
+    },
     choices: [
       {
         text: "砸开消防栓箱，拉开消防栓！",
@@ -216,7 +222,7 @@ Object.assign(storyData, {
   "地铁站-安检区-消防斧清场": {
     image: "images/placeholder.png" /* TODO: images/地铁站/axeSlaughter.png */,
     onEnter: { add: { strength: -1, chasedByZombies: 1 } },
-    text: "你拔出消防斧，冲进了水幕中。\n第一只试图站起来的丧尸被你一斧头抡在头侧，直接飞出去砸在墙上。第二只刚从水里爬起来，斧刃已经劈进了它的肩颈。\n你像切菜一样在水幕中穿行。水声、斧声、骨裂声混在一起——等你回过神来，地上已经没有还能动的丧尸了。\n你浑身湿透，大口喘着气，但前方的路彻底打开了。你提着斧子走到楼梯口，把斧子靠在了墙上——太重了，带着它跑不是什么好主意。",
+    text: "你拔出消防斧，冲进了水幕中。\n第一只试图站起来的丧尸被你一斧头抡在头侧，直接飞出去砸在墙上。第二只刚从水里爬起来，斧刃已经劈进了它的肩颈。\n你像切菜一样在水幕中穿行。水声、斧声、骨裂声混在一起——等你回过神来，地上已经没有还能动的丧尸了。\n你浑身湿透，大口喘着气，但前方的路彻底打开了。你提着斧子走到楼梯口，把斧子靠在了墙上——太重了，带着它跑不是什么好主意。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "扔掉斧子，下楼梯",
@@ -303,7 +309,13 @@ Object.assign(storyData, {
   "地铁站-安检区-硬冲": {
     image: "images/hurtByzombie.webp",
     onEnter: { add: { chasedByZombies: 2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
-    text: "你深吸一口气，朝着楼梯口的方向猛冲过去。\n丧尸们被你突然的动作惊动，从几个方向同时朝你围拢。你撞开了一只挡路的，用肩膀顶开了另一只——但第三只还是抓到了你的手臂，袖子被撕开一道口子，皮肤火辣辣地疼。\n你甩开它，带着伤冲到了楼梯口。回头看时，丧尸群已经在你身后汇合了。",
+    text: function(vars) {
+      var desc = "你深吸一口气，朝着楼梯口的方向猛冲过去。\n丧尸们被你突然的动作惊动，从几个方向同时朝你围拢。你撞开了一只挡路的，用肩膀顶开了另一只——但第三只还是抓到了你的手臂，袖子被撕开一道口子，皮肤火辣辣地疼。\n你甩开它，带着伤冲到了楼梯口。回头看时，丧尸群已经在你身后汇合了。";
+      if (vars._lastScene === "地铁站-安检区-犹豫") { // 仅"抡起旁边的灭火器砸出一条路"入口扣了1体力
+        desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return desc;
+    },
     choices: [
       {
         text: "赶紧下楼",
@@ -410,7 +422,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/地铁站/stairsKick.png */,
     onEnter: { add: { strength: -1 } },
     text: "你在扶手上收腿，然后在接近它的瞬间猛地蹬了出去——一脚正中它的面门。丧尸被踹得向后仰倒，而你借着反冲力稳稳地落在地上。\n\
-你回头看了一眼——它倒在台阶上，正在挣扎着爬起来。你没有等它。",
+你回头看了一眼——它倒在台阶上，正在挣扎着爬起来。你没有等它。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "跑进站台",
@@ -517,8 +529,14 @@ Object.assign(storyData, {
   "地铁站-站台层-硬冲": {
     image: "images/placeholder.png" /* TODO: images/地铁站/platform.png */,
     onEnter: { add: { chasedByZombies: 2 } },
-    text: "你撒腿就跑。站台上的丧尸被你突然的动作惊动，从各个方向朝你追来。\n\
-你在一排排屏蔽门之间狂奔，身后拖着一串越来越长的脚步声和嘶吼声。列车门就在前方——你冲进去的时候，最近的一只丧尸离你只有几步之遥。\n你转过身，面对着正在涌来的丧尸群，站在车厢里大口喘气。",
+    text: function(vars) {
+      var desc = "你撒腿就跑。站台上的丧尸被你突然的动作惊动，从各个方向朝你追来。\n\
+你在一排排屏蔽门之间狂奔，身后拖着一串越来越长的脚步声和嘶吼声。列车门就在前方——你冲进去的时候，最近的一只丧尸离你只有几步之遥。\n你转过身，面对着正在涌来的丧尸群，站在车厢里大口喘气。";
+      if (vars._lastScene === "地铁站-站台层-犹豫") { // 仅"拼命冲！撞开挡路的"入口扣了1体力
+        desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return desc;
+    },
     choices: [
       {
         text: "赶紧找地方躲进车厢深处",

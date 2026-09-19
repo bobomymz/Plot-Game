@@ -351,6 +351,38 @@ function weaponBrokeText(vars) {
   return "\n" + name + "在这场折腾里彻底报废了，你只好把它扔了。";
 }
 
+// ====== 战斗体力消耗（成功也累） ======
+// 近战/空手打赢要耗体力；开枪耗弹不耗体力——射击场景不要调用本组函数。
+// 两档：空手(tier0)/弱(美工刀/拖把杆 tier1) → -2；中(铁管/拐杖 tier2)/强(匕首/斧头 tier3) → -1。
+// 适用范围：QTE 缠斗型战斗的胜利节点。选择式速杀（一击必杀/剧情杀）、非挥武器特殊战
+// （关阀/抵门/躲闪沟通）不挂；失败节点不挂（失败惩罚另算且不预告）。
+
+// 一场胜利近战的体力成本（按当前最优近战武器档位）
+function combatCost(vars) {
+  return meleeWeaponTier(vars) >= 2 ? 1 : 2;
+}
+
+// 胜利节点 onEnter 调用：直接改 vars.strength（同 tryBreakWeapon 模式），扣值记入
+// _lastCombatDrain 供 combatDrainText 事后提示，返回扣值。
+// 扣到 0 会走全局触发器"体力耗尽猝死"——打赢了却累瘫，预期黑色幽默。回溯 skipOnEnter 不会重复扣。
+function combatDrain(vars) {
+  var c = combatCost(vars);
+  vars.strength = Math.max(0, vars.strength - c);
+  vars._lastCombatDrain = c;
+  return c;
+}
+
+// 战斗消耗的事后提示：胜利节点 text 函数末尾拼接——有消耗返回一行【系统提示】并清除
+// 标记（一次性，同 weaponBrokeText 模式），没有返回空串。消耗不在选项上预告，
+// 玩家打完才从剧情文本里得知（{strength} 由引擎插值，显示当前体力）。
+// 用法：text: function(vars) { return "你击退了丧尸。" + combatDrainText(vars); }
+function combatDrainText(vars) {
+  var c = vars._lastCombatDrain;
+  if (!c) return "";
+  vars._lastCombatDrain = 0;
+  return "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-" + c + "，当前体力：{strength}。</span>";
+}
+
 // ====== 记忆闪色辅助函数 ======
 
 function randSeq(colors, len) {

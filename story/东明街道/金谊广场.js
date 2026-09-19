@@ -309,6 +309,7 @@ Object.assign(storyData, {
         ? "陈默把菜刀换到左手，给你腾出了空间——他朝你一点头，像是想起了当初在小区里救你的那一下。\n"
         : "陈默——现在你知道他的名字了——把菜刀换到左手，给你腾出了空间。\n";
       desc += "你们一起从吉祥馄饨的卷帘门里冲了出来。停车场的丧尸被你们的动静吸引，有几只从河边转过身来。\n集中注意力——看清它们的动作轨迹！";
+      desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return desc;
     },
     choices: function(vars) {

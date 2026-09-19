@@ -377,8 +377,13 @@ Object.assign(storyData, {
 
   "建平-前门-清场": {
     image: "images/youKillZombies.webp",
-    onEnter: { set: { _frontGateCleared: true, showZombies: true, currentPos: "前门" } },
-    text: "你趁丧尸合围的间隙闪身冲过了前门，一头扎进校园。\n身后的丧尸扑了个空，被你甩在门外——它们一时半会儿追不上来。",
+    onEnter: function(vars) {
+      combatDrain(vars);
+      return { set: { _frontGateCleared: true, showZombies: true, currentPos: "前门" } };
+    },
+    text: function(vars) {
+      return "你趁丧尸合围的间隙闪身冲过了前门，一头扎进校园。\n身后的丧尸扑了个空，被你甩在门外——它们一时半会儿追不上来。" + combatDrainText(vars);
+    },
     choices: [
       { text: "进入金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(1) }
     ]
@@ -500,7 +505,10 @@ Object.assign(storyData, {
 
   "建平-后门-斧头-胜利": {
     image: "images/youKillZombies.webp",
-    text: "你抡起斧头一路劈砍，斧刃所过之处，丧尸纷纷倒下。\n你踩着满地的残肢和污血，从门边杀了出去，踏上后门辅路。身后的铁门内外，剩余的丧尸嘶吼着，一时追不上来。",
+    onEnter: function(vars) { combatDrain(vars); },
+    text: function(vars) {
+      return "你抡起斧头一路劈砍，斧刃所过之处，丧尸纷纷倒下。\n你踩着满地的残肢和污血，从门边杀了出去，踏上后门辅路。身后的铁门内外，剩余的丧尸嘶吼着，一时追不上来。" + combatDrainText(vars);
+    },
     choices: [
       { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
@@ -525,7 +533,10 @@ Object.assign(storyData, {
 
   "建平-后门-匕首-胜利": {
     image: "images/youKillZombies.webp",
-    text: "你握着匕首左冲右突，专挑丧尸的下颚和太阳穴下手。\n等回过神来，你已经从门边挤了出来，踏上后门辅路。身后的铁门内外乱作一团，丧尸们一时追不上来。",
+    onEnter: function(vars) { combatDrain(vars); },
+    text: function(vars) {
+      return "你握着匕首左冲右突，专挑丧尸的下颚和太阳穴下手。\n等回过神来，你已经从门边挤了出来，踏上后门辅路。身后的铁门内外乱作一团，丧尸们一时追不上来。" + combatDrainText(vars);
+    },
     choices: [
       { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
@@ -549,8 +560,11 @@ Object.assign(storyData, {
   },
   "建平-后门-开打-胜利": {
     image: "images/youKillZombies.webp",
-    text: "你贴着门框闪身，避开当头扑来的一只丧尸，顺势把另一只撞进了尸堆里。趁它们纠缠成一团的空当，你从门边挤了出去，跌跌撞撞踏上后门辅路。\n\
-身后的铁门内外乱作一团——丧尸们互相挤撞着，一时半会儿追不上来。",
+    onEnter: function(vars) { combatDrain(vars); },
+    text: function(vars) {
+      return "你贴着门框闪身，避开当头扑来的一只丧尸，顺势把另一只撞进了尸堆里。趁它们纠缠成一团的空当，你从门边挤了出去，跌跌撞撞踏上后门辅路。\n\
+身后的铁门内外乱作一团——丧尸们互相挤撞着，一时半会儿追不上来。" + combatDrainText(vars);
+    },
     choices: [
       { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
@@ -637,12 +651,15 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._backGateCleared = true;
       vars.currentPos = "后门";
       updateTime(3)(vars);
       return {};
     },
-    text: "杀红了眼。等最后一只丧尸栽倒，你拄着膝盖直喘——后门口已经躺满了尸体，污血淌了一地。\n铁栅栏门还关着，街上空荡荡的。这边闹出这么大动静，居然再没有东西围过来。",
+    text: function(vars) {
+      return "杀红了眼。等最后一只丧尸栽倒，你拄着膝盖直喘——后门口已经躺满了尸体，污血淌了一地。\n铁栅栏门还关着，街上空荡荡的。这边闹出这么大动静，居然再没有东西围过来。" + combatDrainText(vars);
+    },
     choices: [
       { text: "推开后门", nextScene: "建平-后门-内侧-开门", effect: updateTime(1) },
       { text: "回辅路", nextScene: "建平-后门辅路", effect: updateTime(1) }
@@ -1110,7 +1127,10 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-1F-西侧走廊-清场": {
     image: "images/youKillZombies.webp",
-    text: "你抄起墙边一截断掉的水管横扫出去，把扑到面前的丧尸逼开。几只丧尸被砸得连连后退，绊在一起跌倒在地。\n等走廊重新安静下来，你喘着气——这一段总算清了。",
+    onEnter: function(vars) { combatDrain(vars); },
+    text: function(vars) {
+      return "你抄起墙边一截断掉的水管横扫出去，把扑到面前的丧尸逼开。几只丧尸被砸得连连后退，绊在一起跌倒在地。\n等走廊重新安静下来，你喘着气——这一段总算清了。" + combatDrainText(vars);
+    },
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
     ]
@@ -1162,7 +1182,10 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-1F-东侧走廊-清场": {
     image: "images/youKillZombies.webp",
-    text: "你侧身躲过楼梯口扑来的丧尸，顺势一脚把它踹翻，又用肩膀撞开了从休息区方向挤过来的另一只。\n等走廊安静下来，你浑身是汗——这一段算是清干净了。",
+    onEnter: function(vars) { combatDrain(vars); },
+    text: function(vars) {
+      return "你侧身躲过楼梯口扑来的丧尸，顺势一脚把它踹翻，又用肩膀撞开了从休息区方向挤过来的另一只。\n等走廊安静下来，你浑身是汗——这一段算是清干净了。" + combatDrainText(vars);
+    },
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
     ]
@@ -1479,13 +1502,16 @@ Object.assign(storyData, {
   "建平-致真楼-1F-老吴杂物室-击杀": {
     image: "images/placeholder.png",
     onEnter: function(vars) {
+      combatDrain(vars);
       var set = { _laowuKilled: true };
       var n = 0;
       if (!vars.hasKeyRing) { set.hasKeyRing = true; n++; }
       if (!vars.hasPipelineMap) { set.hasPipelineMap = true; n++; }
       return n > 0 ? { set: set, add: { itemCount: n } } : { set: set };
     },
-    text: "你终于把老吴的丧尸制服了。它不再动弹。\n你从他身上取下钥匙串，又捡起地上那张管线图——“水有毒，别喝”。",
+    text: function(vars) {
+      return "你终于把老吴的丧尸制服了。它不再动弹。\n你从他身上取下钥匙串，又捡起地上那张管线图——“水有毒，别喝”。" + combatDrainText(vars);
+    },
     choices: [
       { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
     ]
@@ -2106,7 +2132,10 @@ Object.assign(storyData, {
     ]
   },
   "建平-宿舍-内部": {
-    image: "images/placeholder.png",
+    image: function(vars) {
+      if(vars._dormCleared) return "images/建平/宿舍走廊-清场.webp";
+      return "images/建平/宿舍走廊.webp";
+    },
     onEnter: function(vars) {
       vars.currentPos = "宿舍内部";
       if (!vars._dormCleared) {
@@ -2163,10 +2192,16 @@ Object.assign(storyData, {
   },
 
   "建平-宿舍-内部-发现狼人杀手牌": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/寝室的狼人杀.webp",
+      night: "images/建平/寝室的狼人杀-night.webp"
+    }),
     onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
     text: function(vars) {
-      return "你又躺了回去。再睁眼时脑子还是沉的。翻身撑起来，手底下压着一张狼人杀手牌。金色镶边，一个红眼的狼人画在上面，黑毛飘飘，张牙舞爪，像是在嘶吼。" + restHint(vars, "你回复1点体力");
+      return "你又躺了回去。再睁眼时脑子还是沉的。翻身撑起来，手底下压着一张狼人杀手牌。金色镶边，一个红眼的狼人画在上面，黑毛飘飘，张牙舞爪，像是在嘶吼。\n\
+这应该是学生们的遗产吧。\n\
+此时，你仿佛听到远处传来一声嚎叫。\n\
+" + restHint(vars, "你回复1点体力");
     },
     choices: [
       { text: "继续", nextScene: "建平-宿舍-内部", effect: updateTime(1) }
@@ -2175,7 +2210,10 @@ Object.assign(storyData, {
 
   "建平-宿舍-内部-清场": {
     image: "images/youKillZombies.webp",
-    text: "你贴着墙根冲进走廊，接连闪过几具丧尸的扑抓，一路把散在各处的它们引到楼梯口，反手将防火门猛地带上。\n门后传来沉闷的撞击声，渐渐弱了下去。你靠着门喘匀了气——这栋宿舍总算安静了。",
+    onEnter: function(vars) { combatDrain(vars); },
+    text: function(vars) {
+      return "你贴着墙根冲进走廊，接连闪过几具丧尸的扑抓，一路把散在各处的它们引到楼梯口，反手将防火门猛地带上。\n门后传来沉闷的撞击声，渐渐弱了下去。你靠着门喘匀了气——这栋宿舍总算安静了。" + combatDrainText(vars);
+    },
     choices: [
       { text: "继续", nextScene: "建平-宿舍-内部", effect: updateTime(1) }
     ]

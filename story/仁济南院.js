@@ -146,8 +146,13 @@ Object.assign(storyData, {
 
   "仁济南院-门诊大门-记忆闪色-成功": {
     image: "images/youKillZombies.webp",
-    onEnter: { set: { _renjiGateCleared: true } },
-    text: "你一脚踹飞堵路的几只丧尸，成功地闯进了门诊大厅。",
+    onEnter: function(vars) {
+      combatDrain(vars);
+      return { set: { _renjiGateCleared: true } };
+    },
+    text: function(vars) {
+      return "你一脚踹飞堵路的几只丧尸，成功地闯进了门诊大厅。" + combatDrainText(vars);
+    },
     choices: [
       {
         text: "继续",
@@ -181,7 +186,7 @@ Object.assign(storyData, {
     }),
     onEnter: function(vars) { vars.showZombies = vars.showRain = true; },
     text: function(vars) {
-      var desc = "门诊大楼的正门半敞着，玻璃门上糊着报纸和胶带——有人试图封住它，又放弃了。门前的空地上倒着几具尸体，苍蝇在低空盘旋。旋转门的格子里卡着一个人，玻璃上全是血手印。\n";
+      var desc = "门诊大楼的正门半敞着，玻璃门上糊着报纸和胶带——有人试图封住它，又放弃了。门前的空地上倒着几具尸体，报纸被风掀起一角，下面的皮肉已经发亮。旋转门的格子里卡着一个人，玻璃上全是血手印。\n";
       if (vars.dd >= 6) {
         desc += "更糟的是，医院外围的尸潮不知道什么时候围了上来——大门外的空地已经被一群游荡的丧尸堵死，挤也挤不进去。\n<span style='color: #ffaa00;'>【提示】大门已被尸潮堵死，只能另找入口。</span>";
       } else if (vars._renjiGateCleared) {
@@ -613,9 +618,14 @@ Object.assign(storyData, {
 
   "仁济南院-急诊大厅-胜利": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiER.png */,
-    onEnter: { set: { _renjiERCleared: true } },
-    text: "你抓住机会，把它放倒了。它在地上抽搐了几下，不再动了。\n\
-大厅终于安静下来。你靠在墙上喘了几口气。",
+    onEnter: function(vars) {
+      combatDrain(vars);
+      return { set: { _renjiERCleared: true } };
+    },
+    text: function(vars) {
+      return "你抓住机会，把它放倒了。它在地上抽搐了几下，不再动了。\n\
+大厅终于安静下来。你靠在墙上喘了几口气。" + combatDrainText(vars);
+    },
     choices: [
       {
         text: "继续",
@@ -890,9 +900,14 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-守卫战-胜利": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
-    onEnter: { set: { _renjiLabCleared: true } },
-    text: "你抓住破绽，把它放倒。它瘫在操作台边，白大褂上沾满试剂和血。\n\
-检验科终于安静下来。你环顾四周——这里，就是王知筠最后工作的地方。",
+    onEnter: function(vars) {
+      combatDrain(vars);
+      return { set: { _renjiLabCleared: true } };
+    },
+    text: function(vars) {
+      return "你抓住破绽，把它放倒。它瘫在操作台边，白大褂上沾满试剂和血。\n\
+检验科终于安静下来。你环顾四周——这里，就是王知筠最后工作的地方。" + combatDrainText(vars);
+    },
     choices: [
       {
         text: "开始搜刮",
@@ -925,7 +940,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLabInside.png */,
     onEnter: function(vars) { vars.currentPos = "检验科"; return {}; },
     text: function(vars) {
-      var desc = "检验科的灯还亮着，应急电源嗡嗡作响。离心机、试剂架、培养皿散乱地摆在操作台上——这里的主人离开得很匆忙，又很平静。\n";
+      var desc = "检验科的灯还亮着，应急电源嗡嗡作响。一台离心机盖子掀着，转子停在半途。试剂架还在，培养皿有几只扣在台沿上——这里的主人离开得很匆忙，又很平静。\n";
       if (!vars.hasWangPhone && !vars.hasWangNotebook) {
         desc += "操作台的一角，放着一部手机和一本牛皮纸封面的笔记本。手机屏幕暗着，笔记本的封面上写着“2026 实验记录”。";
       } else if (!vars.hasWangPhone) {
@@ -1046,16 +1061,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-手机-视频": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPhone.png */,
-    text: "视频开始播放。一个戴银框圆眼镜的年轻女人坐在检验科的台面前，对着镜头说话，语速偏快，有点紧张但逻辑清晰：\n\
-\n\
-“如果你看到这条视频，说明我可能已经出事了。先说结论：这不是病毒，是甲基汞中毒。\n\
-6月24日，黄浦江采样点甲基汞超标近40倍。我反复验证过，不是枪头的问题。\n\
-扩散路径是自来水。芜湖那边的一个化工厂封存区泄漏了，含汞废水进了长江，自来水厂取水口在下游……\n\
-被咬伤是二次传播。唾液里的汞剂量很低，不会立刻致命，但如果持续喝污染水，血汞会突破重症阈值。\n\
-别喝自来水。如果已经喝了——我也不知道该怎么办了。请转发。”\n\
-\n\
-她侧头听了一下，说：“有人来了，我去看看。”\n\
-镜头被随手放在台面上，画面对着天花板，然后中断。",
+    text: wangPhoneVideoText,
     choices: [
       {
         text: "放下手机",
@@ -1179,8 +1185,13 @@ Object.assign(storyData, {
 
   "仁济南院-住院部走廊-胜利": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiWard.png */,
-    onEnter: { set: { _renjiWardCleared: true } },
-    text: "你把它解决了。走廊安静下来。",
+    onEnter: function(vars) {
+      combatDrain(vars);
+      return { set: { _renjiWardCleared: true } };
+    },
+    text: function(vars) {
+      return "你把它解决了。走廊安静下来。" + combatDrainText(vars);
+    },
     choices: [
       {
         text: "继续",
@@ -1469,9 +1480,14 @@ Object.assign(storyData, {
 
   "仁济南院-太平间-黑皮丧尸-胜利": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
-    onEnter: { set: { _morgueCleared: true } },
-    text: "你把它放倒了。那层黑色的皮比想象中更硬，但你最终还是解决了它。\n\
-它瘫在地上，不再动弹。太平间重新安静下来。",
+    onEnter: function(vars) {
+      combatDrain(vars);
+      return { set: { _morgueCleared: true } };
+    },
+    text: function(vars) {
+      return "你把它放倒了。那层黑色的皮比想象中更硬，但你最终还是解决了它。\n\
+它瘫在地上，不再动弹。太平间重新安静下来。" + combatDrainText(vars);
+    },
     choices: [
       {
         text: "继续",
@@ -2026,7 +2042,10 @@ Object.assign(storyData, {
 
   "仁济南院-特需病房-储物柜-警觉": {
     image: "images/youKillZombies.webp",
-    onEnter: { set: { _renjiVipZombieCleared: true, positionAfterOperation: "仁济南院-特需病房-储物柜-警觉" } },
+    onEnter: function(vars) {
+      combatDrain(vars);
+      return { set: { _renjiVipZombieCleared: true, positionAfterOperation: "仁济南院-特需病房-储物柜-警觉" } };
+    },
     text: function(vars) {
       var clue;
       if (vars._renjiVipChartRead && vars._renjiVipNoteRead) {
@@ -2038,7 +2057,7 @@ Object.assign(storyData, {
       }
       return "你想起" + clue + "，拉开柜门时侧身让开半步，抬脚就踹。\n\
 里面蜷着的东西刚要扑出，被你一脚钉回柜壁，后脑撞上隔板，软软地滑到地上，不再动了。\n\
-柜子深处还躺着一样东西。";
+柜子深处还躺着一样东西。" + combatDrainText(vars);
     },
     choices: [
       {

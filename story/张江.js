@@ -259,12 +259,15 @@ Object.assign(storyData, {
   "张江-加油站-棚子-胜利": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._gasShedZombieDead = true;
       vars.positionAfterOperation = "张江-加油站-棚子";
       return updateTime(2)(vars);
     },
-    text: "你侧身让过它的第一扑，顺势抄起手边一只空油桶，抡在它的后脑上。它栽进桶堆里，挣了两下，不动了。\n\
-棚子里安静下来，只剩铁皮被风拍打的哐当声。",
+    text: function(vars) {
+      return "你侧身让过它的第一扑，顺势抄起手边一只空油桶，抡在它的后脑上。它栽进桶堆里，挣了两下，不动了。\n\
+棚子里安静下来，只剩铁皮被风拍打的哐当声。" + combatDrainText(vars);
+    },
     choices: [
       { text: "回去翻油桶", nextScene: "张江-加油站-棚子" }
     ]
@@ -767,13 +770,14 @@ Object.assign(storyData, {
   "张江-上科大-食堂-后厨-胜利": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._sistKitchenZombieDead = true;
       vars.positionAfterOperation = "张江-上科大-食堂-后厨";
       return updateTime(2)(vars);
     },
     text: function(vars) {
       return "你侧身让过第一扑，把它撞在储物柜上。柜门砰地关上，它滑下去，围裙的带子散开，工牌掉在油污的地上：餐饮中心 · 临时工。\n\
-后厨里只剩抽油烟机不知从哪来的一点余响。" + weaponBrokeText(vars);
+后厨里只剩抽油烟机不知从哪来的一点余响。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "去翻储物柜", nextScene: "张江-上科大-食堂-后厨" }
@@ -937,13 +941,14 @@ Object.assign(storyData, {
   "张江-华大-广场-近路-胜": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._plazaFought = true;
       vars._plazaFigSeen = true;
       return updateTime(2)(vars);
     },
     text: function(vars) {
       return "你把最前面那条穿着反光背心的撞翻在导引线上，另外两条还在转头——就这半拍，你抢到西沿的墙根。\n\
-旗绳还在空杆上抽。广场又大又白，空得能听见自己的喘气。" + weaponBrokeText(vars);
+旗绳还在空杆上抽。广场又大又白，空得能听见自己的喘气。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "沿西沿，去保安亭", nextScene: "张江-华大-保安亭", effect: updateTime(2) },
@@ -1041,12 +1046,13 @@ Object.assign(storyData, {
   "张江-华大-连廊-遭遇-胜": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._airlockZombieDone = true;
       return updateTime(2)(vars);
     },
     text: function(vars) {
       return "它扑空的瞬间，你侧身让过，顺势把它撞在玻璃门框上。它软软地滑下去，无尘服的头罩歪在一边，露出里面一张干灰的脸。\n\
-你喘匀了气。警报的余音还在连廊里嗡嗡地绕。" + weaponBrokeText(vars);
+你喘匀了气。警报的余音还在连廊里嗡嗡地绕。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "回连廊", nextScene: "张江-华大-连廊" }
@@ -1314,7 +1320,7 @@ Object.assign(storyData, {
       return updateTime(1)(vars);
     },
     text: function(vars) {
-      var desc = "高速气流从四面八方的喷嘴里喷出来，风压实打实地打在身上，衣摆猎猎作响，睁眼都费劲。\n\
+      var desc = "高速气流从四面八方的喷嘴里喷出来，风压实打实地打在身上，袖口啪啪拍脸，睁眼都费劲。\n\
 面板屏幕上，倒计时一格一格地跳：25、24、23……\n\
 据说这一套是要把人身上的浮尘、皮屑、纤维统统吹掉——在进入那间一尘不染的房间之前。";
       if (vars._airlockLeakRounds > 0) desc += "\n舱里还残着一股淡淡的酸味，像上次泄漏留下的记性。";
@@ -1613,6 +1619,7 @@ Object.assign(storyData, {
   "张江-华大-白区-围攻-胜": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._fabSwarmDone = true;
       vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
       return updateTime(3)(vars);
@@ -1620,7 +1627,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你抡圆了最后一击，把扑在最前面的那条白影砸得栽进设备缝里。后面的几条慢了半拍——就这半拍，你抢出一条通道，撞开安全门冲了出去，反手把门带死。\n\
 门板震了几下，安静了。\n\
-你靠着墙喘气，白区的方向再没有动静。这一片，算是被你打穿了。" + weaponBrokeText(vars);
+你靠着墙喘气，白区的方向再没有动静。这一片，算是被你打穿了。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "回主走廊缓口气", nextScene: "张江-华大-洁净主走廊" }
@@ -1716,12 +1723,13 @@ Object.assign(storyData, {
   "张江-华大-白区-工位战A-胜": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._fabFigADone = true;
       return updateTime(2)(vars);
     },
     text: function(vars) {
       return "你让过它的第一把抓，绕到侧面，给它后脑来了一下。它撞在光刻机的护罩上，滑下去，不动了。\n\
-防光帘晃了几晃，慢慢停住。这条工位，安静了。" + weaponBrokeText(vars);
+防光帘晃了几晃，慢慢停住。这条工位，安静了。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "离开工位", nextScene: "张江-华大-白区" }
@@ -1886,6 +1894,7 @@ Object.assign(storyData, {
   "张江-华大-白区-工位战C-胜": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._fabFigCDone = true;
       var splashed = vars.hasGasMask ? 5 : 15;
       vars.mercuryLoad = Math.min(100, (vars.mercuryLoad || 0) + splashed);
@@ -1899,7 +1908,7 @@ Object.assign(storyData, {
       } else {
         desc += "\n飞溅的液体星星点点落在你的手背和下巴上，凉丝丝的，带着那股甜酸味。你赶紧擦，越擦越觉得皮肤发麻。\n<span style='color: #ffaa00;'>有什么东西渗进来了。</span>";
       }
-      return desc + weaponBrokeText(vars);
+      return desc + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "离开工位", nextScene: "张江-华大-白区" }
@@ -2009,6 +2018,7 @@ Object.assign(storyData, {
   "张江-华大-运维区-制服": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._panicEmployeeState = (meleeWeaponTier(vars) >= 2) ? "dead" : "injured";
       return updateTime(2)(vars);
     },
@@ -2017,11 +2027,11 @@ Object.assign(storyData, {
         return "你抢进他的内圈，一记重击正中胸口——他整个人飞出去，撞在配电柜上，滑下来，不动了。\n\
 面罩摔裂了。底下是一张年轻的、错愕的脸，嘴还张着，像有一肚子话没喊出来。\n\
 胸牌翻在外面：操作部，刘。\n\
-他从头到尾，都以为自己在打丧尸。" + weaponBrokeText(vars);
+他从头到尾，都以为自己在打丧尸。" + weaponBrokeText(vars) + combatDrainText(vars);
       }
       return "你架开灭火器，用手背给他面罩上来了一下——不重，但把他打了个趔趄。他后脑磕在柜门上，眼睛一翻，软软地滑了下去。\n\
 面罩摔歪了，露出半张年轻的脸。胸牌翻在外面：操作部，刘。\n\
-你探了探鼻息——活着，就是睡过去了。打得不重，这小子命大，你手下也留了情。" + weaponBrokeText(vars);
+你探了探鼻息——活着，就是睡过去了。打得不重，这小子命大，你手下也留了情。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "离开这里", nextScene: "张江-华大-运维区", effect: updateTime(1) }
@@ -3398,6 +3408,7 @@ Object.assign(storyData, {
   "张江-检测中心-瞎摸-胜": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._knowsReportRoom = true; // 摸到尽头看清了 305 的门牌（此后走廊可直达）
       return updateTime(2)(vars);
     },
@@ -3405,7 +3416,7 @@ Object.assign(storyData, {
       return "你抢在它扑上来之前先动了手。它撞在门框上，滑下去，白大褂的口袋里滚出一支记号笔，骨碌碌滚进黑暗里。\n\
 你扶着墙把气喘匀。这一趟打出的动静不小——整层楼都听见了。\n\
 定下神，你才借光看清走廊尽头：305，检测三室。\n\
-那扇门的观察窗后面，立着一条人影，一动不动。门板底下，隐隐透出一种含混的、念念有词的声音。" + weaponBrokeText(vars);
+那扇门的观察窗后面，立着一条人影，一动不动。门板底下，隐隐透出一种含混的、念念有词的声音。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "去 305 门口", nextScene: "张江-检测中心-三室外", effect: updateTime(1) },
@@ -3532,6 +3543,7 @@ Object.assign(storyData, {
   "张江-检测中心-制服": {
     image: "images/placeholder.png", /* TODO: images/张江/检测中心-报告.webp（盖章报告特写） */
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._labZombieDead = true;
       vars._hasTestReport = true;
       vars.mercuryLoad = Math.min(100, (vars.mercuryLoad || 0) + (vars.hasGasMask ? 5 : 15));
@@ -3546,6 +3558,7 @@ Object.assign(storyData, {
       segs.push("这栋楼里唯一测出真相的人，把报告攥在手里，在这间屋子里念了不知多少天的编号。差一天，就只差一天，它就能躺进待取件架的格子里。\n现在，它在你的手里了。");
       if (!vars.hasGasMask) segs.push("缠斗里蹭到他皮肤的地方，隐隐地发麻。");
       segs.push("<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得[上海市检测中心报告]——官方全项检测，数据、签名、公章齐全。它不占背包。</span>");
+      segs[segs.length - 1] += combatDrainText(vars);
       return segs;
     },
     choices: [
@@ -3577,6 +3590,7 @@ Object.assign(storyData, {
   "张江-检测中心-撤离-胜": {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
+      combatDrain(vars);
       vars._labExitFought = true;
       return updateTime(2)(vars);
     },
@@ -3584,7 +3598,7 @@ Object.assign(storyData, {
       var tail = vars._labExitTo === "张江-检测中心-卸货区"
         ? "你没再看第二眼，反手推开侧门，跌进卸货平台的天光里。\n身后的走廊黑沉沉的，什么声音都没有了。"
         : "你没再看第二眼，撒腿冲进大堂的天光里。\n身后的走廊黑沉沉的，什么声音都没有了。";
-      return "你抄起墙边的灭火器迎面砸过去，它抱着头栽进门框里。\n" + tail + weaponBrokeText(vars);
+      return "你抄起墙边的灭火器迎面砸过去，它抱着头栽进门框里。\n" + tail + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       {

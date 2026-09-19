@@ -197,7 +197,7 @@ Object.assign(storyData, {
       night: "images/安盛街/老头丧尸倒下-night.webp"
     }),
     onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true, showRain: true } }),
-    text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。",
+    text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "看看拐杖",
@@ -218,7 +218,7 @@ Object.assign(storyData, {
       night: "images/安盛街/老头丧尸倒下-night.webp"
     }),
     onEnter: { set: { positionAfterOperation: "安盛街-获得拐杖", showRain: true } },
-    text: "老头丧尸的拐杖掉在地上，是一根金属材质的——沉甸甸的，虽然不是什么神兵利器，但总比空手强。\n老头丧尸在地上扭动着，朝你发出嘶哑的吼声。",
+    text: "老头丧尸的拐杖掉在地上，金属的，沉甸甸。握上去能撑开半步距离。\n老头丧尸在地上扭动着，朝你发出嘶哑的吼声。",
     choices: [
       {
         text: "捡起拐杖",
@@ -764,7 +764,7 @@ Object.assign(storyData, {
     text: function(vars) {
       let weaponDesc = "你举起" + (meleeWeaponName(vars) || "手中的家伙");
       return weaponDesc + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n\
-你补了几下，确定它不会再动了。收银台后面的小门看起来通往更里面——也许仓库里还有什么有用的东西————或者是更多丧尸。";
+你补了几下，确定它不会再动了。收银台后面的小门看起来通往更里面——也许仓库里还有什么有用的东西————或者是更多丧尸。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -1113,7 +1113,7 @@ Object.assign(storyData, {
   "安盛街-服装店反击": {
     image: "images/安盛街/服装店/试衣间反击.webp",
     onEnter: { add: { strength: -1 } },
-    text: "你一脚正中丧尸的胸口，它被踹回了试衣间，撞在墙上发出沉闷的声响。\n趁它还没爬起来，你头也不回地冲出了服装店。",
+    text: "你一脚正中丧尸的胸口，它被踹回了试衣间，撞在墙上发出沉闷的声响。\n趁它还没爬起来，你头也不回地冲出了服装店。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "回安盛街",
@@ -1316,7 +1316,7 @@ Object.assign(storyData, {
     onEnter: { add: { strength: -1 } },
     text: function(vars) {
       return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，一下子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
-你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。";
+你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -1364,7 +1364,7 @@ Object.assign(storyData, {
   "安盛街-尸潮来袭": {
     image: "images/youMeetZombies.webp",
     onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
-    text: "你正走着，突然听到身后传来一阵密集的脚步声。\n回头一看，一群丧尸从十字路口的方向涌了过来——至少二三十只，像潮水一样塞满了整条街道。它们看到了你，发出嘶哑的吼声，加快了速度。\n你必须马上决定往哪跑！",
+    text: "你正走着，突然听到身后传来一阵密集的脚步声。\n回头一看，一群丧尸从十字路口的方向挤过来——至少二三十只，贴着两边店招把整条马路堵实了。它们看到了你，发出嘶哑的吼声，加快了速度。\n你必须马上决定往哪跑！",
     qte: {
       timeout: "7000 - chasedByZombies * 1500",
       onTimeout: "结局-安盛街-被尸潮吞没"
@@ -1506,7 +1506,7 @@ Object.assign(storyData, {
     onEnter: updateTime(2, { set: { showRain: true }, add: { strength: -1, chasedByZombies: 1 } }),
     text: "你深吸一口气，朝着最薄弱的缺口猛冲过去。一只丧尸伸手抓向你的衣领，被你一肘击翻；另一只从侧面扑来，你侧身闪过。\n\
 你的肺部在燃烧，腿像灌了铅一样沉重——但你不能停。\n\
-终于，你冲出了包围圈。身后的丧尸群还在追，但你已经甩开了距离。前方就是安盛街西侧，视野开阔了很多。",
+终于，你冲出了包围圈。身后的丧尸群还在追，但你已经甩开了距离。前方就是安盛街西侧，视野开阔了很多。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续往前",

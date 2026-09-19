@@ -276,6 +276,7 @@ const storyData = {
     _lastShotFired: false,    // 开枪选项：effect 先记“扣扳机前有没有弹”，再扣弹；nextScene 读这个，避免最后一发被当成空枪
     _pryTool: "",             // 撬砸类动作实际用的工具名（useHeavyTool 或选项effect写入，动作场景text展示——损坏后 heavyWeaponName 会指向次优武器，不能靠它回读）
     _weaponJustBroke: "",     // 刚损坏的武器名（tryBreakWeapon/useHeavyTool 写入，承接场景 text 用 weaponBrokeText 读后清除，一次性）
+    _lastCombatDrain: 0,      // 上一场胜利近战的体力扣值（combatDrain 写入，胜利节点 text 用 combatDrainText 读后清除，一次性）
     _heavyUseIronPipe: 0,     // 铁管撬砸类重活已用次数（上限3次损坏；武器损坏/重新获得后归零）
     _heavyUseCane: 0,         // 拐杖撬砸类重活已用次数（上限3次损坏）
     _heavyUseMopHandle: 0,    // 拖把杆撬砸类重活已用次数（上限1次损坏）

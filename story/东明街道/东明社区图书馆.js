@@ -141,7 +141,7 @@ Object.assign(storyData, {
     onEnter: { add: { strength: -1 } },
     text: function(vars) {
       let wpn = meleeWeaponName(vars) || "手中的家伙";
-      return "你压低脚步跟了上去。志愿者丧尸正对着墙上被书砸出的痕迹发呆——它不太聪明的样子。\n你举起" + wpn + "，对着它的后脑勺来了一下。它扑通一声倒在地上，不动了。\n你把它拖到前台后面，至少看上去不那么扎眼了。";
+      return "你压低脚步跟了上去。志愿者丧尸正对着墙上被书砸出的痕迹发呆——它不太聪明的样子。\n你举起" + wpn + "，对着它的后脑勺来了一下。它扑通一声倒在地上，不动了。\n你把它拖到前台后面，至少看上去不那么扎眼了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -160,7 +160,7 @@ Object.assign(storyData, {
     text: function(vars) {
       let wpn = meleeWeaponName(vars) || "手中的家伙";
       return "你握紧" + wpn + "，大步迎了上去。志愿者丧尸听到脚步声转过身来，张开嘴发出嘶哑的吼叫——但你比它快。\n\
-一记结实的打击正中它的头部。它晃了晃，倒在地上不再动弹。\n你喘了口气。动静有点大，可能会把其他地方的东西引过来。";
+一记结实的打击正中它的头部。它晃了晃，倒在地上不再动弹。\n你喘了口气。动静有点大，可能会把其他地方的东西引过来。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -262,7 +262,7 @@ Object.assign(storyData, {
     onEnter: { add: { strength: -1 } },
     text: "你侧身闪过它的扑击，肩膀狠狠撞在旁边的书架上。书架晃了晃——你又加了一把力。\n\
 沉重的书架朝格子衬衫丧尸倒了下去，把它连带着旁边的桌椅一起压在了下面。书页像雪花一样在空中飞舞。\n\
-书架下面传来低沉的嘶吼声，但很快就没有动静了。",
+书架下面传来低沉的嘶吼声，但很快就没有动静了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "穿过阅览室继续前进",
@@ -276,7 +276,7 @@ Object.assign(storyData, {
     onEnter: { add: { strength: -1 } },
     text: function(vars) {
       let wpn = meleeWeaponName(vars) || "手中的家伙";
-      return "你挥出" + wpn + "，准准地砸在了它的脑袋上。它踉跄了一步，但居然没有倒下——反而挥舞着那本厚书朝你脸上招呼过来。\n你后退两步，趁它重心不稳，又是一下。这一次它终于趴下了。";
+      return "你挥出" + wpn + "，准准地砸在了它的脑袋上。它踉跄了一步，但居然没有倒下——反而挥舞着那本厚书朝你脸上招呼过来。\n你后退两步，趁它重心不稳，又是一下。这一次它终于趴下了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -494,7 +494,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，干脆利落地给了被压住的丧尸一下。它终于安静了。\n\
 办公室里安静了下来。你环顾四周——文件柜里有一些没开封的瓶装水，办公桌抽屉里还有半包压缩饼干。虽然不多，但够你撑一阵子。\n\
-更重要的是——你现在可以锁上图书馆的门，把这里变成一个安全的落脚点。窗户结实，大门能锁，只有一道消防通道需要守住。\n你花了些时间把大厅和阅览室的窗帘拉上，把前门反锁。这个小小的图书馆，在这座沦陷的城市里，成了你暂时的庇护所。";
+更重要的是——你现在可以锁上图书馆的门，把这里变成一个安全的落脚点。窗户结实，大门能锁，只有一道消防通道需要守住。\n你花了些时间把大厅和阅览室的窗帘拉上，把前门反锁。窗帘一严，外面的吼声小了一截。这里能关门，先凑合一晚没问题。";
     },
     choices: [
       {

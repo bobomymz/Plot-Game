@@ -126,11 +126,15 @@ Object.assign(storyData, {
           "他告诉你他是骑车过来的——变速器修好了，一路上东躲西藏，刚到这个广场就被水池边的丧尸围了。“这东西好像特别喜欢水，不知道什么毛病。”",
           "他站起来拍了拍裤子，把金属管往肩上一扛。“我打算进去逛逛——这么大的商场，总不能什么都不剩吧。你看看有没有什么好东西，回头碰上了跟我说。”\n山地车被他随手锁在了喷泉边的路灯杆上。“反正也没人偷。”"
         ];
-      return [
+      var seg = [
         "你三拳两脚把丧尸全部打倒，救下了高锦睿。\n他擦了擦脸上的水，一屁股坐在喷泉池沿上。“我靠，你也来这儿了？”",
         "他告诉你他是骑车过来的——变速器修好了，一路上东躲西藏，刚到这个广场就被水池边的丧尸围了。“这东西好像特别喜欢水，不知道什么毛病。”",
         "他站起来拍了拍裤子，把金属管往肩上一扛。“我打算进去逛逛——这么大的商场，总不能什么都不剩吧。你看看有没有什么好东西，回头碰上了跟我说。”\n山地车被他随手锁在了喷泉边的路灯杆上。“反正也没人偷。”"
-      ]; },
+      ];
+      if (vars._lastScene === "新达汇-喷泉广场-高锦睿-帮忙") { // 仅闪色打赢的入口扣了1体力（旁观/被救入口不扣）
+        seg[seg.length - 1] += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return seg; },
     choices: [
       {
         text: "“确定没人偷？现在可没警察盯着。”",
@@ -675,7 +679,7 @@ Object.assign(storyData, {
       var hint = vars._restBlocked
         ? "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
         : "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>";
-      return "你在后厨的角落坐下，撕开一包袋装拉面干嚼了起来。虽然比不上店里现煮的，但在这座沦陷的城市里，能吃到一口面已经是一种奢侈了。\n\
+      return "你在后厨的角落坐下，撕开一包袋装拉面干嚼。盐味冲鼻子，比店里现煮的差远了，好歹嘴里不空。\n\
 你靠墙休息了一会儿，外面的声音渐渐远去了。\n" + hint;
     },
     choices: [
@@ -1120,7 +1124,7 @@ Object.assign(storyData, {
 
   "新达汇-5F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
-    text: "你推开防火门，走进楼梯间。墙上标着「5F」。从这里可以上屋顶或往下走。",
+    text: "你推开防火门，走进楼梯间。墙上标着「5F」。台阶上扔着一只被踩扁的外卖纸袋，油渍渗到水泥缝里。从这里可以上屋顶或往下走。",
     onEnter: function(v) { transit(v, "5F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
@@ -1142,7 +1146,7 @@ Object.assign(storyData, {
   },
   "新达汇-4F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
-    text: "你推开防火门，走进楼梯间。墙上标着「4F」。脚步声在混凝土楼梯井里回荡。",
+    text: "你推开防火门，走进楼梯间。墙上标着「4F」。休息平台靠墙立着一块「4F 服装 / 生活」的楼层导视牌，边框掉了一颗螺丝。",
     onEnter: function(v) { transit(v, "4F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
@@ -1192,7 +1196,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
-    text: "你推开防火门，走进楼梯间。墙上标着「2F」。脚步声在混凝土楼梯井里回荡。",
+    text: "你推开防火门，走进楼梯间。墙上标着「2F」。扶手上缠着半截「小心台阶」的黄黑胶带，一头耷拉着。",
     onEnter: function(v) { transit(v, "2F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
@@ -1214,7 +1218,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
-    text: "你推开防火门，走进楼梯间。墙上标着「1F」。从这里可以上下楼。",
+    text: "你推开防火门，走进楼梯间。墙上标着「1F」。门背后钉着一张手写的“员工通道请随手关门”，字被汗渍洇开了。",
     onEnter: function(v) { transit(v, "1F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
@@ -1608,7 +1612,7 @@ Object.assign(storyData, {
   "新达汇-2F电梯厅": {
     image: "images/新达汇/电梯厅.webp",
     text: function(vars) {
-      if (vars._powerOut) return "电梯厅一片死寂。";
+      if (vars._powerOut) return "电梯厅一片死寂。指示灯灭了，轿厢门缝里卡着一张被夹住的超市小票。";
       return "按钮面板上B1、1F、3F、4F、5F的按键都还亮着。";
     },
     choices: [
@@ -1763,7 +1767,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/childrenShop.png */,
     onEnter: function(v) { v.showPowerOut = true; var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
     text: "童装店里空荡荡的，只有几个落满灰的塑料模特歪倒在地上。你绕到收银台后面蹲下来，这里正好被柜体挡住，从外面完全看不到。\n\
-你缩在阴影里，听着外面的走廊里的脚步声来来回回——但它们没有停下来。过了很久，外面终于安静了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>",
+你缩在阴影里，听着外面的走廊里的脚步声来来回回——但它们没有停下来。过了很久，脚步声拐进了对面铺子。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>",
     choices: [
       {
         text: "从收银台后站起来",
@@ -2061,7 +2065,7 @@ Object.assign(storyData, {
   "新达汇-3F电梯厅": {
     image: "images/新达汇/电梯厅.webp",
     text: function(vars) {
-      if (vars._powerOut) return "电梯厅一片死寂。";
+      if (vars._powerOut) return "电梯厅一片死寂。角落的绿萝叶子耷拉着，花盆里的土裂了细缝。";
       return "按钮面板上B1、1F、2F、4F、5F的按键都还亮着。";
     },
     choices: [
@@ -2583,7 +2587,7 @@ Object.assign(storyData, {
   "新达汇-4F电梯厅": {
     image: "images/新达汇/电梯厅.webp",
     text: function(vars) {
-      if (vars._powerOut) return "电梯厅一片死寂。";
+      if (vars._powerOut) return "电梯厅一片死寂。一面灯箱广告还贴着夏季打折，灯管不亮。";
       return "按钮面板上B1、1F、2F、3F、5F的按键都还亮着。";
     },
     choices: [
@@ -3035,7 +3039,7 @@ Object.assign(storyData, {
   "新达汇-5F电梯厅": {
     image: "images/新达汇/电梯厅.webp",
     text: function(vars) {
-      if (vars._powerOut) return "5F的电梯厅一片死寂。";
+      if (vars._powerOut) return "5F电梯厅一片死寂。墙边立着一排待取的盲盒纸箱，胶带还没拆。";
       return "按钮面板上B1、1F、2F、3F、4F的按键都还亮着。";
     },
     choices: [
@@ -3651,7 +3655,7 @@ Object.assign(storyData, {
       if (vars._visit["新达汇-B1配电房-内部"] === 1) {
         return "你把那具瘦得脱形的身影按倒在地。他挣了几下，不动了。胸牌歪在制服外面——“刘志鹏 · 保安部”，照片上是个笑得很用力的小伙子。\n你环顾这间不到四平米的小屋。\n\
 满地都是矿泉水瓶——不是门外那几个，是几十个，空的，瘪的，从门口一直铺到墙角。\n配电柜前的空地上，一件保安外套叠得整整齐齐，被当作枕头压过，还留着一个人形的凹痕。\n\
-墙上没有任何字。他什么都没写。配电柜侧面钉着一个小抽屉，半开着。";
+墙上没有任何字。他什么都没写。配电柜侧面钉着一个小抽屉，半开着。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       return "配电房里很安静。刘志鹏躺在门边，空瓶还铺在地上，外套还叠在墙角。配电柜侧面的小抽屉半开着。";
     },
@@ -3992,6 +3996,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var d = "扳手从他手里脱落，砸在地上，脆响在走廊里滚了很远。\n他晃了晃，直挺挺地向后倒下去——扬起的灰在应急灯下慢慢落定。\n这是一张五十岁上下的脸，颧骨很高，鼻梁两侧留着眼镜的压痕。眼镜早就不在了。\n他胸前的工牌翻了过来：“王建国 · 物业工程部”。照片上的男人不苟言笑，和躺在地上的这张脸是同一张。";
       if (vars._catFed) d += "\n那只变异猫不知什么时候从管道上跳了下来。它绕着倒下的身影走了一圈，闻了闻他的工牌，然后在离他一步远的地方卧下了。\n它没有叫。";
+      d += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return d;
     },
     choices: [

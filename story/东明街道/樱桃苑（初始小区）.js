@@ -325,8 +325,14 @@ Object.assign(storyData, {
   "家外楼梯间的抉择": {
     image: "images/home/staircase.webp",
     onEnter: updateTime(1), // 花1分钟跑到楼梯间
-    text: "你一路狂奔冲进楼梯间，胸口剧烈地起伏。一只丧尸突然闪到了你的身后！\n\
-你只能快速选择一个楼层离开，或者躲起来，祈祷丧尸不会追你……",
+    text: function(vars) {
+      var desc = "你一路狂奔冲进楼梯间，胸口剧烈地起伏。一只丧尸突然闪到了你的身后！\n\
+你只能快速选择一个楼层离开，或者躲起来，祈祷丧尸不会追你……";
+      if (vars._lastScene === "教程-识别颜色躲丧尸") {
+        desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return desc;
+    },
     qte: {
       timeout: 15000,              // 15 秒（六条去路要读，且无进度条，放宽）
       hidden: true,
@@ -778,7 +784,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "KO丧尸": {
     image: "images/home/KOzombie.webp",
-    text: "你一拳挥出，将丧尸击倒，又补了几脚，它不动了。看来一时半会儿不会有问题了。",
+    text: "你一拳挥出，将丧尸击倒，又补了几脚，它不动了。看来一时半会儿不会有问题了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     onEnter: updateTime(1, { add: { strength: -1 } }), // 花1分钟揍丧尸
     choices: [
       {
@@ -919,7 +925,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: "images/home/防爆门成功.webp",
     onEnter: { add: { strength: -1 } },
     text: "在丧尸冲过来时，你侧身把防爆门关上了，它的半只手臂夹在了中间，却仍不断挥舞着。\n\
-你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。",
+你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续前进",
@@ -1315,7 +1321,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     text: "你率先发动了攻击。\n\
 前面那只丧尸向你缓缓走来，你一个滑铲闪过去，冲向后面那只愣神的丧尸，一拳正中脑门。\n\
 丧尸一个踉跄将要倒地，被你擒住手臂，一个过肩摔，把它重重砸在它的同伙上。\n\
-两只丧尸缓缓爬起来，眼睛似乎在燃烧。你决定？",
+两只丧尸缓缓爬起来，眼睛似乎在燃烧。你决定？\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "躲进旁边的房间",
@@ -1333,7 +1339,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     onEnter: updateTime(3, { add: { strength: -1 } }), // 花3分钟再打一次
     text: "你从墙上掰下来一根长长的铁管，狠狠砸在丧尸们的脑袋上。\n\
 咚！咚！        \n\
-嗯，现在不会有问题了。",
+嗯，现在不会有问题了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "往里面走",
@@ -1632,7 +1638,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "樱桃苑-4楼-胜利": {
     image: "images/home/4楼另一端.webp",
     text: "你看穿了它们的攻击节奏。在第一个丧尸扑过来的瞬间，你侧身闪过，顺势把它推进了旁边的杂物堆。第二个被地上的尸体绊倒，你一脚踩住它的后背，借力跃过第三个伸来的手——第四个还在门口挣扎着挤出来，你一个箭步冲过了走廊。\n\
-身后传来碰撞和低吼声，但它们暂时追不上来了。",
+身后传来碰撞和低吼声，但它们暂时追不上来了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "上楼到5楼",

@@ -338,7 +338,7 @@ Object.assign(storyData,{
     text: "这只黑皮的药房学徒举起针筒向你挥来，你抬手格挡；他又张开嘴向你肘部咬下，你抽出手向右闪开，脖子后缩，躲过他又一爪。\n\
 它发出低沉的怒吼向你再次扑来，你看准时机，抓住针筒，反手一拧将其夺下，再一脚将其踹到货架上，\n\
 轰的一声，数不清的药箱砸在它身上。有这个铁质货架压着，一时半会儿应该是起不来了。\n\
-你低头看了一眼夺下的针筒——筒壁上还残留着水渍。旁边就是垃圾桶，里面有一个被掰断的针头。",
+你低头看了一眼夺下的针筒——筒壁上还残留着水渍。旁边就是垃圾桶，里面有一个被掰断的针头。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "检查夺下的针筒",
@@ -920,11 +920,11 @@ Object.assign(storyData,{
     onEnter: initMemoryGame(["红","蓝","绿"], 10), // 中等难度
     choices: [
       {
-        text: "输入你看到的颜色（体力-1）",
+        text: "输入你看到的颜色",
         input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
         condition: checkFlashAnswer,
         elseScene: "结局-颜色错误，被丧尸咬死",
-        effect: updateTime(5, { add: { strength: -1 } }),
+        effect: updateTime(5, { add: { strength: -1 }, set: { _lastCombatDrain: 1 } }), // 标记扣值供十字路口 text 事后提示
         nextScene: "三林路-环林东路 十字路口",
         timeout: 15000,
         timeoutScene: "结局-被丧尸扑倒咬死"
