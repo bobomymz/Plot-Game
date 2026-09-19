@@ -1,0 +1,4 @@
+[     175ms] [LOG] 【引擎】变量已初始化： {strength: 7, isWeak: false, dd: 1, hh: 8, mm: 0} @ http://127.0.0.1:8630/engine.js:196
+[     184ms] [LOG] 【预加载】开始预加载 509 张图片... @ http://127.0.0.1:8630/engine.js:1500
+[    1186ms] [LOG] 【预加载】完成，509 张图片已缓存。 @ http://127.0.0.1:8630/engine.js:1508
+[    1288ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8630/favicon.ico:0

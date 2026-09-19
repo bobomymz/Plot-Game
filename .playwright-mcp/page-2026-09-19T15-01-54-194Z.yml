@@ -1,0 +1,6 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - img "场景图" [ref=e4]
+    - generic: 🔍
+  - paragraph [ref=e6] [cursor=pointer]: 你是建平中学的毕业生，高▮
+  - button "🔄 重新开始" [ref=e8] [cursor=pointer]
