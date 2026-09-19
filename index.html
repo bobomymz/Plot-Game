@@ -23,6 +23,7 @@
     <!-- 场景图片 -->
     <div id="image-area">
       <img id="scene-image" src="" alt="场景图">
+      <div id="zoom-badge" style="display:none;">🔍</div>
     </div>
 
     <!-- 剧情文字 -->
@@ -38,6 +39,11 @@
       <button id="backtrack-btn" style="display:none;">↩ 回溯</button>
       <button id="restart-btn">🔄 重新开始</button>
     </div>
+  </div>
+
+  <!-- 图片查看器（标记场景图点击放大，见 engine.js 图片查看器节） -->
+  <div id="image-viewer" style="display:none;">
+    <img id="image-viewer-img" src="" alt="查看大图">
   </div>
 
   <!-- 先加载剧情数据，再加载引擎 -->

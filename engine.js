@@ -6,6 +6,10 @@ const sceneText   = document.getElementById("scene-text");
 const choicesArea = document.getElementById("choices-area");
 const restartBtn  = document.getElementById("restart-btn");
 const backtrackBtn = document.getElementById("backtrack-btn");
+const imageArea   = document.getElementById("image-area");
+const zoomBadge   = document.getElementById("zoom-badge");
+const imageViewer = document.getElementById("image-viewer");
+const imageViewerImg = document.getElementById("image-viewer-img");
 
 
 // --- 游戏运行状态 ---

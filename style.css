@@ -65,6 +65,47 @@ html, body {
   display: block;
 }
 
+/* ========== 图片查看器（imageZoom 标记场景可点开，见 engine.js 图片查看器节） ========== */
+/* 角标 = 门票：仅引擎在标记场景给 #image-area 加 .image-zoomable 时显示 */
+#zoom-badge {
+  position: absolute;
+  right: 24px;
+  bottom: 220px;             /* 抬到文本卡 -200px 叠压区之上 */
+  z-index: 60;               /* 压过特效遮罩（50），与文本/选项同层 */
+  padding: 6px 10px;
+  font-size: 20px;
+  line-height: 1;
+  background: rgba(22, 20, 15, 0.6);
+  border: 1px solid rgba(122, 116, 102, 0.4);
+  border-radius: 999px;
+  pointer-events: none;      /* 点击穿透到图片 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#image-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 140;              /* 文本展开(101)/状态栏(120)之上，QTE 条(150)之下 */
+  background: rgba(0, 0, 0, 0.92);
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;        /* 手势全部接管（捏合缩放/拖拽平移） */
+  overscroll-behavior: contain;
+}
+
+#image-viewer-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;       /* 完整显示，永不裁切 */
+  transform-origin: 0 0;     /* 缩放平移由 JS 用 translate/scale 计算 */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;      /* 手势统一落在背板 #image-viewer 上 */
+}
+
 /* ========== 剧情文字：碳灰纸 + 笔记本栏线 ========== */
 #text-area {
   position: relative;
@@ -593,6 +634,19 @@ html, body {
     background: rgba(168, 212, 105, 0.15);
     border-color: rgba(168, 212, 105, 0.6);
   }
+
+  /* 标记场景的场景图：放大镜光标（门票语义，未标记场景不变） */
+  #image-area.image-zoomable #scene-image {
+    cursor: zoom-in;
+  }
+
+  /* 查看器内：未放大时可继续放大，放大后可拖拽 */
+  #image-viewer {
+    cursor: zoom-in;
+  }
+  #image-viewer.zoomed {
+    cursor: grab;
+  }
 }
 
 /* ===== 手机竖屏：单屏紧凑布局（图上 / 文中 / 选项下，一屏内完成阅读+选择） ===== */
@@ -625,6 +679,14 @@ html, body {
 
   #scene-image {
     object-fit: contain;               /* 非 16:9 的图完整显示、两侧/上下补底色，永不裁内容 */
+  }
+
+  /* 角标贴图片区右下角（手机端文本卡不叠压图片，无需抬高） */
+  #zoom-badge {
+    right: 10px;
+    bottom: 8px;
+    font-size: 16px;
+    padding: 5px 8px;
   }
 
   #text-area {
