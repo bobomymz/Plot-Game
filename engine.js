@@ -328,6 +328,7 @@ function clearMemoryFlash() {
   const overlay = document.getElementById("screen-effect-overlay");
   if (overlay) {
     overlay.style.background = 'transparent';
+    overlay.style.animation = ''; // 恢复 pulse-vignette 等 CSS 动画（闪色期间被禁用，见 applyMemoryFlash）
     // 不再设置 display，交给 applyScreenEffects 统一管理
   }
 }
@@ -354,12 +355,17 @@ function applyMemoryFlash(vars) {
 
   overlay.style.display = 'block';
   overlay.style.transition = 'background 0.05s';
+  // 关键：vignette-danger（体力≤1）的 pulse-vignette 动画在 keyframes 里写死 background，
+  // CSS 动画优先级高于 inline style，会把闪色的 inline background 压掉导致闪色不可见。
+  // 闪色期间禁用 overlay 动画，播完/打断时由下方收尾和 clearMemoryFlash 恢复。
+  overlay.style.animation = 'none';
 
   const colorMap = { '红': 'rgba(255,34,0,0.55)', '蓝': 'rgba(34,102,255,0.55)', '绿': 'rgba(34,204,34,0.55)', '黄': 'rgba(255,204,0,0.55)', '紫': 'rgba(170,68,255,0.55)', '白': 'rgba(255,255,255,0.55)' };
 
   function flash(index) {
     if (index >= seq.length) {
       overlay.style.background = 'transparent';
+      overlay.style.animation = '';  // 恢复暗角脉冲等 CSS 动画（闪色期间被禁用）
       applyScreenEffects();  // 闪色结束后恢复屏幕特效（暗角/雨滴等），不再硬编码 display:none
       vars._seqPlayed = true;
       // 序列不清空：回溯/读档落回本场景时需重播原序列（见 renderScene 的 _seqScene 判定）

@@ -780,7 +780,7 @@ Object.assign(storyData, {
 
 **引擎函数（engine.js）：**
 
-- `applyMemoryFlash(vars, onDone)` — 检测 `gameState._currentSeq`，依次在 `#screen-effect-overlay` 上闪烁颜色，播完后设 `_seqPlayed = true`（序列**保留**不清空）
+- `applyMemoryFlash(vars, onDone)` — 检测 `gameState._currentSeq`，依次在 `#screen-effect-overlay` 上闪烁颜色，播完后设 `_seqPlayed = true`（序列**保留**不清空）。闪色期间引擎会把 overlay 的 `animation` 临时置 `none`、播完/打断后恢复——因为 `vignette-danger` 的 `pulse-vignette` keyframes 写死了 `background`，CSS 动画优先级高于 inline style，不禁用会把闪色整个压掉（体力≤1 时闪色不可见）。**给 overlay 新增带 background 的 keyframes 动画时，同样会被闪色期禁用，无需额外处理**
 - `clearMemoryFlash()` — 清理动画定时器、重置遮罩
 - 序列属主记录：场景 onEnter 生成新序列时引擎把场景 ID 写入 `_seqScene`；**回溯/读档（skipOnEnter）落回该场景时重播原序列**（序列不变、动画重放，避免没记住的玩家被卡死；按 `_seqScene === sceneId` 判定，不会在无关场景误播旧序列）
 
