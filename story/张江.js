@@ -13,7 +13,7 @@
 //           防止绕开大门门禁）
 //   南岸：加油站（柴油来源①·L2） / 人工智能岛（科创老师·门禁卡·监控·食堂/停车场冗余）
 //         上科大（曹睿泽宿舍·教学楼/食堂冗余） / 华大半导体 fab（厂区广场/风淋状态机/白区/夹层/动力站·洪金宝）
-//   L3：川杨河南岸堤 → 川杨河大桥（3 段闪色各耗 1 弹，单向）→ 河北岸（街口沿街铺面冗余）
+//   L3：川杨河南岸堤 → 川杨河大桥（3 段闪色各耗 1 弹、扣 1 次面具滤罐，单向）→ 河北岸（街口沿街铺面冗余）
 //       → 上海市检测中心（正门/卸货区侧门双入口，侧门直插走廊暗段，走廊两端可互通）
 //
 // 知识分层（§八，勿在文本里向未获知者剧透）：
@@ -22,6 +22,17 @@
 // 洪金宝撤离：computed _jinbaoLeft = dd >= (_dieselDelivered ? 6 : 5)（core.js 注册）。
 // 本文件用到的变量需在 story/core.js _variables 的“张江”区块注册（见 core.js 内注释清单）。
 // 图片全部占位，TODO 注释标出建议路径（用户生图后替换）。
+
+// “戴面具进危害”的统一入口（与民防/上实南校/仁济/金谊的 maskRemainingUses 计数规则一致）：
+// 有面具且滤罐未耗尽 → 扣 1 次、返回 true；否则不扣、返回 false。
+// 上桥的扣次因门槛已保证滤罐有效，直接写在选项静态 effect 里（updateTime(N, { add: { maskRemainingUses: -1 } })）。
+function zjGasMaskDon(vars) {
+  if (vars.hasGasMask && vars.maskRemainingUses > 0) {
+    vars.maskRemainingUses -= 1;
+    return true;
+  }
+  return false;
+}
 
 Object.assign(storyData, {
 
@@ -1243,7 +1254,14 @@ Object.assign(storyData, {
       } else if (vars._airlockBlowing) {
         cs.push({ text: "站着等风停", nextScene: "张江-华大-风淋舱-吹风", effect: updateTime(1) });
         cs.push({ text: "等不及了，撞内门", nextScene: "张江-华大-风淋舱-击退", effect: updateTime(1) });
-        cs.push({ text: "把外门打开一条缝", nextScene: "张江-华大-风淋舱-泄漏", effect: updateTime(1) });
+        cs.push({
+          text: "把外门打开一条缝",
+          nextScene: "张江-华大-风淋舱-泄漏",
+          effect: function(vars) {
+            vars._airlockMaskOn = zjGasMaskDon(vars);
+            return updateTime(1)(vars);
+          }
+        });
       } else {
         if (!vars._airlockOuterClosed) {
           cs.push({
@@ -1331,7 +1349,14 @@ Object.assign(storyData, {
     choices: [
       { text: "站稳了，等它吹完", nextScene: "张江-华大-风淋舱-倒计时", effect: updateTime(1) },
       { text: "等不及了，撞内门", nextScene: "张江-华大-风淋舱-击退", effect: updateTime(1) },
-      { text: "把外门打开一条缝", nextScene: "张江-华大-风淋舱-泄漏", effect: updateTime(1) }
+      {
+        text: "把外门打开一条缝",
+        nextScene: "张江-华大-风淋舱-泄漏",
+        effect: function(vars) {
+          vars._airlockMaskOn = zjGasMaskDon(vars);
+          return updateTime(1)(vars);
+        }
+      }
     ]
   },
 
@@ -1395,7 +1420,8 @@ Object.assign(storyData, {
       var desc = "你刚把外门拉开一条缝，舱内“轰”的一声——压差崩了。\n\
 一股看不见的东西从洁净区那侧的缝隙里反灌进来，紧跟着喷嘴开始往外吐酸雾，白蒙蒙的，呛得眼睛发辣。两扇门同时“咔哒”锁死，面板红字疯狂闪烁：压差故障，污染物反灌。\n\
 这是 AMC——气态分子污染物。厂房手册上说，这东西在洁净区是被滤网锁住的猛兽；现在它跟你关在了同一个笼子里。";
-      if (vars.hasGasMask) desc += "\n你摸出防毒面具扣在脸上。滤罐是过期的，橡胶都发硬了——但每一口呛人的酸味都淡了一半。老洪，谢了。";
+      if (vars._airlockMaskOn) desc += "\n你摸出防毒面具扣在脸上。滤罐是过期的，橡胶都发硬了——但每一口呛人的酸味都淡了一半。老洪，谢了。";
+      else if (vars.hasGasMask) desc += "\n你摸出防毒面具扣在脸上——滤罐里的活性炭早耗干了。酸味一丝没淡，顺着橡胶缝往里灌，喉咙火烧火燎。";
       else desc += "\n你捂住口鼻，但那股酸味无孔不入，喉咙火烧火燎。";
       if (vars._readAirlockRules) desc += "\n规程第五条在脑子里亮了起来：故障——按【紧急复位】。";
       else desc += "\n面板上那两个键，哪个是停了这个的？";
@@ -1421,12 +1447,12 @@ Object.assign(storyData, {
     }
   },
 
-  // 泄漏通用伤害：每轮 -1（面具每两轮 -1）；体力扣尽 → 结局-风淋舱
+  // 泄漏通用伤害：每轮 -1（有效滤罐面具每两轮 -1，见 _airlockMaskOn）；体力扣尽 → 结局-风淋舱
   "张江-华大-风淋舱-泄漏-乱拍": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-风淋舱-泄漏.webp */
     onEnter: function(vars) {
       vars._airlockLeakRounds = (vars._airlockLeakRounds || 0) + 1;
-      var hurt = vars.hasGasMask ? (vars._airlockLeakRounds % 2 === 0 ? 1 : 0) : 1;
+      var hurt = vars._airlockMaskOn ? (vars._airlockLeakRounds % 2 === 0 ? 1 : 0) : 1;
       vars.strength = Math.max(0, vars.strength - hurt);
       vars._leakJustHurt = hurt > 0;
       return {};
@@ -1457,7 +1483,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-风淋舱-泄漏.webp */
     onEnter: function(vars) {
       vars._airlockLeakRounds = (vars._airlockLeakRounds || 0) + 1;
-      var hurt = vars.hasGasMask ? 0 : 1; // 读规程一次成功：无面具扣1轮，面具档0（减半后不足一轮）
+      var hurt = vars._airlockMaskOn ? 0 : 1; // 读规程一次成功：无有效滤罐扣1轮，面具档0（减半后不足一轮）
       vars.strength = Math.max(0, vars.strength - hurt);
       vars._leakJustHurt = hurt > 0;
       return {};
@@ -1481,7 +1507,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-风淋舱-泄漏.webp */
     onEnter: function(vars) {
       vars._airlockLeakRounds = (vars._airlockLeakRounds || 0) + 1;
-      var hurt = vars.hasGasMask ? (vars._airlockLeakRounds % 2 === 0 ? 1 : 0) : 1;
+      var hurt = vars._airlockMaskOn ? (vars._airlockLeakRounds % 2 === 0 ? 1 : 0) : 1;
       vars.strength = Math.max(0, vars.strength - hurt);
       vars._leakJustHurt = hurt > 0;
       return {};
@@ -1897,15 +1923,17 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       combatDrain(vars);
       vars._fabFigCDone = true;
-      var splashed = vars.hasGasMask ? 5 : 15;
+      var splashed = vars.hasGasMask && vars.maskRemainingUses > 0 ? 5 : 15;
       vars.mercuryLoad = Math.min(100, (vars.mercuryLoad || 0) + splashed);
       return updateTime(2)(vars);
     },
     text: function(vars) {
       var desc = "你逼着它转了半个圈，一记横扫把它掀进空槽里。它挣扎着要爬出来，肚子上的布料“嘶”地裂了一道缝——白雾喷出来，被槽子上方的排风口一把拽了上去。\n\
 它瘪下去，不动了。整条工位被排风拉得干干净净。";
-      if (vars.hasGasMask) {
+      if (vars.hasGasMask && vars.maskRemainingUses > 0) {
         desc += "\n几点飞溅落在你的面具上，你用袖子擦掉了。隔着滤罐，那股甜酸味只剩一点若有若无的尾巴。";
+      } else if (vars.hasGasMask) {
+        desc += "\n几点飞溅落在你的面具上——滤罐早耗干了，那股甜酸味穿过橡胶缝贴上皮肤，一丝都没淡。";
       } else {
         desc += "\n飞溅的液体星星点点落在你的手背和下巴上，凉丝丝的，带着那股甜酸味。你赶紧擦，越擦越觉得皮肤发麻。\n<span style='color: #ffaa00;'>有什么东西渗进来了。</span>";
       }
@@ -2947,7 +2975,7 @@ Object.assign(storyData, {
   },
 
   // ==================== L3 · 川杨河南岸堤（过桥门槛） ====================
-  // 硬门槛（§七）：hasGasMask && hasGun && gunAmmo >= 3，缺一不可上桥。
+  // 硬门槛（§七）：hasGasMask && maskRemainingUses > 0 && hasGun && gunAmmo >= 3，缺一不可上桥；上桥扣 1 次滤罐。
   // 桥只连南北两岸地面；回程走高架（张江立交 → 外环罗山路 → 北蔡镇罗山下）。
 
   "张江-川杨河南岸堤": {
@@ -2968,13 +2996,13 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       cs.push({
-        showCondition: "hasGasMask && hasGun && gunAmmo >= 3",
+        showCondition: "hasGasMask && maskRemainingUses > 0 && hasGun && gunAmmo >= 3",
         text: "戴好防毒面具，数足三发子弹，上桥",
         nextScene: "张江-川杨河大桥-1",
-        effect: updateTime(2, { set: { _bridgeFrom: "南" } })
+        effect: updateTime(2, { set: { _bridgeFrom: "南" }, add: { maskRemainingUses: -1 } })
       });
       cs.push({
-        showCondition: "!(hasGasMask && hasGun && gunAmmo >= 3)",
+        showCondition: "!(hasGasMask && maskRemainingUses > 0 && hasGun && gunAmmo >= 3)",
         text: "沿引桥走两步，探探虚实",
         nextScene: "张江-川杨河南岸堤-探引桥",
         effect: updateTime(2)
@@ -2998,8 +3026,9 @@ Object.assign(storyData, {
       var desc = "你沿着引桥的坡道走了十几米。堵在坡上的车一辆咬着一辆，车身上落了层灰。\n\
 最近的那只背对着你，离你不到十米。你的鞋底蹭过一粒石子——它没有回头。它面前的护栏外就是河，它全部的心思都在那片水上。\n\
 可再往前看，坡道中段的那几只，站姿就不一样了。它们立在原地轻轻摇晃，脑袋一下一下地朝两边划——像在听。桥面那么长，丧尸那么多，你没法保证每一只都背对着你走到头。\n\
-一股甜腻的味道顺着风飘过来，越来越清楚——是从桥中段的方向来的。这东西隔着这么远都能闻见，走到跟前会是什么样，你不敢想。\n\
-你退回堤上。这桥，不是两手空空的人走的。";
+一股甜腻的味道顺着风飘过来，越来越清楚——是从桥中段的方向来的。这东西隔着这么远都能闻见，走到跟前会是什么样，你不敢想。\n";
+      if (vars.hasGasMask && vars.maskRemainingUses <= 0) desc += "你按了按包里的防毒面具，又松开了手。滤罐在上一次硬扛里就耗干了——隔着它，这股甜味一丝都不会少。\n";
+      desc += "你退回堤上。这桥，不是两手空空的人走的。";
       return desc;
     },
     choices: [
@@ -3217,10 +3246,10 @@ Object.assign(storyData, {
       cs.push({ text: "往东，去上海市检测中心", nextScene: "张江-检测中心-大门", effect: updateTime(8) });
       cs.push({ text: "去路边的铺面看看", nextScene: "张江-河北岸-沿街铺面", effect: updateTime(2) });
       cs.push({
-        showCondition: "hasGasMask && hasGun && gunAmmo >= 3",
+        showCondition: "hasGasMask && maskRemainingUses > 0 && hasGun && gunAmmo >= 3",
         text: "戴好防毒面具，数足三发子弹，上桥回南岸",
         nextScene: "张江-川杨河大桥-1",
-        effect: updateTime(2, { set: { _bridgeFrom: "北" } })
+        effect: updateTime(2, { set: { _bridgeFrom: "北" }, add: { maskRemainingUses: -1 } })
       });
       cs.push({ text: "上张江立交的匝道，回高架", nextScene: "张江立交桥", effect: updateTime(5) });
       return cs;
@@ -3547,7 +3576,7 @@ Object.assign(storyData, {
       combatDrain(vars);
       vars._labZombieDead = true;
       vars._hasTestReport = true;
-      vars.mercuryLoad = Math.min(100, (vars.mercuryLoad || 0) + (vars.hasGasMask ? 5 : 15));
+      vars.mercuryLoad = Math.min(100, (vars.mercuryLoad || 0) + (vars.hasGasMask && vars.maskRemainingUses > 0 ? 5 : 15));
       return updateTime(3)(vars);
     },
     text: function(vars) {
@@ -3557,7 +3586,7 @@ Object.assign(storyData, {
       segs.push("《应急水源专项检测报告》。报告编号 YJ-2026-0628-011。采样日期：6 月 26 日至 27 日，六个点位。第三页，测定结果表——你看得懂的部分不多，但“甲基汞”三个字后面那个红色的数字，和它旁边一整排判定符号，谁都看得懂。光是那一行的数字，就把标准限值甩出去几百倍。");
       segs.push("报告的末页压着两枚红章：检验检测专用章，CMA。签名栏里是一个龙飞凤舞的名字：顾嘉铭，6 月 28 日。\n再下面一栏，取件人签收——空着。");
       segs.push("这栋楼里唯一测出真相的人，把报告攥在手里，在这间屋子里念了不知多少天的编号。差一天，就只差一天，它就能躺进待取件架的格子里。\n现在，它在你的手里了。");
-      if (!vars.hasGasMask) segs.push("缠斗里蹭到他皮肤的地方，隐隐地发麻。");
+      if (!(vars.hasGasMask && vars.maskRemainingUses > 0)) segs.push("缠斗里蹭到他皮肤的地方，隐隐地发麻。");
       segs.push("<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得[上海市检测中心报告]——官方全项检测，数据、签名、公章齐全。它不占背包。</span>");
       segs[segs.length - 1] += combatDrainText(vars);
       return segs;

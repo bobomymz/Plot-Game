@@ -316,6 +316,7 @@ const storyData = {
     _airlockStartFails: 0,     // 风淋舱：未关外门强启的连续报错次数（2次触发初级警报）
     _airlockLockedOut: false,  // 风淋舱：强撬内门后系统锁死（须等复位才能重试）
     _airlockLeakRounds: 0,     // 风淋舱：AMC 泄漏已困轮数（面具减半用）
+    _airlockMaskOn: false,     // 风淋舱：泄漏开始时是否戴着有效滤罐的面具（进泄漏扣1次maskRemainingUses，按此标记结算减伤）
     _airlockAlarmZombie: false,// 风淋初级警报是否引来丧尸进外走廊（此后连廊多一场遭遇）
     _airlockAlarmRang: false, // 风淋警报是否刚在本场景响过（强启失败场景 text 分支用，读后由下次进入覆盖）
     _leakSolved: false,        // 泄漏乱拍是否恰好蒙对（nextScene 分流用，临时）

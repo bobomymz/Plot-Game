@@ -1527,12 +1527,31 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 只听嘶的一声，亮斑闪烁起来，像被什么挡住了。你眼前一阵发黑，感到头晕目眩。那双绿色的眼睛，缓缓向你靠近。",
     choices: [
       {
-        showCondition: "maskRemainingUses > 0",
+        showCondition: "hasGasMask && maskRemainingUses > 0",
         text: "还不戴上你的防毒面具！快跑！",
         nextScene: "小区东门",
         effect: { add: { maskRemainingUses: -1 } }
+      },
+      {
+        showCondition: "!hasGasMask || maskRemainingUses <= 0",
+        text: "捂住口鼻，转身快跑！",
+        nextScene: "结局-民防设施-绿色亮斑"
       }
     ]
+  },
+
+  "结局-民防设施-绿色亮斑": {
+    image: "images/home/fanRoom-fail.webp",
+    text: function(vars) {
+      var body = "你捂住口鼻，转身就跑。可那阵头晕比你的脚步快——走廊在眼前拧成了麻花，你一头撞上管道，又撞上墙。\n\
+甜腻的味道从指缝里渗进来。身后那两点绿光不紧不慢地跟着，像提着灯笼散步的人。\n";
+      if (vars.hasGasMask) {
+        body += "你手忙脚乱地摸出防毒面具扣在脸上——吸进来的还是那股甜味。滤罐早在上一场硬扛里就耗干了，这层橡胶壳现在什么都拦不住。\n";
+      } else {
+        body += "你想起了物资区的纸箱，想起那个老式防毒面具。你从它旁边走过的时候，没有伸手。\n";
+      }
+      return body + "—— 结局：护住口鼻是没有用的 ——";
+    }
   },
 
   "小区东门": {
