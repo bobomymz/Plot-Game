@@ -236,6 +236,10 @@ const storyData = {
     _pengNoodleShared: false,   // 14班方便面是否已分享（饭点一次性）
     hasCanteenFood: false,      // 食堂干粮（占背包，一次性，整理整理里吃+2体力）
     hasFeverMed: false,         // 退烧药（医务室，占背包，感冒系统铺路）
+    vitaminC: 0,                // 身上携带的维C盒数 0~8（益丰大药房，可堆叠，每盒占1格；吃一盒免疫/防感冒+1体力）
+    _vitaminCLeft: 8,           // 益丰大药房货架上还剩的维C盒数（世界库存，初始8；丢弃不回货架，同其它物品丢弃=损失）
+    _vitaminCured: false,       // 吃维C这一盒是否治好了当场的感冒（onEnter写入、text读，吃一次覆盖一次）
+    _drawerVitaminTaken: false, // 击杀白大褂后抽屉里那瓶维生素是否已收进背包（一次性，防重复刷）
     hasWatch: false,            // 机械手表（行政楼2F文印室，占背包，整理整理看时间）
     hasCSGun: false,            // 真人CS枪（废弃小楼1F纸箱，占背包，化学实验室拆成手电筒）
     hasScrewdriver: false,      // 螺丝刀（物理实验室/老吴杂物室锁柜，钥匙串开，拆CS枪用，全图唯一）
@@ -939,6 +943,17 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
+        showCondition: "vitaminC > 0 && !_wearingCleanSuit",
+        text: "吃一盒维C（{vitaminC}盒）",
+        nextScene: "整理整理-吃维C"
+      },
+      {
+        showCondition: "vitaminC > 0",
+        text: "丢一盒维C",
+        effect: updateTime(1, { add: { vitaminC: -1, itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
         showCondition: "hasMercuryPill && mercuryLoad > 0 && !_wearingCleanSuit",
         text: "服用无标签药丸（作用未知）",
         nextScene: "整理整理-服药丸"
@@ -1278,6 +1293,28 @@ const storyData = {
     image: "images/整理整理.webp",
     onEnter: updateTime(2, { add: { strength: 4, itemCount: -1 }, set: { hasCannedFood: false } }),
     text: "你拉开罐头拉环，顾不上找筷子，直接用手捞着吃。油水混着肉块滑进胃里，连汤都喝得一滴不剩——这是这几天来最像样的一顿。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+4，当前体力：{strength}。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-吃维C": {
+    image: "images/整理整理.webp",
+    onEnter: function(vars) {
+      vars._vitaminCured = vars.hasCold;           // 记下吃这一盒时是否正感冒，供 text 区分
+      vars.hasCold = false;
+      vars._rainExposure = 0;
+      vars.vitaminC = Math.max(0, vars.vitaminC - 1);
+      vars.itemCount = Math.max(0, vars.itemCount - 1);
+      vars.strength = Math.min(10, vars.strength + 1);
+      return updateTime(1)(vars);
+    },
+    text: function(vars) {
+      if (vars._vitaminCured) {
+        return "你撕开包装，把两片维生素C丢进嘴里嚼碎，就着水咽了下去。酸酸甜甜的味道在舌根化开，一路凉丝丝地滑到胃里。\n过了一会儿，你身上那股散不掉的寒气慢慢退了，额头也不怎么烫了——这盒维C好像真把感冒压了下去。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】感冒已缓解，体力+1，当前体力：{strength}。</span>";
+      }
+      return "你撕开包装，把两片维生素C丢进嘴里嚼碎，就着水咽了下去。酸酸甜甜的味道在舌根化开，喉咙和鼻子都清爽了几分。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+    },
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

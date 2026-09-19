@@ -26,7 +26,7 @@ Object.assign(storyData,{
       },
       {
         showCondition: "pharmacyZombieKilled",
-        text: "绕到柜台后面，看看尸体上还有没有遗漏的东西",
+        text: "绕到柜台后面看看",
         nextScene: "益丰大药房-柜台后-已清理",
         effect: updateTime(1)
       },
@@ -104,23 +104,27 @@ Object.assign(storyData,{
 
   "益丰大药房-击杀": {
     image: "images/小区周边/益丰大药房/击杀白大褂.webp",
-    onEnter: { add: { strength: 1 }, set: { hurtByZombie: false, pharmacyZombieKilled: true } },
+    onEnter: { set: { hurtByZombie: false, pharmacyZombieKilled: true, positionAfterOperation: "益丰大药房-击杀" } },
     text: function(vars) {
-      return "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。\n你蹲下来翻看它刚才啃咬的药箱——里面居然还有几盒没拆封的碘伏棉签和弹性绷带。柜台下面的抽屉里还有一瓶维生素片。\n\
-你撕开碘伏棉签，清理了身上的伤口——至少那些抓痕不会感染了。又把维生素片丢进嘴里嚼了嚼，苦涩中带着一丝甜味。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
+      var desc = "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。\n你蹲下来翻看它刚才啃咬的药箱——里面居然还有几盒没拆封的碘伏棉签和弹性绷带。柜台下面的抽屉里还有一瓶维生素片。\n你撕开碘伏棉签，清理了身上的伤口——至少那些抓痕不会感染了。";
+      if (vars._drawerVitaminTaken) desc += "\n抽屉里那瓶维生素片你已经收进包里了。";
+      return desc;
     },
-    choices: [
-      {
-        text: "继续",
-        nextScene: "益丰大药房",
-        effect: updateTime(1)
-      },
-      {
-        text: "看看他的工牌",
-        nextScene: "利昂药剂师的工牌"
+    choices: function(vars) {
+      var opts = [];
+      if (!vars._drawerVitaminTaken) {
+        opts.push({
+          text: "收起那瓶维生素片",
+          condition: "itemCount < bagVolume",
+          nextScene: "益丰大药房-击杀",
+          effect: updateTime(1, { add: { vitaminC: 1, itemCount: 1 }, set: { _drawerVitaminTaken: true } }),
+          elseScene: "整理整理"
+        });
       }
-    ]
+      opts.push({ text: "继续", nextScene: "益丰大药房", effect: updateTime(1) });
+      opts.push({ text: "看看他的工牌", nextScene: "利昂药剂师的工牌" });
+      return opts;
+    }
   },
 
   "益丰大药房-柜台后-已清理": {
@@ -149,18 +153,30 @@ Object.assign(storyData,{
 
   "益丰大药房-翻找": {
     image: "images/小区周边/益丰大药房/找到维C.webp",
-    onEnter: { add: { strength: 1 } },
-    text: "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱，拿起，放下，拿起，放下，你手快酸死了。\n\
-正准备放弃时，你在角落的货架底层发现了几瓶被遗忘的维生素片——日期还没过。\n\
-你拧开瓶盖吞了两片，苦涩的味道在舌尖化开，身体感觉暖和了一些。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
-    choices: [
-      {
-        text: "继续",
-        nextScene: "益丰大药房",
-        effect: updateTime(5)
+    onEnter: { set: { positionAfterOperation: "益丰大药房-翻找" } },
+    text: function(vars) {
+      if (vars._vitaminCLeft <= 0) {
+        return "你快速扫视货架上的标签。上次发现的那排维生素片已经全拿空了，货架底层只剩几个被撕破的空包装盒，还有几粒滚到角落的药片沾了灰，不能吃了。";
       }
-    ]
+      return "你快速扫视货架上的标签。各种不同的药品名看得你眼花缭乱，拿起，放下，拿起，放下，你手快酸死了。\n正准备放弃时，你在角落的货架底层发现了一排被遗忘的维生素片——包装完好，日期还没过。你数了数，还剩 " + vars._vitaminCLeft + " 盒。";
+    },
+    choices: function(vars) {
+      if (vars._vitaminCLeft <= 0) {
+        return [
+          { text: "离开", nextScene: "益丰大药房", effect: updateTime(1) }
+        ];
+      }
+      return [
+        {
+          text: "拿一盒维C（货架上还剩 {_vitaminCLeft} 盒）",
+          condition: "itemCount < bagVolume",
+          nextScene: "益丰大药房-翻找",
+          effect: updateTime(1, { add: { itemCount: 1, vitaminC: 1, _vitaminCLeft: -1 } }),
+          elseScene: "整理整理"
+        },
+        { text: "先不拿，离开", nextScene: "益丰大药房", effect: updateTime(1) }
+      ];
+    }
   },
 
   "益丰大药房-库房": {

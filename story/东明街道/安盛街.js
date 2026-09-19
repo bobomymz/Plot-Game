@@ -72,7 +72,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "离开这里，回十字路口",
+        text: "去环林东路路口",
         nextScene: "三林路-环林东路 十字路口",
         effect: updateTime(5)
       },
@@ -340,7 +340,6 @@ Object.assign(storyData, {
         effect: updateTime(5)
       },
       {
-        showCondition: "hh >= 19 || hh <= 6",
         text: "休息一会儿",
         nextScene: "理发店-休息"
       },
@@ -380,9 +379,6 @@ Object.assign(storyData, {
       }
       if (isNight && vars.chasedByZombies > 0) {
         desc += "\n<span style='color: #ffaa00;'>窗外的低吼声时远时近——今晚在这里过夜应该能甩掉它们。</span>";
-      }
-      if (vars._lastScene === "理发店-拿到拖把杆" && vars.hasMopHandle) {
-        desc += "\n你掂了掂手里的拖把杆——拆下来后比想象中趁手，棍身上还带着没擦干净的拖布头。";
       }
       return desc;
     },
@@ -467,7 +463,7 @@ Object.assign(storyData, {
       let hint = restHint(vars, "你回复1点体力");
       if (isNight) {
         basicDes = "周师傅拉出一张折叠床，递给你一条毯子。\n“今晚就安心睡吧，我守上半夜，你守下半夜。”\n你把身体埋进折叠床里，听着窗外偶尔传来的丧尸低吼声，竟出奇地睡着了。\n\
-	第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
+    第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
         hint = "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复3点体力，当前体力：{strength}。</span>\
 第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
       } else if(!isMorning) {
@@ -518,31 +514,45 @@ Object.assign(storyData, {
       {
         showCondition: "!hasMopHandle && itemCount < bagVolume",
         text: "看看拖把杆",
-        nextScene: "理发店-拿到拖把杆",
+        nextScene: "理发店-看看拖把杆",
         effect: updateTime(1)
       },
       {
-        text: "回到前面",
+        text: "继续",
         nextScene: "理发店-店内"
       }
     ]
   },
 
-  "理发店-拿到拖把杆": {
+  "理发店-看看拖把杆": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/mopHandle.png */,
-    onEnter: { set: { positionAfterOperation: "理发店-拿到拖把杆" } },
-    text: "墙角靠着一根金属拖把杆，拆下来应该能当武器用。",
+    onEnter: { set: { positionAfterOperation: "理发店-看看拖把杆" } },
+    text: "墙角靠着一根金属拖把杆，应该能当武器用。",
     choices: [
       {
         text: "拿上拖把杆",
         condition: "itemCount < bagVolume",
-        nextScene: "理发店-店内",
+        nextScene: "理发店-获得拖把杆",
         effect: { set: { hasMopHandle: true }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {
         text: "不拿了",
         nextScene: "理发店-店内"
+      }
+    ]
+  },
+
+  "理发店-获得拖把杆": {
+    image: "images/placeholder.png",
+    text: ["你拿起拖把杆掂量掂量————比想象的轻，还挺结实。",
+"“哟，看上我什么东西了？”周师傅的声音从背后传来。",
+"“一根备用杆而已，咋了？哦对了，你可以拿这个防身。”",
+"“真的吗？那太好了。”“送你了，没关系的。现在这个时候谁还关心拖地啊。”"],
+    choices: [
+      {
+        text: "“谢谢周师傅。”",
+        nextScene: "理发店-观察"
       }
     ]
   },
@@ -635,7 +645,7 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        showCondition: "itemCount > 0",
+        showCondition: "chasedByZombies <= 1 && itemCount > 0",
         text: "🎒整理一下物品",
         nextScene: "整理整理",
         effect: { set: { positionAfterOperation: "安盛街中段" } }
@@ -1580,7 +1590,7 @@ Object.assign(storyData, {
         effect: updateTime(6)
       },
       {
-        showCondition: "itemCount > 0",
+        showCondition: "chasedByZombies <= 1 && itemCount > 0",
         text: "🎒整理一下物品",
         nextScene: "整理整理",
         effect: { set: { positionAfterOperation: "安盛街西侧" } }
