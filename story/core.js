@@ -171,7 +171,7 @@ const storyData = {
     hasAntibiotic: false,   // 抗生素（仁济门诊药房）
     hasPainkiller: false,   // 止痛药（仁济门诊药房）
     hasBandage: false,      // 绷带（仁济大门）
-    hasIodine: false,       // 碘伏（仁济检验科）
+    hasIodine: false,       // 碘伏（仁济检验科，可消毒伤口）
     hasAlcohol: false,      // 医用酒精（仁济门诊药房，可消毒伤口）
     hasSutureKit: false,    // 缝合包（仁济手术供应室）
     hasTourniquet: false,   // 止血带（仁济手术供应室）
@@ -976,6 +976,17 @@ const storyData = {
         effect: function(vars) {
           vars.hurtByZombie = false;
           vars.hasAlcohol = false;
+          vars.itemCount = Math.max(0, vars.itemCount - 1);
+          return updateTime(1)(vars);
+        },
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasIodine && hurtByZombie",
+        text: "用碘伏消毒伤口",
+        effect: function(vars) {
+          vars.hurtByZombie = false;
+          vars.hasIodine = false;
           vars.itemCount = Math.max(0, vars.itemCount - 1);
           return updateTime(1)(vars);
         },

@@ -170,10 +170,7 @@ Object.assign(storyData, {
           desc += "墙上贴着一张价目表，最下面一行用圆珠笔加了一行字——“荠菜鲜肉（新品）”。笔迹和价目表上印的字不一样，是一个人手写的。\n";
           desc += "一个戴着鸭舌帽的黑衣人蹲在厨房角落，正在翻一个旧纸箱。听到脚步声，他吓得一激灵，转过身警惕地看着你。\n";
         }
-        if (vars._chenmoRescued) {
-          desc += "\n他嘴角微微动了一下——上次你帮他杀出停车场之后，他对你的态度明显不一样了。“好兄弟，你来啦？”";
-        }
-        else if (vars._visit['初遇陈默']) {
+        if (vars._visit['初遇陈默']) {
           desc += "\n他盯着你看了两秒，忽然认出来了——“是你？在小区里救了你，你居然也杀到这来了。”";
         }
         else if(!backFrom) desc += "“呦，竟然是个活人。”";
@@ -311,7 +308,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "搜刮车辆", nextScene: "金谊广场-停车场-搜刮", effect: updateTime(3) },
-      { text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) },
+      { showCondition:"!_chenmorescued",text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) },
       { text: "去龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) }
     ]
   },
@@ -381,6 +378,7 @@ Object.assign(storyData, {
 
   "金谊广场-停车场-搜刮": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场.webp */,
+    onEnter: {set: {positionAfterOperation: "金谊广场-地面停车场"}},
     text: function(vars) {
       if (vars._visit['金谊广场-停车场-搜刮'] > 1) {
         var again = "你又绕着停车场走了一圈。能拉的车门都拉过了——除了那辆老桑塔纳，其余的全锁着。";
@@ -635,12 +633,20 @@ Object.assign(storyData, {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝3绿" },
         condition: checkFlashAnswer,
-        nextScene: "金谊广场-B1 心谊如意街",
+        nextScene: "金谊广场-地铁站厅-成功",
         elseScene: "金谊广场-地铁站厅-失败",
         effect: updateTime(2),
         timeout: 20000,
         timeoutScene: "金谊广场-地铁站厅-失败"
       }
+    ]
+  },
+
+  "金谊广场-地铁站厅-成功": {
+    images: "images/youKillZombies.webp",
+    text: "你左踢右蹬，一脚一个丧尸，在尸群中灵活走位，把这些丧尸依次打倒。现在你的格斗技巧已经有所提升了。",
+    choices: [
+      {text: "继续",nextScene: "金谊广场-B1 心谊如意街"}
     ]
   },
 
@@ -951,6 +957,7 @@ Object.assign(storyData, {
   // --- 4F 餐饮/影院 ---
   "金谊广场-4F": {
     image: "images/金谊广场/4F.webp" /* TODO: images/金谊广场/4F影院.jpg */,
+    onEnter: { set: { positionAfterOperation: "金谊广场-4F" } },
     text: function(vars) {
       var desc = "你来到四楼。华夏金谊影院的招牌还亮着——不知道是发电机在转还是备用电源。大厅里循环播放着一段片尾字幕，在空无一人的影院里反复回响。\n";
       desc += "放映厅的门半开着，你能看到座椅上坐着几个人——不，是几具尸体。他们躲进来等电影，最后死在了座位上。\n";
@@ -1171,6 +1178,7 @@ Object.assign(storyData, {
   // --- B1 童涵春堂药房 ---
   "金谊广场-B1童涵春堂": {
     image: "images/金谊广场/童涵春堂.webp",
+    onEnter: { set: { positionAfterOperation: "金谊广场-B1童涵春堂" } },
     text: function(vars) {
       var fromTake = vars._lastScene === "金谊广场-B1童涵春堂";
       var desc = (fromTake ? "你把药瓶揣进口袋，转身环顾药房。" : "你推开童涵春堂的玻璃门。") + "药房里弥漫着中药的苦香味。\n";

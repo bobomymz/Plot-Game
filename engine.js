@@ -355,6 +355,7 @@ function applyMemoryFlash(vars) {
   const overlay = document.getElementById("screen-effect-overlay");
   if (!overlay) return false;
 
+  closeImageViewer();   // 闪色播在特效层(z-50)，会被查看器(z-140)盖住；开始播放前自动关闭
   clearMemoryFlash();
 
   overlay.style.display = 'block';
@@ -387,6 +388,153 @@ function applyMemoryFlash(vars) {
   flash(0);
   return true;
 }
+
+// ====== 图片查看器（imageZoom 标记场景图点击放大）======
+// 门票语义：仅当前场景声明 imageZoom: true 时角标显示、点击可开（角标切换在 renderScene 图片节）。
+// 纯 UI 态：不写 gameState、不进存档；换场景（renderScene 开头）与记忆闪色启动时自动关闭。
+// 层级：z-140，QTE 条（150）浮在其上——倒计时不暂停，但始终可见（末日不暂停，见 design.md D3）。
+const VIEWER_MAX_SCALE = 4;        // 缩放上限（相对 contain-fit 的倍率）
+const VIEWER_WHEEL_STEP = 1.15;    // 滚轮每格缩放倍率
+const VIEWER_DRAG_THRESHOLD = 5;   // 位移阈值(px)，超过算拖拽、松开不关闭
+
+let viewerOpen = false;
+let viewerZoomable = false;        // 当前场景是否带 imageZoom 标记（renderScene 每场景刷新）
+let viewerScale = 1;               // 1 = contain 适配屏
+let viewerTx = 0, viewerTy = 0;    // 平移量(px)
+let viewerPointers = new Map();    // pointerId -> {x, y, downX, downY}
+let viewerPinchPrevDist = 0;       // 捏合上一次双指间距（增量式缩放）
+let viewerDragMoved = false;
+
+function openImageViewer() {
+  if (viewerOpen || !viewerZoomable) return;
+  if (!sceneImage.src || sceneImage.style.display === "none") return;
+  imageViewerImg.src = sceneImage.src;
+  viewerOpen = true;
+  viewerScale = 1; viewerTx = 0; viewerTy = 0;
+  viewerPointers.clear();
+  viewerDragMoved = false;
+  imageViewer.style.display = "flex";
+  imageViewer.classList.remove("zoomed");
+  applyViewerTransform();
+}
+
+function closeImageViewer() {
+  if (!viewerOpen) return;
+  viewerOpen = false;
+  viewerPointers.clear();
+  imageViewer.style.display = "none";
+  imageViewer.classList.remove("zoomed");
+}
+
+// 缩放（anchor 为查看器坐标系下的不动点：滚轮光标 / 捏合中点）
+function viewerZoomAt(newScale, ax, ay) {
+  // 图片尚未排版完成（刚打开、仍在解码）时几何未知，忽略本次手势——
+  // 否则按 0 尺寸算出的钳位会把缩放/平移错误归零（通常仅缓存未命中后的第一帧）
+  if (imageViewerImg.offsetWidth === 0) return;
+  newScale = Math.min(VIEWER_MAX_SCALE, Math.max(1, newScale));
+  if (newScale === viewerScale) return;
+  const L = imageViewerImg.offsetLeft, T = imageViewerImg.offsetTop;
+  // 不动点对应的图片局部坐标（transform-origin 0 0：屏点 = (L,T) + local*scale + (tx,ty)）
+  const px = (ax - L - viewerTx) / viewerScale;
+  const py = (ay - T - viewerTy) / viewerScale;
+  viewerScale = newScale;
+  if (viewerScale === 1) {
+    viewerTx = 0; viewerTy = 0;    // 回到适配态，由 flexbox 居中
+  } else {
+    viewerTx = ax - L - px * viewerScale;
+    viewerTy = ay - T - py * viewerScale;
+    clampViewerPan();
+  }
+  imageViewer.classList.toggle("zoomed", viewerScale > 1);
+  applyViewerTransform();
+}
+
+// 平移并钳位：图片边缘不外露背板；不足一屏的维度保持居中
+function clampViewerPan() {
+  const W = imageViewer.clientWidth, H = imageViewer.clientHeight;
+  const L = imageViewerImg.offsetLeft, T = imageViewerImg.offsetTop;
+  const w = imageViewerImg.offsetWidth * viewerScale;
+  const h = imageViewerImg.offsetHeight * viewerScale;
+  if (w <= W) viewerTx = (W - w) / 2 - L;
+  else viewerTx = Math.min(-L, Math.max(W - w - L, viewerTx));
+  if (h <= H) viewerTy = (H - h) / 2 - T;
+  else viewerTy = Math.min(-T, Math.max(H - h - T, viewerTy));
+}
+
+function viewerPanBy(dx, dy) {
+  if (viewerScale <= 1) return;
+  if (imageViewerImg.offsetWidth === 0) return;   // 排版未完成，同 viewerZoomAt
+  viewerTx += dx; viewerTy += dy;
+  clampViewerPan();
+  applyViewerTransform();
+}
+
+function applyViewerTransform() {
+  imageViewerImg.style.transform =
+    "translate(" + viewerTx + "px," + viewerTy + "px) scale(" + viewerScale + ")";
+}
+
+// 滚轮缩放（passive:false 才能 preventDefault 阻止页面滚动）
+imageViewer.addEventListener("wheel", function (e) {
+  if (!viewerOpen) return;
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? VIEWER_WHEEL_STEP : 1 / VIEWER_WHEEL_STEP;
+  viewerZoomAt(viewerScale * factor, e.clientX, e.clientY);
+}, { passive: false });
+
+// Pointer Events 统一鼠标/触屏：单指拖拽平移、双指捏合缩放、单击关闭
+imageViewer.addEventListener("pointerdown", function (e) {
+  if (!viewerOpen) return;
+  // 捕获失败（如非活动指针）不应中断手势登记——捏合/拖拽比捕获更重要
+  try { imageViewer.setPointerCapture(e.pointerId); } catch (err) {}
+  viewerPointers.set(e.pointerId, { x: e.clientX, y: e.clientY, downX: e.clientX, downY: e.clientY });
+  if (viewerPointers.size === 1) viewerDragMoved = false;
+  if (viewerPointers.size === 2) {
+    const pts = [...viewerPointers.values()];
+    viewerPinchPrevDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+  }
+});
+
+imageViewer.addEventListener("pointermove", function (e) {
+  if (!viewerOpen || !viewerPointers.has(e.pointerId)) return;
+  const p = viewerPointers.get(e.pointerId);
+  const dx = e.clientX - p.x, dy = e.clientY - p.y;
+  p.x = e.clientX; p.y = e.clientY;
+  if (Math.hypot(p.x - p.downX, p.y - p.downY) > VIEWER_DRAG_THRESHOLD) viewerDragMoved = true;
+
+  if (viewerPointers.size === 2) {
+    // 捏合：以双指中点为不动点，按间距增量缩放
+    const pts = [...viewerPointers.values()];
+    const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    if (viewerPinchPrevDist > 0 && dist > 0) {
+      viewerZoomAt(viewerScale * dist / viewerPinchPrevDist, (pts[0].x + pts[1].x) / 2, (pts[0].y + pts[1].y) / 2);
+    }
+    viewerPinchPrevDist = dist;
+  } else if (viewerPointers.size === 1 && viewerDragMoved) {
+    viewerPanBy(dx, dy);
+  }
+});
+
+function viewerPointerEnd(e) {
+  if (!viewerOpen) return;
+  const wasSingle = viewerPointers.size === 1 && viewerPointers.has(e.pointerId);
+  viewerPointers.delete(e.pointerId);
+  viewerPinchPrevDist = 0;
+  // 单指按下且未拖拽 → 单击关闭（微信语义）
+  if (wasSingle && !viewerDragMoved) closeImageViewer();
+}
+imageViewer.addEventListener("pointerup", viewerPointerEnd);
+imageViewer.addEventListener("pointercancel", viewerPointerEnd);
+
+// Esc 关闭（桌面）；始终监听、打开时才生效，比开关注册更省事
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && viewerOpen) closeImageViewer();
+});
+
+// 点击场景图：仅标记场景（门票语义）打开查看器
+sceneImage.addEventListener("click", function () {
+  if (viewerZoomable) openImageViewer();
+});
 
 function checkCondition(condition, variables) {
   if (condition == null || condition === true) return true;
@@ -964,6 +1112,7 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   }
   clearSegments();   // 必须在 stopTyping 之前：token 先作废，stopTyping 触发旧分段回调时静默失效
   stopTyping();
+  closeImageViewer();   // 换场景（选项/QTE/回溯/重启/全局触发器）一律关闭查看器，单一 hook 点
 
   // 进入新场景时重置展开状态
   document.getElementById("text-area").classList.remove("text-expanded");
@@ -1063,6 +1212,10 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   } else {
     sceneImage.style.display = "none";
   }
+  // 图片查看器门票：仅标记场景显示角标、允许点击放大（每场景重置，同 showRain 惯例）
+  viewerZoomable = !!scene.imageZoom && !!imageSrc;
+  zoomBadge.style.display = viewerZoomable ? "block" : "none";
+  imageArea.classList.toggle("image-zoomable", viewerZoomable);
 
   choicesArea.style.display = "none";
 

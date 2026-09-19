@@ -141,6 +141,7 @@ Object.assign(storyData,{
 
   "利昂药剂师的工牌": {
     image: "images/小区周边/益丰大药房/利昂的工牌.webp",
+    imageZoom: true,
     text: "你从白大衣的领口里取下了一张工牌。",
     choices: [
       {
@@ -311,6 +312,7 @@ Object.assign(storyData,{
 
   "益丰大药房-右边货架翻找": {
     image: "images/小区周边/益丰大药房/库房的手机.webp",
+    imageZoom: true,
     onEnter: { set: { positionAfterOperation: "益丰大药房-库房" } },
     text: "你埋头寻找，在地板上发现了一部手机。\n\
 它看起来是死机状态，一直卡在锁屏界面，显示的时间是23：47。\n\
