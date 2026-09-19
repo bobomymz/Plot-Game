@@ -205,7 +205,8 @@ const storyData = {
     _renjiAmbulanceChecked: false, // 是否已上救护车检查过（发现车钥匙插在点火开关上，解锁"倒车撞门"选项）
     // 建平中学 - 状态
     _frontGateCleared: false,   // 前门丧尸是否已清（记忆闪色，成功后一次性进出）
-    _backGateOpened: false,     // 后门是否已开（开门引走丧尸，忻老师后门逃脱的铺垫）
+    _backGateOpened: false,     // 后门是否已开（开门引走丧尸，忻老师后门逃脱的铺垫；内侧杀光后从内开门也算）
+    _backGateCleared: false,    // 后门内侧尸群是否已被杀光（内侧"冲上去"闪色胜利；此时门未开但门口已无活尸）
     _harshActive: false,        // Harsh（年级组长丧尸）是否被唤醒（坐电梯触发）
     _harshLag: 6,               // Harsh 落后玩家几步（>=0；走远+1、她逼近-1、折返-2；<=0 即追上）
     _harshTrack: [],            // 玩家地点轨迹数组（真实路径，仅用于折返剪枝判断）

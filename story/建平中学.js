@@ -395,7 +395,7 @@ Object.assign(storyData, {
   "建平-后门": {
     outdoor: true,
     image: function(vars) {
-      if(vars._backGateOpened) {
+      if(vars._backGateOpened || vars._backGateCleared) {
         var f = timeImage({
           morning: "images/建平/后门-清场.webp",
           night: "images/建平/后门-清场-night.webp"
@@ -410,9 +410,14 @@ Object.assign(storyData, {
     },
     onEnter: function(vars) { vars.showZombies = vars.showRain = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "后门"; },
     text: function(vars) {
-      var desc = "你绕到学校后门。";
+      // 从内侧（辅路）过来只有门已开才可能——内侧节点会拦下未开门的玩家
+      var desc = (vars._lastScene === "建平-后门辅路") ? "你沿着辅路走到后门内侧。" : "你绕到学校后门。";
       if (vars._backGateOpened) {
-        desc += "后门已经大开着——门内那些丧尸都被你上次开门时引走了，现在这里空荡荡的。";
+        desc += vars._backGateCleared
+          ? "后门大开着，门口的尸体还堆在那里——都是你干掉的，现在这里空荡荡的。"
+          : "后门已经大开着——门内那些丧尸都被你上次开门时引走了，现在这里空荡荡的。";
+      } else if (vars._backGateCleared) {
+        desc += "后门口横七竖八堆满了尸体——挤在这里的丧尸都被你杀光了，门内再没有动静。";
       } else {
         desc += "丧尸都挤在门内，隔着铁栅栏朝外伸着手臂，低沉的嘶吼连成一片。门内黑压压的一片，看不清到底有多少。";
       }
@@ -421,7 +426,8 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars._backGateOpened) {
-        cs.push({ text: "拉开后门", nextScene: "建平-后门-开门", effect: updateTime(1) });
+        // 内侧已杀光尸群时，从外面开门不再触发战斗
+        cs.push({ text: "推开后门", nextScene: function(v) { return v._backGateCleared ? "建平-后门-开门-清场后" : "建平-后门-开门"; }, effect: updateTime(1) });
       }
       cs.push({ text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) });
       cs.push({ text: "去校园门口", nextScene: "建平-校园门口", effect: updateTime(10) });
@@ -558,6 +564,138 @@ Object.assign(storyData, {
     }
   },
 
+  // ==================== 后门·内侧视角 ====================
+  // 从校园内部（后门辅路）接近后门：尸群挤在门内侧、背对玩家，没有任何遮挡——
+  // 与门外视角（隔着铁栅栏）完全不同。场景级 QTE 模拟"哪一只会突然回头"：
+  // 时限内可安全退回或主动开团；超时 = 被尸群发现（ch+1）逃回辅路。
+
+  "建平-后门-内侧": {
+    outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/建平/后门-内侧.webp（内看铁门+背对尸群） */,
+    qte: function(vars) {
+      if (vars._backGateCleared) return null;   // 尸群已杀光，不再有回头压力
+      return { timeout: "20000 - chasedByZombies * 2000", onTimeout: "建平-后门-内侧-暴露" };
+    },
+    onEnter: function(vars) { vars.showZombies = vars.showRain = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "后门"; },
+    text: function(vars) {
+      if (vars._backGateCleared) {
+        return "辅路尽头就是后门。铁栅栏门还关着，门口横七竖八躺满了尸体——都是你干掉的。\n" + describeWeather(vars);
+      }
+      return "你沿着辅路朝后门摸过去。还有十几米，你猛地僵住了——\n黑压压的丧尸挤在后门内侧，背对着你，隔着铁栅栏朝街上嘶吼、伸手。你和它们之间，什么遮挡都没有。\n它们暂时还没注意到你，但谁知道哪一只会突然回头。\n" + describeWeather(vars);
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars._backGateCleared) {
+        cs.push({ text: "打开后门", nextScene: "建平-后门-内侧-开门", effect: updateTime(1) });
+      } else {
+        cs.push({
+          text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "冲上去！" : "握紧拳头冲上去！"; },
+          nextScene: "建平-后门-内侧-开打"
+        });
+      }
+      cs.push({ text: "悄悄退回辅路", nextScene: "建平-后门辅路", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-后门-内侧-暴露": {
+    outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/建平/后门-内侧.webp */,
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPos = "后门";
+      vars.chasedByZombies = Math.min(5, vars.chasedByZombies + 1);   // 被尸群发现并追了一段
+      return {};
+    },
+    text: "你犹豫得太久了。\n最外面一只丧尸缓缓回过头，浑浊的眼珠对上你的视线。嘶吼声炸开，整片尸群齐刷刷转身，朝你涌过来——\n你头皮发麻，转身就逃，连滚带爬地冲回辅路。尸群被铁栅栏挡着挤不出来，嘶吼声却追着你响了一路。",
+    choices: [
+      { text: "逃回辅路深处", nextScene: "建平-后门辅路", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-后门-内侧-开打": {
+    outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/建平/后门-内侧.webp */,
+    onEnter: initMemoryGame(["红","蓝","绿"], 10, { set: { showZombies: true, currentPos: "后门" } }),
+    text: function(vars) {
+      return (hasMeleeWeapon(vars) ? "你抄起" + meleeWeaponName(vars) : "你赤手空拳") + "，朝尸群的后背扑了上去。\n第一只倒下的瞬间，整片丧尸齐刷刷回头——黑压压的一片，全冲你来了。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+    },
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：4红3蓝3绿" },
+        condition: checkFlashAnswer,
+        nextScene: "建平-后门-内侧-清场",
+        elseScene: "结局-后门-自投罗网",
+        timeout: 13000,            // 10色闪完约8秒，留约5秒输入——几乎必死
+        timeoutScene: "结局-后门-自投罗网"
+      }
+    ]
+  },
+
+  "建平-后门-内侧-清场": {
+    outdoor: true,
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) {
+      vars._backGateCleared = true;
+      vars.currentPos = "后门";
+      updateTime(3)(vars);
+      return {};
+    },
+    text: "杀红了眼。等最后一只丧尸栽倒，你拄着膝盖直喘——后门口已经躺满了尸体，污血淌了一地。\n铁栅栏门还关着，街上空荡荡的。这边闹出这么大动静，居然再没有东西围过来。",
+    choices: [
+      { text: "推开后门", nextScene: "建平-后门-内侧-开门", effect: updateTime(1) },
+      { text: "回辅路", nextScene: "建平-后门辅路", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-后门-内侧-开门": {
+    outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/建平/后门-内侧-开门.webp */,
+    onEnter: function(vars) {
+      vars._backGateOpened = true;   // 内侧杀光后开门：与外侧开门汇合，忻老师线同样解锁
+      vars.showZombies = true;
+      vars.currentPos = "后门";
+      return {};
+    },
+    text: "你推开门，铰链的摩擦声在死寂里格外刺耳，你绷紧了神经——但没有嘶吼回应。\n门外是一条僻静的小巷，沿着它能一路绕回前门方向。",
+    choices: [
+      { text: "出门，绕去前门方向", nextScene: "建平-校园门口", effect: updateTime(10) },
+      { text: "回后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) }
+    ]
+  },
+
+  "建平-后门-开门-清场后": {
+    outdoor: true,
+    image: function(vars) {
+      var f = timeImage({
+        morning: "images/建平/后门-清场.webp",
+        night: "images/建平/后门-清场-night.webp"
+      });
+      return f(vars);
+    },
+    onEnter: function(vars) {
+      vars._backGateOpened = true;   // 内侧已杀光、从外侧补开门
+      vars.showZombies = true;
+      vars.currentPos = "后门";
+      return {};
+    },
+    text: "你缓缓推开后门，门内静悄悄的——挤在这里的丧尸早就死透了，“尸体”横七竖八堆了一地。\n\
+<span style='font-style:italic;'>这能叫尸体吗？本来就是死的吧。</span>\n\
+你跨过尸体，走了进去。",
+    choices: [
+      { text: "走进后门", nextScene: "建平-后门辅路", effect: updateTime(1) }
+    ]
+  },
+
+  "结局-后门-自投罗网": {
+    image: "images/zombieKnockYouDown.webp",
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "你放倒了最前面的几只，但它们是黑压压的一片——前面的倒下，后面的踩着尸体扑上来，根本没有尽头。\n你被淹没在尸群里。" + weaponBrokeText(vars) + "\n—— 结局：自投罗网 ——";
+    }
+  },
+
   "建平-后门辅路": {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/jianping/backAuxRoad.png */,
@@ -583,7 +721,7 @@ Object.assign(storyData, {
         }
         if (vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
           return "你沿着后门辅路走。\n轿车还停在原地，车门大开，引擎已经熄了。忻老师倒靠在车旁，后颈有深深的咬伤，手里还攥着钥匙。\n\
-——丧尸从后门漫进来了。你来晚了一步。";
+" + (vars._backGateCleared ? "——街上的尸群漫过来了。你来晚了一步。" : "——丧尸从后门漫进来了。你来晚了一步。");
         }
         return "你沿着后门辅路走。\n一辆轿车停在路边，车门大开，引擎熄了。一个中年男人倒靠在车旁，已经没了气息。";
       }
@@ -597,7 +735,8 @@ Object.assign(storyData, {
       if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && !vars._xinDead && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         cs.push({ text: "跟忻老师上车（去复旦）", nextScene: "建平-前往复旦", effect: function(v) { v._teacherLeft = true; v.hasCar = false; v.hasEbike = false; v.hasRustyBike = false; v.hasScooter = false; return {}; } });
       }
-      cs.push({ text: "去后门", nextScene: "建平-后门", effect: updateTime(2) });
+      // 未开门时从内侧接近后门 = 走进挤在门内的尸群同侧，走内侧视角节点（QTE 可退/贪死）
+      cs.push({ text: "去后门", nextScene: function(v) { return v._backGateOpened ? "建平-后门" : "建平-后门-内侧"; }, effect: updateTime(2) });
       cs.push({ text: "去食堂", nextScene: "建平-食堂", effect: updateTime(2) });
       cs.push({ text: "去远翔楼", nextScene: "建平-远翔楼-1F", effect: updateTime(2) });
       cs.push({ text: "去致真楼", nextScene: "建平-致真楼-1F", effect: updateTime(2) });
@@ -625,10 +764,13 @@ Object.assign(storyData, {
 
   "建平-金苹果广场": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/jianping/goldenApplePlaza.png */,
+    image: timeImage({
+      morning: "images/建平/金苹果广场.webp",
+      night: "images/建平/金苹果广场-night.webp"
+    }),
     qte: jpChaseQTE(),
     onEnter: function(vars) {
-      vars.showZombies = true;
+      vars.showZombies = vars.showRain = true;
       vars.currentPos = "金苹果广场";
       return jpHubChase(vars, "建平-金苹果广场");
     },
@@ -667,7 +809,8 @@ Object.assign(storyData, {
   "建平-地下车库-西口": {
     image: "images/placeholder.png" /* TODO: images/jianping/bikeGarageRamp.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "地下车库"; },
-    text: "你沿着金苹果广场边上的坡道走下，推开一扇蒙着灰的铁门，进入了地下自行车车库。\n车库很大，一排排车架在昏暗的应急灯下拖着长长的影子，空气里一股潮湿的霉味。",
+    text: "你沿着金苹果广场边上的坡道走下，推开一扇蒙着灰的铁门，进入了地下自行车车库。\n\
+车库很大，一排排车架在昏暗的应急灯下拖着长长的影子，空气里一股潮湿的霉味。",
     choices: [
       { text: "探索车库", nextScene: "建平-地下车库", effect: updateTime(2) },
       { text: "回金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(1) }
@@ -685,7 +828,11 @@ Object.assign(storyData, {
   },
 
   "建平-地下车库": {
-    image: "images/placeholder.png" /* TODO: images/jianping/bikeGarageInterior.png */,
+    image: function(vars) {
+      if(vars.hasTorch) return "images/建平/地下非机动车车库-手电筒.webp";
+      if(vars.hasFireTorch) return "images/建平/地下非机动车车库-火把.webp";
+      return "images/建平/地下非机动车车库.webp";
+    },
     onEnter: function(vars) { vars.currentPos = "地下车库"; },
     text: function(vars) {
       var desc = "车库深处比入口更暗。墙边一扇铁门上了锁，门上用油漆刷着「工具间」三个字——这是学校的民防设施，平时锁着，钥匙应该在后勤手里。";
@@ -2001,7 +2148,10 @@ Object.assign(storyData, {
     }
   },
   "建平-宿舍-内部-休息": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/寝室.webp",
+      night: "images/建平/寝室-night.webp"
+    }),
     onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
     text: function(vars) {
       return "你挑了张下铺躺下，拉过半旧的被子。走廊里安安静静的，你终于能合一会儿眼了。" + restHint(vars, "你回复1点体力");
