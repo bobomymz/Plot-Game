@@ -32,7 +32,8 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.currentPlace = "三林菜市场";
       vars.currentPos = "菜市场大厅";
-      vars._marketEntry = "大厅";
+      // 只在正门钻入时记下入口；从冷库走进来不得覆盖员工通道来路
+      if (vars._lastScene === "菜市场-卷帘门") vars._marketEntry = "大厅";
     },
     text: function(vars) {
       var fromCold = vars._lastScene === "菜市场-冷库区" || vars._lastScene === "菜市场-冷库区-闭门羹";
@@ -48,12 +49,19 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
+      var fromCold = vars._lastScene === "菜市场-冷库区" || vars._lastScene === "菜市场-冷库区-闭门羹"
+        || (vars._lastScene !== "菜市场-卷帘门" && vars._marketEntry === "员工通道");
       if (!vars._marketHallCleared) {
-        cs.push({ text: "绕开它，从摊位底下钻过去", nextScene: "菜市场-大厅-潜行", effect: updateTime(2) });
+        cs.push({ text: "绕开它", nextScene: "菜市场-大厅-潜行", effect: updateTime(2) });
         cs.push({ showCondition: "hasMeleeWeapon", text: function(vars) { return "用" + meleeWeaponName(vars) + "把它彻底解决"; }, nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
-        cs.push({ text: "太危险了，退回去", nextScene: "安盛街西侧", effect: updateTime(1) });
+        // 丧尸挡路：只能从来路离开，不能直接穿到另一端
+        if (fromCold) {
+          cs.push({ text: "去冷库区", nextScene: "菜市场-冷库区", effect: updateTime(1) });
+        } else {
+          cs.push({ text: "从卷帘门钻出去", nextScene: "安盛街西侧", effect: updateTime(1) });
+        }
       } else {
-        cs.push({ text: "前往冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) });
+        cs.push({ text: "去冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) });
         cs.push({ text: "从卷帘门钻出去", nextScene: "安盛街西侧", effect: updateTime(1) });
       }
       return cs;
@@ -62,10 +70,11 @@ Object.assign(storyData, {
 
   "菜市场-大厅-潜行": {
     image: "images/placeholder.png" /* TODO: images/菜市场/大厅-潜行.jpg */,
-    text: "你压低身子，贴着冰柜的阴影一点一点往前挪。那只丧尸拖着半截身子，在地上留下一道长长的血痕。\n你屏住呼吸，从它旁边绕了过去。它似乎嗅到了什么，抽搐着朝你的方向转了一下头，但什么也没抓到。\n你安全地穿过了大厅。那只丧尸还趴在原地——留着它，总归是个隐患，但你管不了那么多了。",
+    text: "你压低身子，贴着阴影一点一点往前挪。那只丧尸拖着半截身子，在地上留下一道长长的血痕。\n你屏住呼吸，从它旁边绕了过去。它似乎嗅到了什么，抽搐着朝你的方向转了一下头，但什么也没抓到。\n你安全地穿过了大厅。那只丧尸还趴在原地——留着它，总归是个隐患，但你管不了那么多了。",
     choices: [
-      { text: "前往冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) },
-      { text: "绕回去把它解决掉", nextScene: "菜市场-大厅-清场", effect: updateTime(2) }
+      { text: "去冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) },
+      { text: "从卷帘门钻出去", nextScene: "安盛街西侧", effect: updateTime(1) },
+      { showCondition: "hasMeleeWeapon", text: function(vars) { return "用" + meleeWeaponName(vars) + "把它彻底解决"; }, nextScene: "菜市场-大厅-清场", effect: updateTime(2) }
     ]
   },
 
@@ -77,7 +86,8 @@ Object.assign(storyData, {
       return "你走上前，它朝你张开了嘴。你举起" + wpn + "，给了它一下。\n它抽搐了几下，不动了。你把它拖到冰柜后面，用一张脏布盖上——至少看着不那么碍眼。\n大厅安静了下来。";
     },
     choices: [
-      { text: "前往冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) }
+      { text: "去冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) },
+      { text: "从卷帘门钻出去", nextScene: "安盛街西侧", effect: updateTime(1) }
     ]
   },
 
@@ -129,7 +139,7 @@ Object.assign(storyData, {
       },
       {
         text: function(vars) {
-          if(canSee(vars)) return "摸黑退回去";
+          if(!canSee(vars)) return "摸黑退回去";
           return "原路退回";
         },
         nextScene: "长者食堂-后厨",
@@ -148,17 +158,26 @@ Object.assign(storyData, {
       return "你凭着感觉往前走，却一头撞进了一个杂物间——手在黑暗中碰到一排冰冷的铁钩。你打了个寒战，赶紧退回去。黑暗中，你隐约觉得背后有拖沓的脚步声。你不敢再乱闯了。";
     },
     choices: [
-      { text: "回到岔路口重新选择", nextScene: "菜市场-员工通道", effect: updateTime(2) },
-      { text: "太黑了，原路退回", nextScene: "长者食堂-后厨", effect: updateTime(1) }
+      { text: "回到岔路口重新选择", nextScene: "菜市场-员工通道", effect: updateTime(2) }
     ]
   },
 
   // ==================== 冷库区 ====================
   "菜市场-冷库区": {
-    image: timeImage({
-      morning: "images/菜市场/冷库区.webp",
-      night: "images/菜市场/冷库区-night.webp"
-    }),
+    image: function(vars) {
+      if(vars.hh >= 12 && vars.hh <= 15) {
+        var f = timeImage({
+          morning: "images/菜市场/冷库区.webp",
+          night: "images/菜市场/冷库区-night.webp"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/菜市场/冷库区-没人.webp",
+        night: "images/菜市场/冷库区-没人-night.webp"
+      });
+      return f(vars);
+    },
     onEnter: { set: { currentPlace: "三林菜市场", currentPos: "冷库区" } },
     text: "你走进冷库区。温度明显低了下来，墙角一排冷库门上结着白霜，其中一扇虚掩着，门缝里漏出微弱的昏黄灯光，还有一股柴油的味道。\n\
 那就是发电机的声音——低沉的嗡嗡声，从虚掩的门后传出来。",
@@ -172,9 +191,8 @@ Object.assign(storyData, {
       } else {
         cs.push({ text: "推开门进去", nextScene: "菜市场-冷库区-闭门羹", effect: updateTime(1) });
       }
-      cs.push({ text: "离开冷库区", nextScene: function(vars) {
-        return vars._marketEntry === "员工通道" ? "菜市场-员工通道" : "菜市场-大厅";
-      }, effect: updateTime(2) });
+      cs.push({ text: "去菜市场大厅", nextScene: "菜市场-大厅", effect: updateTime(2) });
+      cs.push({ text: "去员工通道", nextScene: "菜市场-员工通道", effect: updateTime(2) });
       return cs;
     }
   },
@@ -191,7 +209,7 @@ Object.assign(storyData, {
       return "你推开门——冷库里黑黢黢的，发电机还在嗡嗡地转，但人不在。方姐没在这里。\n你合上门，心里记下：下次挑日头正毒、外面丧尸都蔫了的时候再来碰碰运气。";
     },
     choices: [
-      { text: "去菜市场", nextScene: "菜市场-大厅", effect: updateTime(2) },
+      { text: "去菜市场大厅", nextScene: "菜市场-大厅", effect: updateTime(2) },
       { text: "去员工通道", nextScene: "菜市场-员工通道", effect: updateTime(2) }
     ]
   },

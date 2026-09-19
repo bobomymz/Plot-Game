@@ -632,7 +632,10 @@ const storyData = {
   },
   "整理整理": { // 汇总一下物品
     image: "images/整理整理.webp" ,
-    text: "你的东西也许有点多。把一些没用的东西丢掉，这样能拿更多有用的东西。",
+    text: function(vars) {
+      if(vars.itemCount >= vars.bagVolume) return "你的东西也许有点多。把一些没用的东西丢掉，这样能拿更多有用的东西。";
+      return "让我看看背包里有什么。";
+    },
     choices: [
       {
         showCondition: "hasBroom",
@@ -789,7 +792,7 @@ const storyData = {
       },
       {
         showCondition: "hasInstantNoodle && !_wearingCleanSuit",
-        text: "吃掉泡面（体力+3）",
+        text: "吃掉泡面（体力回满）",
         nextScene: "整理整理-吃泡面"
       },
       {
@@ -1263,8 +1266,9 @@ const storyData = {
 
   "整理整理-吃泡面": {
     image: "images/整理整理.webp",
-    onEnter: updateTime(2, { add: { strength: 3, itemCount: -1 }, set: { hasInstantNoodle: false } }),
-    text: "没有热水，你把面饼掰成小块干嚼，调料包撕开个口，倒一点在手心里舔着就面吃。又咸又干，呛得直咳嗽，但碳水下肚的踏实感骗不了人。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
+    onEnter: updateTime(2, { add: { itemCount: -1 }, set: { strength: 10, hasInstantNoodle: false } }),
+    text: "没有热水，你把面饼掰成小块干嚼，调料包撕开个口，倒一点在手心里舔着就面吃。又咸又干，呛得直咳嗽，但碳水下肚的踏实感骗不了人。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

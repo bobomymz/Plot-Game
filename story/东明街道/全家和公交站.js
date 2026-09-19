@@ -45,6 +45,9 @@ Object.assign(storyData, {
       } else {
         base += "\n靠收银台的促销货架已经空了——泡面一包不剩。";
       }
+      if(vars.hasInstantNoodle && vars.familyMartNoodleLeft > 0) {
+        base += "货架上还有泡面，但你包里已经有一包了。";
+      }
       if (vars._visit["全家便利店（环林东路）"] && (!vars.FamilymartHasZombie || vars._visit["全家便利店-饼干引路"] > 0)) {
         base += "\n<span style='color: #aaa;'>上次那只丧尸已经不在了。柜台后面的员工通道半开着，里面黑漆漆的，也许有什么有用的东西。</span>";
       }
@@ -92,11 +95,6 @@ Object.assign(storyData, {
         nextScene: "全家-拿泡面",
         effect: { set: { positionAfterOperation: "全家便利店内部" } },
         elseScene: "整理整理"
-      },
-      {
-        showCondition: "hasInstantNoodle && familyMartNoodleLeft > 0",
-        text: "货架上还有泡面，但你包里已经有一包了",
-        nextScene: "全家便利店内部"
       },
       {
         showCondition: "chasedByZombies <= 1 && itemCount > 0",

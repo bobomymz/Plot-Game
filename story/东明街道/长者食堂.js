@@ -174,11 +174,6 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "看看后厨",
-        nextScene: "长者食堂-后厨",
-        effect: updateTime(1)
-      },
-      {
         text: "看看办公室",
         nextScene: "长者食堂-办公室",
         effect: updateTime(1)
@@ -238,7 +233,7 @@ Object.assign(storyData, {
 
   "长者食堂-后厨": {
     image: "images/小区周边/长者食堂/后厨.webp",
-    text: "你在长者食堂的后厨。灶台上的锅具东倒西歪，几口炒锅里残留着干涸的菜汤，案板上还搁着半棵蔫了的白菜。\n\
+    text: "你来到长者食堂的后厨。灶台上的锅具东倒西歪，几口炒锅里残留着干涸的菜汤，案板上还搁着半棵蔫了的白菜。\n\
 墙上写着标语：厨房重地，闲人免入。\n\
 你翻找了一圈——调味料倒是齐全，但带不走也煮不了。冷藏室的门虚掩着，门缝里飘出一股冷气和一丝说不清的酸腐味。\n\
 蝉鸣声隐约从窗外传来。",
@@ -304,7 +299,12 @@ Object.assign(storyData, {
       {
         text: "离开窗口",
         nextScene: "长者食堂-内部"
-      }
+      },
+      {
+        text: "看看后厨",
+        nextScene: "长者食堂-后厨",
+        effect: updateTime(1)
+      },
     ]
   },
 
