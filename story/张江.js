@@ -95,7 +95,7 @@ Object.assign(storyData, {
 马路当中，一辆无人配送车斜停在斑马线前，货舱门敞着。它大概是执行完最后一单，就没再等到下一单的指令。\n\
 东边，华大的围墙已经出现在路的尽头。";
       if (vars.isNight && !vars._jinbaoLeft) {
-        desc += "\n夜里，围墙后面那栋厂房亮着灯，白惨惨的一片，像这条街上唯一还活着的东西。";
+        desc += "\n夜里走近了，围墙后面那栋厂房一格一格亮着，铁丝网的影子斜斜地铺在路面上。配送车敞着货舱，黑成一个洞，跟那片光对着干。";
       }
       return desc + "\n" + describeWeather(vars);
     },
@@ -272,8 +272,17 @@ Object.assign(storyData, {
 
   "张江-加油站-拎桶": {
     image: "images/placeholder.png", /* TODO: images/张江/拎桶.webp */
-    text: "你把那只满桶拖到棚门口，找了圈麻绳拴上把手，勒紧，拎了拎——死沉，但能背。\n\
-一整桶柴油。这年头，有油就等于有电，有电就等于有别的一切。就是不知道这玩意儿现在能派上什么用场——先带着，总会有用得上的地方。",
+    text: function(vars) {
+      var desc = "你把那只满桶拖到棚门口，找了圈麻绳拴上把手，勒紧，拎了拎——死沉，但能背。\n一整桶柴油。";
+      if (vars._jinbaoDieselAsked && !vars._dieselDelivered) {
+        desc += "老陈要的就是这个。华大那台发电机再烧几天，就该喝这桶了。";
+      } else if (vars._dieselDelivered) {
+        desc += "发电机那边已经灌过一桶了。再背一桶也行，总比撂在这儿发霉强。";
+      } else {
+        desc += "这年头，有油就等于有电，有电就等于有别的一切。就是不知道这玩意儿现在能派上什么用场——先带着，总会有用得上的地方。";
+      }
+      return desc;
+    },
     choices: [
       { text: "离开棚子", nextScene: "张江-加油站", effect: updateTime(1) }
     ]
@@ -602,12 +611,20 @@ Object.assign(storyData, {
 桌沿压着一张工作证——上海科技大学，物质科学与技术学院，研究实习员：曹睿泽。证件照里的年轻人戴着圆框眼镜，没什么表情。\n\
 一个相框朝下扣在桌角。电脑和一部手机都黑着屏，按了按，一点电也不剩。";
       if (vars._visit['张江-上科大-曹睿泽宿舍'] > 1) {
-        desc = "屋里还是老样子。床上的人、桌上那口凉白开、扣着的相框——你上次没动的东西，都还在原地。";
+        if (vars._hasFriendPhoto) {
+          desc = "屋里还是老样子。床上的人、桌上那口凉白开、空着立回桌角的相框——你上次没动的东西，都还在原地。";
+        } else {
+          desc = "屋里还是老样子。床上的人、桌上那口凉白开、扣着的相框——你上次没动的东西，都还在原地。";
+        }
       }
       return desc;
     },
     choices: [
-      { text: "扶起那个相框看看", nextScene: "张江-上科大-宿舍-合照", effect: updateTime(1) },
+      {
+        text: function(v) { return v._hasFriendPhoto ? "看一眼桌角的空相框" : "扶起那个相框看看"; },
+        nextScene: "张江-上科大-宿舍-合照",
+        effect: updateTime(1)
+      },
       {
         showCondition: "!_dormFoodTaken",
         text: "翻翻柜子和床底",
@@ -1093,6 +1110,7 @@ Object.assign(storyData, {
 墙角的天花板上开着一个检修口，一截笼式爬梯垂下来，通往上面的设备夹层。";
       if (vars._airlockLockedOut) desc += "\n风淋舱的观察窗里，面板的灯是红的——系统还锁着，得找地方复位。";
       if (vars._wearingCleanSuit) desc += "\n无尘服的帽子压着你的耳朵，面罩边缘一圈汗气。";
+      if (vars.hasDieselCan) desc += "\n肩上那只柴油桶沉甸甸地坠着，铁皮磕过长凳，在这间要人一尘不染的更衣室里显得格外不合适。";
       return desc;
     },
     choices: function(vars) {
@@ -1190,8 +1208,10 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "风淋舱"; },
     text: function(vars) {
       if (vars._jinbaoLeft) {
-        return "风淋舱两扇门都虚掩着，面板黑屏。喷嘴里的风早就停了，舱底积着一层薄薄的灰。\n\
+        var darkCabin = "风淋舱两扇门都虚掩着，面板黑屏。喷嘴里的风早就停了，舱底积着一层薄薄的灰。\n\
 那套曾经要把每个人吹得一生不染的机器，现在安静得像口棺材。你直接穿了过去。";
+        if (vars.hasDieselCan) darkCabin += "\n你还扛着那桶柴油。没电了，舱门倒是不拦人——拦人的是这几十斤铁皮。";
+        return darkCabin;
       }
       var desc = "你走进风淋舱。舱不大，两三个人并肩的宽度，四面墙布满喇叭口似的喷嘴。外门在你身后合拢到一半，内门那边亮着一块红色的小牌：联锁。\n\
 面板就在手边，一块不大的屏幕，下面两个键——【风淋启动】【紧急复位】。";
@@ -1200,6 +1220,7 @@ Object.assign(storyData, {
       else if (vars._airlockOuterClosed) desc += "\n外门关得严严实实。面板屏幕上是一行待机字样：外门已关闭，等待启动。";
       else desc += "\n外门还开着一条缝，风从缝里灌进来，面板屏幕上一行小字：请关闭外门。";
       if (vars._readAirlockRules) desc += "\n墙上那张规程你还记得：先关外门，按启动，等倒计时走完，“嘀”一声，内门开。";
+      if (vars.hasDieselCan) desc += "\n几十斤的油桶卡在舱里转不开身，铁皮一下一下磕着喷嘴。这舱是给人吹灰的，不是给人扛货的。";
       return desc;
     },
     choices: function(vars) {
@@ -1297,6 +1318,7 @@ Object.assign(storyData, {
 面板屏幕上，倒计时一格一格地跳：25、24、23……\n\
 据说这一套是要把人身上的浮尘、皮屑、纤维统统吹掉——在进入那间一尘不染的房间之前。";
       if (vars._airlockLeakRounds > 0) desc += "\n舱里还残着一股淡淡的酸味，像上次泄漏留下的记性。";
+      if (vars.hasDieselCan) desc += "\n气流把油桶吹得乱晃，你只好用胳膊把它死死夹住——这套机器大概没设计过给铁桶除尘。";
       return desc;
     },
     choices: [
@@ -1541,6 +1563,7 @@ Object.assign(storyData, {
       } else {
         desc += "\n上回扑向你的那批已经躺下了。剩下的人影离得远，暂时没有动静。";
       }
+      if (vars.hasDieselCan) desc += "\n肩上的柴油桶一下一下磕着髋骨。白得发亮的地坪上，铁皮桶像一块不肯消失的污渍。";
       return desc;
     },
     choices: function(vars) {
@@ -1663,7 +1686,7 @@ Object.assign(storyData, {
   "张江-华大-白区-工位A-试探": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位A.webp */
     text: "你隔着两台设备的距离，轻轻敲了敲护罩。\n\
-那条人影停了半秒——然后以完全不符合刚才那种节奏的速度转过头来，脸“啪”地贴上防光帘的玻璃。\n\
+那条人影停了半秒——然后猛地转过头来，脸“啪”地贴上防光帘的玻璃。\n\
 面罩后面是一张干灰的脸，眼珠浑浊，像两颗泡久了的鱼眼。\n\
 它离开设备，朝你来了。",
     choices: [
@@ -2390,9 +2413,15 @@ Object.assign(storyData, {
       else desc += "“外头辅助区还守着个人，姓刘。”洪金宝提了一句，“你要走那边，报我的名字。”\n";
       if (vars._fabFigBKilled) desc += "发电机上搁着一只老陈的茶缸，茶早凉透了。没人收。\n";
       else if (!vars._jinbaoLeft) desc += "老陈蹲在发电机边上，就着灯光听那台机器的动静，像老中医号脉。\n";
-      if (vars.dd >= 3 && !vars._dieselDelivered && !vars._jinbaoDieselAsked) {
+      if (!vars._fabFigBKilled && vars.dd >= 3 && !vars._dieselDelivered && !vars._jinbaoDieselAsked) {
         desc += "老陈忽然抬头看了你一眼，嘴唇动了动，又低下头去——像有话想说。\n";
-      } else if (vars.dd < 3 && !vars._dieselDelivered) {
+      } else if (!vars._fabFigBKilled && vars._jinbaoDieselAsked && !vars._dieselDelivered) {
+        if (vars.hasDieselCan) {
+          desc += "老陈看见你肩上那桶油，眼睛一亮，下巴朝发电机点了点：“就搁那儿。来，帮我抬一下。”\n";
+        } else {
+          desc += "老陈抬眼看了你一眼：“加油站那边……有信儿没有？”他顿了顿，声音压在发电机的轰鸣里，“油表一天比一天难看。”\n";
+        }
+      } else if (!vars._fabFigBKilled && vars.dd < 3 && !vars._dieselDelivered) {
         desc += "老陈拍了拍发电机外壳：“油还够几天。省着烧。”\n";
       }
       if (vars._toldJinbaoTruth === "silent") desc += "洪金宝没有再看你。自打你说“不清楚”之后，他和你说话，都是隔着仪表说的。\n";

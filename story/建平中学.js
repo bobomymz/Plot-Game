@@ -394,8 +394,21 @@ Object.assign(storyData, {
 
   "建平-后门": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
-    onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "后门"; },
+    image: function(vars) {
+      if(vars._backGateOpened) {
+        var f = timeImage({
+          morning: "images/建平/后门-清场.webp",
+          night: "images/建平/后门-清场-night.webp"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/建平/后门.webp",
+        night: "images/建平/后门-night.webp"
+      })
+      return f(vars);
+    },
+    onEnter: function(vars) { vars.showZombies = vars.showRain = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "后门"; },
     text: function(vars) {
       var desc = "你绕到学校后门。";
       if (vars._backGateOpened) {
