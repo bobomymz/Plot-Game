@@ -171,7 +171,10 @@ const storyData = {
     hasAntibiotic: false,   // 抗生素（仁济门诊药房）
     hasPainkiller: false,   // 止痛药（仁济门诊药房）
     hasBandage: false,      // 绷带（仁济大门）
-    hasIodine: false,       // 碘伏（仁济检验科，可消毒伤口）
+    iodineSwabBox: 0,       // 携带的碘伏棉签盒数（仁济检验科，每盒10根、每盒占1格；整理整理里消毒伤口，一盒用完自动丢弃）
+    _iodineSwabInBox: 0,    // 正在用的那盒里还剩几根（0~10，0=没有拆开的盒，下次消毒自动拆新盒）
+    _iodineSwabBoxLeft: 3,  // 检验科试剂架上还剩的盒数（世界库存，初始3；丢弃不回货架，同其它物品丢弃=损失）
+    _iodineBoxJustEmptied: false, // 本次消毒是否刚好用完一整盒（onEnter写入、text读，用一次覆盖一次）
     hasAlcohol: false,      // 医用酒精（仁济门诊药房，可消毒伤口）
     hasSutureKit: false,    // 缝合包（仁济手术供应室）
     hasTourniquet: false,   // 止血带（仁济手术供应室）
@@ -982,15 +985,13 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasIodine && hurtByZombie",
-        text: "用碘伏消毒伤口",
-        effect: function(vars) {
-          vars.hurtByZombie = false;
-          vars.hasIodine = false;
-          vars.itemCount = Math.max(0, vars.itemCount - 1);
-          return updateTime(1)(vars);
+        showCondition: "iodineSwabBox > 0 && hurtByZombie",
+        text: function(vars) {
+          return vars._iodineSwabInBox > 0
+            ? "用碘伏棉签消毒伤口（" + vars.iodineSwabBox + "盒，这盒还剩" + vars._iodineSwabInBox + "根）"
+            : "用碘伏棉签消毒伤口（" + vars.iodineSwabBox + "盒）";
         },
-        nextScene: "整理整理"
+        nextScene: "整理整理-碘伏消毒"
       },
       {
         showCondition: "hasFeverMed && hasCold && !_wearingCleanSuit",
@@ -1016,9 +1017,14 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasIodine",
-        text: "丢下碘伏",
-        effect: updateTime(1, { set : { hasIodine: false }, add: { itemCount: -1 } }),
+        showCondition: "iodineSwabBox > 0",
+        text: "丢一盒碘伏棉签",
+        effect: function(vars) {
+          vars._iodineSwabInBox = 0;  // 连正在用的那盒一起丢（里面剩的棉签随盒丢弃）
+          vars.iodineSwabBox = Math.max(0, vars.iodineSwabBox - 1);
+          vars.itemCount = Math.max(0, vars.itemCount - 1);
+          return updateTime(1)(vars);
+        },
         nextScene: "整理整理"
       },
       {
@@ -1319,6 +1325,33 @@ const storyData = {
         return "你撕开包装，把两片维生素C丢进嘴里嚼碎，就着水咽了下去。酸酸甜甜的味道在舌根化开，一路凉丝丝地滑到胃里。\n过了一会儿，你身上那股散不掉的寒气慢慢退了，额头也不怎么烫了——这盒维C好像真把感冒压了下去。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】感冒已缓解，体力+1，当前体力：{strength}。</span>";
       }
       return "你撕开包装，把两片维生素C丢进嘴里嚼碎，就着水咽了下去。酸酸甜甜的味道在舌根化开，喉咙和鼻子都清爽了几分。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+    },
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-碘伏消毒": {
+    image: "images/整理整理.webp",
+    onEnter: function(vars) {
+      vars.hurtByZombie = false;
+      if (vars._iodineSwabInBox <= 0) vars._iodineSwabInBox = 5; // 没有拆开的盒，拆一盒新的（每盒5根）
+      vars._iodineSwabInBox -= 1;
+      vars._iodineBoxJustEmptied = false;
+      if (vars._iodineSwabInBox <= 0) {
+        // 一盒用完，自动丢弃空盒
+        vars.iodineSwabBox = Math.max(0, vars.iodineSwabBox - 1);
+        vars.itemCount = Math.max(0, vars.itemCount - 1);
+        vars._iodineBoxJustEmptied = true;
+      }
+      return updateTime(1)(vars);
+    },
+    text: function(vars) {
+      var desc = "你撕开独立包装，掰断棉签的折点，碘伏顺着导管浸透了棉头。你咬着牙把它按在伤口上——一阵细密的刺痛过后，渗血的抓痕总算清理干净了。";
+      if (vars._iodineBoxJustEmptied) {
+        desc += "\n这一盒正好用完，你顺手把空盒子丢进了垃圾桶。";
+      }
+      return desc + "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，不再加快体力消耗。</span>";
     },
     choices: [
       { text: "继续", nextScene: "整理整理" }

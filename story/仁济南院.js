@@ -983,7 +983,6 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        showCondition: "!hasIodine",
         text: "翻看试剂架",
         nextScene: "仁济南院-检验科-碘伏",
         effect: updateTime(1)
@@ -1101,21 +1100,33 @@ Object.assign(storyData, {
   "仁济南院-检验科-碘伏": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLabInside.png */,
     onEnter: { set: { positionAfterOperation: "仁济南院-检验科-碘伏" } },
-    text: "你在试剂架上翻找，在最里层的角落找到一瓶还没开封的碘伏。\n\
-消毒用的，瓶身标签完好。",
-    choices: [
-      {
-        text: "拿走碘伏",
-        condition: "itemCount < bagVolume",
-        nextScene: "仁济南院-检验科-内部",
-        effect: { set: { hasIodine: true }, add: { itemCount: 1 } },
-        elseScene: "整理整理"
-      },
-      {
-        text: "算了，不拿",
-        nextScene: "仁济南院-检验科-内部"
+    text: function(vars) {
+      if (vars._iodineSwabBoxLeft <= 0) {
+        return "你又翻了一遍试剂架的最里层。碘伏棉签已经拿空了，撕开的空包装袋还卡在角落的缝隙里。";
       }
-    ]
+      if (vars._visit['仁济南院-检验科-碘伏'] > 0) {
+        return "你回到试剂架前。那包碘伏棉签还在老地方，里面还剩 {_iodineSwabBoxLeft} 盒。";
+      }
+      return "你在试剂架上翻找，在最里层的角落找到一包还没拆封的碘伏棉签——一盒十根，独立包装，掰断折点让碘伏浸透棉头就能用，正适合处理伤口。\n\
+你数了数，一共 {_iodineSwabBoxLeft} 盒。";
+    },
+    choices: function(vars) {
+      if (vars._iodineSwabBoxLeft <= 0) {
+        return [
+          { text: "离开", nextScene: "仁济南院-检验科-内部" }
+        ];
+      }
+      return [
+        {
+          text: "拿一盒碘伏棉签（试剂架上还剩 {_iodineSwabBoxLeft} 盒）",
+          condition: "itemCount < bagVolume",
+          nextScene: "仁济南院-检验科-碘伏",
+          effect: updateTime(1, { add: { itemCount: 1, iodineSwabBox: 1, _iodineSwabBoxLeft: -1 } }),
+          elseScene: "整理整理"
+        },
+        { text: "离开", nextScene: "仁济南院-检验科-内部" }
+      ];
+    }
   },
 
   // ==================== 住院部走廊 ====================
