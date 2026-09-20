@@ -2253,7 +2253,10 @@ Object.assign(storyData, {
     ]
   },
   "建平-弘渊楼-2F": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/图书馆2楼.webp",
+      night: "images/建平/图书馆2楼-night.webp"
+    }),
     onEnter: function(vars) { vars.currentPos = "弘渊楼2F"; },
     text: function(vars) { return "弘渊楼 2 楼。" + describeZombieWave(vars); },
     choices: [
@@ -2262,7 +2265,10 @@ Object.assign(storyData, {
     ]
   },
   "建平-弘渊楼-3F": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/图书馆3楼.webp",
+      night: "images/建平/图书馆3楼-night.webp"
+    }),
     onEnter: function(vars) { vars.currentPos = "弘渊楼3F"; },
     text: function(vars) { return "弘渊楼 3 楼。" + describeZombieWave(vars); },
     choices: [
