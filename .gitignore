@@ -3,3 +3,6 @@
 .loopx/
 .codex/
 .local/
+
+# E2E 测试依赖（story-testing skill）
+node_modules/
