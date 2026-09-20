@@ -35,6 +35,7 @@ Object.assign(storyData, {
 
   "全家便利店内部": {
     image: "images/小区周边/全家和公交站/全家便利店内部.webp",
+    onEnter: {set: { positionAfterOperation: "全家便利店内部" }},
     text: function(vars) {
       var base = "你走进熟悉又陌生的便利店。\n\
 前面的冷藏区放着一些牛奶、鲜肉盒、饮料，以及你常买来作为早餐的饭团。\n\
@@ -93,14 +94,12 @@ Object.assign(storyData, {
         text: "拿一包泡面",
         condition: "itemCount < bagVolume",
         nextScene: "全家-拿泡面",
-        effect: { set: { positionAfterOperation: "全家便利店内部" } },
         elseScene: "整理整理"
       },
       {
         showCondition: "chasedByZombies <= 1 && itemCount > 0",
         text: "🎒整理一下物品",
-        nextScene: "整理整理",
-        effect: { set: { positionAfterOperation: "全家便利店内部" } }
+        nextScene: "整理整理"
       },
       {
         text: "离开",
@@ -483,6 +482,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/员工通道-暗.png */,
     onEnter: function(vars) {
       if (vars.FamilymartHasZombie) {
+        triggerShake();   // 黑暗中等候的迅捷丧尸猛地窜出
         return initMemoryGame(["红","蓝","绿"], 9)(vars);
       }
       return updateTime(3, { add: { strength: -1 } })(vars);

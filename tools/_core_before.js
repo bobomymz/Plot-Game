@@ -1,6 +1,5 @@
 // ========== story-core.js ==========
 // 全局变量、触发器、屏幕特效、起始场景
-// 人类作者注：有几个测试用的.py文件依赖此文档结构，修改后请同步修改相关文件。
 
 const storyData = {
 
@@ -59,14 +58,6 @@ const storyData = {
     _jinbaobeiFrontOpen: false, // 金宝贝前门是否已用钥匙牌打开
     _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
     _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
-    _wiredCorrectly: false,    // 新达汇B1停车场：配电箱接线是否已恢复供电（车库检查进度，_garageOps 达 3 预警 / 5 驱逐）
-    _garageOps: 0,             // 新达汇B1停车场：车库检查操作次数（≥3 预警 / ≥5 驱逐）
-    _pipeBroke: false,         // 五金店暗道：铁管撬砸是否已失败（true=砸不断，走另一出口）
-    _metPETeacher: false,      // 上实南校2号楼走廊：是否已遭遇体育老师丧尸（走廊再次进入的差异化承接）
-    _peTeacherDead: false,     // 上实南校2号楼走廊：体育老师丧尸是否已被击杀
-    _knownSideDoorPassword: false, // 上实南校：是否已从王老师处拿到侧门密码（0731）
-    _foundHongContact: false,  // 安居苑：是否已找到洪金宝父亲的联系方式（张江洪金宝支线的道德拷问前置）
-    _libraryEnding: false,     // 图书馆深夜结局：是否在本夜触发了图书馆结局分支
 
     // --- 操作状态 ---
     visitExitTimes: 0,         // 访问小区出口次数，达到2自动放行

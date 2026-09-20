@@ -140,7 +140,7 @@ Object.assign(storyData, {
       timeout: "10000 - chasedByZombies * 1000",
       onTimeout: "遭遇老头丧尸-犹豫"
     },
-    onEnter: {set: {showRain: true}},
+    onEnter: {set: {showRain: true}, shake: true},   // 拐角突然闪出老头丧尸
     text: "没走几步，拐角处突然闪出一个佝偻的身影。那是一个拄着拐杖的老头丧尸，灰白的眼珠死死盯着你，嘴里发出含混的咯咯声，一步一步向你挪过来。\n它动作不快，但那根金属拐杖在阳光下闪着冷光——被敲一下可不是闹着玩的。",
     choices: [
       {
@@ -1099,6 +1099,7 @@ Object.assign(storyData, {
 
   "安盛街-服装店试衣间": {
     image: "images/安盛街/服装店/试衣间的丧尸.webp",
+    onEnter: { shake: true },   // 拉开帘子，女丧尸猛地抬头扑来
     qte: {
       timeout: 5000,
       onTimeout: "结局-安盛街-试衣间丧尸扑脸"

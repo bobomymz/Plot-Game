@@ -1,5 +1,5 @@
 // ================= engine.js =================
-
+// 人类作者注：有几个测试用的.py文件依赖此文档结构，修改后请同步修改相关文件。
 // --- DOM 元素 ---
 const sceneImage  = document.getElementById("scene-image");
 const sceneText   = document.getElementById("scene-text");

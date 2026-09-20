@@ -452,6 +452,7 @@ Object.assign(storyData, {
       vars._backGateOpened = true;  // 开门引走丧尸（忻老师后门逃脱的铺垫）
       vars.showZombies = true;
       vars.currentPos = "后门";
+      triggerShake();               // 猛地拉开门，丧尸齐扑
       return {};
     },
     text: "你深吸一口气，握住门闩，猛地拉开了后门。\n门轴发出刺耳的摩擦声，门内的丧尸被惊动，齐刷刷向你扑来！",
@@ -1441,7 +1442,11 @@ Object.assign(storyData, {
 
   "建平-致真楼-1F-老吴杂物室-查看老吴": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.positionAfterOperation = "建平-致真楼-1F-老吴杂物室-查看老吴"; },
+    onEnter: function(vars) {
+      vars.positionAfterOperation = "建平-致真楼-1F-老吴杂物室-查看老吴";
+      // 诈尸瞬间：尸体突然抽搐抬头（仅触发条件成立时抖动）
+      if (vars.dd >= 3 && !vars._laowuKilled && !vars.hasKeyRing) triggerShake();
+    },
     text: function(vars) {
       if (vars.dd >= 3 && !vars._laowuKilled && !vars.hasKeyRing) {
         return "你走近老吴，蹲下身想看看情况。\n就在你伸手的一瞬间——那具“尸体”突然抽搐了一下，猛地抬起头，露出一张灰白扭曲的脸！\n它诈尸了！";
@@ -2456,7 +2461,7 @@ Object.assign(storyData, {
 
   "建平-弘渊楼-2F-李娟-战斗": {
     image: hyLib2FImg,
-    onEnter: initMemoryGame(["红", "蓝", "绿", "黄"], 4, { set: { currentPos: "弘渊楼2F阅览室" } }),
+    onEnter: initMemoryGame(["红", "蓝", "绿", "黄"], 4, { set: { currentPos: "弘渊楼2F阅览室" }, shake: true }),
     text: function(vars) {
       var opener = vars._lastScene === "建平-弘渊楼-2F-李娟-转化"
         ? "她转过身来——那张脸上，已经找不到什么李娟的影子了。她朝你扑过来！"

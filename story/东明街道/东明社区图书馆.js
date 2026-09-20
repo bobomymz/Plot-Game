@@ -222,6 +222,7 @@ Object.assign(storyData, {
       morning: "images/小区周边/图书馆/阅览室-你在看什么.webp",
       night: "images/小区周边/图书馆/阅览室-你在看什么-night.webp"
     }),
+    onEnter: { shake: true },   // 椅子吱嘎一声，丧尸猛地合上书站起来
     text: "你眯起眼睛，试图看清它手里的书脊。《霍乱时期的爱情》。\n真讽刺。\n你再往前凑了半步——椅子突然发出了吱嘎一声。\n格子衬衫丧尸猛地合上书，站了起来。",
     choices: [
       {
@@ -236,6 +237,7 @@ Object.assign(storyData, {
       morning: "images/小区周边/图书馆/阅览室-惊醒.webp",
       night: "images/小区周边/图书馆/阅览室-惊醒-night.webp"
     }),
+    onEnter: { shake: true },   // 丧尸低吼扑来
     text: "格子衬衫丧尸直直地盯着你。它合上书，朝你迈了一步——手里的书攥得紧紧的，举到齐肩。\n随后它低吼一声，朝你扑了过来。",
     choices: [
       {

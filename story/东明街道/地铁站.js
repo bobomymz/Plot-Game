@@ -97,6 +97,7 @@ Object.assign(storyData, {
 
   "地铁站-站厅层-犹豫": {
     image: "images/placeholder.png" /* TODO: images/地铁站/stationHall.png */,
+    onEnter: { shake: true },   // 犹豫几秒，被三只丧尸合围
     text: "你在原地犹豫了几秒——就是这几秒，足够它们完成合围了。\n售票机前的两只丧尸从左右包抄过来，墙角那只也直直地朝你走来。你被堵在了闸机口。\n没有退路了——只能硬冲。",
     choices: [
       {
@@ -172,6 +173,7 @@ Object.assign(storyData, {
 
   "地铁站-安检区-犹豫": {
     image: "images/placeholder.png" /* TODO: images/地铁站/securityCheck.png */,
+    onEnter: { shake: true },   // 身后楼梯也上来了，前后夹击
     text: "你站在原地打量着前方的丧尸群——但你没注意到身后楼梯方向也有东西上来了。等你察觉时，已经被夹在了中间。\n前方的丧尸也被你的动静惊动，齐刷刷地转了过来。你无处可躲。",
     choices: [
       {

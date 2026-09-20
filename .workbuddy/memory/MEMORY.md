@@ -1,5 +1,13 @@
 # 尸潮笔记 · 项目长期约定
 
+## 剧情变量的唯一来源与条件表达式陷阱（2026-09-20 确立）
+
+- **铁律**：`storyData._variables` 是 `gameState` 的唯一来源（engine.js:194 `initGameState()` 深拷贝）。**没写进 `_variables` 的变量名，一旦出现在条件表达式里就是 ReferenceError**，且引擎 `checkCondition` 把整条表达式包进 `new Function` 一次求值——**一个名字没声明，整条表达式就抛错、选项直接不显示**（不是渲染成 false），报错信息只打印表达式文本，极易误判成表达式里第一个变量的问题。
+- **例外（勿当 bug 修）**：`_reactive.computed` 里的 7 个派生变量不进 `_variables`，只在运行时注入——`canSee` / `hasFood` / `hasMeleeWeapon` / `hasNoTransportation` / `meleeWeaponTier` / `zombieAtHomeDoor` / `zombieOutsideHome`。静态审计脚本必须先注入 computed 再判定，否则全是假阳性。
+- **回归工具**：`tools/condition_audit.js`（vm 沙箱加载 utils+core+23 剧情文件 → 深拷贝（Set replacer/reviver）→ 注入 computed → 全量求值所有 showCondition/condition，并对 text/onEnter/effect/onPick 函数体实调一次抓 ReferenceError 与「写入未声明变量」）。改动剧情后务必复跑，期望输出两个 0。
+  - 沙箱踩坑：vm 内 `sandbox.storyData` 取不到，须 `vm.runInContext('storyData', sandbox)`；本环境 `path.resolve(__dirname,'..')` 失效，用 `process.cwd()`；`flashStatusWarning` 等 engine.js 全局函数要补桩。
+- 2026-09-20 修复存档：补声明 8 个漏网变量（`_wiredCorrectly`/`_garageOps`=0/`_pipeBroke`/`_metPETeacher`/`_peTeacherDead`/`_knownSideDoorPassword`/`_foundHongContact`/`_libraryEnding`），消除 40 处报错，变量总数 263→271；其中 `_pipeBroke`、`_libraryEnding`、`_knownSideDoorPassword` 修复前会让对应选项**全部消失导致卡死**。
+
 ## 丧尸气味的写作规范（2026-09-18 确立）
 
 **核心规则：气味与成因必须对齐，不能把「甜腻」当通用丧尸味默认值。**
@@ -27,9 +35,12 @@
 
 ## 体力系统压力评估工具（2026-09-20 落地）
 
-- 三件套：tools/stamina_audit.py（静态审计→体力收支审计报告.md，168 变动点）、tools/stamina_report.py（遥测 JSONL 聚合，--selftest 自测）、tools/stamina_telemetry_selftest.js（Node 冒烟回归）。
+- 三件套：tools/stamina_audit.py（静态审计→体力收支审计报告.md，174 变动点）、tools/stamina_report.py（遥测 JSONL 聚合，--selftest 自测 9 项）、tools/stamina_telemetry_selftest.js（Node 冒烟回归 9 项）。
 - 遥测在 engine.js 末尾（Proxy 捕获全部 strength 写入）+ 三处 __wrapState 包裹点（196 新局/769 回溯/1381 读档）+ utils.js restRecover 的 restBlocked 事件；工作流：游玩 → 控制台 __dumpStaminaLog() → python tools/stamina_report.py <jsonl>。
 - **⚠ 引擎改动约束**：遥测块只能追加在 engine.js 末尾，三处包裹点保持单行——中间插行会破坏 stamina_report.py 的 KNOWN_SITES 行号归因（engine.js 209-214/641-646 等区间映射）。STAMINA_TELEMETRY=false 整体关闭。
+- **⚠ KNOWN_SITES 同时含 core.js / utils.js / 夜晚剧情.js 区间**（不止 engine.js）。**在 story/core.js 的 `_variables` 里增删行会让下方所有 core.js 行号整体平移**，必须同步校正 KNOWN_SITES 的 core.js 区间，否则来源标签静默错位（不报错、只是归错类）。`stamina_audit.py` 是当场重扫、行号自算，不受影响；`stamina_telemetry_selftest.js` 靠标记串定位遥测段，也不受影响。**校验手法**：写脚本读各文件、检查每个区间内是否确实存在 `strength` 写入行（engine.js 两处例外——它们是通用 `for (let key in effect.add)` 动态键名循环，不含字面 `strength`，属正常）。
+- 2026-09-20 校正：因在 core.js:61 插入 8 行变量声明（+8 平移），KNOWN_SITES 的 5 个 core.js 区间全部重定位，并顺带修好 2 处**本次改动前就已漂移**的旧区间、补 1 条进食场景合并区间、修正 utils.js 天气区间上限（177→180，否则漏掉 178 行的 `strength -= drain`）。同时更新 `--selftest` 里的 mock 行号（`core.js:449`→`373`、`core.js:1224`→`1157`）。
+- 回归口令（改剧情后建议全跑）：`python tools/stamina_audit.py`、`python tools/stamina_report.py --selftest`、`node tools/stamina_telemetry_selftest.js`、`node tools/condition_audit.js`、`node tools/unarmed_fight_selftest.js`——期望 0 失败、两个 0。
 
 ## AI 雷同表述限用清单（2026-09-19 全库排查，详见 tools/AI雷同表述排查报告.md）
 

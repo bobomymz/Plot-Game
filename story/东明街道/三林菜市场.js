@@ -145,7 +145,10 @@ Object.assign(storyData, {
           if(!canSee(vars)) return "摸黑退回去";
           return "原路退回";
         },
-        nextScene: "长者食堂-后厨",
+        nextScene: function(vars) {
+          if (vars._lastScene === "菜市场-冷库区" || vars._lastScene === "菜市场-冷库区-闭门羹") return "菜市场-冷库区"
+          return "长者食堂-后厨";
+        },
         effect: updateTime(1)
       }
     ]

@@ -1,3 +1,5 @@
+// 人类作者注：有几个测试用的.py文件依赖此文档结构，修改后请同步修改相关文件。
+
 // 根据游戏内时间返回对应时段的图片路径
 // map: { morning, evening, night, midnight } — morning 必填；evening/midnight 缺省时 fallback 到 night，再 fallback 到 morning
 function timeImage(map) {

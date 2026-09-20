@@ -76,6 +76,7 @@ Object.assign(storyData,{
 
   "益丰大药房-柜台后": {
     image: "images/小区周边/益丰大药房/白大褂.webp" /* TODO: images/小区周边/益丰大药房/发现白大褂.webp */,
+    onEnter: { shake: true },   // 白大褂丧尸突然窜出
     text: "你绕到柜台侧面。一只穿着白大褂的丧尸突然窜了出来，你急忙闪开。它好像没看到你一样，蹲在地上，疯狂地撕咬一盒不知道什么的药。",
     choices: [
       {
@@ -326,7 +327,7 @@ Object.assign(storyData,{
     choices: [
       {
         text: "起身离开",
-        nextScene: "益丰大药房-办公室门口",
+        nextScene: "益丰大药房-库房",
         effect: updateTime(1)
       }
     ]
@@ -436,6 +437,14 @@ Object.assign(storyData,{
   // 入口：门锁上了 → 撞门 → 这里
   "益丰大药房-背后偷袭的丧尸": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/背后偷袭的丧尸.png */,
+    onEnter: function(vars) {
+      // 首次遭遇（未喂水、未解脱）时身后脚步声突然加快 —— 抖一下
+      var firstMeet = !(vars._visit['益丰大药房-喂水'] > 0)
+        && vars._lastScene !== "益丰大药房-沟通躲开"
+        && vars._lastScene !== "益丰大药房-被咬到了";
+      if (firstMeet) triggerShake();
+      return {};
+    },
     text: function(vars) {
       var t;
       if ((vars._visit['益丰大药房-喂水'] > 0)) {

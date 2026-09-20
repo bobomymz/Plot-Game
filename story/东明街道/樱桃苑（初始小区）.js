@@ -325,7 +325,10 @@ Object.assign(storyData, {
 
   "家外楼梯间的抉择": {
     image: "images/home/staircase.webp",
-    onEnter: updateTime(1), // 花1分钟跑到楼梯间
+    onEnter: function(vars) {
+      triggerShake();               // 丧尸突然闪到身后
+      return updateTime(1)(vars);   // 花1分钟跑到楼梯间
+    },
     text: function(vars) {
       var desc = "你一路狂奔冲进楼梯间，胸口剧烈地起伏。一只丧尸突然闪到了你的身后！\n\
 你只能快速选择一个楼层离开，或者躲起来，祈祷丧尸不会追你……";
@@ -1170,6 +1173,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "民防设施-楼梯间": {
     image: "images/home/等候室走廊.webp",
+    onEnter: { shake: true },   // 铁门被硬生生撞开，魁梧丧尸钻进来
     qte: {
       timeout: 8000,
       onTimeout: "结局-被丧尸扑倒咬死"
