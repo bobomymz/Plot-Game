@@ -943,7 +943,7 @@ Object.assign(storyData, {
 
   "建平-地下车库-工具间-拿面具": {
     image: "images/placeholder.png",
-    onEnter: { set: { hasGasMask: true }, add: { itemCount: 1 } },
+    onEnter: { set: { hasGasMask: true, maskRemainingUses: 2 }, add: { itemCount: 1 } },
     text: "你取下那只防毒面具。橡胶面罩保存得还行，滤罐没有明显破损。\n你把面具收进包里。",
     choices: [
       { text: "收好", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }

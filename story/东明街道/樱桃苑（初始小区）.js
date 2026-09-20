@@ -1231,7 +1231,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         text: "拿上防毒面具",
         condition: "itemCount < bagVolume && !hasGasMask",
         nextScene: "物资区的丧尸",
-        effect: { set: { hasGasMask: true }, add: { itemCount: 1 } },
+        effect: { set: { hasGasMask: true, maskRemainingUses: 1 }, add: { itemCount: 1 } },
         elseScene: "整理整理"
       },
       {

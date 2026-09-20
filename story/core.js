@@ -25,8 +25,8 @@ const storyData = {
     _visit: {},                    // 自动记录各场景访问次数（引擎自动维护，不可修改）
     foodUnderBed: true,        // 底下是否有食物，初始为true
     chasedByZombies: 0,        // 被尸潮追击的等级（0~5，效果：进行任何战斗操作都有概率被群殴，qte时间均缩短，体力消耗增加）
-    _travelMinutes: 0,         // 连续户外移动累积时间（分钟），户外场景 >6min 的移动累加，休息/吃饭/过夜归零
-    _fatiguePaid: 0,           // 疲劳已扣档位（0-5，只增不退；travel-fatigue 规则自维护，剧情勿改。休息只归零 _travelMinutes 不退此值，防"休息→再走20分钟"刷扣体力）
+    _travelMinutes: 0,         // 连续户外移动累积时间（分钟），户外场景 >6min 的移动累加，休息/吃饭/躲藏/过夜归零
+    _fatiguePaid: 0,           // 本段连续移动已扣档位（0-5；travel-fatigue 规则自维护，剧情勿改。里程归零时规则自动清零台账，下一段连续移动从第 1 档重新计费）
     _restBlocked: false,       // 休息是否被体力门槛挡住（体力>=6 时 restRecover 置 true，休息场景 text 用 restHint 提示"你已经差不多歇够了"）
     _isOutdoor: false,         // 当前渲染场景是否户外（引擎每次渲染按 scene.outdoor 写入，供 updateTime 判断疲劳累计）
     _sleepingZombieGone: false,// 小区道路椅子上躺着的那个丧尸走了没有
@@ -42,7 +42,7 @@ const storyData = {
     defeatedOldMan: false,     // 是否已击败安盛街老头丧尸
     _supermarketCompromised: false, // 联华超市地下室是否已暴露不再安全
     _supermarketSuppliesTaken: false,// 联华超市的补给是否已经拿到
-    maskRemainingUses: 1,      // 防毒面具剩余使用次数（初始1，含进风机房，耗尽可能二次使用会死）
+    maskRemainingUses: 1,      // 当前面具滤罐剩余使用次数（民防过期货1次，安居苑/建平/警察局保养良好的2次；进危害佩戴即扣1；拾取时按该点面具品质重置；耗尽按无面具结算）
     hasClassMates: false,      // 是否救出上实南校三位同学
     // --- 上实南校临时道具（不占背包容量 itemCount，不可丢弃，离开学校线即无用）---
     _hasCampusKey: false,      // 员工通道钥匙串（教务室铁皮柜割锁获得，教学楼走员工通道下楼用）
@@ -112,7 +112,7 @@ const storyData = {
     hasBroom:  false,          // 是否有扫帚（民防设施等候室）
     hasDiary:  false,          // 是否有日记本（民防设施等候室桌上）
     hasTorch:  false,          // 是否有手电筒（民房设施等候室桌子抽屉）
-    hasGasMask:   false,       // 是否有防毒面具（民防设施物资区）
+    hasGasMask:   false,       // 是否有防毒面具（全图唯一物品，多点可拿：民防物资区/安居苑204/建平车库工具间/警察局防暴柜）
     hasIronPipe: false,        // 是否有铁管（民防设施物资区箱子后面，打斗中才能获得）
     hasCane: false,            // 是否有拐杖（安盛街老头丧尸）
     hasMopHandle: false,       // 是否有拖把杆（理发店）
@@ -430,24 +430,28 @@ const storyData = {
         }
       },
 
-      // --- 连续移动疲劳（20/36/48/56/60五档，间隔递减，每档-1体力，全程上限-5） ---
-      // ⚠ 故意不写 condition：引擎对"条件不满足"的规则会清空 triggerKey 节流记录（applyReactive），
-      // 若写 condition: "_travelMinutes >= 20"，休息归零 _travelMinutes 后整条档位阶梯会被重新武装，
-      // 此后每走满 20 分钟就再扣 1 点（"休息→再走→又扣"无限刷）。改为无条件 + 档位键 + _fatiguePaid 台账：
-      // 里程下降（休息/躲藏归零）只改键不扣体力；档位创新高才按差值扣，跨多档一次扣清。
+      // --- 连续移动疲劳（20/36/48/56/60五档，间隔递减，每档-1体力，单次连续移动上限-5） ---
+      // 语义：疲劳属于"当前这一段连续移动"。休息/吃饭/躲藏/过夜归零 _travelMinutes 后，
+      // 下一段连续移动从第 1 档重新计费。_fatiguePaid 台账（本段已扣到的档位）由本规则自维护，
+      // 剧情只管归零里程、勿手动动台账（全库 40+ 归零点均无需改动）。
+      // ⚠ 必须不写 condition：清台账靠规则在 tier→0 跳变上触发；若写 condition: "_travelMinutes >= 20"，
+      // 归零后规则被跳过、台账清不掉，会退化成"只按历史最高档计费"（旧版行为，疲劳机制中期名存实亡）。
+      // 也不构成刷体力漏洞：restRecover 有 REST_CAP=6 上限，频繁小憩是在用时间换（饥饿时钟照走），
+      // "适时休息躲疲劳"正是设计意图。
       {
         id: "travel-fatigue",
         triggerKey: "fatigueTier(_travelMinutes)",
         effect: function(v) {
           var t = fatigueTier(v._travelMinutes);
-          if (t <= v._fatiguePaid) return false;   // 档位未创新高（含休息归零）——不扣
+          if (t === 0) { v._fatiguePaid = 0; return false; }  // 里程归零＝休息/吃饭/躲藏/过夜，台账随本段清零
+          if (t <= v._fatiguePaid) return false;   // 档位未创新高——不扣
           var n = t - v._fatiguePaid;              // 一次跨多档则一次扣清
           v.strength = Math.max(0, v.strength - n);
           v._fatiguePaid = t;
           return n;
         },
         onTrigger: function(v, rule, n) {
-          if (n) flashStatusWarning("⚠ 体力 -" + n + "（疲劳）· 剩余 " + fmtStrength(v.strength));
+          if (n) flashStatusWarning("⚠ 体力 -" + n + "（连续移动 " + Math.round(v._travelMinutes) + " 分钟）· 剩余 " + fmtStrength(v.strength));
         }
       },
 

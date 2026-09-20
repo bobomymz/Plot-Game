@@ -47,6 +47,14 @@ Object.assign(storyData, {
           elseScene: "整理整理"
         });
       }
+      if (!vars.hasGasMask) {
+        opts.push({
+          text: "拿走防暴防毒面具",
+          condition: "itemCount < bagVolume",
+          nextScene: "警察局-装备-防毒面具",
+          elseScene: "整理整理"
+        });
+      }
       opts.push({
         text: "原路返回",
         nextScene: "上实南校门口",
@@ -100,6 +108,19 @@ Object.assign(storyData, {
     choices: [
       {
         text: "收好匕首",
+        nextScene: "警察局"
+      }
+    ]
+  },
+
+  "警察局-装备-防毒面具": {
+    image: "images/placeholder.png" /* TODO: images/警察局/policeStation.png */,
+    onEnter: { set: { hasGasMask: true, maskRemainingUses: 2 }, add: { itemCount: 1 } },
+    text: "你在器械室墙边的防暴器材柜里翻出一只防毒面具——防暴用的全面罩，镜片没花，橡胶密封圈还软着。柜门内侧贴着领用登记表，最后一行停在五月底。\n\
+滤罐是没拆封的原厂货。你把它拧上滤口，密封圈发出一声轻响——这套东西，比你在别处见过的那些老古董体面多了。",
+    choices: [
+      {
+        text: "收好防毒面具",
         nextScene: "警察局"
       }
     ]

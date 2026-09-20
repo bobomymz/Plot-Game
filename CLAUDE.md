@@ -374,7 +374,7 @@ computed: {
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | `id` | string | 唯一 ID（必填，缺省报错） |
-| `condition` | 表达式/函数 | [可选] 满足时才可能触发。**省略时视为恒满足，且引擎不会清空其节流记录**——适合"键值可能回落（如休息归零 `_travelMinutes`），回落不应重新武装规则"的场景（见 travel-fatigue） |
+| `condition` | 表达式/函数 | [可选] 满足时才可能触发。**省略时视为恒满足，且引擎不会清空其节流记录**——适合"键值回落时也需要触发"的场景（如 travel-fatigue：休息归零 `_travelMinutes` 后，规则要在 tier→0 跳变上清 `_fatiguePaid` 台账） |
 | `triggerKey` | 表达式 | 节流：相同值不重复触发 |
 | `effect` | 对象/函数 | 触发时执行的效果。**函数形式可返回一个值**（见下） |
 | `onTrigger` | 函数 | [可选] 效果执行后调用的副作用回调，签名 `(gameState, rule, effectResult)` |
@@ -608,6 +608,7 @@ Object.assign(storyData, {
 | **尸潮 & 疲劳** | | |
 | `chasedByZombies` | 0–5 | 追击等级，5 秒杀。晴天进入户外场景归零（applyWeatherDrain，不分昼夜）。高值影响 QTE 时间、战斗风险 |
 | `_travelMinutes` | 0–… | 连续移动累积分钟（>6min 的 `updateTime` 累加）；20/36/48/56/60 五档各 -1 体力（reactive） |
+| `_fatiguePaid` | 0–5 | 本段连续移动已扣疲劳档位；里程归零时 travel-fatigue 规则自动清零（2026-09-20 起），剧情勿改 |
 | **背包 & 物品** | | |
 | `itemCount` / `bagVolume` | int | 当前物品数 / 背包容量（初始 3） |
 | `hasXxx` | bool | 物品flag，添加时需同时 `add: { itemCount: 1 }`。交通工具和背包不占 `itemCount` |
@@ -900,15 +901,16 @@ Object.assign(storyData, {
 `updateTime(addMinutes)` 中，当 `addMinutes > 6` 时自动累加到 `_travelMinutes`。雨天走路慢 30%，同段路程更快触发疲劳。
 
 `_travelMinutes` 达阈值时 reactively 扣体力（间隔递减）：
-20 / 36 / 48 / 56 / 60 min → 每档 -1 体力（共 5 档，**全程上限 -5**，一次跨多档则一次扣清）。档位计算用 utils.js 的 `fatigueTier(_travelMinutes)`。
+20 / 36 / 48 / 56 / 60 min → 每档 -1 体力（共 5 档，**单次连续移动上限 -5**，一次跨多档则一次扣清）。档位计算用 utils.js 的 `fatigueTier(_travelMinutes)`。
 
-**重置方式：** 休息、过夜、吃东西时设 `_travelMinutes = 0`。归零只重置里程累计；已扣档位记在
-`_fatiguePaid`（0-5，只增不退，travel-fatigue 规则自维护），所以休息后再走不会立刻重扣第 1 档，只有
-连续移动累计超过历史最高档位才继续扣——否则"休息→走20分钟→再休息"可无限刷扣体力。若想让过夜恢复
-部分档位，可在过夜场景 onEnter 加 `vars._fatiguePaid = Math.max(0, vars._fatiguePaid - 2)`。
+**重置方式：** 休息、吃饭、躲藏、过夜时设 `_travelMinutes = 0`（全库 40+ 处，写法不变）。里程归零后
+`_fatiguePaid` 台账由 travel-fatigue 规则自动清零（effect 检测 tier→0 跳变），**无需、也不要**在剧情里
+手动动 `_fatiguePaid`——下一段连续移动从第 1 档重新计费，疲劳始终属于"当前这一段连续移动"。
 
-注意：travel-fatigue 规则**故意不写 condition**——引擎对条件不满足的规则会清空 triggerKey 节流记录，
-那会让归零后的阶梯重新武装（即上述刷体力 bug 的根源）。
+注意：travel-fatigue 规则**必须不写 condition**——清台账依赖规则在 tier→0 跳变上触发；若写
+`condition: "_travelMinutes >= 20"`，归零后规则被跳过、台账永远清不掉，会退化成"只按历史最高档计费"
+（2026-09-20 之前的旧行为，付过第 5 档后疲劳整局失效）。频繁小憩躲疲劳不构成漏洞：体力回复有
+REST_CAP=6 上限，且小憩消耗游戏时间、饥饿时钟照走——用时间换体力正是"适时休息"的设计意图。
 
 **休息场景守卫：**
 A类（室内安全，无额外条件）：家、理发店、图书馆(清)、民防设施
