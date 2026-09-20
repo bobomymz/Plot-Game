@@ -1,0 +1,9 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - img "场景图" [ref=f1e4]
+    - paragraph [ref=f1e6]: 阅览大厅安静得反常。 远处落地窗边——那个人影不见了。 长桌上的一只保温杯摔在地上，滚出老远。 你后颈的汗毛竖了起来。你看看周围，除了墙角那只腿断了的丧尸，似乎并没有什么活物。
+    - generic [ref=f1e9]:
+      - button "且战且退，退回楼梯" [ref=f1e23] [cursor=pointer]
+      - button "握紧拳头迎战！" [ref=f1e24] [cursor=pointer]
+    - button "🔄 重新开始" [ref=f1e8] [cursor=pointer]
+  - generic: ⚠ 体力 -1（饥饿）· 剩余 7.0

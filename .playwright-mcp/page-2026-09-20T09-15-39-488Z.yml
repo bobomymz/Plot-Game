@@ -1,0 +1,9 @@
+- generic [ref=f1e2]:
+  - img "场景图" [ref=f1e4]
+  - paragraph [ref=f1e6]: 没等你回答，她的视线又飘回桌面，声音低下去： “粉色那个……是我的杯子……水……还有吗……”
+  - generic [ref=f1e9]:
+    - button "递给她你的水瓶" [ref=f1e13] [cursor=pointer]
+    - button "把那只粉色保温杯递给她" [ref=f1e14] [cursor=pointer]
+    - button "再听她说一会儿" [ref=f1e15] [cursor=pointer]
+    - button "退回阅览大厅" [ref=f1e16] [cursor=pointer]
+  - button "🔄 重新开始" [ref=f1e8] [cursor=pointer]

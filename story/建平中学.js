@@ -227,6 +227,12 @@ function jpHide(image, successText, failText, reduceLevel) {
   };
 }
 
+// 弘渊楼 2 楼阅览大厅图（李娟链各节点共用）
+var hyLib2FImg = timeImage({
+  morning: "images/建平/图书馆2楼.webp",
+  night: "images/建平/图书馆2楼-night.webp"
+});
+
 Object.assign(storyData, {
 
   // ==================== 校园门口（到达中转节点） ====================
@@ -2249,20 +2255,318 @@ Object.assign(storyData, {
     choices: [
       { text: "从前门出去", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "从后门出去", nextScene: "建平-操场", effect: updateTime(2) },
+      { text: "去借阅处", nextScene: "建平-弘渊楼-1F-借阅处", effect: updateTime(1) },
       { text: "去楼梯", nextScene: "建平-弘渊楼-楼梯", effect: updateTime(1) }
     ]
   },
-  "建平-弘渊楼-2F": {
+  "建平-弘渊楼-1F-借阅处": {
     image: timeImage({
-      morning: "images/建平/图书馆2楼.webp",
-      night: "images/建平/图书馆2楼-night.webp"
+      morning: "images/建平/图书馆1楼-借阅处.webp",
+      night: "images/建平/图书馆1楼-借阅处-night.webp"
+    }) /* TODO: 用户提供借阅处图（日/夜）后放入 images/建平/ */,
+    onEnter: function(vars) { vars.currentPos = "弘渊楼1F借阅处"; },
+    text: "借阅处。长条台面蒙着薄灰，玻璃板下压着几张过期的推荐书目单。还书口的推车里，还堆着几摞没来得及归架的书。",
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._hyBorrowCardSeen) {
+        cs.push({ text: "看看玻璃板下压着的东西", nextScene: "建平-弘渊楼-1F-借阅处-借书证", effect: updateTime(1) });
+      }
+      cs.push({ text: "回 1 楼大厅", nextScene: "建平-弘渊楼-1F", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-弘渊楼-1F-借阅处-借书证": {
+    image: timeImage({
+      morning: "images/建平/图书馆1楼-借阅处.webp",
+      night: "images/建平/图书馆1楼-借阅处-night.webp"
     }),
-    onEnter: function(vars) { vars.currentPos = "弘渊楼2F"; },
-    text: function(vars) { return "弘渊楼 2 楼。" + describeZombieWave(vars); },
+    onEnter: { set: { _hyBorrowCardSeen: true } },
+    text: "玻璃板下压着一张借书证，塑封的边角已经翘起来。\n【姓名】李娟\n【证号】JP-2024-0506\n【班级】高一（2）班\n借阅记录停在出事前两天。这张证的主人，再也没有来注销过。",
     choices: [
-      { text: "去楼梯", nextScene: "建平-弘渊楼-楼梯", effect: updateTime(1) },
-      { text: "去藏书区", nextScene: "建平-弘渊楼-2F-藏书区", effect: updateTime(1) }
+      { text: "把借书证压回原处", nextScene: "建平-弘渊楼-1F-借阅处", effect: updateTime(1) }
     ]
+  },
+
+  // ===== 弘渊楼 2F · 李娟（半感染女生，含汞饮水机水的受害者）=====
+  // 时间沙漏：Day1-2 清醒（可对话/指认杯子）→ Day3-4 恶化（靠近会抓伤）→ Day5+ 转化（2F 闪色战）。
+  // 保温杯陷阱：桌上所有水都是饮水机的水（含甲基汞），指认与否只影响选项文案——两只杯子都有毒。
+  "建平-弘渊楼-2F": {
+    image: hyLib2FImg,
+    onEnter: function(vars) {
+      vars.currentPos = "弘渊楼2F";
+      if (!vars._lijuanTurned && vars.dd >= 5) vars._lijuanTurned = true;   // Day5+ 李娟自然转化（锁存）
+      return {};
+    },
+    text: function(vars) {
+      // 转化未杀：她堵着阅览大厅
+      if (vars._lijuanTurned && !vars._lijuanKilled) {
+        return "阅览大厅安静得反常。\n远处落地窗边——那个人影不见了。\n长桌上的一只保温杯摔在地上，滚出老远。\n你后颈的汗毛竖了起来。" + describeZombieWave(vars);
+      }
+      var desc = "弘渊楼 2 楼的阅览大厅。右侧一排大窗透进柔和的天光，窗台上的盆栽还没枯透。\n\
+一组组圆桌和彩色座椅还保持着有人来过的样子——摊开的书本、歪倒的水杯，像是主人只是暂时走开。近处这张桌上，立着几只保温杯。\n\
+左侧的台阶坐区上，横七竖八靠着几个背包和袋子，一直没有人来认领。";
+      if (vars._lijuanKilled) {
+        desc += "\n远处落地窗边，空了。";
+      } else {
+        desc += "\n远处落地窗边，坐着一个人影。";
+      }
+      if (vars._hyCupsUsed) desc += "\n桌上的保温杯都空了。";
+      return desc + describeZombieWave(vars);
+    },
+    choices: function(vars) {
+      if (vars._lijuanTurned && !vars._lijuanKilled) {
+        return [
+          { text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "迎战！" : "握紧拳头迎战！"; }, nextScene: "建平-弘渊楼-2F-李娟-战斗" },
+          { text: "且战且退，退回楼梯", nextScene: "建平-弘渊楼-楼梯", effect: function(v) { v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return updateTime(1)(v); } }
+        ];
+      }
+      var cs = [];
+      if (!vars._lijuanTurned) {
+        cs.push({ text: "走近落地窗边的人影", nextScene: "建平-弘渊楼-2F-李娟", effect: updateTime(1) });
+      }
+      if (!vars._hyCupsUsed) {
+        if (vars._lijuanCupTold) {
+          // 她指认过杯子：玩家自以为聪明地避开“她的”——两只都是饮水机的水
+          cs.push({ text: "喝她指过的那只粉色保温杯里的水", nextScene: "建平-弘渊楼-2F-保温杯-粉色", effect: updateTime(1) });
+          cs.push({ text: "喝另一只保温杯里的水", nextScene: "建平-弘渊楼-2F-保温杯-另一只", effect: updateTime(1) });
+        } else {
+          cs.push({ text: "喝桌上保温杯里的水", nextScene: "建平-弘渊楼-2F-保温杯-喝水", effect: updateTime(1) });
+        }
+        cs.push({ text: "把保温杯里的水灌进水瓶", showCondition: "hasBottle && bottleWater == 0", nextScene: "建平-弘渊楼-2F-保温杯-灌水", effect: updateTime(1) });
+      }
+      cs.push({ text: "去楼梯", nextScene: "建平-弘渊楼-楼梯", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "建平-弘渊楼-2F-李娟": {
+    image: hyLib2FImg /* TODO: 后补人影近景特写图 */,
+    onEnter: function(vars) {
+      vars.currentPos = "弘渊楼2F阅览室";
+      // 首访且清醒：她指认自己的粉色保温杯（解锁桌面喝水“双选项”陷阱）
+      if (vars.dd < 3 && (vars._visit['建平-弘渊楼-2F-李娟'] || 0) <= 1) vars._lijuanCupTold = true;
+      return {};
+    },
+    text: function(vars) {
+      // Day3-4 恶化态：只剩破碎单句（每次进场景随机抽一条）
+      if (vars.dd >= 3) {
+        var worse = ["……水……", "包……还在吗……", "别喝……", "……回来了？"];
+        var w = worse[Math.floor(Math.random() * worse.length)];
+        return [
+          "你放轻脚步走近。她又比上次萎了一层——脸颊陷下去，校服空荡荡地挂在肩上。那本《占星术杀人魔法》摊在地上，她不再翻了。",
+          "听见动静，她抬起头，浑浊的眼睛在你脸上停了几秒——什么也没认出来。\n“" + w + "”"
+        ];
+      }
+      // Day1-2 清醒态：首访完整开场，之后随机呓语
+      if ((vars._visit['建平-弘渊楼-2F-李娟'] || 0) <= 1) {
+        return [
+          "你穿过圆桌间的过道，朝落地窗边走过去。\n她坐在窗边，校服外套搭在椅背上，手里捏着一本摊开的书——《占星术杀人魔法》。桌脚围着一圈空矿泉水瓶，瓶盖全都拧开着，瓶底干得发白。",
+          "听见脚步声，她缓缓抬起头。嘴唇干裂起皮，眼睛里像蒙了一层雾。\n“你是……回来拿书包的吗？”",
+          "没等你回答，她的视线又飘回桌面，声音低下去：\n“粉色那个……是我的杯子……水……还有吗……”"
+        ];
+      }
+      var pool = [
+        "她们说下楼找水……让我看着东西……包都在呢……怎么还不回来……",
+        "雨都停了三轮了……人还没回来……",
+        "老师说的……暑假也要保持手感……题还没刷完……",
+        "饮水机……是我喝空的……对不起……",
+        "占星术……塔罗牌……凶手……到底是谁……",
+        "好渴……你知道那种渴吗……像有人把脑袋里的塞子拔了……"
+      ];
+      var m = pool[Math.floor(Math.random() * pool.length)];
+      return [
+        "她还在落地窗边，还是那个姿势。手里的书不知翻到了哪一页——也可能根本没翻过。",
+        "“" + m + "”"
+      ];
+    },
+    choices: function(vars) {
+      // Day3-4 恶化态：无法正常交流，靠近有抓伤风险；见水还是会喝
+      if (vars.dd >= 3) {
+        var cs = [];
+        if (!vars._lijuanScratched) {
+          cs.push({ text: "再靠近一步", nextScene: "建平-弘渊楼-2F-李娟-抓伤", effect: updateTime(1) });
+        }
+        if (vars._lijuanCupTold && !vars._lijuanFedCup) {
+          cs.push({ text: "把那只粉色保温杯递给她", showCondition: "dd >= 4", nextScene: "建平-弘渊楼-2F-李娟-转化", effect: updateTime(1) });
+          cs.push({ text: "把那只粉色保温杯递给她", showCondition: "dd < 4", nextScene: "建平-弘渊楼-2F-李娟-发作", effect: updateTime(1) });
+        }
+        cs.push({ text: "退回阅览大厅", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) });
+        return cs;
+      }
+      // Day1-2 清醒态
+      return [
+        { text: "递给她你的水瓶", showCondition: "hasBottle && bottleWater > 0 && !waterToxic", nextScene: "建平-弘渊楼-2F-李娟-清醒", effect: { set: { bottleWater: 0, waterToxic: false } } },
+        { text: "递给她你的水瓶", showCondition: "hasBottle && bottleWater > 0 && waterToxic", nextScene: "建平-弘渊楼-2F-李娟-毒水", effect: { set: { bottleWater: 0, waterToxic: false } } },
+        { text: "把那只粉色保温杯递给她", showCondition: "_lijuanCupTold && !_lijuanFedCup && dd >= 4", nextScene: "建平-弘渊楼-2F-李娟-转化", effect: updateTime(1) },
+        { text: "把那只粉色保温杯递给她", showCondition: "_lijuanCupTold && !_lijuanFedCup && dd < 4", nextScene: "建平-弘渊楼-2F-李娟-发作", effect: updateTime(1) },
+        { text: "再听她说一会儿", nextScene: "建平-弘渊楼-2F-李娟", effect: updateTime(1) },
+        { text: "退回阅览大厅", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+      ];
+    }
+  },
+
+  "建平-弘渊楼-2F-李娟-清醒": {
+    image: hyLib2FImg,
+    onEnter: { add: { strength: 1 } },   // 润喉糖：她硬塞给你，当场含下
+    text: [
+      "她双手捧起你的水瓶，小口小口地喝——像是要把这一口水在嘴里含久一点。",
+      "喝完，她愣了一会儿。再抬起头时，那层雾竟清了一层。",
+      "“……谢谢。”她的声音很轻，“我刚才，是不是又说胡话了？你别怕我。”",
+      "“我叫——”她顿住，眉头慢慢拧起来，“……我叫什么来着。”她放弃了，转头看向台阶上那排背包，“她们让我看着东西。她们怎么还不回来。”",
+      "“饮水机是我喝空的……”她的声音又开始飘，“四楼还有一台……别喝……那台也……”",
+      "她从兜里摸出一颗薄荷味的润喉糖，硬塞进你手心：“给你。我留着……也没用了。”\n你剥开糖纸含进嘴里——一丝凉意顺着喉咙滑下去。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>"
+    ],
+    choices: [
+      { text: "退回阅览大厅", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-弘渊楼-2F-李娟-毒水": {
+    image: hyLib2FImg,
+    text: [
+      "她双手捧起你的水瓶，仰头咕咚咕咚灌了下去。",
+      "放下瓶子，她忽然蜷起身，指甲抠进自己的喉咙，干呕了几声——什么也没吐出来。再抬起头时，那层雾比刚才更浓了。",
+      "“甜的……”她舔了舔嘴唇，浑浑噩噩地笑了一下，“水……还有吗……”"
+    ],
+    choices: [
+      { text: "退回阅览大厅", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-弘渊楼-2F-李娟-发作": {
+    image: hyLib2FImg,
+    onEnter: { set: { _lijuanFedCup: true } },
+    text: [
+      "你把那只粉色保温杯递过去。她的手抖得厉害，杯盖拧了两次才拧开——然后仰着头，咕咚咕咚灌了下去。",
+      "水顺着她的下巴往下淌。她放下杯子，眼神却比刚才更散了——瞳仁里的雾更重，手指开始不受控制地抠着杯壁。",
+      "“还有吗……”她小声说，“水……还有吗……”"
+    ],
+    choices: [
+      { text: "放回桌上，退开", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-弘渊楼-2F-李娟-转化": {
+    image: hyLib2FImg,
+    onEnter: { set: { _lijuanTurned: true, _lijuanFedCup: true } },
+    text: [
+      "她接过粉色保温杯，抖着手拧开，仰头灌了下去。",
+      "这一次，她没有说“还有吗”。",
+      "喉咙里的声音变了——从干哑的呢喃，沉成一种湿漉漉的、不像人的低鸣。保温杯从她手里滑落，在地板上滚出去老远。",
+      "她扶着落地窗框，慢慢站了起来。"
+    ],
+    choices: [
+      { text: "迎战！", nextScene: "建平-弘渊楼-2F-李娟-战斗", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-弘渊楼-2F-李娟-战斗": {
+    image: hyLib2FImg,
+    onEnter: initMemoryGame(["红", "蓝", "绿", "黄"], 4, { set: { currentPos: "弘渊楼2F阅览室" } }),
+    text: function(vars) {
+      var opener = vars._lastScene === "建平-弘渊楼-2F-李娟-转化"
+        ? "她转过身来——那张脸上，已经找不到什么李娟的影子了。她朝你扑过来！"
+        : "背后传来一声嘶哑的低鸣——她不知什么时候已经绕到了你身后，朝你扑过来！";
+      return opener + "\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+    },
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：2红1蓝1绿" },
+        condition: checkFlashAnswer,
+        nextScene: "建平-弘渊楼-2F-李娟-解脱",
+        elseScene: "结局-阅览室的常客",
+        timeout: 11000,            // 4色闪完约3.2秒，留约7.8秒输入
+        timeoutScene: "结局-阅览室的常客"
+      }
+    ]
+  },
+
+  "建平-弘渊楼-2F-李娟-解脱": {
+    image: hyLib2FImg,
+    onEnter: function(vars) {
+      combatDrain(vars);
+      vars._lijuanKilled = true;
+      return {};
+    },
+    text: function(vars) {
+      var move = hasMeleeWeapon(vars)
+        ? "你用" + meleeWeaponName(vars) + "挡开她最后一下扑击"
+        : "你侧身挡开她最后一下扑击";
+      var tail = vars._hyBorrowCardSeen
+        ? "落地窗外的树影落在她脸上。你忽然想起楼下借阅处玻璃板下那张借书证——李娟。\n那本《占星术杀人魔法》摔在长桌底下，书页朝天，再没有人来翻它了。"
+        : "落地窗外的树影落在她脸上。台阶上那排背包，还在等人认领。";
+      var segs = [move + "，她踉跄着撞在落地窗上，缓缓滑坐下去，不动了。", tail];
+      var drain = combatDrainText(vars);
+      if (drain) segs.push(drain);
+      return segs;
+    },
+    choices: [
+      { text: "退回阅览大厅", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-弘渊楼-2F-李娟-抓伤": {
+    image: hyLib2FImg,
+    onEnter: { set: { _lijuanScratched: true }, add: { mercuryLoad: 10 } },
+    text: function(vars) {
+      var desc = "你又向前挪了半步。\n她的手猛地探过来——指甲在你手背上划出三道血痕。你踉跄着退开，她也没有追，只是缩回窗边，继续盯着地面，喉咙里滚着含混的气音。";
+      if (vars.hasPipelineMap) desc += "\n伤口火辣辣的。你想起管线图上那行红字——“水有毒，别喝”。";
+      return desc;
+    },
+    choices: [
+      { text: "退回阅览大厅", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  // 桌面保温杯：全是饮水机的水（含甲基汞）。指认过杯子才会出现“避开粉色”的假聪明双选项。
+  "建平-弘渊楼-2F-保温杯-粉色": {
+    image: hyLib2FImg,
+    onEnter: { set: { _hyCupsUsed: true }, add: { strength: 1, mercuryLoad: 10 } },
+    text: "你拧开那只粉色保温杯的杯盖，仰头灌了两口。水是温吞吞的，放久了的味道，说不上新鲜——你皱了皱眉，还是咽了下去。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "放回桌上", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-弘渊楼-2F-保温杯-另一只": {
+    image: hyLib2FImg,
+    onEnter: { set: { _hyCupsUsed: true }, add: { strength: 1, mercuryLoad: 10 } },
+    text: "你特意避开了她指过的那只粉色保温杯，从旁边挑了一只印着小熊图案的，拧开仰头灌了两口。\n水一样是温吞吞的，放久了的味道，说不上新鲜。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "放回桌上", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-弘渊楼-2F-保温杯-喝水": {
+    image: hyLib2FImg,
+    onEnter: { set: { _hyCupsUsed: true }, add: { strength: 1, mercuryLoad: 10 } },
+    text: "你随手拿起一只保温杯，拧开仰头灌了两口。水是温吞吞的，放久了的味道，说不上新鲜——你皱了皱眉，还是咽了下去。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    choices: [
+      { text: "放回桌上", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-弘渊楼-2F-保温杯-灌水": {
+    image: hyLib2FImg,
+    onEnter: { set: { bottleWater: 1, waterToxic: true, _hyCupsUsed: true } },
+    text: "你拧开一只保温杯，把里面的水缓缓灌进水瓶，拧紧瓶盖。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】水瓶已灌满。</span>",
+    choices: [
+      { text: "放回桌上", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
+    ]
+  },
+
+  "结局-阅览室的常客": {
+    image: "images/zombieKnockYouDown.webp",
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
+    text: function(vars) {
+      var desc = "你慢了半拍。她扑上来的时候，力气大得完全不像那个蜷在落地窗边的女生。\n";
+      if (vars._hyBorrowCardSeen) {
+        desc += "意识模糊之前，你想起了借阅处玻璃板下的那张借书证——李娟。\n她等的同学没有回来。现在，她也不用再等了。\n";
+      }
+      return desc + weaponBrokeText(vars) + "\n—— 结局：阅览室的常客 ——";
+    }
   },
   "建平-弘渊楼-3F": {
     image: timeImage({
@@ -2346,6 +2650,9 @@ Object.assign(storyData, {
         desc += "\n“食堂后厨还有不少吃的，就是刘冠宇那家伙腿受伤了，一直赖在食堂。你饭点来找我，我带你去后厨翻吃的。”";
       } else {
         desc += "\n“食堂后厨的煤气漏了，现在那边呛得要死，我都不敢去了。得先把煤气阀关了才行——那玩意儿在后厨的小隔间里，好像还有几只厨师的丧尸堵在那儿。”";
+      }
+      if (!vars._lijuanKilled && !vars._lijuanTurned) {
+        desc += "\n“对了，”他忽然想起什么，“2楼阅览区那个女生，一直坐在落地窗边上。前几天我下楼拿泡面，她还会应人两声……现在不行了。你别离她太近。”";
       }
       return desc;
     },
@@ -2799,14 +3106,6 @@ Object.assign(storyData, {
     text: "这层楼空着。桌椅落着薄灰，旧卷子被风掀得到处都是，黑板裂了一角。破窗灌进来的风，把地上的纸页吹得沙沙响。",
     choices: [
       { text: "离开", nextScene: "建平-远翔楼-5F", effect: updateTime(1) }
-    ]
-  },
-  "建平-弘渊楼-2F-藏书区": {
-    image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "弘渊楼2F藏书区"; },
-    text: "藏书区。一排排书架静默地立着，书脊上积了薄薄一层灰。几本书被抽出来丢在地上，翻开的书页被踩满了脚印，有人在这儿翻过。",
-    choices: [
-      { text: "离开", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
     ]
   },
   "建平-弘渊楼-3F-阅览区": {
@@ -3277,7 +3576,7 @@ Object.assign(storyData, {
   // 非地点节点关键词（每次新增此类场景需同步补充）
   // 匹配规则：ID 以关键词【结尾】即命中（无 "-" 前缀锚）——"没螺丝刀/收好内胆/搜尸体"
   // 这类变体由 螺丝刀/内胆/尸体 等基础词直接覆盖，无需逐个造词。
-  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|防波堤|失落的沉默|动摇的坦白|尘封的真相|结算|wqx存档|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|锁着|没钥匙|查看|关阀|被堵住|踢球|听琴|听音乐|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下)$/;
+  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|防波堤|失落的沉默|动摇的坦白|尘封的真相|结算|wqx存档|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|锁着|没钥匙|查看|关阀|被堵住|踢球|听琴|听音乐|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下|李娟|发作|清醒|毒水|转化|解脱|抓伤|借书证|保温杯|粉色|另一只|喝水|灌水)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;

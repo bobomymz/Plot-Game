@@ -1,0 +1,9 @@
+[    1263ms] [LOG] 【引擎】变量已初始化： Proxy(Object) @ http://localhost:8912/engine.js:196
+[    1371ms] [LOG] 【预加载】开始预加载 515 张图片... @ http://localhost:8912/engine.js:1500
+[    4108ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8912/images/%E5%BB%BA%E5%B9%B3/%E5%9B%BE%E4%B9%A6%E9%A6%861%E6%A5%BC-%E5%80%9F%E9%98%85%E5%A4%84.webp:0
+[    4108ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8912/images/%E5%BB%BA%E5%B9%B3/%E5%9B%BE%E4%B9%A6%E9%A6%861%E6%A5%BC-%E5%80%9F%E9%98%85%E5%A4%84-night.webp:0
+[    4109ms] [WARNING] 【预加载】图片加载失败（可能是路径错误）: images/建平/图书馆1楼-借阅处.webp @ http://localhost:8912/engine.js:1514
+[    4109ms] [WARNING] 【预加载】图片加载失败（可能是路径错误）: images/建平/图书馆1楼-借阅处-night.webp @ http://localhost:8912/engine.js:1514
+[    4131ms] [LOG] 【预加载】完成，515 张图片已缓存。 @ http://localhost:8912/engine.js:1508
+[    4191ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8912/favicon.ico:0
+[  349838ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8912/images/%E5%BB%BA%E5%B9%B3/%E5%9B%BE%E4%B9%A6%E9%A6%861%E6%A5%BC-%E5%80%9F%E9%98%85%E5%A4%84.webp:0

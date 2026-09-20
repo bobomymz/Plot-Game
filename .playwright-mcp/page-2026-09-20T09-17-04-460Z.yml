@@ -1,0 +1,10 @@
+- generic [ref=f1e2]:
+  - img "场景图" [ref=f1e4]
+  - paragraph [ref=f1e6]: 弘渊楼 2 楼的阅览大厅。右侧一排大窗透进柔和的天光，窗台上的盆栽还没枯透。 一组组圆桌和彩色座椅还保持着有人来过的样子——摊开的书本、歪倒的水杯，像是主人只是暂时走开。近处这张桌上，立着几只保温杯。 左侧的台阶坐区上，横七竖八靠着几个背包和袋子，一直没有人来认领。 远处落地窗边，坐着一个人影。
+  - generic [ref=f1e9]:
+    - button "把保温杯里的水灌进水瓶" [ref=f1e18] [cursor=pointer]
+    - button "喝她指过的那只粉色保温杯里的水" [ref=f1e19] [cursor=pointer]
+    - button "喝另一只保温杯里的水" [ref=f1e20] [cursor=pointer]
+    - button "去楼梯" [ref=f1e21] [cursor=pointer]
+    - button "走近落地窗边的人影" [ref=f1e22] [cursor=pointer]
+  - button "🔄 重新开始" [ref=f1e8] [cursor=pointer]

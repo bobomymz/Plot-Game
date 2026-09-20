@@ -232,6 +232,14 @@ const storyData = {
     hasPipelineMap: false,      // 管线图（老吴杂物室，"水有毒"真相线索）
     hasKeyRing: false,          // 钥匙串（老吴身上，开工具间/教室/阀门箱）
     _laowuKilled: false,        // 老吴尸变后是否被击杀
+    // 弘渊楼·李娟线（2楼阅览室半感染女生）
+    _hyBorrowCardSeen: false,   // 是否看过 1F 借阅处的借书证（知道"李娟"的名字）
+    _lijuanCupTold: false,      // 李娟清醒时是否指认过自己的保温杯（解锁桌面喝水双选项陷阱）
+    _lijuanFedCup: false,       // 是否已把她的保温杯递给她（发作观察证据，一次性）
+    _lijuanScratched: false,    // Day3-4 靠近时是否已被她抓伤（mercuryLoad+10，一次性）
+    _lijuanTurned: false,       // 李娟是否已彻底转化（Day5+ 自然 / dd>=4 递毒水提前触发）
+    _lijuanKilled: false,       // 转化后的李娟是否已被击杀（2楼恢复自由通行）
+    _hyCupsUsed: false,         // 2楼桌面保温杯交互是否已用过（喝水/灌瓶任一后关闭，防刷汞）
     _pengComputerFixed: false,  // 14班电脑是否修好（供电）
     _pengGalCleared: false,     // 是否帮彭奕宸打完galgame
     _pengGalResult: "",         // galgame最近一次结局：""=未玩过 / "bad"/"normal"/"true"（bad不关门可重试）

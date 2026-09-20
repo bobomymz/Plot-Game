@@ -1,0 +1,4 @@
+- generic [ref=f1e2]:
+  - img "场景图" [ref=f1e4]
+  - paragraph [ref=f1e6] [cursor=pointer]: 她双手捧起你▮
+  - button "🔄 重新开始" [ref=f1e8] [cursor=pointer]
