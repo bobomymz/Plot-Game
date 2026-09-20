@@ -33,7 +33,7 @@ Object.assign(storyData, {
       if (vars._bullBack === true) vars._bullBack = "金谊广场-龙头区"; // 兼容旧存档的布尔残留
       var from = vars._lastScene;
       if (from !== "三林路-路霸-给食物") { // 从"给食物"取消返回时不重判来向，沿用入向记录
-        vars._bullBack = (from === "金谊广场-龙头区" || from === "金谊广场地面入口") ? from : "";
+        vars._bullBack = (from === "金谊广场-停车场入口" || from === "金谊广场-龙头区" || from === "金谊广场地面入口") ? from : "";
       }
       return {};
     },

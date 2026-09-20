@@ -36,18 +36,8 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "去地铁站",
-        nextScene: "金谊广场-地铁站厅",
-        effect: updateTime(2)
-      },
-      {
         text: "去龙头区长廊",
         nextScene: "金谊广场-龙头区长廊",
-        effect: updateTime(2)
-      },
-      {
-        text: "去足球场",
-        nextScene: "金谊广场-足球场",
         effect: updateTime(2)
       },
       {
@@ -56,15 +46,71 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        text: "去正门",
-        nextScene: "金谊广场地面入口",
-        effect: updateTime(3)
-      },
+        text: "去地铁站出入口",
+        nextScene: "金谊广场-地铁站-地上",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  // --- 停车场入口（金谊地界西侧到达枢纽） ---
+  "金谊广场-停车场入口": {
+    outdoor: true,
+    image: timeImage({
+      morning: "images/placeholder.png" /* TODO: images/金谊广场/停车场入口.webp */,
+      night: "images/placeholder.png" /* TODO: images/金谊广场/停车场入口-night.webp */
+    }),
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.showRain = true;
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "停车场入口";
+      return {};
+    },
+    text: function(vars) {
+      var desc = "你来到金谊广场地界东侧的停车场入口。三林路到这里拐了个弯，沿街一排低矮的商铺招牌歪斜，玻璃碎了一地。\n";
+      desc += "往里就是地面停车场，不远处地铁站的出入口立在河边的空地上，河对岸的商场大楼沉默地矗立着，玻璃幕墙反射着苍白的天光。\n";
+      desc += "河岸边的丧尸比街道上密——它们沿着水边缓缓挪动，被那条河牵住了脚步。别在河边久留。";
+      desc += "\n" + describeWeather(vars);
+      return desc;
+    },
+    choices: [
+      { text: "进地面停车场", nextScene: "金谊广场-地面停车场", effect: updateTime(1) },
+      { text: "去地铁站出入口", nextScene: "金谊广场-地铁站-地上", effect: updateTime(1) },
+      { text: "绕去商场正门", nextScene: "金谊广场地面入口", effect: updateTime(2) },
       {
         text: "离开金谊广场",
         nextScene: function(v) { return roadBullBlocked(v) ? "三林路-路霸-堵路" : "三林路-东明路 十字路口"; },
         effect: updateTime(30)
       }
+    ]
+  },
+
+  // --- 地铁站-地上（地铁出入口广场） ---
+  "金谊广场-地铁站-地上": {
+    outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/金谊广场/地铁站-地上.webp */,
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.showRain = true;
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "地铁站出入口";
+      return {};
+    },
+    text: function(vars) {
+      var desc = "你走到地铁站的出入口前。11号线的站牌还立着，玻璃罩里贴的时刻表停留在灾难那天的清晨。\n";
+      desc += "出入口的台阶往下通向站厅，黑洞洞的，像怪兽的巨口——里面的应急灯忽明忽暗。\n";
+      desc += "出入口旁边就是那片人造草皮足球场，再往西，龙头区挑高的玻璃顶棚在小河这侧投下大片阴影。";
+      desc += "\n" + describeWeather(vars);
+      return desc;
+    },
+    choices: [
+      { text: "下进地铁站厅", nextScene: "金谊广场-地铁站厅", effect: updateTime(2) },
+      { text: "去足球场", nextScene: "金谊广场-足球场", effect: updateTime(2) },
+      { text: "去龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(1) },
+      { text: "回停车场入口", nextScene: "金谊广场-停车场入口", effect: updateTime(1) }
     ]
   },
 
@@ -152,7 +198,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
-      { text: "离开足球场", nextScene: "金谊广场-龙头区", effect: updateTime(1) }
+      { text: "离开足球场", nextScene: "金谊广场-地铁站-地上", effect: updateTime(1) }
     ]
   },
 
@@ -180,17 +226,15 @@ Object.assign(storyData, {
       }
     },
     choices: function(vars) {
+      var cs = [];
       if (vars.dd == 1) {
-        var cs = [
-          { text: "跟他聊聊", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(3) },
-          { text: "看看店里", nextScene: "金谊广场-吉祥馄饨-看", effect: updateTime(2) }
-        ];
+        cs.push({ text: "跟他聊聊", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(3) });
+        cs.push({ text: "看看店里", nextScene: "金谊广场-吉祥馄饨-看", effect: updateTime(2) });
         if (vars._visit['金谊广场-吉祥馄饨-聊'] > 0 && !vars._chenmoRescued) {
           cs.push({ text: "带他杀出停车场", nextScene: "金谊广场-吉祥馄饨-杀出去", effect: updateTime(2) });
         }
         var wontonLabel = vars._visit['金谊广场-吉祥馄饨-聊'] > 0 ? "让陈默煮碗馄饨" : "让他帮忙煮碗馄饨";
         cs.push({ text: wontonLabel, nextScene: "金谊广场-吉祥馄饨-吃馄饨", effect: updateTime(2), showCondition: "!_visit['金谊广场-吉祥馄饨-吃馄饨']" });
-        
       }
 
       cs.push(
@@ -308,8 +352,9 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "搜刮车辆", nextScene: "金谊广场-停车场-搜刮", effect: updateTime(3) },
-      { showCondition:"!_chenmorescued",text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) },
-      { text: "去龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) }
+      { showCondition:"!_chenmoRescued",text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) },
+      { text: "去龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) },
+      { text: "去停车场入口", nextScene: "金谊广场-停车场入口", effect: updateTime(1) }
     ]
   },
 
@@ -418,7 +463,7 @@ Object.assign(storyData, {
   "金谊广场地面入口": {
     outdoor: true,
     image: function(vars) {
-      if(vars.weaather == '雨') {
+      if(vars.weather == '雨') {
         var f = timeImage({
           morning: "images/金谊广场/正门-雨.webp",
           night: "images/金谊广场/正门-雨-night.webp"
@@ -462,9 +507,9 @@ Object.assign(storyData, {
         effect: updateTime(30)
       },
       {
-        text: "去龙头区",
-        nextScene: "金谊广场-龙头区",
-        effect: updateTime(3)
+        text: "去停车场入口",
+        nextScene: "金谊广场-停车场入口",
+        effect: updateTime(2)
       }
     ]
   },
@@ -474,16 +519,16 @@ Object.assign(storyData, {
   // --- 正门硬闯（记忆闪色，高难度） ---
   "金谊广场-正门硬闯": {
     image: function(vars) {
-      if(vars.weaather == '雨') {
+      if(vars.weather == '雨') {
         var f = timeImage({
-          morning: "images/金谊广场/旋转门大战-雨.jpg",
-          night: "images/金谊广场/旋转门大战-雨-night.jpg"
+          morning: "images/placeholder.png" /* TODO: images/金谊广场/旋转门大战-雨.webp */,
+          night: "images/placeholder.png" /* TODO: images/金谊广场/旋转门大战-雨-night.webp */
         });
         return f;
       }
       var f = timeImage({
         morning: "images/金谊广场/旋转门大战.webp",
-        night: "images/金谊广场/旋转门大战-night.jpg"
+        night: "images/placeholder.png" /* TODO: images/金谊广场/旋转门大战-night.webp */
       })
       return f;
     },
@@ -531,12 +576,17 @@ Object.assign(storyData, {
 
   "金谊广场-正门硬闯-成功": {
     image: "images/youKillZombies.webp",
+    onEnter: function(vars) {
+      // 开枪不耗体力（耗弹+引尸潮已是代价），其余按近战档位扣
+      if (vars._gateWeapon !== "枪") combatDrain(vars);
+      return {};
+    },
     text: function(vars) {
       var lead = "你撞开一只当先扑来的丧尸，";
       if (vars._gateWeapon === "斧") lead = "你抡起斧头，把扑到门前的丧尸劈开一道缺口，";
       else if (vars._gateWeapon === "匕首") lead = "你攥紧匕首捅穿扑到身前的丧尸，侧身一闪，";
       else if (vars._gateWeapon === "枪") lead = "枪声在中庭炸开，当先的丧尸应声栽倒，你抓住空隙，";
-      return lead + "从合围的缝隙里挤进了中庭，反手用力一推——卡着尸体的旋转门转了半圈，正好把追到门边的丧尸挡在了外面。\n你靠着墙喘了几口气。门扇外传来挠门和低吼的声音，一时半会儿它们进不来。\n总算是闯进来了。";
+      return lead + "从合围的缝隙里挤进了中庭，反手用力一推——卡着尸体的旋转门转了半圈，正好把追到门边的丧尸挡在了外面。\n你靠着墙喘了几口气。门扇外传来挠门和低吼的声音，一时半会儿它们进不来。\n总算是闯进来了。" + combatDrainText(vars);
     },
     choices: [
       { text: "继续", nextScene: "金谊广场-1F 门面层", effect: updateTime(1) }
@@ -588,6 +638,12 @@ Object.assign(storyData, {
 
   "金谊广场-B2货梯间": {
     image: "images/金谊广场/B2货梯.webp",
+    onEnter: function(vars) {
+      vars.currentArea = "金谊广场";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "B2货梯间";
+      return {};
+    },
     text: function(vars) {
       var desc = "你找到了货梯间。货梯的门开着，轿厢里的应急灯还亮着——发出微弱的黄光。\n";
       desc += "你注意到货梯间角落的通风口附近，有一层淡淡的白雾在缓缓飘动。空气里浮着一股说不清的甜腥味——不是腐烂的甜，倒像某种化工原料。\n";
@@ -618,9 +674,9 @@ Object.assign(storyData, {
   // --- 地铁站厅（记忆闪色战斗） ---
   "金谊广场-地铁站厅": {
     image: "images/金谊广场/地铁站厅.webp",
-    onEnter: initMemoryGame(["红","蓝","绿"], 8),
+    onEnter: initMemoryGame(["红","蓝","绿"], 8, { set: { currentArea: "金谊广场", currentPlace: "金谊广场", currentPos: "地铁站厅" } }),
     text: function(vars) {
-      var desc = "你从坍塌的吊顶缝隙钻进了三林路地铁站的站厅。大片吊顶塌了下来，裸露的线缆和通风管道垂在半空。\n";
+      var desc = "你沿着出入口的台阶下到三林路地铁站的站厅。大片吊顶塌了下来，裸露的线缆和通风管道垂在半空。\n";
       desc += "应急灯还在闪烁，把站厅照得一明一暗。\n";
       desc += "站厅里的丧尸比外面少——大部分都挤在靠近排水沟的一侧，朝着潮湿的方向缓慢挪动。但剩下的几只，足够要你的命。\n";
       desc += "你看到前方不远处就是通往B1商业街的通道——只要能冲过去。\n";
@@ -643,8 +699,11 @@ Object.assign(storyData, {
   },
 
   "金谊广场-地铁站厅-成功": {
-    images: "images/youKillZombies.webp",
-    text: "你左踢右蹬，一脚一个丧尸，在尸群中灵活走位，把这些丧尸依次打倒。现在你的格斗技巧已经有所提升了。",
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) { combatDrain(vars); return {}; },
+    text: function(vars) {
+      return "你左踢右蹬，一脚一个丧尸，在尸群中灵活走位，把这些丧尸依次打倒。现在你的格斗技巧已经有所提升了。" + combatDrainText(vars);
+    },
     choices: [
       {text: "继续",nextScene: "金谊广场-B1 心谊如意街"}
     ]
@@ -669,7 +728,13 @@ Object.assign(storyData, {
   // --- 1F 门面层 ---
   "金谊广场-1F 门面层": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/1F中庭.jpg */,
-    text: "你站在金谊广场一楼的中庭。穹顶很高，玻璃裂了几块，阳光从裂缝漏下来，在中庭地面投下一块晃动的光斑。\n中庭中央立着一块商场导航图，上面的楼层指示牌已经歪了，但还能辨认——\nB2 地下车库 / B1 心谊如意街 / 1F 门面层 / 2F 服装 / 3F 餐饮生活 / 4F 影院餐饮 / 5F 健身KTV\n正门方向的旋转门还在缓慢转动，发出吱嘎吱嘎的响声。旁边是一家肯德基，玻璃门碎了一半。",
+    onEnter: function(vars) {
+      vars.currentArea = "金谊广场";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "1F";
+      return {};
+    },
+    text: "你站在金谊广场一楼的中庭。穹顶很高，玻璃裂了几块，阳光从裂缝漏下来，在中庭地面投下一块晃动的光斑。\n中庭中央立着一块商场导航图，上面的楼层指示牌已经歪了，但还能辨认——\nB2 地下车库 / B1 心谊如意街 / 1F 门面层 / 2F 服装 / 3F 餐饮生活 / 4F 影院餐饮 / 5F 健身KTV\n正门方向的旋转门还在缓慢转动，发出吱嘎吱嘎的响声。旁边是一家肯德基，玻璃门碎了一半。\n中庭背阴处有一扇员工通道的灰门，虚掩着——门后是通向地下后场的货梯。",
     choices: [
       {
         text: "去肯德基",
@@ -685,6 +750,12 @@ Object.assign(storyData, {
         text: "下B1",
         nextScene: "金谊广场-B1 心谊如意街",
         effect: updateTime(2)
+      },
+      {
+        showCondition: "hasGasMask && maskRemainingUses > 0",
+        text: "从后场货梯下B2",
+        nextScene: "金谊广场-B2货梯间",
+        effect: updateTime(2, { add: { maskRemainingUses: -1 } })
       },
       {
         text: "从正门出去",
@@ -735,6 +806,12 @@ Object.assign(storyData, {
   // --- 2F 服装层 ---
   "金谊广场-2F": {
     image: "images/金谊广场/2F.webp",
+    onEnter: function(vars) {
+      vars.currentArea = "金谊广场";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "2F";
+      return {};
+    },
     text: function(vars) {
       var head;
       if (vars._lastScene === "金谊广场-3F") head = "你下到二楼。";
@@ -835,6 +912,12 @@ Object.assign(storyData, {
   // --- 3F（长廊入口，落单幸存者） ---
   "金谊广场-3F": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/3F入口.jpg */,
+    onEnter: function(vars) {
+      vars.currentArea = "金谊广场";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "3F";
+      return {};
+    },
     text: function(vars) {
       var viaBridge = vars._lastScene === "金谊广场-龙头区长廊";
       var desc = (viaBridge
@@ -957,7 +1040,7 @@ Object.assign(storyData, {
   // --- 4F 餐饮/影院 ---
   "金谊广场-4F": {
     image: "images/金谊广场/4F.webp" /* TODO: images/金谊广场/4F影院.jpg */,
-    onEnter: { set: { positionAfterOperation: "金谊广场-4F" } },
+    onEnter: { set: { positionAfterOperation: "金谊广场-4F", currentArea: "金谊广场", currentPlace: "金谊广场", currentPos: "4F" } },
     text: function(vars) {
       var desc = "你来到四楼。华夏金谊影院的招牌还亮着——不知道是发电机在转还是备用电源。大厅里循环播放着一段片尾字幕，在空无一人的影院里反复回响。\n";
       desc += "放映厅的门半开着，你能看到座椅上坐着几个人——不，是几具尸体。他们躲进来等电影，最后死在了座位上。\n";
@@ -1039,6 +1122,12 @@ Object.assign(storyData, {
   // --- 5F KTV ---
   "金谊广场-5F": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/5F KTV.jpg */,
+    onEnter: function(vars) {
+      vars.currentArea = "金谊广场";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "5F";
+      return {};
+    },
     text: function(vars) {
       var fromDisinfect = vars._lastScene === "金谊广场-5F-酒精消毒";
       var desc = "五楼是一家KTV。走廊两侧是包间，门上的小窗透出微弱的走廊灯光。\n";
@@ -1094,6 +1183,12 @@ Object.assign(storyData, {
   // --- B1 心谊如意街 ---
   "金谊广场-B1 心谊如意街": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1心谊如意街.jpg */,
+    onEnter: function(vars) {
+      vars.currentArea = "金谊广场";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "B1";
+      return {};
+    },
     text: function(vars) {
       var fromMetro = vars._lastScene === '金谊广场-地铁站厅' || vars._lastScene === '金谊广场-地铁站厅-失败';
       var fromShop = vars._lastScene === '金谊广场-B1奥乐齐' || vars._lastScene === '金谊广场-B1童涵春堂';
@@ -1123,6 +1218,13 @@ Object.assign(storyData, {
         text: "上1F",
         nextScene: "金谊广场-1F 门面层",
         effect: updateTime(2)
+      },
+      {
+        // 站厅打过一次后，通道里的丧尸已被冲散，可以原路穿回地面
+        showCondition: "_visit['金谊广场-地铁站厅-成功'] > 0 || _visit['金谊广场-地铁站厅-失败'] > 0",
+        text: "穿过地铁站通道回到地面",
+        nextScene: "金谊广场-地铁站-地上",
+        effect: updateTime(3)
       },
       {
         showCondition: "itemCount > 0 && chasedByZombies <= 1",
@@ -1218,6 +1320,9 @@ Object.assign(storyData, {
       return desc;
     },
     onEnter: function(vars) {
+      vars.currentArea = "金谊广场";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "B2车库";
       if (!vars.hasGasMask || vars.maskRemainingUses <= 0) {
         // 无面具直接死
         return { set: { _jinyiB2GasWarned: true } };
@@ -1266,7 +1371,13 @@ Object.assign(storyData, {
   // --- 天台 ---
   "金谊广场-天台": {
     image: "images/金谊广场/天台.webp",
-    onEnter: function(vars) { refreshQuackSpot(vars); return {}; },
+    onEnter: function(vars) {
+      vars.currentArea = "金谊广场";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "天台";
+      refreshQuackSpot(vars);
+      return {};
+    },
     text: function(vars) {
       var desc = "你推开天台的门。风很大，吹得你眯起了眼睛。\n";
       desc += "从这里能看得很远——往西，黄浦江的轮廓在灰白的天空下若隐若现。江面上没有船，只有一片死寂的灰色水面。\n";

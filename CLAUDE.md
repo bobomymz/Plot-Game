@@ -48,6 +48,7 @@ explorer index.html
 | 结局节点规范 | grep `"结局-`（core.js 已归一次） |
 | 图片查看器（`imageZoom` 标记/🔍角标/缩放平移/QTE 协同） | CLAUDE.md「图片查看器」节 + engine.js「图片查看器」节 |
 | 新机制（感冒/户外/疲劳/冷兵器分级） | 见下方各处，勿只看一处 |
+| 地理结构优化/图审计（区域重构流程、指标红线） | `.claude/skills/geo-optimization/SKILL.md` + `node tools/graph_audit.mjs <区域>` |
 
 ### 新增机制的四处同步清单
 加可复用机制时按需更新：core.js(变量+computed+rule) · utils.js(函数) · engine.js(若改行为) · 本表对应行。

@@ -36,6 +36,8 @@ Object.assign(storyData, {
         }
       } else if (vars.currentArea === "建平中学") {
         desc += "校园在夜色里格外安静——只有风穿过空荡荡的教学楼发出的呜咽声。远处偶尔传来几声丧尸的拖步声。\n你必须找个地方熬过今晚。";
+      } else if (vars.currentArea === "金谊广场") {
+        desc += "商场里一片死寂，只有应急灯在远处闪着惨白的光。停掉的自动扶梯像一具铁骨架，卷帘门后偶尔传来不知道哪一层发出的碰撞声。\n整座商场在夜里像一头睡着的巨兽——至少，你希望它睡得很沉。";
       } else if (vars.currentArea === "张江") {
         desc += "张江的夜里没有路灯，没有火光，只有玻璃幕墙上流动的一点点天光。这片科技园区在夜里，更像一座空了的展馆。\n";
         if (!vars._jinbaoLeft) {
@@ -216,14 +218,21 @@ Object.assign(storyData, {
         nextScene: "结局-张江-街头过夜"
       },
 
-      // ===== 兜底（始终可用，排除医院/建平/张江） =====
+      // ===== 金谊广场 =====
       {
-        showCondition: "dd < 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江'",
+        showCondition: "currentArea == '金谊广场'",
+        text: "回2F源氏木语，在陈列沙发上睡一觉",
+        nextScene: "过夜-金谊广场"
+      },
+
+      // ===== 兜底（始终可用，排除医院/建平/张江/金谊商场内） =====
+      {
+        showCondition: "dd < 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江' && currentArea != '金谊广场'",
         text: "冒险在街头找地方躲一晚",
         nextScene: "过夜-街头兜底"
       },
       {
-        showCondition: "dd >= 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江'",
+        showCondition: "dd >= 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江' && currentArea != '金谊广场'",
         text: "在街头寻找掩体",
         nextScene: "结局-过夜-街头死亡"
       }
@@ -420,6 +429,23 @@ Object.assign(storyData, {
     text: "你锁好门，拉上窗帘。哥哥的深夜食堂里安静而昏暗，只有壁灯发出暖黄色的光。\n你在吧台后面的地板上铺了一张毯子——虽然硬了点，但比露宿街头强了不知道多少倍。门锁结实，窗户完好。\n你听着东区天桥外偶尔传来的风声，慢慢闭上了眼睛。\n\n第二天醒来时，阳光透过窗帘的缝隙照进来。你活动了一下僵硬的脖子——睡得不算好，但至少你还活着。",
     choices: [
       { text: "继续", nextScene: "新达汇-哥哥的深夜食堂" }
+    ]
+  },
+
+  // ==================== 安全屋 - 金谊广场 2F家具店 ====================
+  "过夜-金谊广场": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/2F家具店过夜.webp */,
+    onEnter: function(vars) {
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      return {};
+    },
+    text: "你把源氏木语的一张躺椅拖到卷帘门后面抵住，又在两排货架之间拉了根绳子，挂上毯子挡住应急灯的光。\n没有音乐、没有广播、也没有营业员赶人——这大概是这家店开业以来最安静的一晚。\n你在布艺沙发上蜷成一团，听着商场深处偶尔传来的响动，不知道什么时候睡了过去。\n\n醒来的时候，玻璃幕墙外的天已经亮了。你活动了一下僵硬的脖子——睡得不算好，但至少，你还活着。",
+    choices: [
+      { text: "继续", nextScene: "金谊广场-2F" }
     ]
   },
 
