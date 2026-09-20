@@ -21,7 +21,7 @@ Object.assign(storyData, {
       },
       {
         // 妈妈遗物：店内的威胁清静后才注意到门口那辆倒下的早点车（先摆平迅捷丧尸才有这选项）
-        showCondition: "!FamilymartHasZombie && !_visit['全家门口-妈妈的遗物'] && !hasPhone",
+        showCondition: "!FamilymartHasZombie && !foundMomRemains && !hasPhone",
         text: "店门口那辆歪倒的早点车，再仔细看看",
         nextScene: "全家门口-妈妈的遗物"
       },
@@ -594,6 +594,7 @@ Object.assign(storyData, {
   "全家门口-妈妈的遗物": {
     image: "images/小区周边/全家和公交站/全家便利店门口.webp",
     onEnter: function(vars) {
+      vars.foundMomRemains = true;
       vars.positionAfterOperation = "全家门口-妈妈的遗物";
       return {};
     },

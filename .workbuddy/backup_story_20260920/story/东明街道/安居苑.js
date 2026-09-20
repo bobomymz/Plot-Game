@@ -759,7 +759,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 贴纸旁边还粘着一张卷了边的便利贴，是同一个人的字：“今天蚯蚓怎么样了？”\n";
       if (vars._wangLaptopUnlocked) {
         desc += "电脑已经解锁，屏幕停在桌面上。";
-      } else if ((vars._visit['三林安居苑-8号楼-203室-笔记本-开机'] > 0)) {
+      } else if (vars._wangLaptopBooted) {
         desc += "你刚才接上电源开了机，屏幕亮着，卡在登录界面，等着输入开机密码。";
       } else if (vars.hasCharger) {
         desc += "屏幕黑着，电源灯也灭了。你手里正好有个充电器，也许能把它救活。";
@@ -776,7 +776,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
           nextScene: "三林安居苑-8号楼-203室-笔记本-桌面",
           effect: updateTime(1)
         });
-      } else if ((vars._visit['三林安居苑-8号楼-203室-笔记本-开机'] > 0)) {
+      } else if (vars._wangLaptopBooted) {
         opts.push({
           text: "输入开机密码",
           input: { placeholder: "开机密码", maxLength: 20 },
@@ -803,7 +803,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   "三林安居苑-8号楼-203室-笔记本-开机": {
     image: "images/placeholder.png" /* TODO: images/安居苑/wangLaptop.png */,
-    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室" } },
+    onEnter: { set: { _wangLaptopBooted: true, positionAfterOperation: "三林安居苑-8号楼-203室" } },
     text: "你找了个插座接上充电器。风扇转了两下，屏幕亮起来——电量勉强够用。\n\
 系统跳出登录框，用户名那栏写着 zhiyun.wang，下面是空的密码框，光标一闪一闪。\n\
 你看了眼A面那只戴博士帽的蚯蚓。",
@@ -951,7 +951,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: function(vars) {
       var opts = [];
 
-      if (!(vars._visit['三林安居苑-8号楼-204室-老洪'] > 0)) {
+      if (!vars._enteredHong204) {
         opts.push({
           text: "蹲下来查看那个老人",
           nextScene: "三林安居苑-8号楼-204室-老洪",
@@ -1010,7 +1010,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   "三林安居苑-8号楼-204室-老洪": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchen.png */,
-    onEnter: {  },
+    onEnter: { set: { _enteredHong204: true } },
     text: [
       "你蹲下身，靠近他。他的眼睛半睁着，眼球在微微颤动——他还活着，但已经说不出完整的话了。",
       "他感觉到有人靠近，嘴唇动了动，发出一串含混的气音。你把耳朵凑近，勉强辨认出几个字：\n<em>“水……别喝……”</em>\n<em>“我的工作……”</em>\n<em>“我要水……快给我水……水……”</em>",

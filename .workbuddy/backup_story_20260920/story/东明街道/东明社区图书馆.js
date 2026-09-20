@@ -14,22 +14,22 @@ Object.assign(storyData, {
       vars.currentPos = "图书馆";
     },
     text: function(vars) {
-      if ((vars._visit['图书馆-办公室-清场'] > 0)) return "你再次来到东明社区图书馆。玻璃门上还留着上次你清理时留下的痕迹。里面很安静——你知道，现在这里是安全的。" + describeWeather(vars);
+      if (vars.libraryCleared) return "你再次来到东明社区图书馆。玻璃门上还留着上次你清理时留下的痕迹。里面很安静——你知道，现在这里是安全的。" + describeWeather(vars);
       return "你来到东明社区图书馆。这是一栋不大的独栋建筑，灰色的外墙爬满了半枯的藤蔓。玻璃门上贴着闭馆通知，日期停留在七月初。\n门没有锁。" + describeWeather(vars);
     },
     choices: [
-      { text: "进去看看", nextScene: "图书馆-大厅", showCondition: "_visit['图书馆-办公室-清场'] > 0" },
-      { text: "推门进去", nextScene: "图书馆-大厅", showCondition: "!_visit['图书馆-办公室-清场']" },
-      { text: "绕到侧面试试窗户", nextScene: "图书馆-侧窗", showCondition: "!_visit['图书馆-办公室-清场']" },
-      { text: "在阅览室沙发上歇一会儿", showCondition: "_visit['图书馆-办公室-清场'] > 0 && chasedByZombies <= 2", nextScene: "图书馆-小憩" },
-      { text: "回东明路", nextScene: "东明路-三林路", showCondition: "_visit['图书馆-办公室-清场'] > 0" },
-      { text: "算了，不进去了", nextScene: "东明路-三林路", showCondition: "!_visit['图书馆-办公室-清场']" }
+      { text: "进去看看", nextScene: "图书馆-大厅", showCondition: "libraryCleared" },
+      { text: "推门进去", nextScene: "图书馆-大厅", showCondition: "!libraryCleared" },
+      { text: "绕到侧面试试窗户", nextScene: "图书馆-侧窗", showCondition: "!libraryCleared" },
+      { text: "在阅览室沙发上歇一会儿", showCondition: "libraryCleared && chasedByZombies <= 2", nextScene: "图书馆-小憩" },
+      { text: "回东明路", nextScene: "东明路-三林路", showCondition: "libraryCleared" },
+      { text: "算了，不进去了", nextScene: "东明路-三林路", showCondition: "!libraryCleared" }
     ]
   },
 
   "图书馆-侧窗": {
     image: function(vars) {
-      if ((vars._visit['图书馆-办公室-清场'] > 0)) {
+      if (vars.libraryCleared) {
         var f = timeImage({
           morning: "images/小区周边/图书馆/侧窗.webp",
           night: "images/小区周边/图书馆/侧窗-无丧尸-night.webp"
@@ -44,7 +44,7 @@ Object.assign(storyData, {
     },
     onEnter: {set: {showRain: true}},
     text: function(vars) {
-      if ((vars._visit['图书馆-办公室-清场'] > 0)) return "你绕到图书馆侧面，一扇通风窗半开着。你垫脚往里看——里面是阅览室，几张长桌整齐排列着。";
+      if (vars.libraryCleared) return "你绕到图书馆侧面，一扇通风窗半开着。你垫脚往里看——里面是阅览室，几张长桌整齐排列着。";
       return "你绕到图书馆侧面，一扇通风窗半开着。你垫脚往里看——里面是阅览室，几张长桌整齐排列着，角落里似乎坐着一个人。\n它没有动。";
     },
     choices: [
@@ -63,7 +63,7 @@ Object.assign(storyData, {
   // ==================== 大厅 ====================
   "图书馆-大厅": {
     image: function(vars) {
-      if ((vars._visit['图书馆-办公室-清场'] > 0)) {
+      if (vars.libraryCleared) {
         var f = timeImage({
           morning: "images/小区周边/图书馆/大厅-无丧尸.webp",
           night: "images/小区周边/图书馆/大厅-无丧尸-night.webp"
@@ -77,20 +77,20 @@ Object.assign(storyData, {
       return g(vars);
     },
     text: function(vars) {
-      if ((vars._visit['图书馆-办公室-清场'] > 0)) return "图书馆大厅空荡荡的。前台和还书机还在原地，但那只穿志愿者马甲的丧尸已经不见了——地上只剩一滩暗色的痕迹。\n\
+      if (vars.libraryCleared) return "图书馆大厅空荡荡的。前台和还书机还在原地，但那只穿志愿者马甲的丧尸已经不见了——地上只剩一滩暗色的痕迹。\n\
 阅览室在左侧，藏书区在右侧。";
       return "图书馆大厅。正前方是前台和还书机，左手边是阅览室，右手边是藏书区的入口。大厅中央站着一只丧尸——穿着图书馆志愿者的马甲，正漫无目的地原地踱步。\n\
 它还没注意到你。";
     },
     choices: [
-        { text: "蹲下身子，从前台下方绕过去", showCondition: "!_visit['图书馆-办公室-清场']", nextScene: "图书馆-大厅-潜行", effect: updateTime(2) },
-        { text: "从书架上抽一本书，朝另一侧扔出去", showCondition: "!_visit['图书馆-办公室-清场']", nextScene: "图书馆-大厅-声东击西", effect: updateTime(1) },
-        { text: function(vars) { return hasMeleeWeapon(vars) ? "用" + meleeWeaponName(vars) + "上去解决它" : "上去解决它"; }, showCondition: "!_visit['图书馆-办公室-清场']", nextScene: "图书馆-大厅-战斗", condition: "hasMeleeWeapon || strength >= 3", elseScene: "结局-图书馆-大厅-徒劳" },
-        { text: "前往阅览室", showCondition: "_visit['图书馆-办公室-清场'] > 0", nextScene: "图书馆-阅览室" },
-        { text: "前往藏书区", showCondition: "_visit['图书馆-办公室-清场'] > 0", nextScene: "图书馆-藏书区" },
-        { text: "离开图书馆", showCondition: "_visit['图书馆-办公室-清场'] > 0", nextScene: "东明路-三林路" },
+        { text: "蹲下身子，从前台下方绕过去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-潜行", effect: updateTime(2) },
+        { text: "从书架上抽一本书，朝另一侧扔出去", showCondition: "!libraryCleared", nextScene: "图书馆-大厅-声东击西", effect: updateTime(1) },
+        { text: function(vars) { return hasMeleeWeapon(vars) ? "用" + meleeWeaponName(vars) + "上去解决它" : "上去解决它"; }, showCondition: "!libraryCleared", nextScene: "图书馆-大厅-战斗", condition: "hasMeleeWeapon || strength >= 3", elseScene: "结局-图书馆-大厅-徒劳" },
+        { text: "前往阅览室", showCondition: "libraryCleared", nextScene: "图书馆-阅览室" },
+        { text: "前往藏书区", showCondition: "libraryCleared", nextScene: "图书馆-藏书区" },
+        { text: "离开图书馆", showCondition: "libraryCleared", nextScene: "东明路-三林路" },
         {
-          showCondition: "_visit['图书馆-办公室-清场'] > 0 && itemCount > 0",
+          showCondition: "libraryCleared && itemCount > 0",
           text: "🎒整理一下物品",
           nextScene: "整理整理",
           effect: { set: { positionAfterOperation: "图书馆-大厅" } }
@@ -183,7 +183,7 @@ Object.assign(storyData, {
       night: "images/小区周边/图书馆/阅览室-night.webp"
     }),
     text: function(vars) {
-      if ((vars._visit['图书馆-办公室-清场'] > 0)) return "阅览室。几排长桌整齐排列，日光灯管还在微弱地闪烁。靠窗那个座位已经空了——椅子歪着，桌上一本摊开的书被风吹得翻过了好几页。";
+      if (vars.libraryCleared) return "阅览室。几排长桌整齐排列，日光灯管还在微弱地闪烁。靠窗那个座位已经空了——椅子歪着，桌上一本摊开的书被风吹得翻过了好几页。";
       return 
         "你进入了阅览室。几排长桌整齐排列，桌面上散落着几本书和借阅登记表。日光灯管还在微弱地闪烁，发出嗡嗡的电流声。\n\
 角落的座位上坐着一个人——一只穿着格子衬衫的丧尸。它低着头，双手捧着一本摊开的书，像在阅读一样。\n\
@@ -193,25 +193,25 @@ Object.assign(storyData, {
     choices: [
       {
         text: "沿着墙边书架绕过去",
-        showCondition: "!_visit['图书馆-办公室-清场']",
+        showCondition: "!libraryCleared",
         nextScene: "图书馆-阅览室-绕行",
         effect: updateTime(2)
       },
       {
         text: "压低身形从桌椅之间穿过去",
-        showCondition: "!_visit['图书馆-办公室-清场']",
+        showCondition: "!libraryCleared",
         nextScene: "图书馆-阅览室-穿行",
         effect: updateTime(2)
       },
       {
         text: "打量一下它在看什么书",
-        showCondition: "!_visit['图书馆-办公室-清场']",
+        showCondition: "!libraryCleared",
         nextScene: "图书馆-阅览室-看书名",
         effect: updateTime(1)
       },
       {
         text: "返回大厅",
-        showCondition: "_visit['图书馆-办公室-清场'] > 0",
+        showCondition: "libraryCleared",
         nextScene: "图书馆-大厅"
       }
     ]
@@ -490,7 +490,7 @@ Object.assign(storyData, {
 
   "图书馆-办公室-清场": {
     image: "images/placeholder.png" /* TODO: images/library/libraryOffice.png */,
-    onEnter: {  },
+    onEnter: { set: { libraryCleared: true } },
     text: function(vars) {
       return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，干脆利落地给了被压住的丧尸一下。它终于安静了。\n\
 办公室里安静了下来。你环顾四周——文件柜里有一些没开封的瓶装水，办公桌抽屉里还有半包压缩饼干。虽然不多，但够你撑一阵子。\n\

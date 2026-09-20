@@ -334,7 +334,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!_visit['理发店-交谈'] && _visit['理发店-休息'] > 0",
+        showCondition: "!talkToBarber && restAtBarber",
         text: "与周师傅交谈",
         nextScene: "理发店-交谈",
         effect: updateTime(5)
@@ -384,7 +384,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!_visit['理发店-交谈']",
+        showCondition: "!talkToBarber",
         text: "与周师傅交谈",
         nextScene: "理发店-交谈",
         effect: updateTime(5)
@@ -419,7 +419,7 @@ Object.assign(storyData, {
 
   "理发店-交谈": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
-    onEnter: {  },
+    onEnter: { set: { talkToBarber: true } },
     text: function(vars) {
       let desc = "周师傅靠在理发椅上，指了指窗外：“\
 对面就是老小区三林安居苑的入口，你以前住在那里，对吗？那边可能有幸存者——但我不确定，毕竟那边流浪猫狗挺多的，天知道它们现在变成什么样了。”\n他顿了顿：“\
@@ -437,10 +437,10 @@ Object.assign(storyData, {
         effect: { set: { askTunnelLore: true } }
       },
       {
-        showCondition: "!_visit['理发店-打听路况']",
+        showCondition: "!askRoadBullInfo",
         text: "“周师傅，最近三林路上太平吗？”",
         nextScene: "理发店-打听路况",
-        effect: {  }
+        effect: { set: { askRoadBullInfo: true } }
       },
       {
         text: "“谢谢你，周师傅”",
@@ -478,6 +478,7 @@ Object.assign(storyData, {
         vars.chasedByZombies = 0;
         vars._travelMinutes = 0;
         vars.strength = Math.min(10, vars.strength + 3); // 加三点体力
+        vars.restAtBarber = true;
         vars.dd ++;
         vars.hh = 7;
         vars.mm = 30;
@@ -485,6 +486,7 @@ Object.assign(storyData, {
         return {};
       } else {
         restRecover(vars, 1);
+        vars.restAtBarber = true;
         updateTime(30)(vars);
         vars._travelMinutes = 0;   // 休息不累积连续移动疲劳（updateTime 会累加，这里在效果结算前清零）
         return {};
@@ -706,7 +708,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPlace = "安盛街"; vars.currentPos = "文具店"; },
     text: function(vars) {
       var insideBack = ["安盛街-收银台", "安盛街-文具店击杀", "安盛街-文具店搜刮-快速", "安盛街-文具店搜刮-仔细", "安盛街-文具店铁柜", "安盛街-文具店铁柜-吃喝", "安盛街-文具店铁柜-拿走帆布袋"].indexOf(vars._lastScene) >= 0;
-      if ((vars._visit['安盛街-文具店击杀'] > 0)) {
+      if (vars._stationeryZombieDead) {
         if (insideBack) return "你回到店堂里。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
         return "你推开吱呀作响的玻璃门，走进文具店。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
       }
@@ -716,14 +718,14 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "悄悄靠近收银台",
-        showCondition: "!_visit['安盛街-文具店击杀']",
+        text: "悄悄靠近查看",
+        showCondition: "!_stationeryZombieDead",
         nextScene: "安盛街-收银台",
         effect: updateTime(1)
       },
       {
         text: "看看收银台后面",
-        showCondition: "_visit['安盛街-文具店击杀'] > 0",
+        showCondition: "_stationeryZombieDead",
         nextScene: "安盛街-收银台",
         effect: updateTime(1)
       },
@@ -742,11 +744,11 @@ Object.assign(storyData, {
 
   "安盛街-收银台": {
     image: function(vars) {
-      if((vars._visit['安盛街-文具店击杀'] > 0)) return "images/安盛街/晨光文具店/晨光文具店内部.webp";
+      if(vars._stationeryZombieDead) return "images/安盛街/晨光文具店/晨光文具店内部.webp";
       return "images/安盛街/晨光文具店/晨光文具店内部-有丧尸.webp";
     },
     text: function(vars) {
-      if ((vars._visit['安盛街-文具店击杀'] > 0)) return "收银台后面空空荡荡，只有地上残留的水彩笔印证明这里曾经有过什么。";
+      if (vars._stationeryZombieDead) return "收银台后面空空荡荡，只有地上残留的水彩笔印证明这里曾经有过什么。";
       return "你蹑手蹑脚地靠近收银台。一个穿校服的少年丧尸正蹲在地上，专心致志地啃咬一盒水彩笔，五颜六色的颜料糊了它一脸。\n\
 它似乎还没发现你——但只要你发出一点声音……";
     },
@@ -757,7 +759,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        showCondition: "!_visit['安盛街-文具店击杀']",
+        showCondition: "!_stationeryZombieDead",
         text: function(vars) { return hasMeleeWeapon(vars) ? "抄起" + meleeWeaponName(vars) + "砸过去" : "赤手空拳按住它"; },
         nextScene: "安盛街-文具店击杀",
         condition: "strength >= 3",
@@ -769,8 +771,8 @@ Object.assign(storyData, {
   "安盛街-文具店击杀": {
     image: "images/安盛街/晨光文具店/丧尸被砸倒.webp",
     onEnter: function(vars) {
-      if (hasMeleeWeapon(vars)) return { add: { strength: -1 } };
-      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
+      if (hasMeleeWeapon(vars)) return { add: { strength: -1 }, set: { _stationeryZombieDead: true } };
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { _stationeryZombieDead: true, hurtByZombie: true } };
     },
     text: function(vars) {
       let tail = "收银台后面的小门看起来通往更里面——也许仓库里还有什么有用的东西————或者是更多丧尸。";
@@ -860,17 +862,17 @@ Object.assign(storyData, {
       if (!vars.hasCutter) {
         desc += "但收银台下面的抽屉里有一把崭新的美工刀，还有一整盒备用刀片。";
       }
-      if (!vars.hasCrumpledLeaflet && !(vars._visit['安盛街-服装店-304柜'] > 0)) {
+      if (!vars.hasCrumpledLeaflet && !vars._leafletUsed) {
         desc += "\n你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，里面是半包饼干和一张皱巴巴的传单，传单上写着一行潦草的字迹”304柜 新到男装“。";
       }
-      if (vars.hasCutter && (vars.hasCrumpledLeaflet || (vars._visit['安盛街-服装店-304柜'] > 0))) {
+      if (vars.hasCutter && (vars.hasCrumpledLeaflet || vars._leafletUsed)) {
         desc += "\n剩下的东西你都已经有了，没再重复拿。";
       }
       return desc;
     },
     choices: [
       {
-        showCondition: "!hasCutter && !hasCrumpledLeaflet && !_visit['安盛街-服装店-304柜']",
+        showCondition: "!hasCutter && !hasCrumpledLeaflet && !_leafletUsed",
         text: "都拿走",
         condition: "itemCount + 2 <= bagVolume",
         nextScene: "安盛街-文具店",
@@ -886,7 +888,7 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
-        showCondition: "!hasCrumpledLeaflet && !_visit['安盛街-服装店-304柜']",
+        showCondition: "!hasCrumpledLeaflet && !_leafletUsed",
         text: "只拿传单",
         condition: "itemCount + 1 <= bagVolume",
         nextScene: "安盛街-文具店",
@@ -894,7 +896,7 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
-        showCondition: "!hasCutter || (!hasCrumpledLeaflet && !_visit['安盛街-服装店-304柜'])",
+        showCondition: "!hasCutter || (!hasCrumpledLeaflet && !_leafletUsed)",
         text: "背包满了，算了",
         nextScene: "安盛街-文具店"
       },
@@ -904,7 +906,7 @@ Object.assign(storyData, {
         nextScene: "安盛街-文具店"
       },
       {
-        showCondition: "hasCutter && _visit['安盛街-服装店-304柜'] > 0",
+        showCondition: "hasCutter && _leafletUsed",
         text: "继续",
         nextScene: "安盛街-文具店"
       }
@@ -1018,7 +1020,7 @@ Object.assign(storyData, {
         showCondition: "hasCrumpledLeaflet",
         text: "想起传单上印的“304柜”，去男装区找找",
         nextScene: "安盛街-服装店-304柜",
-        effect: updateTime(1, { set: { hasCrumpledLeaflet: false }, add: { itemCount: -1 } })
+        effect: updateTime(1, { set: { hasCrumpledLeaflet: false, _leafletUsed: true }, add: { itemCount: -1 } })
       },
       {
         showCondition: "_visit['安盛街-服装店-304柜'] > 0",
@@ -1187,7 +1189,7 @@ Object.assign(storyData, {
     onEnter: { set: { positionAfterOperation: "安盛街-服装店收银台-仔细" } },
     text: function(vars) {
       let basicDes = "你把抽屉整个拉了出来，把里面的东西倒在地上。一堆过期的会员卡、几张外卖单、半管护手霜";
-      if(vars.hasCrumpledLeaflet || (vars._visit['安盛街-服装店-304柜'] > 0)) { // 已经拿到或用掉传单
+      if(vars.hasCrumpledLeaflet || vars._leafletUsed) { // 已经拿到或用掉传单
         basicDes += "。";
       }
       else {
@@ -1197,7 +1199,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!hasCrumpledLeaflet && !_visit['安盛街-服装店-304柜']", // 没拿过、也没用掉传单时才显示
+        showCondition: "!hasCrumpledLeaflet && !_leafletUsed", // 没拿过、也没用掉传单时才显示
         text: "拿走传单",
         condition: "itemCount < bagVolume",
         nextScene: "安盛街-服装店",

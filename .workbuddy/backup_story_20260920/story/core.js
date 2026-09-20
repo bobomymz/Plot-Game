@@ -1,4 +1,4 @@
-// ========== story-core.js ==========
+﻿// ========== story-core.js ==========
 // 全局变量、触发器、屏幕特效、起始场景
 
 const storyData = {
@@ -32,11 +32,18 @@ const storyData = {
     _sleepingZombieGone: false,// 小区道路椅子上躺着的那个丧尸走了没有
     bikeInAnjuyuan: true,      // 三林安居苑是否还有锈蚀的自行车
     FamilymartHasZombie: true, // 全家是否还有员工丧尸
+    pharmacyZombieKilled: false, // 益丰大药房白大褂丧尸是否已被击杀
+    pharmacyApprenticeWatered: false, // 益丰大药房长发女学徒是否已被喂水
+    pharmacyApprenticeKilled: false, // 益丰大药房长发女学徒是否已被解脱
     _paraffinTaken: false,    // 益丰大药房库房石蜡油是否已被拿走（一次性守卫；交易掉后不可重拿）
+    _zhaoGuangchengDead: false, // 益丰大药房店长赵广成是否已死（断电事故害死；死后办公室不再可回访歇脚）
     _zhaoGuangchengFoodGiven: 0, // 益丰大药房赵广成已匀出的食物次数（最多 2 次/每次+1体力；他口粮有限，见底的婉拒靠它门控）
+    libraryCleared: false,     // 是否清空了社区图书馆的丧尸
     defeatedOldMan: false,     // 是否已击败安盛街老头丧尸
     _supermarketCompromised: false, // 联华超市地下室是否已暴露不再安全
+    _supermarketSuppliesTaken: false,// 联华超市的补给是否已经拿到
     maskRemainingUses: 1,      // 当前面具滤罐剩余使用次数（民防过期货1次，安居苑/建平/警察局保养良好的2次；进危害佩戴即扣1；拾取时按该点面具品质重置；耗尽按无面具结算）
+    hasClassMates: false,      // 是否救出上实南校三位同学
     // --- 上实南校临时道具（不占背包容量 itemCount，不可丢弃，离开学校线即无用）---
     _hasCampusKey: false,      // 员工通道钥匙串（教务室铁皮柜割锁获得，教学楼走员工通道下楼用）
     _hasAlcoholLamp: false,    // 酒精灯和火柴（化学实验室取，2号楼1楼砸体育老师丧尸）
@@ -47,36 +54,52 @@ const storyData = {
     _catChasing: false,        // 新达汇变异猫是否在追玩家
     _catFed: false,            // 新达汇变异猫是否已被喂食（中立）
     _ramenVisited: false,      // 新达汇1F味千拉面是否已被撬开
+    _backhallEntered: false,   // 新达汇后勤通道网是否已被发现（防刷）
     _backhallDead: false,      // 新达汇后勤通道被堵死即死标记
     _powerOut: false,          // 新达汇总电闸是否已拉（商场永久断电）
     _1f_wireFixed: false,      // 1F断裂电线是否已处理
     _2f_chairsCleared: false,  // 2F等位椅堆是否已搬开
+    _3f_darkZoneDone: false,   // 3F黑暗段是否已安全通过
     _deliveryCode: "",         // 外卖取餐码（拿到外卖时记录）
     _droneBattery: 30,         // 无人机剩余电量(分钟)，断电后消耗
+    _mallGuardSnack: false,     // 新达汇B1保安室值班台桃酥是否已吃（一次性+2体力）
+    _wangjianguoDead: false,    // 新达汇3F后勤走廊工服丧尸（王建国）是否已被击倒
+    _searchedWang: false,       // 是否已搜过王建国的口袋
     _powerRoomOpen: false,      // 新达汇B1配电房是否已打开（保安组暗线终点）
     _got3fExtinguisher: false,  // 是否拿走了新达汇3F消防通道的灭火器（打王建国用）
     _jinbaobeiFrontOpen: false, // 金宝贝前门是否已用钥匙牌打开
+    _gotGameTokens: false,     // 是否捡了新达汇5F游戏厅的游戏币（纯风味，不占背包）
     _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
+    _marketHallCleared: false, // 菜市场大厅的丧尸是否已清理
     _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
 
     // --- 操作状态 ---
     visitExitTimes: 0,         // 访问小区出口次数，达到2自动放行
     visitWaitingRoomTimes: 0,  // 访问等候区次数，达到3丧尸会出现
+    talkToBarber: false,       // 是否与理发师交谈过
+    restAtBarber: false,       // 是否在理发店休息过
     turnDiaryPages: 0,         // 翻页次数
     repeatedClickTimes: 0,     // 点击重复次数，可以用来设置连点环节
     fightWithVineZombie: false,// 是否与被藤蔓缠绕的丧尸打过
+    _stationeryZombieDead: false, // 安盛街文具店少年丧尸是否已被击杀
     hasBankSlip: false,        // 是否拿到银行存单
+    _droneIntel: false,        // 是否获得无人机侦察情报（物业楼高锦睿）
+    _committeeSearched: false,  // 是否搜过物业楼居委会办公室
     showRain: false,           // 是否展示雨滴叠加特效（B类场景 onEnter 控制）
     showZombies: false,        // 是否展示丧尸包围遮罩（路网节点 onEnter 控制）
     showPowerOut: false,       // 是否展示停电灰色遮罩（新达汇室内节点 onEnter 控制）
+    vmSmashed: false,          // 新达汇1F电梯厅自动售货机是否已砸开取水（全图唯一）
+    _vmReached: false,         // 玩家是否已徒手翻找过该售货机（防重复）
     wangGiveKey: false,        // 王老师是否给了钥匙
     _lastScene: "",            // 引擎自动记录的上一个场景ID（目标场景 text 用于差异化承接）
     _seqScene: "",             // 引擎记录的记忆闪色序列属主场景ID（回溯/读档落回该场景时重播原序列）
     // 金谊广场
+    _chenmoRescued: false,      // 是否在停车场救了陈默
     _jinyiSurvivorsFed: false,  // 是否给长廊幸存者送了食物
     _jinyiSurvivorsRobbed: false, // 是否被长廊幸存者抢了
     _jinyiHasFoodForSurvivors: false, // 是否从B1奥乐齐带了食物给长廊幸存者
     _jinyiB2GasWarned: false,   // B2毒气是否已预警过
+    _jinyiAlcoholUsed: false,   // KTV酒精是否已用于消毒
     // 安居苑7号楼随机入户
     _flat201: 0, _flat202: 0, _flat301: 0, _flat302: 0, _flat501: 0, _flat503: 0,
     // 入户签：0未探 1空屋 2食物未搜 3食物已搜 4丧尸未清 5丧尸已清 6已搜空（首次进门掷签落变量，不重掷）
@@ -105,9 +128,11 @@ const storyData = {
     _hasPoliceMap: false,      // 是否掌握去警察局的穿行路线（金谊广场陈默地图，解锁上实南校北段车阵）
     hasLubricant: false,       // 是否有润滑油（五金店仓库，可带到安居苑修车）
     hasCrumpledLeaflet: false, // 是否有揉皱的传单
+    _leafletUsed: false,       // 是否已用传单打开过服装店304柜（传单使命完成）
     _cafeteriaEnterMinute: -1, // 长者食堂首次进入的游戏总分钟数（计时难度用，-1=未进入）
     hasPhone: false,           // 是否拥有可用的手机(自己的原机[全家门口妈妈遗物] 或 华为店展示机)
     phoneBattery: 0,           // 手机剩余电量%(妈妈遗物+20/华为展示机+50；照明、WiFi、扫码节点各-5，无充电途径)
+    foundMomRemains: false,    // 是否已在全家门口发现妈妈的遗物(回收自己的手机)
     foundDadCar: false,        // 是否查看过济阳路跨线桥那辆弃车(爸爸线 breadcrumb)
     hasLiquidParaffin: false,  // 是否有医用石蜡油（益丰大药房左边货架）
     hasBottle: false,          // 是否有水瓶
@@ -117,6 +142,7 @@ const storyData = {
     waterGivenToTeacher: 0,    // 给王老师的水次数（0→5，满5次信任达成）
     supermarketWaterLeft: 12,  // 联华超市仓库瓶装水剩余（瓶）
     teacherStudentsDead: false, // 给王老师毒水后学生变丧尸的死局标记
+    _cafeteriaWifiOn: false,   // 长者食堂办公室路由器是否已开启
     fangTradeCount: 0,         // 方姐交易次数（上限3，满3次后她尸变，再进冷库深处即死）
     hasFrozenMeat: false,      // 是否有冻肉（菜市场方姐换的，体力回满，占1格）
     hasInstantNoodle: false,   // 是否有泡面（全家货架，占1格；整理整理干嚼+3）
@@ -158,18 +184,32 @@ const storyData = {
     hasWangNotebook: false, // 王知筠实验记录本（仁济检验科）
     hasMercuryReport: false,// 检测报告备份（仁济太平间）
     wangPhoneBattery: 0,    // 王知筠手机剩余电量（捡到时按 dd 计算）
+    _wangLaptopBooted: false,   // 安居苑203室王知筠笔记本是否已用充电器通电开机
     _wangLaptopUnlocked: false, // 安居苑203室王知筠笔记本是否已输入开机密码解锁（Dr.Earthworm）
     // 仁济医院 - 状态
     _renjiGateCleared: false,   // 门诊正门门口尸群是否清除（浦锦路直通的大门是门诊部）
     _renjiERCleared: false,     // 急诊大厅丧尸是否清除
     _renjiLabCleared: false,    // 检验科守卫丧尸是否清除
     _renjiWardCleared: false,   // 住院部丧尸是否清除
+    _renjiSurvivorSaved: false, // 住院部幸存者是否救出
+    _fangyuFound: false,        // 方瑜痕迹是否发现
     _morgueCleared: false,      // 太平间黑皮丧尸是否处理
+    _morgueVentOn: false,       // 太平间通风是否打开
     _renjiNoise: false,         // 是否破门制造过噪音（影响后续风险）
+    _renjiHerbalTaken: false,   // 中医科草药是否已拿（一次性+1体力）
+    _renjiGlucoseTaken: false,  // 护士站葡萄糖是否已喝（一次性+1体力）
+    _renjiPeeked: false,        // 是否透过检验科后门玻璃窗窥视过
+    _renjiDrinkTaken: false,    // 特需病房脉动/功能饮料是否已喝（一次性+1体力）
+    _renjiVipChartRead: false,  // 特需病房是否看过墙上病历（与便签任一即可获得警觉）
+    _renjiVipNoteRead: false,   // 特需病房是否看过茶几便签
     _renjiVipZombieCleared: false, // 特需病房储物柜丧尸是否已清除（警觉秒杀或沙发引袭后）
     _renjiGateOpen: false,      // 救护车通道铁门是否已打开（车撞开/枪打开锁均可，持久）
+    _renjiYardCleared: false,   // 铁门后空地丧尸是否已被压死（仅倒车解法为true；枪解法丧尸仍在，需硬闯）
+    _renjiAmbulanceChecked: false, // 是否已上救护车检查过（发现车钥匙插在点火开关上，解锁"倒车撞门"选项）
     // 建平中学 - 状态
+    _frontGateCleared: false,   // 前门丧尸是否已清（记忆闪色，成功后一次性进出）
     _backGateOpened: false,     // 后门是否已开（开门引走丧尸，忻老师后门逃脱的铺垫；内侧杀光后从内开门也算）
+    _backGateCleared: false,    // 后门内侧尸群是否已被杀光（内侧"冲上去"闪色胜利；此时门未开但门口已无活尸）
     _harshActive: false,        // Harsh（年级组长丧尸）是否被唤醒（坐电梯触发）
     _harshLag: 6,               // Harsh 落后玩家几步（>=0；走远+1、她逼近-1、折返-2；<=0 即追上）
     _harshTrack: [],            // 玩家地点轨迹数组（真实路径，仅用于折返剪枝判断）
@@ -178,13 +218,16 @@ const storyData = {
     hasInnerLining: 0,          // 校服内胆数量（丢给 Harsh 驱赶，单次消耗）
     _harshReturn: "",           // 被 Harsh 堵住前的位置（逃跑/驱赶后返回）
     _harshLastTick: -1,          // Harsh 上次推进时的 3 分钟档（用于计算一次推进几步）
+    _innerLiningYouthRoom: false, // 团委工作室的校服内胆是否已拿
     _yuanxiangWestStairCleared: false,  // 远翔楼西楼梯强丧尸是否已清
     _zhizhenEastStairCleared: false,    // 致真楼东楼梯强丧尸是否已清
+    _yifenWestCleared: false,   // 挹芬楼1F西侧走廊丧尸是否已清（强制记忆闪色）
     _yifenEastCleared: false,   // 挹芬楼1F东侧走廊丧尸是否已清（强制记忆闪色）
     _teacherLeft: false,        // 忻老师是否已开车离开（跟去复旦后为 true）
     _xinDead: false,            // 忻老师是否已被丧尸杀死（ch>=3 进入后门辅路时触发）
     _xinDeathVisit: 0,          // 忻老师死亡发生在后门辅路的第几次访问（用于首访展示目击死亡文本）
     hasMultimeter: false,       // 万用表（老吴杂物室，修14班电脑用）
+    _dormCleared: false,        // 建平宿舍丧尸是否已清理（记忆闪色，安全过夜前置）
     _liuCorpse: false,          // 刘冠宇是否已死（锁存：在食堂观察到尸体后永久保持，关煤气阀不复活）
     hasPipelineMap: false,      // 管线图（老吴杂物室，"水有毒"真相线索）
     hasKeyRing: false,          // 钥匙串（老吴身上，开工具间/教室/阀门箱）
@@ -193,11 +236,15 @@ const storyData = {
     _hyBorrowCardSeen: false,   // 是否看过 1F 借阅处的借书证（知道"李娟"的名字）
     _lijuanCupTold: false,      // 李娟清醒时是否指认过自己的保温杯（解锁桌面喝水双选项陷阱）
     _lijuanFedCup: false,       // 是否已把她的保温杯递给她（发作观察证据，一次性）
+    _lijuanScratched: false,    // Day3-4 靠近时是否已被她抓伤（mercuryLoad+10，一次性）
     _lijuanTurned: false,       // 李娟是否已彻底转化（Day5+ 自然 / dd>=4 递毒水提前触发）
+    _lijuanKilled: false,       // 转化后的李娟是否已被击杀（2楼恢复自由通行）
     _hyCupsUsed: false,         // 2楼桌面保温杯交互是否已用过（喝水/灌瓶任一后关闭，防刷汞）
+    _pengComputerFixed: false,  // 14班电脑是否修好（供电）
     _pengGalCleared: false,     // 是否帮彭奕宸打完galgame
     _pengGalResult: "",         // galgame最近一次结局：""=未玩过 / "bad"/"normal"/"true"（bad不关门可重试）
     _pengGalWqxSeen: false,     // 是否已见过 wqx 存档彩蛋（galgame真结局，设计见 galgame.md）
+    _pengNoodleShared: false,   // 14班方便面是否已分享（饭点一次性）
     hasCanteenFood: false,      // 食堂干粮（占背包，一次性，整理整理里吃+2体力）
     hasFeverMed: false,         // 退烧药（医务室，占背包，感冒系统铺路）
     vitaminC: 0,                // 身上携带的维C盒数 0~8（益丰大药房，可堆叠，每盒占1格；吃一盒免疫/防感冒+1体力）
@@ -207,8 +254,15 @@ const storyData = {
     hasWatch: false,            // 机械手表（行政楼2F文印室，占背包，整理整理看时间）
     hasCSGun: false,            // 真人CS枪（废弃小楼1F纸箱，占背包，化学实验室拆成手电筒）
     hasScrewdriver: false,      // 螺丝刀（物理实验室/老吴杂物室锁柜，钥匙串开，拆CS枪用，全图唯一）
+    _podiumFood3F: false,       // 挹芬楼3F高一教室锁讲台食物是否已拿（钥匙串开，+3体力）
+    _valveBoxOpened: false,     // 崮山路井盖下阀门井里的阀门箱是否已开（钥匙串开，验水）
     _pengPiano: 0,              // 彭奕宸弹琴位置：1=远翔楼圆厅 2=挹芬楼休息区 3=音乐教室；0=不在钢琴
+    _yifenStudentSaved: false,  // 挹芬楼5F幸存学生是否已救活（退烧药，无奖励）
+    _yifenFood2F: false,        // 挹芬楼2F高一教室食品是否已拿
+    _yifenNote3F: false,        // 挹芬楼3F高一教室纸条是否已看
+    _yifenBoard5F: false,       // 挹芬楼5F高二教室黑板字是否已看
     _yifenFood6F: false,        // 挹芬楼6F自习教室食品是否已拿
+    _guardTakeoutTaken: false,  // 门卫室外卖是否已处理（Day<3 新鲜+1，Day≥3 变质）
     _playgroundKicked: false,   // 操场那只足球是否已踢过（回忆[起脚爆射]，一次性）
     // 建平·道具解密支线（橘猫向导 B / 石蜡油火把 C）
     hasFireTorch: false,      // 石蜡油火把（化学实验室制，不占格；照明不耗，烧敌人/楼梯丧尸时燃尽）
@@ -229,6 +283,8 @@ const storyData = {
     _quackSpot: 0,            // 卖假药的郎中当天所在天台：0没在 / 1金谊天台 / 2新达汇屋顶
     _quackDay: 0,             // 郎中方位最近一次刷新所在天（跨天重摇）
     _quackTradedDay: 0,       // 上次跟郎中交易的天（同一天防重复买）
+    askRoadBullInfo: false,   // 周师傅是否已提过三林路/天台的事（防重复给情报）
+    _metZhouSupermarket: false, // 是否已在联华超市仓库遇见周师傅翻找鸟食（Day2中午一次性氛围彩蛋，防重复触发）
     _fangWarnRoadBull: false, // 方姐是否已提醒过路霸（防重复）
     _stairKillNote: "",       // 堵路强丧尸清场旁白（武器effect写入，楼梯text展示后清除，一次性）
     _jpStairFloor: 0,         // 楼梯间当前层（从走廊/楼层进入时写入；清场自跳后 _lastScene 变成楼梯自己，靠它记住层）
@@ -240,17 +296,26 @@ const storyData = {
     _heavyUseCane: 0,         // 拐杖撬砸类重活已用次数（上限3次损坏）
     _heavyUseMopHandle: 0,    // 拖把杆撬砸类重活已用次数（上限1次损坏）
     gasIndex: 0,                // 煤气指数（建平后厨累积，封顶 80；关阀战斗失败才进结局-煤气中毒）
+    _gasValveClosed: false,     // 食堂煤气阀是否关闭
     _chefCleared: false,        // 厨师丧尸是否清除
     // ---- 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） ----
     _hongBottleLabel: false,   // 手上水瓶是否是老洪204那只（瓶身有「芜湖 6.25」字迹标签）；送人/丢瓶重置，仅倒水不重置
+    _bottleFilledBySon: false, // 标签瓶是否已在动力站灌过纯水（情感节拍一次性标记）
+    _enteredHong204: false,    // 是否已蹲下查看过程204的洪金宝（老洪支线「检查老人」选项守卫）
+    _metJinbao: false,         // 是否已见过洪金宝（在场版）
     _toldJinbaoTruth: "",      // 道德拷问结果：""未谈 / "truth"如实告知 / "lie"善意谎言 / "silent"沉默 / "confessed"事后补救
     _jinbaoCommission: false,  // K0：洪金宝是否已拜托玩家回三林看他爸
     _jinbaoFriendCommission: false, // 洪金宝是否已拜托玩家顺路看曹睿泽（上科大）
     _jinbaoCaseComplete: false,// 是否拿到案例记录表（确证版，真相链物证）
+    _jinbaoFriendTold: false,  // 是否已向洪金宝回报过曹睿泽的死讯
+    _jinbaoPhotoShown: false,  // 是否已给洪金宝看过曹睿泽的合照
+    _jinbaoDieselAsked: false, // 柴油任务是否已接过（Day3+洪金宝/厂务开口）
     _dieselDelivered: false,   // 柴油是否已送达动力站（送达→洪金宝撤离顺延一天）
+    _jinbaoReportRead: false,  // 是否已给洪金宝看过检测中心报告
     _jinbaoFed: false,         // 谎言线的加班补给是否已给过（泡面/功能饮料）
     hasDieselCan: false,       // 柴油铁皮桶（占1格；加油站/方姐两来源互斥 !hasDieselCan）
     _hasFabKeycard: false,     // fab 门禁卡（科创老师复制的华大访客卡，进厂唯一途径）
+    _readAirlockRules: false,  // 是否读过外部厂区墙上的《风淋室操作规程》
     _wearingCleanSuit: false,  // 是否穿着无尘服（灰区更衣柜穿/脱；穿着时不能进食饮水）
     _fabAlert: 0,              // fab 警报等级 0-2（风淋误操作2/3各+1：白区围攻与恐慌员工闪色加长、人影更躁动）
     _airlockOuterClosed: false,// 风淋舱：外门是否已关
@@ -264,17 +329,37 @@ const storyData = {
     _airlockAlarmRang: false, // 风淋警报是否刚在本场景响过（强启失败场景 text 分支用，读后由下次进入覆盖）
     _leakSolved: false,        // 泄漏乱拍是否恰好蒙对（nextScene 分流用，临时）
     _leakJustHurt: false,      // 泄漏本轮是否实际扣了体力（text 分支用，临时）
-    _fabFigBDone: false, // 白区三工位人影是否已了结（杀/误杀/对话过）
+    _airlockZombieDone: false, // 连廊那场遭遇是否已解决
+    _fabSwarmDone: false,      // 白区围攻是否已被打穿（打穿后可自由穿行）
+    _fabFigAObs: false, _fabFigBObs: false, _fabFigCObs: false, // 白区三工位人影是否已观察过
+    _fabFigADone: false, _fabFigBDone: false, _fabFigCDone: false, // 白区三工位人影是否已了结（杀/误杀/对话过）
+    _fabFigBKilled: false,    // 白区工位B（老陈·活人）是否被玩家失手打死（误杀：仅文本回声，无机械后果）
     _panicEmployeeState: "unmet", // 恐慌员工（小刘）：unmet未遇 / calmed虚惊相认 / injured打昏 / dead失手打死
+    _plenumPeeked: false,      // 是否已在送风夹层格栅上俯瞰过白区（白区线索预知）
+    _fabOfficeDeskSeen: false, // 是否已看过办公区贴满便利贴的工位（案例表旁证）
     _knowsReportRoom: false,   // 是否翻到检测中心台账（知道检测三室房间号）
     _labAlert: 0,              // 检测中心噪声等级（瞎摸/摔柜门各+1：检测员闪色加长、撤离多一场遭遇）
+    _labWeakened: false,       // 检测员是否被试剂柜门摔脸削弱（闪色-2位）
+    _labZombieDead: false,     // 检测员是否已被制服
+    _labExitFought: false,     // 撤离遭遇是否已打过
+    _reportCopiedToDiary: false, // 是否已把报告关键数据抄进日记本
     _bridgeFrom: "",           // 川杨河大桥上桥方向："南"=南岸上（往北）/"北"=北岸上（往南），北落场景用它分流
+    _metTeacher: false,        // 是否已与科创老师重逢（张江AI岛机房）
+    _teacherFriendTold: false, // 是否已向老师回报过曹睿泽的死讯
+    _teacherReportRead: false, // 老师是否已看过检测中心报告
+    _foundFriend: false,       // 是否已发现曹睿泽的尸体（上科大宿舍）
     _hasFriendPhoto: false,    // 曹睿泽与洪金宝的合照（不占背包，可给老师/洪金宝看）
+    _dormFoodTaken: false,     // 曹睿泽宿舍的火腿肠是否已拿过（一次性守卫）
+    _gasShedZombieDead: false, // 张江加油站铁皮棚的工装丧尸是否已被击杀
     _hasTestReport: false,     // 上海市检测中心的盖章报告（不占背包，L3物证）
+    _noteRead: false,          // 断电版动力站的字条是否已读过
     _remediedFromLie: false,   // 补救前是否走的谎言线（补救场景 text 分支用）
     _bridgeStage: 0,           // 川杨河大桥进度：0未上桥 1/2/3=已过第1/2/3段（结局文本分段用）
     _fangDieselGiven: false,   // 方姐的柴油交易是否已给过（张江还有活人的消息换，一次性）
+    _freightDoorOpen: false,   // 华大动力站卸油门是否已从厂内侧推开过（厂界便道↔动力站捷径是否打通）
     _plazaFigSeen: false,      // 是否已凑近看过华大厂区广场的人影（一次性观察）
+    _plazaFought: false,       // 厂区广场警报后近路遭遇是否已解决
+    _sistKitchenZombieDead: false, // 上科大食堂后厨丧尸是否已击杀
     _labExitTo: "",            // 检测中心撤离遭遇后的落点（大厅 / 卸货区）
 
     // 记忆（不占背包）
@@ -631,7 +716,7 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasPhone && phoneBattery > 0 && _visit['长者食堂-打开路由器'] > 0 && currentPlace == '长者食堂'",
+        showCondition: "hasPhone && phoneBattery > 0 && _cafeteriaWifiOn && currentPlace == '长者食堂'",
         text: "用手机看看有什么消息（电量 {phoneBattery}%）",
         nextScene: "长者食堂-手机信息",
         effect: function(v) { v.positionAfterOperation = v.positionAfterOperation || "长者食堂-内部"; v.phoneBattery = Math.max(0, v.phoneBattery - 5); return {}; }

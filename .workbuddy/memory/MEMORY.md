@@ -47,3 +47,14 @@
 - 徒手代价包（全库标准）：{ add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } }；体力门槛（如 strength>=3/2）对武器和徒手同等生效，虚弱走原反杀结局。
 - 已改：收银台/食品店（徒手抓伤）、菜市场大厅+潜行、药房柜台后（徒手无代价）；回归：tools/unarmed_fight_selftest.js（34 断言，vm 沙箱加载真实 utils+剧情文件，未定义全局自动补桩）。
 - 尚未改的边缘项：安居苑驱猫、安居苑入户×6户、图书馆办公室——待用户拍板。
+
+## 变量 ↔ _visit 替换（2026-09-20 审计+落地完成，详见 tools/变量_visit替换审计报告.md 与 变量替换应用日志.md）
+
+- **A1 已批量替换 89 个**（tools/variable_visit_replace.py --apply，改 18 个 story 文件、删 core.js 定义 89 个，_visit 用法 138→430）：56 个 onEnter 对象式自动 + 33 个目检 OVERRIDE（含 _chenmoRescued=initMemoryGame effect 无条件应用）。**总量 352→263**。
+- **15 个保留变量勿再替换**：_policeGunTaken（onEnter 内"首次进入"判断，_visit 提前累加会 off-by-one）、_supermarketCompromised/_xinDead/teacherStudentsDead/wangGiveKey（条件写入）、_jinyiSurvivorsFed/Robbed（互斥条件）、_paraffinTaken/_drawerVitaminTaken/_jinbaobeiFrontOpen（写入场景=当前场景自身，_visit 先累加会误吞选项）、fightWithVineZombie（三入口不同 nextScene）、_airlockAlarmRang/_airlockAlarmZombie（条件+同场景 text 分支）、_lijuanCupTold（dd<3 且首访）、_fangDieselGiven（nextScene 非专属）。
+- 替换读点惯用法：函数式 `vars.x` → `(vars._visit['场景'] > 0)`；条件字符串裸名 `x` → `_visit['场景'] > 0`；`!x` → `!_visit['场景']`（条件字符串内单引号写法已有先例）。_visit 只读不写；新剧情一次性标记优先用专用子场景 + `_visit['场景'] > 0`。
+- 工具：tools/variable_visit_audit.py（审计分级，可复跑）；variable_visit_replace.py（OVERRIDE 白名单机制，改写时须带「删除后残留校验+失败即 SystemExit 中止+两阶段统一写盘」三件套——第一版缺这些曾产生 9 个语法损坏文件，靠 node --check 验证抓出）。
+- A2 拆子场景后 1（_sleepingZombieGone）；A3 持有/线索类 14 勿换；B 需重构 25；C 166；D 计数型 6（visitExitTimes/visitWaitingRoomTimes 是手写 _visit 重复造轮子，优先换）。
+- **9 个"写而不读"变量待用户拍板**（有写入、全库无读取）：isWeak、_jinyiB2GasWarned、_pengGalWqxSeen、_quackTradedDay、_fangWarnRoadBull、_chefCleared、_jinbaoCommission、_jinbaoFed、shoes。其中 _quackTradedDay/_fangWarnRoadBull 注释声称防重复但读取逻辑不存在（疑似 bug：郎中同天可重复买、方姐重复提醒）。
+- 遗留：_visit 引用中有 9 个场景 ID 在两空格缩进扫描中不存在（小超市、全家-喝饮料腹泻、4F电梯厅×6、金谊广场-B1奥乐齐-搜刮），替换前已存在，疑为真实悬空引用或缩进变体，待排查。
+- 备份：.workbuddy/backup_story_20260920/story/（替换前全量 24 个 js）。

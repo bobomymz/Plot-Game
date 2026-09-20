@@ -51,8 +51,9 @@ for (const rel of FILES) {
   }
 }
 
-const armed = { hasIronPipe: true, strength: 5, dd: 1, chasedByZombies: 0, itemCount: 0, weather: '晴' };
-const unarmed = { strength: 5, dd: 1, chasedByZombies: 0, itemCount: 0, weather: '晴' };
+// vars 桩:_visit 由引擎维护(engine.js 渲染场景时自动累加),沙箱里手动提供空表
+const armed = { hasIronPipe: true, strength: 5, dd: 1, chasedByZombies: 0, itemCount: 0, weather: '晴', _visit: {} };
+const unarmed = { strength: 5, dd: 1, chasedByZombies: 0, itemCount: 0, weather: '晴', _visit: {} };
 
 const S = sandbox.storyData;
 
@@ -62,7 +63,7 @@ console.log('1) 安盛街-收银台：攻击选项对徒手可见');
   ok(!!sc, '场景存在');
   const atk = sc.choices.find(c => c.nextScene === '安盛街-文具店击杀');
   ok(!!atk, '攻击选项存在');
-  ok(atk.showCondition === '!_stationeryZombieDead', 'showCondition 改为 !_stationeryZombieDead（修掉击杀后重进仍可再打的隐患）');
+  ok(atk.showCondition === "!_visit['安盛街-文具店击杀']", 'showCondition 改为 !_visit[安盛街-文具店击杀]（修掉击杀后重进仍可再打的隐患）');
   ok(atk.condition === 'strength >= 3' && atk.elseScene === '结局-安盛街-文具店被反杀', '体力门槛与反杀结局保留');
   ok(atk.text(unarmed) === '赤手空拳按住它', '徒手选项文案="赤手空拳按住它"');
   ok(atk.text(armed) === '抄起铁管砸过去', '有武器选项文案="抄起铁管砸过去"');
@@ -73,10 +74,10 @@ console.log('2) 安盛街-文具店击杀：按武器分支结算');
   const sc = S['安盛街-文具店击杀'];
   const effA = sc.onEnter(Object.assign({}, armed));
   ok(effA.add && effA.add.strength === -1 && !effA.add.mercuryLoad && !(effA.set && effA.set.hurtByZombie), '有武器：体力-1，无抓伤');
-  ok(effA.set && effA.set._stationeryZombieDead === true, '有武器：标记丧尸已死');
+  ok(!(effA.set && ('_stationeryZombieDead' in effA.set)), '有武器：旧变量 _stationeryZombieDead 已由 _visit 场景计数接管');
   const effU = sc.onEnter(Object.assign({}, unarmed));
   ok(effU.add && effU.add.strength === -2 && effU.add.mercuryLoad === 10, '徒手：体力-2、汞负荷+10');
-  ok(effU.set && effU.set.hurtByZombie === true && effU.set._stationeryZombieDead === true, '徒手：hurtByZombie=true 且丧尸已死');
+  ok(effU.set && effU.set.hurtByZombie === true && !('_stationeryZombieDead' in effU.set), '徒手：hurtByZombie=true 且不再写旧死标记（由 _visit 接管）');
   const tU = sc.text(Object.assign({ hurtByZombie: true }, unarmed));
   const tA = sc.text(Object.assign({}, armed));
   ok(tU.indexOf('手背') >= 0 && tU.indexOf('体力-2') >= 0, '徒手文案含抓伤描述与体力-2');

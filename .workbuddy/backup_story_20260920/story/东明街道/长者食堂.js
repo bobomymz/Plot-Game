@@ -327,7 +327,7 @@ Object.assign(storyData, {
       var desc = "你穿过用餐区往深处走去，后面有一扇半掩的门，里面是间不到五平米的小办公室。桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。\n";
       if(vars._visit['长者食堂-办公室']) desc = "办公室桌上放着一台旧台式机、一叠外卖传单，墙角摞着几箱一次性餐具。";
 
-      if (!(vars._visit['长者食堂-打开路由器'] > 0)) {
+      if (!vars._cafeteriaWifiOn) {
         desc += "桌角的路由器指示灯灭着。你凑近看了看——电源线还插着，但开关被按掉了。插座旁边贴着一张泛黄的标签：“省电，走时关路由器。重开按背后小黑钮三秒。”";
       } else {
         desc += "路由器指示灯闪着规律的绿光。";
@@ -336,10 +336,10 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!_visit['长者食堂-打开路由器']",
+        showCondition: "!_cafeteriaWifiOn",
         text: "按住路由器背后的小黑钮三秒",
         nextScene: "长者食堂-打开路由器",
-        effect: updateTime(1, {  })
+        effect: updateTime(1, { set: { _cafeteriaWifiOn: true } })
       },
       {
         text: "离开办公室",

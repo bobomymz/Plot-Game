@@ -113,7 +113,7 @@ Object.assign(storyData, {
       {
         showCondition: "currentArea == '周边社区' && dd < 3",
         text: "去社区图书馆过夜",
-        condition: "_visit['图书馆-办公室-清场'] > 0",
+        condition: "libraryCleared",
         nextScene: "过夜-图书馆",
         elseScene: "结局-过夜-图书馆未清理"
       },
@@ -186,19 +186,19 @@ Object.assign(storyData, {
         nextScene: "结局-过夜-建平街头"
       },
       {
-        showCondition: "currentArea == '建平中学' && _visit['建平-宿舍-内部-清场'] > 0",
+        showCondition: "currentArea == '建平中学' && _dormCleared",
         text: "去宿舍过夜",
         nextScene: "过夜-建平宿舍"
       },
       {
-        showCondition: "currentArea == '建平中学' && !_visit['建平-宿舍-内部-清场']",
+        showCondition: "currentArea == '建平中学' && !_dormCleared",
         text: "去宿舍过夜（没清理过）",
         nextScene: "结局-过夜-建平宿舍遇袭"
       },
 
       // ===== 张江 =====
       {
-        showCondition: "currentArea == '张江' && _visit['张江-AI岛-机房-重逢'] > 0",
+        showCondition: "currentArea == '张江' && _metTeacher",
         text: "回人工智能岛，去机房过夜",
         nextScene: "过夜-张江-机房"
       },

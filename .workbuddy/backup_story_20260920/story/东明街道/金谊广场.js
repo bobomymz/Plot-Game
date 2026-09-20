@@ -230,7 +230,7 @@ Object.assign(storyData, {
       if (vars.dd == 1) {
         cs.push({ text: "跟他聊聊", nextScene: "金谊广场-吉祥馄饨-聊", effect: updateTime(3) });
         cs.push({ text: "看看店里", nextScene: "金谊广场-吉祥馄饨-看", effect: updateTime(2) });
-        if (vars._visit['金谊广场-吉祥馄饨-聊'] > 0 && !(vars._visit['金谊广场-吉祥馄饨-杀出去'] > 0)) {
+        if (vars._visit['金谊广场-吉祥馄饨-聊'] > 0 && !vars._chenmoRescued) {
           cs.push({ text: "带他杀出停车场", nextScene: "金谊广场-吉祥馄饨-杀出去", effect: updateTime(2) });
         }
         var wontonLabel = vars._visit['金谊广场-吉祥馄饨-聊'] > 0 ? "让陈默煮碗馄饨" : "让他帮忙煮碗馄饨";
@@ -280,7 +280,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!_visit['金谊广场-吉祥馄饨-杀出去']",
+        showCondition: "!_chenmoRescued",
         text: "带他杀出停车场",
         nextScene: "金谊广场-吉祥馄饨-杀出去",
         effect: updateTime(2)
@@ -352,7 +352,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "搜刮车辆", nextScene: "金谊广场-停车场-搜刮", effect: updateTime(3) },
-      { showCondition:"!_visit['金谊广场-吉祥馄饨-杀出去']",text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) },
+      { showCondition:"!_chenmoRescued",text: "去吉祥馄饨", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) },
       { text: "去龙头区", nextScene: "金谊广场-龙头区", effect: updateTime(2) },
       { text: "去停车场入口", nextScene: "金谊广场-停车场入口", effect: updateTime(1) }
     ]
@@ -360,7 +360,7 @@ Object.assign(storyData, {
 
   "金谊广场-吉祥馄饨-杀出去": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/地面停车场-战斗.jpg */,
-    onEnter: initMemoryGame(["红","蓝","绿","黄","白"], 7, { add: { strength: -1 } }),
+    onEnter: initMemoryGame(["红","蓝","绿","黄","白"], 7, { set: { _chenmoRescued: true }, add: { strength: -1 } }),
     text: function(vars) {
       var desc = vars._visit['初遇陈默']
         ? "陈默把菜刀换到左手，给你腾出了空间——他朝你一点头，像是想起了当初在小区里救你的那一下。\n"
@@ -1141,7 +1141,7 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var choices = [];
-      if (vars.hurtByZombie && !(vars._visit['金谊广场-5F-酒精消毒'] > 0)) {
+      if (vars.hurtByZombie && !vars._jinyiAlcoholUsed) {
         choices.push({
           text: "用酒精消毒伤口",
           nextScene: "金谊广场-5F-酒精消毒",
@@ -1160,6 +1160,7 @@ Object.assign(storyData, {
   "金谊广场-5F-酒精消毒": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/5F KTV.jpg */,
     onEnter: function(vars) {
+      vars._jinyiAlcoholUsed = true;
       if (Math.random() < 0.5) {
         vars.hurtByZombie = false;
       }
@@ -1382,7 +1383,7 @@ Object.assign(storyData, {
       desc += "从这里能看得很远——往西，黄浦江的轮廓在灰白的天空下若隐若现。江面上没有船，只有一片死寂的灰色水面。\n";
       desc += "往东，你能看到来时的路——十字路口、东明路、三林路，那些你走过的地方，现在看起来像一张缩小的地图。\n";
       desc += "你站在天台的边缘，逆光中你的剪影被拉得很长。\n";
-      if ((vars._visit['金谊广场-吉祥馄饨-杀出去'] > 0)) {
+      if (vars._chenmoRescued) {
         desc += "\n你想起陈默给你的那张地图——那些近道，那些近路，那些只有他才知道的缝隙。这个世界很大，但总有人知道怎么走。";
       }
       desc += "\n<span style='color: #888;'>（金谊广场探索完毕 — 后续内容待展开）</span>";

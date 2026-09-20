@@ -1,4 +1,4 @@
-// ========== 新达汇·三林 ==========
+﻿// ========== 新达汇·三林 ==========
 // 开放式商场探索，B1~5F+屋顶+东区
 
 // 商场走廊/中庭/扶梯 QTE 工厂函数
@@ -422,7 +422,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/B1值班台抽屉.jpg */,
     text: function(vars) {
       var d = "值班台的抽屉没锁。里面有一串没挂钥匙的空钥匙圈、一本卷了边的值班记录";
-      d += (vars._visit['新达汇-B1保安室-抽屉-吃桃酥'] > 0) ? "。" : "，还有半盒受潮的桃酥。";
+      d += vars._mallGuardSnack ? "。" : "，还有半盒受潮的桃酥。";
       d += "\n记录的最后一页写着：“6/28 22:00 交接，西门卷帘门已降，配电房锁芯明早等老王来换。——张”。后面就没有了。";
       return d;
     },
@@ -430,8 +430,8 @@ Object.assign(storyData, {
       {
         text: "把桃酥吃了",
         nextScene: "新达汇-B1保安室-抽屉-吃桃酥",
-        effect: updateTime(3, { }),
-        showCondition: "!_visit['新达汇-B1保安室-抽屉-吃桃酥']",
+        effect: updateTime(3, { set: { _mallGuardSnack: true }}),
+        showCondition: "!_mallGuardSnack",
       },
       {
         text: "合上抽屉",
@@ -522,7 +522,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "1F-北走廊西"); v.showPowerOut = true; return {}; },
     text: function(vars) {
       var desc = "1F北走廊西段。走廊两侧是几家关了门的店铺，卷帘门拉着。其中有一家味千拉面，卷帘门下有空间，但似乎不足以钻进去。";
-      if (!(vars._visit['新达汇-1F后勤走廊西'] > 0)) desc += "\n墙边有一扇白色的门，上面贴着“员工通道”的标签——门锁着，推不动。";
+      if (!vars._backhallEntered) desc += "\n墙边有一扇白色的门，上面贴着“员工通道”的标签——门锁着，推不动。";
       desc += "\n" + describeZombieWave(vars);
       return desc;
     },
@@ -570,7 +570,7 @@ Object.assign(storyData, {
       {
         text: "推开一扇贴着'员工通道'的门",
         nextScene: "新达汇-1F后勤走廊中",
-        showCondition: "_visit['新达汇-1F后勤走廊西'] > 0",
+        showCondition: "_backhallEntered",
       },
       {
         text: "往东走",
@@ -1046,7 +1046,7 @@ Object.assign(storyData, {
   "新达汇-电梯厅贩卖机": {
     image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
     text: function(vars) {
-      if ((vars._visit['新达汇-电梯厅贩卖机-砸开'] > 0)) return "那台自动售货机彻底被你砸开了。玻璃断口参差，落货口里只剩碎的罐子、一只拧盖的空瓶。这里已经捞不出什么了。";
+      if (vars.vmSmashed) return "那台自动售货机彻底被你砸开了。玻璃断口参差，落货口里只剩碎的罐子、一只拧盖的空瓶。这里已经捞不出什么了。";
       var desc = "电梯厅靠墙的角落里立着一部自动售货机。价签还贴着，货道里却透着狼藉——靠走廊这侧的下半块玻璃被人从外面撬开、裂成蛛网状，塞东西进去的动作很粗暴。";
       if (vars._metGaoAtMall) desc += "\n你忽然想起华为体验店展示台上那半瓶矿泉水——原来就是打这儿砸出来的。他挑剩下的，都堆在落货口里。";
       else desc += "\n透过豁口能看见落货口里堆着几个矿泉水瓶，全是空的，瓶盖却一只只拧好、摆得整整齐齐。";
@@ -1056,10 +1056,10 @@ Object.assign(storyData, {
     choices: [
       {
         text: "把手伸进豁口翻一翻",
-        condition: "!_visit['新达汇-电梯厅贩卖机-翻找']",
+        condition: "!_vmReached",
         nextScene: "新达汇-电梯厅贩卖机-翻找",
         elseScene: "新达汇-电梯厅贩卖机-空手",
-        effect: {  },
+        effect: { set: { _vmReached: true } },
       },
       {
         text: function(vars) {
@@ -1101,7 +1101,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
     onEnter: function(vars) {
       useHeavyTool(vars); // 撬砸计数：到上限武器损坏，_pryTool 记下实际工具
-      return { add: { strength: 2, chasedByZombies: 1 } };
+      return { set: { vmSmashed: true }, add: { strength: 2, chasedByZombies: 1 } };
     },
     text: function(vars) {
       return "你抡起" + (vars._pryTool || heavyWeaponName(vars)) + "对准断口补了几下，整块玻璃哗啦啦塌下来。两瓶矿泉水顺着货道骨碌碌滚落，你一把捞起来，拧开灌了几大口——冰凉的甜水淌进喉咙，力气回了几分。\n可碎玻璃和摔罐的哐当声在空旷的商场里荡出去老远，铁栏后的丧尸被这动静勾了过来。<span style='color: #00fbffff; font-style: italic;'>【体力 +2 · 追击 +1】</span>" + weaponBrokeText(vars);
@@ -1834,7 +1834,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "3F-南走廊中"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) {
-      if ((vars._visit['新达汇-3F南走廊中-摸黑'] > 0)) return "3F南走廊中段——之前那段漆黑的地方你现在可以正常通过了。\n" + describeZombieWave(vars);
+      if (vars._3f_darkZoneDone) return "3F南走廊中段——之前那段漆黑的地方你现在可以正常通过了。\n" + describeZombieWave(vars);
       var desc = "3F南走廊中段。往东侧的灯管全都灭了——一段大约十米长的走廊完全淹没在黑暗中。你隐约地看见地上似乎散落着一些东西。";
       if (vars.hasTorch) desc += "\n你摸了摸口袋里的手电筒——有光。";
       desc += "\n" + describeZombieWave(vars);
@@ -1850,25 +1850,25 @@ Object.assign(storyData, {
         text: "往东走",
         nextScene: "新达汇-3F南走廊东",
         effect: updateTime(1),
-        showCondition: "_visit['新达汇-3F南走廊中-摸黑'] > 0",
+        showCondition: "_3f_darkZoneDone",
       },
       {
         text: "摸黑慢慢摸过去",
         nextScene: "新达汇-3F南走廊中-摸黑",
         effect: updateTime(2),
-        showCondition: "!_visit['新达汇-3F南走廊中-摸黑']",
+        showCondition: "!_3f_darkZoneDone",
       },
       {
         text: "打开手电筒快步通过",
         nextScene: "新达汇-3F南走廊东",
         effect: updateTime(1),
-        showCondition: "!_visit['新达汇-3F南走廊中-摸黑'] && hasTorch",
+        showCondition: "!_3f_darkZoneDone && hasTorch",
       },
       {
         text: "退回环廊找找有没有照明工具",
         nextScene: "新达汇-3F南走廊西",
         effect: updateTime(1),
-        showCondition: "!_visit['新达汇-3F南走廊中-摸黑'] && !hasTorch",
+        showCondition: "!_3f_darkZoneDone && !hasTorch",
       },
       {
         text: "往西走",
@@ -1880,7 +1880,7 @@ Object.assign(storyData, {
 
   "新达汇-3F南走廊中-摸黑": {
     image: "images/placeholder.png" /* TODO: images/新达汇/3fSouth.png */,
-    onEnter: { set: { showPowerOut: true }, add: { chasedByZombies: 1 } },
+    onEnter: { set: { showPowerOut: true,  _3f_darkZoneDone: true }, add: { chasedByZombies: 1 } },
     text: "你伸着手在黑暗中摸索前进。脚下嘎吱一声——你踩碎了什么塑料玩具。声音虽不大，但在安静的走廊里还是挺清楚的。",
     choices: [
       {
@@ -1948,7 +1948,7 @@ Object.assign(storyData, {
           text: "钻进员工区去后勤走廊",
           nextScene: "新达汇-3F后勤走廊东",
           effect: updateTime(2),
-          showCondition: "_visit['新达汇-1F后勤走廊西'] > 0",
+          showCondition: "_backhallEntered",
         }
       ];
       // 变异猫尾随时可掏吃的喂它：口粮走统一"给食物"模板（FOOD_GIFTS 全清单，含脆脆炒米）
@@ -1978,8 +1978,8 @@ Object.assign(storyData, {
     onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/earlyEducation.png */,
     text: function(vars) {
-      if ((vars._visit['新达汇-1F后勤走廊西'] > 0) || vars._jinbaobeiFrontOpen) {
-        var head = (vars._visit['新达汇-1F后勤走廊西'] > 0) && !vars._jinbaobeiFrontOpen
+      if (vars._backhallEntered || vars._jinbaobeiFrontOpen) {
+        var head = vars._backhallEntered && !vars._jinbaobeiFrontOpen
           ? "你从后勤通道绕进了金宝贝早教中心的后门。\n"
           : "前门敞开着。\n";
         return head + "蓝黄配色的装潢，教室里小桌椅整齐排列，地面铺着软垫。黑板上画着一只歪歪扭扭的小熊。\n教室深处传来一阵规律的嗡嗡声——一台扫地机器人卡在倒塌的桌椅腿中间，履带空转，把同一块地砖擦了一遍又一遍。\n每天早上九点，它都会准时出仓。这座商场里，只有它还在上班。";
@@ -1999,19 +1999,19 @@ Object.assign(storyData, {
         text: "推开前门出去",
         nextScene: "新达汇-3F北走廊西",
         effect: updateTime(1),
-        showCondition: "_visit['新达汇-1F后勤走廊西'] > 0 || _jinbaobeiFrontOpen",
+        showCondition: "_backhallEntered || _jinbaobeiFrontOpen",
       },
       {
         text: "去后勤走廊",
         nextScene: "新达汇-3F后勤走廊",
         effect: updateTime(1),
-        showCondition: "_visit['新达汇-1F后勤走廊西'] > 0",
+        showCondition: "_backhallEntered",
       },
       {
         text: "回到走廊",
         nextScene: "新达汇-3F北走廊西",
         effect: updateTime(1),
-        showCondition: "!_visit['新达汇-1F后勤走廊西'] && !_jinbaobeiFrontOpen",
+        showCondition: "!_backhallEntered && !_jinbaobeiFrontOpen",
       },
     ]
   },
@@ -2331,7 +2331,7 @@ Object.assign(storyData, {
         ? "大渝火锅的食材已经被你搜刮干净了。"
         : "你走进大渝火锅。冰柜里还有一些食材没完全坏掉。灶台还能用。";
       if (!vars.hasCatSnack) desc += "\n门口等位区的零食台上散落着几包没拆封的零食——其中有一包脆脆炒米。";
-      if ((vars._visit['新达汇-1F后勤走廊西'] > 0)) desc += "\n后厨通向一条后勤走廊——你之前去过那里。";
+      if (vars._backhallEntered) desc += "\n后厨通向一条后勤走廊——你之前去过那里。";
       return desc;
     },
     choices: [
@@ -2945,17 +2945,17 @@ Object.assign(storyData, {
       {
         text: "把机台上没收走的游戏币拢一拢",
         nextScene: "新达汇-5F游戏厅-捡币",
-        showCondition: "!_visit['新达汇-5F游戏厅-捡币']",
+        showCondition: "!_gotGameTokens",
       },
       {
         text: "塞几枚币，投几颗球",
         nextScene: "新达汇-5F游戏厅-投篮机",
-        showCondition: "_visit['新达汇-5F游戏厅-捡币'] > 0 && !_powerOut",
+        showCondition: "_gotGameTokens && !_powerOut",
       },
       {
         text: "塞币玩一把抓娃娃",
         nextScene: "新达汇-5F游戏厅-娃娃机",
-        showCondition: "_visit['新达汇-5F游戏厅-捡币'] > 0 && !_powerOut",
+        showCondition: "_gotGameTokens && !_powerOut",
       },
       {
         text: "回到走廊",
@@ -2973,7 +2973,7 @@ Object.assign(storyData, {
         desc += "黑暗中你只能听着自己的呼吸声。过了很久，外面终于安静了。";
       } else {
         desc += "街机的屏幕在你身旁闪烁着微光，发出嗡嗡的电流声。";
-        if (!(vars._visit['新达汇-5F游戏厅-捡币'] > 0)) desc += "几台机器上还残留着没被拿走的游戏币。";
+        if (!vars._gotGameTokens) desc += "几台机器上还残留着没被拿走的游戏币。";
         desc += "过了很久，外面的脚步声终于远去了。";
       }
       return desc + "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>";
@@ -2989,7 +2989,7 @@ Object.assign(storyData, {
 
   // ===== 5F游戏厅 · 游戏币（纯风味消费，无数值奖励防刷） =====
   "新达汇-5F游戏厅-捡币": {
-    onEnter: { set: { showPowerOut: true } },
+    onEnter: { set: { showPowerOut: true, _gotGameTokens: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/arcade.png */,
     text: "你沿着机台走了一圈，把投币口旁边遗落的游戏币一枚一枚抠下来，拢在掌心——沉甸甸的一小把。\n在一个能上网、能点外卖、能刷脸进地铁的世界里，这些东西一分钱都不值。现在也一样。但你还是把它们装进了口袋。",
     choices: [
@@ -3701,6 +3701,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall1f.png */,
     onEnter: function(v) {
       transit(v, "1F-后勤走廊西");
+      v._backhallEntered = true;
       if (v.chasedByZombies >= 4) { v._backhallDead = true; return {}; }
       if (v.chasedByZombies <= 1) v.chasedByZombies = 0;
       else if (v.chasedByZombies == 2) v.chasedByZombies = 1;
@@ -3842,7 +3843,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "3F-后勤走廊"); return {}; },
     text: function(v) {
       var d = "你走进3F的后勤走廊。这里比下面几层更暗——有两盏应急灯坏了，走廊的中段几乎完全淹没在阴影里。\n";
-      if ((v._visit['新达汇-3F后勤走廊-王建国'] > 0)) {
+      if (v._wangjianguoDead) {
         d += "那个穿维修工服的身影还倒在走廊正中间。扳手掉在他手边，工牌的挂绳缠在纽扣上。";
         if (v._catFed) d += "\n那只变异猫蹲在离他一步远的地方，尾巴盖着爪子，一直看着他。";
         return d;
@@ -3856,7 +3857,7 @@ Object.assign(storyData, {
       {
         text: "迎上去，解决它",
         nextScene: "新达汇-3F后勤走廊-工服丧尸",
-        showCondition: "!_visit['新达汇-3F后勤走廊-王建国'] && (hasIronPipe || hasCane || hasMopHandle || hasAxe || hasDagger || _got3fExtinguisher)",
+        showCondition: "!_wangjianguoDead && (hasIronPipe || hasCane || hasMopHandle || hasAxe || hasDagger || _got3fExtinguisher)",
       },
       {
         text: "放轻脚步，贴着墙从它身边蹭过去",
@@ -3864,24 +3865,24 @@ Object.assign(storyData, {
         effect: updateTime(3),
         condition: "chasedByZombies == 0",
         elseScene: "结局-后勤通道暗算",
-        showCondition: "!_visit['新达汇-3F后勤走廊-王建国']",
+        showCondition: "!_wangjianguoDead",
       },
       {
         text: "拼一把——闭眼冲过去",
         nextScene: "结局-后勤通道暗算",
-        showCondition: "!_visit['新达汇-3F后勤走廊-王建国'] && chasedByZombies > 0",
+        showCondition: "!_wangjianguoDead && chasedByZombies > 0",
       },
       {
-        text: function(v) { return (v._visit['新达汇-3F后勤走廊-王建国的口袋'] > 0) ? "再回到王建国身边翻翻" : "搜一搜他身上的东西"; },
+        text: function(v) { return v._searchedWang ? "再回到王建国身边翻翻" : "搜一搜他身上的东西"; },
         nextScene: "新达汇-3F后勤走廊-王建国的口袋",
         effect: updateTime(1),
-        showCondition: "_visit['新达汇-3F后勤走廊-王建国'] > 0 && (!_visit['新达汇-3F后勤走廊-王建国的口袋'] || !hasDoorKey2)",
+        showCondition: "_wangjianguoDead && (!_searchedWang || !hasDoorKey2)",
       },
       {
         text: "穿过走廊往前走",
         nextScene: "新达汇-3F后勤走廊东",
         effect: updateTime(3),
-        showCondition: "_visit['新达汇-3F后勤走廊-王建国'] > 0",
+        showCondition: "_wangjianguoDead",
       },
       {
         text: "推开消防通道的门",
@@ -3988,6 +3989,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/王建国.jpg */,
     onEnter: function(v) {
       v.showPowerOut = true;
+      v._wangjianguoDead = true;
       if (v._got3fExtinguisher) v._got3fExtinguisher = false;   // 灭火器喷完
       return { add: { chasedByZombies: 1 } };
     },
@@ -3999,10 +4001,10 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: function(v) { return (v._visit['新达汇-3F后勤走廊-王建国的口袋'] > 0) ? "再翻一次他的口袋" : "搜一搜他身上的东西"; },
+        text: function(v) { return v._searchedWang ? "再翻一次他的口袋" : "搜一搜他身上的东西"; },
         nextScene: "新达汇-3F后勤走廊-王建国的口袋",
         effect: updateTime(1),
-        showCondition: "!_visit['新达汇-3F后勤走廊-王建国的口袋'] || !hasDoorKey2",
+        showCondition: "!_searchedWang || !hasDoorKey2",
       },
       {
         text: "从原路退回去",
@@ -4018,7 +4020,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F后勤走廊-王建国的口袋": {
     image: "images/placeholder.png" /* TODO: images/新达汇/王建国的口袋.jpg */,
-    onEnter: { set: { showPowerOut: true, positionAfterOperation: "新达汇-3F后勤走廊-王建国的口袋" } },
+    onEnter: { set: { showPowerOut: true, _searchedWang: true, positionAfterOperation: "新达汇-3F后勤走廊-王建国的口袋" } },
     text: function(vars) {
       var d = "你蹲下来翻他的口袋。\n腰间挂着一串钥匙——大部分锈得发乌，只有一把是崭新的黄铜色，齿口锃亮，像是这几天才配的。\n工装内袋里还有半包压扁的烟，和一张揉皱的派工单。派工单的背面用铅笔描着“正”字——四个整的，第五个只写了两笔。";
       if (vars._visit["新达汇-5F清洁工具间-便条"] > 0) {

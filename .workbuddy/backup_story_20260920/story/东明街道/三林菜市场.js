@@ -23,10 +23,10 @@ Object.assign(storyData, {
   "菜市场-大厅": {
     image: function(vars) {
       if (vars.weather === "雨") {
-        if(!(vars._visit['菜市场-大厅-清场'] > 0)) return "images/菜市场/大厅-雨.webp";
+        if(!vars._marketHallCleared) return "images/菜市场/大厅-雨.webp";
         return "images/菜市场/大厅-雨-无丧尸.webp"
       } 
-      if(!(vars._visit['菜市场-大厅-清场'] > 0)) return "images/菜市场/大厅.webp";
+      if(!vars._marketHallCleared) return "images/菜市场/大厅.webp";
       return "images/菜市场/大厅-无丧尸.webp";
     },
     onEnter: function(vars) {
@@ -40,7 +40,7 @@ Object.assign(storyData, {
       var desc = (fromCold ? "你从冷库区那头折回大厅。" : "你从卷帘门下的缝隙里钻进了菜市场。")
         + "头顶的日光灯早就熄了，只有棚顶漏进来的天光把摊位间的过道照得明暗交错。\n\
 鱼摊、肉摊、菜摊……冰柜的玻璃门蒙着厚厚的雾气，看不清里面还剩什么。";
-      if (!(vars._visit['菜市场-大厅-清场'] > 0)) {
+      if (!vars._marketHallCleared) {
         desc += "\n过道中间趴着一具穿着围裙的尸体，正以一种奇怪的姿势抽搐着——它还有一口气。看到你，它开始往你的方向爬。";
       } else {
         desc += "\n过道空荡荡的——上次那只趴在地上的丧尸已经被你解决了。";
@@ -51,7 +51,7 @@ Object.assign(storyData, {
       var cs = [];
       var fromCold = vars._lastScene === "菜市场-冷库区" || vars._lastScene === "菜市场-冷库区-闭门羹"
         || (vars._lastScene !== "菜市场-卷帘门" && vars._marketEntry === "员工通道");
-      if (!(vars._visit['菜市场-大厅-清场'] > 0)) {
+      if (!vars._marketHallCleared) {
         cs.push({ text: "绕开它", nextScene: "菜市场-大厅-潜行", effect: updateTime(2) });
         cs.push({ text: function(vars) { return hasMeleeWeapon(vars) ? "用" + meleeWeaponName(vars) + "把它彻底解决" : "上去把它彻底解决"; }, nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
         // 丧尸挡路：只能从来路离开，不能直接穿到另一端
@@ -80,7 +80,7 @@ Object.assign(storyData, {
 
   "菜市场-大厅-清场": {
     image: "images/placeholder.png" /* TODO: images/菜市场/大厅-清场.jpg */,
-    onEnter: {  },
+    onEnter: { set: { _marketHallCleared: true } },
     text: function(vars) {
       var wpn = meleeWeaponName(vars);
       var strike = wpn
@@ -239,7 +239,7 @@ Object.assign(storyData, {
         cs.push({ text: "“我有个防毒面具，想换根铁棍。”", nextScene: "菜市场-交易-铁棍", effect: updateTime(2) });
       }
       // 柴油（张江支线）：听过老陈开口（动力站 Day3+ 接任务）才能想到方姐；拿“张江还有活人”的消息换，不占货
-      if ((vars._visit['张江-华大-动力站-柴油-接'] > 0) && !vars.hasDieselCan && !vars._fangDieselGiven) {
+      if (vars._jinbaoDieselAsked && !vars.hasDieselCan && !vars._fangDieselGiven) {
         cs.push({ text: "“不换吃的。跟你打听个货——柴油，有吗？”", nextScene: "菜市场-交易-柴油", effect: updateTime(2) });
       }
       if (cs.length === 0) {

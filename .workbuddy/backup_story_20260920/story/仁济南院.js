@@ -229,18 +229,18 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.showZombies = vars.showRain = true; },
     text: function(vars) {
       if (vars._renjiGateOpen) {
-        return (vars._visit['仁济南院-救护车-倒车撞门'] > 0)
+        return vars._renjiYardCleared
           ? "铁门已经被撞塌，斜倒在一边，底下压着几只再也不会动的丧尸。铁门后的空地空空荡荡，通往急诊大厅的路敞开着。"
           : "铁门被打开了一道缝，勉强能容一个人钻过去。铁门后的空地上，那几只丧尸还在游荡——刚才那一声枪响，已经让它们直直地转过头来。";
       }
       var desc = "你来到了救护车通道门口。铁门用一根铁链和挂锁锁着，门框上端的铰链已经开裂，整扇铁门微微向外倾斜——看着随时会倒下来砸到人。铁门外歪停着一辆救护车，车门大开，车内的担架翻落在地。透过门缝，能看到铁门后的空地上有两三只丧尸在游荡。";
-      if ((vars._visit['仁济南院-救护车-检查'] > 0)) desc += "\n你已经检查过那辆救护车——车厢里的急救用品被搬空了，但钥匙还插在点火开关上，没被拔走。";
+      if (vars._renjiAmbulanceChecked) desc += "\n你已经检查过那辆救护车——车厢里的急救用品被搬空了，但钥匙还插在点火开关上，没被拔走。";
       return desc;
     },
     choices: function(vars) {
       var cs = [];
       if (!vars._renjiGateOpen) {
-        if (!(vars._visit['仁济南院-救护车-检查'] > 0)) {
+        if (!vars._renjiAmbulanceChecked) {
           cs.push({
             text: "上救护车检查一下",
             nextScene: "仁济南院-救护车-检查",
@@ -273,7 +273,7 @@ Object.assign(storyData, {
         });
       } else {
         cs.push({
-          text: (vars._visit['仁济南院-救护车-倒车撞门'] > 0) ? "穿过倒塌的铁门，进入急诊大厅" : "趁着丧尸没围上来，冲进急诊大厅",
+          text: vars._renjiYardCleared ? "穿过倒塌的铁门，进入急诊大厅" : "趁着丧尸没围上来，冲进急诊大厅",
           nextScene: "仁济南院-急诊大厅",
           effect: updateTime(3)
         });
@@ -292,7 +292,7 @@ Object.assign(storyData, {
       morning: "images/仁济南院/救护车后门.webp",
       night: "images/仁济南院/救护车后门-night.webp"
     }),
-    onEnter: { set: { showZombies: true, showRain: true } },
+    onEnter: { set: { _renjiAmbulanceChecked: true, showZombies: true, showRain: true } },
     text: "你拉开变形的车门，爬进后厢检查。储物格全被翻空了——纱布、担架带，一点急救用品都没留下。\n\
 你眼角瞥到驾驶室那边点火开关上还挂着一串钥匙——车主走得太急，忘了拔。",
     choices: [
@@ -302,7 +302,7 @@ Object.assign(storyData, {
 
   "仁济南院-救护车-倒车撞门": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulanceRam.png */,
-    onEnter: { set: { _renjiGateOpen: true }, add: { chasedByZombies: 1 } },
+    onEnter: { set: { _renjiGateOpen: true, _renjiYardCleared: true }, add: { chasedByZombies: 1 } },
     text: "你钻进驾驶室，拧动钥匙——引擎意外地还能打着火。你一脚挂上倒挡，狠狠踩下油门。\n\
 救护车猛地向后蹿去，车尾狠狠撞在铁门上——铰链彻底断裂，整扇铁门带着刺耳的金属声轰然倒下，正好砸在门后那几只丧尸身上。\n\
 引擎盖裂开一条缝，冷却液顺着车底往外渗——这辆车是走不了了，但门开了。空地这边安静了，可引擎的轰鸣已经滚进楼里，远处有什么东西被惊动，低低地应了一声。",
@@ -475,7 +475,7 @@ Object.assign(storyData, {
         ? "你回到检验科后门。门还是关得严严实实——从里面反锁的，推不动。门上有一小块灰蒙蒙的玻璃观察窗。\n"
         : "检验科的后门关得严严实实——从里面反锁，你推回去，门板顶住了你的掌心。门上有一小块灰蒙蒙的玻璃观察窗。\n") +
 "门外的通道上，一个穿着检验科白大褂的人倒在墙边——已经没了呼吸。她的工牌挂在胸前，上面的照片和名字在昏暗的光线下模糊可辨。\n";
-      if ((vars._visit['仁济南院-检验科后门-方瑜'] > 0)) {
+      if (vars._fangyuFound) {
         desc += "你已经查看过她的工牌了。";
       } else {
         desc += "她的手里还攥着一部手机。";
@@ -484,13 +484,13 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!_visit['仁济南院-检验科后门-方瑜']",
+        showCondition: "!_fangyuFound",
         text: "查看那个人的工牌",
         nextScene: "仁济南院-检验科后门-方瑜",
         effect: updateTime(1)
       },
       {
-        showCondition: "!_visit['仁济南院-检验科后门-窥视']",
+        showCondition: "!_renjiPeeked",
         text: "凑到玻璃窗前往里看",
         nextScene: "仁济南院-检验科后门-窥视",
         effect: updateTime(1)
@@ -505,7 +505,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科后门-窥视": {
     image: "images/仁济南院/检验科后门-窗口观察.webp",
-    onEnter: {  },
+    onEnter: { set: { _renjiPeeked: true } },
     text: [
       "你垫起脚，把脸凑到那块灰蒙蒙的玻璃窗前，屏住呼吸往里看。\n\
 检验科的应急灯还亮着，把操作台上的东西照得清清楚楚——离心机、试剂架、散落的培养皿。\n\
@@ -523,7 +523,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科后门-方瑜": {
     image: "images/仁济南院/工牌.webp",
-    onEnter: {  },
+    onEnter: { set: { _fangyuFound: true } },
     text: [
       "你蹲下来，翻看她的工牌——仁济医院南院，检验科，方瑜。",
       "她的手机屏幕还亮着最后一点微光，你按了一下，微信聊天记录停在最后两行：",
@@ -1152,7 +1152,7 @@ Object.assign(storyData, {
         nextScene: "仁济南院-住院部走廊-战斗"
       },
       {
-        showCondition: "dd < 8 && !_visit['仁济南院-住院部走廊-幸存者-救']",
+        showCondition: "dd < 8 && !_renjiSurvivorSaved",
         text: "查看走廊尽头的病房",
         nextScene: "仁济南院-住院部走廊-幸存者",
         effect: updateTime(1)
@@ -1237,7 +1237,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "你推开走廊尽头那扇半掩的病房门。\n\
 病床后面缩着一个男人，穿着皱巴巴的病号服，双手死死抓着一根输液架。听到门响，他浑身一抖，举起输液架对准你。\n";
-      if ((vars._visit['仁济南院-住院部走廊-幸存者-救'] > 0)) {
+      if (vars._renjiSurvivorSaved) {
         desc += "你已经和这个人说过话了。";
       } else {
         desc += "“别、别过来！”他声音发颤，“我、我不是那种东西……你正常吗？你是正常人吗？”";
@@ -1246,7 +1246,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!_visit['仁济南院-住院部走廊-幸存者-救']",
+        showCondition: "!_renjiSurvivorSaved",
         text: "告诉他你没事，问他的情况",
         nextScene: "仁济南院-住院部走廊-幸存者-救"
       },
@@ -1260,7 +1260,7 @@ Object.assign(storyData, {
 
   "仁济南院-住院部走廊-幸存者-救": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiWard.png */,
-    onEnter: {  },
+    onEnter: { set: { _renjiSurvivorSaved: true } },
     text: "你放低声音，告诉他你是正常人，来医院找药的。\n\
 他慢慢放下输液架，眼圈发红：“我、我是这里的护工，爆发那天躲进来的。外面……外面怎么样了？”\n\
 \n\
@@ -1377,25 +1377,25 @@ Object.assign(storyData, {
 太平间的另一头有一扇门，通向医院的后勤区。\n";
       if (vars._morgueCleared) {
         desc += "你上次来的时候，已经处理掉了这里的东西。";
-      } else if ((vars._visit['仁济南院-太平间-通风开启'] > 0)) {
+      } else if (vars._morgueVentOn) {
         desc += "墙上的通风系统在嗡嗡地转，那股甜腻的气味淡了不少。";
       }
       return desc;
     },
     choices: [
       {
-        showCondition: "!_morgueCleared && _visit['仁济南院-太平间-通风开启'] > 0",
+        showCondition: "!_morgueCleared && _morgueVentOn",
         text: "等气味散尽，进去处理那只丧尸",
         nextScene: "仁济南院-太平间-黑皮丧尸"
       },
       {
-        showCondition: "!_morgueCleared && !_visit['仁济南院-太平间-通风开启'] && hasGasMask && maskRemainingUses > 0",
+        showCondition: "!_morgueCleared && !_morgueVentOn && hasGasMask && maskRemainingUses > 0",
         text: "戴上防毒面具进去",
         nextScene: "仁济南院-太平间-戴面具",
         effect: updateTime(1)
       },
       {
-        showCondition: "!_morgueCleared && !_visit['仁济南院-太平间-通风开启'] && (!hasGasMask || maskRemainingUses <= 0)",
+        showCondition: "!_morgueCleared && !_morgueVentOn && (!hasGasMask || maskRemainingUses <= 0)",
         text: "靠近那边的墙看看",
         nextScene: "仁济南院-太平间-通风",
         effect: updateTime(1)
@@ -1447,7 +1447,7 @@ Object.assign(storyData, {
 
   "仁济南院-太平间-通风开启": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
-    onEnter: {  },
+    onEnter: { set: { _morgueVentOn: true } },
     text: "你按下按钮。头顶的通风管道嗡嗡地响了起来，新鲜的空气灌了进来，那股甜腻的尸臭被一点点冲散。\n\
 你等了一会儿，直到能正常呼吸为止。",
     choices: [
@@ -1766,14 +1766,14 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "中草药房"; return {}; },
     text: function(vars) {
       var desc = "中草药房里，一整面墙的中药柜抽屉半开着，草药散落一地，有的已经发了霉。柜台上摆着一杆戥子和一个铜碾槽。\n";
-      if (!(vars._visit['仁济南院-中草药房-喝花茶'] > 0)) {
+      if (!vars._renjiHerbalTaken) {
         desc += "柜台角落里有一包没拆封的花茶，包装上印着“清肝明目”。";
       }
       return desc;
     },
     choices: [
       {
-        showCondition: "!_visit['仁济南院-中草药房-喝花茶']",
+        showCondition: "!_renjiHerbalTaken",
         text: "泡一壶花茶喝下",
         nextScene: "仁济南院-中草药房-喝花茶"
       },
@@ -1792,7 +1792,7 @@ Object.assign(storyData, {
 
   "仁济南院-中草药房-喝花茶": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiHerbalRoom.png */,
-    onEnter: { add: { strength: 1 } },
+    onEnter: { set: { _renjiHerbalTaken: true }, add: { strength: 1 } },
     text: "你抓了一把花茶放进杯子里，接了点热水泡开。药香混着花香升腾起来，在空荡荡的中草药房里显得格外安宁。你捧着杯子慢慢喝了几口，温热的茶水流进胃里，疲惫的身体舒缓了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "仁济南院-中草药房" }
@@ -1826,14 +1826,14 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "护士站的台面一片狼藉，电脑黑着屏，病历架倒了一排，散落的病历纸被踩得脏兮兮。\n\
 墙上那块交班的白板上还留着字——“6/28 夜班 3人”，字迹歪歪扭扭。\n";
-      if (!(vars._visit['仁济南院-护士站-喝葡萄糖'] > 0)) {
+      if (!vars._renjiGlucoseTaken) {
         desc += "台子下面的小冰箱半开着，里面躺着一瓶没拆封的葡萄糖。";
       }
       return desc;
     },
     choices: [
       {
-        showCondition: "!_visit['仁济南院-护士站-喝葡萄糖']",
+        showCondition: "!_renjiGlucoseTaken",
         text: "喝掉那瓶葡萄糖",
         nextScene: "仁济南院-护士站-喝葡萄糖"
       },
@@ -1847,7 +1847,7 @@ Object.assign(storyData, {
 
   "仁济南院-护士站-喝葡萄糖": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiNurseStation.png */,
-    onEnter: { add: { strength: 1 } },
+    onEnter: { set: { _renjiGlucoseTaken: true }, add: { strength: 1 } },
     text: "你拧开那瓶葡萄糖的铝盖，仰头灌了几口。甜腻的糖水顺着喉咙滑下去——太久没尝到甜味了，你几乎要被这熟悉的味道呛到。你靠在护士站台边缓了缓，感觉体力恢复了一些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "仁济南院-护士站" }
@@ -1897,20 +1897,20 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['仁济南院-特需病房-功能饮料'] > 0)) {
+      if (!vars._renjiDrinkTaken) {
         cs.push({ text: "搜索病床", nextScene: "仁济南院-特需病房-病床", effect: updateTime(1) });
       } else {
         cs.push({ text: "再看一眼病床（已经空了）", nextScene: "仁济南院-特需病房-病床-空", effect: updateTime(1) });
       }
       cs.push({
-        text: (vars._visit['仁济南院-特需病房-病历'] > 0) ? "再看墙上的病历夹" : "查看墙上的病历夹",
+        text: vars._renjiVipChartRead ? "再看墙上的病历夹" : "查看墙上的病历夹",
         nextScene: "仁济南院-特需病房-病历",
         effect: updateTime(1)
       });
       cs.push({
         text: "搜索紫色沙发",
         nextScene: function(v) {
-          if (!v._renjiVipZombieCleared && !(v._visit['仁济南院-特需病房-病历'] > 0) && !(v._visit['仁济南院-特需病房-茶几'] > 0)) {
+          if (!v._renjiVipZombieCleared && !v._renjiVipChartRead && !v._renjiVipNoteRead) {
             return "仁济南院-特需病房-沙发-偷袭";
           }
           return "仁济南院-特需病房-沙发";
@@ -1918,14 +1918,14 @@ Object.assign(storyData, {
         effect: updateTime(1)
       });
       cs.push({
-        text: (vars._visit['仁济南院-特需病房-茶几'] > 0) ? "再看茶几上的碎纸" : "搜索小圆茶几",
+        text: vars._renjiVipNoteRead ? "再看茶几上的碎纸" : "搜索小圆茶几",
         nextScene: "仁济南院-特需病房-茶几",
         effect: updateTime(1)
       });
       cs.push({
         text: "搜索门口储物柜",
         nextScene: function(v) {
-          if (!v._renjiVipZombieCleared && !(v._visit['仁济南院-特需病房-病历'] > 0) && !(v._visit['仁济南院-特需病房-茶几'] > 0)) {
+          if (!v._renjiVipZombieCleared && !v._renjiVipChartRead && !v._renjiVipNoteRead) {
             return "结局-仁济-特需偷袭";
           }
           if (!v._renjiVipZombieCleared) {
@@ -1969,7 +1969,7 @@ Object.assign(storyData, {
 
   "仁济南院-特需病房-功能饮料": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
-    onEnter: { add: { strength: 1 } },
+    onEnter: { set: { _renjiDrinkTaken: true }, add: { strength: 1 } },
     text: "你拧开脉动，灌了几口——冰凉的、带着人工甜味的液体顺着喉咙滑下去，是你这几天喝到的最像样的东西。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
@@ -1979,7 +1979,7 @@ Object.assign(storyData, {
 
   "仁济南院-特需病房-病历": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
-    onEnter: {  },
+    onEnter: { set: { _renjiVipChartRead: true } },
     text: "你凑近血糊糊的病历夹。大半字迹被手印盖住了，边缘还能辨认几行：\n\
 病人 302……高烧、狂躁……6/29 护工失联。\n\
 后面的记录戛然而止。墨水在纸上晕开一截，笔被忽然甩开了。",
@@ -1990,7 +1990,7 @@ Object.assign(storyData, {
 
   "仁济南院-特需病房-茶几": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
-    onEnter: {  },
+    onEnter: { set: { _renjiVipNoteRead: true } },
     text: function(vars) {
       if (vars._visit["仁济南院-特需病房-茶几"] > 1) {
         return "碎纸片还摊在茶几上。那几行字你已经看过了——“不要回答，不要回答，不要回答”。";
@@ -2059,9 +2059,9 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       var clue;
-      if ((vars._visit['仁济南院-特需病房-病历'] > 0) && (vars._visit['仁济南院-特需病房-茶几'] > 0)) {
+      if (vars._renjiVipChartRead && vars._renjiVipNoteRead) {
         clue = "病历和便签上的不对劲";
-      } else if ((vars._visit['仁济南院-特需病房-病历'] > 0)) {
+      } else if (vars._renjiVipChartRead) {
         clue = "病历上的不对劲";
       } else {
         clue = "便签上的不对劲";

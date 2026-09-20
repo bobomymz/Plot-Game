@@ -1,7 +1,7 @@
-// ========== 上实南校剧情 ==========
+﻿// ========== 上实南校剧情 ==========
 // 初中校园：1号楼→2号楼→3号楼→复合楼
 // 关键道具：手电筒、美工刀、润滑油、防毒面具（计数）、酒精灯/盐酸/温度计
-// 结局：_visit['上实南校-撤离成功'] > 0 = true
+// 结局：hasClassMates = true
 
 Object.assign(storyData, {
 
@@ -28,7 +28,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       var desc;
-      if ((vars._visit['上实南校-撤离成功'] > 0)) {
+      if (vars.hasClassMates) {
         desc = "你又回到了学校门口。铁门还是半开着，但门卫室的窗户今天看起来更破了。你在救出小陆他们之后带着他们离开了这里——学校里该拿的都拿了，不值得再冒一次险。\n";
       } else {
         desc = "你来到上实南校门口。铁门半开着，门卫室里空无一人——窗户碎了，桌上的茶杯还冒着热气。\n仰望曾经的教室，走廊上散落着几只在游荡的丧尸，教学楼深红色的轮廓在阴沉的天色下显得格外压抑。\n\
@@ -41,13 +41,13 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!_visit['上实南校-撤离成功']",
+        showCondition: "!hasClassMates",
         text: "从围墙缺口钻进去，直奔1号楼",
         nextScene: "上实南校-1号楼走廊",
         effect: updateTime(2)
       },
       {
-        showCondition: "!_visit['上实南校-撤离成功']",
+        showCondition: "!hasClassMates",
         text: "从正门绕进去",
         nextScene: "上实南校-1号楼走廊",
         effect: updateTime(3)
@@ -668,12 +668,12 @@ Object.assign(storyData, {
   "上实南校-复合楼入口": {
     image: "images/placeholder.png" /* TODO: images/上实南校/complexBuilding.png */,
     text: function(vars) {
-      if ((vars._visit['上实南校-撤离成功'] > 0)) return "复合楼里很安静。礼堂的门敞开着——里面空无一人，只有落下的幕布和倒下的座椅。你们上次离开时就是这个样子。";
+      if (vars.hasClassMates) return "复合楼里很安静。礼堂的门敞开着——里面空无一人，只有落下的幕布和倒下的座椅。你们上次离开时就是这个样子。";
       return "你从2号楼的后门走进复合楼。左手边是体育馆，右手边是礼堂，楼下还有食堂和图书馆。\n礼堂的门半掩着。你听到里面有人压低声音说话的声音。";
     },
     choices: [
       {
-        showCondition: "!_visit['上实南校-撤离成功']",
+        showCondition: "!hasClassMates",
         text: "推开礼堂的门",
         nextScene: "上实南校-相认"
       },
@@ -690,7 +690,7 @@ Object.assign(storyData, {
         nextScene: "上实南校-图书馆"
       },
       {
-        showCondition: "_visit['上实南校-撤离成功'] > 0",
+        showCondition: "hasClassMates",
         text: "离开复合楼",
         nextScene: "上实南校-撤离成功"
       }
@@ -1347,6 +1347,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolGate.png */,
     onEnter: function(vars) {
       vars.personalMemorySet.add("返校");
+      vars.hasClassMates = true;
       return {};
     },
     text: "你们站在学校外的路边。小陆、小王、小赵——三个人都灰头土脸的，但都活着。\n\

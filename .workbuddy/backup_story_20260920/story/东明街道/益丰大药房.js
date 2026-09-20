@@ -6,7 +6,7 @@ Object.assign(storyData,{
     onEnter: { set: { currentPlace: "三林路", currentPos: "益丰大药房" } },
     text: function(vars) {
       var insideBack = ["益丰大药房-击杀", "益丰大药房-柜台后-已清理", "益丰大药房-翻找", "益丰大药房-库房门锁了", "益丰大药房-办公室歇脚", "利昂药剂师的工牌"].indexOf(vars._lastScene) >= 0;
-      if ((vars._visit['益丰大药房-击杀'] > 0)) {
+      if (vars.pharmacyZombieKilled) {
         if (insideBack) {
           return "你回到药房待客区。柜台后面，白大褂丧尸的尸体还静静躺在原地，地上的血迹还没干。角落里有几只蟑螂在散落的药盒间爬来爬去，在安静的空间里发出细微的窸窣声。\n货架上的药品依旧东倒西歪，能搜刮的基本都拿过了。";
         }
@@ -19,13 +19,13 @@ Object.assign(storyData,{
     },
     choices: [
       {
-        showCondition: "!_visit['益丰大药房-击杀']",
+        showCondition: "!pharmacyZombieKilled",
         text: "悄悄绕到柜台后面查看",
         nextScene: "益丰大药房-柜台后",
         effect: updateTime(1)
       },
       {
-        showCondition: "_visit['益丰大药房-击杀'] > 0",
+        showCondition: "pharmacyZombieKilled",
         text: "绕到柜台后面看看",
         nextScene: "益丰大药房-柜台后-已清理",
         effect: updateTime(1)
@@ -43,13 +43,13 @@ Object.assign(storyData,{
         elseScene: "益丰大药房-库房门锁了"
       },
       {
-        showCondition: "_visit['益丰大药房-办公室闲聊'] > 0 && !_visit['益丰大药房-断电'] && chasedByZombies <= 1",
+        showCondition: "_visit['益丰大药房-办公室闲聊'] > 0 && !_zhaoGuangchengDead && chasedByZombies <= 1",
         text: "穿过库房，去办公室找赵广成",
         nextScene: "益丰大药房-办公室歇脚",
         effect: updateTime(2)
       },
       {
-        showCondition: "_visit['益丰大药房-击杀'] > 0 && chasedByZombies <= 1 && itemCount > 0",
+        showCondition: "pharmacyZombieKilled && chasedByZombies <= 1 && itemCount > 0",
         text: "🎒整理一下物品",
         nextScene: "整理整理",
         effect: { set: { positionAfterOperation: "益丰大药房" } }
@@ -104,7 +104,7 @@ Object.assign(storyData,{
 
   "益丰大药房-击杀": {
     image: "images/小区周边/益丰大药房/击杀白大褂.webp",
-    onEnter: { set: { hurtByZombie: false, positionAfterOperation: "益丰大药房-击杀" } },
+    onEnter: { set: { hurtByZombie: false, pharmacyZombieKilled: true, positionAfterOperation: "益丰大药房-击杀" } },
     text: function(vars) {
       var kill = hasMeleeWeapon(vars)
         ? "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。"
@@ -438,7 +438,7 @@ Object.assign(storyData,{
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/背后偷袭的丧尸.png */,
     text: function(vars) {
       var t;
-      if ((vars._visit['益丰大药房-喂水'] > 0)) {
+      if (vars.pharmacyApprenticeWatered) {
         // 喂过水后她是安分的，无论从哪条路回到这里
         t = "她靠在墙边，呼吸比刚才平稳了一些。" + (vars._lastScene === "益丰大药房-喂水" ? "看到你回来，" : "看到你，") + "她抬手指了指走廊深处。";
       } else if (vars._lastScene === "益丰大药房-沟通躲开") {
@@ -457,7 +457,7 @@ Object.assign(storyData,{
       var opts = [];
 
       // 沟通选项（未给水、未杀时可选）
-      if (!(vars._visit['益丰大药房-喂水'] > 0) && !(vars._visit['益丰大药房-解脱学徒'] > 0)) {
+      if (!vars.pharmacyApprenticeWatered && !vars.pharmacyApprenticeKilled) {
         opts.push({
           text: "尝试跟她沟通",
           nextScene: "益丰大药房-沟通被咬",
@@ -466,7 +466,7 @@ Object.assign(storyData,{
       }
 
       // 给水选项（有水瓶且瓶中有水、未给水、未杀）
-      if (vars.hasBottle && vars.bottleWater > 0 && !(vars._visit['益丰大药房-喂水'] > 0) && !(vars._visit['益丰大药房-解脱学徒'] > 0)) {
+      if (vars.hasBottle && vars.bottleWater > 0 && !vars.pharmacyApprenticeWatered && !vars.pharmacyApprenticeKilled) {
         opts.push({
           text: "拧开瓶盖，把水瓶放在地上推过去",
           nextScene: "益丰大药房-喂水",
@@ -475,7 +475,7 @@ Object.assign(storyData,{
       }
 
       // 解脱选项（有武器、未杀）
-      if (hasMeleeWeapon(vars) && !(vars._visit['益丰大药房-解脱学徒'] > 0)) {
+      if (hasMeleeWeapon(vars) && !vars.pharmacyApprenticeKilled) {
         opts.push({
           text: "给她一下子",
           nextScene: "益丰大药房-解脱学徒",
@@ -484,7 +484,7 @@ Object.assign(storyData,{
       }
 
       // 已给水 → 沿着她指的方向走
-      if ((vars._visit['益丰大药房-喂水'] > 0)) {
+      if (vars.pharmacyApprenticeWatered) {
         opts.push({
           text: "沿着她指的方向往前走",
           nextScene: "益丰大药房-消防通道",
@@ -493,7 +493,7 @@ Object.assign(storyData,{
       }
 
       // 离开选项
-      if ((vars._visit['益丰大药房-解脱学徒'] > 0)) {
+      if (vars.pharmacyApprenticeKilled) {
         opts.push({
           text: "穿过走廊往回走",
           nextScene: "益丰大药房-解脱后走廊",
@@ -568,7 +568,7 @@ Object.assign(storyData,{
   // ===== 给水支线 =====
   "益丰大药房-喂水": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/背后偷袭的丧尸.png */,
-    onEnter: { set: { hasBottle: false, bottleWater: 0, waterToxic: false, _hongBottleLabel: false }, add: { itemCount: -1 } },
+    onEnter: { set: { pharmacyApprenticeWatered: true, hasBottle: false, bottleWater: 0, waterToxic: false, _hongBottleLabel: false }, add: { itemCount: -1 } },
     text: "你拧开瓶盖，把水瓶放在地上推了过去。\n她盯着水瓶看了好几秒，才颤抖着蹲下来捡起它。水洒了一半，但她喝到了。\n几口下去，她的呼吸明显平稳了一些。她抬起头，用非常慢的动作——像在克服什么巨大的阻力——抬手指向走廊深处。那里有一扇不太起眼的门。",
     choices: [
       {
@@ -582,7 +582,7 @@ Object.assign(storyData,{
   // ===== 解脱支线 =====
   "益丰大药房-解脱学徒": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/背后偷袭的丧尸.png */,
-    onEnter: {  },
+    onEnter: { set: { pharmacyApprenticeKilled: true } },
     text: function(vars) {
       return "你握紧" + meleeWeaponName(vars) + "走上前。\n她没有后退，也没有攻击——只是抬起头，用一种几乎称得上平静的眼神看着你。\n你动手了。\n她倒下去的时候很轻，像一袋衣服从挂钩上滑落。走廊安静了下来。";
     },
@@ -844,7 +844,7 @@ Object.assign(storyData,{
         effect: updateTime(1)
       },
       {
-        showCondition: "_visit['益丰大药房-右边货架翻找'] > 0 || _visit['益丰大药房-喂水'] > 0",
+        showCondition: "_visit['益丰大药房-右边货架翻找'] > 0 || pharmacyApprenticeWatered",
         text: "去消防通道",
         nextScene: "益丰大药房-消防通道",
         effect: updateTime(1)
@@ -910,7 +910,7 @@ Object.assign(storyData,{
 
   "益丰大药房-断电": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/断电.png */,
-    onEnter: {  },
+    onEnter: { set: { _zhaoGuangchengDead: true } },
     text: "你按下几个黑色按钮，周围灯光一闪一闪的，然后一个个熄灭了。你听到远处传来了骂骂咧咧的声音，然后是开门声。\n\
 突然，传来一声尖叫，响声贯穿整个药房。你听到窸窸窣窣的脚步声。黑暗中隐约传来嘎吱嘎吱的声音。\n\
 你快速地关闭了配电箱。",// 赵广成办公室被你断电了，于是他出来看看发生什么了，正好碰上已经尸变的女学徒，尖叫声引来了门口的丧尸，卒

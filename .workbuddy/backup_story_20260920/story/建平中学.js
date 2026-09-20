@@ -279,7 +279,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/jianping/valveBox.png */,
     onEnter: function(vars) { vars.currentPos = "崮山路"; },
     text: function(vars) {
-      if ((vars._visit['建平-崮山路-阀门箱-查看'] > 0)) {
+      if (vars._valveBoxOpened) {
         return "你踩着井壁上的爬梯下到井底。阀门箱还敞着，你刚才看过里面的东西了。头顶只剩井口漏下来的一小块天光。";
       }
       return "你弓着背钻过井口，踩着井壁上的爬梯下到井底。这是一处自来水阀门井——两根管道从井壁两侧穿过，潮气贴着后颈往衣领里钻，头顶只剩井口漏下来的一小块天光。\n\
@@ -287,7 +287,7 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['建平-崮山路-阀门箱-查看'] > 0)) {
+      if (!vars._valveBoxOpened) {
         cs.push({ text: "打开箱门查看", condition: "hasKeyRing", nextScene: "建平-崮山路-阀门箱-查看", elseScene: "建平-崮山路-阀门箱-锁着" });
       }
       cs.push({ text: "爬上去回地面", nextScene: "建平-崮山路-井盖", effect: updateTime(2) });
@@ -309,7 +309,7 @@ Object.assign(storyData, {
 
   "建平-崮山路-阀门箱-查看": {
     image: "images/placeholder.png",
-    onEnter: {  },
+    onEnter: { set: { _valveBoxOpened: true } },
     text: function(vars) {
       var desc = "你把钥匙串上的钥匙一把一把地试。试到第三把，咔哒一声，锁开了。\n\
 打开箱门——里面是一组分管阀门和一个取样龙头，管道上还挂着一只采样用的旧玻璃瓶——瓶底沉着一点洗不掉的灰。";
@@ -330,7 +330,7 @@ Object.assign(storyData, {
   "建平-前门": {
     outdoor: true,
     image: function(vars) {
-      if ((vars._visit['建平-前门-清场'] > 0)) {
+      if (vars._frontGateCleared) {
         var f = timeImage({
           morning: "images/建平/前门-清场.webp",
           night: "images/建平/前门-清场-night.webp"
@@ -346,7 +346,7 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.showZombies = vars.showRain = true;
       vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "前门";
-      if (!(vars._visit['建平-前门-清场'] > 0)) {
+      if (!vars._frontGateCleared) {
         var seq = randSeq(["红","蓝","绿"], 5);
         vars._currentSeq = seq;
         vars._currentAnswer = seqToAnswer(seq);
@@ -355,13 +355,13 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      if ((vars._visit['建平-前门-清场'] > 0)) {
+      if (vars._frontGateCleared) {
         return "前门的丧尸已经清空了。你上次冲进来时把它们都甩在了门外。\n现在这里安静了不少，可以自由进出。\n" + describeWeather(vars) + describeZombieWave(vars);
       }
       return "你贴着墙根摸到前门。铁门半敞着，门内外的丧尸已经发现了你，正从两侧缓缓围拢过来。\n你必须趁它们合围之前冲进去。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
-      if ((vars._visit['建平-前门-清场'] > 0)) {
+      if (vars._frontGateCleared) {
         return [
           { text: "走进前门", nextScene: "建平-金苹果广场", effect: updateTime(2) },
           { text: "去校园门口", nextScene: "建平-校园门口", effect: updateTime(5) }
@@ -385,7 +385,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
-      return { set: { showZombies: true, currentPos: "前门" } };
+      return { set: { _frontGateCleared: true, showZombies: true, currentPos: "前门" } };
     },
     text: function(vars) {
       return "你趁丧尸合围的间隙闪身冲过了前门，一头扎进校园。\n身后的丧尸扑了个空，被你甩在门外——它们一时半会儿追不上来。" + combatDrainText(vars);
@@ -406,7 +406,7 @@ Object.assign(storyData, {
   "建平-后门": {
     outdoor: true,
     image: function(vars) {
-      if(vars._backGateOpened || (vars._visit['建平-后门-内侧-清场'] > 0)) {
+      if(vars._backGateOpened || vars._backGateCleared) {
         var f = timeImage({
           morning: "images/建平/后门-清场.webp",
           night: "images/建平/后门-清场-night.webp"
@@ -424,10 +424,10 @@ Object.assign(storyData, {
       // 从内侧（辅路）过来只有门已开才可能——内侧节点会拦下未开门的玩家
       var desc = (vars._lastScene === "建平-后门辅路") ? "你沿着辅路走到后门内侧。" : "你绕到学校后门。";
       if (vars._backGateOpened) {
-        desc += (vars._visit['建平-后门-内侧-清场'] > 0)
+        desc += vars._backGateCleared
           ? "后门大开着，门口的尸体还堆在那里——都是你干掉的，现在这里空荡荡的。"
           : "后门已经大开着——门内那些丧尸都被你上次开门时引走了，现在这里空荡荡的。";
-      } else if ((vars._visit['建平-后门-内侧-清场'] > 0)) {
+      } else if (vars._backGateCleared) {
         desc += "后门口横七竖八堆满了尸体——挤在这里的丧尸都被你杀光了，门内再没有动静。";
       } else {
         desc += "丧尸都挤在门内，隔着铁栅栏朝外伸着手臂，低沉的嘶吼连成一片。门内黑压压的一片，看不清到底有多少。";
@@ -438,7 +438,7 @@ Object.assign(storyData, {
       var cs = [];
       if (!vars._backGateOpened) {
         // 内侧已杀光尸群时，从外面开门不再触发战斗
-        cs.push({ text: "推开后门", nextScene: function(v) { return (v._visit['建平-后门-内侧-清场'] > 0) ? "建平-后门-开门-清场后" : "建平-后门-开门"; }, effect: updateTime(1) });
+        cs.push({ text: "推开后门", nextScene: function(v) { return v._backGateCleared ? "建平-后门-开门-清场后" : "建平-后门-开门"; }, effect: updateTime(1) });
       }
       cs.push({ text: "去后门辅路", nextScene: "建平-后门辅路", effect: updateTime(2) });
       cs.push({ text: "去校园门口", nextScene: "建平-校园门口", effect: updateTime(10) });
@@ -593,19 +593,19 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/建平/后门-内侧.webp（内看铁门+背对尸群） */,
     qte: function(vars) {
-      if ((vars._visit['建平-后门-内侧-清场'] > 0)) return null;   // 尸群已杀光，不再有回头压力
+      if (vars._backGateCleared) return null;   // 尸群已杀光，不再有回头压力
       return { timeout: "20000 - chasedByZombies * 2000", onTimeout: "建平-后门-内侧-暴露" };
     },
     onEnter: function(vars) { vars.showZombies = vars.showRain = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "后门"; },
     text: function(vars) {
-      if ((vars._visit['建平-后门-内侧-清场'] > 0)) {
+      if (vars._backGateCleared) {
         return "辅路尽头就是后门。铁栅栏门还关着，门口横七竖八躺满了尸体——都是你干掉的。\n" + describeWeather(vars);
       }
       return "你沿着辅路朝后门摸过去。还有十几米，你猛地僵住了——\n黑压压的丧尸挤在后门内侧，背对着你，隔着铁栅栏朝街上嘶吼、伸手。你和它们之间，什么遮挡都没有。\n它们暂时还没注意到你，但谁知道哪一只会突然回头。\n" + describeWeather(vars);
     },
     choices: function(vars) {
       var cs = [];
-      if ((vars._visit['建平-后门-内侧-清场'] > 0)) {
+      if (vars._backGateCleared) {
         cs.push({ text: "打开后门", nextScene: "建平-后门-内侧-开门", effect: updateTime(1) });
       } else {
         cs.push({
@@ -658,6 +658,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._backGateCleared = true;
       vars.currentPos = "后门";
       updateTime(3)(vars);
       return {};
@@ -743,7 +744,7 @@ Object.assign(storyData, {
         }
         if (vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
           return "你沿着后门辅路走。\n轿车还停在原地，车门大开，引擎已经熄了。忻老师倒靠在车旁，后颈有深深的咬伤，手里还攥着钥匙。\n\
-" + ((vars._visit['建平-后门-内侧-清场'] > 0) ? "——街上的尸群漫过来了。你来晚了一步。" : "——丧尸从后门漫进来了。你来晚了一步。");
+" + (vars._backGateCleared ? "——街上的尸群漫过来了。你来晚了一步。" : "——丧尸从后门漫进来了。你来晚了一步。");
         }
         return "你沿着后门辅路走。\n一辆轿车停在路边，车门大开，引擎熄了。一个中年男人倒靠在车旁，已经没了气息。";
       }
@@ -1087,10 +1088,10 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-1F-西侧走廊": {
     image: "images/placeholder.png",
-    qte: jpChaseQTE(function(v) { return !!(v._visit['建平-挹芬楼-1F-西侧走廊-清场'] > 0); }),
+    qte: jpChaseQTE(function(v) { return !!v._yifenWestCleared; }),
     onEnter: function(vars) {
       vars.currentPos = "挹芬楼1F西侧走廊";
-      if (!(vars._visit['建平-挹芬楼-1F-西侧走廊-清场'] > 0)) {
+      if (!vars._yifenWestCleared) {
         var seq = randSeq(["红","蓝","绿"], 5);
         vars._currentSeq = seq;
         vars._currentAnswer = seqToAnswer(seq);
@@ -1100,19 +1101,19 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      if ((vars._visit['建平-挹芬楼-1F-西侧走廊-清场'] > 0)) {
+      if (vars._yifenWestCleared) {
         return "挹芬楼 1 楼西侧走廊。丧尸已经被你清掉了，电梯间和教室门口都安静了下来。" + describeZombieWave(vars);
       }
       return "你踏进挹芬楼 1 楼西侧走廊——电梯间附近几只丧尸朝你扑来。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
-      if (!(vars._visit['建平-挹芬楼-1F-西侧走廊-清场'] > 0)) {
+      if (!vars._yifenWestCleared) {
         return [
           {
             text: "输入你看到的颜色分布",
             input: { placeholder: "例如：3红2蓝" },
             condition: checkFlashAnswer,
-            effect: {  },
+            effect: { set: { _yifenWestCleared: true } },
             nextScene: "建平-挹芬楼-1F-西侧走廊-清场",
             elseScene: "结局-挹芬楼失守",
             timeout: 12000,
@@ -1203,7 +1204,7 @@ Object.assign(storyData, {
       var desc = "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。" + restHint(vars, "你回复1点体力");
       if (jpPengAtPiano(vars, 2)) {
         desc += "\n休息区靠墙那架钢琴前，彭奕宸正低着头，手指在琴键上缓慢地游走。";
-        if ((vars._visit['建平-挹芬楼-5F-高二教室-救活'] > 0)) {
+        if (vars._yifenStudentSaved) {
           desc += "\n那个被你救活的男生就坐在他旁边的长椅上，安安静静地听着。谁也没有说话，只有琴声在空旷的一楼里轻轻回响。";
         }
       }
@@ -1757,7 +1758,7 @@ Object.assign(storyData, {
         desc += "\n彭奕宸不在——电脑还亮着，课桌上摊着本翻开的漫画。他大概又溜去音乐教室或者图书馆了。这家伙，在教室里永远待不住。";
       } else if (vars._pengGalResult === "bad") {
         desc += "\n彭奕宸守在电脑前，时不时瞄一眼屏幕。";
-      } else if ((vars._visit['建平-远翔楼-4F-高三14班-修电脑'] > 0)) {
+      } else if (vars._pengComputerFixed) {
         desc += "\n彭奕宸坐在靠窗的位子，盯着电脑屏幕，一脸跃跃欲试。";
       } else {
         desc += "\n彭奕宸坐在靠窗的位子，盯着那台时不时开不了机的电脑，一脸烦躁。";
@@ -1766,10 +1767,10 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (jpIsMealTime(vars) && !(vars._visit['建平-远翔楼-4F-高三14班-方便面'] > 0)) {
+      if (jpIsMealTime(vars) && !vars._pengNoodleShared) {
         cs.push({ text: "跟彭奕宸分着吃点方便面", nextScene: "建平-远翔楼-4F-高三14班-方便面" });
       }
-      if (!(vars._visit['建平-远翔楼-4F-高三14班-修电脑'] > 0)) {
+      if (!vars._pengComputerFixed) {
         if (vars.hasMultimeter) {
           cs.push({ text: "用万用表检查教室供电", nextScene: "建平-远翔楼-4F-高三14班-修电脑" });
         } else {
@@ -1814,7 +1815,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-4F-高三14班-修电脑": {
     image: "images/placeholder.png",
-    onEnter: {  },
+    onEnter: { set: { _pengComputerFixed: true } },
     text: "你拿出万用表，测了测墙上的插座。\n果然——电压忽高忽低，明显不稳。你又顺着电线查到讲台下方，发现一个插座的接线松了。\n你拧开面板，重新接好线。“啪”的一声，电脑屏幕亮了起来。\n彭奕宸眼睛一亮：“卧槽，你真行！我之前换电源、换硬盘都没用，原来问题出在插座上！”",
     choices: [
       { text: "看看彭奕宸要干什么", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(2) }
@@ -1949,7 +1950,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-4F-高三14班-方便面": {
     image: "images/placeholder.png",
-    onEnter: { add: { strength: 1 } },
+    onEnter: { set: { _pengNoodleShared: true }, add: { strength: 1 } },
     text: "彭奕宸把方便面掰成两半，递给你一半。\n就着没喝完的水，你们俩蹲在教室里，一人半包方便面。\n谈不上多好吃，但在这种时候，能和老同学分着吃口热乎的，比什么都强。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
@@ -1967,7 +1968,7 @@ Object.assign(storyData, {
         if (vars.chasedByZombies >= 3) {
           vars._liuCorpse = "zombie";
         // 死亡锁存：Day 3 且阀门未关时煤气中毒；一旦在食堂观察到即锁存，不复活
-        } else if (vars.dd >= 3 && !(vars._visit['建平-食堂-煤气阀-关阀'] > 0)) {
+        } else if (vars.dd >= 3 && !vars._gasValveClosed) {
           vars._liuCorpse = "gas";
         }
       }
@@ -2005,7 +2006,7 @@ Object.assign(storyData, {
       if (vars._liuCorpse) {
         return "你走到刘冠宇身边。\n他蜷缩在长椅上，脸色铁青，已经没了呼吸。\n煤气中毒。你来得太晚了。";
       }
-      if ((vars._visit['建平-食堂-煤气阀-关阀'] > 0)) {
+      if (vars._gasValveClosed) {
         return "刘冠宇冲你点点头：“煤气阀关上了？谢了。我说怎么后厨那股味儿一直不散，估计是哪个丧尸搞得鬼吧。我这腿伤还没好利索，就不跟你走了，先在这儿待着。”";
       }
       if (vars.dd >= 2) {
@@ -2024,14 +2025,14 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.currentPos = "食堂后厨";
       vars.positionAfterOperation = "建平-食堂-后厨";
-      if (vars.dd >= 2 && !(vars._visit['建平-食堂-煤气阀-关阀'] > 0)) {
+      if (vars.dd >= 2 && !vars._gasValveClosed) {
         vars.gasIndex = Math.min(80, vars.gasIndex + 20);
       }
       return {};
     },
     // gasIndex≥60 时开始计时压力：每次进入在倒计时内不处理就被迫退出
     qte: function(vars) {
-      if (vars.gasIndex >= 60 && !(vars._visit['建平-食堂-煤气阀-关阀'] > 0)) {
+      if (vars.gasIndex >= 60 && !vars._gasValveClosed) {
         var t = 15000 - (vars.gasIndex - 60) * 250;  // 60→15s, 80→10s
         return { hidden: false, timeout: t, onTimeout: "建平-食堂-后厨-窒息" };
       }
@@ -2044,7 +2045,7 @@ Object.assign(storyData, {
         }
         return "后厨。灶台、冰柜、货架，堆着些没来得及处理的食材。";
       }
-      if ((vars._visit['建平-食堂-煤气阀-关阀'] > 0)) {
+      if (vars._gasValveClosed) {
         return "后厨。煤气阀已经关上了，空气清爽了不少。";
       }
       var warn = vars.gasIndex >= 80
@@ -2054,10 +2055,10 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (vars.dd >= 2 && !(vars._visit['建平-食堂-煤气阀-关阀'] > 0)) {
+      if (vars.dd >= 2 && !vars._gasValveClosed) {
         cs.push({ text: "去关煤气阀", nextScene: "建平-食堂-煤气阀", effect: updateTime(1) });
       }
-      if ((vars.dd < 2 || (vars._visit['建平-食堂-煤气阀-关阀'] > 0)) && !vars.hasCanteenFood) {
+      if ((vars.dd < 2 || vars._gasValveClosed) && !vars.hasCanteenFood) {
         cs.push({ text: "找食物", condition: "itemCount < bagVolume", nextScene: "建平-食堂-后厨-找食物", elseScene: "整理整理" });
       }
       cs.push({ text: "回食堂", nextScene: "建平-食堂", effect: updateTime(1) });
@@ -2110,7 +2111,7 @@ Object.assign(storyData, {
 
   "建平-食堂-煤气阀-关阀": {
     image: "images/placeholder.png",
-    onEnter: { set: { _chefCleared: true } },
+    onEnter: { set: { _gasValveClosed: true, _chefCleared: true } },
     text: "你一脚踹飞了厨师丧尸，冲到煤气阀前，用力拧紧了阀门。\n“嘶——”漏气声渐渐停息。空气里那股煤气味淡了下去。嗯，好久没碰到这么好打的丧尸了。",
     choices: [
       { text: "回后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) }
@@ -2138,12 +2139,12 @@ Object.assign(storyData, {
   },
   "建平-宿舍-内部": {
     image: function(vars) {
-      if((vars._visit['建平-宿舍-内部-清场'] > 0)) return "images/建平/宿舍走廊-清场.webp";
+      if(vars._dormCleared) return "images/建平/宿舍走廊-清场.webp";
       return "images/建平/宿舍走廊.webp";
     },
     onEnter: function(vars) {
       vars.currentPos = "宿舍内部";
-      if (!(vars._visit['建平-宿舍-内部-清场'] > 0)) {
+      if (!vars._dormCleared) {
         var seq = randSeq(["红","蓝","绿"], 5);
         vars._currentSeq = seq;
         vars._currentAnswer = seqToAnswer(seq);
@@ -2153,7 +2154,7 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      if ((vars._visit['建平-宿舍-内部-清场'] > 0)) {
+      if (vars._dormCleared) {
         return "宿舍内部。丧尸已经被你清理干净了，走廊安静了下来。这里可以安心休息，甚至过夜。\n\
 宿舍前几年翻修过一遍，实木地板，8人一寝————看起来还不错，虽然你除了军训就没在这里住过。\n\
 记得高中时听说有人会偷偷在宿舍里玩游戏、打牌，这里就是一个灰色地带。" + describeZombieWave(vars);
@@ -2161,13 +2162,13 @@ Object.assign(storyData, {
       return "你推开宿舍的门——走廊里挤着不少丧尸，在昏暗的光线里漫无目的地游荡。得先把它们清掉。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
-      if (!(vars._visit['建平-宿舍-内部-清场'] > 0)) {
+      if (!vars._dormCleared) {
         return [
           {
             text: "输入你看到的颜色分布",
             input: { placeholder: "例如：3红2蓝" },
             condition: checkFlashAnswer,
-            effect: {  },
+            effect: { set: { _dormCleared: true } },
             nextScene: "建平-宿舍-内部-清场",
             elseScene: "结局-宿舍失守",
             timeout: 12000,
@@ -2292,13 +2293,13 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       // 转化未杀：她堵着阅览大厅
-      if (vars._lijuanTurned && !(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0)) {
+      if (vars._lijuanTurned && !vars._lijuanKilled) {
         return "阅览大厅安静得反常。\n远处落地窗边——那个人影不见了。\n长桌上的一只保温杯摔在地上，滚出老远。\n你后颈的汗毛竖了起来。" + describeZombieWave(vars);
       }
       var desc = "弘渊楼 2 楼的阅览大厅。右侧一排大窗透进柔和的天光，窗台上的盆栽还没枯透。\n\
 一组组圆桌和彩色座椅还保持着有人来过的样子——摊开的书本、歪倒的水杯，像是主人只是暂时走开。近处这张桌上，立着几只保温杯。\n\
 左侧的台阶坐区上，横七竖八靠着几个背包和袋子，一直没有人来认领。";
-      if ((vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0)) {
+      if (vars._lijuanKilled) {
         desc += "\n远处落地窗边，空了。";
       } else {
         desc += "\n远处落地窗边，坐着一个人影。";
@@ -2307,7 +2308,7 @@ Object.assign(storyData, {
       return desc + describeZombieWave(vars);
     },
     choices: function(vars) {
-      if (vars._lijuanTurned && !(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0)) {
+      if (vars._lijuanTurned && !vars._lijuanKilled) {
         return [
           { text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "迎战！" : "握紧拳头迎战！"; }, nextScene: "建平-弘渊楼-2F-李娟-战斗" },
           { text: "且战且退，退回楼梯", nextScene: "建平-弘渊楼-楼梯", effect: function(v) { v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return updateTime(1)(v); } }
@@ -2376,7 +2377,7 @@ Object.assign(storyData, {
       // Day3-4 恶化态：无法正常交流，靠近有抓伤风险；见水还是会喝
       if (vars.dd >= 3) {
         var cs = [];
-        if (!(vars._visit['建平-弘渊楼-2F-李娟-抓伤'] > 0)) {
+        if (!vars._lijuanScratched) {
           cs.push({ text: "再靠近一步", nextScene: "建平-弘渊楼-2F-李娟-抓伤", effect: updateTime(1) });
         }
         if (vars._lijuanCupTold && !vars._lijuanFedCup) {
@@ -2480,6 +2481,7 @@ Object.assign(storyData, {
     image: hyLib2FImg,
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._lijuanKilled = true;
       return {};
     },
     text: function(vars) {
@@ -2501,7 +2503,7 @@ Object.assign(storyData, {
 
   "建平-弘渊楼-2F-李娟-抓伤": {
     image: hyLib2FImg,
-    onEnter: { add: { mercuryLoad: 10 } },
+    onEnter: { set: { _lijuanScratched: true }, add: { mercuryLoad: 10 } },
     text: function(vars) {
       var desc = "你又向前挪了半步。\n她的手猛地探过来——指甲在你手背上划出三道血痕。你踉跄着退开，她也没有追，只是缩回窗边，继续盯着地面，喉咙里滚着含混的气音。";
       if (vars.hasPipelineMap) desc += "\n伤口火辣辣的。你想起管线图上那行红字——“水有毒，别喝”。";
@@ -2643,7 +2645,7 @@ Object.assign(storyData, {
       } else {
         desc += "\n“食堂后厨的煤气漏了，现在那边呛得要死，我都不敢去了。得先把煤气阀关了才行——那玩意儿在后厨的小隔间里，好像还有几只厨师的丧尸堵在那儿。”";
       }
-      if (!(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0) && !vars._lijuanTurned) {
+      if (!vars._lijuanKilled && !vars._lijuanTurned) {
         desc += "\n“对了，”他忽然想起什么，“2楼阅览区那个女生，一直坐在落地窗边上。前几天我下楼拿泡面，她还会应人两声……现在不行了。你别离她太近。”";
       }
       return desc;
@@ -2791,14 +2793,14 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "废弃小楼3F团委工作室"; },
     text: function(vars) {
       var desc = "你按下把手，吱呀一声，门开了。团委工作室空间并不大，几个小沙发、高脚椅，加上一张大桌子。这里堆了些历年校园活动的道具和杂物。";
-      if (!(vars._visit['建平-废弃小楼-3F-团委工作室-收好内胆'] > 0)) {
+      if (!vars._innerLiningYouthRoom) {
         desc += "\n角落里的一堆校服下面，露出半截校服外套的内胆。";
       }
       return desc;
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['建平-废弃小楼-3F-团委工作室-收好内胆'] > 0)) {
+      if (!vars._innerLiningYouthRoom) {
         cs.push({ text: "查看那堆校服", nextScene: "建平-废弃小楼-3F-团委工作室-内胆" });
       }
       cs.push({ text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-团委工作室" });
@@ -2827,7 +2829,7 @@ Object.assign(storyData, {
 
   "建平-废弃小楼-3F-团委工作室-收好内胆": {
     image: "images/placeholder.png",
-    onEnter: { add: { hasInnerLining: 1 } },
+    onEnter: { set: { _innerLiningYouthRoom: true }, add: { hasInnerLining: 1 } },
     text: "你收起了内胆。",
     choices: [
       {text: "继续", nextScene: "建平-废弃小楼-3F-团委工作室", effect: updateTime(1)}
@@ -3153,12 +3155,12 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "挹芬楼2F高一教室"; },
     text: function(vars) {
       var desc = "高一教室。课桌东倒西歪，黑板上还留着半截没写完的板书。";
-      if (!(vars._visit['建平-挹芬楼-2F-高一教室-食品'] > 0)) desc += "\n某个课桌抽屉里，露出半截零食包装袋。";
+      if (!vars._yifenFood2F) desc += "\n某个课桌抽屉里，露出半截零食包装袋。";
       return desc;
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['建平-挹芬楼-2F-高一教室-食品'] > 0)) {
+      if (!vars._yifenFood2F) {
         cs.push({ text: "翻翻课桌抽屉", nextScene: "建平-挹芬楼-2F-高一教室-食品" });
       }
       cs.push({ text: "回 2 楼走廊", nextScene: "建平-挹芬楼-2F", effect: updateTime(1) });
@@ -3168,7 +3170,7 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-2F-高一教室-食品": {
     image: "images/placeholder.png",
-    onEnter: { add: { strength: 1 } },
+    onEnter: { set: { _yifenFood2F: true }, add: { strength: 1 } },
     text: "你翻出一个没拆封的面包和半瓶水。顾不上那么多，你撕开包装就吃。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-2F-高一教室", effect: updateTime(2) }
@@ -3179,7 +3181,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "挹芬楼3F高一教室"; },
     text: function(vars) {
       var desc = "高一教室。地上散落着书包和课本，几张课桌被拼在一起，桌缝里还夹着一只空水瓶。";
-      if (!(vars._visit['建平-挹芬楼-3F-高一教室-讲台'] > 0)) {
+      if (!vars._podiumFood3F) {
         if (vars.hasKeyRing) desc += "\n讲台的抽屉上了锁——或许钥匙串能打开。";
         else desc += "\n讲台的抽屉上了锁。";
       }
@@ -3187,8 +3189,8 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['建平-挹芬楼-3F-高一教室-纸条'] > 0)) cs.push({ text: "查看桌上的纸条", nextScene: "建平-挹芬楼-3F-高一教室-纸条" });
-      if (!(vars._visit['建平-挹芬楼-3F-高一教室-讲台'] > 0)) {
+      if (!vars._yifenNote3F) cs.push({ text: "查看桌上的纸条", nextScene: "建平-挹芬楼-3F-高一教室-纸条" });
+      if (!vars._podiumFood3F) {
         if (vars.hasKeyRing) {
           cs.push({ text: "用钥匙串开讲台锁", nextScene: "建平-挹芬楼-3F-高一教室-讲台" });
         }
@@ -3200,7 +3202,7 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-3F-高一教室-讲台": {
     image: "images/placeholder.png",
-    onEnter: { add: { strength: 3 } },
+    onEnter: { set: { _podiumFood3F: true }, add: { strength: 3 } },
     text: "你用钥匙串打开了讲台的抽屉。里面放着几包饼干、一盒午餐肉和一瓶没开封的水——老师塞抽屉里的。\n你撕开午餐肉就着饼干吃了些，胃里终于有了点实在的东西。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复3点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(3) }
@@ -3209,7 +3211,7 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-3F-高一教室-纸条": {
     image: "images/placeholder.png",
-    onEnter: {  },
+    onEnter: { set: { _yifenNote3F: true } },
     text: "你捡起桌上那张揉皱的纸条，上面用圆珠笔匆匆写着几行字：\n「他们说外面都是那种东西。老师让把门顶死，谁也别出去。\n楼下的声音越来越大了……」\n字迹到这里就断了，最后一笔拖出长长一道，没写完。",
     choices: [
       { text: "放下纸条", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(1) }
@@ -3248,9 +3250,9 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "挹芬楼5F高二教室"; },
     text: function(vars) {
       var desc = "高二教室。桌椅被推到墙边，中间空出一块，地上还有几团用过的纸巾。";
-      if (vars.dd >= 3 && !(vars._visit['建平-挹芬楼-5F-高二教室-救活'] > 0)) {
+      if (vars.dd >= 3 && !vars._yifenStudentSaved) {
         desc += "\n靠墙的角落里，蜷缩着一个男生——他低着头，一动不动。";
-      } else if ((vars._visit['建平-挹芬楼-5F-高二教室-救活'] > 0)) {
+      } else if (vars._yifenStudentSaved) {
         desc += "\n靠墙的角落里，那个被你救活的男生裹着件校服，虚弱地冲你点了点头。";
       } else {
         desc += "\n靠墙的角落里，一个男生裹着几件校服蜷缩着，脸色潮红，额头烫得厉害——他在发高烧。";
@@ -3259,11 +3261,11 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['建平-挹芬楼-5F-高二教室-黑板'] > 0)) cs.push({ text: "看黑板上的字", nextScene: "建平-挹芬楼-5F-高二教室-黑板" });
+      if (!vars._yifenBoard5F) cs.push({ text: "看黑板上的字", nextScene: "建平-挹芬楼-5F-高二教室-黑板" });
       // 幸存学生交互
-      if (vars.dd >= 3 && !(vars._visit['建平-挹芬楼-5F-高二教室-救活'] > 0)) {
+      if (vars.dd >= 3 && !vars._yifenStudentSaved) {
         cs.push({ text: "走近看看他", nextScene: "建平-挹芬楼-5F-高二教室-学生尸体" });
-      } else if (!(vars._visit['建平-挹芬楼-5F-高二教室-救活'] > 0)) {
+      } else if (!vars._yifenStudentSaved) {
         cs.push({ text: "看看那个发烧的男生", nextScene: "建平-挹芬楼-5F-高二教室-学生" });
       } else {
         cs.push({ text: "跟那男生说说话", nextScene: "建平-挹芬楼-5F-高二教室-学生已救" });
@@ -3297,6 +3299,7 @@ Object.assign(storyData, {
   "建平-挹芬楼-5F-高二教室-救活": {
     image: "images/placeholder.png",
     onEnter: function(vars) {
+      vars._yifenStudentSaved = true;
       vars.hasFeverMed = false;
       vars.itemCount = Math.max(0, (vars.itemCount || 0) - 1);
       return {};
@@ -3335,7 +3338,7 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-5F-高二教室-黑板": {
     image: "images/placeholder.png",
-    onEnter: {  },
+    onEnter: { set: { _yifenBoard5F: true } },
     text: "黑板上用粉笔潦草地写着几个大字：\n「还剩 11 个人」\n下面还有一行小字：「谁也别自己下楼，下去就回不来了。」",
     choices: [
       { text: "移开视线", nextScene: "建平-挹芬楼-5F-高二教室", effect: updateTime(1) }
@@ -3494,16 +3497,16 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "门卫室"; },
     text: function(vars) {
       var desc = "门卫室。墙上挂着全校班级的钥匙板，挂钩空了一大片——钥匙被人成串摘走了。桌上摆着一部没信号的座机，风扇还在无力地转着。";
-      if (!(vars._visit['建平-门卫室-外卖'] > 0)) {
+      if (!vars._guardTakeoutTaken) {
         desc += "\n靠门的桌上放着一个外卖纸袋——袋口还封着，汤渍没干透。";
-      } else if ((vars._visit['建平-门卫室-外卖'] > 0)) {
+      } else if (vars._guardTakeoutTaken) {
         desc += "\n桌上那个外卖纸袋已经被你处理掉了。";
       }
       return desc;
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['建平-门卫室-外卖'] > 0)) {
+      if (!vars._guardTakeoutTaken) {
         cs.push({ text: "打开外卖纸袋", nextScene: "建平-门卫室-外卖" });
       }
       cs.push({ text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) });
@@ -3514,6 +3517,7 @@ Object.assign(storyData, {
   "建平-门卫室-外卖": {
     image: "images/placeholder.png",
     onEnter: function(vars) {
+      vars._guardTakeoutTaken = true;
       if (vars.dd < 3) vars.strength = Math.min(10, (vars.strength || 0) + 1);   // Day<3 新鲜 +1
       return {};
     },

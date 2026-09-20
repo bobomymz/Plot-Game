@@ -9,7 +9,7 @@
 //     东线：闸机外 → 华科路（无人配送车）→ 华大大门
 //     西线：闸机外 → 街角（有轨电车，南岔→加油站）→ 科苑路 → 上科大校门   ← 加油站挂共享路段
 //     北线：闸机外 → 滨河绿道（远观河沿尸群）→ 川杨河南岸堤
-//     环路：华大动力站卸油门 ↔ 厂界便道 ↔ 滨河绿道（卸油门只能从厂内侧推开，_visit['张江-厂界便道'] > 0 前从绿道侧是死路，
+//     环路：华大动力站卸油门 ↔ 厂界便道 ↔ 滨河绿道（卸油门只能从厂内侧推开，_freightDoorOpen 前从绿道侧是死路，
 //           防止绕开大门门禁）
 //   南岸：加油站（柴油来源①·L2） / 人工智能岛（科创老师·门禁卡·监控·食堂/停车场冗余）
 //         上科大（曹睿泽宿舍·教学楼/食堂冗余） / 华大半导体 fab（厂区广场/风淋状态机/白区/夹层/动力站·洪金宝）
@@ -219,7 +219,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "加油站铁皮棚"; },
     text: function(vars) {
       var desc = "后场的铁皮棚半开着。棚子深处码着几只铁皮油桶，有的空了，歪倒在一边——但最里面那只立得笔直，你试着掂了掂把手，掂不动；摇一摇，里面哗啦作响，是满的。";
-      if (!(vars._visit['张江-加油站-棚子-胜利'] > 0)) {
+      if (!vars._gasShedZombieDead) {
         desc += "\n你刚要往里走，油桶后面的阴影里慢慢立起一个人形——穿着站里的工装外套，前襟一大片发黑的血迹。它转过头，朝你张开了嘴。";
       } else {
         desc += "\n那只穿工装的丧尸倒在油桶边上，不会再起来了。";
@@ -228,7 +228,7 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['张江-加油站-棚子-胜利'] > 0)) {
+      if (!vars._gasShedZombieDead) {
         cs.push({
           text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "迎战" : "握紧拳头迎战"; },
           nextScene: "张江-加油站-棚子-战斗",
@@ -272,6 +272,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._gasShedZombieDead = true;
       vars.positionAfterOperation = "张江-加油站-棚子";
       return updateTime(2)(vars);
     },
@@ -288,7 +289,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/拎桶.webp */
     text: function(vars) {
       var desc = "你把那只满桶拖到棚门口，找了圈麻绳拴上把手，勒紧，拎了拎——死沉，但能背。\n一整桶柴油。";
-      if ((vars._visit['张江-华大-动力站-柴油-接'] > 0) && !vars._dieselDelivered) {
+      if (vars._jinbaoDieselAsked && !vars._dieselDelivered) {
         desc += "老陈要的就是这个。华大那台发电机再烧几天，就该喝这桶了。";
       } else if (vars._dieselDelivered) {
         desc += "发电机那边已经灌过一桶了。再背一桶也行，总比撂在这儿发霉强。";
@@ -346,7 +347,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/AI岛-机房.webp（服务器、显示器墙、电子件杂乱） */
     onEnter: function(vars) { vars.currentPos = "机房"; },
     text: function(vars) {
-      if (!(vars._visit['张江-AI岛-机房-重逢'] > 0)) {
+      if (!vars._metTeacher) {
         return "你推开门，一股冷气扑面——机房里居然还开着空调。一排排机柜的指示灯明明灭灭，把屋子照成一片幽蓝。\n\
 靠墙的操作台前坐着一个人，背对着你，正就着两台显示器的光鼓捣什么。听到门响，他的手停住了。\n\
 “……说过多少次了，闲人免——”他回过头，看清你的脸，后半句卡在了喉咙里。";
@@ -355,16 +356,16 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['张江-AI岛-机房-重逢'] > 0)) {
+      if (!vars._metTeacher) {
         cs.push({ text: "“老师，是我。”", nextScene: "张江-AI岛-机房-重逢", effect: updateTime(1) });
         return cs;
       }
       cs.push({ text: "和老师聊聊", nextScene: "张江-AI岛-机房-话题", effect: updateTime(2) });
       cs.push({ text: "看看监控画面", nextScene: "张江-AI岛-机房-监控", effect: updateTime(2) });
-      if ((vars._visit['张江-上科大-曹睿泽宿舍'] > 0) && !(vars._visit['张江-AI岛-机房-曹睿泽'] > 0)) {
+      if (vars._foundFriend && !vars._teacherFriendTold) {
         cs.push({ text: "告诉他曹睿泽的事", nextScene: "张江-AI岛-机房-曹睿泽", effect: updateTime(1) });
       }
-      if (vars._hasTestReport && !(vars._visit['张江-AI岛-机房-读报告'] > 0)) {
+      if (vars._hasTestReport && !vars._teacherReportRead) {
         cs.push({ text: "把检测中心的报告给他看", nextScene: "张江-AI岛-机房-读报告", effect: updateTime(2) });
       }
       cs.push({ text: "在角落的行军床上歇一会儿", nextScene: "张江-AI岛-机房-休息" });
@@ -382,6 +383,7 @@ Object.assign(storyData, {
   "张江-AI岛-机房-重逢": {
     image: "images/placeholder.png", /* TODO: images/张江/AI岛-机房-重逢.webp */
     onEnter: function(vars) {
+      vars._metTeacher = true;
       vars.personalMemorySet.add("师生重逢");
       return {};
     },
@@ -481,7 +483,7 @@ Object.assign(storyData, {
 
   "张江-AI岛-机房-曹睿泽": {
     image: "images/placeholder.png", /* TODO: images/张江/AI岛-机房-曹睿泽.webp */
-    onEnter: {  },
+    onEnter: { set: { _teacherFriendTold: true } },
     text: function(vars) {
       var desc = "你把上科大那间宿舍的事，拣着能说的说了。桌上晾着的凉白开，烧水壶，还有床上那个再没起来的人。\n\
 老师半天没说话。他转过身去对着屏幕，手在桌沿上敲，敲了很久才停。\n\
@@ -497,7 +499,7 @@ Object.assign(storyData, {
 
   "张江-AI岛-机房-读报告": {
     image: "images/placeholder.png", /* TODO: images/张江/AI岛-机房-读报告.webp */
-    onEnter: {  },
+    onEnter: { set: { _teacherReportRead: true } },
     text: "他把那几页报告翻来覆去看了三遍，从眼镜上方看你，又看纸。\n\
 “检测中心自己的章，自己的签名，6 月 28 号出的报告。”他把纸轻轻放平，像怕碰坏什么，“这些数据我都看得懂——这意味着，28 号那天，真相是写在纸上的。就差一天。”\n\
 他沉默了一会儿，把报告还给你：“收好。这东西比我这一屋子机器加起来都重。”",
@@ -544,7 +546,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "停车场上大半的车都还在——这年头，车再多也没地方开。充电桩的指示灯全灭了，只有一台枪线还插在车上的桩，屏幕定格着一行报错：充电中止，请检查连接。\n\
 最靠里那个车位的地面上放着一只塑料食盆，旁边纸箱做的窝塌了半边，窝里粘着些白色的猫毛。";
-      if ((vars._visit['张江-AI岛-机房-重逢'] > 0)) desc += "\n老师提过他喂的那只猫。食盆空了好几天了——猫也不来了。";
+      if (vars._metTeacher) desc += "\n老师提过他喂的那只猫。食盆空了好几天了——猫也不来了。";
       return desc + "\n" + describeWeather(vars);
     },
     choices: [
@@ -615,6 +617,7 @@ Object.assign(storyData, {
   "张江-上科大-曹睿泽宿舍": {
     image: "images/placeholder.png", /* TODO: images/张江/曹睿泽宿舍.webp（尸体克制、凉白开/空水桶/烧水壶、合照） */
     onEnter: function(vars) {
+      vars._foundFriend = true;
       vars.currentPos = "曹睿泽宿舍";
     },
     text: function(vars) {
@@ -638,7 +641,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        showCondition: "!_visit['张江-上科大-宿舍-搜刮']",
+        showCondition: "!_dormFoodTaken",
         text: "翻翻柜子和床底",
         nextScene: "张江-上科大-宿舍-搜刮",
         effect: updateTime(3)
@@ -669,7 +672,7 @@ Object.assign(storyData, {
 
   "张江-上科大-宿舍-搜刮": {
     image: "images/placeholder.png", /* TODO: images/张江/曹睿泽宿舍.webp */
-    onEnter: { set: { positionAfterOperation: "张江-上科大-曹睿泽宿舍" } },
+    onEnter: { set: { _dormFoodTaken: true, positionAfterOperation: "张江-上科大-曹睿泽宿舍" } },
     text: function(vars) {
       var desc = "你放轻手脚翻了起来。衣柜里是衣服和几本专业书，床底下滚着一双篮球鞋。\n\
 桌角的零食箱里还剩两根火腿肠，包装得好好的。";
@@ -712,7 +715,7 @@ Object.assign(storyData, {
       var desc = "食堂的卷帘门拉了一半，你弯腰钻了进去。就餐区的桌上还摆着没收的餐盘，盘子里的东西干得发白；一台餐车翻在过道里，轮子朝天。\n\
 你绕到饮水区——空的。开水器的柜门敞着，里面一排空桶；墙角堆着十几只换下来的水桶，一只挨一只，全都空了，桶壁上的水渍干成了白圈。\n\
 最先被搬空的，永远是水。你想起这件事的时候，胃里沉了一下。";
-      if (!(vars._visit['张江-上科大-食堂-后厨-胜利'] > 0)) desc += "\n后厨的传菜口黑着，里面偶尔传来一声金属碰瓷的轻响——风，或者别的什么。";
+      if (!vars._sistKitchenZombieDead) desc += "\n后厨的传菜口黑着，里面偶尔传来一声金属碰瓷的轻响——风，或者别的什么。";
       else desc += "\n后厨那头已经安静了。";
       return desc;
     },
@@ -726,7 +729,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/上科大食堂-后厨.webp（扣着的大锅、发蔫的青菜） */
     onEnter: function(vars) { vars.currentPos = "上科大食堂后厨"; vars.positionAfterOperation = "张江-上科大-食堂-后厨"; },
     text: function(vars) {
-      if (!(vars._visit['张江-上科大-食堂-后厨-胜利'] > 0)) {
+      if (!vars._sistKitchenZombieDead) {
         return "后厨比外面更暗。灶台上一排大锅扣着，案板上还摊着没切完的青菜，叶子已经发蔫。\n\
 你刚踏过门槛，储物柜后面立起一个人——白衣、围裙，胸口的工牌反着光。它手里还攥着一把勺子，勺面磕在不锈钢台面上，当的一声。";
       }
@@ -736,7 +739,7 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['张江-上科大-食堂-后厨-胜利'] > 0)) {
+      if (!vars._sistKitchenZombieDead) {
         cs.push({
           text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "迎战" : "握紧拳头迎战"; },
           nextScene: "张江-上科大-食堂-后厨-战斗",
@@ -780,6 +783,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._sistKitchenZombieDead = true;
       vars.positionAfterOperation = "张江-上科大-食堂-后厨";
       return updateTime(2)(vars);
     },
@@ -815,7 +819,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "华大半导体的厂区大门比你想象中朴素——一道伸缩门，一根黄黑相间的闸杆，门柱上嵌着读卡器，旁边钉着“访客请登记”的牌子。\n\
 大门里侧是一大片厂区广场，水泥地坪干净得发白。";
-      if ((vars._visit['张江-华大-广场-近路-胜'] > 0)) desc += "\n透过伸缩门的缝，广场空着。东北角的地上躺着几团不动的影子。";
+      if (vars._plazaFought) desc += "\n透过伸缩门的缝，广场空着。东北角的地上躺着几团不动的影子。";
       else desc += "\n透过伸缩门的缝，能看见广场上有几条人影在慢慢地晃——隔着这道门，看不清是人是尸。";
       desc += "\n远处厂房的玻璃幕墙一层层排开，像一块竖起来的电路板。";
       if (vars._jinbaoLeft) {
@@ -856,8 +860,8 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "门纹丝不动。你拍了几下门柱，声音在空旷的广场上散得干干净净，没有任何回应。\n\
 读卡器的绿灯不紧不慢地闪着，像在说：卡。";
-      if ((vars._visit['张江-AI岛-机房-重逢'] > 0)) desc += "\n你想起老师说过——他经常来这边串门，手里有自己的访客卡。";
-      else if ((vars._visit['张江-华大-动力站-会面'] > 0)) desc += "\n离得这么近，就是进不去。";
+      if (vars._metTeacher) desc += "\n你想起老师说过——他经常来这边串门，手里有自己的访客卡。";
+      else if (vars._metJinbao) desc += "\n离得这么近，就是进不去。";
       return desc;
     },
     choices: [
@@ -875,15 +879,15 @@ Object.assign(storyData, {
       var alerted = vars._fabAlert > 0 || vars._airlockAlarmZombie;
       var desc = "进了伸缩门，厂区广场在眼前铺开——一大片水泥地坪，白得发亮，几道黄色的导引线画到一半就没了必要。一排旗杆立在广场东侧，旗绳抽打着空杆。\n\
 厂房的玻璃幕墙在广场对面立起来，一层压一层，像一块竖起来的电路板。";
-      if ((vars._visit['张江-华大-广场-近路-胜'] > 0)) {
+      if (vars._plazaFought) {
         desc += "\n东北角那几条人影已经倒在导引线边上，不会再晃了。";
       } else if (alerted) {
         desc += "\n警报把东北角那几条人影从梦游里拽醒了。它们不再原地晃，散开了几步，脑袋齐齐朝厂房方向转——西沿那条绕路，比刚才窄了一截。";
       } else {
         desc += "\n广场东北角，离你几十米，几条人影在原地慢慢地晃。隔着这么远，看不清衣着，只看得出它们哪儿也不去。";
       }
-      if (vars.isNight && !vars._jinbaoLeft && !(vars._visit['张江-华大-广场-近路-胜'] > 0)) desc += "\n夜里，幕墙里侧的窗户一层层亮着灯。那几条人影晃在灯影和黑暗的交界上，像被光钉住了。";
-      if (vars._jinbaoLeft && !(vars._visit['张江-华大-广场-近路-胜'] > 0)) desc += "\n灯灭了。幕墙黑成一整块，那几条人影还站在老地方——比这片广场上任何东西都有耐心。";
+      if (vars.isNight && !vars._jinbaoLeft && !vars._plazaFought) desc += "\n夜里，幕墙里侧的窗户一层层亮着灯。那几条人影晃在灯影和黑暗的交界上，像被光钉住了。";
+      if (vars._jinbaoLeft && !vars._plazaFought) desc += "\n灯灭了。幕墙黑成一整块，那几条人影还站在老地方——比这片广场上任何东西都有耐心。";
       return desc + "\n" + describeWeather(vars);
     },
     choices: function(vars) {
@@ -896,14 +900,14 @@ Object.assign(storyData, {
           effect: updateTime(2)
         });
       }
-      if (alerted && !(vars._visit['张江-华大-广场-近路-胜'] > 0)) {
+      if (alerted && !vars._plazaFought) {
         cs.push({
           text: "抄近路，从广场中间穿过去",
           nextScene: "张江-华大-广场-近路",
           effect: updateTime(1)
         });
       }
-      cs.push({ text: "沿广场西沿，绕去保安亭", nextScene: "张江-华大-保安亭", effect: updateTime(alerted && !(vars._visit['张江-华大-广场-近路-胜'] > 0) ? 5 : 3) });
+      cs.push({ text: "沿广场西沿，绕去保安亭", nextScene: "张江-华大-保安亭", effect: updateTime(alerted && !vars._plazaFought ? 5 : 3) });
       cs.push({ text: "往西，去大门", nextScene: "张江-华大-大门", effect: updateTime(2) });
       return cs;
     }
@@ -950,6 +954,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._plazaFought = true;
       vars._plazaFigSeen = true;
       return updateTime(2)(vars);
     },
@@ -990,7 +995,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "一条玻璃连廊从办公楼上架过来，接进厂房侧面。透过玻璃能看见连廊尽头一扇厚重的门，门楣上挂着一块牌子：净化区。\n\
 连廊墙上贴着一张过塑的 A4 纸，标题印得方方正正：《风淋室操作规程》。";
-      if (vars._airlockAlarmZombie && !(vars._visit['张江-华大-连廊-遭遇-胜'] > 0)) {
+      if (vars._airlockAlarmZombie && !vars._airlockZombieDone) {
         desc += "\n连廊中段的玻璃门外，一个白点正在广场方向慢慢挪过来——是警报引来的。它隔着玻璃撞了一下，又撞了一下。";
       }
       return desc;
@@ -998,12 +1003,12 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       cs.push({
-        showCondition: "!_visit['张江-华大-连廊-规程']",
+        showCondition: "!_readAirlockRules",
         text: "凑近读一读那张规程",
         nextScene: "张江-华大-连廊-规程",
         effect: updateTime(3)
       });
-      if (vars._airlockAlarmZombie && !(vars._visit['张江-华大-连廊-遭遇-胜'] > 0)) {
+      if (vars._airlockAlarmZombie && !vars._airlockZombieDone) {
         cs.push({
           text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "解决它" : "握紧拳头解决它"; },
           nextScene: "张江-华大-连廊-遭遇",
@@ -1019,7 +1024,7 @@ Object.assign(storyData, {
 
   "张江-华大-连廊-规程": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-规程特写.webp */
-    onEnter: {  },
+    onEnter: { set: { _readAirlockRules: true } },
     text: "《风淋室操作规程》\n\
 一、进入风淋舱后，请先关闭外门。外门未关闭时，风淋无法启动。\n\
 二、按面板【风淋启动】键，风淋开始，面板显示 25 秒倒计时。\n\
@@ -1054,6 +1059,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._airlockZombieDone = true;
       return updateTime(2)(vars);
     },
     text: function(vars) {
@@ -1086,7 +1092,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "!_visit['张江-华大-办公区-工位']",
+        showCondition: "!_fabOfficeDeskSeen",
         text: "去看看那面白板和贴满便利贴的工位",
         nextScene: "张江-华大-办公区-工位",
         effect: updateTime(3)
@@ -1097,7 +1103,7 @@ Object.assign(storyData, {
 
   "张江-华大-办公区-工位": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-办公区-工位.webp（白板名单特写） */
-    onEnter: {  },
+    onEnter: { set: { _fabOfficeDeskSeen: true } },
     text: "白板上是一张手画的表格，标题写着“互助信息统计（6/28 起）”。\n\
 一行一个名字，后面跟着日期和短短几个字：\n\
 “张-6/28-发烧，回家休息” “李工-6/29-没来，不接电话” “王-6/29-说家里孩子病了” “陈-6/30-失联”……\n\
@@ -1231,7 +1237,7 @@ Object.assign(storyData, {
       else if (vars._airlockBlowing) desc += "\n风正在吹。气流从四面八方喷出来，打得连体服啪啪作响。";
       else if (vars._airlockOuterClosed) desc += "\n外门关得严严实实。面板屏幕上是一行待机字样：外门已关闭，等待启动。";
       else desc += "\n外门还开着一条缝，风从缝里灌进来，面板屏幕上一行小字：请关闭外门。";
-      if ((vars._visit['张江-华大-连廊-规程'] > 0)) desc += "\n墙上那张规程你还记得：先关外门，按启动，等倒计时走完，“嘀”一声，内门开。";
+      if (vars._readAirlockRules) desc += "\n墙上那张规程你还记得：先关外门，按启动，等倒计时走完，“嘀”一声，内门开。";
       if (vars.hasDieselCan) desc += "\n几十斤的油桶卡在舱里转不开身，铁皮一下一下磕着喷嘴。这舱是给人吹灰的，不是给人扛货的。";
       return desc;
     },
@@ -1259,12 +1265,12 @@ Object.assign(storyData, {
       } else {
         if (!vars._airlockOuterClosed) {
           cs.push({
-            text: (vars._visit['张江-华大-连廊-规程'] > 0) ? "按规程：先关严外门" : "把身后的外门关严",
+            text: vars._readAirlockRules ? "按规程：先关严外门" : "把身后的外门关严",
             nextScene: "张江-华大-风淋舱-关门",
             effect: updateTime(1)
           });
           cs.push({
-            text: (vars._visit['张江-华大-连廊-规程'] > 0) ? "不关外门，直接按【风淋启动】" : "按面板上最大的那个键",
+            text: vars._readAirlockRules ? "不关外门，直接按【风淋启动】" : "按面板上最大的那个键",
             nextScene: "张江-华大-风淋舱-强启失败",
             effect: updateTime(1)
           });
@@ -1417,13 +1423,13 @@ Object.assign(storyData, {
       if (vars._airlockMaskOn) desc += "\n你摸出防毒面具扣在脸上。滤罐是过期的，橡胶都发硬了——但每一口呛人的酸味都淡了一半。老洪，谢了。";
       else if (vars.hasGasMask) desc += "\n你摸出防毒面具扣在脸上——滤罐里的活性炭早耗干了。酸味一丝没淡，顺着橡胶缝往里灌，喉咙火烧火燎。";
       else desc += "\n你捂住口鼻，但那股酸味无孔不入，喉咙火烧火燎。";
-      if ((vars._visit['张江-华大-连廊-规程'] > 0)) desc += "\n规程第五条在脑子里亮了起来：故障——按【紧急复位】。";
+      if (vars._readAirlockRules) desc += "\n规程第五条在脑子里亮了起来：故障——按【紧急复位】。";
       else desc += "\n面板上那两个键，哪个是停了这个的？";
       return desc;
     },
     choices: function(vars) {
       var cs = [];
-      if ((vars._visit['张江-华大-连廊-规程'] > 0)) {
+      if (vars._readAirlockRules) {
         cs.push({
           text: "按规程：按【紧急复位】",
           nextScene: "张江-华大-风淋舱-泄漏-复位",
@@ -1582,7 +1588,7 @@ Object.assign(storyData, {
       if (vars._jinbaoLeft) {
         desc += "\n车间黑了大半，只有安全指示灯一排排红点点着。人影还立在老地方，只是更安静了。";
       }
-      if (!vars._wearingCleanSuit && !(vars._visit['张江-华大-白区-围攻-胜'] > 0)) {
+      if (!vars._wearingCleanSuit && !vars._fabSwarmDone) {
         desc += "\n你这一身便装，在这片白色里显眼得像滴在牛奶里的墨水。\n\
 最近的那几条人影，齐刷刷地转过头来。";
       } else if (vars._wearingCleanSuit) {
@@ -1595,7 +1601,7 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if (!vars._wearingCleanSuit && !(vars._visit['张江-华大-白区-围攻-胜'] > 0)) {
+      if (!vars._wearingCleanSuit && !vars._fabSwarmDone) {
         cs.push({
           text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "迎战" : "握紧拳头迎战"; },
           nextScene: "张江-华大-白区-围攻",
@@ -1604,11 +1610,11 @@ Object.assign(storyData, {
         cs.push({ text: "退回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
         return cs;
       }
-      if (!(vars._visit['张江-华大-白区-工位战A-胜'] > 0)) cs.push({ text: "靠近光刻机那台设备边的人影", nextScene: "张江-华大-白区-工位A", effect: updateTime(2) });
+      if (!vars._fabFigADone) cs.push({ text: "靠近光刻机那台设备边的人影", nextScene: "张江-华大-白区-工位A", effect: updateTime(2) });
       else cs.push({ text: "光刻机边（已了结）", nextScene: "张江-华大-白区-工位A", effect: updateTime(1) });
       if (!vars._fabFigBDone) cs.push({ text: "靠近薄膜沉积设备边的人影", nextScene: "张江-华大-白区-工位B", effect: updateTime(2) });
       else cs.push({ text: "薄膜设备边（已了结）", nextScene: "张江-华大-白区-工位B", effect: updateTime(1) });
-      if (!(vars._visit['张江-华大-白区-工位战C-胜'] > 0)) cs.push({ text: "靠近化学清洗槽边的人影", nextScene: "张江-华大-白区-工位C", effect: updateTime(2) });
+      if (!vars._fabFigCDone) cs.push({ text: "靠近化学清洗槽边的人影", nextScene: "张江-华大-白区-工位C", effect: updateTime(2) });
       else cs.push({ text: "清洗槽边（已了结）", nextScene: "张江-华大-白区-工位C", effect: updateTime(1) });
       cs.push({ text: "往东，穿过车间去动力站", nextScene: "张江-华大-动力站", effect: updateTime(4) });
       cs.push({ text: "回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
@@ -1641,6 +1647,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._fabSwarmDone = true;
       vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
       return updateTime(3)(vars);
     },
@@ -1669,22 +1676,22 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位A.webp */
     onEnter: function(vars) { vars.currentPos = "白区工位A"; },
     text: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位战A-胜'] > 0)) {
+      if (vars._fabFigADone) {
         return "光刻机边的那条人影已经躺倒在设备脚下了，白色无尘服摊在地上，像一截脱下来的蛇皮。\n\
 机器的待机灯还在一明一灭，不知道在等谁的操作。";
       }
       var desc = "光刻机是车间里最金贵的设备，罩着黄色的防光帘。帘子边立着一条人影，背对着你。\n\
 它的手臂每隔几秒抬起、放下，抬起、放下——像在重复同一个操作，不知疲倦，也绝不出错。";
-      if ((vars._visit['张江-华大-白区-工位A-观察'] > 0)) desc += "\n你注意到：它没有呼吸的起伏。喉咙深处滚着一线含混的、湿漉漉的喉音，像烧开水前的那种响。";
-      if ((vars._visit['张江-华大-夹层-俯瞰'] > 0) && !(vars._visit['张江-华大-白区-工位A-观察'] > 0)) desc += "\n（你在夹层的格栅上俯瞰过这片——靠光刻机这条，位置从没挪过。）";
+      if (vars._fabFigAObs) desc += "\n你注意到：它没有呼吸的起伏。喉咙深处滚着一线含混的、湿漉漉的喉音，像烧开水前的那种响。";
+      if (vars._plenumPeeked && !vars._fabFigAObs) desc += "\n（你在夹层的格栅上俯瞰过这片——靠光刻机这条，位置从没挪过。）";
       return desc;
     },
     choices: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位战A-胜'] > 0)) {
+      if (vars._fabFigADone) {
         return [{ text: "离开", nextScene: "张江-华大-白区", effect: updateTime(1) }];
       }
       var cs = [];
-      if (!(vars._visit['张江-华大-白区-工位A-观察'] > 0)) {
+      if (!vars._fabFigAObs) {
         cs.push({ text: "再观察一会儿", nextScene: "张江-华大-白区-工位A-观察", effect: updateTime(3) });
       }
       cs.push({ text: "出声试探一下", nextScene: "张江-华大-白区-工位A-试探", effect: updateTime(1) });
@@ -1700,7 +1707,7 @@ Object.assign(storyData, {
 
   "张江-华大-白区-工位A-观察": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位A.webp */
-    onEnter: {  },
+    onEnter: { set: { _fabFigAObs: true } },
     text: "你贴着设备的阴影又看了几分钟。\n\
 它抬起手臂，按下什么，等待，再按下——动作精准得像台机器本身的一部分。可是它没有呼吸。胸口不起不伏，肩胛骨之间静得像一块案板。\n\
 一条喉音从面罩下面丝丝地渗出来，湿的，含混的，不是任何一种语言。\n\
@@ -1744,6 +1751,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._fabFigADone = true;
       return updateTime(2)(vars);
     },
     text: function(vars) {
@@ -1760,7 +1768,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位B.webp */
     onEnter: function(vars) { vars.currentPos = "白区工位B"; },
     text: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位B-误杀'] > 0)) {
+      if (vars._fabFigBKilled) {
         return "老陈倒在薄膜沉积机和料柜之间，扳手还攥在手里。\n\
 没有人知道你对他做了什么。这间车间里也不会有人再喊他名字了。";
       }
@@ -1774,15 +1782,15 @@ Object.assign(storyData, {
       }
       var desc = "薄膜沉积设备立在车间中段，管路像一捆灰色的肠子盘在它背后。设备边的人影比别处的矮半头，正弓着腰在记录板上写什么。\n\
 它的动作有停顿，有回头，还会抬手揉一揉脖子——太“活”了，活得不像是这一片的东西。";
-      if ((vars._visit['张江-华大-白区-工位B-观察'] > 0)) desc += "\n它已经察觉到你了。它慢慢退到设备后面，只露出半个头和一条攥着扳手的手臂。";
+      if (vars._fabFigBObs) desc += "\n它已经察觉到你了。它慢慢退到设备后面，只露出半个头和一条攥着扳手的手臂。";
       return desc;
     },
     choices: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位B-误杀'] > 0) || vars._fabFigBDone || vars._jinbaoLeft) {
+      if (vars._fabFigBKilled || vars._fabFigBDone || vars._jinbaoLeft) {
         return [{ text: "离开", nextScene: "张江-华大-白区", effect: updateTime(1) }];
       }
       var cs = [];
-      if (!(vars._visit['张江-华大-白区-工位B-观察'] > 0)) {
+      if (!vars._fabFigBObs) {
         cs.push({ text: "再观察一会儿", nextScene: "张江-华大-白区-工位B-观察", effect: updateTime(3) });
       }
       cs.push({ text: "出声打个招呼", nextScene: "张江-华大-白区-工位B-对话", effect: updateTime(1) });
@@ -1798,7 +1806,7 @@ Object.assign(storyData, {
 
   "张江-华大-白区-工位B-观察": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位B.webp */
-    onEnter: {  },
+    onEnter: { set: { _fabFigBObs: true } },
     text: "你多看了几分钟。\n\
 它写两笔，停一下，抬腕看表——表早就不走了，但它还是看了。然后它从口袋里摸出块压缩饼干，隔着面罩蹭了蹭嘴，又塞回去。\n\
 会看表，会嘴馋，会不耐烦地叹气。\n\
@@ -1823,7 +1831,7 @@ Object.assign(storyData, {
 
   "张江-华大-白区-工位B-误杀": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位B-误杀.webp */
-    onEnter: { set: { _fabFigBDone: true } },
+    onEnter: { set: { _fabFigBKilled: true, _fabFigBDone: true } },
     text: function(vars) {
       return "你抢先出手。" + (hasMeleeWeapon(vars) ? meleeWeaponName(vars) : "拳头") + "落在身上的声音不对——太闷了，还带着一声短促的、人的闷哼。\n\
 他倒下去的时候，扳手脱手滚出去老远。面罩摔歪了，露出半张脸——一张错愕的、老花镜滑到鼻尖的脸。\n\
@@ -1840,22 +1848,22 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位C.webp */
     onEnter: function(vars) { vars.currentPos = "白区工位C"; },
     text: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位战C-胜'] > 0)) {
+      if (vars._fabFigCDone) {
         return "清洗槽边只剩一摊没干的痕迹，被地坪的排风拉出一道长长的痕。\n\
 槽子里的液体早就干了，结成一层暗色的壳。";
       }
       var desc = "化学清洗槽那一角，排风管密得像一片小树林。槽边立着的人影一动不动，站姿歪斜，重心不在腿上，像一件被挂起来的衣服。\n\
 它的无尘服肚子那一截鼓胀着——有东西在布料下面缓缓地蠕动，一圈，又一圈。";
-      if ((vars._visit['张江-华大-白区-工位C-观察'] > 0)) desc += "\n隔着几米就能闻到那股味了——发馊的甜酸里裹着一股闷臭，像捂坏了的果酒。它的面罩内侧蒙着一层白雾，看不清脸。";
-      if ((vars._visit['张江-华大-夹层-俯瞰'] > 0) && !(vars._visit['张江-华大-白区-工位C-观察'] > 0)) desc += "\n（你在夹层的格栅上看过这片——清洗槽那条人影的影子，比别人的宽一圈。）";
+      if (vars._fabFigCObs) desc += "\n隔着几米就能闻到那股味了——发馊的甜酸里裹着一股闷臭，像捂坏了的果酒。它的面罩内侧蒙着一层白雾，看不清脸。";
+      if (vars._plenumPeeked && !vars._fabFigCObs) desc += "\n（你在夹层的格栅上看过这片——清洗槽那条人影的影子，比别人的宽一圈。）";
       return desc;
     },
     choices: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位战C-胜'] > 0)) {
+      if (vars._fabFigCDone) {
         return [{ text: "离开", nextScene: "张江-华大-白区", effect: updateTime(1) }];
       }
       var cs = [];
-      if (!(vars._visit['张江-华大-白区-工位C-观察'] > 0)) {
+      if (!vars._fabFigCObs) {
         cs.push({ text: "再观察一会儿", nextScene: "张江-华大-白区-工位C-观察", effect: updateTime(3) });
       }
       cs.push({ text: "出声试探一下", nextScene: "张江-华大-白区-工位C-试探", effect: updateTime(1) });
@@ -1871,7 +1879,7 @@ Object.assign(storyData, {
 
   "张江-华大-白区-工位C-观察": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位C.webp */
-    onEnter: {  },
+    onEnter: { set: { _fabFigCObs: true } },
     text: "你捂着口鼻又靠近了半米。\n\
 那股甜酸味浓起来了。它肚子上的布料洇出一圈湿痕，正在缓慢地扩大；蠕动的幅度比刚才大，像有什么急着要出来。\n\
 它的面罩接缝处，一丝白雾正往外渗，一丝，又一丝。\n\
@@ -1914,6 +1922,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._fabFigCDone = true;
       var splashed = vars.hasGasMask && vars.maskRemainingUses > 0 ? 5 : 15;
       vars.mercuryLoad = Math.min(100, (vars.mercuryLoad || 0) + splashed);
       return updateTime(2)(vars);
@@ -2144,12 +2153,12 @@ Object.assign(storyData, {
       var light = vars.hasTorch ? "手电的光柱在管道之间折来折去" : "手机的背光在管道之间晃出一小圈惨白";
       var desc = "你在送风夹层里弓着背前行。" + light + "，照出层层叠叠的风管、线槽和阀轮，脚下的格栅板一步一响。\n\
 格栅的缝隙里漏着下方的微光——透过这些缝，能看见整个白区在脚底下铺开。";
-      if ((vars._visit['张江-华大-夹层-俯瞰'] > 0)) desc += "\n你已经趴在格栅上看过一轮了。";
+      if (vars._plenumPeeked) desc += "\n你已经趴在格栅上看过一轮了。";
       return desc;
     },
     choices: [
       {
-        showCondition: "!_visit['张江-华大-夹层-俯瞰']",
+        showCondition: "!_plenumPeeked",
         text: "趴在格栅上，往下看看白区",
         nextScene: "张江-华大-夹层-俯瞰",
         effect: updateTime(3)
@@ -2161,7 +2170,7 @@ Object.assign(storyData, {
 
   "张江-华大-夹层-俯瞰": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-夹层-俯瞰.webp（格栅视角的白区人影） */
-    onEnter: {  },
+    onEnter: { set: { _plenumPeeked: true } },
     text: "你趴在格栅上，从上往下看整个白区。\n\
 光刻机边那条人影，还站在老位置，手臂抬起来，放下去，抬起来，放下去——从这个角度看得清清楚楚，它脚下连一步都没有挪过。\n\
 薄膜设备边那条，一会儿写两笔，一会儿抬起手腕看看——看了好几次。\n\
@@ -2197,7 +2206,7 @@ Object.assign(storyData, {
         return "你推开动力站那扇厚重的防火门。门没锁——里面也没人锁它了。\n\
 发电机的嗡嗡声消失了，仪表盘黑着，只剩安全出口的指示牌泛着一点绿。空气里还留着一点柴油味，像一台机器刚咽气不久。";
       }
-      if ((vars._visit['张江-华大-动力站-会面'] > 0)) {
+      if (vars._metJinbao) {
         var back = "你回到动力站。";
         if (vars._lastScene === "张江-华大-夹层") back = "你从检修口爬下来，落进动力站。";
         return back;
@@ -2217,7 +2226,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: function(vars) {
-      if (vars._jinbaoLeft || (vars._visit['张江-华大-动力站-会面'] > 0)) {
+      if (vars._jinbaoLeft || vars._metJinbao) {
         return [{ text: "继续", nextScene: "张江-华大-动力站" }];
       }
       return [{ text: "举起双手", nextScene: "张江-华大-动力站-会面", effect: updateTime(1) }];
@@ -2227,7 +2236,7 @@ Object.assign(storyData, {
   // 初见：自我介绍 + 来历盘问（拷问不是玩家选的，是他问出来的）
   "张江-华大-动力站-会面": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-会面.webp */
-    onEnter: {  },
+    onEnter: { set: { _metJinbao: true } },
     text: function(vars) {
       var viaLiu = vars._lastScene === "张江-华大-运维区-虚惊" || vars._lastScene === "张江-华大-运维区-闲聊" || vars._lastScene === "张江-华大-运维区";
       var desc = "";
@@ -2284,7 +2293,7 @@ Object.assign(storyData, {
     }
   },
 
-  // K0：双重委托（爸爸 + 曹睿泽）。_visit['张江-上科大-曹睿泽宿舍'] > 0 已置位时出“先发现后委托”直通选项（B3）。
+  // K0：双重委托（爸爸 + 曹睿泽）。_foundFriend 已置位时出“先发现后委托”直通选项（B3）。
   "张江-华大-动力站-委托": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-会面.webp */
     onEnter: { set: { _jinbaoCommission: true, _jinbaoFriendCommission: true } },
@@ -2295,7 +2304,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: function(vars) {
-      if ((vars._visit['张江-上科大-曹睿泽宿舍'] > 0)) {
+      if (vars._foundFriend) {
         return [
           { text: "“曹睿泽……他已经不在了。”", nextScene: "张江-华大-动力站-曹睿泽-回报", effect: updateTime(1) },
           { text: "先应下，别的以后再说", nextScene: "张江-华大-动力站", effect: updateTime(1) }
@@ -2426,7 +2435,7 @@ Object.assign(storyData, {
 纯水系统停了机。系统旁边，一字排开几只白色的大水桶，桶身上是马克笔的字：“给可能会来的人。”"
           : "动力站空了。发电机哑着，仪表黑着，几只行军床叠在墙角，床下的鞋印还是新的。\n\
 纯水系统停了机。系统旁边，一字排开几只白色的大水桶，桶身上是马克笔的字：“给可能会来的人。”";
-        if (!(vars._visit['张江-华大-动力站-字条'] > 0)) dark += "\n\
+        if (!vars._noteRead) dark += "\n\
 值班桌上压着一张字条，用一只搪瓷缸镇着。";
         else dark += "\n\
 那张字条还压在搪瓷缸底下。";
@@ -2441,17 +2450,17 @@ Object.assign(storyData, {
       else if (vars._panicEmployeeState === "injured") desc += "小刘抱着膝盖缩在地铺角落，后脑勺上的肿包还没消。看见你，他往被子里又缩了半个身位。\n";
       else if (vars._panicEmployeeState === "dead") desc += "“小刘前天说出去巡检，到现在没回来。”洪金宝提了一句，眉头拧着，“外头那些东西，越来越不老实了。”\n";
       else desc += "“外头辅助区还守着个人，姓刘。”洪金宝提了一句，“你要走那边，报我的名字。”\n";
-      if ((vars._visit['张江-华大-白区-工位B-误杀'] > 0)) desc += "发电机上搁着一只老陈的茶缸，茶早凉透了。没人收。\n";
+      if (vars._fabFigBKilled) desc += "发电机上搁着一只老陈的茶缸，茶早凉透了。没人收。\n";
       else if (!vars._jinbaoLeft) desc += "老陈蹲在发电机边上，就着灯光听那台机器的动静，像老中医号脉。\n";
-      if (!(vars._visit['张江-华大-白区-工位B-误杀'] > 0) && vars.dd >= 3 && !vars._dieselDelivered && !(vars._visit['张江-华大-动力站-柴油-接'] > 0)) {
+      if (!vars._fabFigBKilled && vars.dd >= 3 && !vars._dieselDelivered && !vars._jinbaoDieselAsked) {
         desc += "老陈忽然抬头看了你一眼，嘴唇动了动，又低下头去——像有话想说。\n";
-      } else if (!(vars._visit['张江-华大-白区-工位B-误杀'] > 0) && (vars._visit['张江-华大-动力站-柴油-接'] > 0) && !vars._dieselDelivered) {
+      } else if (!vars._fabFigBKilled && vars._jinbaoDieselAsked && !vars._dieselDelivered) {
         if (vars.hasDieselCan) {
           desc += "老陈看见你肩上那桶油，眼睛一亮，下巴朝发电机点了点：“就搁那儿。来，帮我抬一下。”\n";
         } else {
           desc += "老陈抬眼看了你一眼：“加油站那边……有信儿没有？”他顿了顿，声音压在发电机的轰鸣里，“油表一天比一天难看。”\n";
         }
-      } else if (!(vars._visit['张江-华大-白区-工位B-误杀'] > 0) && vars.dd < 3 && !vars._dieselDelivered) {
+      } else if (!vars._fabFigBKilled && vars.dd < 3 && !vars._dieselDelivered) {
         desc += "老陈拍了拍发电机外壳：“油还够几天。省着烧。”\n";
       }
       if (vars._toldJinbaoTruth === "silent") desc += "洪金宝没有再看你。自打你说“不清楚”之后，他和你说话，都是隔着仪表说的。\n";
@@ -2460,7 +2469,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       if (vars._jinbaoLeft) {
         var cs = [];
-        if (!(vars._visit['张江-华大-动力站-字条'] > 0)) cs.push({ text: "拿起那张字条", nextScene: "张江-华大-动力站-字条", effect: updateTime(2) });
+        if (!vars._noteRead) cs.push({ text: "拿起那张字条", nextScene: "张江-华大-动力站-字条", effect: updateTime(2) });
         else cs.push({ text: "再看一遍字条", nextScene: "张江-华大-动力站-字条", effect: updateTime(1) });
         cs.push({ text: "去水桶接水", nextScene: "张江-华大-动力站-纯水", effect: updateTime(1) });
         cs.push({ text: "在行军床上歇一会儿", nextScene: "张江-华大-动力站-休息" });
@@ -2476,6 +2485,7 @@ Object.assign(storyData, {
           text: "从北边的卸油门出去，到厂后便道",
           nextScene: "张江-厂界便道",
           effect: function(v) {
+            v._freightDoorOpen = true;
             return updateTime(3)(v);
           }
         });
@@ -2484,7 +2494,7 @@ Object.assign(storyData, {
       var cs2 = [];
       cs2.push({ text: "和洪金宝聊聊", nextScene: "张江-华大-动力站-聊天", effect: updateTime(2) });
       cs2.push({ text: "去纯水系统接水", nextScene: "张江-华大-动力站-纯水", effect: updateTime(1) });
-      if (vars.dd >= 3 && !(vars._visit['张江-华大-动力站-柴油-接'] > 0) && !vars._dieselDelivered) {
+      if (vars.dd >= 3 && !vars._jinbaoDieselAsked && !vars._dieselDelivered) {
         cs2.push({ text: "问老陈想说什么", nextScene: "张江-华大-动力站-柴油-接", effect: updateTime(2) });
       }
       if (vars.hasDieselCan && !vars._dieselDelivered) {
@@ -2503,6 +2513,7 @@ Object.assign(storyData, {
         text: "从北边的卸油门出去，到厂后便道",
         nextScene: "张江-厂界便道",
         effect: function(v) {
+          v._freightDoorOpen = true;
           return updateTime(3)(v);
         }
       });
@@ -2522,16 +2533,16 @@ Object.assign(storyData, {
       var cs = [];
       cs.push({ text: "问他是怎么撑到现在的", nextScene: "张江-华大-动力站-聊天-自己", effect: updateTime(3) });
       cs.push({ text: "问厂里其他人的情况", nextScene: "张江-华大-动力站-聊天-厂里", effect: updateTime(2) });
-      if (!vars._jinbaoFriendCommission && !(vars._visit['张江-华大-动力站-曹睿泽-回报'] > 0) && !(vars._visit['张江-上科大-曹睿泽宿舍'] > 0)) {
+      if (!vars._jinbaoFriendCommission && !vars._jinbaoFriendTold && !vars._foundFriend) {
         cs.push({ text: "问他还记挂着谁", nextScene: "张江-华大-动力站-曹睿泽-委托", effect: updateTime(2) });
       }
-      if ((vars._visit['张江-上科大-曹睿泽宿舍'] > 0) && !(vars._visit['张江-华大-动力站-曹睿泽-回报'] > 0)) {
+      if (vars._foundFriend && !vars._jinbaoFriendTold) {
         cs.push({ text: "告诉他曹睿泽的事", nextScene: "张江-华大-动力站-曹睿泽-回报", effect: updateTime(2) });
       }
-      if (vars._hasFriendPhoto && !(vars._visit['张江-华大-动力站-合照'] > 0)) {
+      if (vars._hasFriendPhoto && !vars._jinbaoPhotoShown) {
         cs.push({ text: "把那张合照拿给他看", nextScene: "张江-华大-动力站-合照", effect: updateTime(2) });
       }
-      if (vars._hasTestReport && !(vars._visit['张江-华大-动力站-报告'] > 0)) {
+      if (vars._hasTestReport && !vars._jinbaoReportRead) {
         cs.push({ text: "把检测中心的报告给他看", nextScene: "张江-华大-动力站-报告", effect: updateTime(3) });
       }
       if (vars._toldJinbaoTruth === "lie" || vars._toldJinbaoTruth === "silent") {
@@ -2562,7 +2573,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-聊天.webp */
     text: function(vars) {
       var desc = "“厂里活下来的，就这么几个了。”他扳着手指，“我，管动力；老陈，管设备——他那个岁数，硬得像他修的那些泵。”";
-      if ((vars._visit['张江-华大-白区-工位B-误杀'] > 0)) {
+      if (vars._fabFigBKilled) {
         desc += "\n\
 “老陈前两天说，他那台机器上还压着一批没走完的货，非要回去盯。”他皱眉，“都两天了，也该回来了。”\n\
 你端着水杯的手，很稳。";
@@ -2599,7 +2610,7 @@ Object.assign(storyData, {
 “28 号之后，电话就再没打通过。”他抬起头，“人工智能岛往西就是上科大。你要是去那边……顺便，看看他。”\n\
 他笑了一下：“看见他，替我骂他一句。电话都不敢接，胆小鬼。”",
     choices: function(vars) {
-      if ((vars._visit['张江-上科大-曹睿泽宿舍'] > 0)) {
+      if (vars._foundFriend) {
         return [
           { text: "“曹睿泽……他已经不在了。”", nextScene: "张江-华大-动力站-曹睿泽-回报", effect: updateTime(1) },
           { text: "先应下", nextScene: "张江-华大-动力站-聊天", effect: updateTime(1) }
@@ -2612,7 +2623,7 @@ Object.assign(storyData, {
   // 曹睿泽回报（C2 流程）：K0 假设路径核心场景
   "张江-华大-动力站-曹睿泽-回报": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-曹睿泽-回报.webp */
-    onEnter: {  },
+    onEnter: { set: { _jinbaoFriendTold: true } },
     text: function(vars) {
       var desc = "你把上科大那间宿舍的事说了。门牌 214。床上的人。拆空的药板。\n\
 “他……”洪金宝的声音低下去，“怎么走的？屋里……是什么样的？”\n\
@@ -2642,6 +2653,7 @@ Object.assign(storyData, {
   "张江-华大-动力站-合照": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-合照.webp */
     onEnter: function(vars) {
+      vars._jinbaoPhotoShown = true;
       vars.personalMemorySet.add("毕业快乐");
       return {};
     },
@@ -2660,7 +2672,7 @@ Object.assign(storyData, {
   // 检测中心报告给洪金宝读
   "张江-华大-动力站-报告": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-报告.webp */
-    onEnter: {  },
+    onEnter: { set: { _jinbaoReportRead: true } },
     text: "你把那几页纸放在他面前。\n\
 洪金宝拿起来的手很稳，翻到第三页的时候停住了。甲基汞。采样日期。检测方法。下面是那个红色的数字——和一排判定符号。\n\
 他把纸放平，又拿过自己的案例表，并排铺开。一边是官方的数据，一边是他手写的名字和日期。他的目光在两张纸之间来来回回。\n\
@@ -2715,7 +2727,7 @@ Object.assign(storyData, {
   // 柴油任务：接（Day3+ 老陈开口）
   "张江-华大-动力站-柴油-接": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-柴油.webp */
-    onEnter: {  },
+    onEnter: { set: { _jinbaoDieselAsked: true } },
     text: "老陈把你拉到发电机边上，压着那台机器的轰鸣说话。\n\
 “小伙子。”他搓着手，搓出老茧摩擦的沙沙声，“冒昧问一句——外面……还找得到柴油吗？”\n\
 他拍了拍发电机：“这桶油，撑不过三天了。它一停，纯水系统停，灯灭——洪工他们仨，就得摸黑走人。”\n\
@@ -2794,8 +2806,8 @@ Object.assign(storyData, {
     onEnter: { set: { bottleWater: 1, waterToxic: false } },
     text: function(vars) {
       var desc = "你拧开瓶盖，把瓶子接到出水口底下。水柱注进瓶身，咕咚咕咚，把瓶壁上的空气一丝丝挤上去。\n";
-      if (vars._hongBottleLabel && !(vars._visit['张江-华大-动力站-灌水'] > 0)) {
-        if (vars._toldJinbaoTruth === "" && (vars._visit['张江-华大-动力站-会面'] > 0) && !vars._jinbaoLeft) {
+      if (vars._hongBottleLabel && !vars._bottleFilledBySon) {
+        if (vars._toldJinbaoTruth === "" && vars._metJinbao && !vars._jinbaoLeft) {
           desc += "\n\
 一只手伸过来，按住了你的瓶盖。\n\
 洪金宝站在你身后。他不知道什么时候过来的，目光钉在瓶身那行圆珠笔字上——“芜湖 6.25”。\n\
@@ -2811,6 +2823,7 @@ Object.assign(storyData, {
               : "洪金宝看了那只瓶子一眼，又移开了目光。瓶身上的字，他没有问。"))
           + "\n\
 水满了。你拧紧瓶盖。这一瓶水干净得发光。";
+          vars._bottleFilledBySon = true;
         }
       } else {
         desc += "水满了。你拧紧瓶盖。这一瓶水干净得发光。";
@@ -2818,7 +2831,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: function(vars) {
-      if (vars._hongBottleLabel && !(vars._visit['张江-华大-动力站-灌水'] > 0) && vars._toldJinbaoTruth === "" && !vars._jinbaoLeft) {
+      if (vars._hongBottleLabel && !vars._bottleFilledBySon && vars._toldJinbaoTruth === "" && !vars._jinbaoLeft) {
         return [{ text: "迎着他的目光", nextScene: "张江-华大-动力站-拷问", effect: updateTime(1) }];
       }
       return [{ text: "收好水瓶", nextScene: "张江-华大-动力站", effect: updateTime(1) }];
@@ -2863,10 +2876,10 @@ Object.assign(storyData, {
   // Day5+ 字条（五版本路由 + 通用段）
   "张江-华大-动力站-字条": {
     image: "images/placeholder.png", /* TODO: images/张江/字条.webp（物证特写） */
-    onEnter: {  },
+    onEnter: { set: { _noteRead: true } },
     text: function(vars) {
       var body;
-      if (!(vars._visit['张江-华大-动力站-会面'] > 0)) {
+      if (!vars._metJinbao) {
         body = "“给不知什么时候会来的陌生人：\n\
 我是华大半导体的动力工程师，姓洪。你能在这种时候走进这间屋子，说明你比我走得远——那这几句话，你配看。\n\
 我回三林看过我爸。他不在了。安居苑 8 号楼 204，如果你顺路，替我看他一眼。\n\
@@ -2931,7 +2944,7 @@ Object.assign(storyData, {
   },
 
   // ==================== 厂界便道（华大动力站卸油门 ↔ 滨河绿道 · 环路） ====================
-  // 卸油门只能从厂内侧推开：_visit['张江-厂界便道'] > 0 置位前，从绿道方向是死路——防止绕开大门门禁。
+  // 卸油门只能从厂内侧推开：_freightDoorOpen 置位前，从绿道方向是死路——防止绕开大门门禁。
 
   "张江-厂界便道": {
     outdoor: true,
@@ -2944,7 +2957,7 @@ Object.assign(storyData, {
           ? "围栏里头静悄悄的。那台发电机不知从哪天起，就再没震动过，你脚底下只剩川杨河的风声。\n"
           : "围栏里头，动力站那台发电机的震动顺着地面传到你脚底，嗡嗡的，像踩在一头打盹的牲口背上。\n") +
         "便道东头，围栏根下开着一道卸油用的卷帘门。";
-      if ((vars._visit['张江-厂界便道'] > 0)) {
+      if (vars._freightDoorOpen) {
         desc += "\n你上次顶门的那半块砖还在，卷帘底下留着半人高的一道缝。";
       } else {
         desc += "\n卷帘门落得死死的。你在门外转了一圈——这门从外头连个把手都没留，撬都没处下撬。";
@@ -2953,7 +2966,7 @@ Object.assign(storyData, {
     },
     choices: function(vars) {
       var cs = [];
-      if ((vars._visit['张江-厂界便道'] > 0)) {
+      if (vars._freightDoorOpen) {
         cs.push({ text: "钻进卸油门，进动力站", nextScene: "张江-华大-动力站", effect: updateTime(3) });
       }
       cs.push({ text: "往西，去滨河绿道", nextScene: "张江-滨河绿道", effect: updateTime(7) });
@@ -3320,7 +3333,7 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       cs.push({ text: "翻开前台的《样品流转台账》", nextScene: "张江-检测中心-台账", effect: updateTime(3) });
-      if (vars._hasTestReport && vars.hasDiary && !(vars._visit['张江-检测中心-抄录'] > 0)) {
+      if (vars._hasTestReport && vars.hasDiary && !vars._reportCopiedToDiary) {
         cs.push({ text: "把报告的关键数据抄进日记本", nextScene: "张江-检测中心-抄录", effect: updateTime(10) });
       }
       cs.push({ text: "进实验区", nextScene: "张江-检测中心-走廊", effect: updateTime(2) });
@@ -3372,7 +3385,7 @@ Object.assign(storyData, {
       cs.push({
         text: "沿亮处走，去大厅",
         nextScene: function(v) {
-          if (v._labAlert > 0 && !(v._visit['张江-检测中心-撤离-胜'] > 0)) return "张江-检测中心-撤离遭遇";
+          if (v._labAlert > 0 && !v._labExitFought) return "张江-检测中心-撤离遭遇";
           return "张江-检测中心-大厅";
         },
         effect: function(v) {
@@ -3383,7 +3396,7 @@ Object.assign(storyData, {
       cs.push({
         text: "去卸货区侧门",
         nextScene: function(v) {
-          if (v._labAlert > 0 && !(v._visit['张江-检测中心-撤离-胜'] > 0)) return "张江-检测中心-撤离遭遇";
+          if (v._labAlert > 0 && !v._labExitFought) return "张江-检测中心-撤离遭遇";
           return "张江-检测中心-卸货区";
         },
         effect: function(v) {
@@ -3509,6 +3522,7 @@ Object.assign(storyData, {
   "张江-检测中心-摔柜门": {
     image: "images/placeholder.png", /* TODO: images/张江/检测中心-摔柜门.webp（碎玻璃、棕色小瓶滚落） */
     onEnter: function(vars) {
+      vars._labWeakened = true;
       vars._labAlert = Math.min(2, (vars._labAlert || 0) + 1);
       return {};
     },
@@ -3528,11 +3542,11 @@ Object.assign(storyData, {
   "张江-检测中心-检测员战": {
     image: "images/placeholder.png", /* TODO: images/张江/检测中心-检测员战.webp */
     onEnter: initMemoryGame(["红", "蓝", "绿", "黄"], function(vars) {
-      return ((vars._visit['张江-检测中心-摔柜门'] > 0) ? 5 : 7) + (vars._labAlert > 0 ? 1 : 0);
+      return (vars._labWeakened ? 5 : 7) + (vars._labAlert > 0 ? 1 : 0);
     }),
     text: function(vars) {
       var desc;
-      if ((vars._visit['张江-检测中心-摔柜门'] > 0)) {
+      if (vars._labWeakened) {
         desc = "他扑过来的第一步就踩在一只滚落的棕色小瓶上，崴了一下——半边脸的血糊住了眼，他的抓扑全凭声音来。\n\
 别可怜他。他手上那股力气，足够把你按碎在仪器桌上。";
       } else {
@@ -3560,6 +3574,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/检测中心-报告.webp（盖章报告特写） */
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._labZombieDead = true;
       vars._hasTestReport = true;
       vars.mercuryLoad = Math.min(100, (vars.mercuryLoad || 0) + (vars.hasGasMask && vars.maskRemainingUses > 0 ? 5 : 15));
       return updateTime(3)(vars);
@@ -3606,6 +3621,7 @@ Object.assign(storyData, {
     image: "images/youKillZombies.webp",
     onEnter: function(vars) {
       combatDrain(vars);
+      vars._labExitFought = true;
       return updateTime(2)(vars);
     },
     text: function(vars) {
@@ -3627,7 +3643,7 @@ Object.assign(storyData, {
   // 抄录（hasDiary 专属）：报告关键数据抄进日记本一页
   "张江-检测中心-抄录": {
     image: "images/placeholder.png", /* TODO: images/张江/检测中心-抄录.webp（接待台、日记本） */
-    onEnter: {  },
+    onEnter: { set: { _reportCopiedToDiary: true } },
     text: function(vars) {
       return "你在接待台边坐下，就着高侧窗的天光，翻开日记本，把报告从第一页抄起。\n\
 编号、日期、点位、检测方法、那个红色的数字、两枚章的名称——你抄得很慢，一个数字一个数字地对。抄到“取件人签收”那一栏，你的笔尖悬了一下。\n\
@@ -3639,13 +3655,13 @@ Object.assign(storyData, {
     ]
   },
 
-  // 检测中心死亡结局：按 _visit['张江-检测中心-制服'] > 0（报告到手与否）与 _lastScene（死在哪一场）分支
+  // 检测中心死亡结局：按 _labZombieDead（报告到手与否）与 _lastScene（死在哪一场）分支
   "结局-张江-检测中心": {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
       var body;
-      if ((vars._visit['张江-检测中心-制服'] > 0)) {
+      if (vars._labZombieDead) {
         body = "你倒在大堂门口。玻璃门外就是天光，就是旗杆，就是那条能回去的街。\n\
 内袋里那几页纸，一页都没少——数据、签名、两枚红章，全都好好的。\n\
 只有“取件人签收”那一栏，还空着。\n\

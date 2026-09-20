@@ -1,4 +1,4 @@
-// -------- 社区连接 --------
+﻿// -------- 社区连接 --------
 // 主要记录小区附近街区各个场所的道路连接关系
 
 // 三林路共用图片：三林路（路口）/ 三林路-北侧 / 三林路-南侧
@@ -742,14 +742,14 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     choices: [
       {
         text: "吃点东西补充体力",
-        showCondition: "!_visit['联华超市-补给']",
+        showCondition: "!_supermarketSuppliesTaken",
         nextScene: "联华超市-补给",
         effect: updateTime(5)
       },
       {
         text: "往深处走",
         nextScene: function(vars) {
-          if (!(vars._visit['联华超市-仓库-遇见周师傅'] > 0) && vars.dd == 2 && vars.hh == 12 && vars.mm < 30) {
+          if (!vars._metZhouSupermarket && vars.dd == 2 && vars.hh == 12 && vars.mm < 30) {
             return "联华超市-仓库-遇见周师傅";
           }
           return "联华超市-仓库";
@@ -802,7 +802,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 
   "联华超市-补给": {
     image: "images/小区周边/联华超市/吃雪饼喝脉动.webp",
-    onEnter: { add: { strength: 1 } },
+    onEnter: { add: { strength: 1 }, set: { _supermarketSuppliesTaken: true } },
     text: "你撕开一包旺旺雪饼，就着一瓶脉动吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n\
 旺旺雪饼熟悉的味道在空气中弥漫开，又迅速散去。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
@@ -845,7 +845,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   // ==================== 周师傅 · 联华超市仓库偶遇（Day2中午，找鸟食） ====================
   "联华超市-仓库-遇见周师傅": {
     image: "images/placeholder.png" /* TODO: images/小区周边/联华超市/遇见周师傅.png */,
-    onEnter: {  },
+    onEnter: { set: { _metZhouSupermarket: true } },
     text: "你穿过堆着杂物的货架间小道，绕过一排空掉的调味品架，忽然看见前面蹲着一个人——背对着你，正在纸箱堆里翻找什么。听到脚步声，那人猛地回头，手里下意识攥紧了一把剪刀，看清是你才松了口气：“哦……是你啊，差点吓死我。”\n是安盛街理发店的周师傅。他面前摊开几个拆开的纸箱，里面全是些平时没人要的干货——脱水蔬菜粒、碎米、发霉的瓜子。“家里几只鹦鹉快没吃的了，”他有点不好意思地挠了挠后脑勺，“死马当活马医，来看看这些鸟爱不爱吃这个。”\n“你这是要去哪儿？”他随口问了一句，没等你回答又低下头继续翻，“算了，不问了，这年头谁的事都不好说。路上留神点。”",
     choices: [
       { text: "“你也小心点。”", nextScene: "联华超市-仓库" }
