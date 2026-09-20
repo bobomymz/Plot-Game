@@ -61,7 +61,11 @@ function fmtStrength(v) {
 // restRecover 写 vars._restBlocked（core.js _variables 已注册），供休息场景 text 函数配合 restHint 切换提示语。
 var REST_CAP = 6;
 function restRecover(v, amount) {
-  if (v.strength >= REST_CAP) { v._restBlocked = true; return 0; }
+  if (v.strength >= REST_CAP) {
+    v._restBlocked = true;
+    if (typeof window !== "undefined" && window.__staminaEvent) window.__staminaEvent("restBlocked", { strength: v.strength, cap: REST_CAP });   // 体力遥测：休息被拒计数
+    return 0;
+  }
   v._restBlocked = false;
   var before = v.strength;
   v.strength = Math.min(10, v.strength + amount);

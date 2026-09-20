@@ -193,7 +193,7 @@ sceneText.addEventListener("click", () => {
 function initGameState() {
   const defaults = (storyData && storyData._variables) || {};
   // 深拷贝：_variables 里含 Set（记忆集合），浅拷贝会让重启后残留上一局的记忆
-  gameState = snapshotState(defaults);
+  gameState = __wrapState(snapshotState(defaults), "new");   // 包遥测代理（见文件末尾）
   console.log("【引擎】变量已初始化：", gameState);
 }
 
@@ -766,7 +766,7 @@ function backtrack() {
   clearQTE();   // 终止 QTE
   clearMemoryFlash(); // 终止记忆闪色动画
   const prev = historyStack.pop();
-  gameState = prev.gameState;
+  gameState = __wrapState(prev.gameState, "backtrack");   // 回溯恢复后重新挂遥测代理
   // 旧存档的历史项没有 reactiveState：保留当前节流记录比清空安全（清空会让已付过的规则立刻重新武装）
   if (prev.reactiveState) _reactiveState = prev.reactiveState;
   currentScene = prev.sceneId;
@@ -1378,7 +1378,7 @@ function loadSave() {
 
 // 把存档写回运行状态（不负责渲染）
 function applySave(saved) {
-  gameState      = saved.gameState;               // Set 已由 reviver 还原
+  gameState      = __wrapState(saved.gameState, "restore");  // Set 已由 reviver 还原（重新挂遥测代理）
   historyStack   = saved.historyStack || [];
   _reactiveState = saved.reactiveState || {};
   currentScene   = saved.sceneId;
@@ -1581,3 +1581,125 @@ window.addEventListener("DOMContentLoaded", () => {
     startPreload("start", false);
   }
 });
+
+// ======================================================================
+// ====== 体力遥测（tools/stamina_report.py 配套 · 评估用，可整段删除）======
+// ======================================================================
+// 原理：gameState 包进 Proxy，所有对 strength 的写入（剧情/规则/系统，
+// 含未知新增代码）自动记录 {来源文件:行号, 前后值, 游戏时间, 场景, 状态标记}。
+// 新局/读档/回溯三条路径都会重新包裹；日志镜像进 localStorage 防刷新丢失。
+// 用法：正常游玩 → 控制台执行 __dumpStaminaLog() 导出 JSONL
+//       → python tools/stamina_report.py <jsonl> 生成报告
+//       __staminaQuickStats() 控制台速览；__clearStaminaLog() 清空重测
+// 发布时可将 STAMINA_TELEMETRY 改为 false（零开销）或整段删除，
+// 并把三处 gameState = __wrapState(...) 还原为直接赋值。
+var STAMINA_TELEMETRY = true;
+var STAMINA_LOG_KEY = "stamina_telemetry_v1";
+var __staminaLog = [];
+try {
+  var __staminaPrev = JSON.parse(localStorage.getItem(STAMINA_LOG_KEY) || "null");
+  if (Array.isArray(__staminaPrev)) __staminaLog = __staminaPrev;
+} catch (e) { /* localStorage 不可用时仅内存记录 */ }
+var __staminaSeen = typeof WeakSet !== "undefined" ? new WeakSet() : null;
+
+function __staminaSrc() {
+  try {
+    var frames = (new Error().stack || "").split("\n");
+    for (var i = 1; i < frames.length; i++) {
+      var fr = frames[i];
+      if (fr.indexOf("__stamina") !== -1) continue;   // 跳过遥测自身帧
+      var m = fr.match(/([^\/\\()\s:]+\.js):(\d+):\d+/);
+      if (!m) continue;
+      var name = m[1];
+      try { name = decodeURIComponent(name); } catch (e2) {}
+      return name + ":" + m[2];
+    }
+  } catch (e) {}
+  return "?";
+}
+
+function __staminaPush(entry) {
+  entry.rt = entry.rt || Date.now();
+  __staminaLog.push(entry);
+  if (__staminaLog.length % 25 === 0) __staminaMirror();
+}
+
+function __staminaMirror() {
+  if (!STAMINA_TELEMETRY) return;
+  try { localStorage.setItem(STAMINA_LOG_KEY, JSON.stringify(__staminaLog.slice(-4000))); } catch (e) {}
+}
+
+// 非数值事件入口（utils.js restRecover 的休息被拒等）
+window.__staminaEvent = function (type, data) {
+  if (!STAMINA_TELEMETRY) return;
+  var e = { type: type, scene: currentScene, dd: gameState.dd, hh: gameState.hh, mm: gameState.mm };
+  if (data) for (var k in data) e[k] = data[k];
+  __staminaPush(e);
+};
+
+// 包裹状态对象；tag 标记会话来源（new=新局 / restore=读档 / backtrack=回溯）
+function __wrapState(obj, tag) {
+  if (!STAMINA_TELEMETRY || !obj || obj !== Object(obj)) return obj;
+  if (__staminaSeen && __staminaSeen.has(obj)) return obj;
+  if (__staminaSeen) __staminaSeen.add(obj);
+  var proxy = new Proxy(obj, {
+    set: function __staminaTrap(target, prop, value) {
+      var old = target[prop];
+      target[prop] = value;
+      if (prop === "strength" && typeof value === "number" &&
+          typeof old === "number" && old !== value) {
+        __staminaPush({
+          type: "delta", src: __staminaSrc(),
+          from: old, to: value, d: Math.round((value - old) * 100) / 100,
+          dd: target.dd, hh: target.hh, mm: target.mm, scene: currentScene,
+          cold: !!target.hasCold, hurt: !!target.hurtByZombie,
+          chase: target.chasedByZombies || 0,
+          travel: Math.round(target._travelMinutes || 0),
+          weather: target.weather
+        });
+      }
+      return true;
+    }
+  });
+  __staminaPush({ type: "session", tag: tag || "?", scene: currentScene,
+                  dd: obj.dd, hh: obj.hh, mm: obj.mm, strength: obj.strength });
+  if (__staminaSeen) __staminaSeen.add(proxy);   // 代理本身也登记，防二次包裹导致重复记录
+  return proxy;
+}
+
+window.__dumpStaminaLog = function () {
+  __staminaMirror();
+  var rows = __staminaLog.map(function (e) { return JSON.stringify(e); }).join("\n");
+  var blob = new Blob([rows], { type: "application/x-ndjson" });
+  var a = document.createElement("a");
+  var ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+  a.href = URL.createObjectURL(blob);
+  a.download = "stamina_log_" + ts + ".jsonl";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+  console.log("【遥测】已导出 " + __staminaLog.length + " 条记录 → " + a.download);
+};
+
+window.__clearStaminaLog = function () {
+  __staminaLog = [];
+  try { localStorage.removeItem(STAMINA_LOG_KEY); } catch (e) {}
+  console.log("【遥测】日志已清空（从现在开始重新记录）");
+};
+
+window.__staminaQuickStats = function () {
+  var agg = {};
+  __staminaLog.forEach(function (e) {
+    if (e.type !== "delta") return;
+    if (!agg[e.src]) agg[e.src] = { n: 0, net: 0 };
+    agg[e.src].n++;
+    agg[e.src].net = Math.round((agg[e.src].net + e.d) * 100) / 100;
+  });
+  console.table(Object.keys(agg).sort().map(function (k) {
+    return { 来源: k, 次数: agg[k].n, 净变化: agg[k].net };
+  }));
+  var n = __staminaLog.filter(function (e) { return e.type === "delta"; }).length;
+  console.log("【遥测】delta " + n + " 条 / 总记录 " + __staminaLog.length + " 条。导出用 __dumpStaminaLog()");
+};
+window.addEventListener("beforeunload", __staminaMirror);

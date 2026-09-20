@@ -25,6 +25,12 @@
 
 - `story/东明街道/樱桃苑（初始小区）.js` 民防设施日记写「7月14日（或者15日）… 被困第十四天」，但游戏开局为 6/29，玩家第 1–2 天即可读到该日记。需确认是否为有意的时间线伏笔（游戏核心设定含时间回溯/多周目机制，有可能是有意为之）。
 
+## 体力系统压力评估工具（2026-09-20 落地）
+
+- 三件套：tools/stamina_audit.py（静态审计→体力收支审计报告.md，168 变动点）、tools/stamina_report.py（遥测 JSONL 聚合，--selftest 自测）、tools/stamina_telemetry_selftest.js（Node 冒烟回归）。
+- 遥测在 engine.js 末尾（Proxy 捕获全部 strength 写入）+ 三处 __wrapState 包裹点（196 新局/769 回溯/1381 读档）+ utils.js restRecover 的 restBlocked 事件；工作流：游玩 → 控制台 __dumpStaminaLog() → python tools/stamina_report.py <jsonl>。
+- **⚠ 引擎改动约束**：遥测块只能追加在 engine.js 末尾，三处包裹点保持单行——中间插行会破坏 stamina_report.py 的 KNOWN_SITES 行号归因（engine.js 209-214/641-646 等区间映射）。STAMINA_TELEMETRY=false 整体关闭。
+
 ## AI 雷同表述限用清单（2026-09-19 全库排查，详见 tools/AI雷同表述排查报告.md）
 
 写新剧情时规避以下 AI 指纹（次数为当时全库存量）：
