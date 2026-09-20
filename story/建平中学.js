@@ -2260,31 +2260,24 @@ Object.assign(storyData, {
     ]
   },
   "建平-弘渊楼-1F-借阅处": {
-    image: timeImage({
-      morning: "images/建平/图书馆1楼-借阅处.webp",
-      night: "images/建平/图书馆1楼-借阅处-night.webp"
-    }) /* TODO: 用户提供借阅处图（日/夜）后放入 images/建平/ */,
+    image: "images/建平/图书馆1楼-借阅处.webp",
     onEnter: function(vars) { vars.currentPos = "弘渊楼1F借阅处"; },
-    text: "借阅处。长条台面蒙着薄灰，玻璃板下压着几张过期的推荐书目单。还书口的推车里，还堆着几摞没来得及归架的书。",
+    text: "借阅处。长条台面蒙着薄灰，玻璃板上放着一张饭卡————在你的高中，饭卡就是借阅卡。还书口的推车里，还堆着几摞没来得及归架的书。",
     choices: function(vars) {
       var cs = [];
-      if (!vars._hyBorrowCardSeen) {
-        cs.push({ text: "看看玻璃板下压着的东西", nextScene: "建平-弘渊楼-1F-借阅处-借书证", effect: updateTime(1) });
+      if (!vars._visit["建平-弘渊楼-1F-借阅处-饭卡"]) {
+        cs.push({ text: "看看饭卡", nextScene: "建平-弘渊楼-1F-借阅处-饭卡", effect: updateTime(1) });
       }
       cs.push({ text: "回 1 楼大厅", nextScene: "建平-弘渊楼-1F", effect: updateTime(1) });
       return cs;
     }
   },
 
-  "建平-弘渊楼-1F-借阅处-借书证": {
-    image: timeImage({
-      morning: "images/建平/图书馆1楼-借阅处.webp",
-      night: "images/建平/图书馆1楼-借阅处-night.webp"
-    }),
-    onEnter: { set: { _hyBorrowCardSeen: true } },
-    text: "玻璃板下压着一张借书证，塑封的边角已经翘起来。\n【姓名】李娟\n【证号】JP-2024-0506\n【班级】高一（2）班\n借阅记录停在出事前两天。这张证的主人，再也没有来注销过。",
+  "建平-弘渊楼-1F-借阅处-饭卡": {
+    image: "images/建平/饭卡.webp",
+    text: "你仔细看看那张饭卡，挺旧的，就像你的饭卡一样。\n【姓名】李娟\n【学号】20231428",
     choices: [
-      { text: "把借书证压回原处", nextScene: "建平-弘渊楼-1F-借阅处", effect: updateTime(1) }
+      { text: "继续", nextScene: "建平-弘渊楼-1F-借阅处", effect: updateTime(1) }
     ]
   },
 
@@ -2361,7 +2354,7 @@ Object.assign(storyData, {
       // Day1-2 清醒态：首访完整开场，之后随机呓语
       if ((vars._visit['建平-弘渊楼-2F-李娟'] || 0) <= 1) {
         return [
-          "你穿过圆桌间的过道，朝落地窗边走过去。\n她坐在窗边，校服外套搭在椅背上，手里捏着一本摊开的书——《占星术杀人魔法》。桌脚围着一圈空矿泉水瓶，瓶盖全都拧开着，瓶底干得发白。",
+          "你穿过圆桌间的过道，朝落地窗边走过去。\n她坐在窗边的木头台阶上，身穿校服裙子，手里捏着一本摊开的书——《占星术杀人魔法》。桌脚围着一圈空矿泉水瓶，瓶盖全都拧开着，瓶底干得发白。",
           "听见脚步声，她缓缓抬起头。嘴唇干裂起皮，眼睛里像蒙了一层雾。\n“你是……回来拿书包的吗？”",
           "没等你回答，她的视线又飘回桌面，声音低下去：\n“粉色那个……是我的杯子……水……还有吗……”"
         ];
@@ -2369,9 +2362,9 @@ Object.assign(storyData, {
       var pool = [
         "她们说下楼找水……让我看着东西……包都在呢……怎么还不回来……",
         "雨都停了三轮了……人还没回来……",
-        "老师说的……暑假也要保持手感……题还没刷完……",
+        "这里一个头，那里一只腿……凑齐了，都齐了……",
         "饮水机……是我喝空的……对不起……",
-        "占星术……塔罗牌……凶手……到底是谁……",
+        "占星术……凶手……到底是谁……",
         "好渴……你知道那种渴吗……像有人把脑袋里的塞子拔了……"
       ];
       var m = pool[Math.floor(Math.random() * pool.length)];
@@ -2494,7 +2487,7 @@ Object.assign(storyData, {
       var move = hasMeleeWeapon(vars)
         ? "你用" + meleeWeaponName(vars) + "挡开她最后一下扑击"
         : "你侧身挡开她最后一下扑击";
-      var tail = vars._hyBorrowCardSeen
+      var tail = vars._visit["建平-弘渊楼-1F-借阅处-饭卡"]
         ? "落地窗外的树影落在她脸上。你忽然想起楼下借阅处玻璃板下那张借书证——李娟。\n那本《占星术杀人魔法》摔在长桌底下，书页朝天，再没有人来翻它了。"
         : "落地窗外的树影落在她脸上。台阶上那排背包，还在等人认领。";
       var segs = [move + "，她踉跄着撞在落地窗上，缓缓滑坐下去，不动了。", tail];
@@ -2562,7 +2555,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
       var desc = "你慢了半拍。她扑上来的时候，力气大得完全不像那个蜷在落地窗边的女生。\n";
-      if (vars._hyBorrowCardSeen) {
+      if (vars._visit["建平-弘渊楼-1F-借阅处-饭卡"]) {
         desc += "意识模糊之前，你想起了借阅处玻璃板下的那张借书证——李娟。\n她等的同学没有回来。现在，她也不用再等了。\n";
       }
       return desc + weaponBrokeText(vars) + "\n—— 结局：阅览室的常客 ——";

@@ -81,7 +81,7 @@ Object.assign(storyData,{
       {
         text: "给它来一下",
         nextScene: "益丰大药房-击杀",
-        condition: function(vars) { return hasMeleeWeapon(vars) && vars.strength >= 2; },
+        condition: "strength >= 2",
         elseScene: "结局-益丰-被反杀"
       },
       {
@@ -106,7 +106,10 @@ Object.assign(storyData,{
     image: "images/小区周边/益丰大药房/击杀白大褂.webp",
     onEnter: { set: { hurtByZombie: false, pharmacyZombieKilled: true, positionAfterOperation: "益丰大药房-击杀" } },
     text: function(vars) {
-      var desc = "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。\n你蹲下来翻看它刚才啃咬的药箱——里面居然还有几盒没拆封的碘伏棉签和弹性绷带。柜台下面的抽屉里还有一瓶维生素片。\n你撕开碘伏棉签，清理了身上的伤口——至少那些抓痕不会感染了。";
+      var kill = hasMeleeWeapon(vars)
+        ? "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。"
+        : "你从背后把它扑倒在柜台边上，抡起拳头照它后脑砸了几下，它抽了两下，没再起来。";
+      var desc = kill + "\n你蹲下来翻看它刚才啃咬的药箱——里面居然还有几盒没拆封的碘伏棉签和弹性绷带。柜台下面的抽屉里还有一瓶维生素片。\n你撕开碘伏棉签，清理了身上的伤口——至少那些抓痕不会感染了。";
       if (vars._drawerVitaminTaken) desc += "\n抽屉里那瓶维生素片你已经收进包里了。";
       return desc;
     },

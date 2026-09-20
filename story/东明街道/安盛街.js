@@ -754,13 +754,13 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        text: "继续",
+        text: "小心离开",
         nextScene: "安盛街-文具店",
         effect: updateTime(1)
       },
       {
-        showCondition: "hasMeleeWeapon",
-        text: function(vars) { return "抄起" + meleeWeaponName(vars) + "砸过去"; },
+        showCondition: "!_stationeryZombieDead",
+        text: function(vars) { return hasMeleeWeapon(vars) ? "抄起" + meleeWeaponName(vars) + "砸过去" : "赤手空拳按住它"; },
         nextScene: "安盛街-文具店击杀",
         condition: "strength >= 3",
         elseScene: "结局-安盛街-文具店被反杀"
@@ -770,11 +770,18 @@ Object.assign(storyData, {
 
   "安盛街-文具店击杀": {
     image: "images/安盛街/晨光文具店/丧尸被砸倒.webp",
-    onEnter: { add: { strength: -1 }, set: { _stationeryZombieDead: true } },
+    onEnter: function(vars) {
+      if (hasMeleeWeapon(vars)) return { add: { strength: -1 }, set: { _stationeryZombieDead: true } };
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { _stationeryZombieDead: true, hurtByZombie: true } };
+    },
     text: function(vars) {
-      let weaponDesc = "你举起" + (meleeWeaponName(vars) || "手中的家伙");
-      return weaponDesc + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n\
-你补了几下，确定它不会再动了。收银台后面的小门看起来通往更里面——也许仓库里还有什么有用的东西————或者是更多丧尸。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      let tail = "收银台后面的小门看起来通往更里面——也许仓库里还有什么有用的东西————或者是更多丧尸。";
+      if (hasMeleeWeapon(vars)) {
+        return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n\
+你补了几下，确定它不会再动了。" + tail + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return "你从背后扑上去，把它整个人掀翻在水彩笔堆里。它扭头就咬，指甲在你手背上豁开几道口子——你用膝盖压住它的背，攥着它的头发往柜台棱角上磕，磕到第三下它就瘫了。\n\
+你从货架上扯了张包装纸，按住手背上的伤口。" + tail + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -792,7 +799,10 @@ Object.assign(storyData, {
   "结局-安盛街-文具店被反杀": {
     image: "images/zombieKnockYouDown.webp",
     text: function(vars) {
-      return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，但你的手臂发软，这一击只擦过了丧尸的肩膀。\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
+      var opening = hasMeleeWeapon(vars)
+        ? "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，但你的手臂发软，这一击只擦过了丧尸的肩膀。"
+        : "你赤手空拳扑上去，但手臂发软，按了个空。";
+      return opening + "\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
 你太虚弱了，根本无力招架。\n\
 —— 结局：文具店被反杀 ——";
     }
@@ -1284,9 +1294,7 @@ Object.assign(storyData, {
       {
         showCondition: "!_visit['安盛街-食品店战斗']",
         text: function(vars) { return hasMeleeWeapon(vars) ? "抄起" + meleeWeaponName(vars) + "打它" : "赤手空拳跟它拼了"; },
-        condition: "hasMeleeWeapon",
-        nextScene: "安盛街-食品店战斗",
-        elseScene: "结局-被丧尸扑倒咬死"
+        nextScene: "安盛街-食品店战斗"
       },
       {
         showCondition: "!_visit['安盛街-食品店战斗']",
@@ -1323,10 +1331,18 @@ Object.assign(storyData, {
 
   "安盛街-食品店战斗": {
     image: "images/安盛街/食品店/丧尸被打倒.webp" /* TODO: images/anshengStreet/convenienceFight.png */,
-    onEnter: { add: { strength: -1 } },
+    onEnter: function(vars) {
+      if (hasMeleeWeapon(vars)) return { add: { strength: -1 } };
+      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
+    },
     text: function(vars) {
-      return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，一下子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
-你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      let loot = "你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。";
+      if (hasMeleeWeapon(vars)) {
+        return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，一下子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
+" + loot + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return "你扑上去把它按在柜台边上。它的指甲在你小臂上豁开两道口子，血珠往外渗——你用肩膀顶住它的下巴，直到它彻底没了力气。\n\
+" + loot + "\n小臂上的伤口还在渗血，回头得找点酒精或者碘伏处理。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       {

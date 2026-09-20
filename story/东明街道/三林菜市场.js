@@ -53,7 +53,7 @@ Object.assign(storyData, {
         || (vars._lastScene !== "菜市场-卷帘门" && vars._marketEntry === "员工通道");
       if (!vars._marketHallCleared) {
         cs.push({ text: "绕开它", nextScene: "菜市场-大厅-潜行", effect: updateTime(2) });
-        cs.push({ showCondition: "hasMeleeWeapon", text: function(vars) { return "用" + meleeWeaponName(vars) + "把它彻底解决"; }, nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
+        cs.push({ text: function(vars) { return hasMeleeWeapon(vars) ? "用" + meleeWeaponName(vars) + "把它彻底解决" : "上去把它彻底解决"; }, nextScene: "菜市场-大厅-清场", effect: updateTime(2) });
         // 丧尸挡路：只能从来路离开，不能直接穿到另一端
         if (fromCold) {
           cs.push({ text: "去冷库区", nextScene: "菜市场-冷库区", effect: updateTime(1) });
@@ -74,7 +74,7 @@ Object.assign(storyData, {
     choices: [
       { text: "去冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) },
       { text: "从卷帘门钻出去", nextScene: "安盛街西侧", effect: updateTime(1) },
-      { showCondition: "hasMeleeWeapon", text: function(vars) { return "用" + meleeWeaponName(vars) + "把它彻底解决"; }, nextScene: "菜市场-大厅-清场", effect: updateTime(2) }
+      { text: function(vars) { return hasMeleeWeapon(vars) ? "用" + meleeWeaponName(vars) + "把它彻底解决" : "上去把它彻底解决"; }, nextScene: "菜市场-大厅-清场", effect: updateTime(2) }
     ]
   },
 
@@ -82,8 +82,11 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/菜市场/大厅-清场.jpg */,
     onEnter: { set: { _marketHallCleared: true } },
     text: function(vars) {
-      var wpn = meleeWeaponName(vars) || "手中的家伙";
-      return "你走上前，它朝你张开了嘴。你举起" + wpn + "，给了它一下。\n它抽搐了几下，不动了。你把它拖到冰柜后面，用一张脏布盖上——至少看着不那么碍眼。\n大厅安静了下来。";
+      var wpn = meleeWeaponName(vars);
+      var strike = wpn
+        ? "你举起" + wpn + "，给了它一下。"
+        : "你跨上去骑住它的背，一手摁住它的后颈，另一只拳头对着它太阳穴抡了几下。";
+      return "你走上前，它朝你张开了嘴。" + strike + "\n它抽搐了几下，不动了。你把它拖到冰柜后面，用一张脏布盖上——至少看着不那么碍眼。\n大厅安静了下来。";
     },
     choices: [
       { text: "去冷库区", nextScene: "菜市场-冷库区", effect: updateTime(2) },
