@@ -36,7 +36,7 @@ explorer index.html
 | 想知道/想做 | 去 |
 |---|---|
 | 某 flag/物品是否已定义、初始值、全图唯一 | core.js `_variables` |
-| 某物品在哪拿/被用 | grep `hasXxx` 全 story/ |
+| 某物品在哪拿/被用 | grep `hasXxx` 全 story/；一键盘点：`node tools/chain_audit.mjs`（拾取/移除/引用矩阵 + 每文件物品预算表） |
 | computed/每小时规则/屏幕特效/全局触发器 | core.js `_reactive` / `_screenEffects` / `_globalTriggers` |
 | 引擎支持的条件/QTE/闪色/输入框写法 | CLAUDE.md 数据格式节 → 拿不准再读 engine.js |
 | 工具函数/工厂用法（updateTime/timeImage/travelScene/initMemoryGame/hasMeleeWeapon/combatDrain…） | utils.js（函数旁注释即文档） |
@@ -50,6 +50,7 @@ explorer index.html
 | 新机制（感冒/户外/疲劳/冷兵器分级） | 见下方各处，勿只看一处 |
 | 地理结构优化/图审计（区域重构流程、指标红线） | `.claude/skills/geo-optimization/SKILL.md` + `node tools/graph_audit.mjs <区域>` |
 | 剧情测试/走查（L1 lint·L4 E2E helper·坑点清单·无截图原则） | `.claude/skills/story-testing/SKILL.md` + `node tools/lint_story.mjs` / `tools/test_helper.mjs` |
+| 解密链设计/优化（难度杠杆分级·已用套路清单·物品预算·方案先行） | `.claude/skills/puzzle-chain-design/SKILL.md` + `node tools/chain_audit.mjs` |
 
 ### 新增机制的四处同步清单
 加可复用机制时按需更新：core.js(变量+computed+rule) · utils.js(函数) · engine.js(若改行为) · 本表对应行。

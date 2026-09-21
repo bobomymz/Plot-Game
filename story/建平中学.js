@@ -597,7 +597,12 @@ Object.assign(storyData, {
       if ((vars._visit['建平-后门-内侧-清场'] > 0)) return null;   // 尸群已杀光，不再有回头压力
       return { timeout: "20000 - chasedByZombies * 2000", onTimeout: "建平-后门-内侧-暴露" };
     },
-    onEnter: function(vars) { vars.showZombies = vars.showRain = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "后门"; },
+    onEnter: function(vars) {
+      vars.showZombies = vars.showRain = true;
+      vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "后门";
+      // 猛地僵住 —— 撞见黑压压的尸群；清场后这里已无威胁，不再触发
+      if (!(vars._visit['建平-后门-内侧-清场'] > 0)) triggerShake();
+    },
     text: function(vars) {
       if ((vars._visit['建平-后门-内侧-清场'] > 0)) {
         return "辅路尽头就是后门。铁栅栏门还关着，门口横七竖八躺满了尸体——都是你干掉的。\n" + describeWeather(vars);
@@ -626,6 +631,7 @@ Object.assign(storyData, {
       vars.showZombies = true;
       vars.currentPos = "后门";
       vars.chasedByZombies = Math.min(5, vars.chasedByZombies + 1);   // 被尸群发现并追了一段
+      triggerShake();                    // 整片尸群齐刷刷转身，朝你涌过来
       return {};
     },
     text: "你犹豫得太久了。\n最外面一只丧尸缓缓回过头，浑浊的眼珠对上你的视线。嘶吼声炸开，整片尸群齐刷刷转身，朝你涌过来——\n你头皮发麻，转身就逃，连滚带爬地冲回辅路。尸群被铁栅栏挡着挤不出来，嘶吼声却追着你响了一路。",

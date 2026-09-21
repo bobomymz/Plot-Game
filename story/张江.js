@@ -1575,7 +1575,11 @@ Object.assign(storyData, {
 
   "张江-华大-白区": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-白区.webp（工位人影剪影、设备荧光） */
-    onEnter: function(vars) { vars.currentPos = "白区"; },
+    onEnter: function(vars) {
+      vars.currentPos = "白区";
+      // 便装闯入这片白 —— 最近那几条人影齐刷刷转头；穿无尘服或已清场则不抖
+      if (!vars._wearingCleanSuit && !(vars._visit['张江-华大-白区-围攻-胜'] > 0)) triggerShake();
+    },
     text: function(vars) {
       var desc = "气密门在身后合拢。这里就是白区——一间大得离谱的无尘车间，成排的工艺设备蒙着荧光，通道白亮亮地铺到视野尽头。\n\
 设备之间，立着几条白色的人影。隔着距离和反光，看不清哪条是人，哪条不是。";
@@ -3076,7 +3080,7 @@ Object.assign(storyData, {
       vars._bridgeStage = 2;
       vars.gunAmmo = Math.max(0, vars.gunAmmo - 1);
       vars.showZombies = true;
-      return initMemoryGame(["红", "蓝", "绿", "黄"], 6)(vars);
+      return initMemoryGame(["红", "蓝", "绿", "黄"], 6, { shake: true })(vars);   // 四脚着地的影子从车顶窜来
     },
     text: function(vars) {
       return "桥中段。桥面在这里最宽，车堵得只剩一条歪歪扭扭的缝。\n\

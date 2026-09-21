@@ -716,7 +716,7 @@ Object.assign(storyData, {
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
     },
     text: function(vars) {
-      return "你慢了半拍——丧尸从侧面撞上了你，你们一起摔在站厅的瓷砖地上。\n它的指甲划破了你的手臂，你忍着痛一脚踹开它，爬起来跌跌撞撞冲进了通往B1的通道。\n你靠着通道的墙壁大口喘气，手臂上的抓伤火辣辣地疼。" + weaponBrokeText(vars);
+      return "你慢了半拍——丧尸从侧面撞上了你，你们一起摔在站厅的瓷砖地上。\n它的指甲划破了你的手臂，你忍着痛一脚踹开它，爬起来跌跌撞撞冲进了通往B1的通道。\n你靠着通道的墙壁大口喘气，手臂上的抓伤火辣辣地疼。" + weaponBrokeText(vars) + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       { text: "继续前进", nextScene: "金谊广场-B1 心谊如意街", effect: updateTime(1) }

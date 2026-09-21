@@ -366,6 +366,7 @@ Object.assign(storyData, {
   "菜市场-方姐尸变": {
     image: "images/placeholder.png" /* TODO: images/菜市场/方姐尸变.jpg */,
     style: "color: #ff4444;",
+    onEnter: { shake: true },   // 推开门，方姐转过身来 —— 一直都在，只是早已不是人
     text: [
       "你推开门。",
       "发电机还在嗡嗡地转，昏黄的灯泡把冷库照得惨白。方姐背对着你，蹲在冷藏柜前——听到门响，她没有回头。\n“来了。”她的声音像是从喉咙深处挤出来的，又哑又黏。",

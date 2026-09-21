@@ -1395,7 +1395,7 @@ Object.assign(storyData, {
   // ==================== 安盛街-尸潮遭遇战 ====================
   "安盛街-尸潮来袭": {
     image: "images/youMeetZombies.webp",
-    onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 } },
+    onEnter: { set: { showRain: true }, add: { chasedByZombies: 1 }, shake: true },
     text: "你正走着，突然听到身后传来一阵密集的脚步声。\n回头一看，一群丧尸从十字路口的方向挤过来——至少二三十只，贴着两边店招把整条马路堵实了。它们看到了你，发出嘶哑的吼声，加快了速度。\n你必须马上决定往哪跑！",
     qte: {
       timeout: "7000 - chasedByZombies * 1500",
@@ -1606,7 +1606,7 @@ Object.assign(storyData, {
         effect: updateTime(10)
       },
       {
-        text: "走向路边那家菜市场的卷帘门",
+        text: "去菜市场",
         nextScene: "菜市场-卷帘门",
         effect: updateTime(2)
       },

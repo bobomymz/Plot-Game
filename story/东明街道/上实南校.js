@@ -386,7 +386,7 @@ Object.assign(storyData, {
   "上实南校-3号楼-4楼-摸黑": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolStairsDark.png */,
     onEnter: { add: { strength: -1 } },
-    text: "你摸黑爬上4楼。膝盖在台阶上磕了一下，但你忍住了。楼道尽头你摸到了一扇门——门牌上凹凸的字迹你辨认了半天：“化学实验室”。",
+    text: "你摸黑爬上4楼。膝盖在台阶上磕了一下，但你忍住了。楼道尽头你摸到了一扇门——门牌上凹凸的字迹你辨认了半天：“化学实验室”。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "推开门",
@@ -547,6 +547,7 @@ Object.assign(storyData, {
 
   "结局-上实南校-2楼": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor2.png */,
+    onEnter: { shake: true },   // 门锁崩断，丧尸像潮水一样涌出来
     text: "你推开2楼的门，走进走廊。这里比想象中安静——太安静了。\n然后你听到了一扇教室门后传来闷响——砰砰砰，有东西在撞门。\n你后退了一步。门锁崩断了。\n穿着校服的丧尸像潮水一样从教室里涌了出来。\n—— 结局：2楼走廊 ——"
   },
 
@@ -1146,7 +1147,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/上实南校/windowClimb.png */,
     onEnter: { add: { strength: -2 } }, // 摔伤，非咬伤也非中毒，与"翻窗跳下"一致
     text: "你手上的力气不够。管道在你手中滑脱——你从两层楼高的位置摔了下去。落地时脚踝传来一阵剧痛，你蜷缩在地上。\n\
-“你没事吧？！”小陆紧跟着跳了下来，扶你起来。你试着站了站——能站，但每走一步都钻心地疼。\n同学们也陆续爬了下来。你们站在了校园后院的空地上。",
+“你没事吧？！”小陆紧跟着跳了下来，扶你起来。你试着站了站——能站，但每走一步都钻心地疼。\n同学们也陆续爬了下来。你们站在了校园后院的空地上。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>",
     choices: [
       {
         text: "一瘸一拐地找出口",

@@ -951,6 +951,7 @@ Object.assign(storyData,{
 
   "益丰大药房-灯光恢复": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/灯光恢复.png */,
+    onEnter: { shake: true },   // 灯亮的瞬间，货架后走出一只、两只、三只……
     text: "你打开配电箱，灯光慢慢恢复了。货架背后走出来1只、2只、3只……好多只丧尸……",
     choices: [
       {
@@ -969,7 +970,7 @@ Object.assign(storyData,{
   "益丰大药房-与丧尸打群架": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/与丧尸打群架.png */,
     text: "丧尸们一拥而上，你需要快速做出反应！",   
-    onEnter: initMemoryGame(["红","蓝","绿"], 10), // 中等难度
+    onEnter: initMemoryGame(["红","蓝","绿"], 10, { shake: true }), // 中等难度；丧尸一拥而上
     choices: [
       {
         text: "输入你看到的颜色",

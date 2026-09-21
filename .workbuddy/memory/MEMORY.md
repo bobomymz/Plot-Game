@@ -24,6 +24,8 @@
 - **⚠ 遥测块只能追加在 engine.js 末尾，三处 `__wrapState` 包裹点保持单行**（196 新局/769 回溯/1381 读档），插行会破坏 KNOWN_SITES 行号归因。
 - **⚠ 在 core.js `_variables` 增删行 → KNOWN_SITES 的 core.js 区间整体平移，必须同步校正**。校验：逐区间确认存在 strength 写入行，正则要覆盖 `vars.strength = 10` 式（`/strength\s*[:+\-*/]?=/`）；mock 行号须落在区间内。
 - 疲劳属「当前这段连续移动」：tier→0 自动清零 `_fatiguePaid`；剧情代码只归零 `_travelMinutes`，**勿手动动 `_fatiguePaid`**。
+- **体力提示（2026-09-21 审计 + 补齐完成）**：引擎无任何自动提示——`flashStatusWarning()` 只用于环境消耗（饥饿/连续移动/受凉/烈日），**战斗失败一处也没有**；engine.js 体力 Proxy 仅开发期遥测。提示只能手写三条通道：① `【系统提示】体力-N，当前体力：{strength}`（`{strength}` 由 engine.js:785 `interpolateDisplay()` 渲染，**数组 text 的每段也独立插值**）；② 正文身体描写；③ 选项文字标「（体力-N）」。**标准样式（橙 `#ffaa00`）**：`<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-N，当前体力：{strength}。</span>`，基准见 `utils.js:389 combatDrainText` 与 `上实南校.js` 桌椅节点。失败节点补提示的三种落点：字符串 text 末尾接 `\n<span…>`；函数返回字符串在 return 末尾 `+`（排在 `weaponBrokeText` 后）；**数组 text 追加到末段字符串内**。**死亡结局节点不补**（人已死）。已补齐 12 处战斗/非战斗失败节点，战斗类无提示归零。
+- **工具**：`node tools/combat_stamina_feedback_audit.js` → `tools/战斗体力提示审计.md`。**三个踩坑**：① effect 可能是函数**直接改写 `vars.strength`**（非返回 `{add}`），只读返回值会漏检；② 检测"文案暗示"前必须**剥掉系统提示行**（`replace(/<span[^>]*>【系统提示】[^<]*<\/span>/g,' ')`），否则提示里的"体力"二字被误判成正文暗示；③ 结局判定要用「id 以 `结局` 开头 **或** 文案含 `—— 结局：`」，否则 `三林安居苑-厨房危险` 这类会被当成普通失败节点混入统计。
 
 ## 5. 丧尸气味
 **气味与成因对齐，「甜腻」不是通用丧尸味。** 0–2天=血腥铁腥/汗酸馊/尿骚粪臭（味淡近距）；2–7天=闷厚腐肉臭+臭鸡蛋+组织液湿腥（几十米可闻，预警信号）；>1周=干腐味（霉木+陈旧干血），有蛆虫才叠**甜腻**；化工毒气=甜腥/甜酸；变质食物=馊味/酸腐。
@@ -43,5 +45,13 @@
 - 复用工厂：`mallQTE`（新达汇）、`jpChaseQTE(pred)`（建平）、`travelScene`（过场自动播放，**无选项的 hidden QTE 节点引擎不入历史**）。追逐工厂规则：`chasedByZombies <= 0` 不启动，`timeout = max(2000, 20000 - ch*2000)`。
 - 工具：`node tools/qte_report.js` → `tools/场景级QTE分布报告.md`。新增 QTE 优先用现有工厂。
 
-## 9. 待确认
+## 9. 场景抖动 shake（2026-09-21 铺开至 31 处）
+- 引擎在 `renderScene` 里**独立于 `applyEffect`** 判断（engine.js:1195）。`applyEffect` 只认 `set/add/mul`，**`shake` 被静默忽略** → `onEnter: { set:{...}, shake:true }` 并存安全。
+- 三条通道：① `onEnter:{shake:true}`；② 函数式内 `triggerShake()`（**必须保留原有 return**，如 `return updateTime(1)(vars)`，漏掉会静默丢时间推进）；③ 闪色 QTE 用 `initMemoryGame(colors, len, { shake:true })`——utils.js:411 把第 3 个 effect 参数**原样 return**，全库闪色开场通用，无需包函数。
+- **只加「进入瞬间玩家没预期」的场景，分支场景必须加条件**（否则二次进入莫名震动）。三个范式：`!(vars._visit['X-清场'] > 0)`、`!vars._wearingCleanSuit && !(vars._visit['X-围攻-胜'] > 0)`、`if (vars.FamilymartHasZombie)`。
+- **禁加**：高频反复进入的枢纽（三林路/各十字路口/新达汇走廊）、纯远距离观察铺垫。**全库上限 25–35 处**，已到 31，停止扩张。
+- 待办：反派 NPC 3 处（`反派NPC.js:29 路霸-堵路` 建议不加——"缓慢施压"型语义不贴）。报告 `tools/抖动动画适用位置推荐.md`。
+- **改剧情后若新调用了 engine 全局函数，`tools/condition_audit.js` 沙箱要补桩**（已含 `flashStatusWarning/flashStatus/showToast/notify/triggerShake`），否则假报 `X is not defined`。
+
+## 10. 待确认
 - 樱桃苑民防日记「7月14日…被困第十四天」vs 开局 6/29，第 1–2 天即可读到 —— 是否有意伏笔？

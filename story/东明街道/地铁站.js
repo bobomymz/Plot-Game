@@ -437,7 +437,7 @@ Object.assign(storyData, {
   "地铁站-楼梯-滑扶手-撞": {
     image: "images/hurtByzombie.webp",
     onEnter: { add: { strength: -1, mercuryLoad: 10 }, set: { hurtByZombie: true } },
-    text: "你来不及调整，直接撞上了它。你和丧尸一起摔在台阶上，滚了两圈。你挣扎着推开它的手臂和嘴巴——它咬了你一口。\n你终于把它踹开，爬起来一瘸一拐地冲进了站台。",
+    text: "你来不及调整，直接撞上了它。你和丧尸一起摔在台阶上，滚了两圈。你挣扎着推开它的手臂和嘴巴——它咬了你一口。\n你终于把它踹开，爬起来一瘸一拐地冲进了站台。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "跑进站台",
@@ -530,7 +530,7 @@ Object.assign(storyData, {
 
   "地铁站-站台层-硬冲": {
     image: "images/placeholder.png" /* TODO: images/地铁站/platform.png */,
-    onEnter: { add: { chasedByZombies: 2 } },
+    onEnter: { add: { chasedByZombies: 2 }, shake: true },
     text: function(vars) {
       var desc = "你撒腿就跑。站台上的丧尸被你突然的动作惊动，从各个方向朝你追来。\n\
 你在一排排屏蔽门之间狂奔，身后拖着一串越来越长的脚步声和嘶吼声。列车门就在前方——你冲进去的时候，最近的一只丧尸离你只有几步之遥。\n你转过身，面对着正在涌来的丧尸群，站在车厢里大口喘气。";

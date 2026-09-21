@@ -168,7 +168,7 @@ Object.assign(storyData, {
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiGateCleared: true } };
     },
     text: function(vars) {
-      return "你没能及时看清——一只丧尸从斜刺里扑上来，爪子划过你的手臂。你踉跄着冲出重围，跌跌撞撞地摔进了门诊大厅。" + weaponBrokeText(vars);
+      return "你没能及时看清——一只丧尸从斜刺里扑上来，爪子划过你的手臂。你踉跄着冲出重围，跌跌撞撞地摔进了门诊大厅。" + weaponBrokeText(vars) + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -643,7 +643,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return [
         "它的爪子划过了你的肩膀。你踉跄着躲开，反手一击，终于把它打倒在地。" + weaponBrokeText(vars),
-        "<strong>它趴在挂号台后面，病号服不再起伏。</strong>肩膀发沉，血从领口往锁骨渗。"
+        "<strong>它趴在挂号台后面，病号服不再起伏。</strong>肩膀发沉，血从领口往锁骨渗。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>"
       ];
     },
     choices: [
@@ -925,7 +925,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return [
         "它抓伤了你的手臂，但你最终还是把它打倒了。" + weaponBrokeText(vars),
-        "<strong>它瘫在操作台边，不再动弹——这只丧尸已经被你解决。</strong>你喘着粗气，袖管湿透了，血往手肘流。"
+        "<strong>它瘫在操作台边，不再动弹——这只丧尸已经被你解决。</strong>你喘着粗气，袖管湿透了，血往手肘流。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>"
       ];
     },
     choices: [
@@ -1220,7 +1220,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return [
         "你被它抓了一下。" + weaponBrokeText(vars),
-        "<strong>它的头磕在输液架底座上，滑坐下来。</strong>抓痕在发热，往外渗。"
+        "<strong>它的头磕在输液架底座上，滑坐下来。</strong>抓痕在发热，往外渗。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>"
       ];
     },
     choices: [
@@ -1516,7 +1516,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return [
         "它的力气大得惊人，你被它撞在墙上，肩膀一阵剧痛。但你还是把它砸趴了。" + weaponBrokeText(vars),
-        "<strong>它趴在冰柜缝里，黑皮不再起伏。</strong>你靠着墙，剧烈地喘着气。"
+        "<strong>它趴在冰柜缝里，黑皮不再起伏。</strong>你靠着墙，剧烈地喘着气。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-3，当前体力：{strength}。</span>"
       ];
     },
     choices: [

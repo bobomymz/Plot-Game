@@ -64,7 +64,7 @@ Object.assign(storyData, {
 
   "什么都没有": {
     image: "images/home/nothingUnderBed.webp",
-    text: "床底什么都没有，说了什么都没有。",
+    text: "床底什么都没有，说了什么都没有。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     onEnter: {
       add: { strength: -1 }
 // 反复查看会扣体力，然后累死（搞笑）
@@ -1878,7 +1878,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "小区草地-被追": {
     image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地被追-雨天.webp" : "images/home/小区草地被追.webp"; },
     onEnter: { add: { chasedByZombies: 2, strength: -1 } },
-    text: "你犹豫太久了。一只丧尸已经走到了你面前，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。",
+    text: "你犹豫太久了。一只丧尸已经走到了你面前，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "冲进物业楼",
