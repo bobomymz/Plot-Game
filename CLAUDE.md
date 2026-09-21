@@ -49,6 +49,7 @@ explorer index.html
 | 图片查看器（`imageZoom` 标记/🔍角标/缩放平移/QTE 协同） | CLAUDE.md「图片查看器」节 + engine.js「图片查看器」节 |
 | 新机制（感冒/户外/疲劳/冷兵器分级） | 见下方各处，勿只看一处 |
 | 地理结构优化/图审计（区域重构流程、指标红线） | `.claude/skills/geo-optimization/SKILL.md` + `node tools/graph_audit.mjs <区域>` |
+| 剧情测试/走查（L1 lint·L4 E2E helper·坑点清单·无截图原则） | `.claude/skills/story-testing/SKILL.md` + `node tools/lint_story.mjs` / `tools/test_helper.mjs` |
 
 ### 新增机制的四处同步清单
 加可复用机制时按需更新：core.js(变量+computed+rule) · utils.js(函数) · engine.js(若改行为) · 本表对应行。
@@ -995,6 +996,7 @@ C类（户外暴露地形）：绝不出现 — 街道、十字路口、高架�
 - 具体内容请参考设计细节.md和具体代码，涉及较广
 
 ## 测试
+- **测试统一走 story-testing skill**（`.claude/skills/story-testing/SKILL.md`）：改动类型→测试组合决策表、`node tools/lint_story.mjs` 静态体检、`tools/test_helper.mjs` E2E 底座（内置服务器+按文字选按钮+控时+传送+收404/console）、无截图三层断言法、坑点清单。
 - 尽量从玩家视角进行测试
 Playwright MCP vs Chrome DevTools MCP
 

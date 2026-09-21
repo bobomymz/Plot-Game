@@ -261,20 +261,32 @@ Object.assign(storyData, {
         return "你的水瓶里还有水。饮水机还在嗡嗡作响，但暂时用不上。";
       }
       if (vars._waterDispenserUses >= 10) {
-        return "你按下出水键，但只流出几滴——饮水机的水箱已经空了。滤芯指示灯不知什么时候变成了红色。";
+        return "饮水机还在嗡嗡作响，出水口下方的接水盘却是干的。你掀开出水口上方那扇蓝色水位窗看了看——水箱见底了，滤芯指示灯不知什么时候变成了红色。";
       }
-      return "饮水机还在运行。\n你把空水瓶放到出水口下面，按下出水键——清亮的水哗哗地灌进瓶口，几秒钟就装满了。";
+      return "饮水机还在运行，滤芯指示灯闪着绿光。你掀开出水口上方那扇蓝色水位窗看了看——还剩小半箱，够打好几次。\n出水口下面的接水盘干干净净，等着下一只瓶子。";
     },
     choices: [
       {
         showCondition: "hasBottle && bottleWater == 0 && _waterDispenserUses < 10",
-        text: "接水",
-        effect: updateTime(2, { add: { _waterDispenserUses: 1, bottleWater: 1 }, set: { waterToxic: false } }),
-        nextScene: "长者食堂-饮水机"
+        text: "用饮水机接水",
+        effect: updateTime(2),
+        nextScene: "长者食堂-饮水机-接水"
       },
       {
         text: "离开",
         nextScene: "长者食堂-内部"
+      }
+    ]
+  },
+
+  "长者食堂-饮水机-接水": {
+    image: "images/小区周边/长者食堂/饮水机.webp",
+    onEnter: { add: { _waterDispenserUses: 1, bottleWater: 1 }, set: { waterToxic: false } },
+    text: "你把空水瓶从包里抽出来，拧开瓶盖，对准出水口，按下出水键——\n清亮的水哗哗地灌进瓶口，几秒钟就装满了。你拧紧盖子，瓶壁透出一层凉意，水面贴着瓶口轻轻晃。\n滤芯指示灯还是绿的。",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "长者食堂-饮水机"
       }
     ]
   },

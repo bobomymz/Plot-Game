@@ -524,7 +524,7 @@ Object.assign(storyData, {
       },
       {
         text: "去地铁站",
-        nextScene: "11号线-三林东路站",
+        nextScene: "11号线-三林东站",
         effect: updateTime(2)
       },
       {
@@ -532,7 +532,7 @@ Object.assign(storyData, {
         text: "躲到大树后面",
         nextScene: "东明路-三林路-躲藏"
       },
-      sprintAway(["三林路-东明路 十字路口", "图书馆", "上实南校门口", "11号线-三林东路站"])
+      sprintAway(["三林路-东明路 十字路口", "图书馆", "上实南校门口", "11号线-三林东站"])
     ]
   },
 

@@ -43,8 +43,9 @@ let _server = null; // 单例：同进程多次 launchGame 复用
 export async function startServer(port = DEFAULT_PORT) {
   if (_server) return { port: _server.port, url: _server.url, close() {} }; // 已有实例
   for (let p = port; p < port + 5; p++) {
-    // 端口被占时先探测：若已在服务本游戏（页面含标题）则直接复用
-    const probe = await fetch(`http://127.0.0.1:${p}/index.html`).then((r) => (r.ok ? r.text() : null)).catch(() => null);
+    // 端口被占时先探测（带超时：孤儿服务器会 accept 但不响应，fetch 必须能跑完）
+    const probe = await fetch(`http://127.0.0.1:${p}/index.html`, { signal: AbortSignal.timeout(2000) })
+      .then((r) => (r.ok ? r.text() : null)).catch(() => null);
     if (probe && probe.includes("尸潮笔记")) return { port: p, url: `http://127.0.0.1:${p}/`, close() {} };
 
     const ok = await new Promise((resolve) => {
@@ -222,7 +223,7 @@ class Game {
       out += `\n[${title}: ${dedupe(arr).length}]\n`;
       dedupe(arr).slice(0, cap).forEach((x) => (out += "  " + x.slice(0, 200) + "\n"));
     };
-    sec("Console错误", this.art.consoleErrors);
+    sec("Console错误", this.art.consoleErrors.filter((t) => !t.includes("favicon")));
     sec("页面异常", this.art.pageErrors);
     sec("资源失败", f);
     if (!this.art.consoleErrors.length && !this.art.pageErrors.length && !f.length) out += "\n[全部干净 ✔]\n";
@@ -232,5 +233,5 @@ class Game {
   /** 人工验收模式：保持浏览器打开（headed 启动 + 本方法 = 给人看的现场，Ctrl+C 结束） */
   async keepOpen() { console.log("(浏览器保持打开，Ctrl+C 结束)"); await new Promise(() => {}); }
 
-  async close() { await this.browser.close(); }
+  async close() { await this.browser.close(); if (_server) { _server.srv.close(); _server = null; } }
 }

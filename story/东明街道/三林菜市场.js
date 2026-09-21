@@ -191,11 +191,11 @@ Object.assign(storyData, {
       var cs = [];
       if (vars.fangTradeCount >= 3) {
         // 满3次交易后，方姐已尸变——再进冷库深处即死
-        cs.push({ text: "推开门进去", nextScene: "菜市场-方姐尸变" });
+        cs.push({ text: "拉开门进去", nextScene: "菜市场-方姐尸变" });
       } else if (vars.hh >= 12 && vars.hh <= 15) {
-        cs.push({ text: "推开门进去", nextScene: "菜市场-交易点", effect: updateTime(1) });
+        cs.push({ text: "拉开门进去", nextScene: "菜市场-交易点", effect: updateTime(1) });
       } else {
-        cs.push({ text: "推开门进去", nextScene: "菜市场-冷库区-闭门羹", effect: updateTime(1) });
+        cs.push({ text: "拉开门进去", nextScene: "菜市场-冷库区-闭门羹", effect: updateTime(1) });
       }
       cs.push({ text: "去菜市场大厅", nextScene: "菜市场-大厅", effect: updateTime(2) });
       cs.push({ text: "去员工通道", nextScene: "菜市场-员工通道", effect: updateTime(2) });
