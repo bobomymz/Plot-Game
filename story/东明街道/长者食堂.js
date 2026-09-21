@@ -73,7 +73,7 @@ Object.assign(storyData, {
   },
 
   "长者食堂-关门": {
-    image: "images/小区周边/长者食堂/内部.webp",
+    image: "images/placeholder.png",
     text: "你关上了门。店里的椅子东倒西歪，打饭区好像没有剩下什么食物。你摇了摇头，看向旁边的墙壁。\n\
 “扫码注册充值，即可享用美食。”\n\
 砰砰砰————！\n\

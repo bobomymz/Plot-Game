@@ -228,7 +228,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "去那户虚掩着门的人家看看",
-        nextScene: "三林安居苑-7号楼-1楼",
+        nextScene: "三林安居苑-7号楼-1楼门口",
         effect: updateTime(4)
       },
       {
@@ -251,7 +251,7 @@ Object.assign(storyData, {
         text: "躲进灌木丛",
         nextScene: "三林安居苑-小区内部-躲藏"
       },
-      sprintAway(["三林安居苑-7号楼-1楼", "三林安居苑-8号楼-1楼", "三林安居苑-小广场", "安居苑前门"])
+      sprintAway(["三林安居苑-7号楼-1楼走廊", "三林安居苑-8号楼-1楼", "三林安居苑-小广场", "安居苑前门"])
     ]
   },
 
@@ -272,7 +272,8 @@ Object.assign(storyData, {
       vars.positionAfterOperation = "三林安居苑-滑板车";
     },
     text: function(vars) {
-      var desc = "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。小广场一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
+      var desc = "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。\n\
+小广场另一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
 再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。";      
       if (vars._lastScene === "三林安居苑-鹅卵石路" && vars.hasKey502) {
         desc += "\n你捏了捏口袋里那枚钥匙——上面写着“502”，对应七号楼五楼那扇门。";
@@ -301,7 +302,7 @@ Object.assign(storyData, {
       },
       {
         showCondition: "chasedByZombies <= 1",
-        text: "在长亭的石阶上坐一会儿",
+        text: "在石阶上坐一会儿",
         nextScene: "三林安居苑-小广场-歇脚",
         effect: updateTime(1)
       },
@@ -333,7 +334,8 @@ Object.assign(storyData, {
       return updateTime(15, { set: { _travelMinutes: 0 } })(vars);
     },
     text: function(vars) {
-      return "你在长亭的石阶上坐下——就是小时候奶奶坐着看你玩滑板车的那圈台阶。亭檐挡去了大半天光，小区里静得能听见花坛那头的虫鸣。\n露天的位置本不敢久坐，但院墙把街面上的动静隔得很远；真有什么，从这儿跑回楼道也就几步路。你盯着那段鹅卵石路，歇了十五分钟。" + restHint(vars);
+      return "你在石阶上坐下——就是小时候奶奶坐着看你玩滑板车的那圈台阶。露天的位置本不敢久坐，但若真有什么，从这儿跑回楼道也就几步路。\n\
+你盯着那个长亭，歇了十五分钟。" + restHint(vars);
     },
     choices: [
       {
@@ -391,8 +393,8 @@ Object.assign(storyData, {
     },
     onEnter: {set: {positionAfterOperation: "三林安居苑-小广场", showRain: true}},
     text: function(vars) {
-      let basicDes = "你走到了鹅卵石路。鹅卵石路是一条老路，上面的鹅卵石很老，但是很平滑。\n";
-      if(!vars.hasKey502) basicDes += "你走着走着，发现鹅卵石路的尽头是一个老式的自行车，车筐里塞着半袋没来得及拿上楼的菜。\n\
+      let basicDes = "你走到长亭后的鹅卵石路边。鹅卵石路是一条老路，上面的鹅卵石很老，但是很平滑。\n";
+      if(!vars.hasKey502) basicDes += "走着走着，发现鹅卵石路的尽头是一个老式的自行车，车筐里塞着半袋没来得及拿上楼的菜。\n\
 你骑上去试了试。很可惜，这个自行车上锁了。车篮里有一把钥匙，但不是车锁的钥匙，上面写着“502”。"
       return basicDes + "\n" + describeWeather(vars);
     },
@@ -551,7 +553,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "快走！",
-        nextScene: "安居苑前门"
+        nextScene: "三林安居苑-小广场"
       }
     ]
   },
@@ -1160,13 +1162,27 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     ]
   },
   // ========== 居民楼 ==========
-
-  "三林安居苑-7号楼-1楼": {
+  "三林安居苑-7号楼-1楼门口": {
     image: "images/安居苑/居民楼1楼.webp",
+    text: "你走到7号楼门口，铁门大开，楼道幽暗。即使是夏天，里面仍透出一丝阴冷。",
+    choices: [
+      {
+        text: "进去看看",
+        nextScene: "三林安居苑-7号楼-1楼走廊"
+      },
+      {
+        text: "离开",
+        nextScene: "三林安居苑-小区内部"
+      },
+    ]
+  },
+
+  "三林安居苑-7号楼-1楼走廊": {
+    images: "images/placeholder.png",
     onEnter: { set: { currentPos: "居民楼" } },
     text: function(vars) {
       var desc = "";
-      if (vars._visit["三林安居苑-7号楼-1楼"] <= 1) {
+      if (vars._visit["三林安居苑-7号楼-1楼走廊"] <= 1) {
         desc = "你走进7号居民楼的入口。";
       }
       desc += "楼道里很暗，只有安全出口指示牌发出微弱的绿光。墙上一排信箱锈迹斑斑，好几格的盖子都掉了下来，里面塞着积了灰的广告传单和催缴单。\n\
@@ -1186,13 +1202,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       },
       {
         text: "退出去",
-        nextScene: "三林安居苑-小区内部"
+        nextScene: "三林安居苑-7号楼-1楼门口"
       },
       {
         showCondition: "itemCount > 0",
         text: "🎒整理一下物品",
         nextScene: "整理整理",
-        effect: { set: { positionAfterOperation: "三林安居苑-7号楼-1楼" } }
+        effect: { set: { positionAfterOperation: "三林安居苑-7号楼-1楼走廊" } }
       }
     ]
   },
@@ -1219,7 +1235,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       },
       {
         text: "不冒险了，退出去",
-        nextScene: "三林安居苑-7号楼-1楼"
+        nextScene: "三林安居苑-7号楼-1楼走廊"
       }
     ]
   },
@@ -1234,7 +1250,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       { text: "推开201的门", nextScene: "三林安居苑-7号楼-201" },
       { text: "推开202的门", nextScene: "三林安居苑-7号楼-202" },
       { text: "继续上楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) },
-      { text: "下楼", nextScene: "三林安居苑-7号楼-1楼", effect: updateTime(1) },
+      { text: "下楼", nextScene: "三林安居苑-7号楼-1楼走廊", effect: updateTime(1) },
       {
         showCondition: "itemCount > 0",
         text: "🎒整理一下物品",

@@ -1114,7 +1114,7 @@ Object.assign(storyData, {
         text: "一脚踹过去",
         nextScene: "安盛街-服装店反击",
         condition: "strength >= 3",
-        elseScene: "结局-安盛街-试衣间丧尸扑脸"
+        elseScene: "结局-安盛街-试衣间丧尸扑脸-力竭"
       },
       {
         text: "快跑！",
@@ -1126,6 +1126,14 @@ Object.assign(storyData, {
   "结局-安盛街-试衣间丧尸扑脸": {
     image: "images/zombieKnockYouDown.webp",
     text: "丧尸猛地扑到你身上，你失去平衡仰面摔倒。\n还没来得及挣扎，它已经咬了下来。\n\n—— 结局：试衣间丧尸 ——"
+  },
+
+  "结局-安盛街-试衣间丧尸扑脸-力竭": {
+    image: "images/zombieKnockYouDown.webp",
+    text: "你抬脚踹了过去，可这一脚轻飘飘的，连它的冲势都没能挡下。\n\
+女丧尸扑到你身上，你仰面摔进试衣间里，后脑磕在墙上。\n\
+它已经咬了下来。\n\
+\n—— 结局：试衣间丧尸 ——"
   },
 
   "安盛街-服装店反击": {
@@ -1417,6 +1425,15 @@ Object.assign(storyData, {
     text: "你在街道中央犹豫了太久。\n尸潮像一面墙一样压了过来，无数双手抓住了你的衣服、手臂、脖子……\n你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\n—— 结局：被尸潮吞没 ——"
   },
 
+  "结局-安盛街-被尸潮吞没-力竭": {
+    image: "images/zombiesBeatYou.webp",
+    text: "你挑了个看起来最薄的缺口，闷头冲过去。\n\
+可没跑出两步，大腿就酸得发软——你一头撞进人墙里，反倒被夹在了当中。\n\
+尸潮像一面墙一样合拢过来，无数双手抓住了你的衣服、手臂、脖子……\n\
+你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\
+\n—— 结局：被尸潮吞没 ——"
+  },
+
   "安盛街-逃往安居苑": {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/runToAnJuYuan.png */,
     onEnter: updateTime(2, { set: { showRain: true }, add: { chasedByZombies: 1 } }),
@@ -1487,7 +1504,7 @@ Object.assign(storyData, {
         text: "硬闯前面的缺口",
         nextScene: "安盛街-冲出包围",
         condition: "strength >= 4",
-        elseScene: "结局-安盛街-被尸潮吞没"
+        elseScene: "结局-安盛街-被尸潮吞没-力竭"
       }
     ]
   },

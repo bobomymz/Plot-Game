@@ -494,6 +494,15 @@ Object.assign(storyData, {
     }
   },// 会自动给出重新开始按钮
 
+  "结局-被丧尸扑倒咬死-力竭": {
+    image: "images/zombieKnockYouDown.webp",
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 体力不足专版，与共享节点保持同样的断武器处理
+    text: function(vars) {
+      return "你抬脚迎了上去，可这一下软绵绵的，没能把它推开半分。\n丧尸冲了上来，猛地把你扑倒在地。你想撑起身子，胳膊却使不上一点劲。" + weaponBrokeText(vars) + "\n\
+—— 结局：被丧尸扑倒咬死 ——";
+    }
+  },
+
   "结局-1楼-party": {
     image: "images/home/1楼-party.webp",
     text: "你到了一楼大厅。一群丧尸正在开party，一看见你就<em><span style='color:red;'>非常热情</span></em>地围拢过来。\n你甚至来不及尖叫。\n\n—— 结局：一楼派对 ——",
@@ -686,7 +695,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         text: "不管它，不如先躲回家",
         nextScene: "反杀老6",
         condition: "strength > 2",
-        elseScene: "结局-背后的偷袭"
+        elseScene: "结局-背后的偷袭-力竭"
       }
     ]
   },
@@ -720,11 +729,13 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     ]
   },
 
-  "结局-背后的偷袭": {
+  "结局-背后的偷袭-力竭": {
     image: "images/home/zombieAwake.webp",
     onEnter: {shake: true},
-    text: "你对ta丧失了兴趣，转身离开。\n\
-只听得背后传来木头长椅的嘎吱一响，背后阴风袭来。你只感觉脖颈一痛，便失去了知觉。\n\
+    text: "你不想再多生事端，转身往家走。\n\
+可双腿沉得厉害，你想快走两步，膝盖却像灌了铅。\n\
+身后传来木头长椅的一声轻响——等你反应过来要回头，那道阴风已经贴到了后颈。\n\
+你只觉得颈侧一痛，眼前一黑，便什么都不知道了。\n\
 —— 结局：背后的偷袭 ——"
   },
 
@@ -762,19 +773,19 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         text: "脚",
         nextScene: "结局-嘎吱嘎吱",
         condition: "strength > 1",
-        elseScene: "结局-被丧尸扑倒咬死"
+        elseScene: "结局-被丧尸扑倒咬死-力竭"
       },
       {
         text: "头",
         nextScene: "KO丧尸",
         condition: "strength > 1",
-        elseScene: "结局-被丧尸扑倒咬死"
+        elseScene: "结局-被丧尸扑倒咬死-力竭"
       },
       {
         text: "身体",
         nextScene: "击退丧尸",
         condition: "strength > 2",
-        elseScene: "结局-被丧尸扑倒咬死"
+        elseScene: "结局-被丧尸扑倒咬死-力竭"
       }
     ]
   },
