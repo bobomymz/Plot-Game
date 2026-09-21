@@ -94,7 +94,9 @@ const storyData = {
     // --- 物品状态 ---
     // 常规物品
     itemCount: 0,              // 物品数量
-    bagVolume: 3,              // 背包容量（最大物品数量）
+    bagVolume: 3,              // 背包容量（最大物品数量）：占位初值，实际由 _reactive.computed 按 3+_bagTier+_bagExtra 重算，剧情勿直接改
+    _bagTier: 0,               // 主背包档位 0=默认背包(+0) 1=双肩包(+1) 2=书包(+2)；可换包，只升不降
+    _bagExtra: 0,              // 附件加成（袋子等，如帆布袋 +1）
     hasBroom:  false,          // 是否有扫帚（民防设施等候室）
     hasDiary:  false,          // 是否有日记本（民防设施等候室桌上）
     hasTorch:  false,          // 是否有手电筒（民房设施等候室桌子抽屉）
@@ -148,7 +150,9 @@ const storyData = {
     hasScooter: false,         // 是否有滑板车
     hasRustyBike: false,       // 是否有锈蚀的自行车
     // 特殊道具（不占背包）
-    hasBag: false,             // 是否有背包（bagVolume+1）
+    hasBag: false,             // 是否有帆布袋（附件，_bagExtra+1）；三处可拾取（安盛街文具店铁柜/新达汇2F杂物间/安居苑7号楼卧室）
+    hasBackpack: false,        // 是否拿过双肩包（安居苑203室，_bagTier→1）
+    hasSchoolbag: false,       // 是否拿过书包（建平挹芬楼3F高一教室，_bagTier→2）
     hasMercuryPill: false,      // 是否有甲基汞抑制剂（童涵春堂无标签药丸）
     // 仁济医院 - 医疗物资（占背包，全图唯一）
     hasAntibiotic: false,   // 抗生素（仁济门诊药房）
@@ -334,6 +338,9 @@ const storyData = {
       isNight:     "hh >= 19 || hh < 6",
       minutesBetweenReduceStrength: "(hurtByZombie && hasCold) ? 30 : (hurtByZombie ? 60 : (hasCold ? 80 : 120))", // 饥饿间隔（分钟）：健康2h扣1，受伤1h扣1，感冒80min，感冒+受伤30min（受伤/感冒都会让体力掉更快，叠加更快）
       canSee: function(v) { return canSee(v); },
+      // 背包容量 = 默认背包 3 + 主背包升级档位 + 附件加成（帆布袋等）。
+      // 不要直接 add/set bagVolume——改 _bagTier / _bagExtra 即可，本式计算自动跟随。
+      bagVolume: function(v) { return 3 + (v._bagTier || 0) + (v._bagExtra || 0); },
       hasFood: function(v) { return hasFood(v); }, // 是否有食物
       zombieAtHomeDoor: function(v) { return zombieAtHomeDoor(v); }, // 丧尸还在门口
       hasNoTransportation: function(v) { return hasNoTransportation(v); }, // 是否没有交通工具
@@ -713,8 +720,8 @@ const storyData = {
       },
       {
         showCondition: "hasBag",
-        text: "丢下帆布包",
-        effect: updateTime(1, { set : { hasBag: false }, add: { bagVolume: -1 } }),
+        text: "丢下帆布袋",
+        effect: updateTime(1, { set : { hasBag: false }, add: { _bagExtra: -1 } }),
         nextScene: "整理整理"
       },
       {

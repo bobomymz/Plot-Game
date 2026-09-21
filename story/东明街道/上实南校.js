@@ -70,22 +70,54 @@ Object.assign(storyData, {
   "上实南校-1号楼走廊": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor.png */,
     text: "你走进1号楼。走廊两侧是教室，门有的开着有的关着，黑板上还留着粉笔字。午后的阳光从窗户斜射进来，照得空气中悬浮的粉笔灰像细小的雪粒，在光柱里缓缓浮动。\n\
-走廊尽头有几只穿着校服的丧尸在游荡——它们听到你的脚步声，缓缓转过头来。走廊地板上一片狼藉——书包、水杯散落一地，墙上有几道暗红色的抓痕，看来大部分人成功跑出去了。你没有时间细看，侧身闪进最近的一间办公室，关上了门。\n\
+走廊尽头有几只穿着校服的丧尸在游荡——它们听到你的脚步声，缓缓转过头来。走廊地板上一片狼藉——书包、水杯散落一地，墙上有几道暗红色的抓痕，看来大部分人成功跑出去了。你侧身闪进最近的一间办公室，关上了门。\n\
 这是一间教务室。办公桌上堆着作业本和教案，角落里有一个铁皮柜，上面挂着一把弹子锁，不知道钥匙在哪里。",
-    choices: [
-      {
+    choices: function(vars) {
+      var cs = [];
+      // 书包（容量5）：容量已 >=5 就不必再换
+      if (vars._bagTier < 2) {
+        cs.push({
+          text: "顺手捡起一只书包",
+          nextScene: "上实南校-1号楼走廊-捡书包",
+          effect: updateTime(1)
+        });
+      }
+      cs.push({
         text: "翻办公桌抽屉",
         nextScene: "上实南校-教务室-翻桌",
         effect: updateTime(2)
-      },
-      {
-        showCondition: "hasCutter",
-        text: "用美工刀割开铁皮柜的锁",
-        nextScene: "上实南校-教务室-开柜"
-      },
-      {
+      });
+      if (vars.hasCutter) {
+        cs.push({
+          text: "用美工刀割开铁皮柜的锁",
+          nextScene: "上实南校-教务室-开柜"
+        });
+      }
+      cs.push({
         text: "不搜了，离开",
         nextScene: "上实南校-天桥"
+      });
+      return cs;
+    }
+  },
+
+  "上实南校-1号楼走廊-捡书包": {
+    image: "images/placeholder.png" /* TODO: images/上实南校/schoolCorridor.png */,
+    onEnter: { set: { positionAfterOperation: "上实南校-1号楼走廊" } },
+    text: function(vars) {
+      var base = "你飞快地从地上勾过一只书包——拉链还开着，里面的课本滑了出来。宽肩带，双拉链，侧面两个网兜，比你身上那个能装。\n\
+走廊尽头那几只丧尸正朝这边转过来。你没敢多看，把书包甩到肩上，退回办公室门口。";
+      if (vars.hasBag) {
+        base += "帆布袋收紧抽绳挂在包侧，还能再塞点零碎。";
+      }
+      base += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】换上了书包，背包容量+1，当前容量：{bagVolume}。</span>";
+      return base;
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: "上实南校-天桥",
+        effect: { set: { hasSchoolbag: true, _bagTier: 2 } }
       }
     ]
   },

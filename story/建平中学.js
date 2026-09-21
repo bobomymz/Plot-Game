@@ -3198,9 +3198,34 @@ Object.assign(storyData, {
           cs.push({ text: "用钥匙串开讲台锁", nextScene: "建平-挹芬楼-3F-高一教室-讲台" });
         }
       }
+      // 书包（容量5）：容量已 >=5 就不必再换
+      if (vars._bagTier < 2) {
+        cs.push({ text: "从地上捡一只书包", nextScene: "建平-挹芬楼-3F-高一教室-捡书包", effect: updateTime(1) });
+      }
       cs.push({ text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  "建平-挹芬楼-3F-高一教室-捡书包": {
+    image: "images/placeholder.png",
+    onEnter: { set: { positionAfterOperation: "建平-挹芬楼-3F-高一教室" } },
+    text: function(vars) {
+      var base = "你从地上拎起一只书包，抖掉上面的灰。宽肩带，双拉链，侧面还有两个网兜——比你现在背的那个能装。\n\
+你把里面的卷子和半盒粉笔倒出来，只留下了包本身。";
+      if (vars.hasBag) {
+        base += "帆布袋收紧抽绳挂在包侧，还能再塞点零碎。";
+      }
+      base += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】换上了书包，背包容量+1，当前容量：{bagVolume}。</span>";
+      return base;
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: "建平-挹芬楼-3F-高一教室",
+        effect: { set: { hasSchoolbag: true, _bagTier: 2 } }
+      }
+    ]
   },
 
   "建平-挹芬楼-3F-高一教室-讲台": {

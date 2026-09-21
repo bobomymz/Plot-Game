@@ -611,8 +611,13 @@ Object.assign(storyData, {
 | `_travelMinutes` | 0–… | 连续移动累积分钟（>6min 的 `updateTime` 累加）；20/36/48/56/60 五档各 -1 体力（reactive） |
 | `_fatiguePaid` | 0–5 | 本段连续移动已扣疲劳档位；里程归零时 travel-fatigue 规则自动清零（2026-09-20 起），剧情勿改 |
 | **背包 & 物品** | | |
-| `itemCount` / `bagVolume` | int | 当前物品数 / 背包容量（初始 3） |
-| `hasXxx` | bool | 物品flag，添加时需同时 `add: { itemCount: 1 }`。交通工具和背包不占 `itemCount` |
+| `itemCount` | int | 当前物品数 |
+| `bagVolume` | int | 背包容量 = `3 + _bagTier + _bagExtra`。**computed 派生值，剧情勿直接 set/add**，改下面两个： |
+| `_bagTier` | 0/1/2 | 主背包档位：0=默认背包(3格)、1=双肩包(4格·安居苑203室)、2=书包(5格·建平挹芬楼3F高一教室)。**只升不降**，换包是「换」不是「加」 |
+| `_bagExtra` | int | 附件加成：帆布袋 +1（`hasBag` 管三处拾取） |
+| `hasBag` | bool | 是否有帆布袋（袋子，附件类，非主背包） |
+| `hasBackpack` / `hasSchoolbag` | bool | 是否拿过双肩包 / 书包（记录用，不影响容量） |
+| `hasXxx` | bool | 物品flag，添加时需同时 `add: { itemCount: 1 }`。交通工具、背包、袋子不占 `itemCount` |
 | **记忆系统** | | |
 | `gameMemorySet` / `personalMemorySet` | `Set` | 已收集的记忆，`gameMemoryThres`（10）为结局阈值 |
 
@@ -724,6 +729,37 @@ Object.assign(storyData, {
 4. **文案统一 "🎒整理一下物品"**（🎒 让它在选项列表里醒目），自由入口统一带 `showCondition: "itemCount > 0"`（空背包不显示）。背包满时的强制入口（"背包满了，先整理一下"）不属于此规范，维持原样。
 
 现有入口分布：家（初始卧室/客厅）、理发店×2、图书馆大厅、民防设施-等候区、安居苑 7 号楼 1-6 楼/天台/502、8 号楼 1/2 楼、小广场、全家、联华超市+仓库、银行保安室、益丰待客区、长者食堂、安盛街中段/西侧、新达汇 1-5F 电梯厅、小区东门/西门、建平中学各处。
+
+### 背包容量体系（主背包 + 袋子）
+
+设计原则：**玩家最多带「一个主背包 + 一个袋子」**（再多就没手对付丧尸了）。容量分两层，可叠加：
+
+| 层 | 变量 | 加成 | 说明 |
+| --- | --- | --- | --- |
+| 主背包 | `_bagTier` | 0 / +1 / +2 | 默认背包(3格) → 双肩包(4) → 书包(5)。**换包只升不降**，`_bagTier` 存档位而不是累加 |
+| 袋子 | `_bagExtra` | +1 | 帆布袋（`hasBag`）。三处可拾取，拿到后全局都隐藏 |
+
+`bagVolume` 是 **computed 派生值**（`3 + _bagTier + _bagExtra`），**剧情代码永远不要 `set/add bagVolume`**——只改 `_bagTier` / `_bagExtra`，引擎会在每次状态变更后自动重算。
+
+**新增主背包的标准写法**（以双肩包为例）：
+
+```javascript
+// 闸门：容量已 >= 该包容量就不显示（避免让玩家换小的）
+if (vars._bagTier < 1) {
+  opts.push({ text: "背走这只双肩包", nextScene: "XXX-背走双肩包", effect: updateTime(1) });
+}
+// 结果节点：set 档位，不要 add bagVolume
+choices: [{ text: "继续", nextScene: "原场景", effect: { set: { hasBackpack: true, _bagTier: 1 } } }]
+```
+
+**新增袋子**：`set: { hasBag: true }, add: { _bagExtra: 1 }`，闸门 `showCondition: "!hasBag"`。
+
+**要点**：
+- 档位闸门用 `vars._bagTier < N`（N = 该包档位），**不要用 `!hasXxx`**——换包语义下 `!hasXxx` 会让已经拿了小包的玩家看见"换更小包"的选项。
+- 结果节点用 `set: { _bagTier: N }` 而非 `add`，天然实现"换包不叠加"。
+- 当前两个主背包：双肩包(档位1·安居苑8号楼203室·场景 `三林安居苑-8号楼-203室-双肩包`)、书包(档位2·建平挹芬楼3F高一教室·场景 `建平-挹芬楼-3F-高一教室`)。
+- 帆布袋三处入口：安盛街-文具店铁柜、新达汇-2F杂物间、三林安居苑-卧室-仔细。
+- 回归工具：`node tools/bag_volume_selftest.js`（27 断言：默认值/单包/换包不叠加/包+袋叠加/闸门可见性/丢袋回退/三入口并存）。
 
 ### 全图唯一物品（同种物品多点可拿）
 

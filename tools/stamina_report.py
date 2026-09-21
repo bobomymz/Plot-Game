@@ -18,6 +18,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 引擎/辅助函数改版后行号漂移，按区间匹配；区间外的落回原始 file:line。
 # ⚠ 维护提醒：story/core.js 的区间会随「在 _variables 里增删变量」整体平移。
 #   2026-09-20 在 core.js:61 插入 8 行变量声明，下方 core.js 区间已整体校正（+8 后再按实际内容对齐）。
+#   2026-09-21 在 core.js:96 附近插入 5 行背包变量（_bagTier/_bagExtra/hasBackpack/hasSchoolbag + bagVolume 注释），
+#              下方 core.js 区间再次整体 +5 校正。
 #   若日后再往 _variables 增删行，记得同步这里的 core.js 区间，或跑 tools/stamina_audit.py 对照真实行号。
 KNOWN_SITES = [
     ("utils.js",  63,  70, "休息恢复(通用·REST_CAP)"),
@@ -25,12 +27,12 @@ KNOWN_SITES = [
     ("utils.js", 199, 214, "冲刺甩追兵"),
     ("utils.js", 355, 374, "战斗·近战胜利"),
     ("utils.js", 444, 456, "躲藏失败"),
-    ("core.js",  350, 356, "饥饿·规则"),                # starvation 规则：id + effect{strength:-1}
-    ("core.js",  372, 383, "连续移动疲劳·规则"),         # travel-fatigue 规则：id → 380 行档位扣体力
-    ("core.js", 1111, 1120, "喝水(+1)"),
-    ("core.js", 1152, 1160, "吃冻肉(回满)"),
-    ("core.js", 1248, 1260, "吃维C(+1)"),
-    ("core.js", 1166, 1247, "整理整理·进食(+1~+4/回满)"),  # 各类口粮场景（饼干/炒米/干粮/火腿肠/泡面/罐头…）
+    ("core.js",  358, 364, "饥饿·规则"),                # starvation 规则：id → 362 行 effect{strength:-1}
+    ("core.js",  381, 390, "连续移动疲劳·规则"),         # travel-fatigue 规则：id → 388 行档位扣体力
+    ("core.js", 1121, 1130, "喝水(+1)"),
+    ("core.js", 1160, 1167, "吃冻肉(回满)"),             # 1163 行 vars.strength = 10
+    ("core.js", 1253, 1265, "吃维C(+1)"),
+    ("core.js", 1171, 1252, "整理整理·进食(+1~+4/回满)"),  # 各类口粮场景（饼干/炒米/干粮/火腿肠/泡面/罐头…）
     ("engine.js", 209, 214, "场景效果(对象式)"),
     ("engine.js", 641, 646, "饥饿规则·自动扣体力(对象式)"),
     ("夜晚剧情.js", 10, 20, "过夜保底(≥5)"),
@@ -210,7 +212,7 @@ def selftest():
     for i in range(6):                      # 健康饥饿钟：2h 一个
         gm += 120; push(gm, "engine.js:643", -1, 7 - (i + 1), weather="晴")
     gm += 45; push(gm, "utils.js:174", -0.5, 5.5, weather="晴")
-    gm += 50; push(gm, "core.js:373", -2, 3.5, travel=40, weather="雨")
+    gm += 50; push(gm, "core.js:388", -2, 3.5, travel=40, weather="雨")
     gm += 30; push(gm, "utils.js:370", -2, 1.5, weather="雨", chase=2)
     gm += 90; push(gm, "story/仁济南院.js:1850", 1, 2.5, cold=True)   # 吃葡萄糖
     gm += 80; push(gm, "engine.js:643", -1, 1.5, cold=True)           # 感冒 80min 周期
@@ -222,7 +224,7 @@ def selftest():
         push(22 * 60 + 30 + i * 30, "utils.js:67", 1, 5.5 + i)        # 休息到 cap
     E.append({"type": "restBlocked", "dd": 1, "hh": 23, "mm": 30, "scene": "小区-家", "strength": 6, "cap": 6})
     E.append({"type": "restBlocked", "dd": 1, "hh": 23, "mm": 45, "scene": "小区-家", "strength": 6, "cap": 6})
-    push(23 * 60 + 50, "story/core.js:1157", 5.5, 10)                # 吃冻肉回满
+    push(23 * 60 + 50, "story/core.js:1162", 5.5, 10)                # 吃冻肉回满
     md = build_report(E, title="自测报告")
     text = "\n".join(md)
     # --- 断言 ---
@@ -235,7 +237,7 @@ def selftest():
     need("饥饿规则·自动扣体力" in text, "engine.js:643 归因为饥饿规则")
     need("休息恢复(通用·REST_CAP)" in text, "utils.js:67 归因为休息")
     need("天气·户外消耗" in text, "utils.js:174 归因为天气")
-    need("连续移动疲劳·规则" in text, "core.js:373 归因为疲劳")
+    need("连续移动疲劳·规则" in text, "core.js:388 归因为疲劳")
     need("REST_CAP 触挡 2 次" in text, "restBlocked 计数")
     need("虚弱(≤3)时长占比" in text, "虚弱占比输出")
     need("感冒期间支出" in text, "状态相关性输出")

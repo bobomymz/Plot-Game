@@ -3790,11 +3790,11 @@ Object.assign(storyData, {
   },
   "新达汇-2F杂物间": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall2f.png */,
-    text: "你推开杂物间的门。里面堆满了废弃的衣架、模特假人的断肢和几卷落满灰的地毯。墙上贴着一张褪色的海报——是两年前商场的周年庆活动。角落里有一个铁皮柜，柜门上挂着一把弹子锁。旁边还塞着一个皱巴巴的帆布包。",
+    text: "你推开杂物间的门。里面堆满了废弃的衣架、模特假人的断肢和几卷落满灰的地毯。墙上贴着一张褪色的海报——是两年前商场的周年庆活动。角落里有一个铁皮柜，柜门上挂着一把弹子锁。旁边还塞着一个皱巴巴的帆布袋。",
     choices: [
       {
-        text: "翻一翻那个帆布包",
-        nextScene: "新达汇-2F杂物间-帆布包",
+        text: "翻一翻那个帆布袋",
+        nextScene: "新达汇-2F杂物间-帆布袋",
         effect: updateTime(1),
         showCondition: "!hasBag",
       },
@@ -3810,15 +3810,15 @@ Object.assign(storyData, {
       },
     ]
   },
-  "新达汇-2F杂物间-帆布包": {
+  "新达汇-2F杂物间-帆布袋": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall2f.png */,
-    text: "你抖了抖帆布包上的灰。布料很结实，背带也没断——可能是哪个店员放在这里的。容量不大不小，正好可以多装一件东西。",
+    text: "你抖了抖帆布袋上的灰。布料很结实，背带也没断——可能是哪个店员放在这里的。容量不大不小，正好可以多装一件东西。",
     onEnter: { set: { positionAfterOperation: "新达汇-2F杂物间" } },
     choices: [
       {
-        text: "背上帆布包",
+        text: "背上帆布袋",
         nextScene: "新达汇-2F杂物间",
-        effect: { set: { hasBag: true }, add: { bagVolume: 1 } },
+        effect: { set: { hasBag: true }, add: { _bagExtra: 1 } },
       },
       {
         text: "算了",

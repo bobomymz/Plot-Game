@@ -717,12 +717,41 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
           nextScene: "三林安居苑-8号楼-203室"
         });
       }
+      // 双肩包（容量4）：容量已 >=4 就不必再换
+      if (vars._bagTier < 1) {
+        opts.push({
+          text: "背走这只双肩包",
+          nextScene: "三林安居苑-8号楼-203室-背走双肩包",
+          effect: updateTime(1)
+        });
+      }
       opts.push({
         text: "放回包里",
         nextScene: "三林安居苑-8号楼-203室"
       });
       return opts;
     }
+  },
+
+  "三林安居苑-8号楼-203室-背走双肩包": {
+    image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
+    onEnter: { set: { positionAfterOperation: "三林安居苑-8号楼-203室-双肩包" } },
+    text: function(vars) {
+      var base = "你把自己的东西倒进这只双肩包。布料厚实，隔层分明，肩带还能调——比你现在背的那个规整多了。\n\
+你把采样管和记号笔留在原地，只把包背走了。";
+      if (vars.hasBag) {
+        base += "斜挎的帆布袋也没浪费，收紧抽绳挂在包侧，还能再塞点零碎。";
+      }
+      base += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】换上了双肩包，背包容量+1，当前容量：{bagVolume}。</span>";
+      return base;
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: "三林安居苑-8号楼-203室",
+        effect: { set: { hasBackpack: true, _bagTier: 1 } }
+      }
+    ]
   },
 
   "三林安居苑-8号楼-203室-门禁卡": {
@@ -1563,7 +1592,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       let basicDes = "你开始系统地搜索这个房间。";
       if(!vars.hasTorch) basicDes +="书桌抽屉里有一个应急手电筒，还能亮。";
       basicDes += "床头柜里翻出一瓶碘伏消毒液。";
-      if(!vars.hasBag) basicDes += "衣柜顶上还塞着一个旧帆布包——可惜是空的。";
+      if(!vars.hasBag) basicDes += "衣柜顶上还塞着一个旧帆布袋——可惜是空的。";
       return basicDes;
     },
     choices: [
@@ -1577,9 +1606,9 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       },
       {
         showCondition: "!hasBag",
-        text: "拿上帆布包",
+        text: "拿上帆布袋",
         nextScene: "三林安居苑-卧室-仔细",
-        effect: {set: {hasBag: true}, add: {bagVolume: 1}}
+        effect: {set: {hasBag: true}, add: {_bagExtra: 1}}
       },
       {
         text: "离开",

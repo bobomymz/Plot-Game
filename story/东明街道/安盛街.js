@@ -950,7 +950,7 @@ Object.assign(storyData, {
         showCondition: "!hasBag",
         text: "拿走帆布袋",
         nextScene: "安盛街-文具店铁柜-拿走帆布袋",
-        effect: updateTime(15, { set: { hasBag: true }, add: { bagVolume: 1} } )
+        effect: updateTime(15, { set: { hasBag: true }, add: { _bagExtra: 1 } } )
       },
       {
         text: "继续",
@@ -975,8 +975,7 @@ Object.assign(storyData, {
     image: "images/安盛街/晨光文具店/仓库拿帆布袋.webp",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店" } },
     text: "你提起那只帆布袋，掸了掸上面的灰。帆布厚实，肩带完好，袋口还有一根抽绳——比空手强多了。\n你把它斜挎在肩上，腾出手来。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】背包容量+1，当前容量：{bagVolume}。</span>",
-    choices: [
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得帆布袋，背包容量+1，当前容量：{bagVolume}。</span>",    choices: [
       {
         text: "继续",
         nextScene: "安盛街-文具店"
