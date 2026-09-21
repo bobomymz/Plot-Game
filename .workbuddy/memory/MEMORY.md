@@ -7,11 +7,12 @@
 - **`bagVolume` 已改为 `_reactive.computed` 派生值**（core.js:343 `function(v) { return 3 + (v._bagTier||0) + (v._bagExtra||0); }`）。**剧情代码永远不要 set/add bagVolume**，只改 `_bagTier` / `_bagExtra`。`bagVolume` 不在 `_caps` 里，无钳位干扰；存档兼容（旧档无新变量 → `||0` 兜底）。
 - **主背包 `_bagTier`**：0=默认背包(3) 1=双肩包(4) 2=书包(5)。结果节点用 `set: { _bagTier: N }`（不是 add），天然「换包不叠加」。**闸门用 `vars._bagTier < N`，不要用 `!hasXxx`**（换包语义下 `!hasXxx` 会显示"换更小的包"）。
   - 双肩包(档位1)：安居苑8号楼203室-双肩包，新增结果场景 `三林安居苑-8号楼-203室-背走双肩包`。
-  - 书包(档位2)：建平-挹芬楼-3F-高一教室，新增结果场景 `建平-挹芬楼-3F-高一教室-捡书包`。
+  - 书包(档位2)：**两处入口**——建平 `建平-挹芬楼-3F-高一教室`（结果场景 `-捡书包`）、上实南校 `上实南校-1号楼走廊`（结果场景 `上实南校-1号楼走廊-捡书包`，返回 `上实南校-天桥`，因该走廊是单向过场节点）。
+  - **同档位多入口**：共享 `_bagTier`，任一处拿过后其它处自动隐藏，不会重复加成。
 - **袋子 `_bagExtra`**：帆布袋 +1，闸门 `!hasBag`。三处入口（安盛街文具店铁柜 / 新达汇2F杂物间 / 安居苑卧室-仔细）**不再互斥**——原缺陷是 3 处闸门共用 `!hasBag` 且无处重置，导致全流程只能 +1。
 - **命名统一**：全库「帆布包」→「帆布袋」（新达汇场景 ID `新达汇-2F杂物间-帆布包`→`-帆布袋`；core.js 整理整理选项「丢下帆布包」→「丢下帆布袋」）。
 - **新增变量**：`_bagTier: 0` / `_bagExtra: 0` / `hasBackpack: false` / `hasSchoolbag: false`（core.js 96-99、152-155）。
-- **回归**：`node tools/bag_volume_selftest.js` 27 断言（vm 沙箱 + 迷你引擎，含 showCondition 求值）。改背包逻辑后必跑。
+- **回归**：`node tools/bag_volume_selftest.js` 33 断言（vm 沙箱 + 迷你引擎，含 showCondition 求值）。改背包逻辑后必跑。
 - 审计底稿：`tools/背包容量道具候选评估报告.md`、`tools/背包提及清单_精筛.md`（99 处真实容器表述）。
 
 ## ⚠ 背包改造的连带影响：stamina_report.py KNOWN_SITES 再次平移（2026-09-21）

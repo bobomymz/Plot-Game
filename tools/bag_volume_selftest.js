@@ -30,7 +30,7 @@ vm.createContext(sandbox);
 
 const files = ['story/utils.js', 'story/core.js',
   'story/东明街道/安居苑.js', 'story/东明街道/安盛街.js',
-  'story/东明街道/新达汇.js', 'story/建平中学.js'];
+  'story/东明街道/新达汇.js', 'story/东明街道/上实南校.js', 'story/建平中学.js'];
 for (const f of files) {
   vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), sandbox, { filename: f });
 }
@@ -130,6 +130,25 @@ console.log('4) 书包（建平挹芬楼3F高一教室）→ 容量5');
   ok('容量 3 -> 5', s.bagVolume === 5);
   const opts2 = choicesOf(s, '建平-挹芬楼-3F-高一教室');
   ok('已换书包后该选项隐藏', !textsOf(opts2).some(t => t.indexOf('捡一只书包') >= 0));
+}
+
+console.log('4b) 书包（上实南校1号楼走廊，第二处书包入口）→ 容量5');
+{
+  const s = newState();
+  const opts = choicesOf(s, '上实南校-1号楼走廊');
+  ok('未换包时出现「顺手捡起一只书包」', textsOf(opts).some(t => t.indexOf('顺手捡起一只书包') >= 0));
+  ok('原有选项不受影响（翻抽屉/离开）',
+    textsOf(opts).some(t => t.indexOf('翻办公桌抽屉') >= 0) && textsOf(opts).some(t => t.indexOf('不搜了') >= 0));
+  const res = storyData['上实南校-1号楼走廊-捡书包'];
+  ok('结果节点存在且返回天桥', !!res && res.choices[0].nextScene === '上实南校-天桥');
+  applyEffect(s, { set: { hasSchoolbag: true, _bagTier: 2 } });
+  ok('容量 3 -> 5', s.bagVolume === 5);
+  const opts2 = choicesOf(s, '上实南校-1号楼走廊');
+  ok('已换书包后该选项隐藏', !textsOf(opts2).some(t => t.indexOf('顺手捡起一只书包') >= 0));
+  // 从建平拿了书包后，上实南校也不该再给
+  const s2 = newState();
+  applyEffect(s2, { set: { hasSchoolbag: true, _bagTier: 2 } });
+  ok('任意一处拿了书包，另一处也隐藏', !textsOf(choicesOf(s2, '上实南校-1号楼走廊')).some(t => t.indexOf('顺手捡起一只书包') >= 0));
 }
 
 console.log('5) 换包不叠加：双肩包 -> 书包');
