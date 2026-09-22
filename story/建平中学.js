@@ -1744,7 +1744,29 @@ Object.assign(storyData, {
   },
 
   "建平-远翔楼-3F-物理办公室": {
-    image: "images/placeholder.png",
+    image: function(vars) {
+      if(vars.weather == '晴') {
+        if(vars._xinDead) {
+          var f = timeImage({
+            morning: "images/建平/物理办公室-没人.webp",
+            night: "images/建平/物理办公室-没人-night.webp"
+          })
+          return f(vars);
+        }
+        var f = timeImage({
+          morning: "images/建平/物理办公室-忻老师-阴雨.webp",
+          night: "images/建平/物理办公室-忻老师-night.webp"
+        })
+        return f(vars);
+      }
+      if(vars._xinDead) {
+
+      }
+      var f = timeImage({
+        morning: "images/建平/物理办公室-忻老师"
+      })
+      return f(vars);
+    },
     onEnter: function(vars) {
       vars.currentPos = "远翔楼3F物理办公室";
       // 带着高等级尸潮（ch>=3）闯进办公室 = 把尸群引到忻老师面前，他当场遇害
