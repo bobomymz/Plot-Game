@@ -1754,7 +1754,7 @@ Object.assign(storyData, {
         if(vars._xinDead) {
           var f = timeImage({
             morning: "images/建平/物理办公室-没人.webp",
-            night: "images/建平/物理办公室-没人-阴雨.webp" /* TODO: 补一张 物理办公室-没人-night.webp，届时换回 */
+            night: "images/建平/物理办公室-没人-night.webp"
           })
           return f(vars);
         }
@@ -1765,8 +1765,11 @@ Object.assign(storyData, {
         return f(vars);
       }
       if(vars._xinDead) {
-        // 阴雨/夜间共用一张（TODO: 补一张 物理办公室-没人-night.webp 后恢复 timeImage 分支）
-        return "images/建平/物理办公室-没人-阴雨.webp";
+        var f = timeImage({
+          morning: "images/建平/物理办公室-没人-阴雨.webp",
+          night: "images/建平/物理办公室-没人-night.webp"
+        })
+        return f(vars);
       }
       var f = timeImage({
         morning: "images/建平/物理办公室-忻老师-阴雨.webp",

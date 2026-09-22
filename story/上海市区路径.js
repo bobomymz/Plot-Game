@@ -14,20 +14,7 @@ Object.assign(storyData, {
 你继续往前，来到了外环。",
     choices: [
       {
-        text: "前往临港方向",
-        condition: "!hasNoTransportation",
-        nextScene: "下不下高架？",
-        effect: updateTime(20),
-        elseScene: "结局-累死我了"
-      },
-      {
-        text: "前往出城方向",
-        condition: "!hasNoTransportation",
-        nextScene: "三条出城线的抉择",
-        elseScene: "结局-累死我了"
-      },
-      {
-        text: "前往济阳路跨线桥",
+        text: "往西走",
         condition: "!hasNoTransportation",
         nextScene: "济阳路跨线桥",
         effect: updateTime(10),
@@ -82,7 +69,7 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/jiyangOverpass.png */,
     onEnter: function(vars) { vars.showZombies = true; },
-    text: "高架在济阳路跨线桥处分叉。桥下往西北方向的道路，通向仁济医院那一带。\n\
+    text: "你沿着高架往西走。高架在济阳路跨线桥处分叉。桥下往西北方向的道路，通向仁济医院那一带。\n\
 如果你不下高架继续往前，前方的高架被废弃车辆堵得严严实实，看不到尽头。",
     choices: [
       {
@@ -120,8 +107,15 @@ Object.assign(storyData, {
 风从高处灌下来，吹得衣摆猎猎作响。高架桥下是成片灰扑扑的屋顶，再远一点，几栋高楼像墓碑一样立在天际线下。\n\
 这里难得空旷，你反而更不安了——太安静了。",
     choices: [
-      { text: "继续沿外环往东", nextScene: "北蔡镇罗山立交桥", effect: updateTime(10) },
-      { text: "往回走", nextScene: "杨高南路立交桥", effect: updateTime(30) }
+      { text: "往北走", nextScene: "北蔡镇罗山立交桥", effect: updateTime(10) },
+      {
+        text: "往东走",
+        condition: "!hasNoTransportation",
+        nextScene: "下不下高架？",
+        effect: updateTime(20),
+        elseScene: "结局-累死我了"
+      },
+      { text: "往西走", nextScene: "杨高南路立交桥", effect: updateTime(30) }
     ]
   },
 
@@ -131,13 +125,13 @@ Object.assign(storyData, {
     outdoor: true,
     image: "images/placeholder.png" /* TODO: images/highway/beicaiLuoshan.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; },
-    text: "外环在前方又跨上另一条主干道，几条匝道在半空绞成一团，像被随手丢下的灰色绳子。\n\
+    text: "你沿着向北的高架前进。\n\
 桥下的建筑渐渐变了样子——成片的居民楼退开去，换成一栋栋低矮的玻璃幕墙房子，围着一圈圈规整的绿化。这一片没有人声，风刮过玻璃幕墙都听得见。\n\
 右侧一条下高架的匝道空着，路面干净得像刚铺完。",
     choices: [
       { text: "下高架", nextScene: "张江-落地坡道", effect: updateTime(5) },
-      { text: "继续沿外环往东", nextScene: "张江立交桥", effect: updateTime(10) },
-      { text: "往回走", nextScene: "外环罗山路立交桥", effect: updateTime(10) }
+      { text: "往北走", nextScene: "张江立交桥", effect: updateTime(10) },
+      { text: "往南走", nextScene: "外环罗山路立交桥", effect: updateTime(10) }
     ]
   },
 
@@ -148,9 +142,9 @@ Object.assign(storyData, {
     text: "外环在这里与通往张江方向的匝道交汇。匝道下方灰蒙蒙的一片，是张江高科园区那些低矮的玻璃幕墙写字楼——曾经彻夜灯火通明，如今只剩几块残破的招牌在风里晃荡。\n\
 匝道口堵着几辆撞成一团的货车，货厢门敞开着，货物散了一地，早被人翻得乱七八糟。有几只丧尸蹲在车缝里，听到你的脚步声，慢慢抬起了头。",
     choices: [
-      { text: "继续往东", nextScene: "罗山路立交桥下", effect: updateTime(20) },
+      { text: "往北走", nextScene: "罗山路立交桥下", effect: updateTime(20) },
       { text: "下高架", nextScene: "张江-北岸落地", effect: updateTime(5) },
-      { text: "往回走", nextScene: "外环罗山路立交桥", effect: updateTime(20) }
+      { text: "往南走", nextScene: "外环罗山路立交桥", effect: updateTime(20) }
     ]
   },
 
@@ -181,14 +175,6 @@ Object.assign(storyData, {
   "骑车前往临港新城": {
     image: "images/placeholder.png",
     text: "你骑车朝临港新城方向驶去，道路在城郊的农田与集装箱堆场间延伸，望不到尽头。\n（作者尚未更新此处）",
-    choices: [
-      { text: "掉头返回", nextScene: "杨高南路立交桥" }
-    ]
-  },
-
-  "三条出城线的抉择": {
-    image: "images/placeholder.png",
-    text: "你停在出城的岔口前，路牌指向三个方向，每条路尽头都热浪蒸腾、看不清去向。\n（作者尚未更新此处）",
     choices: [
       { text: "掉头返回", nextScene: "杨高南路立交桥" }
     ]

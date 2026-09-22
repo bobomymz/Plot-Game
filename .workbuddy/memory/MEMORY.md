@@ -9,6 +9,7 @@
 - **双审计**：`node tools/condition_audit.js`（期望两个 0，只管**字符串**条件）；`node tools/scene_fn_selftest.js`（期望 0 异常，管**函数式** text/choices/condition/nextScene——condition_audit 对函数式**整段跳过、假绿**）。
 - 沙箱坑：须 `vm.runInContext('storyData', sandbox)`；用 `process.cwd()`；engine 全局函数要补桩（已含 `flashStatusWarning/flashStatus/showToast/notify/triggerShake`），否则假报 `X is not defined`。
 - 计数器初值必须 `0`（用 `add` 累加）；布尔 `false`；字符串 `""`。
+- **第三审计（选项状态可视化缺口）**：`node tools/sprint_away_audit.js`（期望 **0 处 P0**）。查"选项显示依赖某状态，但把该状态讲给玩家的通道漏写"→ 玩家看到凭空冒出的选项。这类 bug **不报错**，`condition_audit` 与 `scene_fn_selftest` 都看不见。做法＝劫持工厂给选项打标记反查场景 + 劫持 `describeZombieWave` 打探针，在多状态实跑 `text`，**探针非空才算"玩家看得见"**。现 2 处 P0：`安盛街东侧`（安盛街.js:50/61）、`三林安居苑-小区内部`（安居苑.js:217/226）。
 
 ## 2. 战斗
 - **徒手化**：默认允许徒手，除非文案表明对方不好惹。改法＝选项文字动态化（`hasMeleeWeapon ? "抄起X" : "徒手…"`）+ onEnter/text 分支，**勿新增场景**（击杀标记靠场景名 `_visit` 或场景内 set，换名断联动）。徒手代价包：`{ add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } }`。

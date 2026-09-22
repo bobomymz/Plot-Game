@@ -152,7 +152,7 @@ Object.assign(storyData, {
         desc += "追在身后的尸群暂时还没跟上来——老小区的门卫亭和几辆废弃的电瓶车形成了一道天然的障碍，也许能挡一阵。\n";
       }
       desc += "小区里异常安静，只有风吹过树梢的沙沙声。你注意到花坛里有几只猫——不，它们看起来不太对劲。它们的眼睛泛着不正常的绿光，体型也比普通猫大了一圈。\n其中一只缓缓转过头来，盯着你，发出低沉的嘶嘶声。";
-      desc += "\n" + describeWeather(vars);
+      desc += "\n" + describeWeather(vars) + describeZombieWave(vars);
       return desc;
     },
     choices: [
@@ -223,7 +223,7 @@ Object.assign(storyData, {
       basicDes += "\n\
 西边那栋的门牌上写着“8号楼”——二楼靠东的窗户开着一道缝，没关上。窗台上搁着一只白色的搪瓷缸。风大的时候，能听到什么东西在啪嗒啪嗒地响。"
       // 安居苑北门是前门，面向三林路，南门是后门，面向安盛街中段
-      return basicDes + "\n" + describeWeather(vars);
+      return basicDes + "\n" + describeWeather(vars) + describeZombieWave(vars);
     },
     choices: [
       {

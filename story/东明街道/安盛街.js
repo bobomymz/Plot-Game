@@ -58,7 +58,7 @@ Object.assign(storyData, {
       if (vars._lastScene === "安盛街-文具店" && vars.hasCutter) {
         desc += "你把玩着手里的美工刀，刀刃咔嗒咔嗒地弹出又收起——手里有家伙，心里踏实了不少。\n";
       }
-      return desc + weather;
+      return desc + weather + describeZombieWave(vars);
     },
     choices: [
       {
