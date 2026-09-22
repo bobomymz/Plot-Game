@@ -820,9 +820,22 @@ Object.assign(storyData, {
 
   "建平-金苹果大道": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/jianping/goldenAppleAvenue.png */,
-    qte: jpChaseQTE(),
-    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "金苹果大道"; },
+    image: function(vars) {
+      if(vars.weather == '阴') {
+        var f = timeImage({
+          morning: "images/建平/金苹果大道-阴.webp",
+          night: "images/建平/金苹果大道-night.webp"
+        })
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/建平/金苹果大道.webp",
+        night: "images/建平/金苹果大道-night.webp" 
+      })
+      return f(vars);
+    },
+    qte: jpChaseQTE(), 
+    onEnter: function(vars) { vars.showZombies = vars.showRain = true; vars.currentPos = "金苹果大道"; },
     text: function(vars) { return "金苹果大道。" + describeWeather(vars) + describeZombieWave(vars); },
     choices: [
       { text: "去金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(3) },
@@ -3180,7 +3193,10 @@ Object.assign(storyData, {
     ]
   },
   "建平-挹芬楼-2F-高一教室": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/挹芬楼-2F-高一教室.webp",
+      night: "images/建平/挹芬楼-2F-高一教室-night.webp"
+    }),
     onEnter: function(vars) { vars.currentPos = "挹芬楼2F高一教室"; },
     text: function(vars) {
       var desc = "高一教室。课桌东倒西歪，黑板上还留着半截没写完的板书。";
@@ -3195,6 +3211,16 @@ Object.assign(storyData, {
       cs.push({ text: "回 2 楼走廊", nextScene: "建平-挹芬楼-2F", effect: updateTime(1) });
       return cs;
     }
+  },
+  "建平-挹芬楼-2F-高一教室-看看时钟": {
+    image: "images/placeholder.png",
+    text: function(vars) { return "你走到黑板边。这里挂着个时钟，上面显示的时间是"+vars.hh+":"+vars.mm;},
+    choices: [
+      {
+        text: "继续",
+        nextScene: "建平-挹芬楼-2F-高一教室"
+      }
+    ]
   },
 
   "建平-挹芬楼-2F-高一教室-食品": {
