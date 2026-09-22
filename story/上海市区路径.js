@@ -5,9 +5,13 @@
 Object.assign(storyData, {
   "杨高南路立交桥": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/highway/highwayJam.png */,
+    image: timeImage({
+      morning: "images/高速/三林路-杨高南路高架.webp",
+      evening: "images/高速/三林路-杨高南路高架-evening.webp",
+      night: "images/高速/三林路-杨高南路高架-night.webp",
+    }),
     onEnter: function(vars) { 
-      vars.showZombies = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; 
+      vars.showZombies  = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; 
     },
     text: "你沿着立交桥径直来到了高架上。这里是你平时上学必经之处，也是最快的出城通道（如果你有车的话）。\n\
 然而，这里已经堵得水泄不通。你早就料到了这一点，毕竟早上就听到这里传来隐约的喇叭声，连绵不绝。\n\
