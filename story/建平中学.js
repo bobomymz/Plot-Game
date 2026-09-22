@@ -397,8 +397,11 @@ Object.assign(storyData, {
   },
 
   "结局-前门失守": {
-    image: "images/zombieKnockYouDown.webp",
-    onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
+    image: timeImage({
+      morning: "images/建平/前门-丧尸扑来.webp",
+      night: "images/建平/前门-丧尸扑来-night.webp"
+    }),
+    onEnter: function(vars) { tryBreakWeapon(vars);triggerShake(); return {}; },
     text: function(vars) {
       return "你记错了颜色的顺序——等你回过神来，丧尸已经扑到了你身上。" + weaponBrokeText(vars) + "\n—— 结局：前门失守 ——";
     }
@@ -408,10 +411,24 @@ Object.assign(storyData, {
     outdoor: true,
     image: function(vars) {
       if(vars._backGateOpened || (vars._visit['建平-后门-内侧-清场'] > 0)) {
+        if(vars.weather == '阴') {
+          var f = timeImage({
+            morning: "images/建平/后门-清场-阴.webp",
+            night: "images/建平/后门-清场-night.webp"
+          });
+          return f(vars);
+        }
         var f = timeImage({
           morning: "images/建平/后门-清场.webp",
           night: "images/建平/后门-清场-night.webp"
         });
+        return f(vars);
+      }
+      if(vars.weather == '阴') {
+        var f = timeImage({
+          morning: "images/建平/后门-阴.webp",
+          night: "images/建平/后门-night.webp"
+        })
         return f(vars);
       }
       var f = timeImage({
@@ -448,7 +465,7 @@ Object.assign(storyData, {
   },
 
   "建平-后门-开门": {
-    image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
+    image: "images/youMeetZombies.webp",
     onEnter: function(vars) {
       vars._backGateOpened = true;  // 开门引走丧尸（忻老师后门逃脱的铺垫）
       vars.showZombies = true;
@@ -456,7 +473,8 @@ Object.assign(storyData, {
       triggerShake();               // 猛地拉开门，丧尸齐扑
       return {};
     },
-    text: "你深吸一口气，握住门闩，猛地拉开了后门。\n门轴发出刺耳的摩擦声，门内的丧尸被惊动，齐刷刷向你扑来！",
+    text: "你深吸一口气，握住门闩，猛地拉开了后门。\n\
+门轴发出刺耳的摩擦声，门内的丧尸被惊动，齐刷刷向你扑来！",
     choices: function(vars) {
       var cs = [];
       // 空枪时仍保留该选项——扣下扳机即死（结局-空枪）
@@ -490,7 +508,8 @@ Object.assign(storyData, {
 
   "建平-结局-空枪": {
     image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
-    text: "你举起手枪，对准扑来的丧尸扣下扳机——\n枪膛里只传来一声清脆的空响。\n没有子弹。\n你愣了一下。就在这半秒里，丧尸已经扑到了面前，你来不及后悔，就被拖进了黑暗里。\n\
+    text: "你举起手枪，对准扑来的丧尸扣下扳机——\n枪膛里只传来一声清脆的空响。\n没有子弹。\n\
+你愣了一下。就在这半秒里，丧尸已经扑到了面前，你来不及后悔，就被拖进了黑暗里。\n\
 —— 结局：空枪 ——"
   },
 
@@ -732,28 +751,10 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPos = "后门辅路";
-      if (vars._backGateOpened && !vars._teacherLeft && !vars._xinDead && vars.chasedByZombies >= 3) {
-        vars._xinDead = true;
-        vars._xinDeathVisit = vars._visit['建平-后门辅路'] || 0;  // 记下死亡发生的访问轮次，本次展示目击死亡
-      }
     },
     text: function(vars) {
       if (vars._xinDead) {
-        var witnessed = vars._xinDeathVisit > 0 && vars._visit['建平-后门辅路'] === vars._xinDeathVisit;
-        if (witnessed) {
-          if (vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
-            return "你沿着后门辅路走，被你引来的尸群在身后穷追不舍。\n前面那辆亮着车灯的轿车旁，忻老师刚拉开车门。他看见了你，也看见了你身后漫过来的黑影，脸色骤变。\n\
-他还没来得及钻进车里，尸群已经把他团团围住。他挥着手臂挣扎，嘶喊着什么，很快就被扑倒在地，惨叫声淹没在成片的低吼里。你被剩下的丧尸撵着，连靠近的机会都没有。\n\
-——是你把它们带过来的。";
-          }
-          return "你沿着后门辅路走，被你引来的尸群在身后穷追不舍。\n路边一辆亮着车灯的轿车旁，一个中年男人刚拉开车门，就被漫过来的尸群团团围住。他挣扎了几下就被扑倒在地，惨叫声淹没在成片的低吼里。\n\
-你顾不上他，只能绕开继续跑。";
-        }
-        if (vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
-          return "你沿着后门辅路走。\n轿车还停在原地，车门大开，引擎已经熄了。忻老师倒靠在车旁，后颈有深深的咬伤，手里还攥着钥匙。\n\
-" + ((vars._visit['建平-后门-内侧-清场'] > 0) ? "——街上的尸群漫过来了。你来晚了一步。" : "——丧尸从后门漫进来了。你来晚了一步。");
-        }
-        return "你沿着后门辅路走。\n一辆轿车停在路边，车门大开，引擎熄了。一个中年男人倒靠在车旁，已经没了气息。";
+        return "你沿着后门辅路走。\n那辆轿车还停在原地，车灯熄着。再也不会有人来开它了。";
       }
       if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         return "你沿着后门辅路走。\n一辆轿车亮着车灯停在不远处——是忻老师。他摇下车窗，朝你招了招手。\n“上车，我带你一程。”";
@@ -1527,7 +1528,7 @@ Object.assign(storyData, {
       return n > 0 ? { set: set, add: { itemCount: n } } : { set: set };
     },
     text: function(vars) {
-      return "你终于把老吴的丧尸制服了。它不再动弹。\n你从他身上取下钥匙串，又捡起地上那张管线图——“水有毒，别喝”。" + combatDrainText(vars);
+      return "你终于把老吴丧尸制服了。它不再动弹。\n你从他身上取下钥匙串，又捡起地上那张管线图。" + combatDrainText(vars);
     },
     choices: [
       { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
@@ -1731,10 +1732,28 @@ Object.assign(storyData, {
 
   "建平-远翔楼-3F-物理办公室": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "远翔楼3F物理办公室"; },
+    onEnter: function(vars) {
+      vars.currentPos = "远翔楼3F物理办公室";
+      // 带着高等级尸潮（ch>=3）闯进办公室 = 把尸群引到忻老师面前，他当场遇害
+      if (!vars._teacherLeft && !vars._xinDead && vars.chasedByZombies >= 3) {
+        vars._xinDead = true;
+        vars._xinDeathVisit = vars._visit['建平-远翔楼-3F-物理办公室'] || 0;  // 记下死亡发生的访问轮次，本次展示目击死亡
+        vars.showZombies = true;   // 目击死亡的这一次显示丧尸包围遮罩
+      }
+    },
     text: function(vars) {
       if (vars._xinDead) {
-        return "物理办公室里早空了。桌上摊着一沓批了一半的试卷，椅子被推到一边——忻老师已经不在这里了。";
+        // 死亡当场（本次访问触发）：目击尸群扑倒忻老师
+        if (vars._xinDeathVisit > 0 && vars._visit['建平-远翔楼-3F-物理办公室'] === vars._xinDeathVisit) {
+          return "你推开物理办公室的门，被你引来的尸群几乎是贴着你的后背涌了进来。\n\
+忻老师——你的物理老师——从那沓批了一半的试卷里抬起头。他看见你，又看见你身后漫进来的黑影，脸色骤变。\n\
+“快跑——”\n\
+喊声只出了一半。尸群漫过办公桌，把他连人带椅子扑倒在地，试卷散了一地，惨叫声很快淹没在成片的低吼里。\n\
+——是你把它们带过来的。你被剩下的丧尸撵着，退到了门口。";
+        }
+        // 之后再来：办公室事后状态
+        return "物理办公室里一片狼藉。办公桌翻倒在地，那沓批了一半的试卷散了一地，暗红的血迹从桌角一直拖到门口。\n\
+忻老师不在这里了。";
       }
       var desc;
       if (!vars._visit["建平-远翔楼-3F-物理办公室"] || vars._visit["建平-远翔楼-3F-物理办公室"] <= 1) {
@@ -1752,7 +1771,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
-      { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-物理办公室" },
+      { text: "躲起来", showCondition: "chasedByZombies > 0 && !_xinDead", nextScene: "建平-躲藏-物理办公室" },
       { showCondition: "itemCount > 0", text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-3F-物理办公室" } } },
       { text: "回 3 楼走廊", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
     ]
