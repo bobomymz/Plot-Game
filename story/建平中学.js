@@ -1840,20 +1840,33 @@ Object.assign(storyData, {
   },
 
   "建平-远翔楼-4F-高三14班": {
-    image: "images/placeholder.png",
+    image: function(vars) {
+      if (jpIsMealTime(vars)) {
+        //desc += "\n彭奕宸正坐在自己的座位上，从书包柜里掏出一包方便面。";
+      } else if (vars._pengGalCleared) {
+        return "images/建平/高三14-空气玩不了电脑.webp";
+      } else if (vars._pengGalResult === "bad") {
+        return "images/建平/高三14-彭奕宸galgame过不了关.webp";
+      } else if ((vars._visit['建平-远翔楼-4F-高三14班-修电脑'] > 0)) {
+        return "images/建平/高三14-彭奕宸玩galgame.webp";
+      } else {
+        return "images/建平/高三14-彭奕宸玩不了galgame.webp";
+      }
+      return "images/placeholder.png";
+    },
     onEnter: function(vars) { vars.currentPos = "远翔楼4F高三14班"; },
     text: function(vars) {
       var desc = "高三 14 班教室，你曾经的班级。课桌还摆成原来的样子，黑板上留着没擦掉的粉笔字。";
       if (jpIsMealTime(vars)) {
         desc += "\n彭奕宸正坐在自己的座位上，从书包柜里掏出一包方便面。";
       } else if (vars._pengGalCleared) {
-        desc += "\n彭奕宸不在——电脑还亮着，课桌上摊着本翻开的漫画。他大概又溜去音乐教室或者图书馆了。这家伙，在教室里永远待不住。";
+        desc += "\n彭奕宸不在——电脑还亮着。这里非常安静，太安静了。";
       } else if (vars._pengGalResult === "bad") {
         desc += "\n彭奕宸守在电脑前，时不时瞄一眼屏幕。";
       } else if ((vars._visit['建平-远翔楼-4F-高三14班-修电脑'] > 0)) {
-        desc += "\n彭奕宸坐在靠窗的位子，盯着电脑屏幕，一脸跃跃欲试。";
+        desc += "\n彭奕宸站在电脑旁，盯着电脑屏幕上的galgame，一脸跃跃欲试。";
       } else {
-        desc += "\n彭奕宸坐在靠窗的位子，盯着那台时不时开不了机的电脑，一脸烦躁。";
+        desc += "\n彭奕宸坐在靠窗的位子，盯着那台开不了机的电脑，一脸烦躁。";
       }
       return desc;
     },
@@ -1920,7 +1933,7 @@ Object.assign(storyData, {
   // 时间推进每次 ≤6 分钟：坐着打游戏不计入赶路疲劳（_travelMinutes）。
   "建平-远翔楼-4F-高三14班-galgame": {
     image: "images/placeholder.png",
-    text: "电脑修好了，彭奕宸把椅子拖到讲台前，点开 Steam——游戏库最底下还躺着一个《Summer Pockets》。\n“高三上学期偷偷装的，就打到白羽线海边这段，重开了七八次都没打出最优解。”他说，“要不要打？虽然我知道你可能对二次元不是很感兴趣。”\n你拉开键盘。屏幕亮起，读档，「第 7 天・傍晚・防波堤」。",
+    text: "电脑修好了，彭奕宸把椅子拖到讲台前，点开《Summer Pockets》。\n“高三上学期偷偷装的，就打到白羽线海边这段，重开了七八次都没打出最优解。”他说，“要不要打？虽然我知道你可能对二次元不是很感兴趣。”\n你拉开键盘。屏幕亮起，读档，「第 7 天・傍晚・防波堤」。",
     choices: [
       { text: "开始", nextScene: "建平-远翔楼-4F-高三14班-galgame-防波堤", effect: updateTime(5) },
       { text: "先不打了", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
