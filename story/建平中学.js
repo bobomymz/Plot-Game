@@ -3224,7 +3224,7 @@ Object.assign(storyData, {
   },
 
   "建平-挹芬楼-2F-高一教室-食品": {
-    image: "images/placeholder.png",
+    image: "images/建平/挹芬楼-2F-高一教室-食品.webp",
     onEnter: { add: { strength: 1 } },
     text: "你翻出一个没拆封的面包和半瓶水。顾不上那么多，你撕开包装就吃。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
@@ -3233,9 +3233,10 @@ Object.assign(storyData, {
   },
   "建平-挹芬楼-3F-高一教室": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "挹芬楼3F高一教室"; },
+    onEnter: function(vars) { vars.currentPos = "挹芬楼3F高一教室"; vars.positionAfterOperation = "建平-挹芬楼-3F-高一教室"; },
     text: function(vars) {
-      var desc = "高一教室。地上散落着书包和课本，几张课桌被拼在一起，桌缝里还夹着一只空水瓶。";
+      var desc = "这是一间高一教室。地上散落着书包和课本，几张课桌被拼在一起。";
+      if (!vars.hasBottle) desc += "桌缝里还夹着一个空水瓶。";
       if (!(vars._visit['建平-挹芬楼-3F-高一教室-讲台'] > 0)) {
         if (vars.hasKeyRing) desc += "\n讲台的抽屉上了锁——或许钥匙串能打开。";
         else desc += "\n讲台的抽屉上了锁。";
@@ -3254,9 +3255,36 @@ Object.assign(storyData, {
       if (vars._bagTier < 2) {
         cs.push({ text: "从地上捡一只书包", nextScene: "建平-挹芬楼-3F-高一教室-捡书包", effect: updateTime(1) });
       }
+      if (!vars.hasBottle) {
+        cs.push({
+          text: "从桌缝里抽出那只空水瓶",
+          condition: "itemCount < bagVolume",
+          nextScene: "建平-挹芬楼-3F-高一教室-空水瓶",
+          elseScene: "整理整理"
+        });
+      }
       cs.push({ text: "回 3 楼走廊", nextScene: "建平-挹芬楼-3F", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  "建平-挹芬楼-3F-高一教室-空水瓶": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars.hasBottle = true;
+      vars.bottleWater = 0;
+      vars.waterToxic = false;
+      vars.itemCount += 1;
+      vars.positionAfterOperation = "建平-挹芬楼-3F-高一教室";
+      return updateTime(1)(vars);
+    },
+    text: "你把那只瓶子从桌缝里抽出来——被两张拼在一起的课桌夹了这么多天，瓶身压出一道浅痕，倒没裂。标签撕得只剩半张，瓶口松松地拧着盖。\n\
+你拧开闻了闻，里头是空的。瓶子本身倒是好东西：能装水，能带着走。\n\
+至于这栋楼里哪台饮水机还能出水、那水能不能喝——得你自己判断。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>",
+    choices: [
+      { text: "继续", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(1) }
+    ]
   },
 
   "建平-挹芬楼-3F-高一教室-捡书包": {
@@ -3318,11 +3346,11 @@ Object.assign(storyData, {
   "建平-挹芬楼-4F-机房": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "挹芬楼4F机房"; },
-    text: "挹芬楼 4 楼 · 机房。",
+    text: "你来到了挹芬楼4楼的机房。",
     choices: [
       { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-挹芬楼机房4F" },
       { showCondition: "itemCount > 0", text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-挹芬楼-4F-机房" } } },
-      { text: "回 4 楼走廊", nextScene: "建平-挹芬楼-4F", effect: updateTime(1) }
+      { text: "回4楼走廊", nextScene: "建平-挹芬楼-4F", effect: updateTime(1) }
     ]
   },
   "建平-挹芬楼-5F-高二教室": {
@@ -3351,7 +3379,7 @@ Object.assign(storyData, {
         cs.push({ text: "跟那男生说说话", nextScene: "建平-挹芬楼-5F-高二教室-学生已救" });
       }
       if (vars.chasedByZombies > 0) cs.push({ text: "躲起来", nextScene: "建平-躲藏-挹芬楼5F高二教室" });
-      cs.push({ text: "回 5 楼走廊", nextScene: "建平-挹芬楼-5F", effect: updateTime(1) });
+      cs.push({ text: "回5楼走廊", nextScene: "建平-挹芬楼-5F", effect: updateTime(1) });
       return cs;
     }
   },

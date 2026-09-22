@@ -1893,11 +1893,14 @@ Object.assign(storyData, {
       if (vars._lastScene === "仁济南院-特需病房-功能饮料") {
         desc += "\n空脉动瓶滚在床沿边。";
       }
+      if (vars._lastScene === "仁济南院-特需病房-病床-带走") {
+        desc += "\n床单还掀着，底下空空的。";
+      }
       return desc;
     },
     choices: function(vars) {
       var cs = [];
-      if (!(vars._visit['仁济南院-特需病房-功能饮料'] > 0)) {
+      if (!(vars._visit['仁济南院-特需病房-功能饮料'] > 0) && !(vars._visit['仁济南院-特需病房-病床-带走'] > 0)) {
         cs.push({ text: "搜索病床", nextScene: "仁济南院-特需病房-病床", effect: updateTime(1) });
       } else {
         cs.push({ text: "再看一眼病床（已经空了）", nextScene: "仁济南院-特需病房-病床-空", effect: updateTime(1) });
@@ -1946,11 +1949,18 @@ Object.assign(storyData, {
 
   "仁济南院-特需病房-病床": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    onEnter: { set: { positionAfterOperation: "仁济南院-特需病房-病床" } },
     text: "你掀开凌乱的被褥。床单下鼓起的地方，是一瓶没开封的脉动——瓶子还凉，不知道谁塞在这里的。",
     choices: [
       {
         text: "当场喝掉",
         nextScene: "仁济南院-特需病房-功能饮料"
+      },
+      {
+        text: "连瓶一起收进背包",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-特需病房-病床-带走",
+        elseScene: "整理整理"
       },
       {
         text: "算了，放回去",
@@ -1959,9 +1969,30 @@ Object.assign(storyData, {
     ]
   },
 
+  "仁济南院-特需病房-病床-带走": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
+    onEnter: function(vars) {
+      vars.hasBottle = true;
+      vars.bottleWater = 1;
+      vars.waterToxic = false;
+      vars.itemCount += 1;
+      vars.positionAfterOperation = "仁济南院-特需病房";
+      return updateTime(1)(vars);
+    },
+    text: "你把那瓶脉动塞进背包侧兜。瓶子贴着后背，还留着一丝凉——不知道是谁，在最后那几天里把它藏进床单底下，然后没能等到喝它的时候。\n\
+瓶里是满的，一口没动。你决定先留着。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得一瓶水（水瓶已装满），想喝时在“整理一下物品”里喝。</span>",
+    choices: [
+      { text: "继续", nextScene: "仁济南院-特需病房", effect: updateTime(1) }
+    ]
+  },
+
   "仁济南院-特需病房-病床-空": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
-    text: "床单掀开过，底下已经空了。只剩一点干涸的饮料渍。",
+    text: function(vars) {
+      if (vars._visit['仁济南院-特需病房-病床-带走'] > 0) return "床单掀开着，底下已经空了，只剩一层被压出来的浅浅凹痕。";
+      return "床单掀开过，底下已经空了。只剩一点干涸的饮料渍。";
+    },
     choices: [
       { text: "离开", nextScene: "仁济南院-特需病房" }
     ]

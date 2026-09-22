@@ -871,8 +871,10 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
       if ((!vars.hasBottle || vars.bottleWater == 0) && vars.supermarketWaterLeft > 0) { // 没有空瓶，或者空瓶没有水
         cs.push({
           text: "从箱子里拿一瓶水",
+          condition: "itemCount < bagVolume",
           nextScene: "联华超市-仓库-拿水",
-          effect: updateTime(2)
+          effect: updateTime(2),
+          elseScene: "整理整理"
         });
       }
       if (vars.lianhuaCannedLeft > 0 && !vars.hasCannedFood) {
@@ -938,6 +940,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
   "联华超市-仓库-拿水": {
     image: "images/小区周边/联华超市/仓库.webp" /* TODO: images/小区周边/supermarketWarehouse.png */,
     onEnter: function(vars) {
+      if(!vars.hasBottle) vars.itemCount++;
       vars.hasBottle = true;
       vars.bottleWater = 1;
       vars.waterToxic = false;

@@ -660,3 +660,13 @@ function wangPhoneVideoText() {
 她侧头听了一下，说：“有人来了，我去看看。”\n\
 镜头被随手放在台面上，画面对着天花板，然后中断。";
 }
+
+// 割/锯类工具（用于划开胶带封死的纸箱）：美工刀 > 匕首 > 斧头 > 螺丝刀，无则空串。
+// 门槛写法：condition: function(v) { return !!cuttingToolName(v); }（用函数条件，避免为它新增 computed 变量）
+function cuttingToolName(vars) {
+  if (vars.hasCutter) return "美工刀";
+  if (vars.hasDagger) return "匕首";
+  if (vars.hasAxe) return "斧头";
+  if (vars.hasScrewdriver) return "螺丝刀";
+  return "";
+}

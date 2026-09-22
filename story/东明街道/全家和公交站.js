@@ -8,6 +8,7 @@ Object.assign(storyData, {
       return "images/小区周边/全家和公交站/全家便利店门口.webp";
     },
     onEnter: function(vars) {
+      vars.showRain = true;
       vars.currentPlace = "初始小区";
       vars.currentPos = "全家便利店";
     },

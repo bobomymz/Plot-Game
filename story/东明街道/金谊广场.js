@@ -468,13 +468,13 @@ Object.assign(storyData, {
           morning: "images/金谊广场/正门-雨.webp",
           night: "images/金谊广场/正门-雨-night.webp"
         });
-        return f;
+        return f(vars);
       }
       var f = timeImage({
         morning: "images/金谊广场/正门.webp",
         night: "images/金谊广场/正门-night.webp"
       })
-      return f;
+      return f(vars);
     },
     onEnter: function(vars) {
       vars.showZombies = true;
@@ -524,13 +524,13 @@ Object.assign(storyData, {
           morning: "images/placeholder.png" /* TODO: images/金谊广场/旋转门大战-雨.webp */,
           night: "images/placeholder.png" /* TODO: images/金谊广场/旋转门大战-雨-night.webp */
         });
-        return f;
+        return f(vars);
       }
       var f = timeImage({
         morning: "images/金谊广场/旋转门大战.webp",
         night: "images/placeholder.png" /* TODO: images/金谊广场/旋转门大战-night.webp */
       })
-      return f;
+      return f(vars);
     },
     onEnter: initMemoryGame(["红","蓝","绿","黄","白"], 9, { add: { chasedByZombies: 1 } }),
     text: function(vars) {

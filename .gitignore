@@ -6,3 +6,6 @@
 
 # E2E 测试依赖（story-testing skill）
 node_modules/
+
+# self-improving-agent 本地学习日志（AutoPushGame 每小时 git add -A，保持本地不入库）
+.learnings/

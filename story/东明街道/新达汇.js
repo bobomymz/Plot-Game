@@ -1046,7 +1046,7 @@ Object.assign(storyData, {
   "新达汇-电梯厅贩卖机": {
     image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
     text: function(vars) {
-      if ((vars._visit['新达汇-电梯厅贩卖机-砸开'] > 0)) return "那台自动售货机彻底被你砸开了。玻璃断口参差，落货口里只剩碎的罐子、一只拧盖的空瓶。这里已经捞不出什么了。";
+      if ((vars._visit['新达汇-电梯厅贩卖机-砸开'] > 0)) return "那台自动售货机彻底被你砸开了。玻璃断口参差，落货口里只剩碎的罐子、一只拧盖的空瓶。想再捞出一瓶水，是不可能了。";
       var desc = "电梯厅靠墙的角落里立着一部自动售货机。价签还贴着，货道里却透着狼藉——靠走廊这侧的下半块玻璃被人从外面撬开、裂成蛛网状，塞东西进去的动作很粗暴。";
       if (vars._metGaoAtMall) desc += "\n你忽然想起华为体验店展示台上那半瓶矿泉水——原来就是打这儿砸出来的。他挑剩下的，都堆在落货口里。";
       else desc += "\n透过豁口能看见落货口里堆着几个矿泉水瓶，全是空的，瓶盖却一只只拧好、摆得整整齐齐。";
@@ -1056,7 +1056,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "把手伸进豁口翻一翻",
-        condition: "!_visit['新达汇-电梯厅贩卖机-翻找']",
+        condition: "vendingBottleLeft > 0 || !_visit['新达汇-电梯厅贩卖机-翻找']",
         nextScene: "新达汇-电梯厅贩卖机-翻找",
         elseScene: "新达汇-电梯厅贩卖机-空手",
         effect: {  },
@@ -1081,9 +1081,48 @@ Object.assign(storyData, {
 
   "新达汇-电梯厅贩卖机-翻找": {
     image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
-    onEnter: updateTime(1),
-    text: "你把手探进撬开的豁口，在落货口里摸出一把：拧着盖的空矿泉水瓶——喝干后被人一支支拧好摆回去的；一罐敞开、跑光了气的黄色可乐；还有一张卷边、沾了糖浆的旧钞票，早不顶用了。\n没有水。你很清楚，真正的水在更里面的货道，隔着一层完好的玻璃——得砸开才拿得到。",
+    onEnter: updateTime(1, { set: { positionAfterOperation: "新达汇-电梯厅贩卖机-翻找" } }),
+    text: function(vars) {
+      if (!(vars._visit['新达汇-电梯厅贩卖机-翻找'] > 1)) {
+        return "你把手探进撬开的豁口，在落货口里摸出一把：拧着盖的空矿泉水瓶——喝干后被人一支支拧好摆回去的；一罐敞开、跑光了气的黄色可乐；还有一张卷边、沾了糖浆的旧钞票，早不顶用了。\n没有水。你很清楚，真正的水在更里面的货道，隔着一层完好的玻璃——得砸开才拿得到。";
+      }
+      return "你又把手探进落货口。几只拧着盖的空瓶码在最上面，瓶身被摸得发亮——喝水的人早就走了，把瓶子一只只拧回去的习惯却留了下来。";
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars.vendingBottleLeft > 0 && !vars.hasBottle) {
+        cs.push({
+          text: "捞一只空瓶带走",
+          condition: "itemCount < bagVolume",
+          nextScene: "新达汇-电梯厅贩卖机-捞空瓶",
+          elseScene: "整理整理",
+        });
+      }
+      cs.push({ text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  "新达汇-电梯厅贩卖机-捞空瓶": {
+    image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
+    onEnter: function(vars) {
+      vars.vendingBottleLeft = Math.max(0, vars.vendingBottleLeft - 1);
+      vars.hasBottle = true;
+      vars.bottleWater = 0;
+      vars.waterToxic = false;
+      vars.itemCount += 1;
+      vars.positionAfterOperation = "新达汇-电梯厅贩卖机-翻找";
+      return updateTime(1)(vars);
+    },
+    text: function(vars) {
+      var desc = "你从落货口里捞出一只空矿泉水瓶。瓶盖拧得端端正正，瓶身干得发亮——喝干它的人在这一层待了很久，却没舍得把瓶子随手丢掉。";
+      if (vars.vendingBottleLeft > 0) desc += "\n落货口里还剩 " + vars.vendingBottleLeft + " 只空瓶。";
+      else desc += "\n落货口里剩下的瓶子，都被你捞空了。";
+      desc += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>";
+      return desc;
+    },
     choices: [
+      { text: "继续翻落货口", nextScene: "新达汇-电梯厅贩卖机-翻找", effect: updateTime(1) },
       { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
     ]
   },
@@ -1091,7 +1130,10 @@ Object.assign(storyData, {
   "新达汇-电梯厅贩卖机-空手": {
     image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
     onEnter: updateTime(1),
-    text: "你又伸进去摸了一遍——还是那几个空瓶、那罐跑气的可乐，没别的。",
+    text: function(vars) {
+      if (vars.vendingBottleLeft <= 0) return "你又伸进去摸了一遍——碎的罐子、跑气的可乐、卷边的旧钞票，还是那几样。空瓶早被你一只只捞干净了。";
+      return "你又伸进去摸了一遍——还是那几个空瓶、那罐跑气的可乐，没别的。";
+    },
     choices: [
       { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
     ]
@@ -3749,13 +3791,133 @@ Object.assign(storyData, {
   },
   "新达汇-1F后勤仓库": {
     image: "images/新达汇/1F后勤仓库.webp",
-    text: "你推开门。这是一间小型储物仓库，货架上堆着一些落满灰的清洁用品和几箱矿泉水。矿泉水箱上放着一瓶已经开封的——看起来是某个员工留下的。",
-    choices: [
-      {
+    onEnter: { set: { positionAfterOperation: "新达汇-1F后勤仓库" } },
+    text: function(vars) {
+      var desc = "你推开门。这是一间小型储物仓库，货架上堆着一些落满灰的清洁用品。\n\
+靠墙码着两箱矿泉水，纸箱上的胶带缠了好几层，接头处严丝合缝——搬进来的人还没来得及拆。";
+      if (vars._visit['新达汇-1F后勤仓库-开箱'] > 0) desc = desc.replace("还没来得及拆。", "还没来得及拆，封口已经被你划开了。");
+      if (!vars.hasBottle) desc += "\n箱盖上还搁着一瓶已经开封的矿泉水——看起来是某个员工留下的。";
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      var tool = cuttingToolName(vars);
+      if (vars.newdahuiWarehouseWaterLeft > 0) {
+        if (!(vars._visit['新达汇-1F后勤仓库-开箱'] > 0)) {
+          if (tool) {
+            cs.push({ text: "用" + tool + "划开纸箱", nextScene: "新达汇-1F后勤仓库-开箱" });
+          } else {
+            cs.push({ text: "试着徒手撕开纸箱", nextScene: "新达汇-1F后勤仓库-撕不开" });
+          }
+        } else {
+          cs.push({
+            text: function(v) { return v.hasBottle ? "把瓶子接满（箱里还有整瓶的）" : "从箱里拿一瓶矿泉水"; },
+            showCondition: function(v) { return !v.hasBottle || v.bottleWater == 0 || v.waterToxic; },
+            condition: function(v) { return v.hasBottle || v.itemCount < v.bagVolume; },
+            nextScene: function(v) { return v.hasBottle ? "新达汇-1F后勤仓库-换水" : "新达汇-1F后勤仓库-拿水"; },
+            elseScene: "整理整理",
+          });
+        }
+      }
+      if (!vars.hasBottle) {
+        cs.push({
+          text: "拿走箱盖上那瓶已开封的水",
+          condition: "itemCount < bagVolume",
+          nextScene: "新达汇-1F后勤仓库-已开封瓶",
+          elseScene: "整理整理",
+        });
+      }
+      cs.push({
         text: "离开",
         nextScene: "新达汇-1F后勤走廊中",
         effect: updateTime(1),
-      },
+      });
+      return cs;
+    }
+  },
+
+  "新达汇-1F后勤仓库-开箱": {
+    image: "images/新达汇/1F后勤仓库.webp",
+    onEnter: updateTime(5, { set: { positionAfterOperation: "新达汇-1F后勤仓库" } }),
+    text: function(vars) {
+      return "你掏出" + cuttingToolName(vars) + "，刀刃贴着胶带接头划进去，一圈一圈把两箱的封口都挑开。胶带啪地崩断，箱盖弹了起来——里面码得整整齐齐的矿泉水，塑封都没拆，瓶身上还凝着薄薄一层水汽。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】纸箱已划开，可以取水了。</span>";
+    },
+    choices: [
+      { text: "拿一瓶", nextScene: "新达汇-1F后勤仓库-拿水", effect: updateTime(1) },
+      { text: "先不拿，离开", nextScene: "新达汇-1F后勤走廊中", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-1F后勤仓库-拿水": {
+    image: "images/新达汇/1F后勤仓库.webp",
+    onEnter: function(vars) {
+      if (!vars.hasBottle) { vars.hasBottle = true; vars.itemCount += 1; }
+      vars.bottleWater = 1;
+      vars.waterToxic = false;
+      vars.newdahuiWarehouseWaterLeft = Math.max(0, vars.newdahuiWarehouseWaterLeft - 1);
+      vars.positionAfterOperation = "新达汇-1F后勤仓库";
+      return updateTime(2)(vars);
+    },
+    text: function(vars) {
+      var desc = "你从纸箱里抽出一瓶矿泉水——塑封完好，生产日期是六月下旬，应该是安全的。";
+      if (vars.newdahuiWarehouseWaterLeft > 0) desc += "\n箱子里还剩 " + vars.newdahuiWarehouseWaterLeft + " 瓶。";
+      else desc += "\n这是箱子里最后一瓶了。";
+      desc += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】水瓶已装满干净的水。</span>";
+      return desc;
+    },
+    choices: [
+      { text: "继续", nextScene: "新达汇-1F后勤仓库", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-1F后勤仓库-换水": {
+    image: "images/新达汇/1F后勤仓库.webp",
+    onEnter: function(vars) {
+      vars.bottleWater = 1;
+      vars.waterToxic = false;
+      vars.newdahuiWarehouseWaterLeft = Math.max(0, vars.newdahuiWarehouseWaterLeft - 1);
+      vars.positionAfterOperation = "新达汇-1F后勤仓库";
+      return updateTime(1)(vars);
+    },
+    text: function(vars) {
+      var desc = "你把瓶里那点水倒在地上，从纸箱里抽出新的一瓶，拧开，把水缓缓灌进自己的瓶子，拧紧瓶盖。\n清亮的水贴着瓶壁晃了晃，一点杂味都没有。";
+      if (vars.newdahuiWarehouseWaterLeft > 0) desc += "\n箱子里还剩 " + vars.newdahuiWarehouseWaterLeft + " 瓶。";
+      else desc += "\n纸箱见了底，刚灌的是头一份。";
+      desc += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】瓶里换上了干净的水。</span>";
+      return desc;
+    },
+    choices: [
+      { text: "继续", nextScene: "新达汇-1F后勤仓库", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-1F后勤仓库-已开封瓶": {
+    image: "images/新达汇/1F后勤仓库.webp",
+    onEnter: function(vars) {
+      vars.hasBottle = true;
+      vars.bottleWater = 0;
+      vars.waterToxic = false;
+      vars.itemCount += 1;
+      vars.positionAfterOperation = "新达汇-1F后勤仓库";
+      return updateTime(1)(vars);
+    },
+    text: "你拿起箱盖上那瓶已开封的矿泉水。瓶口敞着，剩了小半瓶，瓶壁上落了一层灰——放了好几天，谁也不知道里头进了什么。\n\
+你把剩水倒进角落的拖把池，只留下瓶子。瓶身是普通的农夫山泉，干净，结实，拧上盖一滴不漏。\n\
+<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>",
+    choices: [
+      { text: "继续", nextScene: "新达汇-1F后勤仓库", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-1F后勤仓库-撕不开": {
+    image: "images/新达汇/1F后勤仓库.webp",
+    onEnter: { set: { positionAfterOperation: "新达汇-1F后勤仓库" } },
+    text: "你捏住胶带接头往外使劲——胶带缠了好几层，绷得笔直，手心一滑就脱开了。指甲先劈了一道口子，纸箱的封口连一道褶都没起。\n\
+瓶身上那层薄薄的水汽，隔着纸箱的缝隙透出来，看得见，拿不着。\n\
+<span style='color: #ffaa00; font-style: italic;'>【系统提示】徒手撕不开——需要美工刀这类能划开胶带的东西。</span>",
+    choices: [
+      { text: "算了", nextScene: "新达汇-1F后勤仓库", effect: updateTime(1) }
     ]
   },
 

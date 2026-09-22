@@ -127,6 +127,8 @@ const storyData = {
     _waterDispenserUses: 0,    // 饮水机已使用次数（最多10次）
     waterGivenToTeacher: 0,    // 给王老师的水次数（0→5，满5次信任达成）
     supermarketWaterLeft: 12,  // 联华超市仓库瓶装水剩余（瓶）
+    vendingBottleLeft: 3,      // 新达汇1F电梯厅贩卖机落货口里拧盖空瓶剩余（最多捞3只）
+    newdahuiWarehouseWaterLeft: 20, // 新达汇1F后勤仓库未开封箱装水剩余（2箱×10瓶；须用割/锯类工具划开纸箱）
     teacherStudentsDead: false, // 给王老师毒水后学生变丧尸的死局标记
     fangTradeCount: 0,         // 方姐交易次数（上限3，满3次后她尸变，再进冷库深处即死）
     hasFrozenMeat: false,      // 是否有冻肉（菜市场方姐换的，体力回满，占1格）
