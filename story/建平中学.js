@@ -1754,7 +1754,7 @@ Object.assign(storyData, {
           return f(vars);
         }
         var f = timeImage({
-          morning: "images/建平/物理办公室-忻老师-阴雨.webp",
+          morning: "images/建平/物理办公室-忻老师.webp",
           night: "images/建平/物理办公室-忻老师-night.webp"
         })
         return f(vars);
