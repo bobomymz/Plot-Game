@@ -51,6 +51,7 @@ explorer index.html
 | 地理结构优化/图审计（区域重构流程、指标红线） | `.claude/skills/geo-optimization/SKILL.md` + `node tools/graph_audit.mjs <区域>` |
 | 剧情测试/走查（L1 lint·L4 E2E helper·坑点清单·无截图原则） | `.claude/skills/story-testing/SKILL.md` + `node tools/lint_story.mjs` / `tools/test_helper.mjs` |
 | 解密链设计/优化（难度杠杆分级·已用套路清单·物品预算·方案先行） | `.claude/skills/puzzle-chain-design/SKILL.md` + `node tools/chain_audit.mjs` |
+| 新区域整体设计（四阶段编排·区域差异矩阵·入口契约·DoD） | `.claude/skills/area-story-design/SKILL.md` + `node tools/area_check.mjs <区域>`（区域方案落盘 `docs/区域方案-<名>.md`） |
 
 ### 新增机制的四处同步清单
 加可复用机制时按需更新：core.js(变量+computed+rule) · utils.js(函数) · engine.js(若改行为) · 本表对应行。
