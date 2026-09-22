@@ -197,8 +197,7 @@ const storyData = {
     _zhizhenEastStairCleared: false,    // 致真楼东楼梯强丧尸是否已清
     _yifenEastCleared: false,   // 挹芬楼1F东侧走廊丧尸是否已清（强制记忆闪色）
     _teacherLeft: false,        // 忻老师是否已开车离开（跟去复旦后为 true）
-    _xinDead: false,            // 忻老师是否已被丧尸杀死（ch>=3 进入远翔楼3F物理办公室时触发）
-    _xinDeathVisit: 0,          // 忻老师死亡发生在物理办公室的第几次访问（用于首访展示目击死亡文本）
+    _xinDead: false,            // 忻老师是否已被丧尸杀死（带 ch>=3 尸潮进远翔楼3F物理办公室 → “遇害”节点触发）
     hasMultimeter: false,       // 万用表（老吴杂物室，修14班电脑用）
     _liuCorpse: false,          // 刘冠宇是否已死（锁存：在食堂观察到尸体后永久保持，关煤气阀不复活）
     hasPipelineMap: false,      // 管线图（老吴杂物室，"水有毒"真相线索）

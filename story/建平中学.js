@@ -1664,12 +1664,17 @@ Object.assign(storyData, {
     choices: [
       { text: "去东楼梯", nextScene: "建平-远翔楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-远翔楼-西楼梯", effect: updateTime(1) },
-      { 
-        text: "去物理办公室", 
+      {
+        text: "去物理办公室",
         condition: "hasKeyRing",
-        nextScene: "建平-远翔楼-3F-物理办公室",
-        elseScene: "建平-远翔楼-3F-物理办公室-没钥匙", 
-        effect: updateTime(1) 
+        nextScene: function(v) {
+          // 带 ch>=3 的尸潮进办公室 = 把尸群引到忻老师面前 → 分流到独立“遇害”节点，办公室本体只承接事后状态
+          return (!v._teacherLeft && !v._xinDead && v.chasedByZombies >= 3)
+            ? "建平-远翔楼-3F-物理办公室-遇害"
+            : "建平-远翔楼-3F-物理办公室";
+        },
+        elseScene: "建平-远翔楼-3F-物理办公室-没钥匙",
+        effect: updateTime(1)
       },
       { text: "去高三教室", nextScene: "建平-远翔楼-3F-高三教室", effect: updateTime(1) },
       { text: "经廊桥去致真楼", nextScene: "建平-致真楼-3F", effect: updateTime(2) }
@@ -1749,7 +1754,7 @@ Object.assign(storyData, {
         if(vars._xinDead) {
           var f = timeImage({
             morning: "images/建平/物理办公室-没人.webp",
-            night: "images/建平/物理办公室-没人-night.webp"
+            night: "images/建平/物理办公室-没人-阴雨.webp" /* TODO: 补一张 物理办公室-没人-night.webp，届时换回 */
           })
           return f(vars);
         }
@@ -1760,33 +1765,19 @@ Object.assign(storyData, {
         return f(vars);
       }
       if(vars._xinDead) {
-
+        // 阴雨/夜间共用一张（TODO: 补一张 物理办公室-没人-night.webp 后恢复 timeImage 分支）
+        return "images/建平/物理办公室-没人-阴雨.webp";
       }
       var f = timeImage({
-        morning: "images/建平/物理办公室-忻老师"
+        morning: "images/建平/物理办公室-忻老师-阴雨.webp",
+        night: "images/建平/物理办公室-忻老师-night.webp"
       })
       return f(vars);
     },
-    onEnter: function(vars) {
-      vars.currentPos = "远翔楼3F物理办公室";
-      // 带着高等级尸潮（ch>=3）闯进办公室 = 把尸群引到忻老师面前，他当场遇害
-      if (!vars._teacherLeft && !vars._xinDead && vars.chasedByZombies >= 3) {
-        vars._xinDead = true;
-        vars._xinDeathVisit = vars._visit['建平-远翔楼-3F-物理办公室'] || 0;  // 记下死亡发生的访问轮次，本次展示目击死亡
-        vars.showZombies = true;   // 目击死亡的这一次显示丧尸包围遮罩
-      }
-    },
+    onEnter: function(vars) { vars.currentPos = "远翔楼3F物理办公室"; },
     text: function(vars) {
       if (vars._xinDead) {
-        // 死亡当场（本次访问触发）：目击尸群扑倒忻老师
-        if (vars._xinDeathVisit > 0 && vars._visit['建平-远翔楼-3F-物理办公室'] === vars._xinDeathVisit) {
-          return "你推开物理办公室的门，被你引来的尸群几乎是贴着你的后背涌了进来。\n\
-忻老师——你的物理老师——从那沓批了一半的试卷里抬起头。他看见你，又看见你身后漫进来的黑影，脸色骤变。\n\
-“快跑——”\n\
-喊声只出了一半。尸群漫过办公桌，把他连人带椅子扑倒在地，试卷散了一地，惨叫声很快淹没在成片的低吼里。\n\
-——是你把它们带过来的。你被剩下的丧尸撵着，退到了门口。";
-        }
-        // 之后再来：办公室事后状态
+        // 遇害之后：办公室只剩现场（目击过程在“-遇害”独立节点）
         return "物理办公室里一片狼藉。办公桌翻倒在地，那沓批了一半的试卷散了一地，暗红的血迹从桌角一直拖到门口。\n\
 忻老师不在这里了。";
       }
@@ -1809,6 +1800,42 @@ Object.assign(storyData, {
       { text: "躲起来", showCondition: "chasedByZombies > 0 && !_xinDead", nextScene: "建平-躲藏-物理办公室" },
       { showCondition: "itemCount > 0", text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-远翔楼-3F-物理办公室" } } },
       { text: "回 3 楼走廊", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
+    ]
+  },
+
+  // 带尸潮（ch>=3）进物理办公室：尸群跟着你涌进办公室，忻老师当场遇害。
+  // 独立节点承接目击全过程（此刻玩家被撵到门口，只有逃离选项，不给办公室枢纽选项）；
+  // 逃出去落回 3 楼走廊的追击 QTE——尸潮还在身后。办公室本体只承接事后（_xinDead）状态。
+  "建平-远翔楼-3F-物理办公室-遇害": {
+    image: function(vars) {
+      if(vars.weather == '晴') {
+        var f = timeImage({
+          morning: "images/建平/物理办公室-忻老师.webp",
+          night: "images/建平/物理办公室-忻老师-night.webp"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/建平/物理办公室-忻老师-阴雨.webp",
+        night: "images/建平/物理办公室-忻老师-night.webp"
+      });
+      return f(vars);
+    },
+    onEnter: function(vars) {
+      vars.currentPos = "远翔楼3F物理办公室";
+      vars._xinDead = true;
+      vars.showZombies = true;   // 尸群就在眼前
+      triggerShake();            // 尸群破门涌入的冲击
+      return {};
+    },
+    text: [
+      "你用钥匙拧开物理办公室的门。门轴吱呀一响——身后的尸群几乎是贴着你的后背，跟着你涌了进来。",
+      "忻老师——你的物理老师——从那沓批了一半的试卷里抬起头。他看见你，又看见你身后漫进来的黑影，脸色骤变。\n“快跑——”",
+      "喊声只出了一半。尸群漫过办公桌，把他连人带椅子扑倒在地，试卷散了一地，惨叫声很快淹没在成片的低吼里。",
+      "——是你把它们带过来的。\n你被剩下的丧尸撵着，退到了门口。门外的走廊里，更多的嘶吼声正朝这边涌来。"
+    ],
+    choices: [
+      { text: "退出办公室", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
     ]
   },
 
@@ -3698,7 +3725,7 @@ Object.assign(storyData, {
   // 非地点节点关键词（每次新增此类场景需同步补充）
   // 匹配规则：ID 以关键词【结尾】即命中（无 "-" 前缀锚）——"没螺丝刀/收好内胆/搜尸体"
   // 这类变体由 螺丝刀/内胆/尸体 等基础词直接覆盖，无需逐个造词。
-  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|防波堤|失落的沉默|动摇的坦白|尘封的真相|结算|wqx存档|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|锁着|没钥匙|查看|关阀|被堵住|踢球|听琴|听音乐|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下|李娟|发作|清醒|毒水|转化|解脱|抓伤|借书证|保温杯|粉色|另一只|喝水|灌水)$/;
+  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|防波堤|失落的沉默|动摇的坦白|尘封的真相|结算|wqx存档|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|锁着|没钥匙|查看|关阀|被堵住|踢球|听琴|听音乐|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下|李娟|发作|清醒|毒水|转化|解脱|抓伤|借书证|保温杯|粉色|另一只|喝水|灌水|遇害)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;
