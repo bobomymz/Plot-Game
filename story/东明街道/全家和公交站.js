@@ -71,7 +71,7 @@ Object.assign(storyData, {
         nextScene: "全家-吃饭团"
       },
       {
-        showCondition: "!_visit['全家-喝饮料腹泻']",
+        showCondition: "!_visit['结局-全家-喝饮料腹泻']",
         text: "喝饮料",
         nextScene: "结局-全家-喝饮料腹泻"
       },

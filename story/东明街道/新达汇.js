@@ -2278,8 +2278,8 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "4F-南走廊东"); v.showPowerOut = true; return {}; },
     text: function(vars) {
       var desc = "4F南走廊东端。";
-      if(vars._visit['4F电梯厅'] == 1) desc += "走廊上有一滩从卫生间溢出来的污水，散发着刺鼻的臭气，横跨了整个路面。天花板角落鼓着一包发黄的水渍——楼上卫生间的管道裂了，自来水还在供，水从出事那天起就顺着楼板缝一直渗，在这里积成了这滩东西。";
-      else if (vars._visit['4F电梯厅'] == 2) desc += "你刚刚穿过了一滩污水。";
+      if(vars._visit['新达汇-4F南走廊东'] == 1) desc += "走廊上有一滩从卫生间溢出来的污水，散发着刺鼻的臭气，横跨了整个路面。天花板角落鼓着一包发黄的水渍——楼上卫生间的管道裂了，自来水还在供，水从出事那天起就顺着楼板缝一直渗，在这里积成了这滩东西。";
+      else if (vars._visit['新达汇-4F南走廊东'] == 2) desc += "你刚刚穿过了一滩污水。";
       desc += "\n" + describeZombieWave(vars);
       return desc;
     },
@@ -2288,25 +2288,25 @@ Object.assign(storyData, {
         text: "踮脚踩着干的地方绕过去",
         nextScene: "新达汇-4F电梯厅",
         effect: updateTime(2),
-        showCondition: "_visit['4F电梯厅'] == 1",
+        showCondition: "_visit['新达汇-4F南走廊东'] == 1",
       },
       {
         text: "憋气快步冲过去",
         nextScene: "新达汇-4F南走廊东-滑倒",
         effect: updateTime(1),
-        showCondition: "_visit['4F电梯厅'] == 1",
+        showCondition: "_visit['新达汇-4F南走廊东'] == 1",
       },
       {
         text: "绕到北走廊东侧",
         nextScene: "新达汇-4F北走廊东",
         effect: updateTime(2),
-        showCondition: "_visit['4F电梯厅'] > 1",
+        showCondition: "_visit['新达汇-4F南走廊东'] > 1",
       },
       {
         text: "往西走",
         nextScene: "新达汇-4F南走廊中",
         effect: updateTime(1),
-        showCondition: "_visit['4F电梯厅'] > 1",
+        showCondition: "_visit['新达汇-4F南走廊东'] > 1",
       },
     ]
   },

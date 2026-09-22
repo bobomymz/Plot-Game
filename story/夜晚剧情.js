@@ -51,6 +51,10 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
+      // 【选项可见性口径】建筑类过夜点分两层门槛：
+      //   ① showCondition 追加 `_visit['该建筑内部场景'] > 0` —— 没去过 = 选项不出现（玩家不该知道有这个地方）；
+      //   ② condition + elseScene 保持原样 —— 去过但没清场/没钥匙/没手电 = 仍会死（保留原有死亡陷阱）。
+      // 就地过夜（currentPos 已在该建筑内）与区域兜底不适用第①层。
       // ===== 初始小区 =====
       {
         showCondition: "currentArea == '初始小区'",
@@ -79,14 +83,14 @@ Object.assign(storyData, {
 
       // ===== 周边社区 - 去理发店 =====
       {
-        showCondition: "currentPos != '理发店' && currentArea == '周边社区' && dd < 3",
+        showCondition: "currentPos != '理发店' && currentArea == '周边社区' && dd < 3 && _visit['理发店内部'] > 0",
         text: "在理发店过夜",
         nextScene: "过夜-前往理发店"
       },
 
       // ===== 周边社区 - 全家员工通道 =====
       {
-        showCondition: "currentArea == '周边社区' && dd < 3",
+        showCondition: "currentArea == '周边社区' && dd < 3 && _visit['全家便利店（环林东路）'] > 0",
         text: "去全家便利店员工通道",
         condition: "!FamilymartHasZombie",
         nextScene: "过夜-全家",
@@ -95,7 +99,7 @@ Object.assign(storyData, {
 
       // ===== 周边社区 - 联华超市地下室 =====
       {
-        showCondition: "currentArea == '周边社区' && _visit['小超市'] > 0 && dd < 3",
+        showCondition: "currentArea == '周边社区' && _visit['联华超市'] > 0 && dd < 3",
         text: "去联华超市地下室躲藏",
         condition: "hasTorch && !_supermarketCompromised",
         nextScene: "过夜-小超市",
@@ -104,14 +108,14 @@ Object.assign(storyData, {
 
       // ===== 周边社区 - 安居苑 =====
       {
-        showCondition: "currentArea == '周边社区' && dd < 3",
+        showCondition: "currentArea == '周边社区' && dd < 3 && _visit['三林安居苑-小区内部'] > 0",
         text: "去三林安居苑找间空房",
         nextScene: "过夜-安居苑"
       },
 
       // ===== 周边社区 - 图书馆 =====
       {
-        showCondition: "currentArea == '周边社区' && dd < 3",
+        showCondition: "currentArea == '周边社区' && dd < 3 && _visit['图书馆'] > 0",
         text: "去社区图书馆过夜",
         condition: "_visit['图书馆-办公室-清场'] > 0",
         nextScene: "过夜-图书馆",
@@ -120,9 +124,9 @@ Object.assign(storyData, {
 
       // ===== 周边社区 - 哥哥的深夜食堂 =====
       {
-        showCondition: "currentArea == '周边社区' && dd < 3",
+        showCondition: "currentArea == '周边社区' && dd < 3 && _visit['新达汇-哥哥的深夜食堂'] > 0",
         text: "去东区哥哥的深夜食堂过夜",
-        condition: "_yorozuyaUnlocked",
+        condition: "_yorozuyaUnlocked || hasDoorKey1",
         nextScene: "过夜-哥哥的深夜食堂",
         elseScene: "结局-过夜-深夜食堂上锁"
       },
@@ -208,7 +212,7 @@ Object.assign(storyData, {
         nextScene: "过夜-张江-动力站"
       },
       {
-        showCondition: "currentArea == '张江'",
+        showCondition: "currentArea == '张江' && _visit['张江-上科大-校门'] > 0",
         text: "去上科大，找间空宿舍过夜",
         nextScene: "过夜-张江-上科大"
       },
@@ -220,7 +224,7 @@ Object.assign(storyData, {
 
       // ===== 金谊广场 =====
       {
-        showCondition: "currentArea == '金谊广场'",
+        showCondition: "currentArea == '金谊广场' && _visit['金谊广场-2F-休息'] > 0",
         text: "回2F源氏木语，在陈列沙发上睡一觉",
         nextScene: "过夜-金谊广场"
       },

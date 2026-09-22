@@ -988,7 +988,7 @@ Object.assign(storyData, {
       if (!vars._visit['金谊广场-3F-幸存者-聊长廊']) {
         choices.push({ text: "跟他聊聊长廊的事", nextScene: "金谊广场-3F-幸存者-聊长廊", effect: updateTime(2) });
       }
-      if (vars._visit['金谊广场-B1奥乐齐-搜刮'] > 0 && !vars._visit['金谊广场-3F-幸存者-分食物']) {
+      if (vars._visit['金谊广场-B1奥乐齐-搜刮-吃完'] > 0 && !vars._visit['金谊广场-3F-幸存者-分食物']) {
         choices.push({ text: "分他一点食物", nextScene: "金谊广场-3F-幸存者-分食物", effect: updateTime(2) });
       }
       choices.push({ text: "离开", nextScene: "金谊广场-3F", effect: updateTime(1) });
