@@ -87,10 +87,29 @@ Object.assign(storyData, {
       { text: "往东，沿华科路去华大半导体", nextScene: "张江-华科路", effect: updateTime(7) },
       { text: "往西，去街角", nextScene: "张江-街角", effect: updateTime(4) },
       { text: "往北，去川杨河边", nextScene: "张江-滨河绿道", effect: updateTime(8) },
+      { text: "在园区口那方水景边停一下", nextScene: "张江-AI岛-水景", effect: updateTime(2) },
       { text: "上高架，回西边", nextScene: "北蔡镇罗山立交桥", effect: updateTime(10) }
     ]
   },
 
+  // 人工智能岛入口的景观水池：科创园区的标配，也是玩家能"照见自己"的载体之一。
+  // ⚠ 正文禁止出现「汞 / 夜视」等机制名词，只用身体描写。
+  "张江-AI岛-水景": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/AI岛-水景.webp（干涸/积水的景观池、镜面不锈钢雕塑） */
+    onEnter: function(vars) { vars.currentPos = "人工智能岛水景"; },
+    text: function(vars) {
+      var desc = "园区入口是一方景观水池，池壁贴着灰白的石材。喷头早就不出水了，池底积着一层落叶和黑水，只剩下浅浅一层，还没干透。\n\
+池中央立着一组镜面不锈钢的雕塑，被雨水冲出几道水痕，斜斜地映着天。" +
+        (vars._jinbaoLeft ? "东边那栋楼黑着，水面也就跟着黑。" : "东边那栋楼的灯映在水里，被波纹搅成一摊散光。");
+      // 汞 20+ 皮肤灰白：镜面雕塑 = 能照见自己的载体
+      desc += mercuryMirrorNote(vars, "镜子");
+      return desc;
+    },
+    choices: [
+      { text: "回闸机外", nextScene: "张江-人工智能岛闸机外", effect: updateTime(2) }
+    ]
+  },
   // ==================== 南岸街道（闸机外通往各地块的“路程”节点 + 横向环路） ====================
   // 多入口节点，文本一律按方位锚定（东=华大 / 西=上科大 / 北=川杨河），不以来路定向。
 
@@ -2925,6 +2944,8 @@ Object.assign(storyData, {
 河面浑黄，缓缓往东流。贴着河沿，黑压压的一片人影蹲着、立着，脸全朝着水。隔着这一段堤坡，它们还不理会路上的活物。风里有一股甜腻的味道，说不清是河还是它们。\n那甜味不对劲——东西要烂到生蛆，才会泛出这种甜。河沿上这些，死得比别处都久。\n\
 东边，华大半导体的围栏沿着绿道铺过去，围栏里一排排排风立管高出围墙" +
         (vars._jinbaoLeft ? "。白汽没有了，管口只是对着天，一动不动。" : "，正往天上吐着一缕缕白汽。");
+      // 汞 20+ 皮肤灰白：堤坝不高，从路沿上就能看见河面倒影
+      desc += mercuryMirrorNote(vars, "水面");
       return desc + "\n" + describeWeather(vars);
     },
     choices: [
@@ -2982,9 +3003,10 @@ Object.assign(storyData, {
       var desc = "你爬上川杨河的南岸堤坝。河面很宽，水色浑黄，缓缓地往东流。\n\
 堤下的滨河路上黑压压的一片——那些东西全贴着河沿挤，一个挨一个，脸朝着水，一动不动地挤着。没有一只理会你。它们只是想到水边去。\n\
 往北望，一座大桥横在河上。桥面上也是它们——引桥的坡道上、护栏边、车缝里，密密地立着。风从河面上过来，隔得老远，隐约带来一股甜腻的味道。";
+      // 汞 20+ 皮肤灰白：浑黄河水是天然的反光面
+      desc += mercuryMirrorNote(vars, "水面");
       return desc + "\n" + describeWeather(vars);
-    },
-    choices: function(vars) {
+    },    choices: function(vars) {
       var cs = [];
       cs.push({
         showCondition: "hasGasMask && maskRemainingUses > 0 && hasGun && gunAmmo >= 3",

@@ -1018,6 +1018,11 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
+        text: "看一眼墙边的穿衣镜",
+        nextScene: "安盛街-服装店-穿衣镜",
+        effect: updateTime(1)
+      },
+      {
         showCondition: "hasCrumpledLeaflet",
         text: "想起传单上印的“304柜”，去男装区找找",
         nextScene: "安盛街-服装店-304柜",
@@ -1033,6 +1038,27 @@ Object.assign(storyData, {
         text: "感觉不太对，离开这里",
         nextScene: "安盛街中段"
       }
+    ]
+  },
+
+  // 服装店墙边的穿衣镜：另一处"照见自己"的载体（汞 20+ 皮肤灰白）。
+  // ⚠ 正文禁止出现机制名词，只用身体描写。
+  "安盛街-服装店-穿衣镜": {
+    image: "images/placeholder.png", /* TODO: images/安盛街/服装店/穿衣镜.webp */
+    onEnter: { set: { positionAfterOperation: "安盛街-服装店-穿衣镜" } },
+    text: function(vars) {
+      var desc = "店堂最里侧靠墙立着一面穿衣镜，落地的那种，镜框是仿木纹的。镜面上溅了几点不知道是什么的暗色痕迹。\n\
+镜子里是整间乱糟糟的店——倒下的模特、扯烂的衣服，还有站在中间的你。";
+      var note = mercuryMirrorNote(vars, "镜子");
+      if (note) {
+        desc += note;
+      } else {
+        desc += "你看了两眼，没什么可看的，转身要走。";
+      }
+      return desc;
+    },
+    choices: [
+      { text: "回到店堂中央", nextScene: "安盛街-服装店" }
     ]
   },
 

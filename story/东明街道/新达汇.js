@@ -324,8 +324,8 @@ Object.assign(storyData, {
       if (vars._powerOut && !canSee(vars)) {
         if (vars.noPainSense) {
           // 高汞夜视：黑暗中辨得出过道，但仍看不见门牌上褪色的小字（弱于手电）
-          return "过道里一片黑。但你看得清脚下的路——你扶着墙走到尽头，指尖碰到一扇虚掩的门，认得出门板上贴着褪色的标签，却辨不出上面的字。\n" +
-            "<span style='color: #9aa0a6;'>高汞（40-70）夜视：只辨轮廓，看不清文字。</span>\n" + describeZombieWave(vars);
+          // ⚠ 禁止在正文里点明"汞/夜视"——玩家不知道真相前绝不能被告知机制
+          return "过道里一片黑。但你看得清脚下的路——你扶着墙走到尽头，指尖碰到一扇虚掩的门，认得出门板上贴着褪色的标签，却辨不出上面的字。\n" + describeZombieWave(vars);
         }
         return "过道里一片黑。你扶着墙走到尽头，指尖碰到一扇虚掩的门。\n" + describeZombieWave(vars);
       }
@@ -352,8 +352,8 @@ Object.assign(storyData, {
     text: function(vars) {
       if (vars._powerOut && !canSee(vars)) {
         if (vars.noPainSense) {
-          return "值班室里一片漆黑，但你的眼睛比你以为的管用。你摸到值班台的边缘，站了一会儿——台面上那些小件东西的轮廓，居然都分得出来。\n" +
-            "<span style='color: #9aa0a6;'>高汞（40-70）夜视：只辨轮廓，看不清文字。</span>\n" + describeZombieWave(vars);
+          // ⚠ 禁止在正文里点明"汞/夜视"——玩家不知道真相前绝不能被告知机制
+          return "值班室里一片漆黑，但你的眼睛比你以为的管用。你摸到值班台的边缘，站了一会儿——台面上那些小件东西的轮廓，居然都分得出来。\n" + describeZombieWave(vars);
         }
         return "值班室里一片漆黑，什么也看不清。你摸到值班台的边缘，站了一会儿。\n" + describeZombieWave(vars);
       }
@@ -1612,6 +1612,7 @@ Object.assign(storyData, {
       var desc = "公用卫生间。洗手台上的镜子裂了一道，洗手池里积着陈年的水垢。隔间的门大多关着，空气里飘着一股潮闷的消毒水味。";
       desc += "\n你拧开水龙头——自来水还在供应，清亮的水哗哗地流了出来，和灾前没什么两样。";
       // 汞 20+ 皮肤灰白：镜子是少数能"看见自己"的载体
+      // 统一走 mercuryMirrorNote（utils.js），保留本场景特有的"裂镜"意象
       if (vars.mercuryTier >= 1) {
         desc += "\n\n洗手的时候，你抬眼看了下镜子。裂缝把那张脸切成两半，但切不掉那层颜色——脸是灰的，像蒙了一层没擦净的粉。你凑近了些，确认不是灯光的问题。";
       }

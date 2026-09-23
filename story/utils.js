@@ -280,6 +280,26 @@ function mercuryPainNote(vars) {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+// 汞 20+（tier>=1）皮肤灰白：只在"能照见自己"的载体触发（镜子 / 车窗 / 水面）。
+// ⚠ 铁律：玩家学到真相前，正文绝不能出现「汞 / 夜视 / 40-70」这类机制名词——
+//    只能用身体描写（"脸是灰的"），让玩家自己觉得不对，而不是被告知。
+// surface 传载体名词（"镜子" / "车窗" / "水面"），用于让描写贴合场景。
+// 用法：text 里 `desc += mercuryMirrorNote(vars, "水面");`；低档位返回空串，正文保持干净。
+function mercuryMirrorNote(vars, surface) {
+  if (mercuryTier(vars && vars.mercuryLoad) < 1) return "";
+  surface = surface || "镜子";
+  if (surface === "水面") {
+    return "\n<span style='color: #9aa0a6;'>河面很稳，倒影清清楚楚。你看了一会儿才发现不对——水里那张脸太灰了，灰得像蒙了一层没擦净的粉。你抬手碰了碰自己的脸颊，水面跟着晃开，那张脸散成一片。" +
+           "</span>";
+  }
+  if (surface === "车窗") {
+    return "\n<span style='color: #9aa0a6;'>车玻璃蒙了层薄灰，正好当镜用。你无意间瞥见自己的脸——灰的。不是光线的事，你凑近了些，那层灰色还在。" +
+           "</span>";
+  }
+  return "\n<span style='color: #9aa0a6;'>你抬眼看了下镜子。那张脸还在，只是没了该有的颜色——灰的，像蒙了一层没擦净的粉。你凑近了些，确认不是光线的问题。" +
+         "</span>";
+}
+
 function hasNoTransportation(vars) {
   return !vars.hasEbike && !vars.hasCar && !vars.hasRustyBike && !vars.hasScooter;
 }

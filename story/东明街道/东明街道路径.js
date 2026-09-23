@@ -458,7 +458,10 @@ Object.assign(storyData, {
     },
     onEnter: updateTime(2, { set: { showRain: true, showZombies: true } }),
     text: function(vars) {
-      return "你走近那辆丰田的车，使劲拉了拉车门，密封条咬着，拉不开。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。\n" + describeZombieWave(vars);
+      var desc = "你走近那辆丰田的车，使劲拉了拉车门，密封条咬着，拉不开。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。";
+      // 汞 20+ 皮肤灰白：砸窗时玻璃成了最近的一面镜子
+      desc += mercuryMirrorNote(vars, "车窗");
+      return desc + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -519,8 +522,8 @@ Object.assign(storyData, {
       },
       {
         text: "往北走去学校",
-        nextScene: "上实南校门口",
-        effect: updateTime(20)
+        nextScene: "东明路-三林塘桥",
+        effect: updateTime(8)
       },
       {
         text: "去地铁站",
@@ -532,7 +535,104 @@ Object.assign(storyData, {
         text: "躲到大树后面",
         nextScene: "东明路-三林路-躲藏"
       },
-      sprintAway(["三林路-东明路 十字路口", "图书馆", "上实南校门口", "11号线-三林东站"])
+      sprintAway(["三林路-东明路 十字路口", "图书馆", "东明路-三林塘桥", "11号线-三林东站"])
+    ]
+  },
+
+  // ==================== 三林塘桥（东明路 → 上实南校 的中途节点） ====================
+  // 原本「往北走去学校」是一次性 updateTime(20) 直接跳校门口，中间零场景。
+  // 现拆成 8min(到桥) + 12min(过桥到校)，中间这段正好当岔路枢纽：桥上是南来北往的分水岭。
+  // 现实依据：东明路北上需跨三林塘港。全库此前无此河命名，不冲突。
+  "东明路-三林塘桥": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/小区周边/东明路-三林塘桥.webp（桥面、栏杆、桥下河与挤在水边的尸群） */
+    onEnter: function(vars) {
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "东明路";
+      vars.currentPos = "三林塘桥";
+      vars.showZombies = true;
+    },
+    text: function(vars) {
+      var desc = "东明路往北，走到一半横着一条河——三林塘。河不宽，一座平桥平平地搭过去，桥栏杆锈得厉害。\n\
+你上了桥。桥下的水色发暗，流得很慢。贴着桥墩，那些东西三三两两地立在水里，和川杨河边的场面一个样，只是这里少得多——十几只，全背对着桥，脸朝着水。\n\
+过了桥就是杨思路口，往东去是你念过四年的那所学校。";
+      // 汞 20+ 皮肤灰白：桥下水面是天然反光面（全库最早的"照见自己"载体之一）
+      desc += mercuryMirrorNote(vars, "水面");
+      return desc + "\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+    },
+    qte: {
+      timeout: "18000 - chasedByZombies * 2000",
+      onTimeout: "结局-丧尸的围殴"
+    },
+    choices: [
+      {
+        text: "下桥，继续往北去学校",
+        nextScene: "上实南校门口",
+        effect: updateTime(12)
+      },
+      {
+        text: "在桥上往两边看看",
+        nextScene: "东明路-三林塘桥-张望",
+        effect: updateTime(1)
+      },
+      {
+        text: "往回走，回东明路",
+        nextScene: "东明路-三林路",
+        effect: updateTime(8)
+      },
+      {
+        text: "跳下去，自由落体才是最快的",
+        nextScene: "结局-三林塘桥-跳河"
+      }
+    ]
+  },
+
+  // 桥上的"张望"节点：两个方向 + 看桥下，纯观察不损耗
+  "东明路-三林塘桥-张望": {
+    image: "images/placeholder.png", /* TODO: 可复用桥面图 */
+    onEnter: function(vars) { vars.currentPos = "三林塘桥"; },
+    text: function(vars) {
+      return "你扶着锈栏杆往两头看。\n\
+北岸，过桥就是杨思路，路两侧的店铺全关着卷帘门，街面上空得反常——大概有车的人早都跑光了。\n\
+南岸，是你刚过来的东明路，一排翻倒的车堵在路当中，丧尸在车缝间一耸一耸地挪。\n\
+桥下那十几只还立在水里，一动不动。它们不看桥，也不看两岸——只看水。";
+    },
+    choices: [
+      { text: "往北，下桥去学校", nextScene: "上实南校门口", effect: updateTime(13) },
+      { text: "往南，回东明路", nextScene: "东明路-三林路", effect: updateTime(9) },
+      { text: "再靠近栏杆看看水面", nextScene: "东明路-三林塘桥-看水", effect: updateTime(1) }
+    ]
+  },
+
+  // 看水：倒影提示的落点，再次触发一次（玩家主动选择"再看"才出现，不刷屏）
+  "东明路-三林塘桥-看水": {
+    image: "images/placeholder.png", /* TODO: images/小区周边/东明路-三林塘桥-水面.webp */
+    onEnter: function(vars) { vars.currentPos = "三林塘桥"; },
+    text: function(vars) {
+      var desc = "你靠到栏杆边往下看。水很静，静得能照出东西。";
+      var note = mercuryMirrorNote(vars, "水面");
+      if (note) {
+        desc += note;
+      } else {
+        desc += "灰蒙蒙的天，桥栏杆，还有你自己的轮廓——都在水里，没什么特别的。";
+      }
+      return desc + "\n水里那十几只还在原地。它们谁也不抬头。";
+    },
+    choices: [
+      { text: "退回去，继续走", nextScene: "东明路-三林塘桥" },
+      { text: "算了，跳下去更快", nextScene: "结局-三林塘桥-跳河" }
+    ]
+  },
+
+  // 黑色幽默结局：仿「结局-自尽」的口吻（自由落体才是最快的），但落在水里
+  "结局-三林塘桥-跳河": {
+    image: "images/zombieKnockYouDown.webp",
+    text: "你翻过栏杆的时候，桥下那十几只总算有了反应——不是来拦你，是给你让位置。\n\
+水面比看上去近，也比看上去凉。\n\
+三林塘港的水不起浪，你沉下去的时候，它们还在原地站着，脸朝着水。你终于和它们站到了同一边。\n\
+—— 结局：三林塘 ——",
+    choices: [
+      { text: "重生之我直面尸潮", nextScene: "start" }
     ]
   },
 
