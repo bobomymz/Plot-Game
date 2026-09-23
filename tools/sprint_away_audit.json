@@ -1,67 +1,5 @@
 [
   {
-    "id": "安盛街东侧",
-    "file": "story/东明街道/安盛街.js",
-    "area": "东明街道·安盛街",
-    "textKind": "函数",
-    "destIsFn": true,
-    "destCount": 1,
-    "destList": "遭遇老头丧尸 / 三林路-环林东路 十字路口",
-    "hasCall": false,
-    "callCount": 0,
-    "returnCount": 1,
-    "outdoor": true,
-    "textLine": 50,
-    "retLine": 61,
-    "hideChoiceText": "躲进废弃报刊亭",
-    "okStates": 0,
-    "totalStates": 6,
-    "emptyStates": [
-      "ch=3·_visit=0",
-      "ch=3·_visit=1",
-      "ch=4·_visit=0",
-      "ch=4·_visit=1",
-      "ch=5·_visit=0",
-      "ch=5·_visit=1"
-    ],
-    "level": "P0-完全缺失",
-    "sample": "你来到了安盛街东侧。小时候你经常来这里逛，那时人来人往、商铺林立。如今卷帘门半掩、招牌歪斜，街上只剩稀稀拉拉的几只丧尸在远处徘徊。 路边有一家文具店，卷帘门半掩着。你曾经理发的那个小店就在前面不远——希望那里还安全。 天空蓝得发白，眼睛睁不大。热风贴着路面走，柏油发软，鼻腔里全是晒热的焦味。",
-    "zombieSentences": [
-      "如今卷帘门半掩、招牌歪斜，街上只剩稀稀拉拉的几只丧尸在远处徘徊。"
-    ],
-    "textSrc": "function(vars) { var weather = describeWeather(vars); var desc = \"\"; if (!vars._visit[\"理发店内部\"]) { desc = \"你来到了安盛街东侧。小时候你经常来这里逛，那时人来人往、商铺林立。如今卷帘门半掩、招牌歪斜，街上只剩稀稀拉拉的几只丧尸在远处徘徊。\\n路边有一家文具店，卷帘门半掩着。你曾经理发的那个小店就在前面不远——希望那里还安全。\\n\"; } else { desc = \"你再次回到安盛街东侧。街面上又多了一些血迹和碎玻璃，空气里的腐臭味比上次更重了。\\n\"; } if (vars._lastSc"
-  },
-  {
-    "id": "三林安居苑-小区内部",
-    "file": "story/东明街道/安居苑.js",
-    "area": "东明街道·安居苑",
-    "textKind": "函数",
-    "destIsFn": false,
-    "destCount": 1,
-    "destList": "三林安居苑-7号楼-1楼走廊 / 三林安居苑-8号楼-1楼 / 三林安居苑-小广场 / 安居苑前门",
-    "hasCall": false,
-    "callCount": 0,
-    "returnCount": 1,
-    "outdoor": true,
-    "textLine": 217,
-    "retLine": 226,
-    "hideChoiceText": "躲进灌木丛",
-    "okStates": 0,
-    "totalStates": 6,
-    "emptyStates": [
-      "ch=3·_visit=0",
-      "ch=3·_visit=1",
-      "ch=4·_visit=0",
-      "ch=4·_visit=1",
-      "ch=5·_visit=0",
-      "ch=5·_visit=1"
-    ],
-    "level": "P0-完全缺失",
-    "sample": "你走在三林安居苑的一条小道上。印象中，老小区的布局很简单：中间是一个小花园，围绕着几排六层居民楼。旁边还有一个下沉式小广场，你以前经常在这里玩滑板车。 小区南侧有一扇通往安盛街的后门。 你看向面前那栋楼，铁门敞开着，似乎在风中摇摆。门口还停着一辆老式自行车，车筐里塞着半袋没来得及拿上楼的菜。 西边那栋的门牌上写着“8号楼”——二楼靠东的窗户开着一道缝，没关上。窗台上搁着一只白色的搪瓷缸。风大的时候",
-    "zombieSentences": [],
-    "textSrc": "function(vars) { let basicDes = \"你走在三林安居苑的一条小道上。印象中，老小区的布局很简单：中间是一个小花园，围绕着几排六层居民楼。旁边还有一个下沉式小广场，你以前经常在这里玩滑板车。\\n\" basicDes += \"小区南侧有一扇通往安盛街的后门。\\n\\ 你看向面前那栋楼，铁门敞开着，似乎在风中摇摆。\"; if (!vars.hasRustyBike) basicDes += \"门口还停着一辆老式自行车，车筐里塞着半袋没来得及拿上楼的菜。\"; basicDes += \"\\n\\ 西边那栋的门牌上写着“8号楼”——二楼靠东的窗户开着一道缝，没关上。窗台上搁着一只白"
-  },
-  {
     "id": "安居苑后门",
     "file": "story/东明街道/安居苑.js",
     "area": "东明街道·安居苑",
@@ -80,11 +18,36 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。",
+    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
     "zombieSentences": [
-      "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。"
+      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
     ],
     "textSrc": "function(vars) { let desc = \"你来到三林安居苑的入口。这是一个老小区，没有地下车库，几栋六层楼围绕着中间的小花园。\\n\"; if (vars.chasedByZombies >= 2) { desc += \"追在身后的尸群暂时还没跟上来——老小区的门卫亭和几辆废弃的电瓶车形成了一道天然的障碍，也许能挡一阵。\\n\"; } desc += \"小区里异常安静，只有风吹过树梢的沙沙声。你注意到花坛里有几只猫——不，它们看起来不太对劲。它们的眼睛泛着不正常的绿光，体型也比普通猫大了一圈。\\n其中一只缓缓转过头来，盯着你，发出低沉的嘶嘶声。\"; desc += \"\\n\" + d"
+  },
+  {
+    "id": "安盛街东侧",
+    "file": "story/东明街道/安盛街.js",
+    "area": "东明街道·安盛街",
+    "textKind": "函数",
+    "destIsFn": true,
+    "destCount": 1,
+    "destList": "遭遇老头丧尸 / 三林路-环林东路 十字路口",
+    "hasCall": true,
+    "callCount": 1,
+    "returnCount": 1,
+    "outdoor": true,
+    "textLine": 50,
+    "retLine": 61,
+    "hideChoiceText": "躲进废弃报刊亭",
+    "okStates": 6,
+    "totalStates": 6,
+    "emptyStates": [],
+    "level": "OK",
+    "sample": "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。",
+    "zombieSentences": [
+      "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。"
+    ],
+    "textSrc": "function(vars) { var weather = describeWeather(vars); var desc = \"\"; if (!vars._visit[\"理发店内部\"]) { desc = \"你来到了安盛街东侧。小时候你经常来这里逛，那时人来人往、商铺林立。如今卷帘门半掩、招牌歪斜。\\n路边有一家文具店，卷帘门半掩着。你曾经理发的那个小店就在前面不远——希望那里还安全。\\n\"; } else { desc = \"你再次回到安盛街东侧。街面上又多了一些血迹和碎玻璃，空气里的腐臭味比上次更重了。\\n\"; } if (vars._lastScene === \"安盛街-文具店\" &"
   },
   {
     "id": "安盛街西侧",
@@ -98,8 +61,8 @@
     "callCount": 1,
     "returnCount": 1,
     "outdoor": true,
-    "textLine": 1585,
-    "retLine": 1591,
+    "textLine": 1589,
+    "retLine": 1595,
     "hideChoiceText": "躲到广告牌后面",
     "okStates": 6,
     "totalStates": 6,
@@ -123,16 +86,16 @@
     "callCount": 1,
     "returnCount": 1,
     "outdoor": true,
-    "textLine": 609,
-    "retLine": 617,
+    "textLine": 613,
+    "retLine": 621,
     "hideChoiceText": null,
     "okStates": 6,
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
+    "sample": "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。",
     "zombieSentences": [
-      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
+      "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。"
     ],
     "textSrc": "function(vars) { let desc = \"你来到街上。街道两旁的店铺大多紧闭着门，有几家的橱窗被砸碎了，玻璃渣洒了一地。\\n\\ 前方可以看到一家还开着门的服装店，再过去是理发店。北边是安居苑的后门。往东走，路那边有一家文具店；往西走，还有一家食品店。\\n\"; // 承接刚从服装店带出来的东西（_lastScene 由引擎自动记录） if (vars._lastScene === \"安盛街-服装店收银台-仔细\" && vars.hasCrumpledLeaflet) { desc += \"你把那张揉皱的传单折好塞进口袋——“304柜 新到男装”，没准哪天用得上。\\n\"; } le"
   },
@@ -205,9 +168,9 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。",
+    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
     "zombieSentences": [
-      "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。"
+      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
     ],
     "textSrc": "function(vars) { return \"你来到了全家便利店。\\n<span style='font-weight: bold;'>全家熟悉的专属开门声音传来，门缓缓打开。</span>\\n也许你可以吃一些东西垫垫肚子。\\n\" + describeWeather(vars) + \"\\n\" + describeZombieWave(vars); }"
   },
@@ -230,11 +193,36 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
+    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
+    "zombieSentences": [
+      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
+    ],
+    "textSrc": "function(vars) { var fromHospital = [\"仁济南院-门诊大门\", \"仁济南院-救护车通道\", \"仁济南院-地下停车场\"].indexOf(vars._lastScene) >= 0; var desc = (fromHospital ? \"你退回浦锦路上。两侧的香樟还立在原地，医院那几栋白色建筑沉默地堵在路的尽头。\\n\" : \"你下了高架，沿着一条两侧种满香樟的路前进。路边的指示牌写着“仁济医院南院”，箭头指向路尽头的几栋白色建筑。\\n\") + \"医院的轮廓安静得有些不真实。门诊大楼前的广场上横七竖八地倒着几辆私家车，车门大开，路面上有干涸的暗红色痕迹。几个穿"
+  },
+  {
+    "id": "三林安居苑-小区内部",
+    "file": "story/东明街道/安居苑.js",
+    "area": "东明街道·安居苑",
+    "textKind": "函数",
+    "destIsFn": false,
+    "destCount": 1,
+    "destList": "三林安居苑-7号楼-1楼走廊 / 三林安居苑-8号楼-1楼 / 三林安居苑-小广场 / 安居苑前门",
+    "hasCall": true,
+    "callCount": 1,
+    "returnCount": 1,
+    "outdoor": true,
+    "textLine": 217,
+    "retLine": 226,
+    "hideChoiceText": "躲进灌木丛",
+    "okStates": 6,
+    "totalStates": 6,
+    "emptyStates": [],
+    "level": "OK",
     "sample": "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。",
     "zombieSentences": [
       "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。"
     ],
-    "textSrc": "function(vars) { var fromHospital = [\"仁济南院-门诊大门\", \"仁济南院-救护车通道\", \"仁济南院-地下停车场\"].indexOf(vars._lastScene) >= 0; var desc = (fromHospital ? \"你退回浦锦路上。两侧的香樟还立在原地，医院那几栋白色建筑沉默地堵在路的尽头。\\n\" : \"你下了高架，沿着一条两侧种满香樟的路前进。路边的指示牌写着“仁济医院南院”，箭头指向路尽头的几栋白色建筑。\\n\") + \"医院的轮廓安静得有些不真实。门诊大楼前的广场上横七竖八地倒着几辆私家车，车门大开，路面上有干涸的暗红色痕迹。几个穿"
+    "textSrc": "function(vars) { let basicDes = \"你走在三林安居苑的一条小道上。印象中，老小区的布局很简单：中间是一个小花园，围绕着几排六层居民楼。旁边还有一个下沉式小广场，你以前经常在这里玩滑板车。\\n\" basicDes += \"小区南侧有一扇通往安盛街的后门。\\n\\ 你看向面前那栋楼，铁门敞开着，似乎在风中摇摆。\"; if (!vars.hasRustyBike) basicDes += \"门口还停着一辆老式自行车，车筐里塞着半袋没来得及拿上楼的菜。\"; basicDes += \"\\n\\ 西边那栋的门牌上写着“8号楼”——二楼靠东的窗户开着一道缝，没关上。窗台上搁着一只白"
   },
   {
     "id": "三林路-东明路 十字路口",
@@ -280,9 +268,9 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
+    "sample": "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。",
     "zombieSentences": [
-      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
+      "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。"
     ],
     "textSrc": "function(vars) { return \"你来到了一个十字路口。东面远处是杨高南路立交桥，西边沿三林路有一排商铺，南边通向安盛街，北面的环林东路上有一个公交车站。\\n你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\\n\\ <span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\\n\" + describeWeather(vars) + \"\\n\" + describeZombieWave(vars) + combatDrainText("
   },

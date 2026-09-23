@@ -28,6 +28,7 @@ const storyData = {
     chasedByZombies: 0,        // 被尸潮追击的等级（0~5，效果：进行任何战斗操作都有概率被群殴，qte时间均缩短，体力消耗增加）
     _travelMinutes: 0,         // 连续户外移动累积时间（分钟），户外场景 >6min 的移动累加，休息/吃饭/躲藏/过夜归零
     _fatiguePaid: 0,           // 本段连续移动已扣档位（0-5；travel-fatigue 规则自维护，剧情勿改。里程归零时规则自动清零台账，下一段连续移动从第 1 档重新计费）
+    _mercuryChronicHour: 0,    // 汞慢性累积台账：上次结算到的小时数（mercury-chronic 规则自维护，剧情勿改）
     _restBlocked: false,       // 休息是否被体力门槛挡住（体力>=6 时 restRecover 置 true，休息场景 text 用 restHint 提示"你已经差不多歇够了"）
     _isOutdoor: false,         // 当前渲染场景是否户外（引擎每次渲染按 scene.outdoor 写入，供 updateTime 判断疲劳累计）
     _sleepingZombieGone: false,// 小区道路椅子上躺着的那个丧尸走了没有
@@ -317,6 +318,7 @@ const storyData = {
     strength:  { min: 0, max: 10 },
     chasedByZombies:  { min: 0, max: 5 },
     phoneBattery: { min: 0, max: 100 },
+    mercuryLoad: { min: 0, max: 100 },   // 汞负荷 0-100（死亡阈值 70，见 _globalTriggers）
     // 未来随时加：
     // sanity:   { min: 0, max: 100 },
     // bagVolume:{ min: 1, max: 20 },
@@ -349,6 +351,19 @@ const storyData = {
       meleeWeaponTier: function(v) { return meleeWeaponTier(v); }, // 近战武器档位 0-3，强丧尸用 "meleeWeaponTier >= N" 挡弱武器
       zombieOutsideHome: function(v) { return zombieOutsideHome(v); }, // 丧尸在门口
       _jinbaoLeft: "dd >= (_dieselDelivered ? 6 : 5)", // 洪金宝是否已撤离（张江设计稿§五：送达柴油顺延一天；人走=楼黑=风淋/门禁断电）
+      // ===== 汞中毒体征（设计细节 §三：20-40 皮肤灰白；40-70 痛觉消失/夜视增强）=====
+      // 档位：0=无症状 / 1=20-40 / 2=40-70 / 3=>=70（尸变，由全局触发器接管）
+      // 用法：正文按 mercuryTier >= N 分支写身体描写——不要加 flashStatusWarning，汞是隐性中毒，不走系统提示。
+      mercuryTier: function(v) { return mercuryTier(v.mercuryLoad); },
+      // 痛觉消失：疼痛类文案反转（"疼"→"麻"、"火辣辣"→"没什么感觉"）。设计依据：甲基汞摧毁丘脑腹后外侧核。
+      noPainSense: function(v) { return mercuryTier(v.mercuryLoad) >= 2; },
+      // 弱光源：手机屏（有电时）+ 高汞夜视。两者都弱于手电筒，只够"看清轮廓/就近的细节"，远不如手电。
+      // 用途：暗场景里给"原本纯摸黑"的节点一个次优通道，而不是直接开全图。
+      hasDimLight: function(v) {
+        return v.hasTorch
+            || (v.hasPhone && v.phoneBattery > 0)
+            || mercuryTier(v.mercuryLoad) >= 2;   // 高汞：瞳孔固定散大 → 永久暗适应
+      },
       // 也支持函数（复杂逻辑）
       // fatigue: function(v) { return Math.max(0, 10 - v.strength); }
     },
@@ -392,6 +407,27 @@ const storyData = {
         },
         onTrigger: function(v, rule, n) {
           if (n) flashStatusWarning("⚠ 体力 -" + n + "（连续移动 " + Math.round(v._travelMinutes) + " 分钟）· 剩余 " + fmtStrength(v.strength));
+        }
+      },
+
+      // --- 甲基汞慢性累积：被咬过/喝过毒水（load>0）之后，随时间持续富集 ---
+      // 科学依据：甲基汞生物半衰期数十天，人体几乎不主动排出 → 一旦暴露就是"只增不减"的慢时钟。
+      // ⚠ 只在 load > 0 时启动：没被咬过的玩家永不累积，保证"被咬才是开关、时间只是放大器"的因果链。
+      // 速率：每小时 +1（作者定），被咬后约 2.5 天到达 70。改速率只需改 CHRONIC_RATE_PER_HOUR。
+      {
+        id: "mercury-chronic",
+        condition: "mercuryLoad > 0",
+        triggerKey: "Math.floor(gameMinutes / 60)",
+        effect: function(v) {
+          var perHour = 1;
+          var last = v._mercuryChronicHour;
+          if (last === undefined || last === null) { v._mercuryChronicHour = Math.floor(v.gameMinutes / 60); return false; }
+          var now = Math.floor(v.gameMinutes / 60);
+          var gained = (now - last) * perHour;   // 跨 N 小时一次补足 N 点
+          if (gained <= 0) return false;
+          v._mercuryChronicHour = now;
+          v.mercuryLoad = Math.min(100, (v.mercuryLoad || 0) + gained);
+          return gained;
         }
       },
 

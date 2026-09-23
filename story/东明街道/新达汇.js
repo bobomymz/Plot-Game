@@ -322,6 +322,11 @@ Object.assign(storyData, {
     image: "images/新达汇/值班过道.webp",
     text: function(vars) {
       if (vars._powerOut && !canSee(vars)) {
+        if (vars.noPainSense) {
+          // 高汞夜视：黑暗中辨得出过道，但仍看不见门牌上褪色的小字（弱于手电）
+          return "过道里一片黑。但你看得清脚下的路——你扶着墙走到尽头，指尖碰到一扇虚掩的门，认得出门板上贴着褪色的标签，却辨不出上面的字。\n" +
+            "<span style='color: #9aa0a6;'>高汞（40-70）夜视：只辨轮廓，看不清文字。</span>\n" + describeZombieWave(vars);
+        }
         return "过道里一片黑。你扶着墙走到尽头，指尖碰到一扇虚掩的门。\n" + describeZombieWave(vars);
       }
       var d = "窄门后面是一小段过道，堆着几把折叠椅和一个拖把桶。尽头一扇门，贴着褪色的标签——“值班”两个字还认得出，下面一行小字看不清了。门虚掩着。";
@@ -346,6 +351,10 @@ Object.assign(storyData, {
     image: "images/新达汇/B1保安室.webp",
     text: function(vars) {
       if (vars._powerOut && !canSee(vars)) {
+        if (vars.noPainSense) {
+          return "值班室里一片漆黑，但你的眼睛比你以为的管用。你摸到值班台的边缘，站了一会儿——台面上那些小件东西的轮廓，居然都分得出来。\n" +
+            "<span style='color: #9aa0a6;'>高汞（40-70）夜视：只辨轮廓，看不清文字。</span>\n" + describeZombieWave(vars);
+        }
         return "值班室里一片漆黑，什么也看不清。你摸到值班台的边缘，站了一会儿。\n" + describeZombieWave(vars);
       }
       var d = "值班室不大。一面墙嵌着监控屏幕墙，旁边一张掉漆的值班台，台面上有个空的对讲机充电座。角落立着一个灰色的铁皮配电柜。";
@@ -1349,6 +1358,10 @@ Object.assign(storyData, {
           desc += "\n海澜之家门口那堆等位椅已经难不住你了。";
         }
       }
+      else if (vars.noPainSense) { // 高汞夜视：辨得出椅堆轮廓，但看不清店招文字
+        desc += "借着黑暗里那点不该有的清楚，你辨出走廊边堆着一片东西——像是椅子，歪七扭八地垒在一扇玻璃门前。门头的字看不出来是什么店。";
+        if (vars._2f_chairsCleared) desc += "\n那堆椅子已经挪开了。";
+      }
       else desc += "你看不见旁边有什么店，不敢贸然行动。"
       desc += "\n" + describeZombieWave(vars);
       return desc;
@@ -1369,19 +1382,19 @@ Object.assign(storyData, {
         text: "把门口的椅子一把一把搬开（安静但慢）",
         nextScene: "新达汇-2F北走廊中-搬椅",
         effect: updateTime(3),
-        showCondition: "!_2f_chairsCleared && canSee",
+        showCondition: "!_2f_chairsCleared && (canSee || noPainSense)",
       },
       {
         text: "侧身从椅子缝里钻到店门口",
         nextScene: "新达汇-2F北走廊中-钻缝",
         effect: updateTime(1),
-        showCondition: "!_2f_chairsCleared && canSee",
+        showCondition: "!_2f_chairsCleared && (canSee || noPainSense)",
       },
       {
         text: "直接翻过门口的椅子堆",
         nextScene: "新达汇-2F北走廊中-翻椅",
         effect: updateTime(1),
-        showCondition: "!_2f_chairsCleared && canSee",
+        showCondition: "!_2f_chairsCleared && (canSee || noPainSense)",
       },
       {
         text: "往东走",
@@ -1598,6 +1611,10 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "公用卫生间。洗手台上的镜子裂了一道，洗手池里积着陈年的水垢。隔间的门大多关着，空气里飘着一股潮闷的消毒水味。";
       desc += "\n你拧开水龙头——自来水还在供应，清亮的水哗哗地流了出来，和灾前没什么两样。";
+      // 汞 20+ 皮肤灰白：镜子是少数能"看见自己"的载体
+      if (vars.mercuryTier >= 1) {
+        desc += "\n\n洗手的时候，你抬眼看了下镜子。裂缝把那张脸切成两半，但切不掉那层颜色——脸是灰的，像蒙了一层没擦净的粉。你凑近了些，确认不是灯光的问题。";
+      }
       if (!vars.hasBottle) {
         desc += "可惜你没有能装水的容器。";
       } else if (vars.bottleWater == 0) {
@@ -1967,6 +1984,8 @@ Object.assign(storyData, {
       if (vars._powerOut) {
         if (canSee(vars))
           return "卡通尼乐园里一片漆黑。一只猫蜷缩在滑梯下面，诡异的绿眼睛在黑暗中闪烁。";
+        if (vars.noPainSense)
+          return "卡通尼乐园里一片漆黑。你却在黑暗里看清了那只蜷在滑梯下面的猫——它的绿眼睛正对着你。";
         return "卡通尼乐园里一片漆黑。";
       }
       if (vars._catFed) return "你又来到了卡通尼乐园。那只变异猫蜷在海洋球池深处，尾巴搭在池沿上，缓缓摆动。它看了你一眼，没有动——似乎对你已经失去了兴趣。";

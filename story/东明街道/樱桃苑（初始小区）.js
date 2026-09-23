@@ -1707,8 +1707,10 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
       return { add: { strength: -2, mercuryLoad: 10 }, set: {hurtByZombie: true} };
     },
     text: function(vars) {
-      return "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。\n\
-剧痛让你眼前一黑。你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。" + weaponBrokeText(vars);
+      var pain = vars.noPainSense
+        ? "\n<span style='color: #9aa0a6;'>肩膀撞在墙上，声音很闷。那一瞬间你甚至觉得，撞的不是自己。</span>"
+        : "\n剧痛让你眼前一黑。";
+      return "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。" + pain + "\n你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。" + weaponBrokeText(vars);
     },
     choices: [
       {

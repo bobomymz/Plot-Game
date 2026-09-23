@@ -716,7 +716,10 @@ Object.assign(storyData, {
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
     },
     text: function(vars) {
-      return "你慢了半拍——丧尸从侧面撞上了你，你们一起摔在站厅的瓷砖地上。\n它的指甲划破了你的手臂，你忍着痛一脚踹开它，爬起来跌跌撞撞冲进了通往B1的通道。\n你靠着通道的墙壁大口喘气，手臂上的抓伤火辣辣地疼。" + weaponBrokeText(vars) + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
+      var tail = vars.noPainSense
+        ? "你靠着通道的墙壁大口喘气。抓伤在渗血，你等着那股火辣辣的疼——它没有来。伤口静得像不属于你。" + mercuryPainNote(vars)
+        : "你靠着通道的墙壁大口喘气，手臂上的抓伤火辣辣地疼。";
+      return "你慢了半拍——丧尸从侧面撞上了你，你们一起摔在站厅的瓷砖地上。\n它的指甲划破了你的手臂，你忍着痛一脚踹开它，爬起来跌跌撞撞冲进了通往B1的通道。\n" + tail + weaponBrokeText(vars) + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       { text: "继续前进", nextScene: "金谊广场-B1 心谊如意街", effect: updateTime(1) }
@@ -1168,7 +1171,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "你拿起那半瓶威士忌，拧开盖子。酒味很冲。\n你咬紧牙关，把酒倒在手臂的伤口上——一阵剧烈的刺痛从伤口蔓延到整个手臂，你差点叫出声来。\n";
       if (!vars.hurtByZombie) {
-        desc += "刺痛过后，伤口周围的皮肤泛着红，但看起来干净了不少。\n至少，伤口不会再继续恶化了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，感染风险降低。但已进入体内的汞不会因此消失。</span>";
+        desc += "刺痛过后，伤口周围的皮肤泛着红，但看起来干净了不少。\n至少，伤口不会再继续恶化了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，感染风险降低。</span>";
       } else {
         desc += "但刺痛过后，伤口看起来并没有好转——反而更红了。酒精杀死了表面的细菌，但病毒已经太深了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】酒精消毒未能清除感染。伤口仍在恶化。</span>";
       }

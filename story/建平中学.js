@@ -1559,7 +1559,12 @@ Object.assign(storyData, {
       }
       return { set: set, add: add };
     },
-    text: "你伸手去抢那张管线图。\n丧尸猛地挥爪，在你的手臂上抓出一道血淋淋的口子。你忍着剧痛抢到了图纸，踉跄着退开。",
+    text: function(vars) {
+      if (vars.noPainSense) {
+        return "你伸手去抢那张管线图。\n丧尸猛地挥爪，在你的手臂上抓出一道血淋淋的口子——你看见了，却没等到该有的剧痛。你抢到图纸，踉跄着退开。" + mercuryPainNote(vars);
+      }
+      return "你伸手去抢那张管线图。\n丧尸猛地挥爪，在你的手臂上抓出一道血淋淋的口子。你忍着剧痛抢到了图纸，踉跄着退开。";
+    },
     choices: [
       { text: "逃出杂物室", nextScene: "建平-致真楼-1F", effect: function(v) { v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return updateTime(1)(v); } }
     ]

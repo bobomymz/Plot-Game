@@ -385,8 +385,15 @@ Object.assign(storyData, {
 
   "上实南校-3号楼-4楼-摸黑": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolStairsDark.png */,
-    onEnter: { add: { strength: -1 } },
-    text: "你摸黑爬上4楼。膝盖在台阶上磕了一下，但你忍住了。楼道尽头你摸到了一扇门——门牌上凹凸的字迹你辨认了半天：“化学实验室”。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    onEnter: function(vars) { if (!vars.noPainSense) vars.strength = Math.max(0, vars.strength - 1); return {}; },
+    text: function(vars) {
+      if (vars.noPainSense) {
+        // 高汞夜视：不用摸黑，楼梯看得清——但看不清门牌上的字
+        return "没有手电，你照样看清了台阶。楼道尽头那扇门上有一块门牌，凹凸的字迹在暗处显不出来，你凑近了，才一个字一个字摸出来——“化学实验室”。\n" +
+          "<span style='color: #9aa0a6;'>高汞（40-70）夜视：只辨轮廓，看不清文字。</span>";
+      }
+      return "你摸黑爬上4楼。膝盖在台阶上磕了一下，但你忍住了。楼道尽头你摸到了一扇门——门牌上凹凸的字迹你辨认了半天：“化学实验室”。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+    },
     choices: [
       {
         text: "推开门",

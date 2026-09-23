@@ -312,7 +312,10 @@ Object.assign(storyData, {
     image: "images/hurtByzombie.webp",
     onEnter: { add: { chasedByZombies: 2, mercuryLoad: 10 }, set: { hurtByZombie: true } },
     text: function(vars) {
-      var desc = "你深吸一口气，朝着楼梯口的方向猛冲过去。\n丧尸们被你突然的动作惊动，从几个方向同时朝你围拢。你撞开了一只挡路的，用肩膀顶开了另一只——但第三只还是抓到了你的手臂，袖子被撕开一道口子，皮肤火辣辣地疼。\n你甩开它，带着伤冲到了楼梯口。回头看时，丧尸群已经在你身后汇合了。";
+      var painLine = vars.noPainSense
+        ? "但第三只还是抓到了你的手臂，袖子被撕开一道口子，皮肉翻卷着——你先看见的是血，不是疼。" + mercuryPainNote(vars)
+        : "但第三只还是抓到了你的手臂，袖子被撕开一道口子，皮肤火辣辣地疼。";
+      var desc = "你深吸一口气，朝着楼梯口的方向猛冲过去。\n丧尸们被你突然的动作惊动，从几个方向同时朝你围拢。你撞开了一只挡路的，用肩膀顶开了另一只——" + painLine + "\n你甩开它，带着伤冲到了楼梯口。回头看时，丧尸群已经在你身后汇合了。";
       if (vars._lastScene === "地铁站-安检区-犹豫") { // 仅"抡起旁边的灭火器砸出一条路"入口扣了1体力
         desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }

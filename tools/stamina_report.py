@@ -5,40 +5,109 @@
 生成体力压力分析报告：分来源收支、每游戏日净收支、虚弱时长占比、
 REST_CAP 触挡率、天气/状态相关性、死亡与回溯点。
 
+来源归因按**内容锚定**：每次运行先扫源码，用锚点（函数声明 / 规则 id / 场景对象键）
+定位入口行，据此划定区间。core.js / utils.js 增删行后**无需手动校正**。
+
 用法：
     python tools/stamina_report.py stamina_log_xxx.jsonl [-o tools/体力遥测报告.md]
-    python tools/stamina_report.py --selftest        # 用合成数据自测统计逻辑
+    python tools/stamina_report.py --selftest         # 合成数据自测（含锚点解析校验）
+    python tools/stamina_report.py --list-anchors     # 打印锚点解析结果，排查未命中
 """
 import re, os, sys, json, argparse
 from collections import defaultdict
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# ---------------- 来源归因：已知代码位（file后缀, 行号下限, 行号上限, 标签） ----------------
-# 引擎/辅助函数改版后行号漂移，按区间匹配；区间外的落回原始 file:line。
-# ⚠ 维护提醒：story/core.js 的区间会随「在 _variables 里增删变量」整体平移。
-#   2026-09-20 在 core.js:61 插入 8 行变量声明，下方 core.js 区间已整体校正（+8 后再按实际内容对齐）。
-#   2026-09-21 在 core.js:96 附近插入 5 行背包变量（_bagTier/_bagExtra/hasBackpack/hasSchoolbag + bagVolume 注释），
-#              下方 core.js 区间再次整体 +5 校正。
-#   2026-09-22 在 core.js:130 附近插入 2 行水瓶变量（vendingBottleLeft / newdahuiWarehouseWaterLeft），
-#              下方 core.js 区间整体 +2 校正（358→360、381→383、1121→1123、1160→1162、1171→1173、1253→1255）。
-#   若日后再往 _variables 增删行，记得同步这里的 core.js 区间，或跑 tools/stamina_audit.py 对照真实行号。
-KNOWN_SITES = [
-    ("utils.js",  63,  70, "休息恢复(通用·REST_CAP)"),
-    ("utils.js", 168, 180, "天气·户外消耗"),             # 含 178 行 vars.strength -= drain
-    ("utils.js", 199, 214, "冲刺甩追兵"),
-    ("utils.js", 355, 374, "战斗·近战胜利"),
-    ("utils.js", 444, 456, "躲藏失败"),
-    ("core.js",  360, 366, "饥饿·规则"),                # starvation 规则：id → 364 行 effect{strength:-1}
-    ("core.js",  383, 392, "连续移动疲劳·规则"),         # travel-fatigue 规则：id → 390 行档位扣体力
-    ("core.js", 1123, 1132, "喝水(+1)"),
-    ("core.js", 1162, 1169, "吃冻肉(回满)"),             # 1165 行 vars.strength = 10
-    ("core.js", 1255, 1267, "吃维C(+1)"),
-    ("core.js", 1173, 1254, "整理整理·进食(+1~+4/回满)"),  # 各类口粮场景（饼干/炒米/干粮/火腿肠/泡面/罐头…）
-    ("engine.js", 209, 214, "场景效果(对象式)"),
-    ("engine.js", 641, 646, "饥饿规则·自动扣体力(对象式)"),
-    ("夜晚剧情.js", 10, 20, "过夜保底(≥5)"),
+# ---------------- 来源归因：按内容锚定 ----------------
+# 不再硬编码行号：每次运行先扫源码，用锚点定位入口函数/场景起始行，再据此划定区间。
+# 好处：往 core.js/utils.js 增删行后无需手动校正（旧版的 KNOWN_SITES 会随插入整体漂移）。
+# 定位心法：只抓「入口函数 / 规则 id / 场景键所在行」——
+#   `{}` 闭包体内无函数调用帧的写入点，测出的行号是 Proxy trap 的，不会进日志；
+#   会进日志的只有「经函数 / reactive 规则执行」的写入点。
+# anchor 语义：'fn' = 函数声明行起算；'rule' = 规则 id 行起算；'scene' = 场景键行起算；
+#              'line' = 单行精确匹配。
+CONTENT_ANCHORS = [
+    # (文件后缀, 锚点类型, 锚点正则, 区间上限偏移, 标签)
+    ("utils.js", "fn",    r"function\s+restRecover\s*\(",            8,  "休息恢复(通用·REST_CAP)"),
+    ("utils.js", "fn",    r"function\s+applyWeatherDrain\s*\(",     16,  "天气·户外消耗"),
+    ("utils.js", "fn",    r"function\s+sprintAway\s*\(",            14,  "冲刺甩追兵"),
+    ("utils.js", "fn",    r"function\s+combatDrain\s*\(",           18,  "战斗·近战胜利"),
+    ("utils.js", "fn",    r"function\s+hideOnLocation\s*\(",        10,  "躲藏失败"),
+    ("core.js",  "rule",  r'id:\s*"starvation"',                    6,  "饥饿·规则"),
+    ("core.js",  "rule",  r'id:\s*"travel-fatigue"',               10,  "连续移动疲劳·规则"),
+    # 场景锚点必须带 `: {` 后缀——裸 `"X"` 会先撞到 nextScene 里的字符串引用
+    ("core.js",  "scene", r'"整理整理-喝水"\s*:\s*\{',              8,  "喝水(+1)"),
+    ("core.js",  "scene", r'"整理整理-吃冻肉"\s*:\s*\{',            7,  "吃冻肉(回满)"),
+    ("core.js",  "scene", r'"整理整理-吃维C"\s*:\s*\{',            11,  "吃维C(+1)"),
+    ("core.js",  "range", r'"整理整理-吃饼干"\s*:\s*\{', r'"整理整理-吃维C"\s*:\s*\{',  "整理整理·进食(+1~+4/回满)"),
+    ("core.js",  "range", r'"整理整理-喝水"\s*:\s*\{',   r'"整理整理-碘伏消毒"\s*:\s*\{', "饮水与进食(明细)"),
+    ("engine.js","line",  r"gameState\[key\] \+= effect\.add\[key\]", 2, "场景效果(对象式)"),
+    ("engine.js","line",  r"gameState\[k\] \+= rule\.effect\.add\[k\]", 2, "饥饿规则·自动扣体力(对象式)"),
+    ("夜晚剧情.js","line", r"Math\.max\(5, vars\.strength\)",        1, "过夜保底(≥5)"),
 ]
+
+# ---------- 源码缓存 ----------
+_SRC = {}
+def _srcs(suffix):
+    """按后缀找 story/ 下所有 js（含子目录）+ 根目录 engine.js"""
+    key = suffix
+    if key in _SRC:
+        return _SRC[key]
+    out = []
+    for fp in __import__("glob").glob(os.path.join(ROOT, "story", "**", "*.js"), recursive=True):
+        if os.path.basename(fp).endswith(suffix):
+            out.append(fp)
+    fp2 = os.path.join(ROOT, suffix)
+    if os.path.exists(fp2):
+        out.append(fp2)
+    _SRC[key] = out
+    return out
+
+def _find(suffix, pattern):
+    """在匹配后缀的文件里找 pattern，返回 (basename, 1-based 行号, 匹配行原文)"""
+    rx = re.compile(pattern)
+    for fp in _srcs(suffix):
+        with open(fp, encoding="utf-8-sig") as f:
+            for i, ln in enumerate(f, 1):
+                if rx.search(ln):
+                    return os.path.basename(fp), i, ln.rstrip()
+    return None, None, None
+
+def _find_all(suffix, pattern):
+    rx = re.compile(pattern)
+    hits = []
+    for fp in _srcs(suffix):
+        with open(fp, encoding="utf-8-sig") as f:
+            for i, ln in enumerate(f, 1):
+                if rx.search(ln):
+                    hits.append((os.path.basename(fp), i))
+    return hits
+
+# ---------- 启动时解析全部锚点 ----------
+_RESOLVED = []   # (fname, lo, hi, label)
+_UNRESOLVED = []
+for anchor in CONTENT_ANCHORS:
+    suffix, kind, pat = anchor[0], anchor[1], anchor[2]
+    if kind == "range":
+        f1, l1, _ = _find(suffix, pat)
+        f2, l2, _ = _find(suffix, anchor[3])
+        if l1 and l2 and f1 == f2:
+            _RESOLVED.append((f1, min(l1, l2), max(l1, l2), anchor[4]))
+        else:
+            _UNRESOLVED.append((suffix, pat, "range 端点未命中"))
+        continue
+    fname, ln, _raw = _find(suffix, pat)
+    if ln is None:
+        _UNRESOLVED.append((suffix, pat, "锚点未命中"))
+        continue
+    if kind == "fn" or kind == "rule" or kind == "scene":
+        _RESOLVED.append((fname, ln, ln + anchor[3], anchor[4]))
+    elif kind == "line":
+        _RESOLVED.append((fname, ln, ln + anchor[3], anchor[4]))
+
+def anchor_report():
+    """返回锚点解析情况（供 --selftest / --list-anchors 输出）"""
+    return _RESOLVED, _UNRESOLVED
 
 def label_of(src):
     if not src or src == "?":
@@ -47,8 +116,8 @@ def label_of(src):
     if not m:
         return src
     fname, line = m.group(1), int(m.group(2))
-    for suffix, lo, hi, label in KNOWN_SITES:
-        if fname.endswith(suffix) and lo <= line <= hi:
+    for a_fname, lo, hi, label in _RESOLVED:
+        if fname == a_fname and lo <= line <= hi:
             return label
     return src
 
@@ -184,13 +253,20 @@ def summarize(deltas, rest_blocked_n, title):
 def build_report(entries, title="体力遥测报告"):
     res = analyze(entries)
     L = ["# " + title + "\n",
-         "> 由 tools/stamina_report.py 生成。来源标签映射见脚本内 KNOWN_SITES（按行号区间匹配，代码改动后可校正）。\n"]
+         "> 由 tools/stamina_report.py 生成。来源标签按**内容锚定**实时解析（见脚本内 CONTENT_ANCHORS）：",
+         "> 每次运行先扫源码定位入口函数/规则/场景，源码增删行无需手动校正。\n"]
+    if _UNRESOLVED:
+        L.append("> ⚠ **以下锚点未命中，相关来源会落回原始 `文件:行号`**：")
+        for suffix, pat, why in _UNRESOLVED:
+            L.append(">   - `%s` %s（%s）" % (suffix, pat, why))
+        L.append("")
     runs = res["runs"]
     all_deltas = res["deltas"]
     rb_total = sum(1 for e in entries if e.get("type") == "restBlocked")
     L.append("## 总览\n")
     L.append("- 记录 %d 条（delta %d / 会话 %d / 休息被拒 %d），共 %d 段会话" % (
         len(entries), len(all_deltas), len(runs), rb_total, len(runs)))
+    L.append("- 锚点解析：命中 %d / 未命中 %d" % (len(_RESOLVED), len(_UNRESOLVED)))
     L.append("")
     for i, r in enumerate(runs, 1):
         rb = sum(1 for e in r["events"] if e.get("type") == "restBlocked")
@@ -210,23 +286,30 @@ def selftest():
         e.update(gm2t(gm)); e.update(kw)
         E.append(e)
     E.append({"type": "session", "tag": "new", "dd": 1, "hh": 8, "mm": 0, "strength": 7})
+    # 合成数据用「当前解析出的真实行号」，这样锚点漂移时自测会一起报出来
+    ENGINE_STARVE = next((lo for f, lo, _hi, lab in _RESOLVED if lab == "饥饿规则·自动扣体力(对象式)"), 644)
+    CORE_FATIGUE = next((lo for f, lo, _hi, lab in _RESOLVED if lab == "连续移动疲劳·规则"), 390)
+    CORE_MERCURY_DRAIN = next((lo for f, lo, _hi, lab in _RESOLVED if lab == "吃冻肉(回满)"), 1165)
+    UTI_REST = next((lo for f, lo, _hi, lab in _RESOLVED if lab == "休息恢复(通用·REST_CAP)"), 67)
+    UTI_WEATHER = next((lo for f, lo, _hi, lab in _RESOLVED if lab == "天气·户外消耗"), 174)
+    UTI_COMBAT = next((lo for f, lo, _hi, lab in _RESOLVED if lab == "战斗·近战胜利"), 374)
     gm = 8 * 60
     for i in range(6):                      # 健康饥饿钟：2h 一个
-        gm += 120; push(gm, "engine.js:643", -1, 7 - (i + 1), weather="晴")
-    gm += 45; push(gm, "utils.js:174", -0.5, 5.5, weather="晴")
-    gm += 50; push(gm, "core.js:390", -2, 3.5, travel=40, weather="雨")
-    gm += 30; push(gm, "utils.js:370", -2, 1.5, weather="雨", chase=2)
+        gm += 120; push(gm, "engine.js:%d" % ENGINE_STARVE, -1, 7 - (i + 1), weather="晴")
+    gm += 45; push(gm, "utils.js:%d" % UTI_WEATHER, -0.5, 5.5, weather="晴")
+    gm += 50; push(gm, "core.js:%d" % CORE_FATIGUE, -2, 3.5, travel=40, weather="雨")
+    gm += 30; push(gm, "utils.js:%d" % UTI_COMBAT, -2, 1.5, weather="雨", chase=2)
     gm += 90; push(gm, "story/仁济南院.js:1850", 1, 2.5, cold=True)   # 吃葡萄糖
-    gm += 80; push(gm, "engine.js:643", -1, 1.5, cold=True)           # 感冒 80min 周期
-    gm += 80; push(gm, "engine.js:643", -1, 0.5, cold=True)
-    gm += 80; push(gm, "engine.js:643", -0.5, 0, cold=True)           # 归零 → 死亡
+    gm += 80; push(gm, "engine.js:%d" % ENGINE_STARVE, -1, 1.5, cold=True)   # 感冒 80min 周期
+    gm += 80; push(gm, "engine.js:%d" % ENGINE_STARVE, -1, 0.5, cold=True)
+    gm += 80; push(gm, "engine.js:%d" % ENGINE_STARVE, -0.5, 0, cold=True)   # 归零 → 死亡
     E.append({"type": "session", "tag": "backtrack", "dd": 1, "hh": 22, "mm": 5, "strength": 2.5})
-    push(22 * 60 + 5, "utils.js:67", 2, 4.5)                          # 休息
+    push(22 * 60 + 5, "utils.js:%d" % UTI_REST, 2, 4.5)                          # 休息
     for i in range(3):
-        push(22 * 60 + 30 + i * 30, "utils.js:67", 1, 5.5 + i)        # 休息到 cap
+        push(22 * 60 + 30 + i * 30, "utils.js:%d" % UTI_REST, 1, 5.5 + i)        # 休息到 cap
     E.append({"type": "restBlocked", "dd": 1, "hh": 23, "mm": 30, "scene": "小区-家", "strength": 6, "cap": 6})
     E.append({"type": "restBlocked", "dd": 1, "hh": 23, "mm": 45, "scene": "小区-家", "strength": 6, "cap": 6})
-    push(23 * 60 + 50, "story/core.js:1165", 5.5, 10)                # 吃冻肉回满
+    push(23 * 60 + 50, "story/core.js:%d" % CORE_MERCURY_DRAIN, 5.5, 10)        # 吃冻肉回满
     md = build_report(E, title="自测报告")
     text = "\n".join(md)
     # --- 断言 ---
@@ -244,15 +327,38 @@ def selftest():
     need("虚弱(≤3)时长占比" in text, "虚弱占比输出")
     need("感冒期间支出" in text, "状态相关性输出")
     need("会话2 · backtrack" in text, "回溯会话切分")
+    # --- 锚点解析正确性 ---
+    need(len(_UNRESOLVED) == 0, "全部内容锚点命中（未命中 %d）" % len(_UNRESOLVED))
+    resolved = {lab for _f, _lo, _hi, lab in _RESOLVED}
+    for must in ("休息恢复(通用·REST_CAP)", "饥饿·规则", "连续移动疲劳·规则",
+                 "喝水(+1)", "吃冻肉(回满)", "吃维C(+1)", "整理整理·进食(+1~+4/回满)"):
+        need(must in resolved, "锚点已解析：%s" % must)
+    # 锚点行号必须落在文件范围内（防止命中注释里的假锚点）
+    in_range = all(lo >= 1 and hi > lo for _f, lo, hi, _l in _RESOLVED)
+    need(in_range, "锚点区间行号合法")
     print("\n自测%s（合成数据 %d 条）" % ("通过" if ok else "失败", len(E)))
     return 0 if ok else 1
+
+def list_anchors():
+    print("内容锚点解析结果（当前源码）：\n")
+    print("  状态  文件              行号区间      标签")
+    print("  " + "-" * 66)
+    for fname, lo, hi, label in sorted(_RESOLVED, key=lambda x: (x[0], x[1])):
+        print("  ok    %-16s %5d-%-5d  %s" % (fname, lo, hi, label))
+    for suffix, pat, why in _UNRESOLVED:
+        print("  MISS  %-16s %-13s  %s（%s）" % (suffix, "-", pat, why))
+    print("\n命中 %d / 未命中 %d" % (len(_RESOLVED), len(_UNRESOLVED)))
+    return 0 if not _UNRESOLVED else 1
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("jsonl", nargs="*", help="遥测 JSONL 文件（可多个）")
     ap.add_argument("-o", "--out", default=os.path.join(ROOT, "tools", "体力遥测报告.md"))
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--list-anchors", action="store_true", help="打印内容锚点解析结果")
     args = ap.parse_args()
+    if args.list_anchors:
+        sys.exit(list_anchors())
     if args.selftest:
         sys.exit(selftest())
     if not args.jsonl:
@@ -270,7 +376,10 @@ def main():
     with open(args.out, "w", encoding="utf-8") as f:
         f.write("\n".join(md))
     print("报告已生成：%s（输入 %d 条）" % (args.out, len(entries)))
-    print("提示：报告内含每来源收支/虚弱占比/死亡点；调 KNOWN_SITES 可改善来源标签。")
+    if _UNRESOLVED:
+        print("⚠ 有 %d 个锚点未命中，查看：python tools/stamina_report.py --list-anchors" % len(_UNRESOLVED))
+    else:
+        print("锚点全部命中（内容锚定，源码行号变动无需校正）。")
 
 if __name__ == "__main__":
     main()

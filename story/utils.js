@@ -256,6 +256,30 @@ function canSee(vars) {
   return 7 <= vars.hh && vars.hh <= 18 || vars.hasTorch;
 }
 
+// ====== 汞中毒体征档位（设计细节 §三）======
+// 0=无症状 / 1=20-40（皮肤灰白、瞳孔散大）/ 2=40-70（痛觉消失、夜视增强）/ 3=>=70（尸变）
+// 只做档位判定，不做任何提示——汞是隐性中毒，提示必须写在正文里（靠 mercuryTier 分支），不要用 flashStatusWarning。
+function mercuryTier(load) {
+  load = load || 0;
+  if (load >= 70) return 3;
+  if (load >= 40) return 2;
+  if (load >= 20) return 1;
+  return 0;
+}
+
+// 痛觉旁白：汞负荷 40+ 时痛觉消失（设计细节 §三 / §一-1），把"疼"改写成"麻/迟钝"。
+// 用法：受伤节点 text 里写 mercuryPainNote(vars)，它返回一句插入语（0 档返回空串）。
+// 例如： "...手臂上" + mercuryPainNote(vars) + "。" 不要在汞低档返回任何东西，保持正文干净。
+function mercuryPainNote(vars) {
+  if (mercuryTier(vars && vars.mercuryLoad) < 2) return "";
+  var pool = [
+    "\n<span style='color: #9aa0a6;'>应该是疼的。你等着那股疼上来，它没有来——只有一片迟钝的麻木，从伤口向外漫开。</span>",
+    "\n<span style='color: #9aa0a6;'>伤口在渗血。你盯着看了一会儿，才想起来这里本该很疼。</span>",
+    "\n<span style='color: #9aa0a6;'>你低头确认了一下伤口的深度，心里某个地方知道这很严重——但身体没有给你任何反馈。</span>"
+  ];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function hasNoTransportation(vars) {
   return !vars.hasEbike && !vars.hasCar && !vars.hasRustyBike && !vars.hasScooter;
 }

@@ -290,7 +290,12 @@ Object.assign(storyData, {
   "图书馆-阅览室-徒手": {
     image: "images/hurtByzombie.webp",
     onEnter: { add: { strength: -2 } },
-    text: "你只能用拳头。你躲开它挥舞的书，一拳打在它脸上——但自己也被它挠了一下，手臂上火辣辣地疼。\n你在阅览椅上磕绊着后退，抓起一把椅子挡在身前，总算把它顶开了一段距离。趁这个机会，你转身冲向了藏书区的方向。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>",
+    text: function(vars) {
+      var pain = vars.noPainSense
+        ? "手臂上多了几道口子，血顺着往下淌。奇怪的是，你什么也感觉不到。" + mercuryPainNote(vars)
+        : "手臂上火辣辣地疼。";
+      return "你只能用拳头。你躲开它挥舞的书，一拳打在它脸上——但自己也被它挠了一下，" + pain + "\n你在阅览椅上磕绊着后退，抓起一把椅子挡在身前，总算把它顶开了一段距离。趁这个机会，你转身冲向了藏书区的方向。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
+    },
     choices: [
       {
         text: "捂着伤口继续跑",

@@ -117,6 +117,11 @@ Object.assign(storyData, {
       if (vars.hasTorch || (vars.hasPhone && vars.phoneBattery > 0)) {
         return head + "头顶的灯管蒙着灰，但借着你手里的光，通道里的情况还算看得清。\n前方分岔出三条通道——左边堆着几只倒扣的塑料周转箱，中间是一条直道，右边好像通向一个小房间。";
       }
+      // 高汞夜视：瞳孔固定散大 → 暗适应异常敏锐（弱于手机光，只够看清"哪里堆了什么"，看不清细节）
+      if (vars.noPainSense) {
+        return head + "通道里没有一丝光——但你看得见。\n四周的轮廓比该有的样子清楚得多，堆着的菜筐、墙角的拖把、地上那摊干涸的污渍，都在。你眨了下眼，才反应过来这件事不对：这种黑，本来应该什么都看不见的。\n" +
+          "<span style='color: #9aa0a6;'>高汞（40-70）夜视：只辨轮廓，看不清细节与文字。</span>\n前方分岔出三条通道，你只能大致分出方向。";
+      }
       if (vars.hasPhone && vars.phoneBattery <= 0) {
         var phoneLine = fromKitchen ? "你摁亮手机想照个亮——屏幕闪了一下就黑了，电量见底。\n" : "";
         return head + phoneLine + "你只能摸黑往前挪，脚下踩到一只滚落的菜筐，差点绊倒。前方好像分出了岔路，但你什么也看不清。";
@@ -160,6 +165,9 @@ Object.assign(storyData, {
     text: function(vars) {
       if (vars.hasTorch || (vars.hasPhone && vars.phoneBattery > 0)) {
         return "你沿着通道走了几步，发现前方是一条死路——堆满的旧货架堵死了去路。你回想了一下，刚才岔路口那几个方向里，好像有个方向你漏看了。\n你退回了岔路口，重新打量四周。";
+      }
+      if (vars.noPainSense) {
+        return "你沿着通道走了几步，借着眼睛里那点说不清的敏锐，比上次多看清了一截——前方是一条死路，旧货架堆得严严实实。你退回了岔路口。";
       }
       return "你凭着感觉往前走，却一头撞进了一个杂物间——手在黑暗中碰到一排冰冷的铁钩。你打了个寒战，赶紧退回去。黑暗中，你隐约觉得背后有拖沓的脚步声。你不敢再乱闯了。";
     },
