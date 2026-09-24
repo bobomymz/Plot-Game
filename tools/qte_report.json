@@ -362,6 +362,25 @@
       "chaseMs": null
     },
     {
+      "id": "东明路-三林塘桥",
+      "file": "story/东明街道/东明街道路径.js",
+      "area": "东明街道·东明街道路径",
+      "kind": "静态对象",
+      "factory": "",
+      "src": "{ timeout: \"18000 - chasedByZombies * 2000\", onTimeout: \"结局-丧尸的围殴\" }",
+      "timeoutMs": 18000,
+      "timeoutOk": true,
+      "timeoutExpr": "18000 - chasedByZombies * 2000",
+      "timeoutErr": null,
+      "timeoutNote": null,
+      "onTimeout": "结局-丧尸的围殴",
+      "hidden": false,
+      "typewriter": false,
+      "choiceCount": 4,
+      "hitState": null,
+      "chaseMs": null
+    },
+    {
       "id": "图书馆-藏书区入口",
       "file": "story/东明街道/东明社区图书馆.js",
       "area": "东明街道·东明社区图书馆",
@@ -1673,6 +1692,44 @@
       "chaseMs": 10000
     },
     {
+      "id": "忻老师家-楼道",
+      "file": "story/复旦江湾.js",
+      "area": "东明街道·复旦江湾",
+      "kind": "动态函数",
+      "factory": "function",
+      "src": "function(vars) { return { timeout: \"10000 - (dd - 3) * 1500\", onTimeout: \"结局-丧尸的围殴\" }; }",
+      "timeoutMs": 10000,
+      "timeoutOk": true,
+      "timeoutExpr": null,
+      "timeoutErr": null,
+      "timeoutNote": null,
+      "onTimeout": "结局-丧尸的围殴",
+      "hidden": false,
+      "typewriter": false,
+      "choiceCount": 3,
+      "hitState": "基准(ch=0·首次进入)",
+      "chaseMs": 10000
+    },
+    {
+      "id": "忻老师家-学生救场",
+      "file": "story/复旦江湾.js",
+      "area": "东明街道·复旦江湾",
+      "kind": "动态函数",
+      "factory": "function",
+      "src": "function(vars) { return { timeout: \"9000 - (dd - 3) * 1200\", onTimeout: \"结局-丧尸的围殴\" }; }",
+      "timeoutMs": 9000,
+      "timeoutOk": true,
+      "timeoutExpr": null,
+      "timeoutErr": null,
+      "timeoutNote": null,
+      "onTimeout": "结局-丧尸的围殴",
+      "hidden": false,
+      "typewriter": false,
+      "choiceCount": 1,
+      "hitState": "基准(ch=0·首次进入)",
+      "chaseMs": 9000
+    },
+    {
       "id": "张江-落地坡道",
       "file": "story/张江.js",
       "area": "张江",
@@ -1927,6 +1984,14 @@
       "timeout": 11000,
       "timeoutScene": "结局-阅览室的常客",
       "text": "输入你看到的颜色分布"
+    },
+    {
+      "id": "忻老师家-楼道-堵门",
+      "file": "story/复旦江湾.js",
+      "area": "东明街道·复旦江湾",
+      "timeout": "8000 - (dd - 3) * 1000",
+      "timeoutScene": "结局-被丧尸扑倒咬死",
+      "text": "跳下去，离开这里"
     },
     {
       "id": "张江-加油站-棚子-战斗",

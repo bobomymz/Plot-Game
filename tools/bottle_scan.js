@@ -18,7 +18,7 @@ const FILES = [
   'story/东明街道/安盛街.js', 'story/东明街道/安居苑.js',
   'story/东明街道/金谊广场.js', 'story/东明街道/警察局.js',
   'story/东明街道/反派NPC.js', 'story/上海市区路径.js',
-  'story/仁济南院.js', 'story/建平中学.js', 'story/张江.js'
+  'story/仁济南院.js', 'story/建平中学.js', 'story/复旦江湾.js', 'story/张江.js'
 ];
 
 // 关键词：仅「饮用水容器」语义。刻意排除 电瓶车/酒瓶/药瓶/盐酸/油漆 等。
