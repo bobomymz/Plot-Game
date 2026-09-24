@@ -620,7 +620,8 @@ Object.assign(storyData, {
   "全家门口-收好手机": {
     image: "images/小区周边/全家和公交站/全家便利店门口.webp",
     onEnter: function(vars) {
-      vars.hasPhone = true; vars.phoneBattery = 5;vars.itemCount ++; 
+      // _phoneOrigin="own"：妈妈遗物原机（有同学微信）——复旦章 b 链叫人门控用
+      vars.hasPhone = true; vars.phoneBattery = 5; vars._phoneOrigin = "own"; vars.itemCount ++;
     },
     text: "你把手机收好。",
     choices: [

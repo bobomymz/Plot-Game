@@ -136,6 +136,14 @@ function jpPengAtPiano(vars, which) {
   return (vars.hh === 13 || vars.hh === 16) && vars._pengPiano === which;
 }
 
+// 忻老师尸变延迟引信是否已爆线（复旦章③④：抓伤=倒计时，不分分支）。
+// ③ 深伤=次日爆（dd > _xinOutcomeDay），④ 浅伤=隔日爆（+1）；给了药（_xinPillGiven）不炸。
+// 用处：3F走廊"去物理办公室"路由死亡结局 + 高三14班彭奕宸知情软信号（他离物理办公室最近）。
+function jpXinFuse(vars) {
+  return vars._teacherLeft && vars._xinOutcome >= 3 && vars._xinScratched && !vars._xinPillGiven
+    && vars.dd > vars._xinOutcomeDay + (vars._xinOutcome === 3 ? 0 : 1);
+}
+
 // 走廊/楼层追击 QTE：被追（chasedByZombies > 0）时进入节点就开始场景级倒计时，
 // 尸潮越猛限时越短，超时被丧尸围殴；没被追就静静走、不起 QTE。
 // 可选 pred 额外守卫：如挹芬楼 1F 走廊未清场时走记忆闪色，需清场后才启用本 QTE。
@@ -1689,9 +1697,14 @@ Object.assign(storyData, {
         condition: "hasKeyRing",
         nextScene: function(v) {
           // 带 ch>=3 的尸潮进办公室 = 把尸群引到忻老师面前 → 分流到独立“遇害”节点，办公室本体只承接事后状态
-          return (!v._teacherLeft && !v._xinDead && v.chasedByZombies >= 3)
-            ? "建平-远翔楼-3F-物理办公室-遇害"
-            : "建平-远翔楼-3F-物理办公室";
+          if (!v._teacherLeft && !v._xinDead && v.chasedByZombies >= 3) {
+            return "建平-远翔楼-3F-物理办公室-遇害";
+          }
+          // 复旦章延迟引信：③④不给药过了爆线日 → 进办公室 = 被咬死结局（结局-变了的忻老师）
+          if (jpXinFuse(v)) {
+            return "结局-变了的忻老师";
+          }
+          return "建平-远翔楼-3F-物理办公室";
         },
         elseScene: "建平-远翔楼-3F-物理办公室-没钥匙",
         effect: updateTime(1)
@@ -1770,30 +1783,19 @@ Object.assign(storyData, {
 
   "建平-远翔楼-3F-物理办公室": {
     image: function(vars) {
+      // 忻老师不在场：遇害 / 错过窗口独自离开 / ①②牺牲后（_teacherLeft 且章节已收束）。
+      // ③④他人在建平安顿（_xinOutcome >= 3），仍用在场图；爆线后（_xinTurned）3F走廊直接路由结局，进不到这里。
+      var absent = vars._xinDead || vars._xinGone || (vars._teacherLeft && vars._xinOutcome <= 2);
       if(vars.weather == '晴') {
-        if(vars._xinDead) {
-          var f = timeImage({
-            morning: "images/建平/物理办公室-没人.webp",
-            night: "images/建平/物理办公室-没人-night.webp"
-          })
-          return f(vars);
-        }
         var f = timeImage({
-          morning: "images/建平/物理办公室-忻老师.webp",
-          night: "images/建平/物理办公室-忻老师-night.webp"
-        })
-        return f(vars);
-      }
-      if(vars._xinDead) {
-        var f = timeImage({
-          morning: "images/建平/物理办公室-没人-阴雨.webp",
-          night: "images/建平/物理办公室-没人-night.webp"
+          morning: absent ? "images/建平/物理办公室-没人.webp" : "images/建平/物理办公室-忻老师.webp",
+          night: absent ? "images/placeholder.png" /* TODO: images/建平/物理办公室-没人-night.webp */ : "images/建平/物理办公室-忻老师-night.webp"
         })
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/建平/物理办公室-忻老师-阴雨.webp",
-        night: "images/建平/物理办公室-忻老师-night.webp"
+        morning: absent ? "images/建平/物理办公室-没人-阴雨.webp" : "images/建平/物理办公室-忻老师-阴雨.webp",
+        night: absent ? "images/placeholder.png" /* TODO: images/建平/物理办公室-没人-night.webp */ : "images/建平/物理办公室-忻老师-night.webp"
       })
       return f(vars);
     },
@@ -1805,9 +1807,20 @@ Object.assign(storyData, {
 忻老师不在这里了。";
       }
       if (vars._teacherLeft) {
-        // 已跟去复旦（章节中不可达，防御分支）；章节后按 _xinOutcome 分后日谈 → 阶段3（③④他回来了/①②噩讯）
+        // 已跟去复旦（章节中不可达，防御分支）；章节后按 _xinOutcome 分后日谈
         if (vars._xinOutcome > 0) {
-          return "物理办公室。忻老师的座位…（章节后日谈文本 → 阶段3：③④他在建平安顿/①②再也不会回来）";
+          if (vars._xinOutcome <= 2) {
+            // ①②：他再也不会回来了
+            return "物理办公室还保持着那天的样子——那沓批了一半的试卷摊在桌上，红笔搁在旁边，笔帽都没盖。\n只是再也不会有人回来，把它批完了。";
+          }
+          // ③④：他在建平安顿（爆线未到时照常进——他还在，安静倒计时；爆线后进不来，路由去结局）
+          var settled = (vars._xinOutcome === 3)
+            ? "物理办公室里多了一张行军床。忻老师坐在自己的位子上，衬衫换过了，小臂上的纱布是自己缠的，缠得很丑。见你进来，他点点头：“车还好开吗？”"
+            : "物理办公室里多了一张行军床。忻老师坐在自己的位子上，正拿红笔批那沓试卷——批得很慢，像是在跟每一道题重新认识。见你进来，他放下笔：“车还好开吗？”";
+          if (vars._xinPillGiven) {
+            settled += "\n他抬头看你的时候，眼神比江湾那天清亮了不少。";
+          }
+          return settled;
         }
         return "物理办公室空着——忻老师和车都不在了。他跟你一起去江湾了。";
       }
@@ -1883,7 +1896,7 @@ Object.assign(storyData, {
       } else if ((vars._visit['建平-远翔楼-4F-高三14班-修电脑'] > 0)) {
         return "images/建平/高三14-彭奕宸玩galgame.webp";
       } else {
-        return "images/建平/高三14-彭奕宸玩不了galgame.webp";
+        return "images/建平/高三14-彭奕宸玩不了电脑.webp";
       }
       return "images/placeholder.png";
     },
@@ -1900,6 +1913,10 @@ Object.assign(storyData, {
         desc += "\n彭奕宸站在电脑旁，盯着电脑屏幕上的galgame，一脸跃跃欲试。";
       } else {
         desc += "\n彭奕宸坐在靠窗的位子，盯着那台开不了机的电脑，一脸烦躁。";
+      }
+      // 复旦章软信号：忻老师爆线后，离物理办公室最近的彭奕宸知情（唯一预警，不解释——作者拍板）
+      if (jpXinFuse(vars) && !vars._pengGalCleared) {
+        desc += "\n他今天有点心不在焉。见你过来，他欲言又止，最后只压低声音说了一句：“物理办公室那边……最近别去。”";
       }
       return desc;
     },

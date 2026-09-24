@@ -512,6 +512,7 @@ Object.assign(storyData, {
   "B1": {
     image: "images/home/B1.webp",
     onEnter: { set: { currentPlace: "初始小区", currentPos: "地下车库" } },
+    text: "你推开消防门，顺着水泥坡道走进 B1 地下车库。感应灯没亮，只有安全出口的绿灯在远处亮着，照出一排排沉默的车尾。",
     choices: [
       {
         text: "返回楼梯间",

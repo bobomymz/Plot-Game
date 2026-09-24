@@ -205,9 +205,10 @@ const storyData = {
     _xinOutcome: 0,             // 章节分支结果：0=未入章/进行中 1=①他堵门牺牲 2=②学生目击牺牲 3=③带伤双逃 4=④学生救场
     _xinKnowsTruth: false,      // a 成立：305 出示王知筠手机成功（双刃真相：既救他也判他家人）
     _studentsCalled: false,     // b 成立：叫人窗口内用原机打过电话（蔡镜晓+彭奕宸 骑车来援）
-    _xinScratched: false,       // ③忻老师伤情标记（逃出时多处深抓伤 = 1天后尸变的 in-world 依据）
-    _xinPillGiven: false,       // ③已把无标签药丸给忻老师（整理整理里无提示选项，作者已拍板）
-    _xinTurned: false,          // ③不给药延迟引信：进物理办公室 = 被咬死结局
+    _xinScratched: false,       // 忻老师江湾挂彩标记（环境楼楼梯，全分支为真；③再叠逃窗深伤）
+    _xinPillGiven: false,       // ③④已把无标签药丸给忻老师（整理整理里无提示选项，作者已拍板）
+    _xinTurned: false,          // ③④不给药延迟引信：进物理办公室 = 被咬死结局
+    _xinOutcomeDay: 0,          // 章节分支落定当天的 dd（引爆公式：③ dd>_xinOutcomeDay / ④ +1，未给药才炸）
     _phoneOrigin: "",           // 玩家手机来源：""=无 "own"=全家妈妈遗物原机（有同学微信）"store"=新达汇华为展示机（b 门控用）
     hasMultimeter: false,       // 万用表（老吴杂物室，修14班电脑用）
     _liuCorpse: false,          // 刘冠宇是否已死（锁存：在食堂观察到尸体后永久保持，关煤气阀不复活）
@@ -947,6 +948,14 @@ const storyData = {
         nextScene: "整理整理-服药丸"
       },
       {
+        // 复旦章③④：把药丸给忻老师（挂整理整理、无任何提示，作者已拍板——纯藏阴险）
+        // 位置门控 currentArea==建平中学：他人在建平，别处开背包不该能给药
+        showCondition: "_xinOutcome >= 3 && _xinScratched && hasMercuryPill && !_xinPillGiven && currentArea == '建平中学'",
+        text: "把那颗无标签的药丸拿给忻老师",
+        effect: updateTime(1, { set: { hasMercuryPill: false, _xinPillGiven: true }, add: { itemCount: -1 } }),
+        nextScene: "整理整理-给药丸"
+      },
+      {
         showCondition: "hasMercuryPill",
         text: "丢下无标签药丸",
         effect: updateTime(1, { set : { hasMercuryPill: false }, add: { itemCount: -1 } }),
@@ -1367,6 +1376,23 @@ const storyData = {
       return updateTime(1)(vars);
     },
     text: "你抠出那粒无标签的淡黄色药丸，放在手心端详了一下，还是放进嘴里用水送了下去。药丸没有味道，说不上来是什么感觉——但你隐约觉得，身体里那股沉甸甸的压迫感好像减轻了一点。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你服下了那粒无标签的药丸。</span>",
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  // 复旦章③④：给药丸（选项 effect 已扣药，这里只演剧情；知识门控只管提示文本——带王知筠遗物的人知道它为什么有用）
+  "整理整理-给药丸": {
+    image: "images/整理整理.webp",
+    text: function(vars) {
+      var t = "你翻出那颗无标签的药丸，走到忻老师面前，塞进他手里。\n“这……”他捏着药丸愣了愣，“哪来的？”\n“别问。吃。”\n他看了你两秒，仰头咽了下去。";
+      if (vars.hasWangPhone) {
+        t += "\n你知道这颗药为什么可能有用——王知筠的数据里提过它。而他小臂上那些口子，正往同一条路上走。";
+      } else {
+        t += "\n你说不清它到底能不能救命。你只知道，他小臂上那些口子，不该没有任何办法。";
+      }
+      return t;
+    },
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

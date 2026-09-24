@@ -691,6 +691,14 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
+        // 甲基汞抑制剂第二入口（复旦章③④公平性：漏捡/已用掉童涵春堂药丸的玩家可回取；照退烧药双入口模式）
+        showCondition: "!hasMercuryPill",
+        text: "翻翻处方药架最里侧",
+        condition: "itemCount < bagVolume",
+        nextScene: "仁济南院-门诊药房-药丸",
+        elseScene: "整理整理"
+      },
+      {
         text: "离开药房",
         nextScene: "仁济南院-门诊大厅",
         effect: updateTime(1)
@@ -723,6 +731,17 @@ Object.assign(storyData, {
     onEnter: { set: { hasAlcohol: true }, add: { itemCount: 1 } },
     text: "你拿起那瓶医用酒精，拧开瓶盖闻了闻——很冲。\n\
 如果受了伤，这瓶酒精能用来给伤口消毒。",
+    choices: [
+      { text: "收好", nextScene: "仁济南院-门诊药房" }
+    ]
+  },
+
+  // 甲基汞抑制剂第二入口（与金谊广场童涵春堂同一颗 hasMercuryPill，全图唯一守卫防重复）
+  "仁济南院-门诊药房-药丸": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiPharmacy.png */,
+    onEnter: { set: { hasMercuryPill: true }, add: { itemCount: 1 } },
+    text: "处方药架最里侧，一只棕色小瓶倒在别的药盒后面。倒出来一粒淡黄色药丸——瓶身没有标签，只有一行手写的编号。\n\
+你把它收了起来。说不清是什么，但被人藏得这么深的东西，总归有用。",
     choices: [
       { text: "收好", nextScene: "仁济南院-门诊药房" }
     ]

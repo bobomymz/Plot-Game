@@ -936,7 +936,7 @@ Object.assign(storyData, {
         text: "收好手机",
         condition: "itemCount < bagVolume",
         nextScene: "新达汇-1F南走廊东",
-        effect: updateTime(1, { set: { hasPhone: true, phoneBattery: 50 }, add: { itemCount: 1 } }),
+        effect: updateTime(1, { set: { hasPhone: true, phoneBattery: 50, _phoneOrigin: "store" }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
     ]
