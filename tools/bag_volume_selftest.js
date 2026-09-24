@@ -85,6 +85,7 @@ function choicesOf(state, sceneId) {
 function textsOf(list) { return list.map(c => c.text); }
 
 let pass = 0, fail = 0;
+const knownDefects = [];   // ⚠ 已确认但待拍板的缺陷：不计入 fail（避免假绿，也不谎报通过）
 function ok(name, cond) {
   if (cond) { pass++; console.log('  ok  ' + name); }
   else { fail++; console.log('  FAIL ' + name); }
@@ -211,15 +212,26 @@ console.log('9) 三处帆布袋入口并存（不再互斥）');
   ok('拿到后安居苑隐藏', !textsOf(choicesOf(s, '三林安居苑-卧室-仔细')).some(t => t.indexOf('拿上帆布袋') >= 0));
 }
 
-console.log('10) 旧存档兼容（有 hasBag 但无 _bagExtra 的存档）');
+console.log('10) 旧存档兼容（有 hasBag 但无 _bagExtra 的存档）—— ⚠ 已知缺陷，不计入通过数');
 {
   const s = newState();
-  s.hasBag = true;      // 旧存档只写了 hasBag
-  s._bagExtra = 0;      // 没有 _bagExtra 字段（旧档）
+  s.hasBag = true;      // 旧存档只写了 hasBag（改造前 hasBag 的语义 = "有任意扩容容器"）
+  s._bagExtra = 0;      // 迁移时被填默认值 0，而不是按 hasBag 补成 1
   recompute(s);
-  ok('旧存档 bagVolume 不倒退（>=4）', s.bagVolume >= 4 || true); // 见下方说明
+  // ⚠ 这条原本写作 `ok('旧存档 bagVolume 不倒退（>=4）', s.bagVolume >= 4 || true)`：
+  //    `|| true` 让断言恒真 → 一条**假绿**，注释写着"见下方说明"但下方并无说明。
+  //    真实情况：bagVolume 由旧档存的 4 掉到 3（静默缩水 1 格）；此后点「丢下帆布袋」
+  //    （showCondition=hasBag 为 true，所以可见）会把 _bagExtra 由 0 减到 -1，容量再掉。
+  //    量化复现见 tools/bag_migration_repro.js，缺陷报告见 tools/背包容量旧存档迁移缺陷报告.md。
+  //    修复方案涉及语义取舍（旧档 hasBag=true 到底是帆布袋还是双肩包），待作者拍板。
+  console.log('   ⚠ 已知缺陷  旧档 bagVolume = ' + s.bagVolume + '（旧档存的是 4，迁移后掉 1 格）');
+  knownDefects.push('旧存档迁移：hasBag=true 时 _bagExtra 被填 0（应为 1）→ 容量 4→3，丢袋后 _bagExtra=-1');
 }
 
 console.log('');
 console.log('结果：' + pass + ' 通过 / ' + fail + ' 失败');
+if (knownDefects.length) {
+  console.log('已知缺陷 ' + knownDefects.length + ' 项（未计入失败，需作者拍板）：');
+  knownDefects.forEach((d, i) => console.log('  ⚠ ' + (i + 1) + '. ' + d));
+}
 process.exit(fail ? 1 : 0);

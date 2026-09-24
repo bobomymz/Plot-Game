@@ -24,6 +24,8 @@ const REST = [
   'story/东明街道/反派NPC.js', 'story/上海市区路径.js',
   'story/仁济南院.js', 'story/建平中学.js', 'story/复旦江湾.js', 'story/张江.js'
 ];
+// 2026-09-24 根治：以 index.html 为准重算清单（新增剧情文件自动纳入，杜绝"漏加载=假绿"）
+try { const _sf = require('./story_files').list().filter(function (f) { return CORE.indexOf(f) < 0; }); REST.length = 0; for (const _f of _sf) REST.push(_f); } catch (_e) { console.warn('[REST] 回退内置清单：' + _e.message); }
 
 const sandbox = { console, Math, JSON, Object, Array, Set, Map, String, Number, Boolean, Date, isNaN, parseInt, parseFloat, RegExp, Error, Function };
 for (const k of ['flashStatusWarning', 'flashStatus', 'showToast', 'notify', 'triggerShake']) sandbox[k] = function () {};

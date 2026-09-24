@@ -20,6 +20,8 @@ const FILES = [
   'story/东明街道/反派NPC.js', 'story/上海市区路径.js',
   'story/仁济南院.js', 'story/建平中学.js', 'story/复旦江湾.js', 'story/张江.js'
 ];
+// 2026-09-24 根治：以 index.html 为准重算清单（新增剧情文件自动纳入，杜绝"漏加载=假绿"）
+try { const _sf = require('./story_files').list(); FILES.length = 0; for (const _f of _sf) FILES.push(_f); } catch (_e) { console.warn('[FILES] 回退内置清单：' + _e.message); }
 
 // 关键词：仅「饮用水容器」语义。刻意排除 电瓶车/酒瓶/药瓶/盐酸/油漆 等。
 const KW_BOTTLE = /水瓶|矿泉水|瓶装水|空水瓶|空瓶|塑料瓶|桶装水|纯净水|凉白开|脉动|饮料瓶|汽水瓶/;

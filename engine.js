@@ -597,16 +597,25 @@ function evaluateExpr(expr, vars) {
   return expr;
 }
 
+// 只重算派生变量（_reactive.computed），不跑规则。
+// 用途：存档 / 回溯两条恢复路径 —— 与 fillMissingDefaults 是同一件事的两半：
+//   _variables 里的键靠"填初始值"补，computed 里的键只能靠"重算"补（派生量没有初值可取）。
+// ⚠ 恢复路径上不要直接调整个 applyReactive()：那会把饥饿/疲劳规则提前到读档瞬间结算
+//   （玩家什么都没做就掉体力）。规则仍按原流程在第一次 applyEffect 时跑，节流记录照旧。
+function refreshComputed() {
+  const reactive = storyData._reactive;
+  if (!reactive || !reactive.computed) return;
+  for (const key in reactive.computed) {
+    gameState[key] = evaluateExpr(reactive.computed[key], gameState);
+  }
+}
+
 function applyReactive() {
   const reactive = storyData._reactive;
   if (!reactive) return;
 
   // --- 1. 计算派生变量 ---
-  if (reactive.computed) {
-    for (const key in reactive.computed) {
-      gameState[key] = evaluateExpr(reactive.computed[key], gameState);
-    }
-  }
+  refreshComputed();
 
   // --- 2. 执行响应式规则 ---
   if (reactive.rules) {
@@ -766,9 +775,11 @@ function backtrack() {
   clearQTE();   // 终止 QTE
   clearMemoryFlash(); // 终止记忆闪色动画
   const prev = historyStack.pop();
-  gameState = __wrapState(prev.gameState, "backtrack");   // 回溯恢复后重新挂遥测代理
+  // 回调到旧快照同样要补默认值：栈里可能有读档时带进来的旧项（见 applySave）
+  gameState = __wrapState(fillMissingDefaults(prev.gameState), "backtrack");   // 回溯恢复后重新挂遥测代理
   // 旧存档的历史项没有 reactiveState：保留当前节流记录比清空安全（清空会让已付过的规则立刻重新武装）
   if (prev.reactiveState) _reactiveState = prev.reactiveState;
+  refreshComputed();   // 与 applySave 同理：旧快照缺的派生变量在渲染前补齐
   currentScene = prev.sceneId;
 
   // 历史清空则隐藏顶部按钮
@@ -1324,6 +1335,23 @@ function snapshotState(state) {
   return JSON.parse(JSON.stringify(state, setReplacer), setReviver);
 }
 
+// 老存档补齐：把 _variables 里新增、而这份状态里还没有的键填回初始值。
+// ⚠ 不做这一步会真炸（不是理论风险）：checkCondition 用 new Function(...Object.keys(gameState))
+//   求值【字符串条件】，缺键 = 形参不存在 = ReferenceError → 整条条件直接 false，
+//   选项凭空消失 + 控制台刷「条件表达式出错」。函数式条件写 vars.xxx 只会安静地拿到
+//   undefined，所以症状永远只出现在字符串条件上，别被"只有一条报错"误导成单点 bug。
+//   典型路径：续玩旧档 / 回溯到旧快照（两条都绕过 initGameState，拿不到新键）。
+// 只补缺失键、不动已有值 —— 所以它是「新增变量」的安全兜底；
+// 改字段含义/结构（语义变了，补默认值反而错）仍应把 SAVE_VERSION +1 弃档。
+function fillMissingDefaults(state) {
+  if (!state || typeof state !== "object") return state;
+  const defs = (storyData && storyData._variables) || {};
+  for (const key in defs) {
+    if (!(key in state)) state[key] = snapshotState(defs[key]);
+  }
+  return state;
+}
+
 // 保存当前进度。在 renderScene 末尾调用——此时 onEnter 已执行、_visit 已累加、全局触发器已级联完毕
 function saveGame(sceneId) {
   if (!storageOk) return;
@@ -1378,9 +1406,13 @@ function loadSave() {
 
 // 把存档写回运行状态（不负责渲染）
 function applySave(saved) {
-  gameState      = __wrapState(saved.gameState, "restore");  // Set 已由 reviver 还原（重新挂遥测代理）
+  // fillMissingDefaults：老档缺的新变量在这里补齐（详见该函数上方注释）
+  gameState      = __wrapState(fillMissingDefaults(saved.gameState), "restore");  // Set 已由 reviver 还原（重新挂遥测代理）
   historyStack   = saved.historyStack || [];
+  // 历史快照同样来自旧档：不补的话从死屏回溯一步就报 ReferenceError
+  historyStack.forEach(function (h) { if (h && h.gameState) fillMissingDefaults(h.gameState); });
   _reactiveState = saved.reactiveState || {};
+  refreshComputed();   // 旧档里缺的派生变量（如 09-23 新增的 noPainSense/hasDimLight）在这里重算出来
   currentScene   = saved.sceneId;
   // ⚠️ 必须从 gameState._lastScene 恢复：renderScene 会先把 lastRenderedScene 写进
   // gameState._lastScene 再更新自己。若这里填 saved.sceneId，_lastScene 会被覆盖成当前场景，

@@ -976,13 +976,7 @@ const storyData = {
       {
         showCondition: "hasAlcohol && hurtByZombie",
         text: "用医用酒精消毒伤口",
-        effect: function(vars) {
-          vars.hurtByZombie = false;
-          vars.hasAlcohol = false;
-          vars.itemCount = Math.max(0, vars.itemCount - 1);
-          return updateTime(1)(vars);
-        },
-        nextScene: "整理整理"
+        nextScene: "整理整理-用酒精消毒"
       },
       {
         showCondition: "iodineSwabBox > 0 && hurtByZombie",
@@ -1353,6 +1347,20 @@ const storyData = {
       }
       return desc + "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，不再加快体力消耗。</span>";
     },
+    choices: [
+      { text: "继续", nextScene: "整理整理" }
+    ]
+  },
+
+  "整理整理-用酒精消毒": {
+    image: "images/整理整理.webp",
+    onEnter: function(vars) {
+      vars.hurtByZombie = false;
+      vars.hasAlcohol = false;
+      vars.itemCount = Math.max(0, vars.itemCount - 1);
+      return updateTime(1)(vars);
+    },
+    text: "你拧开医用酒精的瓶盖，一股冲鼻的气味涌了出来。手边没有棉球，你索性把瓶口凑到伤口上方，让酒精直接淋下去。\n刺痛顺着抓痕钻进胳膊，你咬紧牙关撑了几秒，指节攥得发白。等那股劲儿退下去，渗血的爪印总算冲干净了。\n瓶子已经见了底，你随手把它丢在一边。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，不再加快体力消耗。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]

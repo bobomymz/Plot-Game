@@ -16,14 +16,21 @@ const FILES = [
   'story/东明街道/反派NPC.js', 'story/上海市区路径.js',
   'story/仁济南院.js', 'story/建平中学.js', 'story/复旦江湾.js', 'story/张江.js'
 ];
+// 2026-09-24 根治：以 index.html 为准重算清单（新增剧情文件自动纳入，杜绝"漏加载=假绿"）
+try { const _sf = require('./story_files').list(); FILES.length = 0; for (const _f of _sf) FILES.push(_f); } catch (_e) { console.warn('[FILES] 回退内置清单：' + _e.message); }
 const sandbox = { console, Math, JSON, Object, Array, Set, Map, String, Number, Boolean, Date, isNaN, parseInt, parseFloat, RegExp, Error, Function };
 for (const g of ['flashStatusWarning', 'flashStatus', 'showToast', 'notify', 'triggerShake']) sandbox[g] = function () { };
 sandbox.window = sandbox; sandbox.globalThis = sandbox;
 vm.createContext(sandbox);
+// 场景 → 定义文件映射（加载前/后比对 key 增量；仅第一个定义者记名，供按区域分组统计）
+const fileOf = {};
+const keysIn = () => { try { return vm.runInContext('Object.keys(storyData)', sandbox); } catch (_) { return []; } };
 for (const f of FILES) {
   const abs = path.join(ROOT, f);
   if (!fs.existsSync(abs)) continue;
+  const before = new Set(keysIn());
   try { vm.runInContext(fs.readFileSync(abs, 'utf8'), sandbox, { filename: f }); } catch (e) { console.error('!!', f, e.message); }
+  for (const k of keysIn()) if (!before.has(k) && !fileOf[k]) fileOf[k] = f;
 }
 const sd = vm.runInContext('storyData', sandbox);
 const FLASH = vm.runInContext('checkFlashAnswer', sandbox);
@@ -157,7 +164,7 @@ const qteSoft = qtess.filter(q => failNodes[q.tgt] && !failNodes[q.tgt].end);
 P('# 打丧尸战斗 · 失败惩罚审计报告');
 P('');
 P('> 生成：' + new Date().toLocaleString('zh-CN') + '　｜　工具：`node tools/combat_penalty_report.js`（可复跑）');
-P('> 扫描 24 个剧情文件 · ' + Object.keys(sd).filter(k => !k.startsWith('_')).length + ' 个场景');
+P('> 扫描 ' + FILES.length + ' 个剧情文件 · ' + Object.keys(sd).filter(k => !k.startsWith('_')).length + ' 个场景');
 P('');
 P('## 一、总体结论');
 P('');
@@ -191,7 +198,17 @@ P('| 发起场景 | 限时 | 输错/超时 → | 结果 |');
 P('|---|---|---|---|');
 for (const s of A) P('| ' + s.from + ' | ' + tmo(s.timeout) + ' | ' + s.tgt + ' | ' + (failNodes[s.tgt].end ? '❌ **死亡结局**' : '🩸 受伤续玩') + ' |');
 P('');
-P('**分布特征**：**建平中学（10 处）+ 张江（13 处）全系死亡结局**——单次判定失误即 Game Over；**仁济南院（4 处）+ 益丰/新达汇/金谊/警察局等（7 处）为受伤续玩**——打输只是挂彩，仍能继续推进；教程关失败也是死亡结局。');
+// 按文件统计 A 类失败后果（自动生成，杜绝硬编码随剧情改动过时）
+const areaOf = (f) => (f || '?').replace(/^story\//, '').replace(/\.js$/, '');
+const flashByFile = {};
+for (const s of A) {
+  const a = areaOf(fileOf[s.from]);
+  if (!flashByFile[a]) flashByFile[a] = { d: 0, h: 0 };
+  if (failNodes[s.tgt].end) flashByFile[a].d++; else flashByFile[a].h++;
+}
+const flashDeathOnly = Object.keys(flashByFile).filter(a => flashByFile[a].h === 0).map(a => a + '（' + flashByFile[a].d + ' 处）');
+const flashHasHurt = Object.keys(flashByFile).filter(a => flashByFile[a].h > 0).map(a => a + '（死亡 ' + flashByFile[a].d + ' / 受伤 ' + flashByFile[a].h + '）');
+P('**分布特征**（自动统计）：A 类失败**全为死亡结局**的文件 —— ' + (flashDeathOnly.join('、') || '无') + '；**仍含受伤续玩**的文件 —— ' + (flashHasHurt.join('、') || '无') + '。');
 P('');
 P('---');
 P('');
@@ -285,7 +302,9 @@ P('---');
 P('');
 P('## 八、值得注意的设计问题');
 P('');
-P('1. **同类机制惩罚落差极大**：颜色 QTE 在仁济南院是"受伤 −2"，在建平/张江却是"直接死亡"。玩家在仁济养成的"打输只是挂彩"预期，到建平张江会被立刻打破，容易产生挫败感。');
+P('1. **同类机制惩罚一致性**：颜色 QTE 失败后果' + (flashHasHurt.length
+  ? '在不同区域仍有落差 —— ' + flashHasHurt.join('、') + ' 为「受伤续玩」，其余为「直接死亡」，玩家跨区域会形成相反预期。'
+  : '已全部统一为「直接死亡」（共 ' + A.length + ' 处）—— 玩家不会在不同区域形成相反的惩罚预期。'));
 P('2. **死亡结局零过渡**：所有死亡分支的 onEnter 为空，失败瞬间跳结局，没有任何体力/伤势的数值交代，玩家难判断是"体力不够"还是"判定失误"。');
 P('3. **门槛严苛度不均**：`张江-华大-风淋舱-击退` 的门槛是 `strength > 0.01`，几乎形同虚设；而 `地铁站-楼梯`、`图书馆-藏书区`、`安盛街-被包围` 等要 `strength >= 3~4`，体力吃紧时直接判死。');
 P('4. **成功成本与失败成本倒挂**：成功只扣 1–2 点体力，失败的受伤惩罚（−2~−3 + 汞 +10~+15 + 断武器）远重于"打赢的代价"，且失败不预告，难度随机性偏高。');

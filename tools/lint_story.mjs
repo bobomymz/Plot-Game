@@ -22,7 +22,11 @@ const files = [];
 for (const m of html.matchAll(/<script src="(story\/[^"]+)"><\/script>/g)) files.push(m[1]);
 
 // vm 里没有 engine.js 的 UI 全局函数，打桩防误报（跑全图发现新的再补）
-const ctx = vm.createContext({ console, flashStatusWarning: () => {}, triggerShake: () => {} });
+// Math.random 固定：story 里多处用随机决定 text/nextScene（仁济南院-检验科、新达汇-B1停车场、夜晚剧情-仁济 等），
+// 不固定则每次运行 W 计数会 ±1 浮动 —— 「绿」不可复现，无法当回归基线。固定取 0.5（各阈值落到 false 侧）；
+// 随机分支的另一个目标由下方「3.5 入边补账」从函数源码字面量补齐，不会因此漏记入边。
+const fixedMath = Object.create(Math); fixedMath.random = () => 0.5;
+const ctx = vm.createContext({ console, Math: fixedMath, flashStatusWarning: () => {}, triggerShake: () => {} });
 const run = (src) => vm.runInContext(src, ctx);
 const fileOf = {};
 const snap = () => { try { return run("Object.keys(storyData)"); } catch (e) { return []; } };
@@ -165,6 +169,27 @@ for (const sid of ids) {
   }
   // 无选项无QTE非结局（潜在卡死/漏写）
   if (!hasChoicesOrQte && !sid.startsWith("结局-")) W(file, sid, "无 choices 且无 qte 且非结局（确认是否剧终节点，结局请加 结局- 前缀）");
+}
+
+// ---------- 3.5 入边补账（函数式目标） ----------
+// choices / nextScene 为函数时，mkVariants() 那 7 组状态未必能走到每个分支
+// （例：`_xinKnowsTruth=true && !_studentsCalled` 不在变体里 → 其目标被误判"无入边"）。
+// 从函数源码里提取字符串字面量、命中真实场景 id 者补记为入边。
+// 全量跑、不受 areaFilter 影响：否则单区域模式会漏掉跨文件入边（如 建平中学.js → 结局-变了的忻老师）。
+// 方向性说明：只增不减 → 孤立检测偏宽松，这是可接受方向（该项为 W 级人工核对）。
+const harvestLiterals = (fn) => {
+  if (typeof fn !== "function") return;
+  for (const m of fn.toString().matchAll(/["'`]([^"'`\n]+)["'`]/g)) if (idSet.has(m[1])) inbound.add(m[1]);
+};
+for (const sid of ids) {
+  const sc = storyData[sid];
+  harvestLiterals(sc.qte);
+  harvestLiterals(sc.onEnter);
+  if (typeof sc.choices === "function") harvestLiterals(sc.choices);
+  else if (Array.isArray(sc.choices)) for (const c of sc.choices) {
+    if (!c || typeof c !== "object") continue;
+    for (const k of ["nextScene", "elseScene", "timeoutScene", "condition", "showCondition", "effect"]) harvestLiterals(c[k]);
+  }
 }
 
 // 孤立场景（无入边；start/触发器目标豁免）

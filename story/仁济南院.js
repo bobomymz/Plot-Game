@@ -137,9 +137,9 @@ Object.assign(storyData, {
         condition: checkFlashAnswer,
         nextScene: "仁济南院-门诊大门-记忆闪色-成功",
         effect: updateTime(3),
-        elseScene: "仁济南院-门诊大门-记忆闪色-失败",
+        elseScene: "结局-仁济-正门失守",
         timeout: 20000,
-        timeoutScene: "仁济南院-门诊大门-记忆闪色-失败"
+        timeoutScene: "结局-仁济-正门失守"
       }
     ]
   },
@@ -161,21 +161,13 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-门诊大门-记忆闪色-失败": {
-    image: "images/hurtByzombie.webp",
-    onEnter: function(vars) {
-      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
-      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiGateCleared: true } };
-    },
-    text: function(vars) {
-      return "你没能及时看清——一只丧尸从斜刺里扑上来，爪子划过你的手臂。你踉跄着冲出重围，跌跌撞撞地摔进了门诊大厅。" + weaponBrokeText(vars) + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
-    },
-    choices: [
-      {
-        text: "继续",
-        nextScene: "仁济南院-门诊大厅"
-      }
-    ]
+  "结局-仁济-正门失守": {
+    image: "images/zombiePounceOnYou.webp",
+    text: "你看漏了一只。\n\
+它从门柱的阴影里窜出来，撞在你的侧腰上。你踉跄着转身，门口那几只已经围拢过来，手臂搭上你的肩膀和后背。\n\
+你被压倒在玻璃门前的空地上，手指还抠着门框上那截胶带。\n\
+\n—— 结局：正门失守 ——",
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-门诊大门": {
@@ -609,9 +601,9 @@ Object.assign(storyData, {
         input: { placeholder: "例如：3红2蓝2绿" },
         condition: checkFlashAnswer,
         nextScene: "仁济南院-急诊大厅-胜利",
-        elseScene: "仁济南院-急诊大厅-受伤",
+        elseScene: "结局-仁济-急诊失守",
         timeout: 12000,
-        timeoutScene: "仁济南院-急诊大厅-受伤"
+        timeoutScene: "结局-仁济-急诊失守"
       }
     ]
   },
@@ -634,24 +626,13 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-急诊大厅-受伤": {
-    image: "images/hurtByzombie.webp",
-    onEnter: function(vars) {
-      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
-      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiERCleared: true } };
-    },
-    text: function(vars) {
-      return [
-        "它的爪子划过了你的肩膀。你踉跄着躲开，反手一击，终于把它打倒在地。" + weaponBrokeText(vars),
-        "<strong>它趴在挂号台后面，病号服不再起伏。</strong>肩膀发沉，血从领口往锁骨渗。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>"
-      ];
-    },
-    choices: [
-      {
-        text: "继续",
-        nextScene: "仁济南院-急诊大厅"
-      }
-    ]
+  "结局-仁济-急诊失守": {
+    image: "images/hurtByZombie.webp",
+    text: "你没能抓住它的间隙。\n\
+它扑上来的那一下比你想的快，你的武器举到一半就被撞偏。牙齿咬进了你的小臂，它拖着你撞翻那辆轮椅。\n\
+金属轮子在地上空转了两圈，慢慢停下。\n\
+\n—— 结局：急诊失守 ——",
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   // ==================== 门诊药房 ====================
@@ -910,9 +891,9 @@ Object.assign(storyData, {
         input: { placeholder: "例如：2红2蓝2绿1黄" },
         condition: checkFlashAnswer,
         nextScene: "仁济南院-检验科-守卫战-胜利",
-        elseScene: "仁济南院-检验科-守卫战-受伤",
+        elseScene: "结局-仁济-检验科被咬",
         timeout: 12000,
-        timeoutScene: "仁济南院-检验科-守卫战-受伤"
+        timeoutScene: "结局-仁济-检验科被咬"
       }
     ]
   },
@@ -935,24 +916,13 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-检验科-守卫战-受伤": {
-    image: "images/hurtByzombie.webp",
-    onEnter: function(vars) {
-      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
-      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiLabCleared: true } };
-    },
-    text: function(vars) {
-      return [
-        "它抓伤了你的手臂，但你最终还是把它打倒了。" + weaponBrokeText(vars),
-        "<strong>它瘫在操作台边，不再动弹——这只丧尸已经被你解决。</strong>你喘着粗气，袖管湿透了，血往手肘流。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>"
-      ];
-    },
-    choices: [
-      {
-        text: "继续搜刮",
-        nextScene: "仁济南院-检验科-内部"
-      }
-    ]
+  "结局-仁济-检验科被咬": {
+    image: "images/zombiesBeatYou.webp",
+    text: "你盯漏了一道影子。\n\
+它从操作台后面直起腰，撞在你的胸口上。你退了两步，后腰顶在台沿，器械盘哗啦一声滑落。\n\
+应急电源还在嗡。它低头咬了下来。\n\
+\n—— 结局：检验科被咬 ——",
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-检验科-内部": {
@@ -1206,9 +1176,9 @@ Object.assign(storyData, {
         input: { placeholder: "例如：2红2蓝2绿" },
         condition: checkFlashAnswer,
         nextScene: "仁济南院-住院部走廊-胜利",
-        elseScene: "仁济南院-住院部走廊-受伤",
+        elseScene: "结局-仁济-病区失守",
         timeout: 10000,
-        timeoutScene: "仁济南院-住院部走廊-受伤"
+        timeoutScene: "结局-仁济-病区失守"
       }
     ]
   },
@@ -1230,24 +1200,13 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-住院部走廊-受伤": {
-    image: "images/hurtByzombie.webp",
-    onEnter: function(vars) {
-      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
-      return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true, _renjiWardCleared: true } };
-    },
-    text: function(vars) {
-      return [
-        "你被它抓了一下。" + weaponBrokeText(vars),
-        "<strong>它的头磕在输液架底座上，滑坐下来。</strong>抓痕在发热，往外渗。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>"
-      ];
-    },
-    choices: [
-      {
-        text: "继续",
-        nextScene: "仁济南院-住院部走廊"
-      }
-    ]
+  "结局-仁济-病区失守": {
+    image: "images/zombieKnockYouDown.webp",
+    text: "你出手慢了一步。\n\
+它转过身，缠在手腕上的输液管甩出来，抽在你脸上。你踉跄着撞进病房的门框，还没站稳，它就压了上来。\n\
+走廊里再没有别的动静。\n\
+\n—— 结局：病区失守 ——",
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-住院部走廊-幸存者": {
@@ -1501,9 +1460,9 @@ Object.assign(storyData, {
         input: { placeholder: "例如：2红2蓝2绿1黄1白" },
         condition: checkFlashAnswer,
         nextScene: "仁济南院-太平间-黑皮丧尸-胜利",
-        elseScene: "仁济南院-太平间-黑皮丧尸-受伤",
+        elseScene: "结局-仁济-黑皮丧尸",
         timeout: 14000,
-        timeoutScene: "仁济南院-太平间-黑皮丧尸-受伤"
+        timeoutScene: "结局-仁济-黑皮丧尸"
       }
     ]
   },
@@ -1526,24 +1485,13 @@ Object.assign(storyData, {
     ]
   },
 
-  "仁济南院-太平间-黑皮丧尸-受伤": {
-    image: "images/hurtByzombie.webp",
-    onEnter: function(vars) {
-      tryBreakWeapon(vars); // 战斗失败按档位概率损坏武器
-      return { add: { strength: -3, mercuryLoad: 15 }, set: { hurtByZombie: true, _morgueCleared: true } };
-    },
-    text: function(vars) {
-      return [
-        "它的力气大得惊人，你被它撞在墙上，肩膀一阵剧痛。但你还是把它砸趴了。" + weaponBrokeText(vars),
-        "<strong>它趴在冰柜缝里，黑皮不再起伏。</strong>你靠着墙，剧烈地喘着气。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-3，当前体力：{strength}。</span>"
-      ];
-    },
-    choices: [
-      {
-        text: "继续",
-        nextScene: "仁济南院-太平间"
-      }
-    ]
+  "结局-仁济-黑皮丧尸": {
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    text: "它的力气比你想的大太多。\n\
+一掌拍在你肩上，把你整个人砸在冰柜门上，金属嗡了一声。你还没来得及喘气，那张干裂的、黑得发亮的脸已经凑到了跟前。\n\
+那是你在这个世界上看到的最后一样东西。\n\
+\n—— 结局：黑皮丧尸 ——",
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "结局-仁济-尸潮围困": {

@@ -1886,7 +1886,7 @@
       "file": "story/仁济南院.js",
       "area": "仁济南院",
       "timeout": 20000,
-      "timeoutScene": "仁济南院-门诊大门-记忆闪色-失败",
+      "timeoutScene": "结局-仁济-正门失守",
       "text": "输入你看到的颜色分布"
     },
     {
@@ -1894,7 +1894,7 @@
       "file": "story/仁济南院.js",
       "area": "仁济南院",
       "timeout": 12000,
-      "timeoutScene": "仁济南院-急诊大厅-受伤",
+      "timeoutScene": "结局-仁济-急诊失守",
       "text": "输入你看到的颜色分布"
     },
     {
@@ -1902,7 +1902,7 @@
       "file": "story/仁济南院.js",
       "area": "仁济南院",
       "timeout": 12000,
-      "timeoutScene": "仁济南院-检验科-守卫战-受伤",
+      "timeoutScene": "结局-仁济-检验科被咬",
       "text": "输入你看到的颜色分布"
     },
     {
@@ -1910,7 +1910,7 @@
       "file": "story/仁济南院.js",
       "area": "仁济南院",
       "timeout": 10000,
-      "timeoutScene": "仁济南院-住院部走廊-受伤",
+      "timeoutScene": "结局-仁济-病区失守",
       "text": "输入你看到的颜色分布"
     },
     {
@@ -1918,7 +1918,7 @@
       "file": "story/仁济南院.js",
       "area": "仁济南院",
       "timeout": 14000,
-      "timeoutScene": "仁济南院-太平间-黑皮丧尸-受伤",
+      "timeoutScene": "结局-仁济-黑皮丧尸",
       "text": "输入你看到的颜色分布"
     },
     {

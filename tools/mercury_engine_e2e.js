@@ -40,8 +40,11 @@ const doc = {
 const store = {};
 const sandbox = {
   console, Math, JSON, Object, Array, String, Number, Boolean, parseInt, parseFloat, isNaN,
-  Set, Map, Date, RegExp, Error, Function, Promise, setTimeout, clearTimeout,
+  Set, Map, Date, RegExp, Error, Promise, setTimeout, clearTimeout,
 };
+// ⚠ 故意不传外层 Function：engine.js 的 evaluateExpr 用 new Function(...) 求值字符串表达式，
+// 只有用 vm 自己的 Function，其全局作用域才等于本沙箱（下方 BIND 到 globalThis 的 utils 顶层函数才可见）。
+// 传外层 Node 的 Function → 作用域落到 Node 外层 → fatigueTier 之类假报未定义、刷屏。
 sandbox.document = doc;
 sandbox.window = sandbox;
 sandbox.globalThis = sandbox;
