@@ -45,6 +45,9 @@ Object.assign(storyData, {
         } else {
           desc += "东边那栋楼黑着，和四周的夜融成一片。\n你必须找个地方过夜。";
         }
+      } else if (vars.currentArea === "复旦") {
+        // 复旦江湾章节防御分支（正常路径 hh<14 上车、单日往返不可达；勿删——删了会落进街头兜底死亡）
+        desc += "江湾的夜风穿过空荡的校道，远处传来零星的嚎叫。你和忻老师回到车上，锁紧了车门。";
       } else {
         desc += "四周一片漆黑，你必须找个地方过夜。";
       }
@@ -229,14 +232,21 @@ Object.assign(storyData, {
         nextScene: "过夜-金谊广场"
       },
 
-      // ===== 兜底（始终可用，排除医院/建平/张江/金谊商场内） =====
+      // ===== 复旦江湾章节（防御分支：正常单日流程不可达，防磨蹭刷时间落死亡） =====
       {
-        showCondition: "dd < 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江' && currentArea != '金谊广场'",
+        showCondition: "currentArea == '复旦'",
+        text: "和忻老师在车里将就一夜",
+        nextScene: "过夜-复旦-车内"
+      },
+
+      // ===== 兜底（始终可用，排除医院/建平/张江/金谊商场内/复旦章节） =====
+      {
+        showCondition: "dd < 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江' && currentArea != '金谊广场' && currentArea != '复旦'",
         text: "冒险在街头找地方躲一晚",
         nextScene: "过夜-街头兜底"
       },
       {
-        showCondition: "dd >= 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江' && currentArea != '金谊广场'",
+        showCondition: "dd >= 3 && currentArea != '仁济南院' && currentArea != '建平中学' && currentArea != '张江' && currentArea != '金谊广场' && currentArea != '复旦'",
         text: "在街头寻找掩体",
         nextScene: "结局-过夜-街头死亡"
       }
@@ -777,6 +787,30 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     text: "你在一栋写字楼的大堂里找了张长椅，和衣躺下。\n玻璃幕墙外没有路灯，这里黑得像口井。后半夜，你听见玻璃门被推开的声音——不是风。风不会蹑手蹑脚。\n这片科技园区白天安静得像座空城，你躺下之前忘了问自己一句：空掉的城，人都去哪儿了。\n—— 结局：空城之夜 ——",
     style: "color: #ff4444; font-weight: bold;"
+  },
+
+  // ==================== 安全屋 - 复旦章节·车内（防御分支，正常路径不可达） ====================
+  "过夜-复旦-车内": {
+    image: "images/placeholder.png" /* TODO: images/复旦江湾/车里过夜.webp */,
+    onEnter: function(vars) {
+      vars.dd += 1;
+      vars.hh = 7;
+      vars.mm = 0;
+      vars._travelMinutes = 0;
+      vars.chasedByZombies = Math.max(0, vars.chasedByZombies - 1);
+      vars.strength = Math.max(0, vars.strength - 1);
+      return {};
+    },
+    text: "你们把座椅放倒，轮流守着。忻老师半夜醒来过一次，盯着窗外看了很久，什么也没说。\n天亮了。他在方向盘上敲了敲：“走，还有事没办完。”",
+    choices: [
+      {
+        text: "继续",
+        nextScene: function(vars) {
+          // 按章节进度回位：305 未看 = 江湾探索中；已看 = 家侧途中
+          return vars._visit["复旦江湾-环境科学楼-305"] > 0 ? "建平-教师小区门口" : "复旦江湾-中央草坪";
+        }
+      }
+    ]
   },
 
 });

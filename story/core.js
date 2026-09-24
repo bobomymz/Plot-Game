@@ -199,6 +199,16 @@ const storyData = {
     _yifenEastCleared: false,   // 挹芬楼1F东侧走廊丧尸是否已清（强制记忆闪色）
     _teacherLeft: false,        // 忻老师是否已开车离开（跟去复旦后为 true）
     _xinDead: false,            // 忻老师是否已被丧尸杀死（带 ch>=3 尸潮进远翔楼3F物理办公室 → “遇害”节点触发）
+    // 复旦江湾章节（方案：docs/区域方案-复旦江湾.md；蓝本：忻老师故事线.md）
+    _xinOfferDay: 0,            // 忻老师上车窗口：首个完整上午窗口所在天（0=尚不具备资格；hh<14 具备当天记，否则次日）
+    _xinGone: false,            // 错过上车窗口、次日清晨独自离开（章节 missable 落定，作者已拍板）
+    _xinOutcome: 0,             // 章节分支结果：0=未入章/进行中 1=①他堵门牺牲 2=②学生目击牺牲 3=③带伤双逃 4=④学生救场
+    _xinKnowsTruth: false,      // a 成立：305 出示王知筠手机成功（双刃真相：既救他也判他家人）
+    _studentsCalled: false,     // b 成立：叫人窗口内用原机打过电话（蔡镜晓+彭奕宸 骑车来援）
+    _xinScratched: false,       // ③忻老师伤情标记（逃出时多处深抓伤 = 1天后尸变的 in-world 依据）
+    _xinPillGiven: false,       // ③已把无标签药丸给忻老师（整理整理里无提示选项，作者已拍板）
+    _xinTurned: false,          // ③不给药延迟引信：进物理办公室 = 被咬死结局
+    _phoneOrigin: "",           // 玩家手机来源：""=无 "own"=全家妈妈遗物原机（有同学微信）"store"=新达汇华为展示机（b 门控用）
     hasMultimeter: false,       // 万用表（老吴杂物室，修14班电脑用）
     _liuCorpse: false,          // 刘冠宇是否已死（锁存：在食堂观察到尸体后永久保持，关煤气阀不复活）
     hasPipelineMap: false,      // 管线图（老吴杂物室，"水有毒"真相线索）

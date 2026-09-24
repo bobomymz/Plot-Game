@@ -5,11 +5,30 @@
 Object.assign(storyData, {
   "杨高南路立交桥": {
     outdoor: true,
-    image: timeImage({
-      morning: "images/高速/三林路-杨高南路高架.webp",
-      evening: "images/高速/三林路-杨高南路高架-evening.webp",
-      night: "images/高速/三林路-杨高南路高架-night.webp",
-    }),
+    image: function(vars) {
+      if(vars.weather == '雨') {
+        var f = timeImage({
+          morning: "images/高架/三林路-杨高南路高架-雨.webp",
+          evening: "images/高架/三林路-杨高南路高架-雨-evening.webp",
+          night: "images/高架/三林路-杨高南路高架-雨-night.webp",
+        });
+        return f(vars);
+      }
+      else if(vars.weather == '阴') {
+        var f = timeImage({
+          morning: "images/高架/三林路-杨高南路高架-阴.webp",
+          evening: "images/高架/三林路-杨高南路高架-阴-evening.webp",
+          night: "images/高架/三林路-杨高南路高架-night.webp",
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/高架/三林路-杨高南路高架.webp",
+        evening: "images/高架/三林路-杨高南路高架-evening.webp",
+        night: "images/高架/三林路-杨高南路高架-night.webp",
+      });
+      return f(vars);
+    },
     onEnter: function(vars) { 
       vars.showZombies  = true; vars.currentArea = "高架"; vars.currentPlace = "高架"; vars.currentPos = "高架"; 
     },

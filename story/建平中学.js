@@ -253,6 +253,7 @@ Object.assign(storyData, {
       { text: "绕去后门", nextScene: "建平-后门", effect: updateTime(10) },
       { showCondition: "itemCount > 0", text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-校园门口" } } },
       { text: "看看路边那只井盖", nextScene: "建平-崮山路-井盖", effect: updateTime(1) },
+      { text: "去旁边那个小区看看", nextScene: "建平-教师小区门口", effect: updateTime(3) },
       { text: "离开这里", nextScene: "罗山路立交桥下", effect: updateTime(10) }
     ]
   },
@@ -751,19 +752,38 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPos = "后门辅路";
+      // 忻老师上车窗口记账（方案拍板：hh<14 可上车，错过 = 次日清晨独自离开）
+      // 首次具备资格时记 _xinOfferDay：当天还在 14 点前 = 当天，否则首个完整上午窗口 = 次日
+      if (!vars._xinDead && vars._backGateOpened && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0 && vars._xinOfferDay === 0) {
+        vars._xinOfferDay = vars.hh < 14 ? vars.dd : vars.dd + 1;
+      }
+      // 窗口过期锁存：过了 offer 日还没上车 → 他天不亮就自己走了（章节 missable 落定）
+      if (vars._xinOfferDay > 0 && vars.dd > vars._xinOfferDay && !vars._teacherLeft && !vars._xinDead) {
+        vars._xinGone = true;
+      }
+      return {};
     },
     text: function(vars) {
       if (vars._xinDead) {
         return "你沿着后门辅路走。\n那辆轿车还停在原地，车灯熄着。再也不会有人来开它了。";
       }
-      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
+      if (vars._xinGone) {
+        return "你沿着后门辅路走。\n那个车位空了——碎玻璃上压着一道新鲜的轮胎印，朝着校外的方向。忻老师没有等你。";
+      }
+      if (vars._teacherLeft) {
+        return "你沿着后门辅路走。车位空着——你和忻老师就是从这里出发去江湾的。";
+      }
+      if (vars._backGateOpened && vars.hh < 14 && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         return "你沿着后门辅路走。\n一辆轿车亮着车灯停在不远处——是忻老师。他摇下车窗，朝你招了招手。\n“上车，我带你一程。”";
+      }
+      if (vars._backGateOpened && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
+        return "你沿着后门辅路走。\n那辆轿车还停在原地，车灯熄着。忻老师说过：过了下午两点他就不走了——等明天上午吧。";
       }
       return "后门辅路。一条通往食堂的窄路，旁边停着几辆车。这里远离校门，丧尸反倒不多。\n" + describeWeather(vars);
     },
     choices: function(vars) {
       var cs = [];
-      if (vars._backGateOpened && vars.hh < 19 && !vars._teacherLeft && !vars._xinDead && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
+      if (vars._backGateOpened && vars.hh < 14 && !vars._teacherLeft && !vars._xinDead && !vars._xinGone && vars._visit['建平-远翔楼-3F-物理办公室'] > 0) {
         cs.push({ text: "跟忻老师上车（去复旦）", nextScene: "建平-前往复旦", effect: function(v) { v._teacherLeft = true; v.hasCar = false; v.hasEbike = false; v.hasRustyBike = false; v.hasScooter = false; return {}; } });
       }
       // 未开门时从内侧接近后门 = 走进挤在门内的尸群同侧，走内侧视角节点（QTE 可退/贪死）
@@ -782,13 +802,8 @@ Object.assign(storyData, {
     text: "你钻进副驾驶座，忻老师发动了车。\n车轮碾过满地的碎玻璃，缓缓驶离了后门。后视镜里，建平中学的轮廓越来越远，越来越小。\n\
 忻老师把着方向盘，目不转睛地盯着前方的路。途中你们碰到了一些尸群，好在忻老师车技还可以，成功躲开了它们。",
     choices: [
-      { text: "继续", nextScene: "复旦江湾", effect: updateTime(30) }
+      { text: "继续", nextScene: "复旦江湾-校门", effect: updateTime(30) }
     ]
-  },
-
-  "复旦江湾": {
-    image: "images/placeholder.png",
-    text: "一段时间后，你们驶入了一处风景优美的校区。“复旦江湾————研学来过的地方。你还记得吧？这里有微电子学院、材料学院、环境科学学院……”（复旦江湾 · 王知筠实验室剧情尚未实装）"
   },
 
   // ==================== 户外 ====================
@@ -1789,6 +1804,16 @@ Object.assign(storyData, {
         return "物理办公室里一片狼藉。办公桌翻倒在地，那沓批了一半的试卷散了一地，暗红的血迹从桌角一直拖到门口。\n\
 忻老师不在这里了。";
       }
+      if (vars._teacherLeft) {
+        // 已跟去复旦（章节中不可达，防御分支）；章节后按 _xinOutcome 分后日谈 → 阶段3（③④他回来了/①②噩讯）
+        if (vars._xinOutcome > 0) {
+          return "物理办公室。忻老师的座位…（章节后日谈文本 → 阶段3：③④他在建平安顿/①②再也不会回来）";
+        }
+        return "物理办公室空着——忻老师和车都不在了。他跟你一起去江湾了。";
+      }
+      if (vars._xinGone) {
+        return "物理办公室里收拾得干干净净，只有桌上半杯凉透的茶。忻老师天不亮就自己走了——他没有等到你。";
+      }
       var desc;
       if (!vars._visit["建平-远翔楼-3F-物理办公室"] || vars._visit["建平-远翔楼-3F-物理办公室"] <= 1) {
         desc = "你推开物理办公室的门。\n忻老师——你的物理老师——正坐在办公桌前，手边摊着一沓批了一半的试卷。看到你，他先是一愣，随即露出一个复杂的笑容。\n“是你啊。没想到还能在这儿见到你。”\n";
@@ -1797,10 +1822,10 @@ Object.assign(storyData, {
       }
       if (!vars._backGateOpened) {
         desc += "忻老师压低声音：“我的车就停在后门附近，被一群丧尸团团围住了。得先把后门那些东西引开、或者解决掉，我才能开车冲出去。你去后门看看。”";
-      } else if (vars.hh < 19) {
-        desc += "忻老师点点头：“后门清了，好样的。我这就收拾东西开车走。你要是想离开这鬼地方，天黑前来后门辅路找我——我带你一程，去复旦那边。我在江湾有个熟人，是搞实验室的，说不定能帮上忙。”";
+      } else if (vars.hh < 14) {
+        desc += "忻老师点点头：“后门清了，好样的。我这就收拾东西开车走。你要是想离开这鬼地方，下午两点前来后门辅路找我——我带你一程，去复旦那边。我在江湾有个熟人，是搞实验室的，说不定能帮上忙。”";
       } else {
-        desc += "忻老师看了看窗外：“天已经黑了。今晚走不了了，等天亮再说吧。”";
+        desc += "忻老师看了看窗外：“过了两点了，今天走不了了。明天上午我在后门辅路等你——过午我可就自己走了。”";
       }
       return desc;
     },
