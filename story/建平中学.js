@@ -477,6 +477,10 @@ Object.assign(storyData, {
     image: "images/youMeetZombies.webp",
     onEnter: function(vars) {
       vars._backGateOpened = true;  // 开门引走丧尸（忻老师后门逃脱的铺垫）
+      // 忻老师窗口记账（拍板：错过即走）：门开 = 他随时能走，窗口锚定清开日（三处开门点同款）
+      if (!vars._xinDead && !vars._teacherLeft && vars._xinOfferDay === 0) {
+        vars._xinOfferDay = vars.dd;
+      }
       vars.showZombies = true;
       vars.currentPos = "后门";
       triggerShake();               // 猛地拉开门，丧尸齐扑
@@ -712,6 +716,10 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/建平/后门-内侧-开门.webp */,
     onEnter: function(vars) {
       vars._backGateOpened = true;   // 内侧杀光后开门：与外侧开门汇合，忻老师线同样解锁
+      // 忻老师窗口记账（拍板：错过即走）：门开 = 他随时能走，窗口锚定清开日（三处开门点同款）
+      if (!vars._xinDead && !vars._teacherLeft && vars._xinOfferDay === 0) {
+        vars._xinOfferDay = vars.dd;
+      }
       vars.showZombies = true;
       vars.currentPos = "后门";
       return {};
@@ -734,6 +742,10 @@ Object.assign(storyData, {
     },
     onEnter: function(vars) {
       vars._backGateOpened = true;   // 内侧已杀光、从外侧补开门
+      // 忻老师窗口记账（拍板：错过即走）：门开 = 他随时能走，窗口锚定清开日（三处开门点同款）
+      if (!vars._xinDead && !vars._teacherLeft && vars._xinOfferDay === 0) {
+        vars._xinOfferDay = vars.dd;
+      }
       vars.showZombies = true;
       vars.currentPos = "后门";
       return {};
@@ -760,13 +772,14 @@ Object.assign(storyData, {
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPos = "后门辅路";
-      // 忻老师上车窗口记账（方案拍板：hh<14 可上车，错过 = 次日清晨独自离开）
-      // 首次具备资格时记 _xinOfferDay：当天还在 14 点前 = 当天，否则首个完整上午窗口 = 次日
+      // 忻老师上车窗口记账（拍板：错过即走，不给第二次机会）：
+      // 窗口已在三处开门点锚定清开日，这里只兜底（防御：旧档/异常路径下门已开但未记账时补记）
       if (!vars._xinDead && vars._backGateOpened && !vars._teacherLeft && vars._visit['建平-远翔楼-3F-物理办公室'] > 0 && vars._xinOfferDay === 0) {
-        vars._xinOfferDay = vars.hh < 14 ? vars.dd : vars.dd + 1;
+        vars._xinOfferDay = vars.dd;
       }
-      // 窗口过期锁存：过了 offer 日还没上车 → 他天不亮就自己走了（章节 missable 落定）
-      if (vars._xinOfferDay > 0 && vars.dd > vars._xinOfferDay && !vars._teacherLeft && !vars._xinDead) {
+      // 错过落定：过了许诺日（次日清晨独自离开），或许诺日当天 14 点后才到 → 锁存 _xinGone（章节 missable）
+      if (!vars._xinDead && !vars._teacherLeft && vars._xinOfferDay > 0 &&
+          (vars.dd > vars._xinOfferDay || (vars.dd === vars._xinOfferDay && vars.hh >= 14))) {
         vars._xinGone = true;
       }
       return {};
@@ -776,6 +789,9 @@ Object.assign(storyData, {
         return "你沿着后门辅路走。\n那辆轿车还停在原地，车灯熄着。再也不会有人来开它了。";
       }
       if (vars._xinGone) {
+        if (vars.dd === vars._xinOfferDay) {
+          return "你沿着后门辅路走。\n那辆轿车刚驶出辅路——忻老师隔着车窗看了你最后一眼，没有停车。\n说好了下午两点前。你没有赶上。";
+        }
         return "你沿着后门辅路走。\n那个车位空了——碎玻璃上压着一道新鲜的轮胎印，朝着校外的方向。忻老师没有等你。";
       }
       if (vars._teacherLeft) {
@@ -1188,10 +1204,10 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-1F-东侧走廊": {
     image: "images/placeholder.png",
-    qte: jpChaseQTE(function(v) { return !!v._yifenEastCleared; }),
+    qte: jpChaseQTE(function(v) { return !!(v._visit['建平-挹芬楼-1F-东侧走廊-清场'] > 0); }),
     onEnter: function(vars) {
       vars.currentPos = "挹芬楼1F东侧走廊";
-      if (!vars._yifenEastCleared) {
+      if (!(vars._visit['建平-挹芬楼-1F-东侧走廊-清场'] > 0)) {
         var seq = randSeq(["红","蓝","绿"], 5);
         vars._currentSeq = seq;
         vars._currentAnswer = seqToAnswer(seq);
@@ -1201,19 +1217,19 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      if (vars._yifenEastCleared) {
+      if (vars._visit['建平-挹芬楼-1F-东侧走廊-清场'] > 0) {
         return "挹芬楼 1 楼东侧走廊。丧尸已经被你清掉了，楼梯口和休息区门口都安静了下来。" + describeZombieWave(vars);
       }
       return "你走进挹芬楼 1 楼东侧走廊——楼梯口和休息区方向都有丧尸涌来。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
-      if (!vars._yifenEastCleared) {
+      if (!(vars._visit['建平-挹芬楼-1F-东侧走廊-清场'] > 0)) {
         return [
           {
             text: "输入你看到的颜色分布",
             input: { placeholder: "例如：3红2蓝" },
             condition: checkFlashAnswer,
-            effect: { set: { _yifenEastCleared: true } },
+            effect: {  },
             nextScene: "建平-挹芬楼-1F-东侧走廊-清场",
             elseScene: "结局-挹芬楼失守",
             timeout: 12000,
@@ -1756,7 +1772,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "医务室。药柜半开着，里面的药品大多被翻得乱七八糟，只剩些纱布和空药盒。";
       if (vars._visit['建平-远翔楼-1F-医务室-拿药'] > 0) {
-        desc += "\n药柜底层那格空着——那盒退烧药已经被你拿走了。";
+        desc += "\n药柜底层那格空着，那盒退烧药已经被你拿走了。";
       } else {
         desc += "\n角落里，一盒没拆封的退烧药孤零零地躺在药柜底层。";
       }
@@ -1775,7 +1791,7 @@ Object.assign(storyData, {
   "建平-远翔楼-1F-医务室-拿药": {
     image: "images/placeholder.png",
     onEnter: { set: { hasFeverMed: true }, add: { itemCount: 1 } },
-    text: "你拿起那盒退烧药，看了看保质期——还没过期。\n说不定哪天发烧了用得上。你把它塞进包里。",
+    text: "你拿起那盒退烧药，看了看保质期，还没过期。\n说不定哪天发烧了用得上。你把它塞进包里。",
     choices: [
       { text: "收好", nextScene: "建平-远翔楼-1F-医务室", effect: updateTime(1) }
     ]
@@ -1799,7 +1815,18 @@ Object.assign(storyData, {
       })
       return f(vars);
     },
-    onEnter: function(vars) { vars.currentPos = "远翔楼3F物理办公室"; },
+    onEnter: function(vars) {
+      vars.currentPos = "远翔楼3F物理办公室";
+      // 忻老师上车窗口（拍板：错过即走）：窗口已在三处开门点锚定清开日，这里只兜底补记（与辅路 onEnter 同一套落定规则）
+      if (!vars._xinDead && !vars._teacherLeft && vars._backGateOpened && vars._xinOfferDay === 0) {
+        vars._xinOfferDay = vars.dd;
+      }
+      if (!vars._xinDead && !vars._teacherLeft && vars._xinOfferDay > 0 &&
+          (vars.dd > vars._xinOfferDay || (vars.dd === vars._xinOfferDay && vars.hh >= 14))) {
+        vars._xinGone = true;
+      }
+      return {};
+    },
     text: function(vars) {
       if (vars._xinDead) {
         // 遇害之后：办公室只剩现场（目击过程在“-遇害”独立节点）
@@ -1816,7 +1843,7 @@ Object.assign(storyData, {
           // ③④：他在建平安顿（爆线未到时照常进——他还在，安静倒计时；爆线后进不来，路由去结局）
           var settled = (vars._xinOutcome === 3)
             ? "物理办公室里多了一张行军床。忻老师坐在自己的位子上，衬衫换过了，小臂上的纱布是自己缠的，缠得很丑。见你进来，他点点头：“车还好开吗？”"
-            : "物理办公室里多了一张行军床。忻老师坐在自己的位子上，正拿红笔批那沓试卷——批得很慢，像是在跟每一道题重新认识。见你进来，他放下笔：“车还好开吗？”";
+            : "物理办公室里多了一张行军床。忻老师坐在自己的位子上，正拿红笔批那沓试卷，批得很慢，像是在跟每一道题重新认识。见你进来，他放下笔：“车还好开吗？”";
           if (vars._xinPillGiven) {
             settled += "\n他抬头看你的时候，眼神比江湾那天清亮了不少。";
           }
@@ -1825,6 +1852,9 @@ Object.assign(storyData, {
         return "物理办公室空着——忻老师和车都不在了。他跟你一起去江湾了。";
       }
       if (vars._xinGone) {
+        if (vars.dd === vars._xinOfferDay) {
+          return "物理办公室的门敞着。忻老师正把一只纸箱搬到门口，看见你进来，他停了停。\n“过了两点，我就不等了。”\n他侧身从你身边过去，抱着箱子下了楼。没多久，窗外传来轿车发动的声音，渐渐远了。";
+        }
         return "物理办公室里收拾得干干净净，只有桌上半杯凉透的茶。忻老师天不亮就自己走了——他没有等到你。";
       }
       var desc;
@@ -1835,10 +1865,8 @@ Object.assign(storyData, {
       }
       if (!vars._backGateOpened) {
         desc += "忻老师压低声音：“我的车就停在后门附近，被一群丧尸团团围住了。得先把后门那些东西引开、或者解决掉，我才能开车冲出去。你去后门看看。”";
-      } else if (vars.hh < 14) {
-        desc += "忻老师点点头：“后门清了，好样的。我这就收拾东西开车走。你要是想离开这鬼地方，下午两点前来后门辅路找我——我带你一程，去复旦那边。我在江湾有个熟人，是搞实验室的，说不定能帮上忙。”";
       } else {
-        desc += "忻老师看了看窗外：“过了两点了，今天走不了了。明天上午我在后门辅路等你——过午我可就自己走了。”";
+        desc += "忻老师点点头：“后门清了，好样的。我这就收拾东西开车走。你要是想离开这鬼地方，下午两点前来后门辅路找我，我带你一程，去复旦那边。我在江湾有个熟人，是搞实验室的，说不定能帮上忙。”";
       }
       return desc;
     },
@@ -1875,13 +1903,14 @@ Object.assign(storyData, {
       return {};
     },
     text: [
-      "你用钥匙拧开物理办公室的门。门轴吱呀一响——身后的尸群几乎是贴着你的后背，跟着你涌了进来。",
-      "忻老师——你的物理老师——从那沓批了一半的试卷里抬起头。他看见你，又看见你身后漫进来的黑影，脸色骤变。\n“快跑——”",
+      "你用钥匙拧开物理办公室的门，随机转身关上门。身后的几只丧尸被关在了门外",
+      "忻老师——你的物理老师——从那沓批了一半的试卷里抬起头。他看见你，笑了一下。突然，他的表情凝固了。",
+      "砰！砰砰砰！嘎吱！嘭———— 丧尸冲破了大门，涌了进来。“快跑——”",
       "喊声只出了一半。尸群漫过办公桌，把他连人带椅子扑倒在地，试卷散了一地，惨叫声很快淹没在成片的低吼里。",
-      "——是你把它们带过来的。\n你被剩下的丧尸撵着，退到了门口。门外的走廊里，更多的嘶吼声正朝这边涌来。"
+      "你被剩下的丧尸撵着，从窗户翻了出去。门外的走廊里，更多的嘶吼声正朝这边涌来。"
     ],
     choices: [
-      { text: "退出办公室", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
+      { text: "继续", nextScene: "建平-远翔楼-3F", effect: updateTime(1) }
     ]
   },
 
@@ -3038,12 +3067,11 @@ Object.assign(storyData, {
   "建平-Harsh堵住-火焚": {
     image: "images/placeholder.png" /* TODO: images/jianping/harshFire.png */,
     onEnter: function(vars) {
-      // 火焚：永久解决 Harsh（_harshDead 由选项 effect 置位，这里兜底关闭追逐）
+      // 火焚：永久解决 Harsh（_harshDead 与 +2ch 均由选项 effect 置位，这里只关闭追逐状态）
       vars._harshCaught = false;
       vars._harshActive = false;
       vars._harshTrack = [];
       vars._harshLag = 6;
-      if(vars.chasedByZombies < 4) vars.chasedByZombies ++;
       return {};
     },
     text: "你举起火把，火舌舔上她伸来的手臂——她猛地一缩，随即发出一声凄厉到不像是人能的尖啸。\n\
@@ -3320,6 +3348,7 @@ Object.assign(storyData, {
       if (!(vars._visit['建平-挹芬楼-2F-高一教室-食品'] > 0)) {
         cs.push({ text: "翻翻课桌抽屉", nextScene: "建平-挹芬楼-2F-高一教室-食品" });
       }
+      cs.push({ text: "看看黑板边挂着的时钟", nextScene: "建平-挹芬楼-2F-高一教室-看看时钟" });
       cs.push({ text: "回 2 楼走廊", nextScene: "建平-挹芬楼-2F", effect: updateTime(1) });
       return cs;
     }

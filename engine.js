@@ -100,7 +100,7 @@ function typeText(element, fullText, speed = 80, onComplete) {
 }
 
 // ====== 分段文本 ======
-const SEGMENT_MS_PER_CHAR = 50;   // 段间停留：每字毫秒数（仿 travelScene 惯例）
+const SEGMENT_MS_PER_CHAR = 25;   // 段间停留：每字毫秒数（仿 travelScene 惯例）
 const SEGMENT_MIN_PAUSE = 1200;   // 段间停留：最短下限(ms)
 let segmentToken = 0;             // 代际令牌：renderScene 顶部递增，旧分段链路全部作废
 let segmentActive = false;        // 分段播放中（含段间停留等待）

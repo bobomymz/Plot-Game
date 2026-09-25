@@ -285,6 +285,72 @@ console.log("\n=== 7. missable：错过上车窗口 → _xinGone 空车位 ===")
   chk(ot.indexOf("天不亮就自己走了") >= 0, "物理办公室 _xinGone 空屋文案");
 }
 
+console.log("\n=== 7b. 错过即走（拍板 09-24）：许诺日当天 14 点为硬闸，无第二次机会 ===");
+{
+  // 当天 13 点 → 窗口仍在，可上车
+  baseChapterState({ _xinOfferDay: 3, dd: 3, hh: 13 });
+  let node = enterScene("建平-后门辅路");
+  chk(gameState._xinGone !== true, "许诺日当天 13 点 → 未过期");
+  chk(visibleChoices(node).some((c) => String(c.text).indexOf("跟忻老师上车") >= 0), "当天 13 点「跟忻老师上车」可见");
+
+  // 当天 15 点 → 当场目送他开车走，上车选项消失
+  baseChapterState({ _xinOfferDay: 3, dd: 3, hh: 15 });
+  node = enterScene("建平-后门辅路");
+  chk(gameState._xinGone === true, "许诺日当天 15 点 → _xinGone=true（错过即走）");
+  const t = typeof node.text === "function" ? node.text(gameState) : node.text;
+  chk(t.indexOf("没有停车") >= 0, "辅路目送离开文案（没有停车）");
+  chk(visibleChoices(node).map((c) => c.text).join("|").indexOf("跟忻老师上车") < 0, "当天 15 点「跟忻老师上车」不再出现");
+  const off = enterScene("建平-远翔楼-3F-物理办公室");
+  const ot = typeof off.text === "function" ? off.text(gameState) : off.text;
+  chk(ot.indexOf("过了两点，我就不等了") >= 0, "办公室当天告别文案");
+
+  // 办公室记账：未记账时先进办公室（后门已清）→ 当天记账；14 点前进辅路可上车
+  baseChapterState({ _xinOfferDay: 0, dd: 3, hh: 13 });
+  chk(gameState._xinOfferDay === 0, "初始 _xinOfferDay=0");
+  enterScene("建平-远翔楼-3F-物理办公室");
+  chk(gameState._xinOfferDay === 3, "办公室 onEnter 记账 _xinOfferDay=dd（实际 " + gameState._xinOfferDay + "）");
+  node = enterScene("建平-后门辅路");
+  chk(visibleChoices(node).some((c) => String(c.text).indexOf("跟忻老师上车") >= 0), "记账当天 13 点仍可上车");
+
+  // 文案不再承诺「明天」
+  baseChapterState({ _xinOfferDay: 0, dd: 3, hh: 13 });
+  const off2 = enterScene("建平-远翔楼-3F-物理办公室");
+  const ot2 = typeof off2.text === "function" ? off2.text(gameState) : off2.text;
+  chk(ot2.indexOf("明天") < 0, "办公室文案不承诺「明天」（错过即走）");
+}
+
+console.log("\n=== 7c. 窗口锚定开门日（拍板 09-24 方案A）：过夜重置漏洞已堵 ===");
+{
+  // 15:00 开门 → 记账锚定当天，而非首次进办公室/辅路那天
+  baseChapterState({ _xinOfferDay: 0, dd: 3, hh: 15 });
+  enterScene("建平-后门-开门");
+  chk(gameState._xinOfferDay === 3, "开门瞬间记账 _xinOfferDay=清开日（实际 " + gameState._xinOfferDay + "）");
+
+  // 开门后不进办公室/辅路、撑过一夜 → 次日清晨进辅路：空车位，不再有上午窗口
+  gameState.dd = 4;
+  const node = enterScene("建平-后门辅路");
+  chk(gameState._xinGone === true, "过夜重置漏洞已堵：次日进辅路 → _xinGone=true");
+  const t = typeof node.text === "function" ? node.text(gameState) : node.text;
+  chk(t.indexOf("轮胎印") >= 0, "次日空车位文案（轮胎印）");
+  chk(visibleChoices(node).map((c) => c.text).join("|").indexOf("跟忻老师上车") < 0, "次日清晨「跟忻老师上车」不再出现");
+
+  // 当天 15:00 开门 → 当天进辅路：当场目送离开
+  baseChapterState({ _xinOfferDay: 0, dd: 3, hh: 15 });
+  enterScene("建平-后门-内侧-开门");
+  const node2 = enterScene("建平-后门辅路");
+  chk(gameState._xinGone === true, "当天 15 点开门后进辅路 → _xinGone=true");
+  const t2 = typeof node2.text === "function" ? node2.text(gameState) : node2.text;
+  chk(t2.indexOf("没有停车") >= 0, "当天目送离开文案（没有停车）");
+
+  // 内侧补开门点同样记账
+  baseChapterState({ _xinOfferDay: 0, dd: 3, hh: 10 });
+  enterScene("建平-后门-开门-清场后");
+  chk(gameState._xinOfferDay === 3, "「开门-清场后」开门点同样记账（实际 " + gameState._xinOfferDay + "）");
+  const node3 = enterScene("建平-后门辅路");
+  chk(gameState._xinGone !== true, "当天 10 点开门 → 窗口仍在，未落定");
+  chk(visibleChoices(node3).some((c) => String(c.text).indexOf("跟忻老师上车") >= 0), "当天 10 点「跟忻老师上车」可见");
+}
+
 console.log("\n=== 8. 整理整理给药丸选项（位置门控） ===");
 {
   const bagChoices = () => { const b = storyData["整理整理"]; return (typeof b.choices === "function" ? b.choices.call(b, gameState) : b.choices).filter((c) => !c.showCondition || checkCondition(c.showCondition, gameState)); };

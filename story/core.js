@@ -196,12 +196,11 @@ const storyData = {
     _harshLastTick: -1,          // Harsh 上次推进时的 3 分钟档（用于计算一次推进几步）
     _yuanxiangWestStairCleared: false,  // 远翔楼西楼梯强丧尸是否已清
     _zhizhenEastStairCleared: false,    // 致真楼东楼梯强丧尸是否已清
-    _yifenEastCleared: false,   // 挹芬楼1F东侧走廊丧尸是否已清（强制记忆闪色）
     _teacherLeft: false,        // 忻老师是否已开车离开（跟去复旦后为 true）
     _xinDead: false,            // 忻老师是否已被丧尸杀死（带 ch>=3 尸潮进远翔楼3F物理办公室 → “遇害”节点触发）
     // 复旦江湾章节（方案：docs/区域方案-复旦江湾.md；蓝本：忻老师故事线.md）
-    _xinOfferDay: 0,            // 忻老师上车窗口：首个完整上午窗口所在天（0=尚不具备资格；hh<14 具备当天记，否则次日）
-    _xinGone: false,            // 错过上车窗口、次日清晨独自离开（章节 missable 落定，作者已拍板）
+    _xinOfferDay: 0,            // 忻老师上车窗口：许诺日（后门清开后他开口的那一天，0=尚不具备资格；当天14点前可上车，错过即走）
+    _xinGone: false,            // 错过上车窗口（跨日或当天14点后才到）→ 他独自离开（章节 missable 落定，作者已拍板：不给第二次机会）
     _xinOutcome: 0,             // 章节分支结果：0=未入章/进行中 1=①他堵门牺牲 2=②学生目击牺牲 3=③带伤双逃 4=④学生救场
     _xinKnowsTruth: false,      // a 成立：305 出示王知筠手机成功（双刃真相：既救他也判他家人）
     _studentsCalled: false,     // b 成立：叫人窗口内用原机打过电话（蔡镜晓+彭奕宸 骑车来援）
@@ -536,7 +535,7 @@ const storyData = {
         triggerKey: "hh",
         effect: function(v) {
           var opts = [1, 3];                    // 远翔楼圆厅、音乐教室
-          if (v._yifenEastCleared) opts.push(2); // 挹芬楼休息区（清理东侧走廊后才去）
+          if ((v._visit['建平-挹芬楼-1F-东侧走廊-清场'] || 0) > 0) opts.push(2); // 挹芬楼休息区（清理东侧走廊后才去）
           v._pengPiano = opts[Math.floor(Math.random() * opts.length)];
         }
       },
