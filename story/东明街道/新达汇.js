@@ -91,7 +91,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你记错了——一只丧尸从你侧面扑过来，你来不及反应。\n一根金属管从你耳边呼啸而过，咚地一声砸在丧尸脸上。那只丧尸踉跄着栽进了排水沟里。\n\
 高锦睿拽着你的手把你拉了起来：\
-”别愣着啊！走吧！“\n你低头一看——手臂上多了一道抓痕。" + weaponBrokeText(vars);
+“别愣着啊！走吧！”\n你低头一看——手臂上多了一道抓痕。" + weaponBrokeText(vars);
     },
     choices: [
       {
@@ -577,7 +577,7 @@ Object.assign(storyData, {
       },
       
       {
-        text: "推开一扇贴着'员工通道'的门",
+        text: "推开一扇贴着“员工通道”的门",
         nextScene: "新达汇-1F后勤走廊中",
         showCondition: "_visit['新达汇-1F后勤走廊西'] > 0",
       },
@@ -2445,7 +2445,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-麻辣": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
     onEnter: { add: { strength: -1 }, set: { showPowerOut: true,  _triedHotpot: true } },
-    text: "🌶麻辣锅底——你涮了一片午餐肉——太久没吃辣，胃完全受不了。体力-1。",
+    text: "🌶麻辣锅底——你涮了一片午餐肉——太久没吃辣，胃完全受不了。<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -2457,7 +2457,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-番茄": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
     onEnter: { add: { strength: 1 }, set: { showPowerOut: true,  _triedHotpot: true } },
-    text: "🍅番茄锅底温和多了。吃了一顿饱饭。体力+1。",
+    text: "🍅番茄锅底温和多了。吃了一顿饱饭。<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -2469,7 +2469,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-菌菇": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
     onEnter: { add: { strength: 2 }, set: { showPowerOut: true,  _triedHotpot: true } },
-    text: "🍄菌菇汤底鲜甜暖胃。体力+2。",
+    text: "🍄菌菇汤底鲜甜暖胃。<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -2977,8 +2977,7 @@ Object.assign(storyData, {
   "新达汇-5F左庭右院-吃外卖": {
     onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/牛肉炒饭.webp",
-    text: "外卖真好吃。\
-【系统提示】体力+2，当前体力：{strength}。",
+    text: "外卖真好吃。<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-5F左庭右院", effect: updateTime(1) }
     ]
