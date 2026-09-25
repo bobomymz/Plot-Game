@@ -235,6 +235,11 @@ const storyData = {
     _pengPiano: 0,              // 彭奕宸弹琴位置：1=远翔楼圆厅 2=挹芬楼休息区 3=音乐教室；0=不在钢琴
     _yifenFood6F: false,        // 挹芬楼6F自习教室食品是否已拿
     _playgroundKicked: false,   // 操场那只足球是否已踢过（回忆[起脚爆射]，一次性）
+    // 建平·校园自动打铃（JP_BELLS 课表驱动；门卫出事后没人切"暑假模式"）
+    _lastBellKey: "",           // 已响过的铃台账："dd-槽位下标"，同一天同一铃只响一次（jpBellNote 自维护，剧情勿改）
+    _bellFirstHeard: false,     // 是否已听过第一声铃（首次追加"没人关掉它"旁白，一次性）
+    _linghaiNetworked: false,   // 灵海社活动室大屏幕是否已连上校园内网（密码 zhktzhkt，一次性）
+    _linghaiBoardKicked: false, // 活动室那块"智慧课堂"白板是否已被踹开（一次性搞笑）
     // 建平·道具解密支线（橘猫向导 B / 石蜡油火把 C）
     hasFireTorch: false,      // 石蜡油火把（化学实验室制，不占格；照明不耗，烧敌人/楼梯丧尸时燃尽）
     _harshDead: false,        // Harsh 是否被火烧死（永久，坐电梯不再唤醒）

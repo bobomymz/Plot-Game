@@ -124,6 +124,69 @@ function jpIsMealTime(vars) {
   return (vars.hh >= 11 && vars.hh <= 12) || (vars.hh >= 17 && vars.hh <= 19);
 }
 
+// ===== 校园自动打铃 =====
+// 早就放假了，但门卫出事之后没人切"暑假模式"，打铃系统仍按学期课表走。
+// 数据源：images/建平/课程表.webp（改图必须同步改 JP_BELLS）。周一~周五按点响铃，周末静默
+// ——第六、七天回学校的人会发现"今天没铃"，静默本身就是叙事。周五 14:45 放学，之后的课不排。
+// 地下车库/走廊闪色战斗类场景不响（BELL_EXCLUDE），躲藏点在 jpHide 里单独挂。
+var JP_BELLS = [
+  { t: 7 * 60 + 20,  type: "read" },
+  { t: 7 * 60 + 50,  type: "readEnd" },
+  { t: 8 * 60,       type: "class" },
+  { t: 8 * 60 + 40,  type: "exercise" },    // 下课后出操，放《运动员进行曲》
+  { t: 9 * 60,       type: "class" },
+  { t: 9 * 60 + 40,  type: "break" },
+  { t: 9 * 60 + 50,  type: "class" },
+  { t: 10 * 60 + 30, type: "break" },
+  { t: 10 * 60 + 40, type: "class" },
+  { t: 11 * 60 + 20, type: "noon" },
+  { t: 13 * 60 + 15, type: "class" },
+  { t: 13 * 60 + 55, type: "break" },
+  { t: 14 * 60 + 5,  type: "class" },
+  { t: 14 * 60 + 45, type: "fridayAfterSchool" },  // 周五=放学；周一~四只是普通下课
+  { t: 14 * 60 + 55, type: "class" },
+  { t: 15 * 60 + 35, type: "break" },
+  { t: 15 * 60 + 45, type: "class" },
+  { t: 16 * 60 + 25, type: "break" },
+  { t: 16 * 60 + 35, type: "class" },
+  { t: 17 * 60 + 15, type: "afterSchool" }
+];
+var JP_BELL_TEXT = {
+  read:      "一声长铃滚过走廊——早读开始了。本该有的翻书声，一个字也没有。",
+  readEnd:   "铃声又响了一遍，短促。早读结束了。",
+  class:     "扩音喇叭里响起《致爱丽丝》——上课铃。旋律顺着走廊一路飘到尽头，没有人回应它。",
+  exercise:  "喇叭里炸出《运动员进行曲》，鼓点敲得整栋楼都在震。操场上一个人也没有，只有风声。",
+  break:     "叮铃铃铃——下课铃响了。",
+  noon:      "放学铃响了两遍——上午结束了。食堂那边一点动静也没有。",
+  afterSchool: "很长的一声铃。放学了。没有人跑出教室，也没有人喊。",
+  fridayAfterSchool: "很长的一声铃。周五的最后一节课结束了——放学了。但这一切是不会结束的。"
+};
+// 只在建平校园内、工作日、且当前时间刚过某个铃点（15 分钟窗口内）时响一次。
+// 同一天同一铃只响一次（_lastBellKey 台账），避免玩家在走廊来回走时每屏复读。
+// 首次听到时追加一句"没人关掉它"——埋下谜面，谜底在门卫室监控台的打铃主机上。
+function jpBellNote(vars) {
+  if (vars.currentArea !== "建平中学") return "";
+  var wd = (vars.dd - 1) % 7;                 // dd1 = 2026/6/29 = 周一 → 0=周一 … 4=周五 5=周六 6=周日
+  if (wd >= 5) return "";                     // 周末静默
+  var now = (vars.hh || 0) * 60 + (vars.mm || 0);
+  for (var i = JP_BELLS.length - 1; i >= 0; i--) {
+    var b = JP_BELLS[i];
+    if (wd === 4 && b.t > 14 * 60 + 45) continue;    // 周五 14:45 放学，之后不再有课
+    if (now < b.t || now > b.t + 15) continue;
+    var key = vars.dd + "-" + i;
+    if (vars._lastBellKey === key) return "";        // 这个铃今天已经响过了
+    vars._lastBellKey = key;
+    var line = JP_BELL_TEXT[b.type] || "";
+    if (!vars._bellFirstHeard) {
+      vars._bellFirstHeard = true;
+      line += "\n你愣了一下——早就放假了。打铃系统还按着课表在走，没人来关掉它。";
+    }
+    if (!line) return "";
+    return "\n<span style='color:#8fa8c8; font-style:italic;'>" + line + "</span>";
+  }
+  return "";
+}
+
 // 枢纽节点首次进入才 +ch（雨天户外不归零，反复路过会把 QTE 压到不可玩）
 function jpHubChase(vars, sceneId) {
   if ((vars._visit[sceneId] || 0) <= 1) return { add: { chasedByZombies: 1 } };
@@ -228,7 +291,8 @@ function jpHide(image, successText, failText, reduceLevel) {
       }
       return {};
     },
-    text: function(vars) { return vars._hideFail ? failText : successText; },
+    // 躲藏时也要听得见铃声——被追得蹲在课桌下、广播里准时响起《致爱丽丝》，是这套系统最值钱的一笔
+    text: function(vars) { return (vars._hideFail ? failText : successText) + jpBellNote(vars); },
     // 躲完后返回来源场景，避免"无选项 → 剧终"
     choices: [
       { text: "继续", nextScene: function(vars) { return vars._lastScene || "建平-金苹果大道"; } }
@@ -1106,7 +1170,117 @@ Object.assign(storyData, {
       { text: "去东楼梯", nextScene: "建平-行政楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-行政楼-西楼梯", effect: updateTime(1) },
       { text: "上天台花园", nextScene: "建平-行政楼-天台", effect: updateTime(1) },
-      { text: "去公开课教室", nextScene: "建平-行政楼-3F-公开课教室", effect: updateTime(1) }
+      { text: "去公开课教室", nextScene: "建平-行政楼-3F-公开课教室", effect: updateTime(1) },
+      { text: "去灵海社活动室", nextScene: "建平-行政楼-3F-灵海社活动室", effect: updateTime(1) }
+    ]
+  },
+
+  // ==================== 灵海社活动室（AI 社团 · 校园内网课程表） ====================
+  // 大屏幕连的是校园内网（不是外网——座机没信号、手机打不通，外网早死了）。
+  // 内网无线叫「智慧课堂」，密码 zhktzhkt；密码提示在蔡镜晓/彭奕宸两台电脑前的同一句台词里
+  // （"你怎么连上网的？"→"密码 zhktzhkt，你忘了？"），不额外贴便签。
+
+  "建平-行政楼-3F-灵海社活动室": {
+    image: "images/placeholder.png" /* TODO: images/建平/灵海社活动室.webp */,
+    onEnter: function(vars) { vars.currentPos = "行政楼3F灵海社活动室"; },
+    text: function(vars) {
+      return "灵海社活动室。门虚掩着，推开是一股闷了很久的灰味。\n\
+靠墙一整排旧机柜，指示灯还亮着一排——电还在。正对着门那块大屏幕黑着，屏幕下角贴着一张没撕干净的标签：「智慧课堂 · 公开课专用」。\n\
+前排有张椅子翻倒着，椅面上是一大片发黑的东西。讲台上搁着半杯水，杯壁上的水渍干了一圈，又干了一圈。\n" + describeZombieWave(vars);
+    },
+    choices: [
+      { text: "开那台大屏幕", nextScene: "建平-行政楼-3F-灵海社活动室-连网", effect: updateTime(1) },
+      { text: "看那块白板", nextScene: "建平-行政楼-3F-灵海社活动室-白板" },
+      { text: "躲起来", showCondition: "chasedByZombies > 0", nextScene: "建平-躲藏-灵海社活动室" },
+      { showCondition: "itemCount > 0", text: "🎒整理一下物品", nextScene: "整理整理", effect: { set: { positionAfterOperation: "建平-行政楼-3F-灵海社活动室" } } },
+      { text: "回 3 楼走廊", nextScene: "建平-行政楼-3F", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-行政楼-3F-灵海社活动室-连网": {
+    image: "images/placeholder.png" /* TODO: images/建平/智慧课堂登录.webp */,
+    onEnter: function(vars) { vars.currentPos = "行政楼3F灵海社活动室"; },
+    text: function(vars) {
+      if (vars._linghaiNetworked) return "大屏幕还连着「智慧课堂」，内网页面停在那儿。";
+      return "你按下大屏幕旁的电源键。屏幕亮起来，跳出一行小字：\n\
+“校园内网 · 无线：智慧课堂”\n\
+下面是个密码框，光标一闪一闪。以前在这间教室里连过的人，大概还记得那串密码。";
+    },
+    choices: [
+      {
+        text: "输入网络密码",
+        input: { placeholder: "网络密码", maxLength: 8 },
+        condition: { _input: "zhktzhkt" },        // 精确比对：大小写敏感（NPC 台词里给的也是小写）
+        nextScene: "建平-行政楼-3F-灵海社活动室-课程表",
+        elseScene: "建平-行政楼-3F-灵海社活动室-输错",
+        showCondition: "!_linghaiNetworked"
+      },
+      { text: "算了，不弄了", nextScene: "建平-行政楼-3F-灵海社活动室", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-行政楼-3F-灵海社活动室-输错": {
+    image: "images/placeholder.png" /* TODO: images/建平/智慧课堂登录.webp */,
+    text: "密码错误。输入框又空了，光标还在闪。",
+    choices: [
+      { text: "再试一次", nextScene: "建平-行政楼-3F-灵海社活动室-连网", effect: updateTime(1) },
+      { text: "算了", nextScene: "建平-行政楼-3F-灵海社活动室", effect: updateTime(1) }
+    ]
+  },
+
+  // 课程表内容由图片承载（作者提供 images/建平/课表.webp），代码里不写具体课程信息。
+  "建平-行政楼-3F-灵海社活动室-课程表": {
+    image: "images/placeholder.png" /* TODO: images/建平/课表.webp（作者提供后替换） */,
+    onEnter: function(vars) {
+      vars._linghaiNetworked = true;
+      vars.currentPos = "行政楼3F灵海社活动室";
+      return updateTime(2)(vars);
+    },
+    text: function(vars) {
+      var wd = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"][(vars.dd - 1) % 7];
+      return "密码对了。内网的第一页就是课表——一整屏的格子，密密麻麻排着一天十节课。\n\
+今天是" + wd + "，屏幕上那一列还标着颜色，像随时会有人推门进来上课。\n\
+你把屏幕转过来看了一会儿。这些格子里的名字，现在大概大半都在楼下。";
+    },
+    choices: [
+      { text: "关掉屏幕", nextScene: "建平-行政楼-3F-灵海社活动室", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-行政楼-3F-灵海社活动室-白板": {
+    image: "images/placeholder.png" /* TODO: images/建平/智慧课堂白板.webp */,
+    onEnter: function(vars) { vars.currentPos = "行政楼3F灵海社活动室"; },
+    text: function(vars) {
+      if (vars._linghaiBoardKicked) return "那块白板已经在墙角了，滚轮朝天，板面扣在地上——看不出上面写过什么。";
+      return "白板装在带滚轮的支架上，板角印着「智慧课堂」。板面上还留着上次活动的板书：几个画歪了的神经网络示意图，和一行大字——灵海社 · 招新。\n\
+支架底下四个小滚轮，转起来应该很顺。";
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._linghaiBoardKicked) {
+        cs.push({ text: "一脚把它踹开", nextScene: "建平-行政楼-3F-灵海社活动室-踹白板" });
+      }
+      cs.push({ text: "回活动室", nextScene: "建平-行政楼-3F-灵海社活动室", effect: updateTime(1) });
+      return cs;
+    }
+  },
+
+  // 纯搞笑，但有代价：咣当一声会引来东西（ch+1），与砸消防柜玻璃同款"动静招尸"逻辑。
+  "建平-行政楼-3F-灵海社活动室-踹白板": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      vars._linghaiBoardKicked = true;
+      vars.chasedByZombies = Math.min(5, (vars.chasedByZombies || 0) + 1);
+      return updateTime(1)(vars);
+    },
+    text: function(vars) {
+      return "你后退半步，抬腿就是一脚。\n\
+白板滑出去，滚轮吱吱响了一路，咣当撞在对面墙上，板面朝下趴住了。\n\
+那一声在教室里绕了两圈才散。远处，不知道什么地方，有脚步声动了动。\n\
+……你也不知道自己为什么要踹这一脚。大概是它立在那儿的样子，太像在等你开口了。";
+    },
+    choices: [
+      { text: "……算了，回活动室", nextScene: "建平-行政楼-3F-灵海社活动室", effect: updateTime(1) }
     ]
   },
   "建平-行政楼-天台": {
@@ -1968,8 +2142,14 @@ Object.assign(storyData, {
         });
       }
       if (vars._pengGalResult !== "" && !vars.mixedMemorySet.has("腐烂尸城")) {
-        cs.push({ text: "看看彭奕宸收藏的视频", nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) });
+        cs.push({ text: "看看收藏夹里那个视频", nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) });
       }
+      // 彭奕宸在场才能问（打完 galgame 他人就不在了；饭点他还在座位上）
+      cs.push({
+        text: "“你怎么连上网的？”",
+        showCondition: function(v) { return jpIsMealTime(v) || !v._pengGalCleared; },
+        nextScene: "建平-远翔楼-4F-高三14班-联网"
+      });
       if (vars.chasedByZombies > 0) {
         cs.push({ text: "躲起来", nextScene: "建平-躲藏-14班" });
       }
@@ -1978,6 +2158,17 @@ Object.assign(storyData, {
       cs.push({ text: "回 4 楼走廊", nextScene: "建平-远翔楼-4F", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  // 校园内网密码提示（活动室大屏幕用得上），与蔡镜晓那台是同一句口径。
+  "建平-远翔楼-4F-高三14班-联网": {
+    image: "images/placeholder.png",
+    text: "你问他这电脑是怎么连上网的。彭奕宸头也不抬：\n\
+“智慧课堂啊——学校的网，外网早死了，它自己还在。密码 zhktzhkt，你忘了？”\n\
+说完他愣了一下，才补一句：“……这都什么时候了，你还惦记这个。”",
+    choices: [
+      { text: "回教室", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
+    ]
   },
 
   "建平-远翔楼-4F-高三14班-窗边": {
@@ -2069,7 +2260,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "读档，再试一次", nextScene: "建平-远翔楼-4F-高三14班-galgame-防波堤", effect: updateTime(2) },
-      { text: "看看他收藏的视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
+      { text: "看看收藏夹里那个视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
       { text: "回教室", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
     ]
   },
@@ -2083,7 +2274,7 @@ Object.assign(storyData, {
     },
     text: "屏幕上弹出结算画面：「徐徐靠近」。白羽站在坡道上，朝主角轻轻挥了挥手。\n彭奕宸盯着结算画面看了一会儿，忽然起身，从书包柜里翻出他囤的泡面，撕开一桶，掰了半块面饼给你，又从铅笔盒里摸出半根火腿肠。\n“比我打得好。”他说，“吃。”\n你们就着饮水机里的温水，把面啃完了。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n收拾面桶的时候，他提了一句：收藏了个互动视频，有兴趣可以看看。",
     choices: [
-      { text: "看看那个视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
+      { text: "看看收藏夹里那个视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
       { text: "回教室", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
     ]
   },
@@ -2113,11 +2304,11 @@ Object.assign(storyData, {
       segs.push("“这存档是你的？”你碰了碰屏幕。\n彭奕宸凑过来看了一眼，眉头皱起来：“不可能。我前几天刚清空过存档文件夹。再说这个时间……6月29号早上八点整，不就是出事那天早上？”");
       segs.push("窗外的丧尸忽然低低地嘶吼了一声。电脑屏幕猛地闪了一下。\n你揉了揉眼睛——存档列表干干净净，编号 0 的位置空着，什么都没有。\n面的热气涌上来，模糊了你的视线。");
       if (vars.hasDiary) segs.push("\n那三个字母莫名让你想起自己在民防设施里捡到的那本灰皮日记。");
-      segs.push("\n过了很久，彭奕宸才闷闷地开口：“……这事别跟人说。”顿了顿，又补了一句：“要是睡不着，我收藏了个视频。”");
+      segs.push("\n过了很久，彭奕宸才闷闷地开口：“……这事别跟人说。”顿了顿，又补了一句：“要是睡不着，这台机器上还存了个视频。”");
       return segs;
     },
     choices: [
-      { text: "看看那个视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
+      { text: "看看收藏夹里那个视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
       { text: "回教室", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
     ]
   },
@@ -2125,7 +2316,9 @@ Object.assign(storyData, {
   "建平-远翔楼-4F-高三14班-看B站": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.mixedMemorySet.add("腐烂尸城"); return {}; },
-    text: "彭奕宸点开视频。《腐烂尸城》——一个互动视频，讲一座城市被尸潮吞没，幸存者们在废墟中挣扎求生。\n\
+    // 收藏夹是主角自己的：这台是14班教室的电脑，不是彭奕宸的机器，
+    // 视频早在出事前就下好躺在缓存里——没网也放得出来。
+    text: "你坐回这张课桌，点开收藏夹——是你自己以前留的。《腐烂尸城》，一个互动视频，讲一座城市被尸潮吞没，幸存者们在废墟里挣扎求生。当年你大概是躲在这间教室看完的，看完还得赶去下一节课。缓存还在，不用网也放得出来。\n\
 画面里的丧尸、逃命的人群、绝望的呐喊……和你这些天的经历，是那么相似。\n你看着看着，仿佛自己也置身其中。\n\
  <span style='color:#ffaa00;'>【记忆】你获得了一段记忆：腐烂尸城。</span>",
     choices: [
@@ -2782,9 +2975,9 @@ Object.assign(storyData, {
           desc += "\n电脑区空无一人，角落里那台电脑还亮着。";
         }
       } else {
-        desc += "\n蔡镜晓坐在那台亮着的电脑前，专心致志地打着明日方舟，屏幕上闪烁着怪物和各种粒子效果。";
+        desc += "\n蔡镜晓坐在那台亮着的电脑前，专心致志地打着植物大战僵尸——屏幕上排着一整排豌豆射手，正对着涌过来的僵尸开火。这游戏不要网，机房里早年装的，他还玩得下去。";
         if (vars._pengGalCleared) {
-          desc += "\n旁边那台也亮着，彭奕宸占着，敲键盘敲得啪啪响。\n蔡镜晓摘下一边耳机，拿眼睛扫了你俩一眼：“这都什么时候了，还搁这打舟呢？”\n彭奕宸头也不抬：“不然呢？能活一天是一天。反正它们上不来。”";
+          desc += "\n旁边那台也亮着，彭奕宸占着，敲键盘敲得啪啪响。\n蔡镜晓摘下一边耳机，拿眼睛扫了你俩一眼：“这都什么时候了，还搁这打僵尸呢？”\n彭奕宸头也不抬：“不然呢？能活一天是一天。反正它们上不来。”";
         }
         
       }
@@ -2834,6 +3027,18 @@ Object.assign(storyData, {
       }
       return desc;
     },
+    choices: [
+      { text: "“你怎么连上网的？”", nextScene: "建平-弘渊楼-4F-电脑区-蔡镜晓-联网" },
+      { text: "回电脑区", nextScene: "建平-弘渊楼-4F-电脑区", effect: updateTime(1) }
+    ]
+  },
+
+  // 校园内网密码提示（活动室大屏幕用得上）。台词口径：无线叫「智慧课堂」，密码 zhktzhkt。
+  "建平-弘渊楼-4F-电脑区-蔡镜晓-联网": {
+    image: "images/placeholder.png",
+    text: "你指了指屏幕。蔡镜晓一脸莫名其妙：\n\
+“你是说内网？就那个‘智慧课堂’啊——学校本来就有的，断了外网它自己还在。密码 zhktzhkt，你忘了？”\n\
+他说得理直气壮，好像这是全校人都该记得的东西。",
     choices: [
       { text: "回电脑区", nextScene: "建平-弘渊楼-4F-电脑区", effect: updateTime(1) }
     ]
@@ -3741,26 +3946,66 @@ Object.assign(storyData, {
       { text: "离开", nextScene: "建平-废弃小楼-2F", effect: updateTime(1) }
     ]
   },
+  // 门卫室在校园内侧（金苹果广场旁）——进出自广场，窗户正对着校门外。
   "建平-门卫室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "门卫室"; },
     text: function(vars) {
-      var desc = "门卫室。墙上挂着全校班级的钥匙板，挂钩空了一大片——钥匙被人成串摘走了。桌上摆着一部没信号的座机，风扇还在无力地转着。";
+      var desc = "门卫室。墙上挂着全校班级的钥匙板，挂钩空了一大片——钥匙被人成串摘走了。桌上摆着一部没信号的座机，风扇还在无力地转着。\n\
+靠窗那面墙是整排监控屏，大部分还亮着；屏下那台打铃主机也亮着，屏幕上一行小字：暑假模式 · 未启用。\n\
+椅背上搭着一件门卫制服，袖口有一片黑褐色的、已经发硬的东西。值班表停在 6 月 28 日那一格，那天的名字后面画了个很潦草的勾。";
+      if (!(vars._visit['建平-门卫室-监控'] > 0)) {
+        desc += "\n你抬头看了一眼监控墙——一格一格，都是学校的角落。";
+      } else {
+        desc += "\n监控墙你刚才看过了。";
+      }
       if (!(vars._visit['建平-门卫室-外卖'] > 0)) {
         desc += "\n靠门的桌上放着一个外卖纸袋——袋口还封着，汤渍没干透。";
-      } else if ((vars._visit['建平-门卫室-外卖'] > 0)) {
+      } else {
         desc += "\n桌上那个外卖纸袋已经被你处理掉了。";
       }
       return desc;
     },
     choices: function(vars) {
       var cs = [];
+      cs.push({ text: "看监控墙", nextScene: "建平-门卫室-监控", effect: updateTime(2) });
       if (!(vars._visit['建平-门卫室-外卖'] > 0)) {
         cs.push({ text: "打开外卖纸袋", nextScene: "建平-门卫室-外卖" });
       }
-      cs.push({ text: "回校园门口", nextScene: "建平-校园门口", effect: updateTime(1) });
+      cs.push({ text: "回金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(1) });
       return cs;
     }
+  },
+
+  // 监控只覆盖室外/枢纽位（前门、广场、后门、操场、食堂门口）——教学楼走廊和室内一律不装，
+  // 免得把忻老师/同学/猫提前卖出去。画面是定性描述："三三两两"还是"黑压压"，不给精确数字，
+  // 也不给闪色答案（否则监控就变成小地图了）。
+  "建平-门卫室-监控": {
+    image: "images/placeholder.png" /* TODO: images/建平/监控墙.webp */,
+    onEnter: function(vars) { vars.currentPos = "门卫室"; },
+    text: function(vars) {
+      var lines = [];
+      lines.push((vars._visit['建平-前门-清场'] > 0)
+        ? "前门：门内外躺着一地不动的东西，别的什么也没有。"
+        : "前门：门内外的丧尸挤成一团，铁门被推得歪着。");
+      lines.push((vars.chasedByZombies >= 3)
+        ? "金苹果广场：黑影一层叠一层，看不出到底有多少。"
+        : "金苹果广场：三三两两的身影在慢慢挪。");
+      if ((vars._visit['建平-后门-内侧-清场'] > 0)) {
+        lines.push("后门：门大开着，那片地方是空的。");
+      } else if (vars._backGateOpened) {
+        lines.push("后门：铁门敞着，门里的东西被引出去了，街上散着几只。");
+      } else {
+        lines.push("后门：门内黑压压挤满了，栅栏被压得往里凹。");
+      }
+      lines.push("操场：跑道上横着几具尸体，风吹不动它们。");
+      lines.push("食堂门口：台阶上坐着一只，一动不动——看不出还活着没有。");
+      lines.push("7 号摄像头那格只有雪花。信号线断在哪儿，没人去查。");
+      return "你凑到监控墙前，一格一格看过去。画面是黑白的，带着噪点。\n" + lines.join("\n");
+    },
+    choices: [
+      { text: "离开监控墙", nextScene: "建平-门卫室", effect: updateTime(1) }
+    ]
   },
 
   "建平-门卫室-外卖": {
@@ -3777,13 +4022,14 @@ Object.assign(storyData, {
       return desc + "但已经放了太久——米饭结成硬块，菜叶发黑，散发出一股馊味。你闻了闻就把它丢回了垃圾桶。";
     },
     choices: [
-      { text: "离开门卫室", nextScene: "建平-校园门口", effect: updateTime(2) }
+      { text: "回门卫室", nextScene: "建平-门卫室", effect: updateTime(1) }
     ]
   },
 
 
   // ==================== 躲藏点（降 ch） ====================
 
+  "建平-躲藏-灵海社活动室": jpHide("images/placeholder.png", "你反锁上活动室的门，缩在机柜后面。外面的脚步声来了又去，那块白板还静静立在原地。", "", 2),
   "建平-躲藏-14班": jpHide("images/placeholder.png", "你躲进14班教室，反锁上门，缩在课桌下。外面的动静渐渐远了，教室里安静得能听见自己的心跳。", "", 2),
   "建平-躲藏-物理办公室": jpHide("images/placeholder.png", "你闪进物理办公室，忻老师示意你蹲下。你们屏息等着，外面的脚步声来了又去。", "", 2),
   "建平-躲藏-电脑区": jpHide("images/placeholder.png", "你蹲在电脑桌下，蔡镜晓也猫着腰。外面的动静渐渐远了。", "", 2),
@@ -3815,10 +4061,13 @@ Object.assign(storyData, {
 (function() {
   var EXCLUDE = /^(建平-躲藏-|建平-Harsh|建平-结局-|结局-|复旦)/;
   var KEEP = /^建平-/;
+  // 打铃排除：地下车库（铁门+地下，听不见）、走廊闪色战斗（12 秒读秒，正文多一行是干扰）
+  var BELL_EXCLUDE = /^(建平-地下|结局)/;
+  var BELL_EXCLUDE_ID = { "建平-前门": 1, "建平-挹芬楼-1F-西侧走廊": 1 };
   // 非地点节点关键词（每次新增此类场景需同步补充）
   // 匹配规则：ID 以关键词【结尾】即命中（无 "-" 前缀锚）——"没螺丝刀/收好内胆/搜尸体"
   // 这类变体由 螺丝刀/内胆/尸体 等基础词直接覆盖，无需逐个造词。
-  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|防波堤|失落的沉默|动摇的坦白|尘封的真相|结算|wqx存档|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|锁着|没钥匙|查看|关阀|被堵住|踢球|听琴|听音乐|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下|李娟|发作|清醒|毒水|转化|解脱|抓伤|借书证|保温杯|粉色|另一只|喝水|灌水|遇害)$/;
+  var NON_PLACE = /(战斗|击杀|驱赶|逃跑|清场|开门|开打|失守|胜利|手枪|斧头|匕首|窒息|煤气阀|刘冠宇|外卖|内胆|翻货架|查看老吴|尸体|万用表|抢管线图|铁柜|螺丝刀|拆枪|电脑坏|修电脑|galgame|防波堤|失落的沉默|动摇的坦白|尘封的真相|结算|wqx存档|方便面|看B站|蔡镜晓|找食物|拿面具|拿药|手表|拿枪|纸箱|锁柜|锁门|锁着|没钥匙|查看|关阀|被堵住|踢球|听琴|听音乐|窗边|火把|消防柜|相遇|亲近|带路|夹心饼干|取斧|讲台|纸条|黑板|学生|学生已救|救活|休息|发现狼人杀手牌|前往复旦|食品|吃掉|收下|李娟|发作|清醒|毒水|转化|解脱|抓伤|借书证|保温杯|粉色|另一只|喝水|灌水|遇害|监控|连网|联网|输错|课程表|白板)$/;
   for (var sceneId in storyData) {
     if (!storyData.hasOwnProperty(sceneId)) continue;
     if (!KEEP.test(sceneId) || EXCLUDE.test(sceneId) || NON_PLACE.test(sceneId)) continue;
@@ -3837,12 +4086,13 @@ Object.assign(storyData, {
         return result || {};
       };
 
-      // 包装 text：末尾追加距离提示
+      // 包装 text：末尾追加距离提示 + 校园打铃（铃声由场景自己决定要不要响）
+      var bellOn = !BELL_EXCLUDE.test(id) && !BELL_EXCLUDE_ID[id];
       var origText = scene.text;
       if (typeof origText === "function") {
-        scene.text = function(vars) { return (origText(vars) || "") + jpHarshHint(vars); };
+        scene.text = function(vars) { return (origText(vars) || "") + jpHarshHint(vars) + (bellOn ? jpBellNote(vars) : ""); };
       } else if (typeof origText === "string") {
-        scene.text = function(vars) { return origText + jpHarshHint(vars); };
+        scene.text = function(vars) { return origText + jpHarshHint(vars) + (bellOn ? jpBellNote(vars) : ""); };
       }
     })(sceneId);
   }
