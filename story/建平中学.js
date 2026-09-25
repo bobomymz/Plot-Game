@@ -1805,13 +1805,13 @@ Object.assign(storyData, {
       if(vars.weather == '晴') {
         var f = timeImage({
           morning: absent ? "images/建平/物理办公室-没人.webp" : "images/建平/物理办公室-忻老师.webp",
-          night: absent ? "images/placeholder.png" /* TODO: images/建平/物理办公室-没人-night.webp */ : "images/建平/物理办公室-忻老师-night.webp"
+          night: absent ? "images/建平/物理办公室-没人-night.webp": "images/建平/物理办公室-忻老师-night.webp"
         })
         return f(vars);
       }
       var f = timeImage({
         morning: absent ? "images/建平/物理办公室-没人-阴雨.webp" : "images/建平/物理办公室-忻老师-阴雨.webp",
-        night: absent ? "images/placeholder.png" /* TODO: images/建平/物理办公室-没人-night.webp */ : "images/建平/物理办公室-忻老师-night.webp"
+        night: absent ? "images/建平/物理办公室-没人-night.webp": "images/建平/物理办公室-忻老师-night.webp"
       })
       return f(vars);
     },
