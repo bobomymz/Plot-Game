@@ -120,7 +120,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/喷泉广场-morning.png */,
     onEnter: { set: { _metGaoAtMall: true, showRain: true } },
     text: function(vars) {
-      if(vars._lastScene == "新达汇-喷泉广场-高锦睿-旁观")
+      if(vars._lastScene == "新达汇-喷泉广场-高锦睿-旁观" || vars._lastScene == "新达汇-喷泉广场-高锦睿-被救")
         return [
           "“哈哈，打这些二愣子还是小菜一碟。”高锦睿走了过来。\n他擦了擦脸上的水，一屁股坐在喷泉池沿上。“我靠，你也来这儿了？”",
           "他告诉你他是骑车过来的——变速器修好了，一路上东躲西藏，刚到这个广场就被水池边的丧尸围了。“这东西好像特别喜欢水，不知道什么毛病。”",
@@ -359,7 +359,7 @@ Object.assign(storyData, {
       }
       var d = "值班室不大。一面墙嵌着监控屏幕墙，旁边一张掉漆的值班台，台面上有个空的对讲机充电座。角落立着一个灰色的铁皮配电柜。";
       if (vars._powerOut) {
-        d += "\n监控屏幕全黑了。配电柜的总闸被你扳到了最底下，卡住了。";
+        d += "\n监控屏幕全黑了。";
       } else {
         d += "\n监控墙还亮着，十几个分屏无声地切换着商场各处的画面。配电柜门半开，里面一排闸刀。";
       }
@@ -453,7 +453,7 @@ Object.assign(storyData, {
   "新达汇-B1保安室-抽屉-吃桃酥": {
     onEnter: { set: { showPowerOut: true }, add: { strength: 2 }  },
     image: "images/placeholder.png" /* TODO: images/新达汇/B1值班台抽屉-吃桃酥.jpg */,
-    text: "你把桃酥吃掉了。<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，甩掉了一些追兵。当前体力：{strength}。</span>",
+    text: "你把桃酥吃掉了。<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力。当前体力：{strength}。</span>",
     choices: [
       {
         text: "合上抽屉",
