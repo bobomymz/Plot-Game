@@ -1884,14 +1884,14 @@ Object.assign(storyData, {
     image: function(vars) {
       if(vars.weather == '晴') {
         var f = timeImage({
-          morning: "images/建平/物理办公室-忻老师.webp",
-          night: "images/建平/物理办公室-忻老师-night.webp"
+          morning: "images/建平/物理办公室-忻老师寄.webp",
+          night: "images/建平/物理办公室-忻老师寄-night.webp"
         });
         return f(vars);
       }
       var f = timeImage({
-        morning: "images/建平/物理办公室-忻老师-阴雨.webp",
-        night: "images/建平/物理办公室-忻老师-night.webp"
+        morning: "images/建平/物理办公室-忻老师寄-阴雨.webp",
+        night: "images/建平/物理办公室-忻老师寄-night.webp"
       });
       return f(vars);
     },
