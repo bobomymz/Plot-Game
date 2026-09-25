@@ -1469,18 +1469,18 @@
       "area": "建平中学",
       "kind": "追逐工厂(函数)",
       "factory": "jpChaseQTE",
-      "src": "jpChaseQTE(function(v) { return !!v._yifenEastCleared; })",
-      "timeoutMs": null,
-      "timeoutOk": false,
+      "src": "jpChaseQTE(function(v) { return !!(v._visit['建平-挹芬楼-1F-东侧走廊-清场'] > 0); })",
+      "timeoutMs": 14000,
+      "timeoutOk": true,
       "timeoutExpr": null,
       "timeoutErr": null,
-      "timeoutNote": "合成状态下均不触发（默认关闭）",
-      "onTimeout": "(条件未满足)",
+      "timeoutNote": null,
+      "onTimeout": "结局-丧尸的围殴",
       "hidden": false,
       "typewriter": false,
-      "choiceCount": 1,
-      "hitState": null,
-      "chaseMs": null
+      "choiceCount": 4,
+      "hitState": "满追(ch=3·已探索)",
+      "chaseMs": 14000
     },
     {
       "id": "建平-挹芬楼-2F",
@@ -1951,14 +1951,6 @@
       "area": "建平中学",
       "timeout": 13000,
       "timeoutScene": "结局-后门-自投罗网",
-      "text": "输入你看到的颜色分布"
-    },
-    {
-      "id": "建平-挹芬楼-1F-东侧走廊",
-      "file": "story/建平中学.js",
-      "area": "建平中学",
-      "timeout": 12000,
-      "timeoutScene": "结局-挹芬楼失守",
       "text": "输入你看到的颜色分布"
     },
     {

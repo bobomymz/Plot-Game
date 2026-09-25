@@ -251,7 +251,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/jianping/campusGate.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "校园门口"; },
     text: function(vars) {
-      if(vars._lastScene === "建平-后门-开门") return "你刚从后门逃回来。那些丧尸没有跟过来。";
+      if(vars._lastScene === "建平-后门-开门") return "你刚从后门逃回来。身后是一片惊动的嘶吼——大部分丧尸被你引出了门，但它们记住了这片街区。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return "你站在建平中学前门马路对面的一棵行道树后，没有急着靠近。\n\
 校门还是老样子——“上海市建平中学”七个金字静静地立在墙上，移动门半开。你能看到里面那片熟悉到骨子里的金苹果广场，和广场上歪歪斜斜游荡着的身影。\n\
 校门口内外都有丧尸，只是现在它们还没注意到你。你压低身子，盘算着怎么进去。\n" + describeWeather(vars) + describeZombieWave(vars);
@@ -495,7 +495,8 @@ Object.assign(storyData, {
       if (vars.hasAxe) cs.push({ text: "抡起斧头劈过去！", nextScene: "建平-后门-斧头" });
       if (vars.hasDagger) cs.push({ text: "抽出匕首近身！", nextScene: "建平-后门-匕首" });
       cs.push({ text: "空手硬拼！", nextScene: "建平-后门-开打" });
-      cs.push({ text: "快逃！", nextScene: "建平-校园门口", effect: updateTime(5) });
+      // 快逃也有代价：拉开门惊动整片尸群，狂奔逃命（体力-1、追击+1）——开门引走丧尸成立，但不再零成本
+      cs.push({ text: "快逃！", nextScene: "建平-校园门口", effect: function(v) { v.strength = Math.max(0, v.strength - 1); v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return updateTime(5)(v); } });
       return cs;
     }
   },
