@@ -647,6 +647,7 @@ Object.assign(storyData, {
 | `gameMemorySet` / `personalMemorySet` | `Set` | 已收集的记忆，`gameMemoryThres`（10）为结局阈值 |
 | `_diaryLog` | 数组 | 日记本条目（记忆/事件/手写三类，自动记 dd/hh/mm/weather）；写入走 utils.js 的 `gainMemory`/`addDiaryEvent`/`addDiaryNote` |
 | `_diaryPage` | int | 日记本当前页（0=最新一页，往前翻 +1）；「日记本」onEnter 从外部进入时归零 |
+| `_runNumber` | int | 当前周目号（`restoreDiaryLedger` 拿本时置 `ledger.runs+1`；跨周目账本用，见日记本系统节） |
 
 ### `_lastScene`：引擎自动记录的上一个场景
 
@@ -825,6 +826,8 @@ choices: [{ text: "继续", nextScene: "原场景", effect: { set: { hasBackpack
 3. 上述两种 key 必须登记在 `story/日记本.js` 的 `DIARY_ENTRIES` 正文表（第一人称日记腔；正文禁用 `{ }`，text 函数返回值会做插值）。`tools/check_diary.js` 审计：裸 add=0 + key 双向对齐 + 场景存在性。
 4. 玩家手写走「日记本-写」input 选项，`addDiaryNote` 落库前做 HTML 转义 + 花括号中和（engine 用 innerHTML 渲染、函数返回值做 {变量名} 插值，双重防注入）。
 5. 翻页是 `nextScene: "日记本"` 自跳：onEnter 靠 `_lastScene !== "日记本"` 判定"从外部进入"才重置 `_diaryPage` 到最新页（引擎自动维护 `_lastScene`，翻页自跳不会误重置）。
+
+**跨周目账本（ledger，核心设定 §2.2）**：核心 A/B 结局只统计**当前周目**的记忆（Set 不跨周目回灌，否则 A/B 拦截使 F 永远不可达）；F 结局的"所有周目累积"数据 = `_diaryLog` 本身。两条重开路径（engine 右上角"重新开始" / 存档框"从 Day 1 重新开始"）在 `clearSave()` 前各有一行钩子调 `persistDiaryLedger`（仅 `hasDiary` 才落账——继承资格=关键道具在手），写独立 `localStorage` key `shichaobiji_diary_ledger_v1`（与剧本存档分离）；樱桃苑「拿上日记本」effect 调 `restoreDiaryLedger`（幂等）合并旧账：同源条目按 `kind+key` 去重保本周目页、按"周目号+时刻"排序旧账在前、条目补 `run` 周目戳、`_runNumber = ledger.runs+1`。渲染（`diaryRender`）：周目交界出分隔行、旧周目条目褪色墨色。丢弃日记本=不留账（数据随本子"空空如也"）。审计：`tools/check_diary.js` 第 7 节（mock localStorage 做往返测试）。
 
 ### 分段文本（text 数组）
 

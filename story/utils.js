@@ -508,6 +508,88 @@ function diaryDateText(entry) {
   return s;
 }
 
+// ====== 日记本跨周目账本（ledger） ======
+// 设计依据 核心设定.md §2.2：核心 A/B 结局只统计【当前周目】的记忆，核心 F 结局统计
+// 【所有周目累积】——所以跨周目累积记在 _diaryLog（日记账本）里，记忆 Set 不回灌新周目
+// （回灌 = A/B 拦截提前触发 = F 永远不可达）。Set 快照仍随账本留档备查。
+// 两条重开路径（右上角"重新开始"按钮 / 刷新页后存档框"从 Day 1 重新开始"）在清档前调
+// persistDiaryLedger（持有日记本才有继承资格）；新周目在樱桃苑「拿上日记本」时调
+// restoreDiaryLedger 合并旧账。函数实现在本文件（story 层），engine.js 只有两处一行钩子。
+
+// 账本独立于剧本存档（SAVE_KEY），外部重开/换浏览器不迁移——"全部格式化"的语义留给将来
+var DIARY_LEDGER_KEY = "shichaobiji_diary_ledger_v1";
+
+// 条目指纹：记忆/事件按 kind+key（同一记忆两个周目各记一次 = 同一页，不重复出两张）；
+// 手写按 时刻+全文（同一分钟写同一句话视为同一页，概率可忽略）。
+function diaryEntrySig(e) {
+  return e.kind === "note"
+    ? "note|" + (e.dd || 1) + "|" + (e.hh || 0) + "|" + (e.mm || 0) + "|" + e.text
+    : (e.kind || "?") + "|" + (e.key || "");
+}
+
+// 条目排序键：周目号 → 游戏内时刻。旧周目排在前（日记是从后往前翻的：最新页=本周目）。
+function diaryEntryOrder(e) {
+  return (e.run || 1) * 1000000 + (e.dd || 1) * 1440 + (e.hh || 0) * 60 + (e.mm || 0);
+}
+
+// 重开前落账：给本周目新条目补周目戳，与三套记忆 Set 快照一起写进独立 localStorage key。
+// 仅持有日记本时调用（继承资格 = 关键道具在手）；存储不可用则静默降级为不留账。
+function persistDiaryLedger(vars) {
+  if (!vars || !vars.hasDiary || typeof localStorage === "undefined") return false;
+  var run = vars._runNumber || 1;
+  var log = (vars._diaryLog || []).map(function (e) {
+    return e.run ? e : Object.assign({}, e, { run: run });
+  });
+  try {
+    localStorage.setItem(DIARY_LEDGER_KEY, JSON.stringify({
+      version: 1,
+      runs: run,                      // 已经历（账本连续）的周目数；新周目号 = runs + 1
+      diaryLog: log,
+      // 记忆 Set 快照：当前实现不回灌（A/B 只看当前周目），仅留档备查
+      gameMemory:     vars.gameMemorySet     instanceof Set ? Array.from(vars.gameMemorySet)     : [],
+      personalMemory: vars.personalMemorySet instanceof Set ? Array.from(vars.personalMemorySet) : [],
+      mixedMemory:    vars.mixedMemorySet    instanceof Set ? Array.from(vars.mixedMemorySet)    : []
+    }));
+    return true;
+  } catch (e) { return false; }
+}
+
+// 新周目拿上日记本时合并旧账：旧周目条目去重后并入 _diaryLog（按周目+时刻排序，旧账在前），
+// 本周目尚未打戳的条目盖上本周目号，_runNumber 更新。返回并入条数（0 = 无旧账/不可用）。
+// 幂等：重复拾取/回溯重入不产生重复条目（sig 去重）。记忆 Set 不回灌，见节首注释。
+function restoreDiaryLedger(vars) {
+  if (!vars || typeof localStorage === "undefined") return 0;
+  var raw = null;
+  try { raw = localStorage.getItem(DIARY_LEDGER_KEY); } catch (e) { return 0; }
+  if (!raw) return 0;
+  var led = null;
+  try { led = JSON.parse(raw); } catch (e) { return 0; }
+  if (!led || led.version !== 1 || !Array.isArray(led.diaryLog)) return 0;
+
+  var run = (led.runs || 0) + 1;
+  vars._runNumber = run;
+  if (!vars._diaryLog) vars._diaryLog = [];
+  vars._diaryLog.forEach(function (e) { if (!e.run) e.run = run; });
+
+  var seen = {};
+  vars._diaryLog.forEach(function (e) { seen[diaryEntrySig(e)] = 1; });
+  var old = [];
+  for (var i = 0; i < led.diaryLog.length; i++) {
+    var e = led.diaryLog[i];
+    if (!e) continue;
+    e.run = e.run || 1;
+    var sig = diaryEntrySig(e);
+    if (seen[sig]) continue;   // 本周目已重记的同源条目：保留本周目的，跳过旧页
+    seen[sig] = 1;
+    old.push(e);
+  }
+  if (old.length === 0) return 0;
+  vars._diaryLog = old.concat(vars._diaryLog).sort(function (a, b) {
+    return diaryEntryOrder(a) - diaryEntryOrder(b);
+  });
+  return old.length;
+}
+
 // ====== 记忆闪色辅助函数 ======
 
 function randSeq(colors, len) {

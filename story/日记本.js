@@ -40,6 +40,8 @@ var DIARY_ENTRIES = {
 
 // 渲染当前页。同一天连续条目共享一个日期头；手写条目直接出 text（已转义），
 // 记忆/事件查 DIARY_ENTRIES（查不到出兜底行，check_diary.js 保证兜底永不触发）。
+// 跨周目（条目带 run 戳，restoreDiaryLedger 合并）：周目交界处出分隔行，旧周目墨色褪色
+// ——同一本子，不是同一段时间的字。
 function diaryRender(vars) {
   var log = vars._diaryLog || [];
   if (log.length === 0) {
@@ -49,24 +51,35 @@ function diaryRender(vars) {
   var page = Math.min(Math.max(0, vars._diaryPage || 0), total - 1);
   var start = Math.max(0, log.length - (page + 1) * DIARY_PER_PAGE);
   var end = log.length - page * DIARY_PER_PAGE;
+  var curRun = vars._runNumber || 1;
 
   var parts = [];
-  var lastDay = -1;
+  var lastDayKey = "";
+  var prevRun = start > 0 ? ((log[start - 1] && log[start - 1].run) || 1)
+             : (log.length ? ((log[0] && log[0].run) || 1) : 0); // 本子第一页不出分隔行
   for (var i = start; i < end; i++) {
     var e = log[i];
-    if (e.dd !== lastDay) {
-      parts.push("<strong>—— " + diaryDateText(e) + " ——</strong>");
-      lastDay = e.dd;
+    var eRun = e.run || 1;
+    if (eRun !== prevRun) {
+      parts.push("<span style=\"color:#8a7f6a;font-style:italic;\">（往前，字迹换了墨色——像是更早的自己写下的。）</span>");
+      prevRun = eRun;
     }
+    var dayKey = eRun + "|" + e.dd;
+    if (dayKey !== lastDayKey) {
+      parts.push("<strong>—— " + diaryDateText(e) + " ——</strong>");
+      lastDayKey = dayKey;
+    }
+    var body;
     if (e.kind === "note") {
-      parts.push(e.text);
+      body = e.text;
     } else {
       // 值支持纯字符串（当前用法）或 { body, ink } 对象（预留墨色字段）
       var ent = DIARY_ENTRIES[e.key];
-      var body = !ent ? "（这一页的字迹被水洇开了，认不出来。）"
-               : (typeof ent === "string" ? ent : (ent.body || "……"));
-      parts.push(body);
+      body = !ent ? "（这一页的字迹被水洇开了，认不出来。）"
+             : (typeof ent === "string" ? ent : (ent.body || "……"));
     }
+    if (eRun < curRun) body = "<span style=\"color:#bfb7a3;\">" + body + "</span>";
+    parts.push(body);
   }
   parts.push("<span style=\"color:#8a7f6a;\">（第 " + (page + 1) + " / " + total + " 页）</span>");
   return parts.join("<br><br>");

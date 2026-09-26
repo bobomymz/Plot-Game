@@ -1306,6 +1306,8 @@ restartBtn.addEventListener("click", () => {
   historyStack = [];          // 清空历史
   backtrackBtn.style.display = 'none';  // 隐藏回溯
   _reactiveState = {};        // 清空规则节流记录，否则新局第一小时不扣体力
+  // 内部重开（核心设定 §2.2）：持有日记本才有跨周目继承资格，清档前落账
+  if (typeof persistDiaryLedger === "function" && gameState && gameState.hasDiary) persistDiaryLedger(gameState);
   clearSave();                // 重启 = 清档（随后 renderScene 会写入全新存档）
   initGameState();
   lastRenderedScene = "";     // 重置上一场景记录，避免旧场景串场
@@ -1449,7 +1451,8 @@ function makeSaveSummary(saved) {
   const mm = String(v.mm !== undefined ? v.mm : 0).padStart(2, "0");
   const memCount = ["gameMemorySet", "personalMemorySet", "mixedMemorySet"]
     .reduce(function (n, k) { return n + (v[k] instanceof Set ? v[k].size : 0); }, 0);
-  return "Day " + v.dd + " " + v.hh + ":" + mm + " · 记忆 " + memCount + " 段";
+  return "Day " + v.dd + " " + v.hh + ":" + mm + " · 记忆 " + memCount + " 段" +
+    ((v._runNumber || 1) > 1 ? " · 第 " + v._runNumber + " 周目" : "");
 }
 
 // 启动时的存档选择框（append 到 body 末尾，不进 #game-container，避免干扰兄弟选择器）
@@ -1614,6 +1617,8 @@ window.addEventListener("DOMContentLoaded", () => {
         startPreload(saved.sceneId, true);
       },
       function () {                          // 从头开始
+        // 与右上角"重新开始"同权：上次持有日记本则跨周目落账（saved.gameState = 上局终态）
+        if (typeof persistDiaryLedger === "function" && saved.gameState && saved.gameState.hasDiary) persistDiaryLedger(saved.gameState);
         clearSave();
         startPreload("start", false);
       }

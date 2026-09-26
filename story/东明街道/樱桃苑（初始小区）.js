@@ -1117,7 +1117,8 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
         nextScene: "民防设施-等候区",
         condition: "visitWaitingRoomTimes <= 3", 
         // 如果在等候区决策过多次数，丧尸就会进来（不再重复声明）
-        effect: { set: { hasDiary: true }, add: { itemCount: 1 } },
+        // 拿上日记本：合并跨周目旧账（restoreDiaryLedger 幂等，重复拾取/回溯重入不重复并入）
+        effect: function(vars) { restoreDiaryLedger(vars); return { set: { hasDiary: true }, add: { itemCount: 1 } }; },
         elseScene: "结局-丧尸破门而入",
       },
       {

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>光锥坐标拾取器 · 尸潮笔记</title>
+<style>
+:root{--bg:#0f1216;--panel:#171c23;--line:#2a323e;--txt:#d8dee7;--dim:#8b95a5;--acc:#e8b04b;--red:#e05a4e}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.6 "Microsoft YaHei",system-ui,sans-serif;display:flex;overflow:hidden}
+#panel{width:312px;flex:none;background:var(--panel);border-right:1px solid var(--line);padding:14px;overflow-y:auto}
+#stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;gap:10px;min-width:0}
+h1{font-size:15px;margin:0 0 2px;color:var(--acc)}
+section{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:10px 0;background:#141920}
+section h2{font-size:13px;margin:0 0 8px;color:var(--acc)}
+.hint{color:var(--dim);font-size:12px}
+label{display:block;font-size:12px;color:var(--dim);margin:7px 0 2px}
+input[type=text],input[type=number],select,textarea{width:100%;background:#0c1015;color:var(--txt);border:1px solid var(--line);border-radius:4px;padding:4px 6px;font:12px/1.5 Consolas,monospace}
+textarea{resize:vertical;min-height:130px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+input[type=checkbox]{accent-color:var(--acc);vertical-align:-2px}
+button{background:#212936;color:var(--txt);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px}
+button:hover{border-color:var(--acc);color:var(--acc)}
+button.danger:hover{border-color:var(--red);color:var(--red)}
+button:disabled{opacity:.45;cursor:default}
+button:disabled:hover{border-color:var(--line);color:var(--txt)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+#status{font-size:12px;color:var(--dim);min-height:16px;margin-bottom:4px}
+#frame{position:relative;width:min(100%,calc((100vh - 120px)*16/9));aspect-ratio:16/9;background:#000;overflow:hidden;box-shadow:0 0 0 1px var(--line),0 10px 40px #000c;touch-action:none;cursor:crosshair}
+#pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+#frame.contain #pic{object-fit:contain}
+#grid{position:absolute;inset:0;pointer-events:none;display:none;background-image:linear-gradient(to right,rgba(255,255,255,.16) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.16) 1px,transparent 1px);background-size:33.334% 33.334%}
+#dark{position:absolute;inset:0;pointer-events:none;display:none;background:radial-gradient(circle var(--lr,120px) at var(--lx,50%) var(--ly,50%),rgba(0,0,0,0) 0,rgba(0,0,0,.25) 58%,rgba(0,0,0,.97) 100%)}
+#empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--dim);pointer-events:none;text-align:center;padding:20px}
+.spot{position:absolute;width:0;height:0;cursor:grab}
+.spot .ring{position:absolute;left:0;top:0;transform:translate(-50%,-50%);border:1.5px solid rgba(232,176,75,.85);border-radius:50%;pointer-events:none;box-shadow:0 0 0 1px #0008}
+.spot .dot{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--acc);border:2px solid #000;pointer-events:none}
+.spot .tag{position:absolute;left:10px;top:-28px;white-space:nowrap;background:#000c;color:var(--acc);font:11px/1.4 Consolas,monospace;padding:1px 6px;border-radius:3px;border:1px solid var(--line);pointer-events:none}
+.spot.sel .ring{border-color:#fff;box-shadow:0 0 0 2px #e8b04b88}
+.spot.sel .dot{background:#fff}
+.spot.out .ring{border-color:var(--red);border-style:dashed}
+.spot.out .tag{color:var(--red)}
+.spot.decoy .dot{background:#8b95a5}
+body.preview .spot{display:none}
+#readout{font:12px/1.5 Consolas,monospace;color:var(--dim);height:18px}
+#readout b{color:var(--txt);font-weight:normal}
+#readout .warn{color:var(--red)}
+ol{margin:0;padding-left:18px;font-size:12px;color:var(--dim)}
+ol li{margin:3px 0}
+</style>
+</head>
+<body>
+<aside id="panel">
+  <h1>🔦 光锥坐标拾取器</h1>
+  <div id="status">等待加载图片…</div>
+
+  <section>
+    <h2>图片</h2>
+    <input type="file" id="fileInput" accept="image/*">
+    <label><input type="checkbox" id="modeContain"> 显示完整图片（16:9 内含留边）</label>
+    <label><input type="checkbox" id="gridChk"> 3×3 构图网格</label>
+  </section>
+
+  <section>
+    <h2>光锥预览（自测找不找得到）</h2>
+    <label><input type="checkbox" id="previewChk"> 🔦 开启光锥预览（隐藏标记）</label>
+    <label>光源</label>
+    <select id="lightSrc">
+      <option value="torch">手电筒（半径 18% 图宽）</option>
+      <option value="phone">手机（半径 9% 图宽）</option>
+      <option value="custom">自定义</option>
+    </select>
+    <div id="customRRow" style="display:none">
+      <label>自定义半径 <span id="customRVal">14%</span></label>
+      <input type="range" id="customR" min="4" max="25" step="0.5" value="14">
+    </div>
+  </section>
+
+  <section>
+    <h2>热点</h2>
+    <label>新热点默认半径 <span id="defRVal">10%</span></label>
+    <input type="range" id="defR" min="2" max="25" step="0.5" value="10">
+    <div id="selBox">
+      <label>id（用于 onFind 提示文案）</label>
+      <input type="text" id="spotId" placeholder="消防柜" disabled>
+      <label>命中半径 <span id="spotRVal">10%</span>（光圈中心进入此圈即计 dwell）</label>
+      <input type="range" id="spotR" min="2" max="25" step="0.5" value="10" disabled>
+      <label style="margin-top:6px"><input type="checkbox" id="spotDecoy" disabled> 诱饵（照到只给一句旁白）</label>
+      <div class="row" style="margin-top:8px">
+        <button class="danger" id="delSpot" disabled>删除选中</button>
+        <button class="danger" id="clearAll" disabled>清空全部</button>
+      </div>
+    </div>
+    <div class="hint" id="noSel" style="margin-top:4px">在图上点击添加热点；拖动微调，右键删除。</div>
+  </section>
+
+  <section>
+    <h2>导出</h2>
+    <label>dwellMs（光圈停留判定时长，默认 600）</label>
+    <input type="number" id="dwellMs" value="600" min="100" step="100">
+    <textarea id="outTa" readonly spellcheck="false"></textarea>
+    <div class="row" style="margin-top:6px"><button id="copyBtn">复制导出代码</button></div>
+  </section>
+
+  <section>
+    <h2>用法</h2>
+    <ol>
+      <li>拖入场景图（选「手电筒版」亮图）</li>
+      <li>点击图面添加热点，拖动微调，右键删除</li>
+      <li>选中热点后在上方改 id / 半径 / 诱饵</li>
+      <li>勾「光锥预览」自测：黑图里用手电圈扫，能否在 5–15 秒内找到目标</li>
+      <li>复制导出代码，贴进场景数据的 <b>darkSearch</b> 字段</li>
+    </ol>
+    <div class="hint" style="margin-top:6px">坐标 = 图片原始宽高百分比（0–1），游戏内 16:9 裁切由引擎换算。红框 ⚠ = 该点会被 16:9 裁掉。热点按 图片名+大小 自动存档。</div>
+  </section>
+</aside>
+
+<main id="stage">
+  <div id="frame">
+    <img id="pic" alt="">
+    <div id="grid"></div>
+    <div id="dark"></div>
+    <div id="empty">
+      <div style="font-size:34px">🔦</div>
+      <div>把场景图拖进来，或用左侧「选择图片」</div>
+      <div class="hint">坐标以图片原始宽高百分比输出</div>
+    </div>
+  </div>
+  <div id="readout"></div>
+</main>
+
+<script>
+(function(){
+"use strict";
+var $ = function(s){ return document.querySelector(s); };
+var frame = $("#frame"), pic = $("#pic"), darkEl = $("#dark"), gridEl = $("#grid"),
+    emptyEl = $("#empty"), readout = $("#readout"), outTa = $("#outTa"), statusEl = $("#status");
+var TORCH_R = 0.18, PHONE_R = 0.09;
+var spots = [], sel = -1, natW = 0, natH = 0, objURL = null, storeKey = "";
+
+function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+
+// ---- 显示几何：cover / contain 换算（与引擎 #image-area 的 16:9 cover 一致）----
+function fit(contain){
+  var W = frame.clientWidth, H = frame.clientHeight;
+  var s = contain ? Math.min(W / natW, H / natH) : Math.max(W / natW, H / natH);
+  return { W: W, H: H, scale: s, offX: (W - natW * s) / 2, offY: (H - natH * s) / 2, dW: natW * s };
+}
+function frameToImgPx(px, py){
+  var f = fit($("#modeContain").checked);
+  return { x: (px - f.offX) / f.scale, y: (py - f.offY) / f.scale };
+}
+function imgPctToFramePx(ix, iy){
+  var f = fit($("#modeContain").checked);
+  return { x: ix * natW * f.scale + f.offX, y: iy * natH * f.scale + f.offY };
+}
+function coverVisible(ix, iy){  // 该图片坐标在 16:9 cover 下是否可见
+  var f = fit(false);
+  var x = ix * natW * f.scale + f.offX, y = iy * natH * f.scale + f.offY;
+  return x >= -1 && x <= f.W + 1 && y >= -1 && y <= f.H + 1;
+}
+
+function setStatus(t){ statusEl.textContent = t; }
+function save(){
+  if (!storeKey) return;
+  try { localStorage.setItem(storeKey, JSON.stringify({ spots: spots })); } catch (e) {}
+}
+
+// ---- 图片加载 ----
+function loadFile(file){
+  if (!file || !/^image\//.test(file.type)) { setStatus("不是图片文件"); return; }
+  if (objURL) URL.revokeObjectURL(objURL);
+  objURL = URL.createObjectURL(file);
+  pic.onload = function(){
+    natW = pic.naturalWidth; natH = pic.naturalHeight;
+    pic.style.display = "block"; emptyEl.style.display = "none";
+    storeKey = "spotPicker:" + file.name + ":" + file.size;
+    spots = []; sel = -1;
+    try {
+      var saved = JSON.parse(localStorage.getItem(storeKey) || "null");
+      if (saved && saved.spots && saved.spots.length) spots = saved.spots;
+    } catch (e) {}
+    rebuild();
+    setStatus("已加载 " + file.name + "（" + natW + "×" + natH + "）" +
+      (spots.length ? "，恢复 " + spots.length + " 个热点" : ""));
+  };
+  pic.src = objURL;
+}
+$("#fileInput").addEventListener("change", function(e){ loadFile(e.target.files[0]); });
+["dragover", "drop"].forEach(function(t){
+  $("#stage").addEventListener(t, function(e){
+    e.preventDefault();
+    if (t === "drop") loadFile(e.dataTransfer.files[0]);
+  });
+});
+
+// ---- 热点渲染 ----
+function tagText(s){
+  return (s.decoy ? "⚑ " : "") + s.id + " · " + (s.x * 100).toFixed(1) + "%," + (s.y * 100).toFixed(1) + "%" +
+    (coverVisible(s.x, s.y) ? "" : " ⚠裁切外");
+}
+function place(el, s){
+  var f = fit($("#modeContain").checked);
+  var p = imgPctToFramePx(s.x, s.y);
+  el.style.left = p.x + "px"; el.style.top = p.y + "px";
+  var ring = el.querySelector(".ring"), d = s.r * natW * f.scale * 2;
+  ring.style.width = d + "px"; ring.style.height = d + "px";
+  el.querySelector(".tag").textContent = tagText(s);
+  el.classList.toggle("out", !coverVisible(s.x, s.y));
+}
+function rebuild(){
+  Array.prototype.forEach.call(frame.querySelectorAll(".spot"), function(n){ n.remove(); });
+  spots.forEach(function(s, i){
+    var el = document.createElement("div");
+    el.className = "spot" + (i === sel ? " sel" : "") + (s.decoy ? " decoy" : "");
+    var ring = document.createElement("div"); ring.className = "ring";
+    var dot = document.createElement("div"); dot.className = "dot";
+    var tag = document.createElement("div"); tag.className = "tag";
+    el.appendChild(ring); el.appendChild(dot); el.appendChild(tag);
+    place(el, s);
+    el.addEventListener("click", function(ev){ ev.stopPropagation(); });
+    el.addEventListener("contextmenu", function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      spots.splice(i, 1);
+      if (sel >= spots.length) sel = spots.length - 1;
+      rebuild(); save();
+    });
+    el.addEventListener("pointerdown", function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      if (sel !== i) { sel = i; syncSelClasses(); syncPanel(); updateExport(); }
+      var r = frame.getBoundingClientRect(), moved = false;
+      try { el.setPointerCapture(ev.pointerId); } catch (e) {}
+      var mv = function(e2){
+        if (Math.abs(e2.clientX - ev.clientX) + Math.abs(e2.clientY - ev.clientY) > 3) moved = true;
+        if (!moved) return;
+        var p = frameToImgPx(e2.clientX - r.left, e2.clientY - r.top);
+        s.x = +clamp(p.x / natW, 0, 1).toFixed(3);
+        s.y = +clamp(p.y / natH, 0, 1).toFixed(3);
+        place(el, s); updateExport();
+      };
+      var up = function(){
+        el.removeEventListener("pointermove", mv);
+        el.removeEventListener("pointerup", up);
+        el.removeEventListener("pointercancel", up);
+        if (moved) { rebuild(); save(); }
+      };
+      el.addEventListener("pointermove", mv);
+      el.addEventListener("pointerup", up);
+      el.addEventListener("pointercancel", up);
+    });
+    frame.appendChild(el);
+  });
+  syncPanel(); updateExport();
+}
+function syncSelClasses(){
+  Array.prototype.forEach.call(frame.querySelectorAll(".spot"), function(n, i){
+    n.classList.toggle("sel", i === sel);
+  });
+}
+
+// ---- 添加热点（图面点击空白处）----
+frame.addEventListener("click", function(e){
+  if (!natW) return;
+  if (document.body.classList.contains("preview")) return;
+  if (e.target.closest(".spot")) return;
+  var r = frame.getBoundingClientRect();
+  var p = frameToImgPx(e.clientX - r.left, e.clientY - r.top);
+  if (p.x < 0 || p.y < 0 || p.x > natW || p.y > natH) return;  // 点在留边黑区
+  spots.push({
+    id: "热点" + (spots.length + 1),
+    x: +(p.x / natW).toFixed(3), y: +(p.y / natH).toFixed(3),
+    r: +$("#defR").value, decoy: false
+  });
+  sel = spots.length - 1;
+  rebuild(); save();
+});
+
+// ---- 选中面板 ----
+function syncPanel(){
+  var on = sel >= 0 && sel < spots.length;
+  $("#spotId").disabled = !on; $("#spotR").disabled = !on; $("#spotDecoy").disabled = !on;
+  $("#delSpot").disabled = !on; $("#clearAll").disabled = !spots.length;
+  $("#noSel").style.display = on ? "none" : "";
+  if (!on) return;
+  var s = spots[sel];
+  if (document.activeElement !== $("#spotId")) $("#spotId").value = s.id;
+  $("#spotR").value = s.r * 100;
+  $("#spotRVal").textContent = s.r.toFixed(1).replace(/\.0$/, "") + "%";
+  $("#spotDecoy").checked = !!s.decoy;
+}
+$("#spotId").addEventListener("change", function(){
+  if (sel < 0) return; spots[sel].id = this.value || "热点"; rebuild(); save();
+});
+$("#spotR").addEventListener("input", function(){
+  if (sel < 0) return;
+  spots[sel].r = +this.value;
+  $("#spotRVal").textContent = (+this.value) + "%";
+  rebuild(); save();
+});
+$("#spotDecoy").addEventListener("change", function(){
+  if (sel < 0) return; spots[sel].decoy = this.checked; rebuild(); save();
+});
+$("#delSpot").addEventListener("click", function(){
+  if (sel < 0) return;
+  spots.splice(sel, 1);
+  sel = Math.min(sel, spots.length - 1);
+  rebuild(); save();
+});
+$("#clearAll").addEventListener("click", function(){
+  if (!spots.length) return;
+  if (!window.confirm("清空全部热点？")) return;
+  spots = []; sel = -1; rebuild(); save();
+});
+
+// ---- 导出 ----
+function updateExport(){
+  if (!spots.length) { outTa.value = "// 还没有热点——在图上点击添加"; return; }
+  var lines = spots.map(function(s){
+    var t = '{ id: "' + s.id + '", x: ' + s.x.toFixed(3) + ', y: ' + s.y.toFixed(3) + ', r: ' + (+s.r).toFixed(2);
+    if (s.decoy) t += ", decoy: true";
+    return t + " }";
+  });
+  outTa.value = "darkSearch: {\n  spots: [\n    " + lines.join(",\n    ") +
+    "\n  ],\n  dwellMs: " + (+$("#dwellMs").value || 600) + "\n}";
+}
+$("#dwellMs").addEventListener("change", updateExport);
+$("#copyBtn").addEventListener("click", function(){
+  outTa.select(); outTa.setSelectionRange(0, 999999);
+  var ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  if (!ok && navigator.clipboard) {
+    navigator.clipboard.writeText(outTa.value).catch(function(){});
+    ok = true;
+  }
+  $("#copyBtn").textContent = ok ? "已复制 ✓" : "请手动 Ctrl+C";
+  setTimeout(function(){ $("#copyBtn").textContent = "复制导出代码"; }, 1200);
+});
+
+// ---- 显示开关 ----
+$("#modeContain").addEventListener("change", function(){ frame.classList.toggle("contain", this.checked); if (natW) rebuild(); });
+$("#gridChk").addEventListener("change", function(){ gridEl.style.display = this.checked ? "block" : "none"; });
+$("#defR").addEventListener("input", function(){ $("#defRVal").textContent = this.value + "%"; });
+
+// ---- 光锥预览 ----
+function lightR(){
+  var v = $("#lightSrc").value;
+  return v === "torch" ? TORCH_R : v === "phone" ? PHONE_R : (+$("#customR").value) / 100;
+}
+$("#lightSrc").addEventListener("change", function(){
+  $("#customRRow").style.display = this.value === "custom" ? "" : "none";
+});
+$("#customR").addEventListener("input", function(){ $("#customRVal").textContent = this.value + "%"; });
+$("#previewChk").addEventListener("change", function(){
+  document.body.classList.toggle("preview", this.checked);
+  darkEl.style.display = this.checked ? "block" : "none";
+  frame.style.cursor = this.checked ? "none" : "crosshair";
+});
+frame.addEventListener("pointermove", function(e){
+  if (!natW) return;
+  var r = frame.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+  var p = frameToImgPx(px, py);
+  var t = "光标：<b>" + (p.x / natW * 100).toFixed(1) + "%, " + (p.y / natH * 100).toFixed(1) + "%</b>（图片百分比）";
+  var prev = document.body.classList.contains("preview");
+  if (prev) {
+    t = "🔦 光圈半径 " + (lightR() * 100).toFixed(0) + "%　" + t;
+    darkEl.style.setProperty("--lx", px + "px");
+    darkEl.style.setProperty("--ly", py + "px");
+    darkEl.style.setProperty("--lr", (lightR() * fit($("#modeContain").checked).dW) + "px");
+  } else if (!coverVisible(p.x / natW, p.y / natH)) {
+    t += " <span class='warn'>⚠ 此处会被 16:9 裁掉</span>";
+  }
+  readout.innerHTML = t;
+});
+
+// ---- 键盘 / 缩放 ----
+window.addEventListener("keydown", function(e){
+  var tag = document.activeElement && document.activeElement.tagName;
+  if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
+  if (e.key === "Escape") { sel = -1; syncSelClasses(); syncPanel(); }
+  if ((e.key === "Delete" || e.key === "Backspace") && sel >= 0) {
+    e.preventDefault();
+    spots.splice(sel, 1);
+    sel = Math.min(sel, spots.length - 1);
+    rebuild(); save();
+  }
+});
+window.addEventListener("resize", function(){ if (natW) rebuild(); });
+
+updateExport();
+})();
+</script>
+</body>
+</html>

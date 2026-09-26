@@ -7,6 +7,8 @@
  *   4. 日记场景存在性（5 个）+ 变量注册（_diaryLog/_diaryPage）
  *   5. 整理整理入口：「翻开日记本」存在且 showCondition=hasDiary；「丢下日记本」nextScene=整理整理-丢日记本
  *   6. 渲染冒烟：空本子 / 记忆落账 / 手写转义（HTML+花括号）/ 幂等 / 分页与翻页边界
+ *   7. 跨周目账本：engine 两处重开钩子 + 拾取点接线 + persist/restore 往返（mock localStorage）
+ *      去重（同源记忆保本周目页）/ 排序（旧周目在前）/ 周目戳 / _runNumber / Set 不回灌
  * 用法: node tools/check_diary.js
  */
 const fs = require('fs');
@@ -199,6 +201,59 @@ check('外部进入归位到最新页', s._diaryPage === 0);
 // 写好了 onEnter = updateTime(1)（可执行、返回 effect）
 const doneScene = storyData['日记本-写好了'];
 check('「日记本-写好了」onEnter 为 updateTime(1) 效果', typeof doneScene.onEnter === 'function' && doneScene.onEnter(s) != null);
+
+// ---------- 6. 跨周目账本（ledger） ----------
+const persistDiaryLedger = vm.runInContext('persistDiaryLedger', sandbox);
+const restoreDiaryLedger = vm.runInContext('restoreDiaryLedger', sandbox);
+const engineSrc = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
+const cherrySrc = fs.readFileSync(path.join(ROOT, 'story/东明街道/樱桃苑（初始小区）.js'), 'utf8');
+check('engine 重开按钮钩子存在（persistDiaryLedger(gameState) ×1）', (engineSrc.match(/persistDiaryLedger\(gameState\)/g) || []).length === 1);
+check('engine 存档框钩子存在（persistDiaryLedger(saved.gameState) ×1）', (engineSrc.match(/persistDiaryLedger\(saved\.gameState\)/g) || []).length === 1);
+check('拾取点接线 restoreDiaryLedger', cherrySrc.includes('restoreDiaryLedger(vars)'));
+check('_variables 注册 _runNumber', vars0._runNumber === 1);
+
+// mock localStorage（sandbox 内 persist/restore 经 typeof 检查可见）
+const store = {};
+sandbox.localStorage = {
+  getItem: k => (k in store ? store[k] : null),
+  setItem: (k, v) => { store[k] = String(v); },
+  removeItem: k => { delete store[k]; }
+};
+const LEDGER_KEY = 'shichaobiji_diary_ledger_v1';
+
+// 周目1：拿本、记两条、手写一条、重开落账
+let s1 = newState({ hasDiary: true });
+gainMemory(s1, '忘记搬家的松鼠', 'personal');
+gainMemory(s1, 'U-ball', 'personal');
+addDiaryNote(s1, '周目1的手写');
+check('persist 拒绝无本状态', persistDiaryLedger(Object.assign(newState({ hasDiary: false }), { _diaryLog: [{ kind: 'note', text: 'x', dd: 1, hh: 1, mm: 0 }] })) === false);
+check('persist 落账成功', persistDiaryLedger(s1) === true);
+const led1 = JSON.parse(store[LEDGER_KEY]);
+check('账本 runs=1 且条目全部打戳', led1.runs === 1 && led1.diaryLog.length === 3 && led1.diaryLog.every(e => e.run === 1));
+check('账本含记忆 Set 快照', Array.isArray(led1.personalMemory) && led1.personalMemory.length === 2);
+
+// 周目2：新档先记同源记忆 + 新手写，再拿本合并
+let s2 = newState({ hasDiary: false });
+gainMemory(s2, '忘记搬家的松鼠', 'personal');   // 同源记忆：去重，保留周目2的页
+addDiaryNote(s2, '周目2的手写');
+check('restore 并入 2 条（同源松鼠去重）', restoreDiaryLedger(s2) === 2);
+check('_runNumber 更新为 2', s2._runNumber === 2);
+check('合并后 4 条、旧周目在前、周目戳齐全', s2._diaryLog.length === 4 &&
+  s2._diaryLog[0].run === 1 && s2._diaryLog[3].run === 2 && s2._diaryLog.every(e => e.run));
+check('记忆 Set 不回灌（A/B 只看当前周目）', s2.personalMemorySet.size === 1 && s2.personalMemorySet.has('忘记搬家的松鼠'));
+check('restore 幂等（重复拾取不再并入）', restoreDiaryLedger(s2) === 0 && s2._diaryLog.length === 4);
+
+// 渲染：周目分隔行 + 两周目内容同页可见
+out = diaryRender(s2);
+check('渲染出周目分隔行', out.includes('换了墨色'));
+check('渲染同时含两个周目的内容', out.includes('周目1的手写') && out.includes('周目2的手写'));
+
+// 周目2 结束再落账：runs 递增、账本累积（落账前补拾取动作置 hasDiary=true，与真实流程一致）
+s2.hasDiary = true;
+check('周目2 落账成功', persistDiaryLedger(s2) === true);
+const led2 = JSON.parse(store[LEDGER_KEY]);
+check('二周目落账 runs=2 且账本累积到 4 条', led2.runs === 2 && led2.diaryLog.length === 4);
+check('周目3 号 = runs+1', (() => { const s3 = newState({ hasDiary: false }); restoreDiaryLedger(s3); return s3._runNumber; })() === 3);
 
 // ---------- 汇总 ----------
 console.log('日记本审计：' + pass + ' 通过 / ' + fails.length + ' 失败');

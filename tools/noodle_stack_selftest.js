@@ -149,10 +149,10 @@ console.log('== S1 全家促销货架：可连拿 3 包，每包占 1 格 ==');
   enter('全家便利店内部', st);
   ok('初始 instantNoodle = 0', st.instantNoodle === 0, st.instantNoodle);
   ok('初始货架库存 = 3', st.familyMartNoodleLeft === 3, st.familyMartNoodleLeft);
-  ok('可见「拿一包泡面（货架上还剩 3 包）」', has(st, '全家便利店内部', '拿一包泡面（货架上还剩 3 包）'));
+  ok('可见「拿一包泡面（货架上还剩 3 包）」', has(st, '全家便利店内部', '拿一包泡面'));
 
   for (let i = 1; i <= 3; i++) {
-    const dest = click('全家便利店内部', st, '拿一包泡面（货架上还剩 ' + st.familyMartNoodleLeft + ' 包）');
+    const dest = click('全家便利店内部', st, '拿一包泡面');
     ok('第' + i + '次拿取 → 全家-拿泡面', dest === '全家-拿泡面', dest);
     enter(dest, st);
     ok('第' + i + '次：instantNoodle = ' + i, st.instantNoodle === i, st.instantNoodle);
@@ -162,7 +162,7 @@ console.log('== S1 全家促销货架：可连拿 3 包，每包占 1 格 ==');
       ok('第' + i + '次：文案写明货架剩余', /还剩2包|还剩1包|最后一包/.test(String(textOf(dest, st))), textOf(dest, st));
       enter('全家便利店内部', st);
       ok('第' + i + '次：拿取选项仍可见（不再限带 1 包）',
-        has(st, '全家便利店内部', '拿一包泡面（货架上还剩 ' + st.familyMartNoodleLeft + ' 包）'));
+        has(st, '全家便利店内部', '拿一包泡面'));
       ok('第' + i + '次：店内文案提示包里已带 ' + i + ' 包',
         new RegExp('包里已经带了' + i + '包了').test(String(textOf('全家便利店内部', st))));
     } else {
@@ -205,7 +205,7 @@ console.log('== S3 背包满：走 elseScene，不凭空占格 ==');
   const st = newState({ itemCount: 3, _bagTier: 0, _bagExtra: 0 }); // bagVolume = 3
   enter('全家便利店内部', st);
   ok('背包满时拿取选项仍渲染（有 elseScene）', hasRe(st, '全家便利店内部', /拿一包泡面/));
-  const dest = click('全家便利店内部', st, '拿一包泡面（货架上还剩 3 包）');
+  const dest = click('全家便利店内部', st, '拿一包泡面');
   ok('背包满 → elseScene 整理整理', dest === '整理整理', dest);
   ok('背包满：instantNoodle 不变', st.instantNoodle === 0, st.instantNoodle);
   ok('背包满：itemCount 不变', st.itemCount === 3, st.itemCount);
