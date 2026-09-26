@@ -2,6 +2,18 @@
 // 包括安盛街东侧、中段、西侧、各店铺、理发店安全屋、朝新达汇方向
 // 安居苑相关内容已拆分到安居苑.js
 
+// 文具店「仔细翻找」的三件可拾取物。各自独立判定是否已持有/已看过，
+// 返回 [{key, name}]，供「都拿走」动态计算格数与 effect，避免写死 +2/+3。
+function anshengStationeryLoot(vars) {
+  var loot = [];
+  if (!vars.hasCutter) loot.push({ key: "hasCutter", name: "美工刀" });
+  if (!vars.hasBiscuit) loot.push({ key: "hasBiscuit", name: "半包饼干" });
+  if (!vars.hasCrumpledLeaflet && !(vars._visit['安盛街-服装店-304柜'] > 0)) {
+    loot.push({ key: "hasCrumpledLeaflet", name: "传单" });
+  }
+  return loot;
+}
+
 Object.assign(storyData, {
 
   // ==================== 入口：安盛街东侧 ====================
@@ -864,21 +876,36 @@ Object.assign(storyData, {
       if (!vars.hasCutter) {
         desc += "但收银台下面的抽屉里有一把崭新的美工刀，还有一整盒备用刀片。";
       }
-      if (!vars.hasCrumpledLeaflet && !(vars._visit['安盛街-服装店-304柜'] > 0)) {
+      // 饼干与传单同在一个信封里，但各自独立判定：只描述玩家真正还能拿到的那部分，
+      // 避免"文案说有饼干、effect 不给"的错位（2026-09-26 玩家体验报告）
+      var wantLeaflet = !vars.hasCrumpledLeaflet && !(vars._visit['安盛街-服装店-304柜'] > 0);
+      var wantBiscuit = !vars.hasBiscuit;
+      if (wantBiscuit && wantLeaflet) {
         desc += "\n你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，里面是半包饼干和一张皱巴巴的传单，传单上写着一行潦草的字迹”304柜 新到男装“。";
+      } else if (wantLeaflet) {
+        desc += "\n你正要起身，余光扫到柜台底下贴着一个信封——撕下来一看，饼干已经被人拿走了，只剩一张皱巴巴的传单，上面写着一行潦草的字迹”304柜 新到男装“。";
+      } else if (wantBiscuit) {
+        desc += "\n柜台底下还贴着一个信封，撕开一看，传单没了，只剩半包压缩饼干——有人藏在这儿，后来没回来取。";
       }
-      if (vars.hasCutter && (vars.hasCrumpledLeaflet || (vars._visit['安盛街-服装店-304柜'] > 0))) {
+      if (anshengStationeryLoot(vars).length === 0) {
         desc += "\n剩下的东西你都已经有了，没再重复拿。";
       }
       return desc;
     },
     choices: [
       {
-        showCondition: "!hasCutter && !hasCrumpledLeaflet && !_visit['安盛街-服装店-304柜']",
-        text: "都拿走",
-        condition: "itemCount + 2 <= bagVolume",
+        showCondition: function(vars) { return anshengStationeryLoot(vars).length >= 2; },
+        text: function(vars) {
+          return "都拿走（" + anshengStationeryLoot(vars).map(function(i) { return i.name; }).join("、") + "）";
+        },
+        // 格数按「实际还缺几件」算，不写死
+        condition: function(vars) { return vars.itemCount + anshengStationeryLoot(vars).length <= vars.bagVolume; },
         nextScene: "安盛街-文具店",
-        effect: updateTime(1, { set: { hasCutter: true, hasCrumpledLeaflet: true }, add: { itemCount: 2 } }),
+        effect: function(vars) {
+          var loot = anshengStationeryLoot(vars), set = {};
+          loot.forEach(function(i) { set[i.key] = true; });
+          return updateTime(1, { set: set, add: { itemCount: loot.length } })(vars);
+        },
         elseScene: "整理整理"
       },
       {
@@ -890,6 +917,14 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
+        showCondition: "!hasBiscuit",
+        text: "只拿半包饼干",
+        condition: "itemCount + 1 <= bagVolume",
+        nextScene: "安盛街-文具店",
+        effect: updateTime(1, { set: { hasBiscuit: true }, add: { itemCount: 1 } }),
+        elseScene: "整理整理"
+      },
+      {
         showCondition: "!hasCrumpledLeaflet && !_visit['安盛街-服装店-304柜']",
         text: "只拿传单",
         condition: "itemCount + 1 <= bagVolume",
@@ -898,17 +933,12 @@ Object.assign(storyData, {
         elseScene: "整理整理"
       },
       {
-        showCondition: "!hasCutter || (!hasCrumpledLeaflet && !_visit['安盛街-服装店-304柜'])",
+        showCondition: function(vars) { return anshengStationeryLoot(vars).length > 0; },
         text: "背包满了，算了",
         nextScene: "安盛街-文具店"
       },
       {
-        showCondition: "hasCutter && hasCrumpledLeaflet",
-        text: "继续",
-        nextScene: "安盛街-文具店"
-      },
-      {
-        showCondition: "hasCutter && _visit['安盛街-服装店-304柜'] > 0",
+        showCondition: function(vars) { return anshengStationeryLoot(vars).length === 0; },
         text: "继续",
         nextScene: "安盛街-文具店"
       }

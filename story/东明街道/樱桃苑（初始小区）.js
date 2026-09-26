@@ -1052,7 +1052,20 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "民防设施-等候区": {
     image: "images/home/CDwaitingRoom.webp",
-    text: "你在一个小房间里。这个房间空无一人，只有一张桌子和墙上的一些告示。",
+    // visitWaitingRoomTimes 是隐藏计数器（第4次操作丧尸破门），原本玩家无从察觉；
+    // 这里按次数给递进的听觉暗示：1次=疑似听错，2次=明确有东西，3次=马上就到。
+    text: function(vars) {
+      var desc = "你在一个小房间里。这个房间空无一人，只有一张桌子和墙上的一些告示。";
+      var n = vars.visitWaitingRoomTimes || 0;
+      if (n >= 3) {
+        desc += "\n<span style='color: #ff4444;'>铁门那头传来连续的刮擦声，一声接一声——很近了，有什么东西正贴着门缝往里挤。这里不能再待下去了。</span>";
+      } else if (n === 2) {
+        desc += "\n<span style='color: #ffaa00;'>你听到门外似乎传来了什么声音——很轻，是鞋底蹭过水泥地的那种摩擦声，一下，又一下，比刚才更清楚了。这地方本来不该有别人。</span>";
+      } else if (n === 1) {
+        desc += "\n<span style='color: #ffaa00;'>你听到门外似乎传来了什么声音，很轻，隔了几秒才又响了一下。也许是你听错了。</span>";
+      }
+      return desc;
+    },
     onEnter: { set: { currentPlace: "初始小区", currentPos: "民防设施" } },
     choices: [
       {

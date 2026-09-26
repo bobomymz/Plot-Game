@@ -18,9 +18,9 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。",
+    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
     "zombieSentences": [
-      "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。"
+      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
     ],
     "textSrc": "function(vars) { let desc = \"你来到三林安居苑的入口。这是一个老小区，没有地下车库，几栋六层楼围绕着中间的小花园。\\n\"; if (vars.chasedByZombies >= 2) { desc += \"追在身后的尸群暂时还没跟上来——老小区的门卫亭和几辆废弃的电瓶车形成了一道天然的障碍，也许能挡一阵。\\n\"; } desc += \"小区里异常安静，只有风吹过树梢的沙沙声。你注意到花坛里有几只猫——不，它们看起来不太对劲。它们的眼睛泛着不正常的绿光，体型也比普通猫大了一圈。\\n其中一只缓缓转过头来，盯着你，发出低沉的嘶嘶声。\"; desc += \"\\n\" + d"
   },
@@ -36,8 +36,8 @@
     "callCount": 1,
     "returnCount": 1,
     "outdoor": true,
-    "textLine": 50,
-    "retLine": 61,
+    "textLine": 62,
+    "retLine": 73,
     "hideChoiceText": "躲进废弃报刊亭",
     "okStates": 6,
     "totalStates": 6,
@@ -61,8 +61,8 @@
     "callCount": 1,
     "returnCount": 1,
     "outdoor": true,
-    "textLine": 1615,
-    "retLine": 1621,
+    "textLine": 1639,
+    "retLine": 1645,
     "hideChoiceText": "躲到广告牌后面",
     "okStates": 6,
     "totalStates": 6,
@@ -86,8 +86,8 @@
     "callCount": 1,
     "returnCount": 1,
     "outdoor": true,
-    "textLine": 613,
-    "retLine": 621,
+    "textLine": 625,
+    "retLine": 633,
     "hideChoiceText": null,
     "okStates": 6,
     "totalStates": 6,
@@ -118,9 +118,9 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。",
+    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
     "zombieSentences": [
-      "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。"
+      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
     ],
     "textSrc": "function(vars) { return \"你来到了东明路上。这里有很多丧尸，你需要快点做出选择。\\n\" + describeWeather(vars) + \"\\n\" + describeZombieWave(vars); }"
   },
@@ -143,9 +143,9 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。",
+    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
     "zombieSentences": [
-      "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。"
+      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
     ],
     "textSrc": "function(vars) { return \"你来到了公交车站。\\n那辆1003的车窗反射着日光，让你的眼睛不太舒服。窗内有群人影在蠕动，想都不用想就知道是丧尸。\\n车门关着，所以你不会被它们围殴，问题不大。\\n\" + describeWeather(vars) + \"\\n\" + describeZombieWave(vars); }"
   },
@@ -168,9 +168,9 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
+    "sample": "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。",
     "zombieSentences": [
-      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
+      "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。"
     ],
     "textSrc": "function(vars) { return \"你来到了全家便利店。\\n<span style='font-weight: bold;'>全家熟悉的专属开门声音传来，门缓缓打开。</span>\\n也许你可以吃一些东西垫垫肚子。\\n\" + describeWeather(vars) + \"\\n\" + describeZombieWave(vars); }"
   },
@@ -243,9 +243,9 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
+    "sample": "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。",
     "zombieSentences": [
-      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
+      "丧尸的数量明显多了起来，甚至有几只突然从你身侧撞出，逼得你踉跄着夺路而逃。"
     ],
     "textSrc": "function(vars) { return \"你来到了一个十字路口。西边通向金谊广场，南边通向新达汇，它们都是大商场，可能有丰富的物资；北面是东明路，东面是三林路，住宅楼的阴影下还有一个长者食堂。\\n\\ 你需要选择前进的方向。\\n快选哦，周围的丧尸就要围拢过来了。\\n\\ <span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\\n\" + describeWeather(vars) + \"\\n\" + describeZombieWave(vars);"
   },
@@ -268,9 +268,9 @@
     "totalStates": 6,
     "emptyStates": [],
     "level": "OK",
-    "sample": "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。",
+    "sample": "你环视四周，发现有几只丧尸正在向你快速冲过来。",
     "zombieSentences": [
-      "丧尸从四面八方涌来，你不停地躲避着摇晃的身体和伸出的烂手，你已经跑得有点喘不过气了。"
+      "你环视四周，发现有几只丧尸正在向你快速冲过来。"
     ],
     "textSrc": "function(vars) { return \"你来到了一个十字路口。东面远处是杨高南路立交桥，西边沿三林路有一排商铺，南边通向安盛街，北面的环林东路上有一个公交车站。\\n你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\\n\\ <span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\\n\" + describeWeather(vars) + \"\\n\" + describeZombieWave(vars) + combatDrainText("
   },

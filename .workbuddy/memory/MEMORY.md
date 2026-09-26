@@ -16,6 +16,7 @@
 
 ## 体力/天气
 - ⚠遥测块只能追加 engine.js 末尾，三处 `__wrapState` 保持单行；**场景锚点必须带 `: {` 后缀**。疲劳属"当前这段连续移动"：tier→0 自动清 `_fatiguePaid`，剧情只归零 `_travelMinutes`。引擎无自动提示，手写三通道；橙 `#ffaa00` `【系统提示】体力-N，当前体力：{strength}。`；死亡结局不补。
+- **遥测日志会跨版本混合**：持久化且不清空，而 core.js 三天能漂 4 次行号（同一 travel-fatigue 被记成 core.js:381/388/389/415，饥饿被记成 engine.js:644 与 653）。**每次测量前必须 `__clearStaminaLog()`**；记录现带 `lid`(加载 id)/`ver`(storyData 指纹)，报告脚本会自动告警。归因语义：**对象式规则→应用侧 engine 行号；函数式规则→真实赋值行**（实测 `tools/stamina_src_attribution_probe.js`）。
 - `weather` 唯一改写 `updateWeather()`；雨只能转阴。户外 `outdoor:true` 三选一：placeholder 图、本场景 onEnter 开 showRain（选项 effect 无效）、路径含「雨」专图。`timeImage(map)` 是工厂（返回 `function(vars)`）。
 
 ## `_visit`/过夜/QTE/shake

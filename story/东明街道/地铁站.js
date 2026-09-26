@@ -60,12 +60,12 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 站厅层（QTE: 8s，隐藏） ====================
+  // ==================== 站厅层（QTE: 12s，隐藏） ====================
   "地铁站-站厅层": {
     image: "images/placeholder.png" /* TODO: images/地铁站/stationHall.png */,
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     qte: {
-      timeout: "8000 - chasedByZombies * 500",
+      timeout: "12000 - chasedByZombies * 500",
       hidden: true,
       onTimeout: "地铁站-站厅层-犹豫"
     },
@@ -130,12 +130,12 @@ Object.assign(storyData, {
     text: "你的体力不够撑住蹲姿太久——腿一软，手掌撑在地上发出一声响。靠在墙角的那只丧尸猛地转过头，嘶吼着朝你扑了过来。\n你还没来得及站起来就被扑倒了。\n—— 结局：地铁站-站厅层-被发现 ——"
   },
 
-  // ==================== 安检区（QTE: 6s，隐藏） ====================
+  // ==================== 安检区（QTE: 9s，隐藏） ====================
   "地铁站-安检区": {
     image: "images/placeholder.png" /* TODO: images/地铁站/securityCheck.png */,
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     qte: {
-      timeout: "6000 - chasedByZombies * 500",
+      timeout: "9000 - chasedByZombies * 500",
       hidden: true,
       onTimeout: "地铁站-安检区-犹豫"
     },
@@ -330,11 +330,11 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 楼梯（QTE: 4s，可见） ====================
+  // ==================== 楼梯（QTE: 7s，可见） ====================
   "地铁站-楼梯": {
     image: "images/地铁站/楼梯.webp",
     qte: {
-      timeout: "4000 - chasedByZombies * 400",
+      timeout: "7000 - chasedByZombies * 400",
       onTimeout: "地铁站-楼梯-犹豫"
     },
     text: "你来到楼梯口。台阶向下延伸，转角处堆着一些被遗弃的行李箱和几只倒下的垃圾桶。站厅上游荡着十余只丧尸，他们好像看到了你，手脚并用慢慢爬上楼梯，向你围拢了过来。\n\
@@ -450,12 +450,12 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 站台层（QTE: 3s，可见） ====================
+  // ==================== 站台层（QTE: 6s，可见） ====================
   "地铁站-站台层": {
     image: "images/地铁站/站台.webp",
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     qte: {
-      timeout: "3000 - chasedByZombies * 300",
+      timeout: "6000 - chasedByZombies * 300",
       onTimeout: "地铁站-站台层-犹豫"
     },
     text: function(vars) {

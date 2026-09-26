@@ -267,6 +267,15 @@ def build_report(entries, title="体力遥测报告"):
     L.append("- 记录 %d 条（delta %d / 会话 %d / 休息被拒 %d），共 %d 段会话" % (
         len(entries), len(all_deltas), len(runs), rb_total, len(runs)))
     L.append("- 锚点解析：命中 %d / 未命中 %d" % (len(_RESOLVED), len(_UNRESOLVED)))
+    # 跨版本检测：同一份日志里混了多个构建时，来源行号不可比（2026-09-26 教训）
+    vers = sorted({e.get("ver") for e in runs if e.get("ver")})
+    lids = sorted({e.get("lid") for e in entries if e.get("lid")})
+    if len(vers) > 1 or len(lids) > 1:
+        L.append("- ⚠ **本日志跨 %d 个构建 / %d 次页面加载**（版本指纹 %s）：core.js 等文件的行号在不同构建里指向不同代码，"
+                 "同一条规则会被拆成多个来源。**结构性比值可用，绝对归因不可比**——重测前请先在控制台执行 `__clearStaminaLog()`。"
+                 % (len(vers) or 1, len(lids) or 1, "、".join(map(str, vers)) or "?"))
+    else:
+        L.append("- 版本一致性：单一版本 ✓" + ("（指纹 %s）" % vers[0] if vers else "（旧日志，无指纹字段）"))
     L.append("")
     for i, r in enumerate(runs, 1):
         rb = sum(1 for e in r["events"] if e.get("type") == "restBlocked")

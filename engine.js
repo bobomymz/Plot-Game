@@ -1643,12 +1643,30 @@ try {
 } catch (e) { /* localStorage 不可用时仅内存记录 */ }
 var __staminaSeen = typeof WeakSet !== "undefined" ? new WeakSet() : null;
 
+// 每次页面加载生成一个 loadId：同一浏览器刷新/改版后重新加载会换新 id，
+// 用于在报告里把「跨版本混合」的日志切开（2026-09-26 教训：core.js 三天内行号漂了 4 次，
+// 一份没清过的日志里同一个「连续移动疲劳」规则被记成 381/388/389/415 四个不同来源）。
+var __staminaLoadId = String(Date.now());
+var __staminaLastRaw = "";   // 归因失败时保留原始栈帧首行，便于诊断未知来源
+
+// 内容指纹：storyData 形状（变量数 - 规则数 - 场景键数），版本一变就不同
+function __staminaVer() {
+  try {
+    if (typeof storyData === "undefined" || !storyData) return "?";
+    var vars = storyData._variables ? Object.keys(storyData._variables).length : 0;
+    var rules = (storyData._reactive && storyData._reactive.rules) ? storyData._reactive.rules.length : 0;
+    return vars + "-" + rules + "-" + Object.keys(storyData).length;
+  } catch (e) { return "?"; }
+}
+
 function __staminaSrc() {
   try {
     var frames = (new Error().stack || "").split("\n");
+    __staminaLastRaw = "";
     for (var i = 1; i < frames.length; i++) {
       var fr = frames[i];
       if (fr.indexOf("__stamina") !== -1) continue;   // 跳过遥测自身帧
+      if (!__staminaLastRaw) __staminaLastRaw = fr.trim().slice(0, 160);   // 留作取证
       var m = fr.match(/([^\/\\()\s:]+\.js):(\d+):\d+/);
       if (!m) continue;
       var name = m[1];
@@ -1689,8 +1707,10 @@ function __wrapState(obj, tag) {
       target[prop] = value;
       if (prop === "strength" && typeof value === "number" &&
           typeof old === "number" && old !== value) {
+        var src = __staminaSrc();
         __staminaPush({
-          type: "delta", src: __staminaSrc(),
+          type: "delta", src: src, lid: __staminaLoadId,
+          raw: src === "?" ? __staminaLastRaw : "",
           from: old, to: value, d: Math.round((value - old) * 100) / 100,
           dd: target.dd, hh: target.hh, mm: target.mm, scene: currentScene,
           cold: !!target.hasCold, hurt: !!target.hurtByZombie,
@@ -1703,6 +1723,7 @@ function __wrapState(obj, tag) {
     }
   });
   __staminaPush({ type: "session", tag: tag || "?", scene: currentScene,
+                  lid: __staminaLoadId, ver: __staminaVer(),
                   dd: obj.dd, hh: obj.hh, mm: obj.mm, strength: obj.strength });
   if (__staminaSeen) __staminaSeen.add(proxy);   // 代理本身也登记，防二次包裹导致重复记录
   return proxy;

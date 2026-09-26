@@ -249,7 +249,7 @@ Object.assign(storyData, {
     },
     choices: [
       {
-        showCondition: "Math.random() < 0.5", // 50%概率允许查看日记本
+        showCondition: "hasDiary", // 有日记本就能看（原为 50% 随机，玩家无从预期，且这是唯一的战斗教学入口）
         text: "查看日记本",
         nextScene: "日记本的提示-迅捷丧尸",
         effect: updateTime(1)
