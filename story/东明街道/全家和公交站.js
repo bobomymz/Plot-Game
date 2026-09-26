@@ -50,7 +50,7 @@ Object.assign(storyData, {
       if(vars.instantNoodle > 0 && vars.familyMartNoodleLeft > 0) {
         base += "货架上还有泡面，但你包里已经带了" + vars.instantNoodle + "包了。";
       }
-      if (vars._visit["全家便利店（环林东路）"] && (!vars.FamilymartHasZombie || vars._visit["全家便利店-饼干引路"] > 0)) {
+      if (vars._visit["全家便利店（环林东路）"] && (!vars.FamilymartHasZombie || vars._visit["全家便利店-零食引路"] > 0)) {
         base += "\n<span style='color: #aaa;'>上次那只丧尸已经不在了。柜台后面的员工通道半开着，里面黑漆漆的，也许有什么有用的东西。</span>";
       }
       return base;
@@ -79,8 +79,8 @@ Object.assign(storyData, {
       {
         showCondition: "hasTorch",
         text: "打手电筒探索员工通道",
-        condition: "_visit['全家便利店-饼干引路']",
-        nextScene: "全家便利店-员工通道",
+        condition: "_visit['全家便利店-零食引路']",
+        nextScene: "全家便利店-员工通道", // 只有用零食把丧尸引走了才能安全进入员工通道
         effect: updateTime(2),
         elseScene: "结局-全家便利店-员工通道-丧尸的偷袭"
       },
@@ -166,9 +166,8 @@ Object.assign(storyData, {
       },
       {
         showCondition: "hasBiscuit",
-        text: "掏出饼干丢出去！",
-        nextScene: "全家便利店-饼干引路",
-        effect: updateTime(1, { set: { hasBiscuit: false }, add: { itemCount: -1 } })
+        text: "往员工通道里丢出零食",
+        nextScene: "全家便利店-零食引路"
       }
     ]
   },
@@ -425,10 +424,10 @@ Object.assign(storyData, {
 
   // ========== 饼干引路 + 员工通道 ==========
 
-  "全家便利店-饼干引路": {
+  "全家便利店-零食引路": {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/饼干引路.png */,
-    text: "你从口袋里掏出那包饼干，撕开包装，用力朝员工通道的方向扔了过去。\n\
-饼干砸在金属门上，碎屑四溅。那只迅捷丧尸的注意力瞬间被吸引——它像一道闪电般扑向声音的来源，一头扎进了黑漆漆的员工通道。\n\
+    text: "你把手电筒用力朝员工通道的方向扔了过去。\n\
+零食袋砸在金属门上，那只迅捷丧尸的注意力瞬间被吸引——它像一道闪电般扑向声音的来源，一头扎进了黑漆漆的员工通道。\n\
 紧接着，通道深处传来咣当一声巨响——它似乎撞翻了什么重物，然后是一阵杂乱的刮擦声……渐渐安静了下来。\n你等了几秒，确认它没有回来。员工通道的门半开着，里面一片漆黑。",
     choices: [
       {
@@ -456,25 +455,20 @@ Object.assign(storyData, {
       return updateTime(3)(vars);
     },
     text: "你打开手电筒，一道光束劈开黑暗。\n员工通道比你想象的要深。那只迅捷丧尸倒在走廊尽头——它撞翻了一个堆满饮料瓶的铁架，被压在下面动弹不得，只能冲你发出微弱的嘶吼。\n\
-你小心地绕过它。走廊两侧是储物柜和杂物间。其中一个储物柜的门虚掩着，锁上还插着一把钥匙。\n你拉开柜门，里面挂着一件员工外套。你翻了翻口袋——一把钥匙掉了出来，不知道是开什么的。",
+你小心地绕过它。走廊两侧是储物柜和杂物间。其中一个储物柜的门虚掩着，锁上还插着一把钥匙。\n\
+你拉开柜门，里面挂着一件员工外套。你翻了翻口袋——一把钥匙掉了出来，不知道是开什么的。",
     choices: [
       {
         showCondition: "!hasDoorKey1",
-        text: "继续",
+        text: "捡起钥匙",
         condition: "itemCount < bagVolume",
         nextScene: "全家便利店内部",
         effect: updateTime(1, { set: { hasDoorKey1: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
-        showCondition: "hasDoorKey1",
-        text: "继续",
+        text: "离开",
         nextScene: "全家便利店内部"
-      },
-      {
-        showCondition: "itemCount >= bagVolume",
-        text: "背包满了，先整理一下",
-        nextScene: "整理整理"
       }
     ]
   },

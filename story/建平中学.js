@@ -1030,8 +1030,8 @@ Object.assign(storyData, {
 
   "建平-地下车库-消防柜-取斧": {
     image: "images/placeholder.png" /* TODO: images/jianping/fireAxe.png */,
-    onEnter: { set: { hasAxe: true }, add: { itemCount: 1, chasedByZombies: 1 } },
-    text: "你抡起手边一块砖头，砸碎消防柜的锁。碎裂声在空旷的车库里格外响，外面似乎传来了一阵骚动。\n你飞快地抓起那把消防斧——沉甸甸的，刃口崭新，是学校里那种防暴斧。",
+    onEnter: { set: { hasAxe: true }, add: { itemCount: 1} },
+    text: "你拿走了斧头。",
     choices: [
       { text: "收好消防斧", nextScene: "建平-地下车库", effect: updateTime(1) }
     ]
@@ -1039,9 +1039,13 @@ Object.assign(storyData, {
 
   "建平-地下车库-工具间": {
     image: function(vars) {
-      if (!vars._visit['建平-地下车库-工具间-开门']) return "images/placeholder.png";
+      if (!vars._visit['建平-地下车库-工具间-开门']) {
+        if(vars.hasTorch) return "images/建平/地下工具间门口-手电筒.webp";
+        if(vars.hasFireTorch) return "images/建平/地下工具间门口-火把.webp";
+        return "images/placeholder.png";
+      }
       // 开门后室内：昏暗底图（试点用降亮度试验图，定稿换正式 webp）
-      return "images/建平/地下工具间-test.jpg";
+      return "images/建平/地下工具间.webp"; // 转换完毕
     },
     onEnter: function(vars) { vars.currentPos = "地下车库工具间"; vars.positionAfterOperation = "建平-地下车库-工具间"; },
     text: function(vars) {
@@ -1104,7 +1108,7 @@ Object.assign(storyData, {
   // 发现即互动：spot.choice 在照亮瞬间由引擎追加渲染成下方选项（完整普通选项语义），
   // 互动结果节点收尾后回到本场景继续搜（onEnter 无时间成本，费用记在进门选项上）。
   "建平-地下车库-工具间-搜查": {
-    image: "images/建平/地下工具间-test.jpg",
+    image: "images/建平/地下工具间.webp",
     darkSearch: {
       dwellMs: 5000,
       spots: [
