@@ -1044,9 +1044,8 @@ Object.assign(storyData, {
       if (!vars._gasMaskGarage) {
         return "工具间的门锁着。这锁不是普通挂锁——是后勤的那种铁芯锁。";
       }
-      var desc = "工具间。墙上挂着扳手、管钳，货架上码着几箱应急物资。";
-      if (!vars.hasGasMask) desc += "\n角落里挂着一只老式防毒面具。";
-      else desc += "\n你已经有防毒面具了，没再拿。";
+      var desc = "这里是工具间。地面散落着大量塑料瓶、包装袋等垃圾，各种杂物堆叠在一起：倾斜的门板、折叠椅、行李箱、布袋、泡沫箱。各色袋子、布料和废弃家具相互挤靠，东西几乎堆满地面，";
+      if (!vars.hasGasMask) desc += "\n角落里放着一只老式防毒面具。";
       return desc;
     },
     choices: function(vars) {
