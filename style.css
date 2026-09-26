@@ -118,6 +118,14 @@ html, body {
   font-size: 13px;
   white-space: nowrap;
 }
+/* 热点照亮时追加的互动选项：入场动画标示"新发现" */
+.choice-btn.choice-new {
+  animation: choice-new-in 0.45s ease;
+}
+@keyframes choice-new-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
 
 /* ========== 图片查看器（imageZoom 标记场景可点开，见 engine.js 图片查看器节） ========== */
 /* 角标 = 门票：仅引擎在标记场景给 #image-area 加 .image-zoomable 时显示 */

@@ -760,7 +760,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   "三林安居苑-8号楼-203室-门禁卡": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502.png */,
-    onEnter: { set: { hasRenjiCard: true } },
+    onEnter: { set: { hasRenjiCard: true }, add: { itemCount: 1 } },
     text: function(vars) {
       var seenDesk = vars._visit["三林安居苑-8号楼-203室-书桌"] > 0;
       var seenDraft = vars._visit["三林安居苑-8号楼-203室-草稿"] > 0;

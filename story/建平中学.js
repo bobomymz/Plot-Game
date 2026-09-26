@@ -1021,9 +1021,9 @@ Object.assign(storyData, {
     choices: function(vars) {
       var cs = [];
       if (!vars.hasAxe) {
-        cs.push({ text: "砸开玻璃，取消防斧", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-消防柜-取斧", effect: updateTime(1), elseScene: "整理整理" });
+        cs.push({ text: "拿走消防斧", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-消防柜-取斧", effect: updateTime(1), elseScene: "整理整理" });
       }
-      cs.push({ text: "回车库", nextScene: "建平-地下车库", effect: updateTime(1) });
+      cs.push({ text: "不拿", nextScene: "建平-地下车库", effect: updateTime(1) });
       return cs;
     }
   },
@@ -1066,25 +1066,14 @@ Object.assign(storyData, {
         }
         return cs;
       }
-      // 开门后：光锥搜索入口（强黑暗——手机弱光源不行，只认火把/手电，同车库深处门槛）
+      // 开门后：光锥搜索入口（强黑暗——手机弱光源不行，只认火把/手电，同车库深处门槛）。
+      // 互动选项不在枢纽重复出现：照亮即互动都发生在搜查场景内（darkSearch spots 的 choice）
       if (vars.hasFireTorch || vars.hasTorch) {
         cs.push({
           text: function(v) { return (v.hasFireTorch ? "举着火把" : "打亮手电筒") + "，把屋里仔细搜一遍"; },
-          nextScene: "建平-地下车库-工具间-搜查"
+          nextScene: "建平-地下车库-工具间-搜查",
+          effect: updateTime(2)   // 时间成本记在进门这一次；场内往返互动节点不重复计费
         });
-      }
-      // 发现与互动分离：照亮（darkSearch 写 var）之后，互动选项才出现
-      if (vars._toolLitTrash && !vars.hasBottle) {
-        cs.push({ text: "在垃圾堆里翻一只空瓶子", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-工具间-翻垃圾堆", elseScene: "整理整理" });
-      }
-      if (vars._toolLitCabinet && !vars._visit['建平-地下车库-工具间-翻破柜子']) {
-        cs.push({ text: "翻翻那只破柜子", nextScene: "建平-地下车库-工具间-翻破柜子" });
-      }
-      if (vars._toolLitParcel && !vars._visit['建平-地下车库-工具间-拆包裹']) {
-        cs.push({ text: "拆开那个快递包裹", nextScene: "建平-地下车库-工具间-拆包裹" });
-      }
-      if (vars._toolLitMask && !vars.hasGasMask) {
-        cs.push({ text: "拿防毒面具", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-工具间-拿面具", elseScene: "整理整理" });
       }
       cs.push({ text: "离开", nextScene: "建平-地下车库", effect: updateTime(1) });
       return cs;
@@ -1104,7 +1093,7 @@ Object.assign(storyData, {
     onEnter: { set: { hasGasMask: true, maskRemainingUses: 2 }, add: { itemCount: 1 } },
     text: "你取下那只防毒面具。橡胶面罩保存得还行，滤罐没有明显破损。\n你把面具收进包里。",
     choices: [
-      { text: "收好", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+      { text: "收好", nextScene: "建平-地下车库-工具间-搜查", effect: updateTime(1) }
     ]
   },
 
@@ -1112,19 +1101,28 @@ Object.assign(storyData, {
   // 底图=降亮度试验图（地下工具间-test.jpg）；定稿换正式 webp。
   // 美术标准："欠曝一档"而非黑成一团——光圈内提亮（brightness 2.2）拉不出图里没有的信息。
   // 坐标取自 tools/spot_picker.html（图片原始宽高百分比）。
+  // 发现即互动：spot.choice 在照亮瞬间由引擎追加渲染成下方选项（完整普通选项语义），
+  // 互动结果节点收尾后回到本场景继续搜（onEnter 无时间成本，费用记在进门选项上）。
   "建平-地下车库-工具间-搜查": {
     image: "images/建平/地下工具间-test.jpg",
     darkSearch: {
       dwellMs: 5000,
       spots: [
-        { id: "防毒面具", x: 0.859, y: 0.593, r: 0.095, var: "_toolLitMask" },
-        { id: "破柜子", x: 0.567, y: 0.341, r: 0.095, var: "_toolLitCabinet" },
-        { id: "顺丰快递包裹", x: 0.279, y: 0.225, r: 0.095, var: "_toolLitParcel" },
-        { id: "垃圾堆", x: 0.428, y: 0.715, r: 0.095, var: "_toolLitTrash" }
+        { id: "防毒面具", x: 0.859, y: 0.593, r: 0.095, var: "_toolLitMask",
+          choice: { text: "拿角落的防毒面具", showCondition: "!hasGasMask", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-工具间-拿面具", elseScene: "整理整理" } },
+        { id: "破柜子", x: 0.567, y: 0.341, r: 0.095, var: "_toolLitCabinet",
+          choice: { text: "翻翻那只破柜子", showCondition: "!_visit['建平-地下车库-工具间-翻破柜子']", nextScene: "建平-地下车库-工具间-翻破柜子" } },
+        { id: "顺丰快递包裹", x: 0.279, y: 0.225, r: 0.095, var: "_toolLitParcel",
+          choice: { text: "拆开那个快递包裹", showCondition: "!_visit['建平-地下车库-工具间-拆包裹']", nextScene: "建平-地下车库-工具间-拆包裹" } },
+        { id: "垃圾堆", x: 0.428, y: 0.715, r: 0.095, var: "_toolLitTrash",
+          choice: { text: "在垃圾堆里翻一只空瓶子", showCondition: "!hasBottle", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-工具间-翻垃圾堆", elseScene: "整理整理" } }
       ]
     },
-    onEnter: updateTime(2),
+    onEnter: { set: { positionAfterOperation: "建平-地下车库-工具间-搜查" } },  // 拿面具/翻瓶子满包走整理整理后回到本场景继续搜
     text: function(vars) {
+      var back = ["建平-地下车库-工具间-拿面具", "建平-地下车库-工具间-翻破柜子",
+                  "建平-地下车库-工具间-拆包裹", "建平-地下车库-工具间-翻垃圾堆"].indexOf(vars._lastScene) >= 0;
+      if (back) return "你回到光圈里，继续搜这间黑屋子。";
       var light = vars.hasFireTorch ? "火把" : "手电";
       return "你举着" + light + "跨进工具间。光圈落到哪儿，哪儿才从黑暗里浮出来——满地杂物的轮廓、挤在墙边的旧家具。\n想看清一件东西，就把光在它身上停得久一点。";
     },
@@ -1138,7 +1136,7 @@ Object.assign(storyData, {
     onEnter: { set: { hasBottle: true, bottleWater: 0 }, add: { itemCount: 1 } },
     text: "你把那堆空瓶子、泡沫箱和发脆的包装袋扒开一道口子，从里面捡出一只还算完整的空水瓶。\n瓶盖拧得很紧——上一个用它的人，走得应该很匆忙。",
     choices: [
-      { text: "收好空瓶", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+      { text: "收好空瓶", nextScene: "建平-地下车库-工具间-搜查", effect: updateTime(1) }
     ]
   },
 
@@ -1147,7 +1145,7 @@ Object.assign(storyData, {
     image: "images/建平/地下工具间-test.jpg",  // 试点试验图，定稿换特写
     text: "你拉开变形的柜门——里面是后勤攒下的杂物：几根发黑的旧灯管、半瓶凝固的胶水、一沓受潮发胀的领料单。\n领料单上的字迹早就洇成一团，什么都认不出来。",
     choices: [
-      { text: "关上柜门", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+      { text: "关上柜门", nextScene: "建平-地下车库-工具间-搜查", effect: updateTime(1) }
     ]
   },
 
@@ -1155,7 +1153,7 @@ Object.assign(storyData, {
     image: "images/建平/地下工具间-test.jpg",  // 试点试验图，定稿换特写
     text: "你撕开顺丰的纸箱——里面是一套崭新的教辅资料，收件人是学校的一位老师，塑封都没来得及拆。\n没什么你能用上的东西。",
     choices: [
-      { text: "放回去", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+      { text: "放回去", nextScene: "建平-地下车库-工具间-搜查", effect: updateTime(1) }
     ]
   },
 

@@ -970,25 +970,30 @@ choices: [{ text: "继续", nextScene: "原场景", effect: { set: { hasBackpack
   darkSearch: {
     dwellMs: 5000,           // 光圈停留判定时长（中心进入命中圈累计，移出清零）
     spots: [
-      { id: "防毒面具", x: 0.859, y: 0.593, r: 0.095, var: "_toolLitMask" },
-      { id: "破柜子",  x: 0.567, y: 0.341, r: 0.095, var: "_toolLitCabinet" }
+      // choice = 发现即互动：照亮瞬间引擎把它追加渲染成下方选项（choice-new 入场动画）
+      { id: "防毒面具", x: 0.859, y: 0.593, r: 0.095, var: "_toolLitMask",
+        choice: { text: "拿角落的防毒面具", showCondition: "!hasGasMask",
+                  condition: "itemCount < bagVolume", nextScene: "…-拿面具", elseScene: "整理整理" } },
+      // 纯 decoy 也可以不挂 choice，只给 toast
+      { id: "破柜子",  x: 0.567, y: 0.341, r: 0.095, var: "_toolLitCabinet",
+        choice: { text: "翻翻那只破柜子", showCondition: "!_visit['…-翻破柜子']", nextScene: "…-翻破柜子" } }
     ]
   }
 }
 ```
 
-**机制要点（发现与互动分离）：**
+**机制要点（发现即互动）：**
 
 - **坐标取法**：x/y/r 是**图片原始宽高的百分比**（0–1），引擎负责 16:9 cover/手机 contain 换算。用 `tools/spot_picker.html` 取：拖图点击、拖动微调、光锥预览自测"找不找得到"、一键导出 spots 代码（按图片名+大小自动存档）。
-- **发现 = 照满 dwellMs** → 写 `var`（须先在 `_variables` 注册）+ 顶部 toast"🔦 你看清了——xxx" + 图上留 ✓ 标记。**互动（拿取/翻找）仍走常规选项**，用 `showCondition: "_toolLitXxx"` 守卫——引擎不做图上浮动按钮，选项语义全留在剧情数据。
+- **发现 = 照满 dwellMs** → 写 `var`（须先在 `_variables` 注册）+ 顶部 toast"🔦 你看清了——xxx" + 图上留 ✓ 标记 + **`choice` 追加渲染成下方选项**（完整普通选项语义：showCondition/condition/elseScene/effect/nextScene，点击走 createChoiceButton 统一链路）。互动结果节点收尾后 `nextScene` 回搜索场景即可继续搜（记得用 `_lastScene` 给回场短文本，且 onEnter 别放时间成本）。
 - **刻意不做进度环**：照没照到东西是玩家的观察课题，进度反馈等于报答案（试点约定，勿加）。
-- 光圈/dwell 累计是纯 UI 态（不进 gameState/存档）；已发现态由 var 持久化，回溯随快照还原，重进场景已发现热点直接标 ✓。
+- 光圈/dwell 累计是纯 UI 态（不进 gameState/存档）；已发现态由 var 持久化，回溯随快照还原，重进场景已发现热点直接标 ✓ 并补渲染其选项（按 showCondition 过滤）。
 - 光源档自动推断：`hasFireTorch`（暖色 14%）> `hasTorch`（18%）；`darkSearch.light: "torch"/"fire"` 可覆盖。手机弱光源不支持（强黑暗）。无光源则机制不激活（剧情应已用选项门槛拦住进入，如工具间只认火把/手电）。
 - 与 `imageZoom` 互斥：darkSearch 场景强制不显示 🔍 角标（查看器会全屏亮图穿帮）。与场景级 QTE 可叠加（倒计时不暂停，压力版搜索）。
 - 光源分层在 `#image-area` 内部（`#dark-lit-layer`/`#dark-mask`/`.dark-found-mark` z-61），不新增全局层级。
 - 美术标准：底图"欠曝一档"而非黑成一团——提亮（brightness 2.2）拉不出图里没有的信息；热点目标以手电 18% 光圈内 5–15 秒可辨为宜。
 
-**当前接入场景：** 建平-地下车库-工具间-搜查（试点：防毒面具/破柜子/快递包裹/垃圾堆 四热点，垃圾堆接 hasBottle，破柜子与包裹内容物待定）。
+**当前接入场景：** 建平-地下车库-工具间-搜查（试点：防毒面具/破柜子/快递包裹/垃圾堆 四热点全部挂 choice，垃圾堆接 hasBottle，破柜子与包裹内容物待定）。
 
 ### 层叠顺序（z-index）
 

@@ -136,7 +136,7 @@ Object.assign(storyData, {
 
   "上实南校-教务室-开柜": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolOffice.png */,
-    onEnter: { set: { _hasCampusKey: true } },
+    onEnter: { set: { _hasCampusKey: true }, add: { itemCount: 1 } },
     text: "你用美工刀对准锁扣处的铁皮，几下就割开了一个口子。锁头连着铁皮一起掉了下来。\n\
 柜子里堆着一些杂物——旧的荣誉证书、几个奖杯，还有一个钥匙串，上面贴着“员工通道”的标签。你收起了钥匙。",
     choices: [

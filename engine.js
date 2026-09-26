@@ -812,6 +812,29 @@ function resolveChoiceText(choice) {
 }
 
 // ====== 渲染选项 ======
+// 普通选项按钮的统一创建（renderChoices 与黑暗光锥的即时选项共用）：
+// 点击链路 = clearQTE → pushHistory → condition 分支 → effect → 跳转，与常规选项完全一致
+function createChoiceButton(choice) {
+  const btn = document.createElement("button");
+  btn.className = "choice-btn";
+  btn.textContent = resolveChoiceText(choice);
+
+  btn.addEventListener("click", () => {
+    clearQTE();   // 安全起见，也清理一下
+    const nowCondMet = checkCondition(choice.condition, gameState);
+    pushHistory();
+    if (nowCondMet) {
+      if (choice.effect) applyEffect(choice.effect);
+      currentScene = parseRedirectTarget(choice.nextScene, gameState);
+    } else {
+      currentScene = parseRedirectTarget(choice.elseScene, gameState)
+                  || parseRedirectTarget(choice.nextScene, gameState);
+    }
+    renderScene(currentScene);
+  });
+  return btn;
+}
+
 function renderChoices(scene, sceneId) {
   choicesArea.innerHTML = "";
 
@@ -988,23 +1011,7 @@ function renderChoices(scene, sceneId) {
       return; // 跳过普通按钮
     }
 
-    const btn = document.createElement("button");
-    btn.className = "choice-btn";
-    btn.textContent = resolveChoiceText(choice);
-
-    btn.addEventListener("click", () => {
-      clearQTE();   // 安全起见，也清理一下
-      const nowCondMet = checkCondition(choice.condition, gameState);
-      pushHistory();
-      if (nowCondMet) {
-        if (choice.effect) applyEffect(choice.effect);
-        currentScene = parseRedirectTarget(choice.nextScene, gameState);
-      } else {
-        currentScene = parseRedirectTarget(choice.elseScene, gameState)
-                    || parseRedirectTarget(choice.nextScene, gameState);
-      }
-      renderScene(currentScene);
-    });
+    const btn = createChoiceButton(choice);
 
     choicesArea.appendChild(btn);
     if (choice.timeout !== undefined && choice.timeoutScene === undefined) {
@@ -1116,8 +1123,9 @@ function appendBacktrackToChoices(scene) {
 
 // ====== 黑暗光锥（darkSearch：暗图 + 提亮双层 + 遮罩，光照 dwell 发现热点）======
 // 数据格式见 CLAUDE.md「黑暗光锥」节。设计要点：
-// · 发现与互动分离：这里只负责"照亮 → 写 var → toast → ✓标记"，拿取/翻找走
-//   常规选项（showCondition 守卫 var），不做图上浮动按钮，选项语义留在剧情数据。
+// · 发现即互动：热点可挂 choice（完整普通选项语义）——照亮瞬间追加渲染到下方
+//   选项区（choice-new 入场动画），点击走 createChoiceButton 统一链路；
+//   已发现（var=true）的热点，进场景时直接补渲染其选项（按 showCondition 过滤）。
 // · 光圈与 dwell 累计是纯 UI 态（不进 gameState、不进存档）；已发现态由剧情声明的
 //   var 持久化（须先在 _variables 注册），回溯/读档随快照还原，重进场景直接标 ✓。
 // · 刻意不做进度环：照没照到东西本身就是玩家的观察课题，进度反馈等于报答案。
@@ -1169,7 +1177,7 @@ function startDarkSearch(scene) {
     return {
       id: s.id || "什么",
       x: +s.x || 0, y: +s.y || 0, r: (s.r != null ? +s.r : 0.10),
-      var: s.var || "", decoy: !!s.decoy, acc: 0,
+      var: s.var || "", decoy: !!s.decoy, choice: s.choice || null, acc: 0,
       found: !!(s.var && gameState[s.var])   // 已发现（var 持久化）：不再判定，直接标 ✓
     };
   });
@@ -1182,7 +1190,11 @@ function startDarkSearch(scene) {
   imageArea.classList.toggle("dark-fire", tier === "fire");
   imageArea.style.setProperty("--lr", "0px");   // 首次移动前光圈收拢，全黑入场
   clearDarkMarkers();
-  darkSpots.forEach(addDarkMarker);
+  darkSpots.forEach(function (s) {
+    if (!s.found) return;             // 只补渲染已发现热点——未发现的选项必须等照亮
+    addDarkMarker(s);
+    darkRenderSpotChoice(s, false);   // 已发现热点：选项直接补渲染（无动画）
+  });
   darkLastT = 0;
   if (!darkLoopOn) { darkLoopOn = true; requestAnimationFrame(darkLoop); }
 }
@@ -1226,6 +1238,19 @@ function darkFind(s) {
   if (s.var) gameState[s.var] = true;   // 直改（同剧情 onEnter 直改惯例），rAF 里不走 applyEffect
   flashStatusWarning("🔦 你看清了——" + s.id);
   addDarkMarker(s);
+  darkRenderSpotChoice(s, true);        // 发现即互动：选项带动画追加进下方选项区
+}
+
+// 热点互动选项：完整普通选项语义（showCondition/condition/elseScene/effect/nextScene），
+// 与 renderChoices 同一套可见性过滤，按钮走 createChoiceButton 统一点击链路
+function darkRenderSpotChoice(s, animate) {
+  if (!s.choice) return;
+  if (s.choice.showCondition && !checkCondition(s.choice.showCondition, gameState)) return;
+  if (!s.choice.input && s.choice.elseScene === undefined && !checkCondition(s.choice.condition, gameState)) return;
+  const btn = createChoiceButton(s.choice);
+  if (animate) btn.classList.add("choice-new");
+  choicesArea.appendChild(btn);
+  choicesArea.style.display = "flex";   // 保险：场景本身没有常规选项时也把选项区撑开
 }
 
 function darkRadius() {

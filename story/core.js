@@ -743,6 +743,36 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
+        showCondition: "hasDoorKey2",
+        text: "丢下黄铜钥匙",
+        effect: updateTime(1, { set : { hasDoorKey2: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasDoorKey3",
+        text: "丢下金宝贝钥匙牌",
+        effect: updateTime(1, { set : { hasDoorKey3: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasRenjiCard",
+        text: "丢下仁济门禁卡",
+        effect: updateTime(1, { set : { hasRenjiCard: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "hasKeyRing",
+        text: "丢下老吴钥匙串",
+        effect: updateTime(1, { set : { hasKeyRing: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
+        showCondition: "_hasCampusKey",
+        text: "丢下员工通道钥匙串",
+        effect: updateTime(1, { set : { _hasCampusKey: false }, add: { itemCount: -1 } }),
+        nextScene: "整理整理"
+      },
+      {
         showCondition: "hasCane",
         text: "丢下拐杖",
         effect: updateTime(1, { set : { hasCane: false }, add: { itemCount: -1 } }),
@@ -913,7 +943,7 @@ const storyData = {
         effect: updateTime(1, { set : { hasTeethingBiscuit: false }, add: { itemCount: -1 } }),
         nextScene: "整理整理"
       },
-      // 建平·占格道具的丢弃项（钥匙串/管线图为关键线索且合占 1 格，参照王知筠线索不设丢弃）
+      // 建平·占格道具的丢弃项（管线图仍为关键线索不设丢弃；老吴钥匙串按全钥匙统一口径现已可丢弃）
       {
         showCondition: "hasCanteenFood && !_wearingCleanSuit",
         text: "吃掉食堂干粮（体力+2）",

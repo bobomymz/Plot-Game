@@ -149,6 +149,24 @@ for (const sid of ids) {
         }
       });
     }
+    // darkSearch：热点互动选项（发现即互动）——目标校验 + 入边记账 + var 注册检查，同普通选项
+    const ds = sc.darkSearch;
+    if (ds && Array.isArray(ds.spots)) {
+      ds.spots.forEach((sp, i) => {
+        const label = `darkSearch.spots#${i}`;
+        if (sp.var && !varKeys.includes(sp.var)) E(file, sid, `${label} var 未在 _variables 注册: ${sp.var}`);
+        if (typeof sp.x !== "number" || typeof sp.y !== "number") E(file, sid, `${label} x/y 缺失或非数字`);
+        const c = sp.choice;
+        if (!c) return;
+        checkTarget(file, sid, r(c.nextScene, `${label} nextScene`), "nextScene");
+        checkTarget(file, sid, r(c.elseScene, `${label} elseScene`), "elseScene");
+        const ns = typeof c.nextScene === "function" ? null : c.nextScene;
+        if (typeof ns === "string" && ns && !ns.includes("{")) inbound.add(ns);
+        for (const key of ["condition", "showCondition"]) {
+          if (typeof c[key] === "string") { const bad = evalExpr(c[key]); if (bad !== true) E(file, sid, `${label} ${key} "${c[key]}": ${bad}`); }
+        }
+      });
+    }
     // onEnter
     const oe = typeof sc.onEnter === "function" ? (() => { try { return sc.onEnter(st); } catch (e) { E(file, sid, `onEnter() 抛错: ${e.message}`); return null; } })() : sc.onEnter;
     checkEffectEconomy(file, sid, oe, "onEnter");
