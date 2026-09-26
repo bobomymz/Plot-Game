@@ -46,6 +46,7 @@ const storyData = {
     _hasThermometer: false,    // 温度计（化学实验室取，给小赵测温判断是否发炎）
     _yorozuyaUnlocked: false,  // 是否解锁哥哥的深夜食堂
     _triedHotpot: false,       // 是否吃过新达汇大渝火锅（一次性）
+    _metGaoAtMall: false,      // 是否已在新达汇喷泉广场遇过高锦睿（喷泉广场-高锦睿-聊 置 true；华为店/监控墙/贩卖机三处联动靠它，⚠此前漏注册，字符串条件引用会静默吞选项）
     _catChasing: false,        // 新达汇变异猫是否在追玩家
     _catFed: false,            // 新达汇变异猫是否已被喂食（中立）
     _ramenVisited: false,      // 新达汇1F味千拉面是否已被撬开
@@ -133,8 +134,8 @@ const storyData = {
     teacherStudentsDead: false, // 给王老师毒水后学生变丧尸的死局标记
     fangTradeCount: 0,         // 方姐交易次数（上限3，满3次后她尸变，再进冷库深处即死）
     hasFrozenMeat: false,      // 是否有冻肉（菜市场方姐换的，体力回满，占1格）
-    hasInstantNoodle: false,   // 是否有泡面（全家货架，占1格；整理整理干嚼+3）
-    familyMartNoodleLeft: 3,   // 全家货架泡面剩余（包），身上限带1包，吃完可回拿
+    instantNoodle: 0,          // 身上携带的泡面包数 0~3（全家促销货架，可堆叠，每包占1格；整理整理干嚼=体力回满）
+    familyMartNoodleLeft: 3,   // 全家货架泡面剩余（包）（世界库存，初始3；丢弃不回货架，同其它物品丢弃=损失）
     hasCannedFood: false,      // 是否有罐头（联华超市仓库，占1格；整理整理吃+4）
     lianhuaCannedLeft: 2,      // 联华仓库罐头剩余（罐），身上限带1罐，吃完可回拿
     // 钥匙
@@ -788,14 +789,14 @@ const storyData = {
         nextScene: "整理整理"
       },
       {
-        showCondition: "hasInstantNoodle && !_wearingCleanSuit",
-        text: "吃掉泡面（体力回满）",
+        showCondition: "instantNoodle > 0 && !_wearingCleanSuit",
+        text: "吃一包泡面（体力回满，{instantNoodle}包）",
         nextScene: "整理整理-吃泡面"
       },
       {
-        showCondition: "hasInstantNoodle",
-        text: "丢下泡面",
-        effect: updateTime(1, { set : { hasInstantNoodle: false }, add: { itemCount: -1 } }),
+        showCondition: "instantNoodle > 0",
+        text: "丢一包泡面",
+        effect: updateTime(1, { add: { instantNoodle: -1, itemCount: -1 } }),
         nextScene: "整理整理"
       },
       {
@@ -1290,7 +1291,7 @@ const storyData = {
 
   "整理整理-吃泡面": {
     image: "images/整理整理.webp",
-    onEnter: updateTime(2, { add: { itemCount: -1 }, set: { strength: 10, hasInstantNoodle: false } }),
+    onEnter: updateTime(2, { add: { itemCount: -1, instantNoodle: -1 }, set: { strength: 10 } }),
     text: "没有热水，你把面饼掰成小块干嚼，调料包撕开个口，倒一点在手心里舔着就面吃。又咸又干，呛得直咳嗽，但碳水下肚的踏实感骗不了人。\n\
 <span style='color: #00fbffff; font-style: italic;'>【系统提示】当前体力：{strength}。</span>",
     choices: [

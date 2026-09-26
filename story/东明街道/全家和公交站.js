@@ -47,8 +47,8 @@ Object.assign(storyData, {
       } else {
         base += "\n靠收银台的促销货架已经空了——泡面一包不剩。";
       }
-      if(vars.hasInstantNoodle && vars.familyMartNoodleLeft > 0) {
-        base += "货架上还有泡面，但你包里已经有一包了。";
+      if(vars.instantNoodle > 0 && vars.familyMartNoodleLeft > 0) {
+        base += "货架上还有泡面，但你包里已经带了" + vars.instantNoodle + "包了。";
       }
       if (vars._visit["全家便利店（环林东路）"] && (!vars.FamilymartHasZombie || vars._visit["全家便利店-饼干引路"] > 0)) {
         base += "\n<span style='color: #aaa;'>上次那只丧尸已经不在了。柜台后面的员工通道半开着，里面黑漆漆的，也许有什么有用的东西。</span>";
@@ -91,8 +91,8 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        showCondition: "familyMartNoodleLeft > 0 && !hasInstantNoodle",
-        text: "拿一包泡面",
+        showCondition: "familyMartNoodleLeft > 0",
+        text: "拿一包泡面（货架上还剩 {familyMartNoodleLeft} 包）",
         condition: "itemCount < bagVolume",
         nextScene: "全家-拿泡面",
         elseScene: "整理整理"
@@ -112,7 +112,7 @@ Object.assign(storyData, {
   "全家-拿泡面": {
     image: "images/小区周边/全家和公交站/全家便利店内部.webp",
     onEnter: function(vars) {
-      vars.hasInstantNoodle = true;
+      vars.instantNoodle += 1;
       vars.itemCount += 1;
       vars.familyMartNoodleLeft = Math.max(0, vars.familyMartNoodleLeft - 1);
       return updateTime(1)(vars);

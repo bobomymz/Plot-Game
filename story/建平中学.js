@@ -1181,12 +1181,12 @@ Object.assign(storyData, {
   // （"你怎么连上网的？"→"密码 zhktzhkt，你忘了？"），不额外贴便签。
 
   "建平-行政楼-3F-灵海社活动室": {
-    image: "images/placeholder.png" /* TODO: images/建平/灵海社活动室.webp */,
+    image: "images/建平/灵海社活动室.webp",
     onEnter: function(vars) { vars.currentPos = "行政楼3F灵海社活动室"; },
     text: function(vars) {
       return "灵海社活动室。门虚掩着，推开来先是一股板材和胶水的味道——这间教室去年才翻新过，墙面白得发亮，地砖的缝还干净。\n\
-靠墙一整排新机柜，指示灯齐刷刷亮着一排，线缆扎得整整齐齐——电还在。正对着门那块大屏幕黑着，屏幕下角贴着一张没撕干净的标签：「智慧课堂 · 公开课专用」。\n\
-前排有张白椅子翻倒在地，椅面上是一大片发黑的东西，顺着地砖缝拖出去一道，到门口就淡了。讲台上搁着半杯水，水面落了一层薄灰。\n" + describeZombieWave(vars);
+教室前面那屏幕还亮着，显示着博弈论的一页PPT，屏幕下角贴着一张没撕干净的标签：「智慧课堂 · 公开课专用」。\n\
+前排有张白椅子翻倒在地，一个人倒在一边。桌子上搁着两瓶水。\n" + describeZombieWave(vars);
     },
     choices: [
       { text: "开那台大屏幕", nextScene: "建平-行政楼-3F-灵海社活动室-连网", effect: updateTime(1) },
@@ -1202,11 +1202,12 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "行政楼3F灵海社活动室"; },
     text: function(vars) {
       if (vars._linghaiNetworked) return "大屏幕还连着「智慧课堂」，内网页面停在那儿。";
-      return "你走到屏幕前屏幕点了点，嗯，是熟悉的感觉。\n\
+      return "你走到屏幕前点了点，嗯，是熟悉的感觉。\n\
 打开google，瞬间跳出一个小恐龙————呃，你不该期待这里会有网的。\n\
 你点开右下角的网络图标，注意到一行：\n\
 “校园内网 · 无线（智慧课堂）”\n\
-下面是个密码框，光标一闪一闪。以前在这间教室里连过的人，大概还记得那串密码。";
+下面是个密码框，光标一闪一闪。\n\
+这网能连吗？";
     },
     choices: [
       {

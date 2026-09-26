@@ -526,7 +526,7 @@ function hideOnLocation(image, failText, successText) {
 // 可当口粮"给出去/吃掉/喂猫/交给路霸或假郎中"的食物清单一处维护（[flag, 显示名]）。
 // 水、假解毒剂不算口粮。
 var FOOD_GIFTS = [
-  ["hasBiscuit", "压缩饼干"], ["hasInstantNoodle", "方便面"], ["hasCannedFood", "罐头"],
+  ["hasBiscuit", "压缩饼干"], ["instantNoodle", "方便面"], ["hasCannedFood", "罐头"],
   ["hasSnackCookie", "味千小饼干"], ["hasHamSausage", "火腿肠"], ["hasCracker", "夹心饼干"],
   ["hasTeethingBiscuit", "磨牙饼干"], ["hasCatSnack", "脆脆炒米"], ["hasCanteenFood", "食堂干粮"], ["hasFrozenMeat", "冻肉"]
 ];
@@ -559,7 +559,9 @@ function foodGiftChoices(opts) {
             text: opts.pickText.replace("{名}", label),
             nextScene: opts.pickScene,
             effect: function(v) {
-              v[flag] = false;
+              // 可堆叠口粮是数字（如 instantNoodle 包数 / vitaminC 盒数），只扣 1 份；布尔标记直接置 false
+              if (typeof v[flag] === "number") v[flag] = Math.max(0, v[flag] - 1);
+              else v[flag] = false;
               v.itemCount = Math.max(0, v.itemCount - 1);
               if (opts.onPick) opts.onPick(v, flag);
               return {};

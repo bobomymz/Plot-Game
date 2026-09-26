@@ -6,23 +6,24 @@
 - 三件套：`condition_audit`（0/0，只查字符串）、`scene_fn_selftest`（0 异常）、`sprint_away_audit`（0 P0）；**清单唯一权威=`tools/story_files.js`**，新脚本禁硬编码 FILES（漏跟=假绿）。存档 `fillMissingDefaults`+`refreshComputed` 挂 `applySave`/`backtrack`；只新增变量不必 bump `SAVE_VERSION`，**改字段含义必须 bump 或写反推迁移**。
 
 ## 战斗
-- 徒手化＝改文案+onEnter 分支，勿新增场景；代价包 `{add:{strength:-2,mercuryLoad:10},set:{hurtByZombie:true}}`。体力门槛失败结局只改体力分支 elseScene 指向，原结局节点不动。
+- 徒手化＝改文案+onEnter 分支，勿新增场景；代价包 `{add:{strength:-2,mercuryLoad:10},set:{hurtByZombie:true}}`。体力门槛失败结局只改 elseScene 指向。
 - `combatCost`=tier≥2?1:2；失败包=体力−1~−3、汞+10~+15、hurt、`tryBreakWeapon`。惩罚三处：onEnter、选项 effect、场景级 `qte.onTimeout`（最易漏）。`isEnding()` 用「id 以『结局』开头 或 文案含『—— 结局：』」。
 
 ## 背包/水瓶
 - 容量=`3+_bagTier+_bagExtra`；`bagVolume` 派生值永不 set/add；`_bagTier` 0/1/2=3/4/5，闸门 `vars._bagTier<N`；`_bagExtra` 帆布袋+1，闸门 `!hasBag`。拾取四件套：`condition:"itemCount<bagVolume"`+`effect:{set,add:{itemCount:1}}`+`elseScene:"整理整理"`，新节点必须 set `positionAfterOperation`。⚠09-21 前旧档容量 4→3（`bag_migration_repro.js`）。
 - 割锯工具（`cuttingToolName`）：美工刀>匕首>斧头>螺丝刀；不含铁管/拐杖/拖把杆/扫帚/钥匙。可多次打水，水瓶非紧平衡；`bottleWater` 0/1，丢弃须同清 `waterToxic`/`_hongBottleLabel`；保温杯另体系（建平弘渊楼2F，水全毒）。
+- 计数型可堆叠口粮：`instantNoodle` 0~3（全家货架，每包1格，吃=体力回满）、`vitaminC` 0~8；布尔改计数须同步 `FOOD_GIFTS`+`foodGiftChoices`（数字分支只扣1）。⚠字段迁移块要排在 `fillMissingDefaults` 补默认值循环**之前**（写后面=恒假死代码）。
 
 ## 体力/天气
 - ⚠遥测块只能追加 engine.js 末尾，三处 `__wrapState` 保持单行；**场景锚点必须带 `: {` 后缀**。疲劳属"当前这段连续移动"：tier→0 自动清 `_fatiguePaid`，剧情只归零 `_travelMinutes`。引擎无自动提示，手写三通道；橙 `#ffaa00` `【系统提示】体力-N，当前体力：{strength}。`；死亡结局不补。
-- `weather` 唯一改写 `updateWeather()`；雨只能转阴。户外 `outdoor:true` 三选一：placeholder 图、本场景 onEnter 开 showRain（选项 effect 无效）、路径含「雨」专图。`timeImage(map)` 是工厂：`var f=timeImage({...}); return f(vars);`。
+- `weather` 唯一改写 `updateWeather()`；雨只能转阴。户外 `outdoor:true` 三选一：placeholder 图、本场景 onEnter 开 showRain（选项 effect 无效）、路径含「雨」专图。`timeImage(map)` 是工厂（返回 `function(vars)`）。
 
 ## `_visit`/过夜/QTE/shake
 - 只读不写；`vars.x`→`(_visit['场景']>0)`，`!x`→`!_visit['场景']`；键名必须=真实场景 ID（悬空键不报错、条件恒假→选项永不出现）。改计数键名（`==1/>1`）前算首达路径：全库都自引用本场景 ID（引擎先自增后渲染）。
-- `天黑必须过夜` 29 选项；建筑类过夜点两层门槛：`showCondition` 加 `_visit['建筑内部']>0`、原 `condition`/`elseScene` 保留；就地/区域兜底不加。场景级=`node.qte`，选项级=`choice.timeout`；工厂 `mallQTE`/`jpChaseQTE`/`travelScene`。shake 已 31 处停止扩张（上限 25–35）；`applyEffect` 只认 set/add/mul（shake 静默忽略）。
+- `天黑必须过夜` 29 选项；建筑类过夜点两层门槛：`showCondition` 加 `_visit['建筑内部']>0`、原 `condition`/`elseScene` 保留；就地/区域兜底不加。场景级=`node.qte`，选项级=`choice.timeout`；工厂 `mallQTE`/`jpChaseQTE`/`travelScene`。shake 已 31 处（上限 25–35）；`applyEffect` 只认 set/add/mul（shake 静默忽略）。
 
 ## 文风/气味
-- **禁增/降频全表见 `tools/ai_phrase_scan*.py`**；基准 `张江.js`。高频禁词：纹丝不动、安静下来、不再动弹、屏住呼吸、火辣辣地疼、「像是」比喻、泛着…光、衣摆猎猎作响、静得反常。气味按成因：0–2天血腥汗酸、2–7天闷厚腐肉臭、>1周干腐、化工毒气甜腥；**「甜腻」只留**长蛆老尸（张江川杨河/大桥、仁济太平间）与化工毒气（金谊B2、五金店）。
+- **禁增/降频全表见 `tools/ai_phrase_scan*.py`**；基准 `张江.js`。高频禁词：纹丝不动/不再动弹/屏住呼吸/「像是」比喻/泛着…光/静得反常。气味按成因：0–2天血腥汗酸、2–7天闷厚腐肉臭、>1周干腐、化工毒气甜腥；**「甜腻」只留**长蛆老尸与化工毒气（金谊B2、五金店）。
 
 ## 汞中毒
 - `mercuryLoad` 0–100，已注册 `_caps`（隐藏变量必有上限，查值必 grep `_caps`）。≥70→`结局-汞中毒尸变`。慢性：`mercuryLoad>0` 才启动、每小时+1，台账 `_mercuryChronicHour` 勿动。派生 `mercuryTier`(0/20/40/70)、`noPainSense`=tier≥2、`hasDimLight`。减汞唯一手段：童涵春堂药丸−20。

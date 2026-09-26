@@ -1346,6 +1346,15 @@ function snapshotState(state) {
 function fillMissingDefaults(state) {
   if (!state || typeof state !== "object") return state;
   const defs = (storyData && storyData._variables) || {};
+  // —— 字段语义迁移（改含义，不是新增）：上面只补初值，表达不了新旧字段的映射 ——
+  // 09-26：泡面 hasInstantNoodle(bool，占1格) → instantNoodle(包数，每包占1格)。
+  // 老档 true ⇒ 1 包、false ⇒ 0 包：占格数前后一致，背包账目不会凭空多/少一格。
+  // ⚠ 必须排在「补默认值」循环【之前】：循环会先把 instantNoodle 填成初值 0，
+  //   之后再判 "instantNoodle" in state 就恒为真，这段迁移会变成永远不执行的死代码。
+  if ("hasInstantNoodle" in state) {
+    if (!("instantNoodle" in state)) state.instantNoodle = state.hasInstantNoodle ? 1 : 0;
+    delete state.hasInstantNoodle;   // 旧名成脏键，迁移完就删（留着会让「有没有泡面」有两套真相）
+  }
   for (const key in defs) {
     if (!(key in state)) state[key] = snapshotState(defs[key]);
   }
