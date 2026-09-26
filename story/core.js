@@ -30,6 +30,7 @@ const storyData = {
     _fatiguePaid: 0,           // 本段连续移动已扣档位（0-5；travel-fatigue 规则自维护，剧情勿改。里程归零时规则自动清零台账，下一段连续移动从第 1 档重新计费）
     _mercuryChronicHour: 0,    // 汞慢性累积台账：上次结算到的小时数（mercury-chronic 规则自维护，剧情勿改）
     _restBlocked: false,       // 休息是否被体力门槛挡住（体力>=6 时 restRecover 置 true，休息场景 text 用 restHint 提示"你已经差不多歇够了"）
+    _restTidyReturn: false,    // 是否刚从「整理整理」返回休息节点（restTidyChoice 置 true，休息场景 onEnter 用 restTidyGuard 吃掉，防重复结算时间/收益）
     _isOutdoor: false,         // 当前渲染场景是否户外（引擎每次渲染按 scene.outdoor 写入，供 updateTime 判断疲劳累计）
     _sleepingZombieGone: false,// 小区道路椅子上躺着的那个丧尸走了没有
     bikeInAnjuyuan: true,      // 三林安居苑是否还有锈蚀的自行车

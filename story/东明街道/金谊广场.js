@@ -870,7 +870,7 @@ Object.assign(storyData, {
 
   "金谊广场-2F-休息-休息完": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/2F家具店.jpg */,
-    onEnter: function(vars) { restRecover(vars, 1); return { set: { _travelMinutes: 0 } }; },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return { set: { _travelMinutes: 0 } }; },
     text: function(vars) {
       return "你在沙发上闭着眼睛躺了很久。不记得自己什么时候睡着的——也许只是一小会儿。\n当你睁开眼时，窗外透进来的光已经变了颜色。你活动了一下肩膀，站起来。" + restHint(vars);
     },
@@ -880,6 +880,7 @@ Object.assign(storyData, {
         nextScene: "金谊广场-2F-休息-休息完",
         effect: updateTime(30, { set: { _travelMinutes: 0 } })
       },
+      restTidyChoice("金谊广场-2F-休息-休息完"),
       {
         text: "起来继续探索",
         nextScene: "金谊广场-2F"

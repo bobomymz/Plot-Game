@@ -683,7 +683,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F味千拉面-休息": {
     image: "images/新达汇/味千后厨.webp", 
-    onEnter: function(v) { v.showPowerOut = true; restRecover(v, 1); var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
+    onEnter: function(v) { var g = restTidyGuard(v); if (g) return g; v.showPowerOut = true; restRecover(v, 1); var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
     text: function(vars) {
       var hint = vars._restBlocked
         ? "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
@@ -692,6 +692,7 @@ Object.assign(storyData, {
 你靠墙休息了一会儿，外面的声音渐渐远去了。\n" + hint;
     },
     choices: [
+      restTidyChoice("新达汇-1F味千拉面-休息"),
       {
         text: "继续",
         nextScene: "新达汇-1F味千拉面",
@@ -701,7 +702,7 @@ Object.assign(storyData, {
   },
   "新达汇-1F味千拉面-没吃的": {
     image: "images/新达汇/味千后厨-没吃的.webp",
-    onEnter: function(v) { v.showPowerOut = true; restRecover(v, 1); var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
+    onEnter: function(v) { var g = restTidyGuard(v); if (g) return g; v.showPowerOut = true; restRecover(v, 1); var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
     text: function(vars) {
       var hint = vars._restBlocked
         ? "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
@@ -709,6 +710,7 @@ Object.assign(storyData, {
       return "吃的是没有了，但你在后厨的角落坐下休息了一会儿，外面的声音渐渐远去了。\n" + hint;
     },
     choices: [
+      restTidyChoice("新达汇-1F味千拉面-没吃的"),
       {
         text: "继续",
         nextScene: "新达汇-1F味千拉面",
@@ -3396,11 +3398,12 @@ Object.assign(storyData, {
   },
   "新达汇-哥哥的深夜食堂-休息": {
     image: "images/placeholder.png" /* TODO: images/新达汇/izakaya.png */,
-    onEnter: function(vars) { restRecover(vars, 1); return { set: { showPowerOut: true,  _travelMinutes: 0 } }; },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return { set: { showPowerOut: true,  _travelMinutes: 0 } }; },
     text: function(vars) {
       return "你在吧台前坐下，喝了一瓶饮料。这里很安静。" + restHint(vars);
     },
     choices: [
+      restTidyChoice("新达汇-哥哥的深夜食堂-休息"),
       {
         text: "继续",
         nextScene: "新达汇-哥哥的深夜食堂",

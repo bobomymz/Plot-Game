@@ -329,6 +329,7 @@ Object.assign(storyData, {
       // midnight直接复用night图片
     }),
     onEnter: function(vars) {
+      var g = restTidyGuard(vars); if (g) return g;
       vars.showRain = true;
       restRecover(vars, 1);
       return updateTime(15, { set: { _travelMinutes: 0 } })(vars);
@@ -343,6 +344,7 @@ Object.assign(storyData, {
         nextScene: "三林安居苑-小广场-歇脚",
         effect: updateTime(1)
       },
+      restTidyChoice("三林安居苑-小广场-歇脚"),
       {
         text: "起身离开",
         nextScene: "三林安居苑-小广场",
@@ -1385,12 +1387,13 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   "三林安居苑-7号楼-天台-歇脚": {
     image: "images/placeholder.png" /* TODO: images/安居苑/天台.png */,
-    onEnter: function(vars) { restRecover(vars, 1); return {}; },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return {}; },
     text: function(vars) {
       return "你在护墙边的水泥台沿上坐下，把腿伸直，后背靠上温热的墙面。风从楼与楼的缝隙间穿过，把汗湿的衣服一点点吹干。\n\
 底下是丧尸的拖步声，头顶是空旷的天。你闭了一会儿眼——这大概是爆发以来，难得安静的三分钟。" + restHint(vars);
     },
     choices: [
+      restTidyChoice("三林安居苑-7号楼-天台-歇脚"),
       { text: "站起来，下楼", nextScene: "三林安居苑-7号楼-天台", effect: updateTime(1) }
     ]
   },

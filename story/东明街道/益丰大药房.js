@@ -779,7 +779,7 @@ Object.assign(storyData,{
 
   "益丰大药房-办公室歇脚": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/办公室歇脚.png */,
-    onEnter: function(vars) { restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
       var desc;
       if (vars._visit["益丰大药房-办公室歇脚"] <= 1) {
@@ -801,6 +801,7 @@ Object.assign(storyData,{
         nextScene: "益丰大药房-匀口饭吃",
         elseScene: "益丰大药房-食物见底"
       },
+      restTidyChoice("益丰大药房-办公室歇脚"),
       {
         text: "谢过赵广成，离开办公室",
         nextScene: "益丰大药房",
@@ -812,6 +813,7 @@ Object.assign(storyData,{
   "益丰大药房-匀口饭吃": {
     image: "images/小区周边/益丰大药房/办公室闲聊.webp",
     onEnter: function(vars) {
+      var g = restTidyGuard(vars); if (g) return g;   // 从整理返回：不再重复消耗赵广成的口粮次数
       vars._zhaoGuangchengFoodGiven++;
       restRecover(vars, 1);
       return updateTime(5, { set: { _travelMinutes: 0 } })(vars);
@@ -826,6 +828,7 @@ Object.assign(storyData,{
       return head + "\n你就着矿泉水把饼干囫囵咽下，肚子里有了东西，人也有力气了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
     },
     choices: [
+      restTidyChoice("益丰大药房-匀口饭吃"),
       {
         text: "谢过他，回沙发歇着",
         nextScene: "益丰大药房-办公室歇脚",

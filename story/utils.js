@@ -81,6 +81,29 @@ function restHint(vars, okText) {
   return "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】" + (okText || "体力+1") + "，当前体力：{strength}。</span>";
 }
 
+// ====== 休息节点 · 就地整理背包入口（全图休息节点通用） ======
+// 用法（休息场景内）：choices 里加 restTidyChoice("<本场景ID>")，onEnter 开头加 restTidyGuard(vars)。
+//
+// ⚠ 为什么要 guard：从「整理整理」退出走的是 nextScene "{positionAfterOperation}"（回本场景），
+//   本场景 onEnter 会**再跑一遍**——休息节点普遍在 onEnter 里 updateTime(5~30)、甩追兵(chasedByZombies-1)、
+//   消耗一次性 NPC 口粮次数、甚至过夜跳天数。不拦住就是纯刷子（反复整理=反复甩追兵/反复跳天）。
+//   故入口 effect 打 _restTidyReturn 标记，onEnter 开头用 guard 吃掉它，返回时只做一次"回到休息点"的落地。
+function restTidyChoice(id) {
+  return {
+    showCondition: "itemCount > 0",
+    text: "🎒整理一下物品",
+    nextScene: "整理整理",
+    effect: { set: { positionAfterOperation: id, _restTidyReturn: true } }
+  };
+}
+// 休息场景 onEnter 开头调用：返回 null 表示不是从整理返回（继续正常结算）；
+// 返回 {} 表示是整理返回——已清标记，调用方直接 return 它，不再重复计时间/收益。
+function restTidyGuard(vars) {
+  if (!vars._restTidyReturn) return null;
+  vars._restTidyReturn = false;
+  return {};
+}
+
 // ====== 天气系统 ======
 
 function updateWeather(vars) {

@@ -57,7 +57,7 @@ Object.assign(storyData, {
 
   "长者食堂-休息": {
     image: "images/小区周边/长者食堂/坐在地上.webp",
-    onEnter: function(vars) { restRecover(vars, 1); return updateTime(5, { set: { _travelMinutes: 0 } })(vars); },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return updateTime(5, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
         if(vars._visit["长者食堂-休息"] > 1) return "你决定继续休息一会儿。" + describeWeather(vars) + restHint(vars);
         return "你走向椅子堆，上面沾了些脏东西。你觉得不干净，于是决定就坐在地上休息一会儿……" + restHint(vars);
@@ -68,6 +68,7 @@ Object.assign(storyData, {
         nextScene: "长者食堂-休息",
         effect: updateTime(1)
       },
+      restTidyChoice("长者食堂-休息"),
       {
         text: "起身",
         nextScene: "长者食堂-内部",

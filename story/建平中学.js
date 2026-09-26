@@ -1007,7 +1007,11 @@ Object.assign(storyData, {
   },
 
   "建平-地下车库-消防柜": {
-    image: "images/placeholder.png" /* TODO: images/jianping/fireCabinet.png */,
+    image: function(vars) {
+      if(vars.hasTorch) return "images/建平/地下消防柜-手电筒.webp";
+      if(vars.hasFireTorch) return "images/建平/地下消防柜-火把.webp";
+      return "images/建平/地下非机动车车库.webp";
+    },
     onEnter: function(vars) { vars.currentPos = "地下车库消防柜"; vars._garageFireCabinet = true; vars.positionAfterOperation = "建平-地下车库-消防柜"; return {}; },
     text: function(vars) {
       if (vars.hasAxe) return "消防柜的玻璃门敞着，里面只剩空挂架和半截卡扣——斧头你身上已经有一把了。";
@@ -1438,7 +1442,7 @@ Object.assign(storyData, {
 
   "建平-挹芬楼-1F-休息区": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.currentPos = "挹芬楼1F休息区"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; vars.currentPos = "挹芬楼1F休息区"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
     text: function(vars) {
       var desc = "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。" + restHint(vars, "你回复1点体力");
       if (jpPengAtPiano(vars, 2)) {
@@ -1451,6 +1455,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "去饮料机", nextScene: "建平-挹芬楼-1F-饮料机", effect: updateTime(1) },
+      restTidyChoice("建平-挹芬楼-1F-休息区"),
       { text: "回东侧走廊", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
     ]
   },
@@ -2569,12 +2574,13 @@ Object.assign(storyData, {
       morning: "images/建平/寝室.webp",
       night: "images/建平/寝室-night.webp"
     }),
-    onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
     text: function(vars) {
       return "你挑了张下铺躺下，拉过半旧的被子。走廊里安安静静的，你终于能合一会儿眼了。" + restHint(vars, "你回复1点体力");
     },
     choices: [
       { text: "起来", nextScene: "建平-宿舍-内部", effect: updateTime(1) },
+      restTidyChoice("建平-宿舍-内部-休息"),
       { text: "继续休息", nextScene: "建平-宿舍-内部-发现狼人杀手牌", effect: updateTime(120) }
     ]
   },
@@ -2584,7 +2590,7 @@ Object.assign(storyData, {
       morning: "images/建平/寝室的狼人杀.webp",
       night: "images/建平/寝室的狼人杀-night.webp"
     }),
-    onEnter: function(vars) { vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; vars.currentPos = "宿舍内部"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
     text: function(vars) {
       return "你又躺了回去。再睁眼时脑子还是沉的。翻身撑起来，手底下压着一张狼人杀手牌。金色镶边，一个红眼的狼人画在上面，黑毛飘飘，张牙舞爪。\n\
 这应该是学生们的遗产吧。\n\
@@ -2592,6 +2598,7 @@ Object.assign(storyData, {
 " + restHint(vars, "你回复1点体力");
     },
     choices: [
+      restTidyChoice("建平-宿舍-内部-发现狼人杀手牌"),
       { text: "继续", nextScene: "建平-宿舍-内部", effect: updateTime(1) }
     ]
   },
@@ -3005,7 +3012,7 @@ Object.assign(storyData, {
 
   "建平-弘渊楼-4F-电脑区-窗边": {
     image: "images/placeholder.png" /* TODO: images/jianping/windowGushanRd.png */,
-    onEnter: function(vars) { restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
       return "你走到电脑区靠窗的位子，拨开窗帘往下看，顺手把椅子拖过来坐下。\n\
 隔着操场和校门，校门口那条崮山路上，几辆歪在路边的车堵着半幅路面。行道树的树冠探过墙头，更远处的十字路口空荡荡的，只有风卷着纸屑在路面上打旋。\n\
@@ -3013,6 +3020,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "在窗边再坐一会儿", nextScene: "建平-弘渊楼-4F-电脑区-窗边", effect: updateTime(1) },
+      restTidyChoice("建平-弘渊楼-4F-电脑区-窗边"),
       { text: "拉上窗帘，回到座位", nextScene: "建平-弘渊楼-4F-电脑区", effect: updateTime(1) }
     ]
   },
@@ -3130,12 +3138,13 @@ Object.assign(storyData, {
   },
   "建平-济美楼-4F-音乐教室-听音乐": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
       return "彭奕宸十指在琴键上轻轻起落，一首《命运交响曲》从指尖流出。你挑了张折叠椅坐下，闭上眼，任由琴声把你裹住——紧绷的神经一点点松了下来。" + restHint(vars, "你回复1点体力");
     },
     choices: [
       { text: "再听一会儿", nextScene: "建平-济美楼-4F-音乐教室-听音乐", effect: updateTime(1) },
+      restTidyChoice("建平-济美楼-4F-音乐教室-听音乐"),
       { text: "继续", nextScene: "建平-济美楼-4F-音乐教室", effect: updateTime(1) }
     ]
   },

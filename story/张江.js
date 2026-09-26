@@ -528,6 +528,7 @@ Object.assign(storyData, {
   "张江-AI岛-机房-休息": {
     image: "images/placeholder.png", /* TODO: images/张江/AI岛-机房.webp */
     onEnter: function(vars) {
+      var g = restTidyGuard(vars); if (g) return g;
       vars.currentPos = "机房";
       vars._travelMinutes = 0;
       restRecover(vars, 1);
@@ -539,6 +540,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "再眯一会儿", nextScene: "张江-AI岛-机房-休息", effect: updateTime(1) },
+      restTidyChoice("张江-AI岛-机房-休息"),
       { text: "起来", nextScene: "张江-AI岛-机房", effect: updateTime(1) }
     ]
   },
@@ -2861,6 +2863,7 @@ Object.assign(storyData, {
   "张江-华大-动力站-休息": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-休息.webp */
     onEnter: function(vars) {
+      var g = restTidyGuard(vars); if (g) return g;
       vars.currentPos = "动力站";
       vars._travelMinutes = 0;
       restRecover(vars, 2);
@@ -2879,6 +2882,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "再歇一会儿", nextScene: "张江-华大-动力站-休息", effect: updateTime(1) },
+      restTidyChoice("张江-华大-动力站-休息"),
       { text: "起来", nextScene: "张江-华大-动力站", effect: updateTime(1) }
     ]
   },

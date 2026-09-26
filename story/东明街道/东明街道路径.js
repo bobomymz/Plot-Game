@@ -753,7 +753,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 
   "银行-保安室-歇脚": {
     image: "images/小区周边/银行/保安室.webp",
-    onEnter: function(vars) { restRecover(vars, 1); return updateTime(15, { set: { _travelMinutes: 0 } })(vars); },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return updateTime(15, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
       return "你把墙角那把备用的值班椅拖过来，隔着办公桌，背对那只卡住的保安丧尸坐下。\n它蹬椅子的吱吱声单调又规律，听久了竟有点像老式挂钟——你盯着一片漆黑的监控墙，居然就这么眯着了。\n只要那把椅子不散架，它就永远够不到你。" + restHint(vars);
     },
@@ -763,6 +763,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         nextScene: "银行-保安室-歇脚",
         effect: updateTime(1)
       },
+      restTidyChoice("银行-保安室-歇脚"),
       {
         text: "起身离开",
         nextScene: "银行内部",
@@ -924,7 +925,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 
   "联华超市-歇脚": {
     image: "images/小区周边/联华超市/内部.webp",
-    onEnter: function(vars) { restRecover(vars, 1); return updateTime(15, { set: { _travelMinutes: 0 } })(vars); },
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return updateTime(15, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
       return "你把收银台旁顾客休息长凳上的传单拨到地上，坐了下来。头顶的日光灯管还剩两根在亮，惨白的光照着一排排半空的货架。\n身后那排冰柜早就断电了，外壳倒还是凉的。你靠着它，盯着货架之间那条空荡荡的过道，歇了十五分钟——一家没人的超市，比想象中安静得多。" + restHint(vars);
     },
@@ -934,6 +935,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
         nextScene: "联华超市-歇脚",
         effect: updateTime(1)
       },
+      restTidyChoice("联华超市-歇脚"),
       {
         text: "起来继续转转",
         nextScene: "联华超市",

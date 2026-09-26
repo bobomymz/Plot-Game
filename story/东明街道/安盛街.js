@@ -489,6 +489,7 @@ Object.assign(storyData, {
       return basicDes + hint + describeZombieWave(vars);
     },
     onEnter: function(vars) {
+      var g = restTidyGuard(vars); if (g) return g;   // 从整理返回：不再重复过夜跳天 / 不再重复推进 30 分钟
       let isNight = vars.hh >= 19 || vars.hh <= 6;
       if (isNight) { // 在理发店过夜
         vars.chasedByZombies = 0;
@@ -507,6 +508,7 @@ Object.assign(storyData, {
       }
     },
     choices: [
+      restTidyChoice("理发店-休息"),
       {
         text: "继续",
         nextScene: "理发店-店内"
