@@ -1450,7 +1450,30 @@ Object.assign(storyData, {
   },
 
   "建平-挹芬楼-1F-休息区": {
-    image: "images/placeholder.png",
+    image: function(vars) {
+      if(vars.weather == '雨') {
+        var f = timeImage({
+          morning: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴-雨.webp",
+          evening: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴-evening.webp",
+          night: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴-night.webp",
+        });
+        return f(vars);
+      }
+      else if(vars.weather == '阴') {
+        var f = timeImage({
+          morning: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴-阴.webp",
+          evening: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴-evening.webp",
+          night: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴-night.webp",
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴.webp",
+        evening: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴-evening.webp",
+        night: "images/建平/挹芬楼-1F休息区-彭奕宸弹琴-night.webp",
+      });
+      return f(vars);
+    },
     onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; vars.currentPos = "挹芬楼1F休息区"; vars._travelMinutes = 0; restRecover(vars, 1); return {}; },
     text: function(vars) {
       var desc = "你在休息区的长椅上坐下，喘了口气。这里很安静——丧尸都被挡在了外面。" + restHint(vars, "你回复1点体力");

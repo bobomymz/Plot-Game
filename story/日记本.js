@@ -76,7 +76,7 @@ Object.assign(storyData, {
 
   // ---- 主浏览页：翻页自跳，onEnter 只在"从外部进入"时归位到最新页（_lastScene 是引擎自动维护的） ----
   "日记本": {
-    image: "images/placeholder.png", /* TODO: images/日记本.webp（16:9 横版摊开的笔记本纸面） */
+    image: "images/日记本.webp", /* TODO: images/日记本.webp（16:9 横版摊开的笔记本纸面） */
     style: "font-family: 'Kaiti SC','STKaiti','KaiTi',serif; color: #ffffff; line-height: 1.8;",
     onEnter: function(vars) {
       if (vars._lastScene !== "日记本") vars._diaryPage = 0;
