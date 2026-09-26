@@ -1106,12 +1106,16 @@ Object.assign(storyData, {
 
   "建平-操场": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/jianping/playground.png */,
+    image: timeImage({
+      morning: "images/建平/操场.webp",
+      evening: "images/建平/操场-evening.webp",
+      night: "images/建平/操场-night.webp"
+    }),
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "操场"; },
     text: function(vars) {
       if (!vars._playgroundKicked) return "这里是操场。建平的操场不大——这片市中心区域实在挤不出空间，但你在这里踢了三年球。\n\
 靠近球门的地方，滚着一只孤零零的足球。\n" + describeWeather(vars) + describeZombieWave(vars);
-      return "这里是操场。建平的操场不大——这片市中心区域实在挤不出空间，但你在这里踢了三年球。\n球门里那只球还躺着，网兜微微凹下去一块。\n" + describeWeather(vars) + describeZombieWave(vars);
+      return "这里是操场。建平的操场不大——这片市中心区域实在挤不出空间，但你在这里踢了三年球。\n球门里那只球还躺着。\n" + describeWeather(vars) + describeZombieWave(vars);
     },
     choices: [
       { text: "去食堂侧门", nextScene: "建平-食堂", effect: updateTime(2) },
@@ -1128,10 +1132,9 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.personalMemorySet.add("起脚爆射"); vars._playgroundKicked = true; return {}; },
     text: [
       "你捞起那只孤零零的足球，退到中圈。四下很静，风从操场一头灌过来，把空着的球门网吹得鼓了一下。",
-      "你没怎么助跑，脚背一送——球不高不低地飞过禁区，擦着横梁下沿，钉进了球门死角。球在网里弹了两下，停住了。",
-      "嗯，很有脚感。",
-      "一阵回忆涌了上来。高三那会儿，别人都在树荫里聊天，你就爱抱着球来这儿。中圈到球门，一脚一脚地试，非要踢出那种擦着横梁下沿落进死角的球才算完。班主任远远喊一句“别踢了，回教室刷题”，你嘴上应着，脚下没停。",
-      "如今球门还在，可这个点了，不会再有哨声催你回教室了。",
+      "你没怎么助跑，脚背一送——球不高不低地飞过禁区，擦着横梁下沿，钉进了球门死角。球在网里弹了两下，停住了。\n嗯，很有脚感。",
+      "一阵回忆涌了上来。高三那会儿，在体育课，或者中午有空的时候，你们就爱抱着球来这儿。还没分队时，你就走到中圈，面对球门，一脚一脚地试，非要踢出那种擦着横梁下沿落进死角的球才算完。",
+      "如今球门还在，可这个点了，不会再有铃声催你回教室了。",
       "<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[起脚爆射]</span>"
     ],
     choices: [
