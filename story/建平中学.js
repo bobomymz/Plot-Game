@@ -1027,7 +1027,7 @@ Object.assign(storyData, {
   "建平-地下车库-消防柜-取斧": {
     image: "images/placeholder.png" /* TODO: images/jianping/fireAxe.png */,
     onEnter: { set: { hasAxe: true }, add: { itemCount: 1, chasedByZombies: 1 } },
-    text: "你抡起手边一块砖头，砸碎消防柜的玻璃门。碎裂声在空旷的车库里格外响。\n你飞快地抓起那把消防斧——沉甸甸的，刃口崭新，是学校里那种防暴斧。",
+    text: "你抡起手边一块砖头，砸碎消防柜的锁。碎裂声在空旷的车库里格外响，外面似乎传来了一阵骚动。\n你飞快地抓起那把消防斧——沉甸甸的，刃口崭新，是学校里那种防暴斧。",
     choices: [
       { text: "收好消防斧", nextScene: "建平-地下车库", effect: updateTime(1) }
     ]
@@ -1184,9 +1184,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/建平/灵海社活动室.webp */,
     onEnter: function(vars) { vars.currentPos = "行政楼3F灵海社活动室"; },
     text: function(vars) {
-      return "灵海社活动室。门虚掩着，推开是一股闷了很久的灰味。\n\
-靠墙一整排旧机柜，指示灯还亮着一排——电还在。正对着门那块大屏幕黑着，屏幕下角贴着一张没撕干净的标签：「智慧课堂 · 公开课专用」。\n\
-前排有张椅子翻倒着，椅面上是一大片发黑的东西。讲台上搁着半杯水，杯壁上的水渍干了一圈，又干了一圈。\n" + describeZombieWave(vars);
+      return "灵海社活动室。门虚掩着，推开来先是一股板材和胶水的味道——这间教室去年才翻新过，墙面白得发亮，地砖的缝还干净。\n\
+靠墙一整排新机柜，指示灯齐刷刷亮着一排，线缆扎得整整齐齐——电还在。正对着门那块大屏幕黑着，屏幕下角贴着一张没撕干净的标签：「智慧课堂 · 公开课专用」。\n\
+前排有张白椅子翻倒在地，椅面上是一大片发黑的东西，顺着地砖缝拖出去一道，到门口就淡了。讲台上搁着半杯水，水面落了一层薄灰。\n" + describeZombieWave(vars);
     },
     choices: [
       { text: "开那台大屏幕", nextScene: "建平-行政楼-3F-灵海社活动室-连网", effect: updateTime(1) },
@@ -1202,8 +1202,10 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "行政楼3F灵海社活动室"; },
     text: function(vars) {
       if (vars._linghaiNetworked) return "大屏幕还连着「智慧课堂」，内网页面停在那儿。";
-      return "你按下大屏幕旁的电源键。屏幕亮起来，跳出一行小字：\n\
-“校园内网 · 无线：智慧课堂”\n\
+      return "你走到屏幕前屏幕点了点，嗯，是熟悉的感觉。\n\
+打开google，瞬间跳出一个小恐龙————呃，你不该期待这里会有网的。\n\
+你点开右下角的网络图标，注意到一行：\n\
+“校园内网 · 无线（智慧课堂）”\n\
 下面是个密码框，光标一闪一闪。以前在这间教室里连过的人，大概还记得那串密码。";
     },
     choices: [
@@ -1228,9 +1230,10 @@ Object.assign(storyData, {
     ]
   },
 
-  // 课程表内容由图片承载（作者提供 images/建平/课表.webp），代码里不写具体课程信息。
+  // 课程表内容由图片承载，代码里不写具体课程信息。
   "建平-行政楼-3F-灵海社活动室-课程表": {
-    image: "images/placeholder.png" /* TODO: images/建平/课表.webp（作者提供后替换） */,
+    image: "images/建平/课表.webp",
+    imageZoom: true,
     onEnter: function(vars) {
       vars._linghaiNetworked = true;
       vars.currentPos = "行政楼3F灵海社活动室";
@@ -1819,7 +1822,7 @@ Object.assign(storyData, {
       vars.hasFireTorch = true;
       return {};
     },
-    text: "实验台的抽屉里有几卷纱布和一根断了的木架杆。你把纱布撕成条，一圈圈缠在杆头，拧开那瓶医用石蜡油浸透，再缠上一层，留出燃烧的余头。\n你把它凑到酒精灯上借了个火，等布条把油吃透、火苗稳住，又把它吹熄——要用的时候再点上。石蜡油的气味在实验室里散开，不算浓。\n<span style='color:#00fbffff;font-style:italic;'>【系统提示】获得火把（不占背包）。点亮照暗处不消耗；用来烧敌人，烧完即灭。</span>",
+    text: "实验台的抽屉里有几卷纱布和一根断了的木架杆。你把纱布撕成条，一圈圈缠在杆头，拧开那瓶医用石蜡油浸透，再缠上一层，留出燃烧的余头。\n你把它凑到酒精灯上借了个火，等布条把油吃透、火苗稳住，又把它吹熄——要用的时候再点上。石蜡油的气味在实验室里散开，不算浓。\n<span style='color:#00fbffff;font-style:italic;'>【系统提示】获得火把（不占背包）。</span>",
     choices: [
       { text: "收好火把", nextScene: "建平-致真楼-2F-化学实验室", effect: updateTime(1) }
     ]
@@ -4029,7 +4032,7 @@ Object.assign(storyData, {
 
   // ==================== 躲藏点（降 ch） ====================
 
-  "建平-躲藏-灵海社活动室": jpHide("images/placeholder.png", "你反锁上活动室的门，缩在机柜后面。外面的脚步声来了又去，那块白板还静静立在原地。", "", 2),
+  "建平-躲藏-灵海社活动室": jpHide("images/placeholder.png", "你反锁上活动室的门，缩在机柜后面。外面的脚步声来了又去，没有人推这扇门。", "", 2),
   "建平-躲藏-14班": jpHide("images/placeholder.png", "你躲进14班教室，反锁上门，缩在课桌下。外面的动静渐渐远了，教室里安静得能听见自己的心跳。", "", 2),
   "建平-躲藏-物理办公室": jpHide("images/placeholder.png", "你闪进物理办公室，忻老师示意你蹲下。你们屏息等着，外面的脚步声来了又去。", "", 2),
   "建平-躲藏-电脑区": jpHide("images/placeholder.png", "你蹲在电脑桌下，蔡镜晓也猫着腰。外面的动静渐渐远了。", "", 2),

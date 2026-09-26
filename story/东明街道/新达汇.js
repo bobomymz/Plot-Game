@@ -90,7 +90,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你记错了——一只丧尸从你侧面扑过来，你来不及反应。\n一根金属管从你耳边呼啸而过，咚地一声砸在丧尸脸上。那只丧尸踉跄着栽进了排水沟里。\n\
-高锦睿拽着你的手把你拉了起来：\
+高锦睿拽着你的手一把拉了起来：\
 “别愣着啊！走吧！”\n你低头一看——手臂上多了一道抓痕。" + weaponBrokeText(vars);
     },
     choices: [
@@ -402,7 +402,7 @@ Object.assign(storyData, {
       if (vars._metGaoAtMall) {
         d += "二楼一个机位里晃过个大活人——锅盖头，背着包，走路大摇大摆，一看就知道是谁。\n";
       }
-      d += "最上面一排是屋顶的机位。风把镜头吹得直晃，那片停机坪从头到尾没有一个影子——人也好，别的东西也好，都没有。";
+      d += "最上面一排是屋顶的机位。风把镜头吹得直晃，但能看到一个顺丰的货运无人机停在那里。";
       return d;
     },
     choices: [
@@ -1870,7 +1870,7 @@ Object.assign(storyData, {
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "3F南走廊西段。卡通墙绘密集，走廊尽头是卡通尼乐园的入口。\n"
  + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声从儿童乐园方向传来。</span>\n" : "")
- + (!vars._catChasing && !vars._powerOut && vars._catFed && Math.random() < 0.3 ? "墙上的卡通猫墙绘旁边——一只真猫正蹲在消防管道的支架上，安静地俯视着你经过。</span>\n" : "") + describeZombieWave(vars); },
+ + (!vars._catChasing && !vars._powerOut && vars._catFed && Math.random() < 0.3 ? "墙上的卡通猫墙绘旁边——一只真猫正蹲在消防管道的支架上，安静地俯视着你经过。\n" : "") + describeZombieWave(vars); },
     choices: [
       {
         text: "去卡通尼乐园",
@@ -2081,7 +2081,7 @@ Object.assign(storyData, {
     onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/babyStore.png */,
     text: function(vars) {
-      var desc = "你走进爱婴室。彩虹渐变logo，白底彩色地砖配木纹货架。婴儿湿巾的包装早就被人拆开过，干得像纸。\n矿泉水货架上剩下的几瓶全是空的——瓶盖却又都被拧了回去，一瓶一瓶立得整整齐齐。有人喝完之后，一瓶一瓶拧好的。";
+      var desc = "你走进爱婴室。彩虹渐变logo，白底彩色地砖配木纹货架。婴儿湿巾的包装早就被人拆开过，干得像纸。\n矿泉水货架上剩下的几瓶全是空的——瓶盖却又都被拧了回去，一瓶一瓶立得整整齐齐。";
       if (!vars.hasTeethingBiscuit) desc += "\n货架最下层还剩两罐没开封的磨牙饼干。";
       return desc;
     },
