@@ -234,6 +234,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "捡起拐杖",
+        showCondition: "!hasCane",
         condition: "itemCount < bagVolume",
         nextScene: "安盛街-理发店",
         effect: updateTime(1, { set: { hasCane: true }, add: { itemCount: 1 } }),
@@ -547,6 +548,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "拿上拖把杆",
+        showCondition: "!hasMopHandle",
         condition: "itemCount < bagVolume",
         nextScene: "理发店-获得拖把杆",
         effect: { set: { hasMopHandle: true }, add: { itemCount: 1 } },

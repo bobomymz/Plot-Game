@@ -983,24 +983,25 @@ Object.assign(storyData, {
     },
     onEnter: function(vars) { vars.currentPos = "地下车库"; },
     text: function(vars) {
-      var desc = "车库深处比入口更暗。墙边一扇铁门上了锁，门上用油漆刷着「工具间」三个字——这是学校的民防设施，平时锁着，钥匙应该在后勤手里。";
-      if (vars._gasMaskGarage) desc += "\n工具间的锁已经被你打开了。";
-      if (vars._garageFireCabinet) desc += "\n墙边那台红漆消防柜的玻璃门已经碎了。";
+      var desc = "车库深处比入口更暗。周围有几个小隔间停着车子，更深处的走廊看不清有什么房间。";
+      if (vars._garageFireCabinet) desc += "\n墙边那个消防柜的门已经打开了。";
       return desc;
     },
     choices: function(vars) {
       var cs = [
-        { text: "去工具间", nextScene: "建平-地下车库-工具间", effect: updateTime(1) },
         { text: "从西口上去", nextScene: "建平-地下车库-西口", effect: updateTime(1) },
         { text: "从大道口上去", nextScene: "建平-地下车库-大道口", effect: updateTime(1) }
       ];
-      // 深处太暗：需光源（火把/手电）才能发现消防柜；已有斧则无需再看
-      if ((vars.hasFireTorch || vars.hasTorch) && (!vars._garageFireCabinet || !vars.hasAxe)) {
-        cs.push({
-          text: function(v) { return (v.hasFireTorch ? "点亮火把" : "打亮手电筒") + "，照向车库更深处"; },
-          nextScene: "建平-地下车库-消防柜",
-          effect: updateTime(1)
-        });
+      // 深处太暗：需光源（火把/手电）才能发现消防柜；
+      if (vars.hasFireTorch || vars.hasTorch) {
+        if(!vars._garageFireCabinet || !vars.hasAxe) // 已有斧则无需再看
+          cs.push({
+            text: function(v) { return (v.hasFireTorch ? "点亮火把" : "打亮手电筒") + "，照向车库更深处"; },
+            nextScene: "建平-地下车库-消防柜",
+            effect: updateTime(1)
+          });
+        cs.push(
+        { text: "看看走廊边的房间", nextScene: "建平-地下车库-工具间", effect: updateTime(1) });
       }
       return cs;
     }
@@ -1010,11 +1011,10 @@ Object.assign(storyData, {
     image: function(vars) {
       if(vars.hasTorch) return "images/建平/地下消防柜-手电筒.webp";
       if(vars.hasFireTorch) return "images/建平/地下消防柜-火把.webp";
-      return "images/建平/地下非机动车车库.webp";
+      return "images/placeholder.png";
     },
     onEnter: function(vars) { vars.currentPos = "地下车库消防柜"; vars._garageFireCabinet = true; vars.positionAfterOperation = "建平-地下车库-消防柜"; return {}; },
     text: function(vars) {
-      if (vars.hasAxe) return "消防柜的玻璃门敞着，里面只剩空挂架和半截卡扣——斧头你身上已经有一把了。";
       var light = vars.hasFireTorch ? "火把" : "手电光柱";
       return "你把" + light + "举高，扫过车库最深处那面墙——靠墙立着一台红漆的消防柜，玻璃门蒙着灰。透过灰蒙蒙的玻璃，能看见里面横着一把消防斧。";
     },
@@ -1038,19 +1038,23 @@ Object.assign(storyData, {
   },
 
   "建平-地下车库-工具间": {
-    image: "images/placeholder.png" /* TODO: images/jianping/toolRoom.png */,
+    image: function(vars) {
+      if(vars.hasTorch) return "images/建平/地下工具间-手电筒.webp";
+      if(vars.hasFireTorch) return "images/建平/地下工具间-火把.webp";
+      return "images/placeholder.png";
+    },
     onEnter: function(vars) { vars.currentPos = "地下车库工具间"; vars.positionAfterOperation = "建平-地下车库-工具间"; },
     text: function(vars) {
-      if (!vars._gasMaskGarage) {
-        return "工具间的门锁着。这锁不是普通挂锁——是后勤的那种铁芯锁。";
+      if (!vars._visit['建平-地下车库-工具间-开门']) {
+        return "你摸索了一番，找到了工具间。工具间的门锁着。这锁不是普通挂锁——是后勤的那种铁芯锁。";
       }
-      var desc = "这里是工具间。地面散落着大量塑料瓶、包装袋等垃圾，各种杂物堆叠在一起：倾斜的门板、折叠椅、行李箱、布袋、泡沫箱。各色袋子、布料和废弃家具相互挤靠，东西几乎堆满地面，";
+      var desc = "地面散落着大量塑料瓶、包装袋等垃圾，各种杂物堆叠在一起：倾斜的门板、折叠椅、行李箱、布袋、泡沫箱。各色袋子、布料和废弃家具相互挤靠，东西几乎堆满地面，";
       if (!vars.hasGasMask) desc += "\n角落里放着一只老式防毒面具。";
       return desc;
     },
     choices: function(vars) {
       var cs = [];
-      if (!vars._gasMaskGarage) {
+      if (!vars._visit['建平-地下车库-工具间-开门']) {
         if (vars.hasKeyRing) {
           cs.push({ text: "用钥匙串开门", nextScene: "建平-地下车库-工具间-开门" });
         } else {
@@ -1068,8 +1072,7 @@ Object.assign(storyData, {
 
   "建平-地下车库-工具间-开门": {
     image: "images/placeholder.png",
-    onEnter: { set: { _gasMaskGarage: true } },
-    text: "你用钥匙串上的一把钥匙试了试——咔哒，锁开了。\n工具间里码着各种应急物资，墙角挂着一只老式防毒面具。",
+    text: "你用钥匙串上的一把钥匙试了试——咔哒，锁开了。",
     choices: [
       { text: "进去看看", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
     ]
@@ -1086,8 +1089,12 @@ Object.assign(storyData, {
 
   "建平-水池": {
     outdoor: true,
-    image: "images/placeholder.png" /* TODO: images/jianping/pond.png */,
-    onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "水池"; return jpHubChase(vars, "建平-水池"); },
+    image: timeImage({
+      morning: "images/建平/水池.webp",
+      evening: "images/建平/水池-evening.webp",
+      night: "images/建平/水池-night.webp"
+    }),
+    onEnter: function(vars) { vars.showZombies = vars.showRain = true; vars.currentPos = "水池"; return jpHubChase(vars, "建平-水池"); },
     text: function(vars) { return "水池。丧尸沿着池边挤成一圈，有些半个身子泡在水里——水的湿气让它们扎堆在这里。\n" + describeWeather(vars); },
     choices: [
       { text: "去废弃小楼", nextScene: "建平-废弃小楼-1F", effect: updateTime(2) },
@@ -1661,7 +1668,6 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "那个铁柜锁着，是后勤的挂锁。";
       if (!vars.hasKeyRing) return desc + "\n你没有能打开它的钥匙。";
-      if (vars.hasScrewdriver) return "你已经有螺丝刀了。";
       return desc;
     },
     choices: function(vars) {
@@ -1835,7 +1841,7 @@ Object.assign(storyData, {
 
   "建平-致真楼-2F-化学实验室-没螺丝刀": {
     image: "images/placeholder.png",
-    text: "你把真人CS枪翻来覆去看了几遍。枪管上的战术手电是螺丝固定的——没有螺丝刀拆不下来。\n你记得物理实验室和总务处工具间都有工具柜，也许那边有。",
+    text: "你把真人CS枪翻来覆去看了几遍。枪管上的战术手电是螺丝固定的——没有螺丝刀拆不下来。\n也许你应该去工具间找一下。",
     choices: [
       { text: "回去", nextScene: "建平-致真楼-2F-化学实验室", effect: updateTime(1) }
     ]
@@ -3415,7 +3421,6 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "致真楼5F物理实验室"; vars.positionAfterOperation = "建平-致真楼-5F-物理实验室"; },
     text: function(vars) {
       var desc = "物理实验室。光学仪器东倒西歪，示波器的屏幕黑着，地上散落着导线。黑板上的电路图画到一半，旁边用红笔打了个大大的问号。靠墙的工具柜上了锁。";
-      if (vars.hasScrewdriver) desc += "（你已经有一把螺丝刀了。）";
       return desc;
     },
     choices: function(vars) {
