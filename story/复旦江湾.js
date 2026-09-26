@@ -101,7 +101,7 @@ Object.assign(storyData, {
   // 研学个人记忆 pickup（作者拍板：介孔材料展板，与王知筠无关）
   "复旦江湾-材料楼-展板": {
     image: "images/placeholder.png" /* TODO: images/复旦江湾/材料楼展板.webp */,
-    onEnter: function(vars) { vars.personalMemorySet.add("介孔材料"); return {}; },
+    onEnter: function(vars) { gainMemory(vars, "介孔材料", "personal"); return {}; },
     text: [
       "大厅里立着一排介绍院史的展板。你在其中一块前停了下来——「介孔材料」，配着一张蜂窝状的示意图。",
       "展板上写，一粒米大小的介孔粉末，里面的孔道全部摊开，面积抵得上半个篮球场。肉眼看不见的地方，藏着最大的世界。",

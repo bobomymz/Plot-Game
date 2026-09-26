@@ -456,6 +456,58 @@ function combatDrainText(vars) {
   return "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-" + c + "，当前体力：{strength}。</span>";
 }
 
+// ====== 日记本系统（数据层；浏览场景与正文表见 story/日记本.js） ======
+// 三类条目统一落 _diaryLog：记忆（gainMemory）/ 剧情事件（addDiaryEvent，如张江抄录报告）/
+// 玩家手写（addDiaryNote，落库前转义）。每条自动记录 dd/hh/mm/weather（日期头渲染用）。
+// ⚠ 新增记忆一律走 gainMemory(vars, key, type)，禁止裸调 xxxMemorySet.add —— 不进日记 = 内容缺失。
+
+// HTML 转义 + 花括号中和：玩家手写经 innerHTML 渲染（engine.js 用 innerHTML），
+// 且 text 函数返回值还会做 {变量名} 插值 —— 花括号转成数字实体，插值阶段失配、显示阶段还原。
+function diaryEscape(s) {
+  return String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/\{/g, "&#123;").replace(/\}/g, "&#125;");
+}
+
+// 获得记忆：入对应 Set（结局阈值计数照旧）+ 落一条日记。幂等（重复进场景不重复记）。
+// type: "personal" / "game" / "mixed"。返回是否新获得（false=早已持有）。
+function gainMemory(vars, key, type) {
+  if (!vars._diaryLog) vars._diaryLog = [];
+  var set = type === "game" ? vars.gameMemorySet : (type === "mixed" ? vars.mixedMemorySet : vars.personalMemorySet);
+  if (set.has(key)) return false;
+  set.add(key);
+  vars._diaryLog.push({ kind: type, key: key, dd: vars.dd, hh: vars.hh, mm: vars.mm, weather: vars.weather });
+  return true;
+}
+
+// 剧情自动条目（非记忆、不进任何 Set）：同 key 只记一次（防重入节点重复落账）。
+function addDiaryEvent(vars, key) {
+  if (!vars._diaryLog) vars._diaryLog = [];
+  for (var i = 0; i < vars._diaryLog.length; i++) {
+    if (vars._diaryLog[i].kind === "event" && vars._diaryLog[i].key === key) return false;
+  }
+  vars._diaryLog.push({ kind: "event", key: key, dd: vars.dd, hh: vars.hh, mm: vars.mm, weather: vars.weather });
+  return true;
+}
+
+// 玩家手写：转义后落库。调用方（"日记本-写"）已确保 text 非空。
+function addDiaryNote(vars, text) {
+  if (!vars._diaryLog) vars._diaryLog = [];
+  vars._diaryLog.push({ kind: "note", text: diaryEscape(text), dd: vars.dd, hh: vars.hh, mm: vars.mm, weather: vars.weather });
+  return true;
+}
+
+// 条目时间 → 日记日期头文本："6月29日 · 星期一 · 雨"（Day 1 = 2026/6/29）。
+// 星期由 Date 对象换算，不手写常量；weather 取落账时的天气。
+function diaryDateText(entry) {
+  var d = new Date(2026, 5, 29);
+  d.setDate(d.getDate() + ((entry.dd || 1) - 1));
+  var week = ["日", "一", "二", "三", "四", "五", "六"][d.getDay()];
+  var s = (d.getMonth() + 1) + "月" + d.getDate() + "日 · 星期" + week;
+  if (entry.weather) s += " · " + entry.weather;
+  return s;
+}
+
 // ====== 记忆闪色辅助函数 ======
 
 function randSeq(colors, len) {

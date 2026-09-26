@@ -92,7 +92,7 @@ Object.assign(storyData, {
       },
       {
         showCondition: "familyMartNoodleLeft > 0",
-        text: "拿一包泡面（货架上还剩 {familyMartNoodleLeft} 包）",
+        text: "拿一包泡面",
         condition: "itemCount < bagVolume",
         nextScene: "全家-拿泡面",
         elseScene: "整理整理"

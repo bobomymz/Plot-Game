@@ -1386,7 +1386,7 @@ Object.assign(storyData, {
   "上实南校-撤离成功": {
     image: "images/placeholder.png" /* TODO: images/上实南校/schoolGate.png */,
     onEnter: function(vars) {
-      vars.personalMemorySet.add("返校");
+      gainMemory(vars, "返校", "personal");
       return {};
     },
     text: "你们站在学校外的路边。小陆、小王、小赵——三个人都灰头土脸的，但都活着。\n\

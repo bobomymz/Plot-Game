@@ -401,7 +401,7 @@ Object.assign(storyData, {
   "张江-AI岛-机房-重逢": {
     image: "images/placeholder.png", /* TODO: images/张江/AI岛-机房-重逢.webp */
     onEnter: function(vars) {
-      vars.personalMemorySet.add("师生重逢");
+      gainMemory(vars, "师生重逢", "personal");
       return {};
     },
     text: "他从椅子上站起来，又坐下去，又站起来。\n\
@@ -2667,7 +2667,7 @@ Object.assign(storyData, {
   "张江-华大-动力站-合照": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-合照.webp */
     onEnter: function(vars) {
-      vars.personalMemorySet.add("毕业快乐");
+      gainMemory(vars, "毕业快乐", "personal");
       return {};
     },
     text: "你把那张合照拿出来，递过去。\n\
@@ -3657,7 +3657,7 @@ Object.assign(storyData, {
   // 抄录（hasDiary 专属）：报告关键数据抄进日记本一页
   "张江-检测中心-抄录": {
     image: "images/placeholder.png", /* TODO: images/张江/检测中心-抄录.webp（接待台、日记本） */
-    onEnter: {  },
+    onEnter: function(vars) { addDiaryEvent(vars, "抄录报告"); return {}; },
     text: function(vars) {
       return "你在接待台边坐下，就着高侧窗的天光，翻开日记本，把报告从第一页抄起。\n\
 编号、日期、点位、检测方法、那个红色的数字、两枚章的名称——你抄得很慢，一个数字一个数字地对。抄到“取件人签收”那一栏，你的笔尖悬了一下。\n\

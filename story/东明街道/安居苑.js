@@ -361,7 +361,7 @@ Object.assign(storyData, {
       // midnight直接复用night图片
     }),
     onEnter: function(vars) {
-      vars.personalMemorySet.add("滑板车的盲从");
+      gainMemory(vars, "滑板车的盲从", "personal");
       return {};
     },
     text: "你拿起了滑板车。车轴没有锈迹，看起来是辆新车，不错。\n\
@@ -1535,7 +1535,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   "三林安居苑-502-小卧室": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuan502SmallBedroom.png */,
     onEnter: function(vars) {
-      vars.personalMemorySet.add("忘记搬家的松鼠");
+      gainMemory(vars, "忘记搬家的松鼠", "personal");
       return {};
     },
     text: function(vars) {

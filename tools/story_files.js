@@ -27,7 +27,7 @@ const FALLBACK = [
   'story/东明街道/安盛街.js', 'story/东明街道/安居苑.js',
   'story/东明街道/金谊广场.js', 'story/东明街道/警察局.js',
   'story/东明街道/反派NPC.js', 'story/上海市区路径.js',
-  'story/仁济南院.js', 'story/建平中学.js', 'story/复旦江湾.js', 'story/张江.js'
+  'story/仁济南院.js', 'story/建平中学.js', 'story/复旦江湾.js', 'story/张江.js', 'story/日记本.js'
 ];
 
 // 最低合理条数：低于此值视为解析失败（防止正则失配导致"零文件、零问题"的假绿）

@@ -1129,7 +1129,7 @@ Object.assign(storyData, {
 
   "建平-操场-踢球": {
     image: "images/placeholder.png" /* TODO: images/jianping/playgroundKick.png */,
-    onEnter: function(vars) { vars.personalMemorySet.add("起脚爆射"); vars._playgroundKicked = true; return {}; },
+    onEnter: function(vars) { gainMemory(vars, "起脚爆射", "personal"); vars._playgroundKicked = true; return {}; },
     text: [
       "你捞起那只孤零零的足球，退到中圈。四下很静，风从操场一头灌过来，把空着的球门网吹得鼓了一下。",
       "你没怎么助跑，脚背一送——球不高不低地飞过禁区，擦着横梁下沿，钉进了球门死角。球在网里弹了两下，停住了。\n嗯，很有脚感。",
@@ -2332,7 +2332,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-4F-高三14班-看B站": {
     image: "images/placeholder.png",
-    onEnter: function(vars) { vars.mixedMemorySet.add("腐烂尸城"); return {}; },
+    onEnter: function(vars) { gainMemory(vars, "腐烂尸城", "mixed"); return {}; },
     // 收藏夹是主角自己的：这台是14班教室的电脑，不是彭奕宸的机器，
     // 视频早在出事前就下好躺在缓存里——没网也放得出来。
     text: "你坐回这张课桌，点开收藏夹——是你自己以前留的。《腐烂尸城》，一个互动视频，讲一座城市被尸潮吞没，幸存者们在废墟里挣扎求生。当年你大概是躲在这间教室看完的，看完还得赶去下一节课。缓存还在，不用网也放得出来。\n\
@@ -3482,7 +3482,7 @@ Object.assign(storyData, {
   },
   "建平-远翔楼-1F-圆厅-听琴": {
     image: "images/placeholder.png" /* TODO: images/jianping/yuanTingPiano.png */,
-    onEnter: function(vars) { vars.personalMemorySet.add("悠扬琴声"); return {}; },
+    onEnter: function(vars) { gainMemory(vars, "悠扬琴声", "personal"); return {}; },
     text: "你放轻脚步，在观众席第一排坐下。彭奕宸没回头，指尖的曲子断断续续——弹错一个音，他就退回那一小节，从头重来一遍。\n\
 你听了一会儿，忽然想起高三那会儿——那时候这琴还摆在走廊上。你中午吃完饭经过，总会放慢脚步，站下来听一会儿。琴声不紧不慢，能把下午第一节课前那点烦闷都熨平。\n\
 大概他也不知道，走廊里那架琴替他收留过多少个午后的听众。\n\

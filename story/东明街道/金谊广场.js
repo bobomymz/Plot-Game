@@ -184,7 +184,7 @@ Object.assign(storyData, {
   "金谊广场-足球场": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/足球场.jpg */,
     onEnter: function(vars) {
-      vars.personalMemorySet.add("U-ball");
+      gainMemory(vars, "U-ball", "personal");
       return {};
     },
     text: function(vars) {

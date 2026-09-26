@@ -102,6 +102,8 @@ const storyData = {
     _bagExtra: 0,              // 附件加成（袋子等，如帆布袋 +1）
     hasBroom:  false,          // 是否有扫帚（民防设施等候室）
     hasDiary:  false,          // 是否有日记本（民防设施等候室桌上）
+    _diaryLog: [],             // 日记本条目（gainMemory/addDiaryEvent/addDiaryNote 落库；浏览见"日记本"场景）
+    _diaryPage: 0,             // 日记本当前页（0=最新一页，「往前翻」+1；"日记本" onEnter 从外部进入时归零）
     hasTorch:  false,          // 是否有手电筒（民房设施等候室桌子抽屉）
     hasGasMask:   false,       // 是否有防毒面具（全图唯一物品，多点可拿：民防物资区/安居苑204/建平车库工具间/警察局防暴柜）
     hasIronPipe: false,        // 是否有铁管（民防设施物资区箱子后面，打斗中才能获得）
@@ -646,7 +648,12 @@ const storyData = {
         showCondition: "hasDiary",
         text: "丢下日记本",
         effect: updateTime(1, { set : { hasDiary: false }, add: { itemCount: -1 } }),
-        nextScene: "整理整理"
+        nextScene: "整理整理-丢日记本"
+      },
+      {
+        showCondition: "hasDiary",
+        text: "📔 翻开日记本",
+        nextScene: "日记本"
       },
       {
         showCondition: "hasTorch",

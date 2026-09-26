@@ -645,6 +645,8 @@ Object.assign(storyData, {
 | `hasXxx` | bool | 物品flag，添加时需同时 `add: { itemCount: 1 }`。交通工具、背包、袋子不占 `itemCount` |
 | **记忆系统** | | |
 | `gameMemorySet` / `personalMemorySet` | `Set` | 已收集的记忆，`gameMemoryThres`（10）为结局阈值 |
+| `_diaryLog` | 数组 | 日记本条目（记忆/事件/手写三类，自动记 dd/hh/mm/weather）；写入走 utils.js 的 `gainMemory`/`addDiaryEvent`/`addDiaryNote` |
+| `_diaryPage` | int | 日记本当前页（0=最新一页，往前翻 +1）；「日记本」onEnter 从外部进入时归零 |
 
 ### `_lastScene`：引擎自动记录的上一个场景
 
@@ -813,6 +815,16 @@ choices: [{ text: "继续", nextScene: "原场景", effect: { set: { hasBackpack
   ]
 }
 ```
+
+### 日记本系统（story/日记本.js + utils.js 数据层）
+
+入口：整理整理「📔 翻开日记本」（`showCondition: hasDiary`）；丢日记本走特殊节点 `整理整理-丢日记本`（log 保留、入口消失）。规则：
+
+1. **记忆获取一律 `gainMemory(vars, key, type)`**（type: `"personal"`/`"game"`/`"mixed"`），**禁止裸调 `xxxMemorySet.add()`**——裸 add 不进日记本。`gainMemory` 幂等（Set 判重），结局阈值计数不受影响。
+2. 剧情自动条目（非记忆，如张江抄录报告）用 `addDiaryEvent(vars, key)`，同 key 幂等只记一次。
+3. 上述两种 key 必须登记在 `story/日记本.js` 的 `DIARY_ENTRIES` 正文表（第一人称日记腔；正文禁用 `{ }`，text 函数返回值会做插值）。`tools/check_diary.js` 审计：裸 add=0 + key 双向对齐 + 场景存在性。
+4. 玩家手写走「日记本-写」input 选项，`addDiaryNote` 落库前做 HTML 转义 + 花括号中和（engine 用 innerHTML 渲染、函数返回值做 {变量名} 插值，双重防注入）。
+5. 翻页是 `nextScene: "日记本"` 自跳：onEnter 靠 `_lastScene !== "日记本"` 判定"从外部进入"才重置 `_diaryPage` 到最新页（引擎自动维护 `_lastScene`，翻页自跳不会误重置）。
 
 ### 分段文本（text 数组）
 
