@@ -249,6 +249,10 @@ const storyData = {
     hasFireTorch: false,      // 石蜡油火把（化学实验室制，不占格；照明不耗，烧敌人/楼梯丧尸时燃尽）
     _harshDead: false,        // Harsh 是否被火烧死（永久，坐电梯不再唤醒）
     _garageFireCabinet: false,// 地下车库深处消防柜是否已被光源照亮发现
+    _toolLitMask: false,      // 工具间光锥搜索：防毒面具已被照亮发现
+    _toolLitCabinet: false,   // 工具间光锥搜索：破柜子已被照亮发现
+    _toolLitParcel: false,    // 工具间光锥搜索：快递包裹已被照亮发现
+    _toolLitTrash: false,     // 工具间光锥搜索：垃圾堆已被照亮发现
     _jianpingCatFed: false,   // 建平橘猫是否已喂（喂后带路去致真楼 + Harsh 软预警）
     _catReturn: "",           // 橘猫相遇时来自哪个游走节点（喂后"算了/由它去"回这里）
     hasSnackCookie: false,    // 味千小饼干（占格；可拆吃+1 / 喂橘猫）

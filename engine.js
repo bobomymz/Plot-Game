@@ -1114,6 +1114,167 @@ function appendBacktrackToChoices(scene) {
   choicesArea.appendChild(btn);
 }
 
+// ====== 黑暗光锥（darkSearch：暗图 + 提亮双层 + 遮罩，光照 dwell 发现热点）======
+// 数据格式见 CLAUDE.md「黑暗光锥」节。设计要点：
+// · 发现与互动分离：这里只负责"照亮 → 写 var → toast → ✓标记"，拿取/翻找走
+//   常规选项（showCondition 守卫 var），不做图上浮动按钮，选项语义留在剧情数据。
+// · 光圈与 dwell 累计是纯 UI 态（不进 gameState、不进存档）；已发现态由剧情声明的
+//   var 持久化（须先在 _variables 注册），回溯/读档随快照还原，重进场景直接标 ✓。
+// · 刻意不做进度环：照没照到东西本身就是玩家的观察课题，进度反馈等于报答案。
+// · 光源档自动推断：hasFireTorch（暖色）> hasTorch；darkSearch.light 可覆盖。
+//   手机弱光源不支持（强黑暗，见照明分级）。无光源则机制不激活（剧情应已门槛拦住）。
+// · 与 imageZoom 互斥（renderScene 图片节强制不显示角标，查看器会全屏亮图穿帮）；
+//   与场景级 QTE 可叠加（倒计时不暂停，压力版搜索）。
+const DARK_TORCH_R = 0.18;     // 手电光圈半径（占图片显示宽）
+const DARK_FIRE_R  = 0.14;     // 火把光圈（小一点，暖色）
+const DARK_MOBILE_DY = -56;    // 触屏光圈中心上移，别让手指盖住光
+
+let darkActive = false;
+let darkSpots = [];
+let darkDwellMs = 600;
+let darkLight = { img: { x: 0, y: 0 }, frame: { x: 0, y: 0 }, active: false };
+let darkLoopOn = false;
+let darkLastT = 0;
+let darkLitLayer = null, darkMask = null;
+let darkCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+
+function ensureDarkLayers() {
+  if (darkLitLayer) return;
+  darkLitLayer = document.createElement("img");
+  darkLitLayer.id = "dark-lit-layer";
+  darkMask = document.createElement("div");
+  darkMask.id = "dark-mask";
+  sceneImage.insertAdjacentElement("afterend", darkLitLayer);
+  darkLitLayer.insertAdjacentElement("afterend", darkMask);
+}
+
+// 显示几何：镜像 #scene-image 的 object-fit（桌面 cover / 手机 contain），坐标在图片像素空间结算
+function darkFit() {
+  const W = imageArea.clientWidth, H = imageArea.clientHeight;
+  const w = sceneImage.naturalWidth, h = sceneImage.naturalHeight;
+  if (!w || !h) return null;
+  const contain = getComputedStyle(sceneImage).objectFit === "contain";
+  const s = contain ? Math.min(W / w, H / h) : Math.max(W / w, H / h);
+  return { W: W, H: H, scale: s, offX: (W - w * s) / 2, offY: (H - h * s) / 2, dW: w * s };
+}
+
+function startDarkSearch(scene) {
+  const cfg = scene && scene.darkSearch;
+  if (!cfg || !Array.isArray(cfg.spots) || !cfg.spots.length) return;
+  let tier = typeof cfg.light === "function" ? cfg.light(gameState) : cfg.light;
+  if (!tier) tier = gameState.hasFireTorch ? "fire" : (gameState.hasTorch ? "torch" : "");
+  if (!tier) return;   // 防御：无光源按普通场景渲染（剧情应已用选项门槛拦住进入）
+  ensureDarkLayers();
+  darkSpots = cfg.spots.map(function (s) {
+    return {
+      id: s.id || "什么",
+      x: +s.x || 0, y: +s.y || 0, r: (s.r != null ? +s.r : 0.10),
+      var: s.var || "", decoy: !!s.decoy, acc: 0,
+      found: !!(s.var && gameState[s.var])   // 已发现（var 持久化）：不再判定，直接标 ✓
+    };
+  });
+  darkDwellMs = +cfg.dwellMs || 600;
+  darkActive = true;
+  darkLight.active = false;
+  darkLitLayer.src = sceneImage.src;   // 提亮层同图：圈外被遮罩压黑，圈内提亮=照亮
+  darkLitLayer.classList.toggle("fire", tier === "fire");
+  imageArea.classList.add("dark-searching");
+  imageArea.classList.toggle("dark-fire", tier === "fire");
+  imageArea.style.setProperty("--lr", "0px");   // 首次移动前光圈收拢，全黑入场
+  clearDarkMarkers();
+  darkSpots.forEach(addDarkMarker);
+  darkLastT = 0;
+  if (!darkLoopOn) { darkLoopOn = true; requestAnimationFrame(darkLoop); }
+}
+
+function closeDarkSearch() {
+  darkActive = false;
+  darkSpots = [];
+  imageArea.classList.remove("dark-searching", "dark-fire");
+  clearDarkMarkers();
+}
+
+function darkLoop(t) {
+  darkLoopOn = false;
+  if (!darkActive) return;
+  const dt = darkLastT ? Math.min(t - darkLastT, 250) : 0;   // 切后台回来不补算
+  darkLastT = t;
+  if (dt > 0 && darkLight.active && sceneImage.naturalWidth) {
+    for (const s of darkSpots) {
+      if (s.found) continue;
+      if (darkInRange(s)) {
+        s.acc += dt;
+        if (s.acc >= darkDwellMs) { s.found = true; s.acc = 0; darkFind(s); }
+      } else {
+        s.acc = 0;   // 光圈移出命中圈即清零（spot_picker 同语义）
+      }
+    }
+  }
+  darkLoopOn = true;
+  requestAnimationFrame(darkLoop);
+}
+
+// 光圈中心是否落在热点命中圈内（图片像素空间，r 以图片宽为基准）
+function darkInRange(s) {
+  const dx = darkLight.img.x - s.x * sceneImage.naturalWidth;
+  const dy = darkLight.img.y - s.y * sceneImage.naturalHeight;
+  const rr = s.r * sceneImage.naturalWidth;
+  return dx * dx + dy * dy <= rr * rr;
+}
+
+function darkFind(s) {
+  if (s.var) gameState[s.var] = true;   // 直改（同剧情 onEnter 直改惯例），rAF 里不走 applyEffect
+  flashStatusWarning("🔦 你看清了——" + s.id);
+  addDarkMarker(s);
+}
+
+function darkRadius() {
+  return imageArea.classList.contains("dark-fire") ? DARK_FIRE_R : DARK_TORCH_R;
+}
+
+function addDarkMarker(s) {
+  if (!s.found) return;
+  const el = document.createElement("div");
+  el.className = "dark-found-mark";
+  el.textContent = "✓ " + s.id;
+  positionDarkMarker(el, s);
+  imageArea.appendChild(el);
+}
+function positionDarkMarker(el, s) {
+  const f = darkFit();
+  if (!f) return;
+  el.style.left = (s.x * sceneImage.naturalWidth * f.scale + f.offX) + "px";
+  el.style.top = (s.y * sceneImage.naturalHeight * f.scale + f.offY) + "px";
+}
+function clearDarkMarkers() {
+  Array.prototype.forEach.call(imageArea.querySelectorAll(".dark-found-mark"), function (n) { n.remove(); });
+}
+
+// 指针驱动光圈：移动/按下=更新位置，离开图片区=暂停累计；触屏中心上移防手指遮挡
+function darkPointer(e) {
+  if (!darkActive) return;
+  const f = darkFit();
+  if (!f) return;
+  const rect = imageArea.getBoundingClientRect();
+  const fx = e.clientX - rect.left;
+  const fy = e.clientY - rect.top + (darkCoarse ? DARK_MOBILE_DY : 0);
+  darkLight.frame.x = fx; darkLight.frame.y = fy;
+  darkLight.img.x = (fx - f.offX) / f.scale;
+  darkLight.img.y = (fy - f.offY) / f.scale;
+  darkLight.active = true;
+  imageArea.style.setProperty("--lx", fx + "px");
+  imageArea.style.setProperty("--ly", fy + "px");
+  imageArea.style.setProperty("--lr", (darkRadius() * f.dW) + "px");
+}
+imageArea.addEventListener("pointermove", darkPointer);
+imageArea.addEventListener("pointerdown", darkPointer);
+imageArea.addEventListener("pointerleave", function () { darkLight.active = false; });
+window.addEventListener("resize", function () {
+  if (!darkActive) return;
+  clearDarkMarkers();
+  darkSpots.forEach(addDarkMarker);
+});
+
 // ====== 核心渲染 ======
 function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   // 防递归过深
@@ -1124,6 +1285,7 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   clearSegments();   // 必须在 stopTyping 之前：token 先作废，stopTyping 触发旧分段回调时静默失效
   stopTyping();
   closeImageViewer();   // 换场景（选项/QTE/回溯/重启/全局触发器）一律关闭查看器，单一 hook 点
+  closeDarkSearch();    // 光锥层同理：换场景一律卸载（纯 UI 态不进存档）
 
   // 进入新场景时重置展开状态
   document.getElementById("text-area").classList.remove("text-expanded");
@@ -1224,7 +1386,8 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     sceneImage.style.display = "none";
   }
   // 图片查看器门票：仅标记场景显示角标、允许点击放大（每场景重置，同 showRain 惯例）
-  viewerZoomable = !!scene.imageZoom && !!imageSrc;
+  // darkSearch 场景强制不给门票——查看器全屏展示亮图，黑暗当场穿帮
+  viewerZoomable = !!scene.imageZoom && !!imageSrc && !scene.darkSearch;
   zoomBadge.style.display = viewerZoomable ? "block" : "none";
   imageArea.classList.toggle("image-zoomable", viewerZoomable);
 
@@ -1280,17 +1443,20 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
     typeSegments(sceneText, displayText, 80, () => {
       renderChoices(scene, sceneId);
       applyMemoryFlash(gameState);
+      startDarkSearch(scene);
     });
   } else if (hasQte && !hasQte.typewriter) {
     // QTE 场景直接显示文字，跳过打字机效果
     sceneText.innerHTML = displayText;
     sceneText.classList.remove("typing");
     renderChoices(scene, sceneId);  // renderChoices 内部会启动倒计时
+    startDarkSearch(scene);         // QTE+光锥可叠加：倒计时走着，玩家边搜边被逼
   } else {
     // 无 QTE，或 QTE 声明了 typewriter（过场动画）：走打字机，完成后渲染选项并启动倒计时
     typeText(sceneText, displayText, 80, () => {
       renderChoices(scene, sceneId);
       applyMemoryFlash(gameState);
+      startDarkSearch(scene);
     });
   }
 

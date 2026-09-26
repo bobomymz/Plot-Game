@@ -182,18 +182,19 @@ Object.assign(storyData, {
 
   // --- 足球场（U-ball 个人记忆） ---
   "金谊广场-足球场": {
-    image: "images/placeholder.png" /* TODO: images/金谊广场/足球场.jpg */,
+    image: timeImage({
+      morning: "images/金谊广场/足球场.webp",
+      evening: "images/金谊广场/足球场-evening.webp",
+      night: "images/金谊广场/足球场-night.webp"
+    }),
     onEnter: function(vars) {
       gainMemory(vars, "U-ball", "personal");
-      return {};
+      return {set: {showRain: true}};
     },
     text: function(vars) {
-      var desc = "你走到龙头区一侧的足球场。场地不大，人造草皮已经褪色发白，边线几乎看不清了。\n";
-      desc += "球门锈得厉害，横梁上的白漆剥落了一大半。但你还是能认出那行字——\n";
-      desc += "<em>U-ball 足球俱乐部</em>——字迹已经模糊了，最后一个“部”字只剩了半边。\n";
-      desc += "你小时候每周六都来这里上足球课。妈妈就坐在场地边的台阶上，一边看手机一边等你。\n";
-      desc += "俱乐部早就倒闭了。球门后面堆着几卷废弃的人工草皮和两个漏气的足球。\n";
-      desc += "你站在锈掉的球门前，风从河边吹过来，带走了你脑海里最后一丝关于“那个周六”的画面。\n";
+      var desc = "你走到龙头区一侧的足球场。说是足球场，但已经面目全非。看着眼前3道白色的网，你知道这里已经变成了网球场。\n\
+儿时的回忆涌上心头————小时候你在这里上足球课，每次踢完还要去吉祥馄饨吃午饭。那个足球俱乐部叫做U-ball，你有个球上写着他们的名字。\n\
+这个俱乐部早就倒闭了。\n";
       desc += "<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[U-ball]——有些东西你以为永远不会忘，但等你再回来时，它已经不在了。</span>";
       return desc;
     },

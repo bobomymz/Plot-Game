@@ -47,6 +47,7 @@ explorer index.html
 | 世界观顶层设定 | 核心设定3.0.md |
 | 结局节点规范 | grep `"结局-`（core.js 已归一次） |
 | 图片查看器（`imageZoom` 标记/🔍角标/缩放平移/QTE 协同） | CLAUDE.md「图片查看器」节 + engine.js「图片查看器」节 |
+| 黑暗光锥（`darkSearch` 暗图搜索/热点 dwell/坐标拾取器） | CLAUDE.md「黑暗光锥」节 + engine.js「黑暗光锥」节 + `tools/spot_picker.html` |
 | 新机制（感冒/户外/疲劳/冷兵器分级） | 见下方各处，勿只看一处 |
 | 地理结构优化/图审计（区域重构流程、指标红线） | `.claude/skills/geo-optimization/SKILL.md` + `node tools/graph_audit.mjs <区域>` |
 | 剧情测试/走查（L1 lint·L4 E2E helper·坑点清单·无截图原则） | `.claude/skills/story-testing/SKILL.md` + `node tools/lint_story.mjs` / `tools/test_helper.mjs` |
@@ -956,6 +957,38 @@ choices: [{ text: "继续", nextScene: "原场景", effect: { set: { hasBackpack
 - `renderScene` 每次渲染按当前场景 `imageZoom` 重算角标显隐（同 `showRain` 每场景重置惯例），无需手动管理。
 
 **当前标记场景：** 初始卧室（兼教学：首访文本末尾灰色小字"带 🔍 的场景图可以点开细看"）、物业楼-居委会-给高锦睿（地图）、利昂药剂师的工牌、益丰大药房-右边货架翻找（库房的手机）。新增特写图时照此标记即可，全库 grep `imageZoom` 可盘点。
+
+### 黑暗光锥（`darkSearch` 暗图搜索）
+
+场景图上盖全黑遮罩、只留一个跟随指针的光圈（同图提亮双层模拟"照亮"），玩家把光停在热点上照满 dwellMs 才算"看清"。考察观察与探索，是记忆闪色的姊妹机制。
+
+**场景数据格式：**
+
+```javascript
+"场景ID": {
+  image: "images/xxx.jpg",   // 暗底图：欠曝一档即可（光圈内自动提亮），无需专门手电版
+  darkSearch: {
+    dwellMs: 5000,           // 光圈停留判定时长（中心进入命中圈累计，移出清零）
+    spots: [
+      { id: "防毒面具", x: 0.859, y: 0.593, r: 0.095, var: "_toolLitMask" },
+      { id: "破柜子",  x: 0.567, y: 0.341, r: 0.095, var: "_toolLitCabinet" }
+    ]
+  }
+}
+```
+
+**机制要点（发现与互动分离）：**
+
+- **坐标取法**：x/y/r 是**图片原始宽高的百分比**（0–1），引擎负责 16:9 cover/手机 contain 换算。用 `tools/spot_picker.html` 取：拖图点击、拖动微调、光锥预览自测"找不找得到"、一键导出 spots 代码（按图片名+大小自动存档）。
+- **发现 = 照满 dwellMs** → 写 `var`（须先在 `_variables` 注册）+ 顶部 toast"🔦 你看清了——xxx" + 图上留 ✓ 标记。**互动（拿取/翻找）仍走常规选项**，用 `showCondition: "_toolLitXxx"` 守卫——引擎不做图上浮动按钮，选项语义全留在剧情数据。
+- **刻意不做进度环**：照没照到东西是玩家的观察课题，进度反馈等于报答案（试点约定，勿加）。
+- 光圈/dwell 累计是纯 UI 态（不进 gameState/存档）；已发现态由 var 持久化，回溯随快照还原，重进场景已发现热点直接标 ✓。
+- 光源档自动推断：`hasFireTorch`（暖色 14%）> `hasTorch`（18%）；`darkSearch.light: "torch"/"fire"` 可覆盖。手机弱光源不支持（强黑暗）。无光源则机制不激活（剧情应已用选项门槛拦住进入，如工具间只认火把/手电）。
+- 与 `imageZoom` 互斥：darkSearch 场景强制不显示 🔍 角标（查看器会全屏亮图穿帮）。与场景级 QTE 可叠加（倒计时不暂停，压力版搜索）。
+- 光源分层在 `#image-area` 内部（`#dark-lit-layer`/`#dark-mask`/`.dark-found-mark` z-61），不新增全局层级。
+- 美术标准：底图"欠曝一档"而非黑成一团——提亮（brightness 2.2）拉不出图里没有的信息；热点目标以手电 18% 光圈内 5–15 秒可辨为宜。
+
+**当前接入场景：** 建平-地下车库-工具间-搜查（试点：防毒面具/破柜子/快递包裹/垃圾堆 四热点，垃圾堆接 hasBottle，破柜子与包裹内容物待定）。
 
 ### 层叠顺序（z-index）
 

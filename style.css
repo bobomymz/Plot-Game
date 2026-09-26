@@ -65,6 +65,60 @@ html, body {
   display: block;
 }
 
+/* ====== 黑暗光锥（darkSearch，engine.js「黑暗光锥」节）====== */
+/* 提亮层：同图 + brightness 滤镜，径向 mask 只露出光圈——模拟手电照亮 */
+#dark-lit-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+  pointer-events: none;
+  filter: brightness(2.2) contrast(1.06);
+  -webkit-mask-image: radial-gradient(circle var(--lr, 0px) at var(--lx, 50%) var(--ly, 50%), #000 0 52%, transparent 96%);
+  mask-image: radial-gradient(circle var(--lr, 0px) at var(--lx, 50%) var(--ly, 50%), #000 0 52%, transparent 96%);
+}
+#dark-lit-layer.fire {
+  filter: brightness(1.9) contrast(1.05) sepia(0.35) saturate(1.35);
+}
+/* 遮罩层：圈外压黑（圈边缘半透过渡） */
+#dark-mask {
+  position: absolute;
+  inset: 0;
+  display: none;
+  pointer-events: none;
+  background: radial-gradient(circle var(--lr, 0px) at var(--lx, 50%) var(--ly, 50%),
+    rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.25) 58%, rgba(0, 0, 0, 0.97) 100%);
+}
+#image-area.dark-fire #dark-mask {
+  background: radial-gradient(circle var(--lr, 0px) at var(--lx, 50%) var(--ly, 50%),
+    rgba(26, 10, 0, 0) 0, rgba(26, 10, 0, 0.3) 58%, rgba(10, 4, 0, 0.97) 100%);
+}
+/* 激活态：显示双层、吃掉触摸滚动、隐藏系统光标（光圈就是光标） */
+#image-area.dark-searching {
+  touch-action: none;
+  cursor: none;
+}
+#image-area.dark-searching #dark-lit-layer,
+#image-area.dark-searching #dark-mask {
+  display: block;
+}
+/* 已发现热点标记（发现后常驻，重进场景按 var 恢复） */
+.dark-found-mark {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 61;
+  background: rgba(10, 16, 11, 0.85);
+  color: #7ecf9d;
+  border: 1px solid rgba(126, 207, 157, 0.8);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
 /* ========== 图片查看器（imageZoom 标记场景可点开，见 engine.js 图片查看器节） ========== */
 /* 角标 = 门票：仅引擎在标记场景给 #image-area 加 .image-zoomable 时显示 */
 #zoom-badge {
@@ -677,7 +731,8 @@ html, body {
     -webkit-user-select: none;
   }
 
-  #scene-image {
+  #scene-image,
+  #dark-lit-layer {
     object-fit: contain;               /* 非 16:9 的图完整显示、两侧/上下补底色，永不裁内容 */
   }
 

@@ -434,7 +434,7 @@ Object.assign(storyData, {
   },
   "结局-来自丧尸的惊吓": {
     image: "images/home/zombieScare.webp",
-    text: "突然，一只丧尸不知从什么地方窜了出来，向你扑来！\n—— 结局：衣柜丧尸 ——",
+    text: "突然，一只丧尸不知从什么地方窜了出来，向你扑来！",
     qte: {
       timeout: "8000 - repeatedClickTimes * 2000 - foodUnderBed * 999", // 8 秒起，但每次点击减少2秒
       onTimeout: "结局-反应太慢被咬死了"  // 超时则被咬死

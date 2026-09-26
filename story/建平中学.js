@@ -1039,17 +1039,21 @@ Object.assign(storyData, {
 
   "建平-地下车库-工具间": {
     image: function(vars) {
-      if(vars.hasTorch) return "images/建平/地下工具间-手电筒.webp";
-      if(vars.hasFireTorch) return "images/建平/地下工具间-火把.webp";
-      return "images/placeholder.png";
+      if (!vars._visit['建平-地下车库-工具间-开门']) return "images/placeholder.png";
+      // 开门后室内：昏暗底图（试点用降亮度试验图，定稿换正式 webp）
+      return "images/建平/地下工具间-test.jpg";
     },
     onEnter: function(vars) { vars.currentPos = "地下车库工具间"; vars.positionAfterOperation = "建平-地下车库-工具间"; },
     text: function(vars) {
       if (!vars._visit['建平-地下车库-工具间-开门']) {
         return "你摸索了一番，找到了工具间。工具间的门锁着。这锁不是普通挂锁——是后勤的那种铁芯锁。";
       }
-      var desc = "地面散落着大量塑料瓶、包装袋等垃圾，各种杂物堆叠在一起：倾斜的门板、折叠椅、行李箱、布袋、泡沫箱。各色袋子、布料和废弃家具相互挤靠，东西几乎堆满地面，";
-      if (!vars.hasGasMask) desc += "\n角落里放着一只老式防毒面具。";
+      var desc = "工具间里黑黢黢的，只有门口漏进来的一点车库应急灯光，勉强照出满地堆叠的杂物轮廓——塑料瓶、包装袋、旧家具挤作一团。\n";
+      if (vars.hasFireTorch || vars.hasTorch) {
+        desc += "这样的黑，得举着光源把屋里搜一遍，才看得清哪儿有什么。";
+      } else {
+        desc += "没有光源，你只能站在门口，看个大概。";
+      }
       return desc;
     },
     choices: function(vars) {
@@ -1060,12 +1064,29 @@ Object.assign(storyData, {
         } else {
           cs.push({ text: "（锁着，打不开）", nextScene: "建平-地下车库" });
         }
-      } else {
-        if (!vars.hasGasMask) {
-          cs.push({ text: "拿防毒面具", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-工具间-拿面具", elseScene: "整理整理" });
-        }
-        cs.push({ text: "离开", nextScene: "建平-地下车库", effect: updateTime(1) });
+        return cs;
       }
+      // 开门后：光锥搜索入口（强黑暗——手机弱光源不行，只认火把/手电，同车库深处门槛）
+      if (vars.hasFireTorch || vars.hasTorch) {
+        cs.push({
+          text: function(v) { return (v.hasFireTorch ? "举着火把" : "打亮手电筒") + "，把屋里仔细搜一遍"; },
+          nextScene: "建平-地下车库-工具间-搜查"
+        });
+      }
+      // 发现与互动分离：照亮（darkSearch 写 var）之后，互动选项才出现
+      if (vars._toolLitTrash && !vars.hasBottle) {
+        cs.push({ text: "在垃圾堆里翻一只空瓶子", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-工具间-翻垃圾堆", elseScene: "整理整理" });
+      }
+      if (vars._toolLitCabinet && !vars._visit['建平-地下车库-工具间-翻破柜子']) {
+        cs.push({ text: "翻翻那只破柜子", nextScene: "建平-地下车库-工具间-翻破柜子" });
+      }
+      if (vars._toolLitParcel && !vars._visit['建平-地下车库-工具间-拆包裹']) {
+        cs.push({ text: "拆开那个快递包裹", nextScene: "建平-地下车库-工具间-拆包裹" });
+      }
+      if (vars._toolLitMask && !vars.hasGasMask) {
+        cs.push({ text: "拿防毒面具", condition: "itemCount < bagVolume", nextScene: "建平-地下车库-工具间-拿面具", elseScene: "整理整理" });
+      }
+      cs.push({ text: "离开", nextScene: "建平-地下车库", effect: updateTime(1) });
       return cs;
     }
   },
@@ -1084,6 +1105,57 @@ Object.assign(storyData, {
     text: "你取下那只防毒面具。橡胶面罩保存得还行，滤罐没有明显破损。\n你把面具收进包里。",
     choices: [
       { text: "收好", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+    ]
+  },
+
+  // ==================== 工具间·光锥搜索（黑暗光锥机制试点）====================
+  // 底图=降亮度试验图（地下工具间-test.jpg）；定稿换正式 webp。
+  // 美术标准："欠曝一档"而非黑成一团——光圈内提亮（brightness 2.2）拉不出图里没有的信息。
+  // 坐标取自 tools/spot_picker.html（图片原始宽高百分比）。
+  "建平-地下车库-工具间-搜查": {
+    image: "images/建平/地下工具间-test.jpg",
+    darkSearch: {
+      dwellMs: 5000,
+      spots: [
+        { id: "防毒面具", x: 0.859, y: 0.593, r: 0.095, var: "_toolLitMask" },
+        { id: "破柜子", x: 0.567, y: 0.341, r: 0.095, var: "_toolLitCabinet" },
+        { id: "顺丰快递包裹", x: 0.279, y: 0.225, r: 0.095, var: "_toolLitParcel" },
+        { id: "垃圾堆", x: 0.428, y: 0.715, r: 0.095, var: "_toolLitTrash" }
+      ]
+    },
+    onEnter: updateTime(2),
+    text: function(vars) {
+      var light = vars.hasFireTorch ? "火把" : "手电";
+      return "你举着" + light + "跨进工具间。光圈落到哪儿，哪儿才从黑暗里浮出来——满地杂物的轮廓、挤在墙边的旧家具。\n想看清一件东西，就把光在它身上停得久一点。";
+    },
+    choices: [
+      { text: "收起光源，退到门外", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-地下车库-工具间-翻垃圾堆": {
+    image: "images/建平/地下工具间-test.jpg",  // 试点试验图，定稿换特写
+    onEnter: { set: { hasBottle: true, bottleWater: 0 }, add: { itemCount: 1 } },
+    text: "你把那堆空瓶子、泡沫箱和发脆的包装袋扒开一道口子，从里面捡出一只还算完整的空水瓶。\n瓶盖拧得很紧——上一个用它的人，走得应该很匆忙。",
+    choices: [
+      { text: "收好空瓶", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+    ]
+  },
+
+  // TODO(待定)：破柜子/快递包裹内容物未定，先按"翻找一无所获"占位
+  "建平-地下车库-工具间-翻破柜子": {
+    image: "images/建平/地下工具间-test.jpg",  // 试点试验图，定稿换特写
+    text: "你拉开变形的柜门——里面是后勤攒下的杂物：几根发黑的旧灯管、半瓶凝固的胶水、一沓受潮发胀的领料单。\n领料单上的字迹早就洇成一团，什么都认不出来。",
+    choices: [
+      { text: "关上柜门", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
+    ]
+  },
+
+  "建平-地下车库-工具间-拆包裹": {
+    image: "images/建平/地下工具间-test.jpg",  // 试点试验图，定稿换特写
+    text: "你撕开顺丰的纸箱——里面是一套崭新的教辅资料，收件人是学校的一位老师，塑封都没来得及拆。\n没什么你能用上的东西。",
+    choices: [
+      { text: "放回去", nextScene: "建平-地下车库-工具间", effect: updateTime(1) }
     ]
   },
 
