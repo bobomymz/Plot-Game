@@ -3066,14 +3066,33 @@ Object.assign(storyData, {
   "建平-济美楼-1F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼1F"; return jpHubChase(vars, "建平-济美楼-1F"); },
-    text: "济美楼的白色瓷砖地沾染了血迹。抬头向上看，回字形走廊延伸到屋顶。办公室里传来低吼声，似乎丧尸不少。",
+    text: "济美楼的白色瓷砖地沾染了血迹。中庭是回字形的，一圈圈走廊绕着天井往上叠，最上头是玻璃顶，光从那儿漏下来，把血迹照得发白。办公室里传来低吼声，似乎丧尸不少。",
     choices: [
       { text: "从侧门出去", nextScene: "建平-金苹果大道", effect: updateTime(2) },
       { text: "从正门出去", nextScene: "建平-水池", effect: updateTime(2) },
       { text: "去东楼梯", nextScene: "建平-济美楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-济美楼-西楼梯", effect: updateTime(1) },
       { text: "去心理教室", nextScene: "建平-济美楼-1F-心理教室", effect: updateTime(1) },
-      { text: "去饮料机", nextScene: "建平-济美楼-1F-饮料机", effect: updateTime(1) }
+      { text: "去饮料机", nextScene: "建平-济美楼-1F-饮料机", effect: updateTime(1) },
+      { text: "看看上面", nextScene: "建平-济美楼-1F-中庭", effect: updateTime(1) }
+    ]
+  },
+  "建平-济美楼-1F-中庭": {
+    image: "images/建平/济美楼仰视.webp",
+    onEnter: function(vars) { vars.currentPos = "济美楼1F中庭"; },
+    text: function(vars) {
+      var t = "你站在 1 楼中庭，仰头往上看。回字形走廊一圈圈叠上去，铁栏杆的影子在白瓷砖墙上投出密密的格子。顶上是玻璃顶，光从那儿漏下来。";
+      if (jpPengAtPiano(vars, 3)) {
+        t += "\n最上面那层——4 楼的栏杆后头，坐着一个人。是彭奕宸。他面前那台钢琴顺着天井飘下来的声音断断续续的，在这栋空楼里格外清楚。你看清了，他在笑，手指没停。";
+      } else if (vars.chasedByZombies > 0) {
+        t += "\n你听见上面有拖步声。几只丧尸正贴着上层回字形走廊的栏杆，歪着头往下看你——它们下不来，但这圈天井把你的动静全收了进去。最好别在这儿久留。";
+      } else {
+        t += "\n4 楼那台钢琴蒙着灰，没人碰。各层走廊都空着，只有风从天井穿过去，凉飕飕的。";
+      }
+      return t;
+    },
+    choices: [
+      { text: "回 1 楼走廊", nextScene: "建平-济美楼-1F", effect: updateTime(1) }
     ]
   },
   "建平-济美楼-2F": {
@@ -3099,10 +3118,19 @@ Object.assign(storyData, {
   "建平-济美楼-4F": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼4F"; },
-    text: function(vars) { return "你来到了 4 楼，以前上音乐课就在这里。走廊上有一台钢琴。" + describeZombieWave(vars); },
+    text: function(vars) {
+      var t = "济美楼的 4 楼。回字形走廊围着中庭一圈，靠栏杆摆着一台钢琴。";
+      if (jpPengAtPiano(vars, 3)) {
+        t += "\n彭奕宸正坐在那台钢琴前，十指在琴键上轻轻起落，断断续续弹着一首曲子。听见脚步声，他抬头看见是你，咧嘴一笑：“哟，你上来了。刚才楼下是不是听见了？这破楼天井跟个喇叭似的，声音直往下灌。”";
+      } else if (vars._pengGalCleared) {
+        t += "\n彭奕宸靠在钢琴边发呆，见你上来，抬手点了下：“来啦。刚才那局谢了啊。”他低头，又随手按了两个音，“你上来它们可上不来——这楼梯，三层楼，累死它们。”";
+      }
+      return t + describeZombieWave(vars);
+    },
     choices: [
       { text: "去东楼梯", nextScene: "建平-济美楼-东楼梯", effect: updateTime(1) },
       { text: "去西楼梯", nextScene: "建平-济美楼-西楼梯", effect: updateTime(1) },
+      { text: "休息一下，听音乐", showCondition: function(v) { return jpPengAtPiano(v, 3) || v._pengGalCleared; }, nextScene: "建平-济美楼-4F-走廊-听音乐", effect: updateTime(1) },
       { text: "去音乐教室", nextScene: "建平-济美楼-4F-音乐教室", effect: updateTime(1) }
     ]
   },
@@ -3121,36 +3149,21 @@ Object.assign(storyData, {
   "建平-济美楼-4F-音乐教室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "济美楼4F音乐教室"; },
-    text: function(vars) {
-      if (jpPengAtPiano(vars, 3)) {
-        return "你走进了音乐教室。\n彭奕宸正坐在钢琴前，十指在琴键上轻轻起落，断断续续地弹着一首曲子。听见你进来，他吓得一激灵，抬头看见是你，叹了口气，说：\n\
-“好久没见着活人了。我来这里弹会儿钢琴散散心，你想听吗？”";
-      }
-      if (vars._pengGalCleared) {
-        var galLine = vars._pengGalResult === "true" ? "刚才那隐藏结局，谢了啊。" : "刚才那局，谢了啊。";
-        return "彭奕宸正靠着钢琴发呆，看见你，咧嘴一笑：“哟，你来了。" + galLine + "”\n\
-他低头，继续弹起一首曲子。\n\
-“你这么做不怕丧尸过来吗？”\n\
-“不怕。它们怕3层楼不得累死。”\n\
-确实，济美楼的楼梯实在陡峭。";
-      }
-      return "你走进了4楼的音乐教室————好久没来过了，之前的音乐课都在操场上。一架旧钢琴蒙着灰，谱架上的乐谱被风吹乱了几页。几排折叠椅错落有序，空无一人。";
-    },
+    text: "你走进了 4 楼的音乐教室——好久没来过了，以前的课都在操场上上。一架旧钢琴蒙着灰，谱架上的乐谱被风吹乱了几页。几排折叠椅错落有序，空无一人。走廊那头好像有人在弹琴，但这儿的琴，是没人碰的。",
     choices: [
-      { text: "休息一下，听音乐", showCondition: function(v) { return jpPengAtPiano(v, 3) || v._pengGalCleared; }, nextScene: "建平-济美楼-4F-音乐教室-听音乐", effect: updateTime(1) },
       { text: "回 4 楼走廊", nextScene: "建平-济美楼-4F", effect: updateTime(1) }
     ]
   },
-  "建平-济美楼-4F-音乐教室-听音乐": {
+  "建平-济美楼-4F-走廊-听音乐": {
     image: "images/placeholder.png",
     onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; restRecover(vars, 1); return updateTime(30, { set: { _travelMinutes: 0 } })(vars); },
     text: function(vars) {
-      return "彭奕宸十指在琴键上轻轻起落，一首《命运交响曲》从指尖流出。你挑了张折叠椅坐下，闭上眼，任由琴声把你裹住——紧绷的神经一点点松了下来。" + restHint(vars, "你回复1点体力");
+      return "彭奕宸十指在琴键上轻轻起落，一首《命运交响曲》从指尖流出。你靠着 4 楼回字形走廊的栏杆坐下，琴声顺着中庭的天井往下灌，闭上眼，紧绷的神经一点点松了下来。" + restHint(vars, "你回复1点体力");
     },
     choices: [
-      { text: "再听一会儿", nextScene: "建平-济美楼-4F-音乐教室-听音乐", effect: updateTime(1) },
-      restTidyChoice("建平-济美楼-4F-音乐教室-听音乐"),
-      { text: "继续", nextScene: "建平-济美楼-4F-音乐教室", effect: updateTime(1) }
+      { text: "再听一会儿", nextScene: "建平-济美楼-4F-走廊-听音乐", effect: updateTime(1) },
+      restTidyChoice("建平-济美楼-4F-走廊-听音乐"),
+      { text: "继续", nextScene: "建平-济美楼-4F", effect: updateTime(1) }
     ]
   },
 
