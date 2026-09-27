@@ -360,7 +360,7 @@ Object.assign(storyData, {
     choices: [
       {
         condition: "hasTorch || (hasPhone && phoneBattery > 0)",
-        text: "往后勤区方向走",
+        text: "往右走",
         nextScene: "仁济南院-后勤通道",
         effect: function(vars) { return updateTime(5, { add: { phoneBattery: vars.hasTorch ? 0 : -5 } })(vars); }
       },

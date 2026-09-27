@@ -233,7 +233,7 @@ Object.assign(storyData, {
   },
 
   "全家便利店-员工通道-丧尸的偷袭-储物柜": {
-    image: "images/小区周边/全家和公交站/仓库.webp",
+    image: "images/全家和公交站/储物柜里.webp",
     onEnter: { set: { hasDoorKey1: true, _fmStaffTagSeen: true }, add: { itemCount: 1 } },
     text: "你拉开柜门，里面挂着一件员工外套，肩线有些塌。胸口别着一枚塑料名牌，边角磨得起了毛，上面是一个年轻女孩的名字——「苏晓」。你翻了翻口袋，一把钥匙掉了出来，不知道是开什么的。\n你把钥匙收进包里。",
     choices: [
@@ -583,7 +583,8 @@ Object.assign(storyData, {
 
   "全家便利店-员工通道": {
     image: function(vars) {
-      if(vars._visit['全家便利店-零食引路']) return "images/储物柜里.webp";
+      if(vars._visit['全家便利店-零食引路']) return "images/全家和公交站/储物柜里.webp";
+      return "images/全家和公交站/仓库-清场.webp";
     },
     onEnter: function(vars) {
       vars.positionAfterOperation = "全家便利店-员工通道";
