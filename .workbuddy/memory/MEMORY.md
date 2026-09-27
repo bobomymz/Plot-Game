@@ -37,7 +37,10 @@
 - ⚠打字机每 tick 重写 `innerHTML` → CSS `animation` 每帧重启，长动画/抖动只在打完后才完整播。
 - ⚠**选项文本不支持 HTML**（engine 820/910/969 用 `textContent`），要支持须改引擎+白名单过滤。
 - 语义 class 制（非 inline style），色板/字体/class 表见方案 §3；单段配额：≤2 处强调（`crit/sfx/shout`）+ ≤1 处环境色；环境色只包整句不包单词。
-- 迁移基线：265 处 inline style、122 处结局行、7 处 `**` markdown 残留（玩家可见星号=bug）。回归 `node tools/text_markup_scan.js --md`；`lint_story.mjs` 已 `stripHtml` 不误报，但 `ai_phrase_scan*.py` 需补去标签。
+- ⚠**选项文本已支持受限 HTML**（09-27 波波拍板）：engine 三处改 `innerHTML` + `sanitizeInlineHtml()`（DOMParser 白名单 11 标签/23 class；非白名单标签降级纯文本、非白名单属性全丢）。
+- ⚠**新增 class 必须同步三处**：`style.css` 的 `.类` 定义 + `engine.js` 的 `CHOICE_HTML_CLASSES` + `tools/text_markup_lint.js` 的 `ALLOWED_CLASSES`（漏同步 lint 报 E）。
+- 迁移基线：265 处 inline style（未动）、122 处结局行、7 处 `**` markdown 残留（玩家可见星号=bug）。样板已改 `五金店.js`（75 处标记）。回归见 `tools/五金店HTML样板改造报告.md`。
+- 工具：`node tools/text_markup_scan.js --md`（候选清单）、`node tools/text_markup_lint.js`（标记体检，E 有错退出1）、`node tools/choice_html_selftest.mjs`（选项 HTML 18 断言）。`lint_story.mjs` 已 `stripHtml` 不误报，`ai_phrase_scan*.py` 也已补去标签。
 
 ## 复旦江湾章（09-24）
 - `story/复旦江湾.js`：入口 `建平-后门辅路`（hh<14，错过→`_xinGone`）。2×2（堵门/目击/双逃/救场）+ a 链双窗口（`hasWangPhone&&wangPhoneBattery>=6`，出示不扣电）+ b 链 `_phoneOrigin=="own"`；引信 `jpXinFuse` ③次日/④隔日爆，给药不炸→否则 `结局-变了的忻老师`。

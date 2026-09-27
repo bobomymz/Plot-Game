@@ -811,13 +811,71 @@ function resolveChoiceText(choice) {
   return interpolateDisplay(raw, gameState);
 }
 
+// ====== 选项文本：受限 HTML（白名单标签 + 白名单 class）======
+// 背景：选项此前一律 textContent（引擎 820/910/969），剧情里写 <span> 会被原样显示成文本。
+// 现在放行行内标签，但先用 DOMParser 洗一遍：非白名单标签降级成纯文本（文字不丢、标签丢），
+// 非白名单属性全部丢弃。因此 style/script/on* 不可能存活，玩家手写内容（日记本）也进不来。
+// ⚠ 新增 class 时必须同时改两处：style.css 的 .类 定义 + 下面的 CHOICE_HTML_CLASSES。
+const CHOICE_HTML_TAGS = new Set(["SPAN", "B", "STRONG", "I", "EM", "SMALL", "MARK", "CODE", "BR", "SUB", "SUP"]);
+const CHOICE_HTML_CLASSES = new Set([
+  "sys", "warn", "crit", "numb",        // 系统/UI
+  "sfx", "shout", "rot",                // 声音
+  "smell", "think", "mem",              // 感官/叙事
+  "leaf", "water", "fire", "dust", "gore", "chem",  // 环境
+  "hand", "print", "term", "sign",      // 载体
+  "num", "clock", "end"                 // 数值/时间/结局
+]);
+
+function sanitizeInlineHtml(html) {
+  const src = html == null ? "" : String(html);
+  if (src.indexOf("<") === -1) return src;              // 无标签：走原路径，零开销
+  let doc;
+  try {
+    doc = new DOMParser().parseFromString("<div id='__r'>" + src + "</div>", "text/html");
+  } catch (e) {
+    return src.replace(/<[^>]*>/g, "");                 // 极端兜底：全剥标签，只留文字
+  }
+  const root = doc.getElementById("__r");
+  if (!root) return src.replace(/<[^>]*>/g, "");
+
+  (function walk(node) {
+    const children = Array.prototype.slice.call(node.childNodes);
+    for (const child of children) {
+      if (child.nodeType === 3) continue;               // 文本节点，保留
+      if (child.nodeType !== 1) { child.remove(); continue; }
+      if (!CHOICE_HTML_TAGS.has(child.tagName)) {       // 非白名单标签：降级为纯文本
+        child.replaceWith(doc.createTextNode(child.textContent));
+        continue;
+      }
+      const attrs = Array.prototype.slice.call(child.attributes);
+      for (const a of attrs) {
+        if (a.name === "class") {
+          const keep = String(a.value).split(/\s+/).filter(c => CHOICE_HTML_CLASSES.has(c));
+          if (keep.length) child.setAttribute("class", keep.join(" "));
+          else child.removeAttribute("class");
+        } else {
+          child.removeAttribute(a.name);                // 其余属性（style/on*/src…）全部丢弃
+        }
+      }
+      walk(child);
+    }
+  })(root);
+
+  return root.innerHTML;
+}
+
+// 选项文本统一入口：先插值（resolveChoiceText）再洗标签
+function setChoiceText(el, choice) {
+  el.innerHTML = sanitizeInlineHtml(resolveChoiceText(choice));
+}
+
 // ====== 渲染选项 ======
 // 普通选项按钮的统一创建（renderChoices 与黑暗光锥的即时选项共用）：
 // 点击链路 = clearQTE → pushHistory → condition 分支 → effect → 跳转，与常规选项完全一致
 function createChoiceButton(choice) {
   const btn = document.createElement("button");
   btn.className = "choice-btn";
-  btn.textContent = resolveChoiceText(choice);
+  btn.innerHTML = sanitizeInlineHtml(resolveChoiceText(choice));   // 受限 HTML（见 sanitizeInlineHtml 注释）
 
   btn.addEventListener("click", () => {
     clearQTE();   // 安全起见，也清理一下
@@ -907,7 +965,7 @@ function renderChoices(scene, sceneId) {
 
         const btn = document.createElement("button");
         btn.className = "choice-btn";
-        btn.textContent = resolveChoiceText(choice);
+        btn.innerHTML = sanitizeInlineHtml(resolveChoiceText(choice));   // 受限 HTML（QTE 内选项）
 
         btn.addEventListener("click", () => {
           clearQTE();
@@ -931,7 +989,7 @@ function renderChoices(scene, sceneId) {
       // 过场动画（typewriter）纯自动播放，不显示"倒计时中"占位
       if (!qte.typewriter) {
         const noChoiceMsg = document.createElement("p");
-        noChoiceMsg.textContent = "（倒计时中……）";
+        noChoiceMsg.textContent = "……";
         choicesArea.appendChild(noChoiceMsg);
       }
     }
@@ -966,7 +1024,7 @@ function renderChoices(scene, sceneId) {
 
       const label = document.createElement("div");
       label.className = "choice-input-label";
-      label.textContent = resolveChoiceText(choice);
+      label.innerHTML = sanitizeInlineHtml(resolveChoiceText(choice));   // 受限 HTML（输入型选项标签）
       container.appendChild(label);
 
       const row = document.createElement("div");

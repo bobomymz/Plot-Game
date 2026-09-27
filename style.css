@@ -12,6 +12,27 @@
   --ash:      #7a7466;   /* 次要文字/边框/占位 */
   --phosphor: #a8d469;   /* 丧尸眼磷光绿——唯一强调色 */
   --blood:    #9e2a22;   /* 干血——仅危险 */
+
+  /* —— 正文语义色（09-27 加，见 tools/剧情文本HTML增强方案.md §3）—— */
+  /* 系统/UI */
+  --sys:      #4ec9d4;   /* 系统提示青（替代过亮的 #00fbffff） */
+  --warn:     #ffaa00;   /* 警告橙（沿用既有 inline 色） */
+  --crit:     #ff4d3d;   /* 危险红（沿用既有 #ff4444 语义） */
+  /* 物质/感官 */
+  --gore:     #b05a4c;   /* 血、腐肉（描写性暗红，弱于 crit） */
+  --rot:      #9fb05a;   /* 丧尸、腐臭（脏黄绿，别和磷光绿混） */
+  --leaf:     #5f9e7a;   /* 植被 */
+  --water:    #6fa8c8;   /* 水、雨 */
+  --fire:     #ff9a3c;   /* 火、光 */
+  --dust:     #948d80;   /* 尘、雾、灰 */
+  --chem:     #c3cc7a;   /* 化工、汞（银绿） */
+  --smell:    #c0a06a;   /* 气味（褐黄） */
+  /* 载体/叙事 */
+  --mem:      #a99ec4;   /* 回忆（淡紫） */
+  --hand:     #d8c9a3;   /* 手写纸（暖白） */
+  --term:     #7fd3e8;   /* 电子屏（冷青） */
+  --sign:     #e0b64a;   /* 招牌（亮黄） */
+  --numb:     #9aa0a6;   /* 麻木/体征（冷灰，沿用既有 inline 色） */
 }
 
 /* ========== 全局重置 ========== */
@@ -208,6 +229,58 @@ html, body {
   position: relative;
   transition: opacity 0.4s;
 }
+
+/* ========== 正文语义 class（09-27 加）==========
+   规则（写文时务必遵守，防"圣诞树"）：
+   1) 只允许行内元素：#scene-text 是 <p>，<div>/<ul>/<table> 会撑破段落；
+   2) 单段配额：≤2 处强调（crit/sfx/shout）+ ≤1 处环境色；
+   3) 环境色只包整句，不包单词；
+   4) 打字机每帧重写 innerHTML → 不要挂长 CSS 动画，会不停重启；
+   5) 新增/改名必须同步 engine.js 的 CHOICE_HTML_CLASSES（选项白名单）。
+   ============================================== */
+
+/* 系统/UI */
+.sys      { color: var(--sys); font-style: italic; }
+.sys.warn { color: var(--warn); }
+.sys.crit { color: var(--crit); }
+.numb     { color: var(--numb); letter-spacing: 1.2px; }
+
+/* 危险与声音 */
+.crit     { color: var(--crit); font-weight: bold; letter-spacing: 0.05em; }
+.warn     { color: var(--warn); }
+.sfx      { font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 1.35em; font-weight: bold; letter-spacing: 0.1em; }
+.sfx.crit { color: var(--crit); }
+.shout    { font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 1.15em; font-weight: bold; color: var(--warn); }
+.rot      { color: var(--rot); letter-spacing: 0.08em; }
+
+/* 感官/叙事 */
+.smell    { color: var(--smell); font-style: italic; }
+.think    { color: #a99e86; font-style: italic; }
+.mem      { color: var(--mem); opacity: 0.9; }
+
+/* 环境（只包整句，单段最多 1 处） */
+.leaf     { color: var(--leaf); }
+.water    { color: var(--water); }
+.fire     { color: var(--fire); }
+.dust     { color: var(--dust); }
+.gore     { color: var(--gore); }
+.chem     { color: var(--chem);
+            text-shadow: 1.5px 0 0 rgba(195, 204, 122, 0.45), -1.5px 0 0 rgba(195, 204, 122, 0.25); }
+
+/* 载体 */
+.hand     { font-family: "STKaiti", "KaiTi", "Kaiti SC", serif; color: var(--hand); }
+.print    { letter-spacing: 0.08em; color: #b8b09d; }
+.term     { font-family: "Consolas", "Courier New", monospace; color: var(--term);
+            text-shadow: 0 0 6px rgba(127, 211, 232, 0.35); }
+.sign     { font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--sign); letter-spacing: 0.15em; }
+
+/* 数值/时间/结局 */
+.num      { font-family: "Consolas", "Courier New", monospace; color: var(--phosphor); font-weight: bold; }
+.clock    { font-family: "Consolas", "Courier New", monospace; font-size: 0.85em; color: var(--ash); }
+.end      { color: var(--blood); font-weight: bold; letter-spacing: 0.2em; font-size: 1.05em; }
 
 /* 展开/收起文本区域 */
 #text-area.text-expanded {

@@ -6,6 +6,10 @@
    离心机/长桌整齐排列/水泄不通/火辣辣/电梯厅一片死寂/沦陷的城市 等
 """
 import re, os, json, glob
+
+# 09-27 加：剧情正文/选项已支持行内 HTML（见 tools/剧情文本HTML增强方案.md），
+# 统计文风前必须先剥标签，否则 "<span class='crit'>朝你扑了过来</span>" 会被标签切碎、漏检。
+STRIP_HTML_RE = re.compile(r"</?[a-zA-Z][^>]*>")
 from collections import defaultdict
 
 ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "story")
@@ -49,6 +53,7 @@ def extract_texts(path):
         if in_excluded(start):
             continue
         s = m.group(1)
+        s = STRIP_HTML_RE.sub("", s)   # 09-27 加：剧情文本支持 HTML 后，先去标签再统计（否则标签会打断"雷同表述"的连续匹配）
         if len(s) >= 4 and HAN.search(s):
             results.append((scenes[si][1] if scenes else "?", s))
     return results

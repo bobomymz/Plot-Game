@@ -1907,7 +1907,22 @@ Object.assign(storyData, {
   },
 
   "建平-致真楼-2F-化学实验室": {
-    image: "images/placeholder.png",
+    image: function(vars) {
+      if(vars.weather == '雨') {
+        var f = timeImage({
+          morning: "images/建平/化学实验室-雨.webp",
+          evening: "images/建平/化学实验室-雨-evening.webp",
+          night: "images/建平/化学实验室-night.webp"
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/建平/化学实验室.webp",
+        evening: "images/建平/化学实验室-evening.webp",
+        night: "images/建平/化学实验室-night.webp"
+      });
+      return f(vars);
+    },
     onEnter: function(vars) { vars.currentPos = "致真楼2F化学实验室"; },
     text: "这里是致真楼2楼的化学实验室。实验台上摆着各种瓶瓶罐罐，水池边散落着几把镊子和试管刷。",
     choices: function(vars) {
