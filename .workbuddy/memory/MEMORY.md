@@ -31,5 +31,13 @@
 - `mercuryLoad` 0–100，已注册 `_caps`（隐藏变量必有上限）。≥70→`结局-汞中毒尸变`；慢性：`mercuryLoad>0` 才启动、每小时+1，台账 `_mercuryChronicHour` 勿动；减汞唯一手段：童涵春堂药丸−20。派生 `mercuryTier`/`noPainSense`/`hasDimLight`。
 - 体征走正文：灰白→`mercuryMirrorNote(vars,surface)`（7 处勿重复加）；痛觉消失→文案反转+`mercuryPainNote`；夜视→手电弱化版。**玩家可见文案禁止点明机制**（汞/夜视/数值不得出现）；新载体须登记 `mercury_leak_guard` 的 `SCENES`。
 
+## 正文 HTML 排版（09-27 定，方案见 `tools/剧情文本HTML增强方案.md`）
+- 引擎已支持：正文走 `innerHTML`，打字机遇 `<` 整段插标签；`{变量}` 在标签内照常插值。
+- ⚠**只允许行内元素**：`#scene-text` 是 `<p>`，写 `<div>/<p>/<ul>/<table>` 会被自动闭合撑破段落。日记本已用 `<br>`（安全）。
+- ⚠打字机每 tick 重写 `innerHTML` → CSS `animation` 每帧重启，长动画/抖动只在打完后才完整播。
+- ⚠**选项文本不支持 HTML**（engine 820/910/969 用 `textContent`），要支持须改引擎+白名单过滤。
+- 语义 class 制（非 inline style），色板/字体/class 表见方案 §3；单段配额：≤2 处强调（`crit/sfx/shout`）+ ≤1 处环境色；环境色只包整句不包单词。
+- 迁移基线：265 处 inline style、122 处结局行、7 处 `**` markdown 残留（玩家可见星号=bug）。回归 `node tools/text_markup_scan.js --md`；`lint_story.mjs` 已 `stripHtml` 不误报，但 `ai_phrase_scan*.py` 需补去标签。
+
 ## 复旦江湾章（09-24）
 - `story/复旦江湾.js`：入口 `建平-后门辅路`（hh<14，错过→`_xinGone`）。2×2（堵门/目击/双逃/救场）+ a 链双窗口（`hasWangPhone&&wangPhoneBattery>=6`，出示不扣电）+ b 链 `_phoneOrigin=="own"`；引信 `jpXinFuse` ③次日/④隔日爆，给药不炸→否则 `结局-变了的忻老师`。

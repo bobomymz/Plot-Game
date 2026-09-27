@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>尸潮笔记 · 剧情文本样式预览（设计稿）</title>
+<style>
+  :root{
+    /* 沿用 */
+    --canvas:#0b0d0a; --paper:#16140f; --ink:#cfc7b6; --ash:#7a7466;
+    --phosphor:#a8d469; --blood:#9e2a22;
+    /* 新增：系统/UI */
+    --sys:#4ec9d4; --warn:#ffaa00; --crit:#ff4d3d;
+    /* 新增：物质/感官 */
+    --gore:#b05a4c; --rot:#9fb05a; --leaf:#5f9e7a; --water:#6fa8c8;
+    --fire:#ff9a3c; --dust:#948d80; --chem:#c3cc7a; --smell:#c0a06a;
+    /* 新增：载体/叙事 */
+    --mem:#a99ec4; --hand:#d8c9a3; --term:#7fd3e8; --sign:#e0b64a; --numb:#9aa0a6;
+  }
+  body{
+    background:var(--canvas); color:var(--ink); margin:0; padding:28px 20px 60px;
+    font-family:"STZhongsong","Songti SC","Noto Serif CJK SC","SimSun",serif;
+  }
+  h1{font-size:20px; letter-spacing:2px; color:var(--ink); margin-bottom:4px;}
+  .sub{color:var(--ash); font-size:13px; margin-bottom:24px;}
+  h2{font-size:15px; color:var(--phosphor); letter-spacing:1px; margin:26px 0 10px; border-left:3px solid rgba(168,212,105,.5); padding-left:8px;}
+  .panel{
+    width:88%; max-width:1200px; padding:26px 30px; margin:0 auto 14px;
+    background:rgba(22,20,15,.92); border-radius:14px;
+    border:1px solid rgba(122,116,102,.3); border-left:3px solid rgba(158,42,34,.45);
+  }
+  .panel p{ font-size:18px; line-height:1.9; letter-spacing:.5px; white-space:pre-wrap; margin:0 0 14px; color:var(--ink); }
+  .panel p:last-child{margin-bottom:0;}
+  .cap{ font-size:12px; color:var(--ash); margin:0 auto 6px; width:88%; max-width:1200px; }
+
+  /* ====== 语义 class ====== */
+  .sys{ color:var(--sys); font-style:italic; }
+  .sys.warn{ color:var(--warn); }
+  .sys.crit{ color:var(--crit); }
+  .numb{ color:var(--numb); letter-spacing:1.2px; }
+  .crit{ color:var(--crit); font-weight:bold; letter-spacing:.05em; }
+  .warn{ color:var(--warn); }
+  .sfx{ font-family:"PingFang SC","Microsoft YaHei",sans-serif; font-size:1.35em; font-weight:bold; letter-spacing:.1em; }
+  .sfx.crit{ color:var(--crit); }
+  .shout{ font-family:"PingFang SC","Microsoft YaHei",sans-serif; font-size:1.15em; font-weight:bold; color:var(--warn); }
+  .rot{ color:var(--rot); letter-spacing:.08em; }
+  .smell{ color:var(--smell); font-style:italic; }
+  .smell.rot{ color:var(--rot); font-style:italic; }
+  .smell.gore{ color:var(--gore); font-style:italic; }
+  .smell.chem{ color:var(--chem); font-style:italic; }
+  .think{ color:#a99e86; font-style:italic; }
+  .mem{ color:var(--mem); opacity:.9; }
+  .leaf{ color:var(--leaf); }
+  .water{ color:var(--water); }
+  .fire{ color:var(--fire); }
+  .dust{ color:var(--dust); }
+  .gore{ color:var(--gore); }
+  .chem{ color:var(--chem); text-shadow:1.5px 0 0 rgba(195,204,122,.45), -1.5px 0 0 rgba(195,204,122,.25); }
+  .hand{ font-family:"STKaiti","KaiTi","Kaiti SC",serif; color:var(--hand); }
+  .print{ font-family:"STZhongsong","Songti SC",serif; letter-spacing:.08em; color:#b8b09d; }
+  .term{ font-family:"Consolas","Courier New",monospace; color:var(--term); text-shadow:0 0 6px rgba(127,211,232,.35); }
+  .sign{ font-family:"PingFang SC","Microsoft YaHei",sans-serif; color:var(--sign); letter-spacing:.15em; }
+  .num{ font-family:"Consolas","Courier New",monospace; color:var(--phosphor); font-weight:bold; }
+  .clock{ font-family:"Consolas","Courier New",monospace; font-size:.85em; color:var(--ash); }
+  .end{ color:var(--blood); font-weight:bold; letter-spacing:.2em; font-size:1.05em; }
+
+  /* ====== 色板 ====== */
+  .swatches{ display:flex; flex-wrap:wrap; gap:10px; width:88%; max-width:1200px; margin:0 auto; }
+  .sw{ padding:6px 10px; border-radius:6px; background:rgba(22,20,15,.9); border:1px solid rgba(122,116,102,.3); font-size:13px; }
+  table{ width:88%; max-width:1200px; margin:10px auto 0; border-collapse:collapse; font-size:13px; }
+  th,td{ border:1px solid rgba(122,116,102,.3); padding:6px 10px; text-align:left; }
+  th{ color:var(--phosphor); font-weight:normal; }
+  code{ font-family:"Consolas","Courier New",monospace; color:var(--term); }
+</style>
+</head>
+<body>
+
+<h1>尸潮笔记 · 剧情文本 HTML 样式预览</h1>
+<div class="sub">设计稿，未改动任何游戏代码。下面每一块都是真实剧情原文（出处标在上方小字里）。</div>
+
+<h2>① 突袭 / 致命瞬间 — <code>crit</code> + 丧尸嘶吼 <code>rot</code></h2>
+<div class="cap">story/东明街道/地铁站.js:130 「结局-地铁站-站厅层-被发现」</div>
+<div class="panel"><p>你的体力不够撑住蹲姿太久——腿一软，手掌撑在地上发出一声响。靠在墙角的那只丧尸猛地转过头，<span class="rot">嘶吼着</span><span class="crit">朝你扑了过来</span>。
+<span class="crit">你还没来得及站起来就被扑倒了。</span>
+<span class="end">—— 结局：地铁站-站厅层-被发现 ——</span></p></div>
+
+<h2>② 拟声词 — <code>sfx</code>（放大 1.35em + 黑体）</h2>
+<div class="cap">story/东明街道/上实南校.js:1303 「上实南校-后门-潜行」</div>
+<div class="panel"><p>你已经走到窄巷的一半——还有几步就是街口。
+然后你踩到了一根树枝。
+<span class="sfx crit">咔嚓</span>一声。<span class="crit">值日教师猛地转过身来。</span></p></div>
+
+<div class="cap">story/东明街道/上实南校.js:558（门锁崩断）</div>
+<div class="panel"><p>然后你听到了一扇教室门后传来闷响——<span class="sfx">砰砰砰</span>，有东西在撞门。
+你后退了一步。<span class="crit">门锁崩断了。</span></p></div>
+
+<h2>③ 手写遗书 — <code>hand</code>（楷体 + 暖白）</h2>
+<div class="cap">story/东明街道/安居苑.js:1822（7号楼-401 字条）</div>
+<div class="panel"><p>你展开字条，上面的字迹越到后面越抖：
+<span class="hand">“第三天被咬的。不敢去医院，也不敢死在外面。吃的都在墙角，留给后来的人。别学我。”</span>
+你顺着他指的方向看去——墙角整整齐齐码着半箱泡面、几罐午餐肉和一提矿泉水。</p></div>
+
+<h2>④ 电子文本 — <code>term</code> + 客观时间 <code>clock</code></h2>
+<div class="cap">story/仁济南院.js:644（检验科 方瑜 的手机）</div>
+<div class="panel"><p>她的手机屏幕还亮着最后一点微光，你按了一下，微信聊天记录停在最后两行：
+<span class="term">王知筠（18:47）：“到了，后门等我”
+方瑜：“好”</span>
+<span class="clock">时间停在 6月28日。</span>她等在这里，却没能等到人，也没能等到撤离。</p></div>
+
+<h2>⑤ 机械面板 — <code>term crit</code> + 面板蜂鸣 <code>sfx</code></h2>
+<div class="cap">story/张江.js:1335（风淋间）</div>
+<div class="panel"><p>你按下【风淋启动】。面板“<span class="sfx">哔——</span>”地叫了一声，屏幕上<span class="term crit">一行红字：外门未关闭，无法启动</span>。</p></div>
+
+<h2>⑥ 气味分档 — <code>smell</code> 三档（对齐既有「气味按成因」规则）</h2>
+<div class="cap">story/东明街道/五金店.js:21（化工毒气·甜腥）｜ story/东明街道/三林菜市场.js:16（2–7 天腐肉臭）</div>
+<div class="panel"><p>门缝里飘出<span class="smell chem">一股机油混着腐臭的甜味</span>，若有若无，可你知道那不是错觉。</p>
+<p>门缝里飘出<span class="smell rot">一股鱼腥味，混着一丝若有若无的腐味</span>。</p></div>
+
+<h2>⑦ 心理活动 — <code>think</code>（斜体暖灰）</h2>
+<div class="cap">story/东明街道/三林菜市场.js:223</div>
+<div class="panel"><p>你合上门，<span class="think">心里记下：下次挑日头正毒、外面丧尸都躲着的时候再来。</span></p></div>
+
+<h2>⑧ 环境着色（只包整句）— <code>leaf / water / fire / dust / gore</code></h2>
+<div class="cap">story/东明街道/安居苑.js:1756</div>
+<div class="panel"><p>你钻进花坛的<span class="leaf">灌木丛深处。枝条和叶片把你完全遮住了</span>。透过叶缝你能看到丧尸在小区里游荡，但它们没有注意到这片浓密的绿植。</p>
+<p>雨丝直直地落下来。<span class="water">路面的积水倒映着灰蒙蒙的天空</span>，<span class="dust">空气里弥漫着泥土的潮湿气味</span>。</p></div>
+
+<h2>⑨ 编号 / 密码 — <code>num</code>（顺手修掉现状的 ** 星号）</h2>
+<div class="cap">story/东明街道/上实南校.js:805（现状写的是 **0731**，玩家会看到星号）</div>
+<div class="panel"><p>她转身从书桌上拿起一本便签纸，翻到某一页，撕下来递给你。上面写着一串数字：<span class="num">0731</span>。</p></div>
+
+<h2>⑩ 印刷载体 — <code>print</code>（告示/标签/检修表）与招牌 <code>sign</code></h2>
+<div class="cap">示例写法</div>
+<div class="panel"><p>检修表上印着一行：<span class="print">抽检3只做气密性测试，1只存在轻微漏气</span>。</p>
+<p>门牌上钉着<span class="sign">化学实验室</span>几个字，漆掉了一半。</p></div>
+
+<h2>⑪ 汞中毒体征 — <code>numb</code>（冷灰迟钝感）与 <code>chem</code>（重影）</h2>
+<div class="cap">story/utils.js:299（痛觉消失）</div>
+<div class="panel"><p><span class="numb">应该是疼的。你等着那股疼上来，它没有来——只有一片迟钝的麻木，从伤口向外漫开。</span></p>
+<p><span class="chem">白色气体正从柜门缝隙里一丝一丝地漏出来，贴着地面蔓延。</span></p></div>
+
+<h2>⑫ 【系统提示】迁移 — <code>sys / sys warn / sys crit</code></h2>
+<div class="cap">现状 265 处 inline style → class（青色建议从 #00fbffff 换柔和的 #4ec9d4）</div>
+<div class="panel"><p>你拧开瓶盖喝了几口。
+<span class="sys">【系统提示】体力+1，当前体力：7。</span></p>
+<p><span class="sys warn">【系统提示】体力-1，当前体力：3。</span></p>
+<p><span class="sys crit">【系统提示】你受了伤。伤口会加快体力消耗。</span></p></div>
+
+<h2>色板</h2>
+<div class="swatches">
+  <span class="sw" style="color:#cfc7b6">--ink 正文</span>
+  <span class="sw" style="color:#4ec9d4">--sys 系统</span>
+  <span class="sw" style="color:#ffaa00">--warn 警告</span>
+  <span class="sw" style="color:#ff4d3d">--crit 危险</span>
+  <span class="sw" style="color:#b05a4c">--gore 血/腐肉</span>
+  <span class="sw" style="color:#9fb05a">--rot 丧尸/腐臭</span>
+  <span class="sw" style="color:#5f9e7a">--leaf 植被</span>
+  <span class="sw" style="color:#6fa8c8">--water 水/雨</span>
+  <span class="sw" style="color:#ff9a3c">--fire 火/光</span>
+  <span class="sw" style="color:#948d80">--dust 尘/雾</span>
+  <span class="sw" style="color:#c3cc7a">--chem 化工/汞</span>
+  <span class="sw" style="color:#c0a06a">--smell 气味</span>
+  <span class="sw" style="color:#a99ec4">--mem 回忆</span>
+  <span class="sw" style="color:#d8c9a3">--hand 手写</span>
+  <span class="sw" style="color:#7fd3e8">--term 电子屏</span>
+  <span class="sw" style="color:#e0b64a">--sign 招牌</span>
+  <span class="sw" style="color:#9aa0a6">--numb 麻木</span>
+</div>
+
+<h2>硬约束备忘</h2>
+<table>
+  <tr><th>约束</th><th>后果</th></tr>
+  <tr><td><code>#scene-text</code> 是 <code>&lt;p&gt;</code></td><td>只能用行内元素；块级标签会撑破段落</td></tr>
+  <tr><td>打字机每帧重写 innerHTML</td><td>CSS animation 会重启，长动画不可用</td></tr>
+  <tr><td>选项用 <code>textContent</code></td><td>选项文本暂不支持 HTML（需改引擎）</td></tr>
+  <tr><td>单段配额</td><td>最多 2 处强调 + 1 处环境，防圣诞树</td></tr>
+</table>
+
+</body>
+</html>
