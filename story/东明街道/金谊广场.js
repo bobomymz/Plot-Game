@@ -53,6 +53,12 @@ Object.assign(storyData, {
     ]
   },
 
+  // 龙头区端的上行扶梯：连接龙头区（地面）与跨河廊桥上的长廊（幸存者据点），双向可通。
+  // 计时说明：行走时间计在"离开出发场景"那一步（龙头区→扶梯 2 分钟 / 长廊→扶梯 1 分钟），
+  // 本节点两个出口都不重复计时（updateTime(0)），保证往返总耗时与旧版"龙头区↔长廊"直连一致。
+  // ⚠ 刻意不标 outdoor：扶梯在玻璃顶棚下（遮蔽），不标则不会触发 applyWeatherDrain，
+  //   使「龙头区↔长廊」一趟的天气扣减（雨天+20受凉/晴天-0.5体力）与旧版直连保持一致；
+  //   若日后想让扶梯也算户外暴露，加一行 outdoor: true 即可（会多一次天气扣减）。
   "金谊广场-龙头区扶梯": {
     image: function(vars) {
       if(vars.weather == '雨') {
@@ -77,7 +83,36 @@ Object.assign(storyData, {
         night: "images/金谊广场/龙头区入口扶梯-night.webp",
       });
       return f(vars);
-    }
+    },
+    onEnter: function(vars) {
+      vars.currentArea = "周边社区";
+      vars.currentPlace = "金谊广场";
+      vars.currentPos = "龙头区";
+      return {};
+    },
+    text: function(vars) {
+      var fromBridge = vars._lastScene === "金谊广场-龙头区长廊";
+      var desc = fromBridge
+        ? "你从长廊那头折回到扶梯口。\n"
+        : "你走到龙头区入口的扶梯口。\n";
+      desc += "扶梯早停了，一级级踏板往上升，堆进顶棚的暗处。顶棚铺着一格格黄蓝相间的采光板，光从板缝漏下来，在踏板和扶手上切出深浅不一的方块。\n";
+      desc += "扶手外侧挂着广告牌，楼盘和培训班的招贴卷了边，露出底下的一层旧纸。几串灯笼从顶棚垂下来，红的黄的，积了灰。\n";
+      desc += "一级踏板正中撂着一只没人穿的白色运动鞋，鞋口朝上。";
+      desc += "\n" + describeWeather(vars);
+      return desc;
+    },
+    choices: [
+      {
+        text: "上扶梯去长廊",
+        nextScene: "金谊广场-龙头区长廊",
+        effect: updateTime(0)
+      },
+      {
+        text: "下扶梯回龙头区",
+        nextScene: "金谊广场-龙头区",
+        effect: updateTime(0)
+      }
+    ]
   },
 
   // --- 停车场入口（金谊地界西侧到达枢纽） ---
@@ -162,6 +197,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var head;
       if (vars._lastScene === "金谊广场-3F") head = "你穿过三楼的玻璃门，回到长廊上。";
+      else if (vars._lastScene === "金谊广场-龙头区扶梯") head = "你顺着扶梯上到廊桥，走到长廊口。";
       else if (vars._jinyiHasFoodForSurvivors) head = "你回到长廊上。";
       else head = "你走向龙头区的长廊。";
       var desc = head + "这是一条有顶的走廊，跨过小河通向商场3F。\n";
@@ -197,12 +233,12 @@ Object.assign(storyData, {
         choices.push({ text: "穿过长廊去3F", nextScene: "金谊广场-3F", effect: updateTime(2) });
       }
       if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed && !vars._jinyiHasFoodForSurvivors) {
-        choices.push({ text: "去B1奥乐齐找食物", nextScene: "金谊广场-龙头区", effect: updateTime(1) });
+        choices.push({ text: "去B1奥乐齐找食物", nextScene: "金谊广场-龙头区扶梯", effect: updateTime(1) });
       }
       if (vars._jinyiSurvivorsRobbed) {
-        choices.push({ text: "转身离开", nextScene: "金谊广场-龙头区", effect: updateTime(1) });
+        choices.push({ text: "转身离开", nextScene: "金谊广场-龙头区扶梯", effect: updateTime(1) });
       }
-      choices.push({ text: "离开长廊", nextScene: "金谊广场-龙头区", effect: updateTime(1) });
+      choices.push({ text: "离开长廊", nextScene: "金谊广场-龙头区扶梯", effect: updateTime(1) });
       return choices;
     }
   },

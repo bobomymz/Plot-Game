@@ -3366,6 +3366,12 @@ Object.assign(storyData, {
         showCondition: "hasDoorKey1 && !_yorozuyaUnlocked",
       },
       {
+        text: "在店里看看",
+        nextScene: "新达汇-哥哥的深夜食堂-查看",
+        effect: updateTime(1),
+        showCondition: "_yorozuyaUnlocked",
+      },
+      {
         text: "在店里休息一会儿",
         nextScene: "新达汇-哥哥的深夜食堂-休息",
         showCondition: "_yorozuyaUnlocked",
@@ -3409,6 +3415,24 @@ Object.assign(storyData, {
         nextScene: "新达汇-哥哥的深夜食堂",
         effect: updateTime(5),
       },
+    ]
+  },
+  "新达汇-哥哥的深夜食堂-查看": {
+    image: "images/新达汇/哥哥的深夜食堂.webp",
+    text: function(vars) {
+      var d = "你借着壁灯的光在店里转了一圈。吧台一通到底，几把高脚凳倒扣在台面上；后厨的灶台冷着，调料瓶罐却排得整整齐齐。\n\
+吧台后面的墙上钉着一块小白板，是餐厅用来排班的那种——格子被擦过很多遍，边缘只剩几个没擦净的名字。";
+      if (vars._fmStaffTagSeen || vars._visit["全家便利店-员工通道-丧尸的偷袭-杂物间"] > 0) {
+        d += "\n最后一格里留着一个没擦掉的名字：「苏晓」。";
+        if (vars._fmStaffTagSeen) d += "你认得它——全家储物柜里那件员工外套的胸口，别着同一枚名牌。";
+        if (vars._visit["全家便利店-员工通道-丧尸的偷袭-杂物间"] > 0) d += "你想起杂物间那张被撕了一半的班表：白天在便利店，夜里来这里上到两点。";
+      } else {
+        d += "\n最后一格里留着一个没擦掉的名字：「苏晓」，排的是晚班，一直排到夜里的两点。";
+      }
+      return d;
+    },
+    choices: [
+      { text: "回到店里", nextScene: "新达汇-哥哥的深夜食堂", effect: updateTime(1) }
     ]
   },
   "新达汇-东区2F平台": {

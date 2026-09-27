@@ -293,6 +293,7 @@ Object.assign(storyData, {
         elseScene: "三林路-轿车门锁了"
       },
       { text: "去小超市", nextScene: "联华超市", effect: updateTime(2) },
+      { text: "去五金店", nextScene: "五金店", effect: updateTime(4) },
       { text: "横穿到南侧", nextScene: "三林路-南侧", effect: updateTime(1) },
       { text: "回到路中央", nextScene: "三林路", effect: updateTime(1) }
     ]
@@ -312,7 +313,6 @@ Object.assign(storyData, {
     choices: [
       { text: "去老小区", nextScene: "安居苑前门", effect: updateTime(4) },
       { text: "去药房", nextScene: "益丰大药房", effect: updateTime(6) },
-      { text: "去五金店", nextScene: "五金店", effect: updateTime(4) },
       { text: "横穿到北侧", nextScene: "三林路-北侧", effect: updateTime(1) },
       { text: "回到路中央", nextScene: "三林路", effect: updateTime(1) }
     ]

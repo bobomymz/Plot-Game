@@ -169,10 +169,14 @@ Object.assign(storyData, {
           } },
         { id: "烟盒", x: 0.594, y: 0.907, r: 0.055, var: "_fmLitCigarette", decoy: true },
         { id: "杂物间", x: 0.813, y: 0.521, r: 0.065, var: "_fmLitStorage",
-          choice: {   // 陷阱：光全洒在小门上，背后那片黑一秒都没照过——远处那只就埋伏在旁边
-            text: "凑近看看那扇小门",
-            showCondition: "FamilymartHasZombie",
-            nextScene: "结局-员工通道-背后的偷袭"
+          choice: {   // 有丧尸时=陷阱（光全洒在小门上，背后那片黑一秒都没照过——远处那只就埋伏在旁边）；清场后可正常翻找
+            text: function(v) { return v.FamilymartHasZombie ? "凑近看看那扇小门" : "翻看那间杂物间"; },
+            showCondition: function(v) {
+              return v.FamilymartHasZombie || !(v._visit["全家便利店-员工通道-丧尸的偷袭-杂物间"] > 0);
+            },
+            nextScene: function(v) {
+              return v.FamilymartHasZombie ? "结局-员工通道-背后的偷袭" : "全家便利店-员工通道-丧尸的偷袭-杂物间";
+            }
           } }
       ]
     },
@@ -230,10 +234,22 @@ Object.assign(storyData, {
 
   "全家便利店-员工通道-丧尸的偷袭-储物柜": {
     image: "images/小区周边/全家和公交站/仓库.webp",
-    onEnter: { set: { hasDoorKey1: true }, add: { itemCount: 1 } },
-    text: "你拉开柜门，里面挂着一件员工外套。你翻了翻口袋——一把钥匙掉了出来，不知道是开什么的。\n你把钥匙收进包里。",
+    onEnter: { set: { hasDoorKey1: true, _fmStaffTagSeen: true }, add: { itemCount: 1 } },
+    text: "你拉开柜门，里面挂着一件员工外套，肩线有些塌。胸口别着一枚塑料名牌，边角磨得起了毛，上面是一个年轻女孩的名字——「苏晓」。你翻了翻口袋，一把钥匙掉了出来，不知道是开什么的。\n你把钥匙收进包里。",
     choices: [
       { text: "收好", nextScene: "全家便利店-员工通道-丧尸的偷袭", effect: updateTime(1) }
+    ]
+  },
+
+  "全家便利店-员工通道-丧尸的偷袭-杂物间": {
+    image: "images/小区周边/全家和公交站/仓库.webp",
+    text: "杂物间不大，拖把、水桶和成捆的纸箱一直堆到顶。墙角钉着一块软木板，上面贴过一层又一层的班表，最上面那张被撕掉了半张，只剩最后两列还看得清——\n\
+「周一—周五 07:00—15:00 全家（环林东路）」\n\
+「周一—周五 18:00—02:00 深夜食堂（新达汇东区）」\n\
+最后一行用红笔描过两遍：「夜班别迟到」。\n\
+两行字是同一只手写的。一边是便利店，一边是食堂。你对着这张班表站了一会儿。",
+    choices: [
+      { text: "退出去", nextScene: "全家便利店-员工通道-丧尸的偷袭", effect: updateTime(1) }
     ]
   },
 
@@ -566,7 +582,9 @@ Object.assign(storyData, {
   },
 
   "全家便利店-员工通道": {
-    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/员工通道.png */,
+    image: function(vars) {
+      if(vars._visit['全家便利店-零食引路']) return "images/储物柜里.webp";
+    },
     onEnter: function(vars) {
       vars.positionAfterOperation = "全家便利店-员工通道";
       return updateTime(3)(vars);
@@ -580,7 +598,7 @@ Object.assign(storyData, {
       }
       return "你打开手电筒，一道光束劈开黑暗。\n那只迅捷丧尸倒在走廊尽头——它撞翻了一个堆满饮料瓶的铁架，被压在下面动弹不得，只能冲你发出微弱的嘶吼。\n\
 你小心地绕过它。走廊两侧是储物柜和杂物间。其中一个储物柜的门虚掩着，锁上还插着一把钥匙。\n\
-你拉开柜门，里面挂着一件员工外套。你翻了翻口袋——一把钥匙掉了出来，不知道是开什么的。";
+你拉开柜门，里面挂着一件员工外套。胸口别着一枚塑料名牌——「苏晓」，边角磨得起了毛。你翻了翻口袋，一把钥匙掉了出来，不知道是开什么的。";
     },
     choices: [
       {
@@ -588,7 +606,7 @@ Object.assign(storyData, {
         text: "捡起钥匙",
         condition: "itemCount < bagVolume",
         nextScene: "全家便利店内部",
-        effect: updateTime(1, { set: { hasDoorKey1: true }, add: { itemCount: 1 } }),
+        effect: updateTime(1, { set: { hasDoorKey1: true, _fmStaffTagSeen: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
       },
       {
