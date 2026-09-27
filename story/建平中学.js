@@ -1102,7 +1102,7 @@ Object.assign(storyData, {
   },
 
   // ==================== 工具间·光锥搜索（黑暗光锥机制试点）====================
-  // 底图=降亮度试验图（地下工具间-test.jpg）；定稿换正式 webp。
+  // 底图=地下工具间.webp（欠曝定稿版，1024×572，与试验图同尺寸同构图，坐标不用重取）。
   // 美术标准："欠曝一档"而非黑成一团——光圈内提亮（brightness 2.2）拉不出图里没有的信息。
   // 坐标取自 tools/spot_picker.html（图片原始宽高百分比）。
   // 发现即互动：spot.choice 在照亮瞬间由引擎追加渲染成下方选项（完整普通选项语义），
@@ -1136,7 +1136,7 @@ Object.assign(storyData, {
   },
 
   "建平-地下车库-工具间-翻垃圾堆": {
-    image: "images/建平/地下工具间-test.jpg",  // 试点试验图，定稿换特写
+    image: "images/建平/地下工具间.webp",  // 暂用室内全景，定稿换特写
     onEnter: { set: { hasBottle: true, bottleWater: 0 }, add: { itemCount: 1 } },
     text: "你把那堆空瓶子、泡沫箱和发脆的包装袋扒开一道口子，从里面捡出一只还算完整的空水瓶。\n瓶盖拧得很紧——上一个用它的人，走得应该很匆忙。",
     choices: [
@@ -1146,7 +1146,7 @@ Object.assign(storyData, {
 
   // TODO(待定)：破柜子/快递包裹内容物未定，先按"翻找一无所获"占位
   "建平-地下车库-工具间-翻破柜子": {
-    image: "images/建平/地下工具间-test.jpg",  // 试点试验图，定稿换特写
+    image: "images/建平/地下工具间.webp",  // 暂用室内全景，定稿换特写
     text: "你拉开变形的柜门——里面是后勤攒下的杂物：几根发黑的旧灯管、半瓶凝固的胶水、一沓受潮发胀的领料单。\n领料单上的字迹早就洇成一团，什么都认不出来。",
     choices: [
       { text: "关上柜门", nextScene: "建平-地下车库-工具间-搜查", effect: updateTime(1) }
@@ -1154,7 +1154,7 @@ Object.assign(storyData, {
   },
 
   "建平-地下车库-工具间-拆包裹": {
-    image: "images/建平/地下工具间-test.jpg",  // 试点试验图，定稿换特写
+    image: "images/建平/地下工具间.webp",  // 暂用室内全景，定稿换特写
     text: "你撕开顺丰的纸箱——里面是一套崭新的教辅资料，收件人是学校的一位老师，塑封都没来得及拆。\n没什么你能用上的东西。",
     choices: [
       { text: "放回去", nextScene: "建平-地下车库-工具间-搜查", effect: updateTime(1) }
@@ -1217,7 +1217,7 @@ Object.assign(storyData, {
   },
 
   "建平-思贤堂": {
-    image: "images/placeholder.png" /* TODO: images/jianping/sixianHall.png */,
+    image: "images/建平/思贤堂.webp",
     onEnter: function(vars) { vars.showZombies = true; vars.currentPos = "思贤堂"; },
     text: function(vars) { return "这里是思贤堂。红色帷幕耷拉在舞台两边，候场区的钢琴和牌子略显杂乱；没有小桌板的扶手椅整整齐齐地排着，虽然看不到几只丧尸，但椅子的缝隙间应该躺着不少尸体。" + describeZombieWave(vars); },
     choices: [

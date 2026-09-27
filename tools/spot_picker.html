@@ -46,6 +46,11 @@ body.preview #picLit{display:block}
 .spot.out .ring{border-color:var(--red);border-style:dashed}
 .spot.out .tag{color:var(--red)}
 .spot.decoy .dot{background:#8b95a5}
+/* 拖拽热区：dot 周围的透明圆。没有它 .spot 是 0×0、子元素全 pointer-events:none，
+   热点在命中测试里永远点不到（选中/拖动/右键删除全部失效） */
+.spot .hit{position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%}
+.spot .hit:hover{background:rgba(232,176,75,.15)}
+body.dragging,body.dragging *{cursor:grabbing!important}
 body.preview .spot{display:none}
 /* 识别成功后的绿色标记（预览模式下仍显示） */
 .fmark{position:absolute;transform:translate(-50%,-50%);pointer-events:none;font:11px/1.4 Consolas,monospace;color:var(--green);background:#000c;border:1px solid var(--green);border-radius:3px;padding:1px 6px;white-space:nowrap}
@@ -103,6 +108,10 @@ ol li{margin:3px 0}
     <div id="selBox">
       <label>id（用于识别成功提示文案）</label>
       <input type="text" id="spotId" placeholder="消防柜" disabled>
+      <div class="row" style="margin-top:7px">
+        <div><label>x（%）</label><input type="number" id="spotX" min="0" max="100" step="0.1" disabled></div>
+        <div><label>y（%）</label><input type="number" id="spotY" min="0" max="100" step="0.1" disabled></div>
+      </div>
       <label>命中半径 <span id="spotRVal">10%</span>（光圈中心进入此圈即开始累计）</label>
       <input type="range" id="spotR" min="2" max="25" step="0.5" value="10" disabled>
       <label style="margin-top:6px"><input type="checkbox" id="spotDecoy" disabled> 诱饵（照到只给一句旁白）</label>
@@ -111,7 +120,7 @@ ol li{margin:3px 0}
         <button class="danger" id="clearAll" disabled>清空全部</button>
       </div>
     </div>
-    <div class="hint" id="noSel" style="margin-top:4px">在图上点击添加热点；拖动微调，右键删除。</div>
+    <div class="hint" id="noSel" style="margin-top:4px">在图上点击添加热点；点击热点选中后：拖动 / 方向键微调（Shift 大步）、直接改坐标数值，右键删除。</div>
   </section>
 
   <section>
@@ -126,8 +135,8 @@ ol li{margin:3px 0}
     <h2>用法</h2>
     <ol>
       <li>拖入<b>最终版</b>场景图（AI 重绘会挪动物体，坐标必须取自最终图）</li>
-      <li>点击图面添加热点，拖动微调，右键删除</li>
-      <li>选中热点后在上方改 id / 半径 / 诱饵</li>
+      <li>点击图面添加热点；点击热点选中，拖动或方向键（Shift 大步）微调位置，右键删除</li>
+      <li>选中热点后在上方改 id / 坐标 / 半径 / 诱饵</li>
       <li>勾「光锥预览」自测：黑图里扫光，停住累计识别——顺便校准 dwellMs 手感</li>
       <li>复制导出代码，贴进场景数据的 <b>darkSearch</b> 字段</li>
     </ol>
@@ -252,7 +261,8 @@ function rebuild(){
     var ring = document.createElement("div"); ring.className = "ring";
     var dot = document.createElement("div"); dot.className = "dot";
     var tag = document.createElement("div"); tag.className = "tag";
-    el.appendChild(ring); el.appendChild(dot); el.appendChild(tag);
+    var hit = document.createElement("div"); hit.className = "hit";
+    el.appendChild(ring); el.appendChild(dot); el.appendChild(tag); el.appendChild(hit);
     place(el, s);
     el.addEventListener("click", function(ev){ ev.stopPropagation(); });
     el.addEventListener("contextmenu", function(ev){
@@ -264,25 +274,28 @@ function rebuild(){
     el.addEventListener("pointerdown", function(ev){
       ev.preventDefault(); ev.stopPropagation();
       if (sel !== i) { sel = i; syncSelClasses(); syncPanel(); updateExport(); }
-      var r = frame.getBoundingClientRect(), moved = false;
+      var r = frame.getBoundingClientRect(), moved = false, sx = ev.clientX, sy = ev.clientY;
       try { el.setPointerCapture(ev.pointerId); } catch (e) {}
+      document.body.classList.add("dragging");
+      // move/up 挂 window：指针捕获失败或快速拖出热区也不丢事件
       var mv = function(e2){
-        if (Math.abs(e2.clientX - ev.clientX) + Math.abs(e2.clientY - ev.clientY) > 3) moved = true;
+        if (Math.abs(e2.clientX - sx) + Math.abs(e2.clientY - sy) > 3) moved = true;
         if (!moved) return;
         var p = frameToImgPx(e2.clientX - r.left, e2.clientY - r.top);
         s.x = +clamp(p.x / natW, 0, 1).toFixed(3);
         s.y = +clamp(p.y / natH, 0, 1).toFixed(3);
-        place(el, s); updateExport();
+        place(el, s); syncXYInputs(); updateExport();
       };
       var up = function(){
-        el.removeEventListener("pointermove", mv);
-        el.removeEventListener("pointerup", up);
-        el.removeEventListener("pointercancel", up);
+        window.removeEventListener("pointermove", mv);
+        window.removeEventListener("pointerup", up);
+        window.removeEventListener("pointercancel", up);
+        document.body.classList.remove("dragging");
         if (moved) { rebuild(); save(); }
       };
-      el.addEventListener("pointermove", mv);
-      el.addEventListener("pointerup", up);
-      el.addEventListener("pointercancel", up);
+      window.addEventListener("pointermove", mv);
+      window.addEventListener("pointerup", up);
+      window.addEventListener("pointercancel", up);
     });
     frame.appendChild(el);
     if (s.found) {   // 识别自测成功过的：显示绿色标记
@@ -323,11 +336,13 @@ frame.addEventListener("click", function(e){
 function syncPanel(){
   var on = sel >= 0 && sel < spots.length;
   $("#spotId").disabled = !on; $("#spotR").disabled = !on; $("#spotDecoy").disabled = !on;
+  $("#spotX").disabled = !on; $("#spotY").disabled = !on;
   $("#delSpot").disabled = !on; $("#clearAll").disabled = !spots.length;
   $("#noSel").style.display = on ? "none" : "";
   if (!on) return;
   var s = spots[sel];
   if (document.activeElement !== $("#spotId")) $("#spotId").value = s.id;
+  syncXYInputs();
   $("#spotR").value = Math.round(s.r * 100);
   $("#spotRVal").textContent = (+s.r * 100).toFixed(1).replace(/\.0$/, "") + "%";
   $("#spotDecoy").checked = !!s.decoy;
@@ -335,6 +350,23 @@ function syncPanel(){
 $("#spotId").addEventListener("change", function(){
   if (sel < 0) return; spots[sel].id = this.value || "热点"; rebuild(); save();
 });
+// 坐标数值直改（百分比；拖动/方向键微调也会回写到这里）
+function syncXYInputs(){
+  if (sel < 0) return;
+  var s = spots[sel];
+  if (document.activeElement !== $("#spotX")) $("#spotX").value = (s.x * 100).toFixed(1);
+  if (document.activeElement !== $("#spotY")) $("#spotY").value = (s.y * 100).toFixed(1);
+}
+function applyXY(){
+  if (sel < 0) return;
+  var s = spots[sel];
+  var nx = parseFloat($("#spotX").value), ny = parseFloat($("#spotY").value);
+  if (isFinite(nx)) s.x = +clamp(nx / 100, 0, 1).toFixed(3);
+  if (isFinite(ny)) s.y = +clamp(ny / 100, 0, 1).toFixed(3);
+  rebuild(); save();
+}
+$("#spotX").addEventListener("change", applyXY);
+$("#spotY").addEventListener("change", applyXY);
 $("#spotR").addEventListener("input", function(){
   if (sel < 0) return;
   spots[sel].r = +this.value / 100;
@@ -478,6 +510,16 @@ window.addEventListener("keydown", function(e){
   var tag = document.activeElement && document.activeElement.tagName;
   if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
   if (e.key === "Escape") { sel = -1; syncSelClasses(); syncPanel(); }
+  if (sel >= 0 && /^Arrow/.test(e.key)) {   // 方向键微调选中热点（Shift = 大步 1%，默认 0.1%）
+    e.preventDefault();
+    var st = e.shiftKey ? 0.01 : 0.001, s = spots[sel];
+    if (e.key === "ArrowLeft")  s.x = clamp(+(s.x - st).toFixed(3), 0, 1);
+    if (e.key === "ArrowRight") s.x = clamp(+(s.x + st).toFixed(3), 0, 1);
+    if (e.key === "ArrowUp")    s.y = clamp(+(s.y - st).toFixed(3), 0, 1);
+    if (e.key === "ArrowDown")  s.y = clamp(+(s.y + st).toFixed(3), 0, 1);
+    rebuild(); save();
+    return;
+  }
   if ((e.key === "Delete" || e.key === "Backspace") && sel >= 0) {
     e.preventDefault();
     spots.splice(sel, 1);
