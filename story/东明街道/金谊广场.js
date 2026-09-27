@@ -37,7 +37,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "去龙头区长廊",
-        nextScene: "金谊广场-龙头区长廊",
+        nextScene: "金谊广场-龙头区扶梯",
         effect: updateTime(2)
       },
       {
@@ -51,6 +51,33 @@ Object.assign(storyData, {
         effect: updateTime(1)
       }
     ]
+  },
+
+  "金谊广场-龙头区扶梯": {
+    image: function(vars) {
+      if(vars.weather == '雨') {
+        var f = timeImage({
+          morning: "images/金谊广场/龙头区入口扶梯-雨.webp",
+          evening: "images/金谊广场/龙头区入口扶梯-evening.webp",
+          night: "images/金谊广场/龙头区入口扶梯-night.webp",
+        });
+        return f(vars);
+      }
+      else if(vars.weather == '阴') {
+        var f = timeImage({
+          morning: "images/金谊广场/龙头区入口扶梯-阴.webp",
+          evening: "images/金谊广场/龙头区入口扶梯-evening.webp",
+          night: "images/金谊广场/龙头区入口扶梯-night.webp",
+        });
+        return f(vars);
+      }
+      var f = timeImage({
+        morning: "images/金谊广场/龙头区入口扶梯.webp",
+        evening: "images/金谊广场/龙头区入口扶梯-evening.webp",
+        night: "images/金谊广场/龙头区入口扶梯-night.webp",
+      });
+      return f(vars);
+    }
   },
 
   // --- 停车场入口（金谊地界西侧到达枢纽） ---
@@ -951,7 +978,7 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "回长廊",
+        text: "去长廊",
         nextScene: "金谊广场-龙头区长廊",
         effect: updateTime(2)
       },
