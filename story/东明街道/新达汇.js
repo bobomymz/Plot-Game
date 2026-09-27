@@ -2469,7 +2469,7 @@ Object.assign(storyData, {
     ]
   },
   "新达汇-4F火锅-菌菇": {
-    image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
+    image: "images/新达汇/菌菇火锅.webp",
     onEnter: { add: { strength: 2 }, set: { showPowerOut: true,  _triedHotpot: true } },
     text: "🍄菌菇汤底鲜甜暖胃。<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [

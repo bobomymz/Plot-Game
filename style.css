@@ -82,6 +82,10 @@ html, body {
 #dark-lit-layer.fire {
   filter: brightness(1.9) contrast(1.05) sepia(0.35) saturate(1.35);
 }
+/* 手机微光：提亮比手电弱一点（遮罩中央还会再压一层暗，见下） */
+#dark-lit-layer.phone {
+  filter: brightness(2.0) contrast(1.04);
+}
 /* 遮罩层：圈外压黑（圈边缘半透过渡） */
 #dark-mask {
   position: absolute;
@@ -94,6 +98,13 @@ html, body {
 #image-area.dark-fire #dark-mask {
   background: radial-gradient(circle var(--lr, 0px) at var(--lx, 50%) var(--ly, 50%),
     rgba(26, 10, 0, 0) 0, rgba(26, 10, 0, 0.3) 58%, rgba(10, 4, 0, 0.97) 100%);
+}
+/* 手机微光：光圈中央也压一层半透暗（提亮×压暗后圈内净亮度约 1.3×，只有手电的六成）——
+   亮的大件（车、人影、反光）看得出，暗处细字（标语/铭牌）基本不可辨，模拟"手机找东西
+   费劲"的难度梯度（视觉语言同断电灰遮罩）。两档透明度为可调口味值 */
+#image-area.dark-phone #dark-mask {
+  background: radial-gradient(circle var(--lr, 0px) at var(--lx, 50%) var(--ly, 50%),
+    rgba(0, 2, 8, 0.35) 0, rgba(0, 2, 8, 0.48) 58%, rgba(0, 2, 8, 0.97) 100%);
 }
 /* 激活态：显示双层、吃掉触摸滚动、隐藏系统光标（光圈就是光标） */
 #image-area.dark-searching {

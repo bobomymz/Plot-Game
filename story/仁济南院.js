@@ -345,30 +345,28 @@ Object.assign(storyData, {
     image: "images/仁济南院/地下停车场.webp",
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
-      var desc = "地下停车场的入口坡道黑黢黢的，往下看不到底。入口处横着一辆失控的轿车，挡风玻璃碎了一半。\n";
+      var desc = "地下停车场的入口坡道黑黢黢的，往下看不到底。入口处横着一辆失控的轿车，挡风玻璃碎了一半，碎渣一直散进坡道里。\n";
       if (vars.hasTorch) {
-        desc += "你打开照明，光线勉强能照清前方几米——墙边一块指示牌写着“门诊电梯←”，箭头指向车库深处；另一侧的通道则通向医院的后勤区。";
-      } else if(vars.hasPhone && vars.phoneBattery > 0) {
-        desc += "你打开手机，屏幕的微光勉强能照清前方几米——墙边一块指示牌写着“门诊电梯←”，箭头指向车库深处；另一侧的通道则通向医院的后勤区。手机电量还剩 " + vars.phoneBattery + "%。";
-      } else if(vars.hasPhone) {
-        desc += "你摁亮手机——屏幕闪了一下就黑了。电量见底，和没有一样。";
+        desc += "你拧亮手电。光柱扎进坡道，一路推到最底下的水泥柱——车库比你想象的深，一排排柱子往黑暗里延伸，一眼望不到头。";
+      } else if (vars.hasFireTorch) {
+        desc += "你举着火把往下照。火光晃晃悠悠地舔着坡道两壁，柱子的影子一根根往后退——车库比你想象的深，一眼望不到头。";
+      } else if (vars.hasPhone && vars.phoneBattery > 0) {
+        desc += "你摁亮手机，屏幕的微光只够照到脚前三五步。再往里，就是一片会吃掉光的黑。手机电量还剩 " + vars.phoneBattery + "%。";
+      } else if (vars.hasPhone) {
+        desc += "你摁了摁手机——屏幕闪了一下就黑了。电量见底，和没有一样。\n没有光，这样的黑走不得。";
       } else {
-        desc += "里面比外面暗得多——没有照明的话，进去什么都看不见，只会撞上不知道什么东西。";
+        desc += "你朝坡道里望了望——什么都没有，只有黑。\n没有光，这样的黑走不得。";
       }
       return desc;
     },
     choices: [
       {
-        condition: "hasTorch || (hasPhone && phoneBattery > 0)",
-        text: "往右走",
-        nextScene: "仁济南院-后勤通道",
-        effect: function(vars) { return updateTime(5, { add: { phoneBattery: vars.hasTorch ? 0 : -5 } })(vars); }
-      },
-      {
-        condition: "hasTorch || (hasPhone && phoneBattery > 0)",
-        text: "跟着指示牌去坐电梯",
-        nextScene: "仁济南院-地下停车场-电梯口",
-        effect: function(vars) { return updateTime(3, { add: { phoneBattery: vars.hasTorch ? 0 : -5 } })(vars); }
+        showCondition: "hasTorch || hasFireTorch || (hasPhone && phoneBattery > 0)",
+        text: function(vars) {
+          return (vars.hasTorch || vars.hasFireTorch) ? "借着光，下到车库深处" : "借着手机微光，下到车库深处";
+        },
+        nextScene: "仁济南院-地下停车场-深处",
+        effect: updateTime(2)
       },
       {
         text: "去浦锦路",
@@ -376,6 +374,131 @@ Object.assign(storyData, {
         effect: updateTime(6)
       }
     ]
+  },
+
+  // ==================== 车库深处（黑暗光锥第 3 试点：路标导航解锁 + 负热点 + 路径陷阱）====================
+  // 与前两试点的错位：建平工具间=搜物、全家仓库=时限+发现即触发战斗；这里照的是“路”——
+  // 两块指路牌要照亮才出现导航选项（spot.choice 发现即互动）；丧尸群是负热点（照满 2 秒
+  // =惊动，onFound 直接跳 QTE 场景）；废车碎玻璃是路径情报——没照过就去电梯=踩玻璃
+  // ch+1，踩过一次就学会了（_rjLitGlass 置真）。无场景时限：风险来自“光停在哪里”，不是倒计时。
+  // 手机微光=第三档光源（引擎 dark-phone：光圈 10%+遮罩压暗），入口扣 5% 电；压暗层下
+  // 暗处细字基本不可辨——弱光玩家找齐指路牌天然更难，是难度梯度不是 bug。
+  // 热点布局：玻璃(0.226,0.610)与丧尸群(0.297,0.497)命中圈有意重叠——从上方照玻璃
+  // 可能顺手惊动丧尸群，从下方贴近则安全（用户拍板保留的微张力）。
+  "仁济南院-地下停车场-深处": {
+    image: "images/仁济南院/地下停车场-暗图.webp",
+    darkSearch: {
+      dwellMs: 2000,
+      spots: [
+        { id: "丧尸群", x: 0.297, y: 0.497, r: 0.055, var: "_rjLitZombies",
+          onFound: function(v) { return "仁济南院-地下停车场-惊动丧尸群"; } },
+        { id: "“后勤走廊→”标语", x: 0.861, y: 0.550, r: 0.055, var: "_rjLitCorridor",
+          choice: { text: "照着标语去后勤走廊", nextScene: "仁济南院-后勤通道", effect: updateTime(4) } },
+        { id: "“门诊电梯←”牌子", x: 0.492, y: 0.598, r: 0.080, var: "_rjLitElevator",
+          choice: { text: "照着指示牌去门诊电梯",
+            condition: "_rjLitGlass",
+            nextScene: "仁济南院-地下停车场-电梯口",
+            elseScene: "仁济南院-地下停车场-踩到碎玻璃",
+            effect: updateTime(2) } },
+        { id: "废车和碎玻璃", x: 0.226, y: 0.610, r: 0.090, var: "_rjLitGlass" }   // 纯情报：照亮=知道绕开，无选项
+      ]
+    },
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      // 手机微光探路：每次进车库深处扣 5% 电（照明分级惯例；手电/火把不耗）。
+      // 电量在 onEnter 扣、startDarkSearch 在其后判定——刚好耗尽就黑灯，只留退路
+      if (!vars.hasTorch && !vars.hasFireTorch && vars.hasPhone && vars.phoneBattery > 0) {
+        vars.phoneBattery = Math.max(0, vars.phoneBattery - 5);
+      }
+      return {};
+    },
+    text: function(vars) {
+      if (!(vars.hasTorch || vars.hasFireTorch || (vars.hasPhone && vars.phoneBattery > 0))) {
+        return "你站在车库深处，四面是化不开的黑。手边没有任何光——只能听着自己的呼吸声，和偶尔一两下很远的水滴声。\n这里什么都做不了。";
+      }
+      if (vars._lastScene === "仁济南院-地下停车场-踩到碎玻璃") {
+        return "你踮着脚从碎玻璃边上退开，回到车库中间。刚才那声脆响还在柱子之间打转。";
+      }
+      if (vars._lastScene === "仁济南院-地下停车场-电梯-坏钮") {
+        return "你回到车库里。指路牌的箭头还悬在墙上，电梯口那边没什么动静。";
+      }
+      if (vars._lastScene === "仁济南院-后勤通道") {
+        return "你从后勤通道的小门退回车库。光圈推开黑暗，柱子又一根根立回原处。";
+      }
+      var lit = [];
+      if (vars._rjLitElevator) lit.push("门诊电梯");
+      if (vars._rjLitCorridor) lit.push("后勤走廊");
+      var tail = lit.length ? "你已经认下的路：" + lit.join("、") + "。" : "想看清一样东西，就把光在它身上停得久一点。";
+      return "坡道到底，车库比你想象的深。车一辆挨一辆泊在位子里，蒙着薄薄一层灰；左侧两根柱子之间，好像有什么东西挤作一团，一动不动。\n" + tail;
+    },
+    choices: [
+      {
+        text: "退回坡道",
+        nextScene: "仁济南院-地下停车场",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  // 惊动丧尸群：光在丧尸群上停满 2 秒 = 被盯上。10 秒 QTE（ch 越高越短），三条逃生路——
+  // 电梯/后勤走廊都要先照亮过对应指路牌（一块都没照过的玩家只能原路爬坡道逃）。
+  // 所有出口 ch+1：动静已经闹大，别指望悄悄溜走。
+  "仁济南院-地下停车场-惊动丧尸群": {
+    image: "images/仁济南院/地下停车场-暗图.webp",
+    qte: {
+      timeout: "10000 - chasedByZombies * 1000",
+      onTimeout: "结局-仁济-车库尸群"
+    },
+    onEnter: function(vars) { vars.showZombies = true; },
+    text: "光在那片挤作一团的东西上停得太久了。\n十几颗头颅同时转过来，喉咙里滚出同一个音。它们开始动了——方向是你。\n<span style='color: #ffaa00;'>【提示】别愣着，它们不会一直等你。</span>",
+    choices: [
+      {
+        showCondition: "_rjLitElevator",
+        text: "照着指示牌，冲向门诊电梯",
+        condition: "_rjLitGlass",
+        nextScene: "仁济南院-地下停车场-电梯口",
+        elseScene: "仁济南院-地下停车场-踩到碎玻璃",
+        effect: updateTime(1, { add: { chasedByZombies: 1 } })
+      },
+      {
+        showCondition: "_rjLitCorridor",
+        text: "照着标语，冲向后勤走廊",
+        nextScene: "仁济南院-后勤通道",
+        effect: updateTime(2, { add: { chasedByZombies: 1 } })
+      },
+      {
+        text: "原路退回坡道",
+        nextScene: "仁济南院-浦锦路",
+        effect: updateTime(4, { add: { chasedByZombies: 1 } })
+      }
+    ]
+  },
+
+  // 踩到碎玻璃：没照亮过废车碎玻璃就去电梯的代价——ch+1，同时“学会”了
+  // （_rjLitGlass 置真，之后电梯选项不再吃玻璃；从惊动丧尸群冲过来时同样触发）
+  "仁济南院-地下停车场-踩到碎玻璃": {
+    image: "images/仁济南院/地下停车场-暗图.webp",
+    onEnter: function(vars) {
+      vars._rjLitGlass = true;
+      return updateTime(1, { add: { chasedByZombies: 1 } })(vars);
+    },
+    text: "“咔嚓”——脚下炸开一声脆响，你僵在原地。\n碎玻璃。满地的碎玻璃，正闪着你带下来的那点光。\n声音在车库的柱子之间滚了很远。你竖着耳朵听了好几秒——没有别的动静。你踮起脚，小心地绕开那片反光，往电梯口挪。",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "仁济南院-地下停车场-电梯口",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "结局-仁济-车库尸群": {
+    image: "images/zombieWaveSmashYouIntoPieces.webp",
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; },   // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "你终究没能跑过它们。\n十几条影子从车缝里挤出来，把你围在两根水泥柱之间。你的光落在地上，滚了半圈，停住了——安安静静地照着一根柱子，照着你再也够不到的东西。" + weaponBrokeText(vars) + "\n—— 结局：车库尸群 ——";
+    },
+    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-地下停车场-电梯口": {
@@ -399,8 +522,8 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "退回坡道",
-        nextScene: "仁济南院-地下停车场",
+        text: "退回车库",
+        nextScene: "仁济南院-地下停车场-深处",
         effect: updateTime(2)
       }
     ]
@@ -427,7 +550,7 @@ Object.assign(storyData, {
     image: "images/仁济南院/后勤走廊.webp",
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
-      var head = vars._lastScene === "仁济南院-地下停车场" ? "你穿过地下停车场，摸到了医院的后勤通道。" : "你回到医院的后勤通道。";
+      var head = vars._lastScene === "仁济南院-地下停车场-深处" ? "你照着车库里的标语穿过停车场，摸到了医院的后勤通道。" : "你回到医院的后勤通道。";
       return head + "这里堆着手推车、氧气瓶和成箱的耗材，空气中弥漫着一股消毒水混合着霉味的气息。\n\
 这里游荡着几只丧尸，你趁它们不注意，小心地穿了过去。\n\
 通道尽头是一扇写着“检验科”的门，门旁有一条更窄的走道，通往住院部方向。另一头的墙边，立着一扇沉重的铁门，上面贴着一块发黄的“太平间”标识。";
@@ -450,8 +573,8 @@ Object.assign(storyData, {
       },
       {
         text: "去地下停车场",
-        nextScene: "仁济南院-地下停车场",
-        effect: updateTime(5)
+        nextScene: "仁济南院-地下停车场-深处",
+        effect: updateTime(4)
       }
     ]
   },

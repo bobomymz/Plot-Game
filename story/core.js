@@ -195,6 +195,11 @@ const storyData = {
     _renjiNoise: false,         // 是否破门制造过噪音（影响后续风险）
     _renjiVipZombieCleared: false, // 特需病房储物柜丧尸是否已清除（警觉秒杀或沙发引袭后）
     _renjiGateOpen: false,      // 救护车通道铁门是否已打开（车撞开/枪打开锁均可，持久）
+    // 仁济地下停车场·光锥搜索（深处）：照的是"路"——指路牌照亮才解锁导航选项，丧尸群是负热点
+    _rjLitZombies: false,     // 车库深处：丧尸群已被照亮（照满 2 秒=惊动，onFound 跳 QTE；一次性）
+    _rjLitCorridor: false,    // 车库深处：“后勤走廊→”标语已被照亮（解锁去后勤通道的选项）
+    _rjLitElevator: false,    // 车库深处：“门诊电梯←”牌子已被照亮（解锁去电梯口的选项）
+    _rjLitGlass: false,       // 车库深处：废车碎玻璃已知（照亮=知道绕开；踩过一次也置真=学会）
     // 建平中学 - 状态
     _backGateOpened: false,     // 后门是否已开（开门引走丧尸，忻老师后门逃脱的铺垫；内侧杀光后从内开门也算）
     _harshActive: false,        // Harsh（年级组长丧尸）是否被唤醒（坐电梯触发）

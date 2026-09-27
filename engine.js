@@ -1133,12 +1133,16 @@ function appendBacktrackToChoices(scene) {
 // · 光圈与 dwell 累计是纯 UI 态（不进 gameState、不进存档）；已发现态由剧情声明的
 //   var 持久化（须先在 _variables 注册），回溯/读档随快照还原，重进场景直接标 ✓。
 // · 刻意不做进度环：照没照到东西本身就是玩家的观察课题，进度反馈等于报答案。
-// · 光源档自动推断：hasFireTorch（暖色）> hasTorch；darkSearch.light 可覆盖。
-//   手机弱光源不支持（强黑暗，见照明分级）。无光源则机制不激活（剧情应已门槛拦住）。
+// · 光源档自动推断：hasFireTorch（暖色 14%）> hasTorch（18%）> 手机微光（10%+压暗）；
+//   darkSearch.light 可覆盖（"torch"/"fire"/"phone"）。手机档光圈最小，且遮罩中央也压
+//   一层半透暗（CSS dark-phone）——暗处细字（标语/铭牌）基本不可辨、只够找大件，
+//   形成"弱光找路更难"的梯度；电量消耗由剧情在入口扣（照明分级惯例，引擎不管电）。
+//   无光源则机制不激活（剧情应已门槛拦住）。
 // · 与 imageZoom 互斥（renderScene 图片节强制不显示角标，查看器会全屏亮图穿帮）；
 //   与场景级 QTE 可叠加（倒计时不暂停，压力版搜索；onFound 自动跳转会先 clearQTE）。
 const DARK_TORCH_R = 0.18;     // 手电光圈半径（占图片显示宽）
 const DARK_FIRE_R  = 0.14;     // 火把光圈（小一点，暖色）
+const DARK_PHONE_R = 0.10;     // 手机微光光圈（最小；配合遮罩中央压暗层，见 #image-area.dark-phone）
 const DARK_MOBILE_DY = -56;    // 触屏光圈中心上移，别让手指盖住光
 
 let darkActive = false;
@@ -1174,7 +1178,9 @@ function startDarkSearch(scene) {
   const cfg = scene && scene.darkSearch;
   if (!cfg || !Array.isArray(cfg.spots) || !cfg.spots.length) return;
   let tier = typeof cfg.light === "function" ? cfg.light(gameState) : cfg.light;
-  if (!tier) tier = gameState.hasFireTorch ? "fire" : (gameState.hasTorch ? "torch" : "");
+  if (!tier) tier = gameState.hasFireTorch ? "fire"
+    : (gameState.hasTorch ? "torch"
+    : ((gameState.hasPhone && gameState.phoneBattery > 0) ? "phone" : ""));
   if (!tier) return;   // 防御：无光源按普通场景渲染（剧情应已用选项门槛拦住进入）
   ensureDarkLayers();
   darkSpots = cfg.spots.map(function (s) {
@@ -1191,8 +1197,10 @@ function startDarkSearch(scene) {
   darkLight.active = false;
   darkLitLayer.src = sceneImage.src;   // 提亮层同图：圈外被遮罩压黑，圈内提亮=照亮
   darkLitLayer.classList.toggle("fire", tier === "fire");
+  darkLitLayer.classList.toggle("phone", tier === "phone");
   imageArea.classList.add("dark-searching");
   imageArea.classList.toggle("dark-fire", tier === "fire");
+  imageArea.classList.toggle("dark-phone", tier === "phone");
   imageArea.style.setProperty("--lr", "0px");   // 首次移动前光圈收拢，全黑入场
   clearDarkMarkers();
   darkSpots.forEach(function (s) {
@@ -1207,7 +1215,7 @@ function startDarkSearch(scene) {
 function closeDarkSearch() {
   darkActive = false;
   darkSpots = [];
-  imageArea.classList.remove("dark-searching", "dark-fire");
+  imageArea.classList.remove("dark-searching", "dark-fire", "dark-phone");
   clearDarkMarkers();
 }
 
@@ -1271,7 +1279,9 @@ function darkRenderSpotChoice(s, animate) {
 }
 
 function darkRadius() {
-  return imageArea.classList.contains("dark-fire") ? DARK_FIRE_R : DARK_TORCH_R;
+  if (imageArea.classList.contains("dark-fire")) return DARK_FIRE_R;
+  if (imageArea.classList.contains("dark-phone")) return DARK_PHONE_R;
+  return DARK_TORCH_R;
 }
 
 function addDarkMarker(s) {
