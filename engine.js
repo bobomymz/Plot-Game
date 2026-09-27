@@ -1126,13 +1126,17 @@ function appendBacktrackToChoices(scene) {
 // · 发现即互动：热点可挂 choice（完整普通选项语义）——照亮瞬间追加渲染到下方
 //   选项区（choice-new 入场动画），点击走 createChoiceButton 统一链路；
 //   已发现（var=true）的热点，进场景时直接补渲染其选项（按 showCondition 过滤）。
+// · 发现即触发：热点可挂 onFound(vars, id) ——照满 dwellMs 识别成功时调用，
+//   返回场景 ID 则自动跳转（clearQTE + pushHistory，死亡回溯落回本场景可再触发）。
+//   用于"看清即引爆"类节点（如全家仓库：第二只丧尸照亮的瞬间战斗开始）；
+//   正常触发后 choice 不再出现（场景已切走），但保留 choice 可作回溯落回时的手动兜底。
 // · 光圈与 dwell 累计是纯 UI 态（不进 gameState、不进存档）；已发现态由剧情声明的
 //   var 持久化（须先在 _variables 注册），回溯/读档随快照还原，重进场景直接标 ✓。
 // · 刻意不做进度环：照没照到东西本身就是玩家的观察课题，进度反馈等于报答案。
 // · 光源档自动推断：hasFireTorch（暖色）> hasTorch；darkSearch.light 可覆盖。
 //   手机弱光源不支持（强黑暗，见照明分级）。无光源则机制不激活（剧情应已门槛拦住）。
 // · 与 imageZoom 互斥（renderScene 图片节强制不显示角标，查看器会全屏亮图穿帮）；
-//   与场景级 QTE 可叠加（倒计时不暂停，压力版搜索）。
+//   与场景级 QTE 可叠加（倒计时不暂停，压力版搜索；onFound 自动跳转会先 clearQTE）。
 const DARK_TORCH_R = 0.18;     // 手电光圈半径（占图片显示宽）
 const DARK_FIRE_R  = 0.14;     // 火把光圈（小一点，暖色）
 const DARK_MOBILE_DY = -56;    // 触屏光圈中心上移，别让手指盖住光
@@ -1177,7 +1181,8 @@ function startDarkSearch(scene) {
     return {
       id: s.id || "什么",
       x: +s.x || 0, y: +s.y || 0, r: (s.r != null ? +s.r : 0.10),
-      var: s.var || "", decoy: !!s.decoy, choice: s.choice || null, acc: 0,
+      var: s.var || "", decoy: !!s.decoy, choice: s.choice || null,
+      onFound: s.onFound || null, acc: 0,
       found: !!(s.var && gameState[s.var])   // 已发现（var 持久化）：不再判定，直接标 ✓
     };
   });
@@ -1239,6 +1244,18 @@ function darkFind(s) {
   flashStatusWarning("🔦 你看清了——" + s.id);
   addDarkMarker(s);
   darkRenderSpotChoice(s, true);        // 发现即互动：选项带动画追加进下方选项区
+  // 发现即触发：onFound 返回场景 ID 则自动跳转（"看清即引爆"类节点）。
+  // clearQTE 不带旧倒计时进新场景（否则偷袭场的时限会在战斗里归零杀人）；
+  // pushHistory 让死亡回溯落回本场景——已发现态持久，兜底 choice 可手动再触发或撤退。
+  if (typeof s.onFound === "function") {
+    var target = s.onFound(gameState, s.id);
+    if (target) {
+      clearQTE();
+      pushHistory();
+      currentScene = parseRedirectTarget(target, gameState);
+      renderScene(currentScene);
+    }
+  }
 }
 
 // 热点互动选项：完整普通选项语义（showCondition/condition/elseScene/effect/nextScene），

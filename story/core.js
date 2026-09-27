@@ -40,7 +40,6 @@ const storyData = {
     _fmLitLocker: false,     // 全家仓库光锥搜索：储物柜已被照亮发现
     _fmLitCigarette: false,  // 全家仓库光锥搜索：烟盒（纯诱饵）已被照亮发现
     _fmLitStorage: false,    // 全家仓库光锥搜索：杂物间（凑近即死的陷阱）已被照亮发现
-    _fmAmbushEnterMin: 0,    // 全家仓库偷袭：本次进仓库的游戏分钟数（8 分钟时限窗的起点，onEnter 记录；场内往返/整理回来不重记）
     _paraffinTaken: false,    // 益丰大药房库房石蜡油是否已被拿走（一次性守卫；交易掉后不可重拿）
     _zhaoGuangchengFoodGiven: 0, // 益丰大药房赵广成已匀出的食物次数（最多 2 次/每次+1体力；他口粮有限，见底的婉拒靠它门控）
     defeatedOldMan: false,     // 是否已击败安盛街老头丧尸

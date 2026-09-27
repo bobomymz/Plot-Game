@@ -974,6 +974,11 @@ choices: [{ text: "继续", nextScene: "原场景", effect: { set: { hasBackpack
       { id: "防毒面具", x: 0.859, y: 0.593, r: 0.095, var: "_toolLitMask",
         choice: { text: "拿角落的防毒面具", showCondition: "!hasGasMask",
                   condition: "itemCount < bagVolume", nextScene: "…-拿面具", elseScene: "整理整理" } },
+      // onFound = 发现即触发：照满 dwellMs 识别成功时调用，返回场景 ID 则自动跳转
+      //（clearQTE + pushHistory，死亡回溯落回本场景；choice 可留作回溯兜底的手动入口）
+      { id: "远处货架后侧的丧尸", x: 0.763, y: 0.535, r: 0.050, var: "_fmLitFar",
+        onFound: function(v) { return (v._fmLitShelf && v._fmLitFar) ? "…-迎战" : ""; },
+        choice: { text: "它盯上你了——先下手为强！", showCondition: 函数, nextScene: "…-迎战" } },
       // 纯 decoy 也可以不挂 choice，只给 toast
       { id: "破柜子",  x: 0.567, y: 0.341, r: 0.095, var: "_toolLitCabinet",
         choice: { text: "翻翻那只破柜子", showCondition: "!_visit['…-翻破柜子']", nextScene: "…-翻破柜子" } }
@@ -982,10 +987,11 @@ choices: [{ text: "继续", nextScene: "原场景", effect: { set: { hasBackpack
 }
 ```
 
-**机制要点（发现即互动）：**
+**机制要点（发现即互动 / 发现即触发）：**
 
 - **坐标取法**：x/y/r 是**图片原始宽高的百分比**（0–1），引擎负责 16:9 cover/手机 contain 换算。用 `tools/spot_picker.html` 取：拖图点击、拖动微调、光锥预览自测"找不找得到"、一键导出 spots 代码（按图片名+大小自动存档）。
 - **发现 = 照满 dwellMs** → 写 `var`（须先在 `_variables` 注册）+ 顶部 toast"🔦 你看清了——xxx" + 图上留 ✓ 标记 + **`choice` 追加渲染成下方选项**（完整普通选项语义：showCondition/condition/elseScene/effect/nextScene，点击走 createChoiceButton 统一链路）。互动结果节点收尾后 `nextScene` 回搜索场景即可继续搜（记得用 `_lastScene` 给回场短文本，且 onEnter 别放时间成本）。
+- **发现即触发（`onFound`）**：照满 dwellMs 识别成功时引擎调用 `onFound(vars, id)`，**返回场景 ID 则自动跳转**（先 clearQTE 不带旧倒计时进新场景，pushHistory 让死亡回溯落回本场景）。回溯/读档重进时已发现态只走 ✓ 补渲染、不会重放 onFound——"看清即引爆"类节点（如全家仓库第二只丧尸照亮即开战）应同时挂 choice 作回溯兜底的手动入口。
 - **刻意不做进度环**：照没照到东西是玩家的观察课题，进度反馈等于报答案（试点约定，勿加）。
 - 光圈/dwell 累计是纯 UI 态（不进 gameState/存档）；已发现态由 var 持久化，回溯随快照还原，重进场景已发现热点直接标 ✓ 并补渲染其选项（按 showCondition 过滤）。
 - 光源档自动推断：`hasFireTorch`（暖色 14%）> `hasTorch`（18%）；`darkSearch.light: "torch"/"fire"` 可覆盖。手机弱光源不支持（强黑暗）。无光源则机制不激活（剧情应已用选项门槛拦住进入，如工具间只认火把/手电）。
@@ -993,7 +999,7 @@ choices: [{ text: "继续", nextScene: "原场景", effect: { set: { hasBackpack
 - 光源分层在 `#image-area` 内部（`#dark-lit-layer`/`#dark-mask`/`.dark-found-mark` z-61），不新增全局层级。
 - 美术标准：底图"欠曝一档"而非黑成一团——提亮（brightness 2.2）拉不出图里没有的信息；热点目标以手电 18% 光圈内 5–15 秒可辨为宜。
 
-**当前接入场景：** 建平-地下车库-工具间-搜查（试点：防毒面具/破柜子/快递包裹/垃圾堆 四热点全部挂 choice，垃圾堆接 hasBottle，破柜子与包裹内容物待定）。
+**当前接入场景：** 建平-地下车库-工具间-搜查（试点：防毒面具/破柜子/快递包裹/垃圾堆 四热点全部挂 choice，垃圾堆接 hasBottle，破柜子与包裹内容物待定）；全家便利店-员工通道-丧尸的偷袭（第 2 试点：30 秒场景级 QTE 时限 + 两只丧尸 `onFound` 发现即触发战斗 + 储物柜战后才开 + 杂物间凑近即死陷阱，打赢置 FamilymartHasZombie=false）。
 
 ### 层叠顺序（z-index）
 

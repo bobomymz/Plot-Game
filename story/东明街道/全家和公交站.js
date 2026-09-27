@@ -128,40 +128,37 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 员工通道·仓库偷袭（黑暗光锥第 2 试点：搜索 + 时限窗 + 高难闪色）====================
+  // ==================== 员工通道·仓库偷袭（黑暗光锥第 2 试点：30 秒时限 + 发现即触发）====================
   // 入口：全家便利店内部「打手电筒探索员工通道」的 elseScene——没做零食引路时迅捷丧尸没被引走，
   // 它和另一只正躲在仓库里（做了引路/已清场走安全走廊，见"全家便利店-员工通道"）。
   // 机制：
-  // · darkSearch 5 热点：两只丧尸（发现第二只的瞬间按钮变"先下手为强"→迎战）、储物柜（打赢才开，
-  //   战前照亮只给 ✓ 标记）、烟盒（纯诱饵 decoy）、杂物间（凑近即死陷阱——命中圈与远处丧尸圈重叠）。
-  // · 时限窗 8 游戏分钟：onEnter 记 _fmAmbushEnterMin（场内往返/整理回来不重记）；qte 按剩余分钟给
-  //   真实倒计时（每次场内互动烧 1 游戏分钟，QTE 随之收紧），站着不动由 QTE 归零兜底；
-  //   超窗后点"离开"走 elseScene 同样死——转身不是后悔药。
+  // · 场景级 QTE 固定 30 秒真实时限：推开门你只有一线窗口——30 秒内照亮两只丧尸（各 5s dwell）
+  //   自动触发战斗，或点"退出仓库"安全撤离；倒计时归零 = 被偷袭致死。
+  //   打赢后回场 qte 返回 null 不再计时，从容搜刮；撤离后再进，窗口重新给（已发现的热点保持 ✓）。
+  // · 两只丧尸 spot 挂 onFound：第二只照亮的瞬间自动跳迎战（不要"记下位置"式手动环节）；
+  //   spot.choice 只是回溯兜底——死亡回溯落回本场景时两只已是发现态，按钮"先下手为强"手动再触发。
+  // · 储物柜打赢才开（战前照亮只给 ✓ 标记）；烟盒纯诱饵；杂物间凑近即死（命中圈与远处丧尸圈重叠）。
   // · 打赢 → FamilymartHasZombie=false：解锁全家过夜/安全屋，与摸黑线同权。
   "全家便利店-员工通道-丧尸的偷袭": {
     image: "images/小区周边/全家和公交站/仓库.webp",
     qte: function(v) {
       if (!v.FamilymartHasZombie) return null;   // 两只都解决了：不再倒计时
-      var left = (v._fmAmbushEnterMin + 8) - v.gameMinutes;
-      return { timeout: Math.max(4000, left * 60000), onTimeout: "结局-员工通道-丧尸的偷袭" };
+      return { timeout: 30000, onTimeout: "结局-员工通道-丧尸的偷袭" };
     },
     darkSearch: {
       dwellMs: 5000,
       spots: [
         { id: "货架顶端的丧尸", x: 0.648, y: 0.130, r: 0.100, var: "_fmLitShelf",
-          choice: {
-            text: function(v) { return v._fmLitFar ? "它盯上你了——先下手为强！" : "记下它的位置，继续搜"; },
-            showCondition: "FamilymartHasZombie",
-            effect: function(v) { return v._fmLitFar ? {} : updateTime(1)(v); },   // 只发现一只：换角度再搜，烧 1 分钟
-            nextScene: function(v) { return v._fmLitFar ? "全家便利店-员工通道-丧尸的偷袭-迎战" : "全家便利店-员工通道-丧尸的偷袭"; }
+          onFound: function(v) { return (v._fmLitShelf && v._fmLitFar) ? "全家便利店-员工通道-丧尸的偷袭-迎战" : ""; },
+          choice: {   // 仅回溯兜底：两只都已发现的状态下重进场景，手动再触发战斗
+            text: "它盯上你了——先下手为强！",
+            showCondition: function(v) { return v.FamilymartHasZombie && v._fmLitShelf && v._fmLitFar; },
+            nextScene: "全家便利店-员工通道-丧尸的偷袭-迎战"
           } },
         { id: "远处货架后侧的丧尸", x: 0.763, y: 0.535, r: 0.050, var: "_fmLitFar",
-          choice: {
-            text: function(v) { return v._fmLitShelf ? "它盯上你了——先下手为强！" : "记下它的位置，继续搜"; },
-            showCondition: "FamilymartHasZombie",
-            effect: function(v) { return v._fmLitShelf ? {} : updateTime(1)(v); },
-            nextScene: function(v) { return v._fmLitShelf ? "全家便利店-员工通道-丧尸的偷袭-迎战" : "全家便利店-员工通道-丧尸的偷袭"; }
-          } },
+          onFound: function(v) { return (v._fmLitShelf && v._fmLitFar) ? "全家便利店-员工通道-丧尸的偷袭-迎战" : ""; }
+          // 兜底 choice 只挂在货架那只上，避免两只都发现时渲染出两个一模一样的按钮
+          },
         { id: "储物柜", x: 0.142, y: 0.503, r: 0.100, var: "_fmLitLocker",
           choice: {
             text: "翻那只储物柜",
@@ -179,27 +176,20 @@ Object.assign(storyData, {
           } }
       ]
     },
-    onEnter: function(vars) {
-      var inside = ["全家便利店-员工通道-丧尸的偷袭", "全家便利店-员工通道-丧尸的偷袭-险胜",
-                    "全家便利店-员工通道-丧尸的偷袭-储物柜", "整理整理"].indexOf(vars._lastScene) >= 0;
-      if (!inside) vars._fmAmbushEnterMin = vars.gameMinutes;   // 场内往返不重开时限窗
-      return { set: { positionAfterOperation: "全家便利店-员工通道-丧尸的偷袭" } };
-    },
+    onEnter: { set: { positionAfterOperation: "全家便利店-员工通道-丧尸的偷袭" } },
     text: function(vars) {
       if (!vars.FamilymartHasZombie)
         return "仓库里安静下来，只剩你自己的呼吸声。光圈扫过的地方，再没有什么会动了。\n该拿的东西，现在可以从容去拿了。";
       if (vars._lastScene === "全家便利店-员工通道-丧尸的偷袭-储物柜" || vars._lastScene === "整理整理")
         return "你回到光圈里。";
       if (vars._lastScene === "全家便利店-员工通道-丧尸的偷袭")
-        return "你挪了两步，换了个角度继续搜。光圈外的黑，好像比刚才更沉了。";
+        return "光圈外那些看不见的东西，正在朝你收拢。";   // 回溯落回（两只已发现）：战斗按钮就在下面
       return "员工通道尽头的小门虚掩着，你推开门，手电的光束扎进仓库的黑暗。\n货架挤挤挨挨排到墙根，过道里堆着半人高的纸箱。空气里有一股闷闷的甜腥味，像是什么东西在暗处放了很久。\n想看清一件东西，就把光在它身上停得久一点。";
     },
     choices: [
       {
         text: function(v) { return v.FamilymartHasZombie ? "收起手电，退出仓库" : "收起手电，离开仓库"; },
-        condition: function(v) { return !v.FamilymartHasZombie || (v.gameMinutes - v._fmAmbushEnterMin) <= 8; },
         nextScene: "全家便利店内部",
-        elseScene: "结局-员工通道-丧尸的偷袭",
         effect: updateTime(1)
       }
     ]
@@ -251,7 +241,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },   // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "你终究没能同时盯住两个方向。\n头顶的残影压下来的瞬间，货架后的那双灰手也攥住了你的脚踝——你在漆黑的仓库里被前后撕开。\n手电滚落在地，光柱静静照着天花板，直到电池耗尽。" + weaponBrokeText(vars) + "\n\n—— 结局：仓库里的两只丧尸 ——";
+      return "你终究没能同时盯住两个方向。\n头顶的残影压下来的瞬间，货架后的那双灰手也攥住了你的脚踝——你在漆黑的仓库里被前后撕开。\n手电滚落在地，光柱静静照着天花板，直到电池耗尽。" + weaponBrokeText(vars) + "\n—— 结局：仓库里的两只丧尸 ——";
     }
   },
 
@@ -259,7 +249,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
-      return "你的手电全洒在那扇小门上——门后只有拖把和成捆的纸箱，什么都没有。\n可你想看的太多了。背对的那片黑，你一秒钟都没照过。\n灰色的手指扣上你肩膀的时候，你连手电都没来得及松手。" + weaponBrokeText(vars) + "\n\n—— 结局：背后的黑影 ——";
+      return "你的手电全洒在那扇小门上——门后只有拖把和成捆的纸箱，什么都没有。\n可你想看的太多了。背对的那片黑，你一秒钟都没照过。\n灰色的手指扣上你肩膀的时候，你连手电都没来得及松手。" + weaponBrokeText(vars) + "\n—— 结局：背后的黑影 ——";
     }
   },
 
@@ -351,7 +341,7 @@ Object.assign(storyData, {
   "结局-你太慢啦": {
     image: "images/zombieKnockYouDown.webp",
     text: "你抬脚准备离开，那只丧尸转过身来，像一道闪电一样闪现到你面前。\n\
-<span style='color: red; font-weight: bold;'>GAME OVER</span>\n\n—— 结局：你太慢啦 ——"
+<span style='color: red; font-weight: bold;'>GAME OVER</span>\n—— 结局：你太慢啦 ——"
   },
 
   "结局-脚步声太大啦": {
@@ -359,7 +349,7 @@ Object.assign(storyData, {
     text: "你转身躲了起来，大气也不敢喘，缓慢地向门口挪动身子。\n\
 突然，脚下的地板发出嘎吱一声。\n\
 那只丧尸蹭的一下直起身来，猛地向你的位置扑来。\n\
-你被咬死了。\n\n—— 结局：脚步声太大啦 ——"
+你被咬死了。\n—— 结局：脚步声太大啦 ——"
   },
 
   "躲在货架后": {
@@ -546,7 +536,7 @@ Object.assign(storyData, {
 
   "结局-被尸潮群殴": {
     image: "images/zombiesBeatYou.webp",
-    text: "<span style='color: #ff4444; font-weight: bold;'>丧尸一拥而上，把你撕成了碎片。</span>\n\n—— 结局：被尸潮群殴 ——"
+    text: "<span style='color: #ff4444; font-weight: bold;'>丧尸一拥而上，把你撕成了碎片。</span>\n—— 结局：被尸潮群殴 ——"
   },
 
   // ========== 饼干引路 + 员工通道 ==========
@@ -584,11 +574,11 @@ Object.assign(storyData, {
     text: function(vars) {
       if (!vars._visit['全家便利店-零食引路']) {
         // 没做过零食引路、但仓库那两只已被解决（偷袭线打赢）的玩家从这里来
-        var quiet = "员工通道比你想的要深。手电的光推着黑暗往前走，通道尽头的小门敞着。\n仓库方向安静得很——那两只是在里面被你放倒的。\n";
+        var quiet = "手电的光推着黑暗往前走，通道尽头的小门敞着。\n仓库安静得很——那两只是在里面被你放倒的。\n";
         quiet += vars.hasDoorKey1 ? "墙边的储物柜敞着门，空了。" : "墙边的储物柜立在光圈边上。";
         return quiet;
       }
-      return "你打开手电筒，一道光束劈开黑暗。\n员工通道比你想象的要深。那只迅捷丧尸倒在走廊尽头——它撞翻了一个堆满饮料瓶的铁架，被压在下面动弹不得，只能冲你发出微弱的嘶吼。\n\
+      return "你打开手电筒，一道光束劈开黑暗。\n那只迅捷丧尸倒在走廊尽头——它撞翻了一个堆满饮料瓶的铁架，被压在下面动弹不得，只能冲你发出微弱的嘶吼。\n\
 你小心地绕过它。走廊两侧是储物柜和杂物间。其中一个储物柜的门虚掩着，锁上还插着一把钥匙。\n\
 你拉开柜门，里面挂着一件员工外套。你翻了翻口袋——一把钥匙掉了出来，不知道是开什么的。";
     },
@@ -716,7 +706,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。" + weaponBrokeText(vars) + "\n\n—— 结局：员工通道的迅捷丧尸 ——";
+      return "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。" + weaponBrokeText(vars) + "\n—— 结局：员工通道的迅捷丧尸 ——";
     }
   },
 
