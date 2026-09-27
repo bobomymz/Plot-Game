@@ -55,7 +55,7 @@ ok(cs.includes("借着光，下到车库深处"), "坡道：手电玩家看到�
 ok(!cs.some((t) => t.includes("手机微光")), "坡道：手电玩家不出现手机微光选项");
 
 await g.click("借着光，下到车库深处");
-await g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });
 ok(await g.waitChoices(20000), "深处：选项出现（打字机完成，darkSearch 已启动）");
 ok(await g.scene() === S_DEEP, "到达车库深处");
 let cls = await areaClasses(g);
@@ -84,14 +84,14 @@ let st = await g.state();
 ok(st._rjLitGlass === true, "踩过一次：_rjLitGlass 置真（学会了）");
 ok(st.chasedByZombies === ch0 + 1, "踩玻璃：ch+1（" + ch0 + "→" + st.chasedByZombies + "）");
 
-await g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });   // 踩玻璃文本打字中 → 选项未渲染
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });   // 踩玻璃文本打字中 → 选项未渲染
 await g.waitChoices(20000);
 await g.click("继续");
 ok(await g.scene() === S_ELE, "电梯口到达");
-await g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });   // 电梯口文本 ~150 字
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });   // 电梯口文本 ~150 字
 await g.waitChoices(20000);
 await g.click("退回车库");
-await g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });
 await g.waitChoices(20000);
 ok((await g.text()).includes("你已经认下的路"), "重进深处：已认下的路 recap（持久化守卫生效）");
 cs = await g.choices();
@@ -105,8 +105,10 @@ ok(await g.scene() === S_ELE, "学会后：去电梯直达电梯口（不再踩�
 ok((await g.state()).chasedByZombies === ch1, "学会后：ch 不再增加");
 
 // 丧尸群负热点（0.297,0.497）：照满即惊动 → onFound 自动跳 QTE 场景
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });   // 电梯口文本打字中 → 选项未渲染（漏这步会点到上一场景的残留按钮）
+await g.waitChoices(20000);
 await g.click("退回车库");
-await g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });
 await g.waitChoices(20000);
 await dwell(g, 0.297, 0.497, 2800);
 ok(await g.scene() === S_ALARM, "照满丧尸群 2 秒：onFound 自动跳“惊动丧尸群”");
@@ -140,7 +142,7 @@ ok(cs.includes("借着手机微光，下到车库深处"), "坡道：手机玩�
 ok(!cs.includes("借着光，下到车库深处"), "坡道：不出现手电文案选项");
 
 await g.click("借着手机微光，下到车库深处");
-await g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });
 await g.waitChoices(20000);
 st = await g.state();
 ok(st.phoneBattery === 25, "深处入口扣 5% 电（30→" + st.phoneBattery + "）");
@@ -154,6 +156,7 @@ ok((await g.state())._rjLitElevator === true, "手机微光也能照亮路标（
 // 电量耗尽 → 坡道拒绝深入
 await g.teleport(S_RAMP);
 await g.set({ phoneBattery: 0 });
+await g.waitChoices(20000);   // set() 会重渲染当前场景、重跑打字机——等播完再读文本，否则 text() 拿到半截
 ok((await g.text()).includes("电量见底"), "电量归零：坡道提示“电量见底”");
 cs = await g.choices();
 ok(!cs.some((t) => t.includes("下到车库深处")), "电量归零：深入选项消失");
@@ -161,16 +164,17 @@ ok(!cs.some((t) => t.includes("下到车库深处")), "电量归零：深入选�
 // ============ D. 无光线 ============
 console.log("\n=== D. 无光线 ===");
 await g.set({ hasPhone: false });
+await g.waitChoices(20000);   // set() 会重渲染当前场景、重跑打字机——等播完再读文本，否则 text() 拿到半截
 ok((await g.text()).includes("只有黑"), "没手机：坡道提示“只有黑”");
 cs = await g.choices();
 ok(cs.length === 1 && cs[0] === "去浦锦路", "没手机：只剩去浦锦路");
 
 // 后勤通道反进车库深处：无光 → 什么都做不了，光锥不激活
 await g.teleport(S_CORR);
-await g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });   // 后勤通道文本长（~15s 打字机）
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });   // 后勤通道文本长（~15s 打字机）
 await g.waitChoices(25000);
 await g.click("去地下停车场");
-await g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });
+await g.page.evaluate(() => { try { if (typingTimer) document.getElementById("scene-text").click(); } catch (e) {} });
 await g.waitChoices(20000);
 ok(await g.scene() === S_DEEP, "无光从后勤通道进入深处");
 ok((await g.text()).includes("化不开的黑"), "无光分支：四面是化不开的黑");

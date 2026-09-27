@@ -1909,7 +1909,7 @@ Object.assign(storyData, {
   "建平-致真楼-2F-化学实验室": {
     image: "images/placeholder.png",
     onEnter: function(vars) { vars.currentPos = "致真楼2F化学实验室"; },
-    text: "致真楼 2 楼 · 化学实验室。实验台上摆着各种瓶瓶罐罐，水池边散落着几把镊子和试管刷。",
+    text: "这里是致真楼2楼的化学实验室。实验台上摆着各种瓶瓶罐罐，水池边散落着几把镊子和试管刷。",
     choices: function(vars) {
       var cs = [];
       if (vars.hasCSGun && !vars.hasTorch && vars.hasScrewdriver) {

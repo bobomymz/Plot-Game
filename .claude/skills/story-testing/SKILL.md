@@ -85,6 +85,8 @@ await g.close();
 11. **`Math.random`**（武器断/尸潮等）不可复现：接受它，或 evaluate 里 stub `Math.random`。
 12. **Windows 复制保留 mtime**：图片 404 排查时别信文件时间戳（今天踩过：图是刚补的，mtime 显示昨天）。
 13. **vm 静态检查**：极端状态变体（全真/全假/夜晚）可能掏出不可达分支的空 text（jpHide 工厂空 failText）——降为 W 人工核对，勿当 E。
+14. **打字没播完就读 `text()`**：helper 的 `text()` 内部调 `stopTyping()`——只清定时器+回调、**不补全文**（engine.js），会把半截文本冻在原地，断言必假败。断言文本前先 `waitChoices()`（或 evaluate 里 `if (typingTimer) document.getElementById("scene-text").click()` 跳打字机）；`set()`/teleport 后立刻读 text 同样中招——重渲染会重跑打字机。（2026-09-27 仁济车库实录，曾误报为"recap 丢失"）
+15. **切场景后打字期间旧选项按钮残留 DOM**：renderScene 只把 `#choices-area` `display:none`（engine.js），innerHTML 要等打字播完的 renderChoices 才清空重建；`click()` 按 textContent 匹配不看可见性——漏 `waitChoices` 时"选项未找到"的报错列表其实是**上一场景**的旧按钮，极易误读成"页面跳回了上一场景"。真引擎无此问题（玩家看不见隐藏区）。（2026-09-27 仁济车库实录）
 
 ## 人工验收单（真需要人眼的活，模板）
 
