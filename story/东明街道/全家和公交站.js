@@ -13,7 +13,7 @@ Object.assign(storyData, {
       vars.currentPos = "全家便利店";
     },
     text: function(vars) {
-      return "你来到了全家便利店。\n<span class='sfx'>全家熟悉的专属开门声音传来，门缓缓打开。</span>\n也许你可以吃一些东西垫垫肚子。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+      return "你来到了全家便利店。\n<b>全家熟悉的专属开门声音传来，门缓缓打开。</b>\n也许你可以吃一些东西垫垫肚子。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {

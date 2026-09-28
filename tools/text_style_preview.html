@@ -433,6 +433,34 @@
   绿眼 = <code>sfx rot</code>（放大 1.35em + 丧尸脏黄绿，不再是刺眼荧光）、破门 = <code>crit</code>、结局行 = <code>end</code>。
 </div>
 
+<h2>P1 全库迁移完成（09-28）· 三处会改变观感的地方</h2>
+<div class="cap">
+  P1 是<b>纯迁移</b>：<code>270 处 inline style → 语义 class</code>、<code>122 处结局行 → end</code>、<code>5 处 ** 星号</code>。
+  绝大多数是"换个写法、观感不变"。下面是<b>唯三会让你看出变化的地方</b>，请重点确认。
+</div>
+
+<h3 style="width:88%;max-width:1200px;margin:18px auto 6px;font-size:14px;font-weight:normal;color:var(--ash)">① 系统提示青色变柔和（116 处）—— 就是你批准的那一换</h3>
+<div class="panel">
+  <p style="color:#00fbffff;font-style:italic">【系统提示】体力+1，当前体力：{strength}。　← 旧 #00fbffff（刺眼）</p>
+  <p><span class="sys">【系统提示】体力+1，当前体力：{strength}。　← 新 --sys #4ec9d4</span></p>
+  <p><span class="sys warn">【系统提示】体力-3，当前体力：{strength}。　← 扣体力走 warn 橙（沿用既有橙色，观感不变）</span></p>
+</div>
+
+<h3 style="width:88%;max-width:1200px;margin:18px auto 6px;font-size:14px;font-weight:normal;color:var(--ash)">② 结局行 122 处 —— 从裸文本到干血红（这是全库最大的观感增量）</h3>
+<div class="panel">
+  <p>—— 结局：体力耗尽 ——　← 旧：和普通正文一模一样</p>
+  <p><span class="end">—— 结局：体力耗尽 ——</span>　← 新：干血红 + 字距 0.2em + 1.05em</p>
+</div>
+
+<h3 style="width:88%;max-width:1200px;margin:18px auto 6px;font-size:14px;font-weight:normal;color:var(--ash)">③ 四小类"顺手语义化"（共 12 处，需要你点头）</h3>
+<div class="panel">
+  <p><span class="term">6/28 06:57 妈：醒了吗？锅里有粥，妈出去买早饭，很快回来。</span>　← 妈妈的微信：原 #aaa 灰 → 电子屏冷青（2 处）</p>
+  <p><span class="hand">（日记本正文：上一周目的自己写下的字）</span>　← 原 #bfb7a3 → 手写楷体暖白（1 处）</p>
+  <p><span class="clock">（第 3 / 12 页）</span>　← 原 #8a7f6a → 页码走 clock（1 处）</p>
+  <p><span class="sys">【好感度 +25】</span>　← <b>原粉色 → 青色</b>，3 处。归入"UI 反馈=系统提示"，是本次唯一把粉色改掉的决定</p>
+  <p><span class="numb">你是4217人中第一个达成此结局的玩家。</span>　← 彩蛋小字走 numb（4 处）</p>
+</div>
+
 <h2>色板</h2>
 <div class="swatches">
   <span class="sw" style="color:#cfc7b6">--ink 正文</span>
