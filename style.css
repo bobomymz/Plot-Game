@@ -490,6 +490,7 @@ html, body {
   z-index: 150;
   margin-top: 8px;
   padding: 12px 18px;
+  pointer-events: none;        /* 纯展示条：不拦截底下的图片触摸（darkSearch+QTE 叠加时光圈要全图可达） */
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -923,5 +924,117 @@ html, body {
     bottom: auto;
     height: min(56.25vw, 42vh);
     height: min(56.25vw, 42dvh);
+  }
+}
+
+/* ===== 手机横屏：侧栏布局（图左满高 / 文+选项右侧栏） =====
+   动机：竖屏 contain 的 16:9 图是宽度受限（390×219），加高只补黑边；横屏是唯一真正的
+   放大杠杆（844×390 下图片列约 506×285，约 1.7 倍面积）——光锥搜索（darkSearch）的
+   热点坐标是图片百分比、引擎 darkFit 实时读 object-fit，旋转后几何自动适配。
+   触发是双判据并集：宽度 ≤767（沿用竖屏块的手机判据——这种机型横屏时竖屏块同样
+   命中，本块必须写在其后靠源序覆盖）+ 高度 ≤500（横屏手机高度一律 375~430，宽度
+   判据漏掉的 844/932px 宽现代机型由它兜住；桌面矮窗口顺带享受紧凑侧栏，无害）。
+   因此块内规则对基础层自洽（max-height/flex-direction/object-fit 都自带覆盖），
+   不依赖竖屏块先清场。引擎侧配合：darkSearch 竖屏进场提示横屏 + resize 收拢光圈
+   （engine.js「黑暗光锥」节）。 */
+@media (max-width: 767px) and (orientation: landscape),
+       (max-height: 500px) and (orientation: landscape) {
+  #game-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) min(40%, 340px);   /* 图占满高左列，右侧栏 */
+    grid-template-rows: minmax(0, 1fr) auto;                 /* 文本弹性撑满 / 选项自然高 */
+    height: 100vh;
+    height: 100dvh;
+    padding-left: env(safe-area-inset-left, 0px);            /* 横屏刘海在左右两侧 */
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  #image-area {
+    grid-area: 1 / 1 / 3 / 2;      /* 跨两行、满高 */
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;            /* 清竖屏 16:9——横屏以列宽×满高为准 */
+    max-height: none;
+  }
+
+  /* 宽 >767 机型横屏时竖屏块不命中、基础层是 cover——这里统一 contain，
+     手机端两向都认定"完整显示优先"；光锥几何（darkFit 读 object-fit）随之自适应 */
+  #scene-image,
+  #dark-lit-layer {
+    object-fit: contain;
+  }
+
+  #text-area {
+    grid-area: 1 / 2 / 2 / 3;
+    width: auto;                   /* 列宽交给网格 */
+    max-height: none;              /* 清基础层 100px（≤767 机型竖屏块已清，宽机型靠这行） */
+    margin: 8px 8px 0 0;
+    padding: 12px 12px;
+  }
+
+  #scene-text {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  #choices-area {
+    grid-area: 2 / 2 / 3 / 3;
+    width: auto;
+    max-width: none;
+    flex-direction: column;        /* 宽机型基础层是横排——侧栏内一律纵排 */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)) 0;
+    padding-bottom: 10px;          /* 安全区补在 margin 里，不双重叠加 */
+    max-height: 55dvh;             /* 选项多时栏内滚动，不挤死文本行 */
+    gap: 8px;
+  }
+
+  .choice-btn {
+    min-height: 44px;              /* 触控目标不缩水 */
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  /* 角标贴图片右下（宽机型没有竖屏块的贴角规则，这里统一） */
+  #zoom-badge {
+    right: 12px;
+    bottom: 12px;
+  }
+
+  /* QTE 条贴图片列左上（右上角是状态栏所在的侧栏顶），不再居中横跨两栏压住文本 */
+  #qte-timer {
+    top: calc(env(safe-area-inset-top, 0px) + 56px);
+    left: calc(env(safe-area-inset-left, 0px) + 12px);
+    transform: none;
+    width: min(52vw, 480px);
+  }
+
+  /* 展开文本收进右侧栏（竖屏块的 top/bottom/left/宽度在此覆盖），不再全屏盖住图片；
+     底部照竖屏惯例给展开选项留位 */
+  #text-area.text-expanded {
+    left: auto;
+    right: calc(env(safe-area-inset-right, 0px) + 8px);
+    width: min(40%, 340px);
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 150px);
+  }
+  #text-area.text-expanded ~ #choices-area.text-expanded {
+    left: auto;
+    right: calc(env(safe-area-inset-right, 0px) + 8px);
+    transform: none;
+    width: min(40%, 340px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    max-height: 138px;
+  }
+
+  /* 丧尸包围遮罩对齐图片列：满高、右缘在侧栏左界。
+   （fixed 层的 % 按视口解析，与网格按内容盒解析在刘海机型上差零点几个 inset——
+     侧栏纸卡不透明且 z-60 压在遮罩 z-50 上，微小错位被盖住，无视觉影响） */
+  #screen-effect-overlay.zombie-surround-moderate::after,
+  #screen-effect-overlay.zombie-surround-heavy::after {
+    bottom: 0;
+    height: auto;
+    right: calc(env(safe-area-inset-right, 0px) + min(40%, 340px));
   }
 }

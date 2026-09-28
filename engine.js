@@ -1268,6 +1268,11 @@ function startDarkSearch(scene) {
   });
   darkLastT = 0;
   if (!darkLoopOn) { darkLoopOn = true; requestAnimationFrame(darkLoop); }
+  // 触屏+竖屏进场时提示横屏（横屏侧栏布局下图幅约 1.7 倍，找路标/看细节更省力）；
+  // 仅提示不强转（浏览器无权锁方向）。matchMedia 现场求值——同一局中旋转不重弹。
+  if (darkCoarse && window.matchMedia && window.matchMedia("(orientation: portrait)").matches) {
+    flashStatusWarning("🔄 横屏视野更大，建议旋转手机");
+  }
 }
 
 function closeDarkSearch() {
@@ -1383,6 +1388,10 @@ window.addEventListener("resize", function () {
   if (!darkActive) return;
   clearDarkMarkers();
   darkSpots.forEach(addDarkMarker);
+  // 旋转/窗口变化后旧光圈坐标已不可信（darkFit 几何全变）：收拢光圈并暂停 dwell 累计，
+  // 等下一次 pointermove 用新几何重建位置+半径——避免残留一个错位亮圈、甚至静默错判热点。
+  darkLight.active = false;
+  imageArea.style.setProperty("--lr", "0px");
 });
 
 // ====== 核心渲染 ======
