@@ -138,9 +138,11 @@ for (const f of files) {
     // 跳过非剧情文本行（09-28：这些占了全库 W 的大半，会把真问题埋掉）：
     //   - 条件/跳转字段：condition / nextScene 里的比较运算符
     //   - 图片路径：night&midnight.webp 这种文件名里的 & 不进 innerHTML
+    //   - 整行注释（09-28 补）：// 入口：…（hh<14） 这类设计说明不是剧情文本
     const lnStart = src.lastIndexOf("\n", bm.index) + 1;
     const lnEnd = src.indexOf("\n", bm.index);
     const lineTxt = src.slice(lnStart, lnEnd < 0 ? src.length : lnEnd);
+    if (/^\s*\/\//.test(lineTxt)) continue;
     if (/^\s*(show)?[Cc]ondition\s*:|^\s*(nextScene|elseScene|timeoutScene)\s*:|^\s*(image|morning|evening|night|midnight)\s*:|\.(webp|png|jpg|jpeg)/i.test(lineTxt)) continue;
     // 只关心出现在中文文本附近的（代码块里允许比较运算符：这里用简单启发式——前后有中文或引号）
     const s = Math.max(0, bm.index - 12), e = Math.min(src.length, bm.index + 12);

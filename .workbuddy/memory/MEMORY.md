@@ -40,11 +40,12 @@
 - ⚠**选项文本已支持受限 HTML**（09-27 波波拍板）：engine 三处改 `innerHTML` + `sanitizeInlineHtml()`（DOMParser 白名单 11 标签/23 class；非白名单标签降级纯文本、非白名单属性全丢）。
 - ⚠**新增 class 必须同步三处**：`style.css` 的 `.类` 定义 + `engine.js` 的 `CHOICE_HTML_CLASSES` + `tools/text_markup_lint.js` 的 `ALLOWED_CLASSES`（漏同步 lint 报 E）。
 - 迁移基线：265 处 inline style（未动）、122 处结局行、7 处 `**` markdown 残留（玩家可见星号=bug）。回归见各样板报告。
-- **样板一 `五金店.js`（75 处，陷阱屋）**：危险类 crit+end+rot 占 45%。**样板二 `东明街道/长者食堂.js`（42 处，探索/信息型）**：危险类仅 12%，主力是 term 10 / think 5 / smell 5 / print 3。
+- **样板一 `五金店.js`（75 处，陷阱屋）**：危险类 crit+end+rot 占 45%。**样板二 `东明街道/长者食堂.js`（42 处，探索/信息型）**：危险类仅 12%，主力是 term 10 / think 5 / smell 5 / print 3。**样板三 `复旦江湾.js`（81 处，对话/情感线）**：危险类 26%，主力 rot 12 / think 11 / crit 8 / term 6。
+- ⚠**对话/情感线的三条规则**（样板三验证）：① **台词一律不上色，越关键的台词越留白**——留白段紧贴上色段，对比就是节奏（全上色=圣诞树）；② **`think` 是主色**，专给"玩家察觉到但没说出口"；③ **`mem` 专给回忆画面**、`hand` 专给"有人亲手写过的字"（便利贴/铅笔字/纸条），与 `print`（印刷体）、`term`（电子屏）构成三级载体区隔。
 - ⚠**密度开关是「这个节点会不会死人」，不是「每文件几处」**：两文件标记总数只差 1.2 倍，危险类占比差 3.8 倍 → 观感差异全在这。日常点靠 `term`（电子屏）/ `print`（纸上引文）做信息分区、其余整段留白。
 - ⚠跨多行 span 可用（签到机签到记录整块 `term` 跨 7 行，等宽+pre-wrap 对齐），但必须跑浏览器自检确认 `\n` 保留。
 - 工具：`node tools/text_markup_scan.js --md`（候选清单）、`node tools/text_markup_lint.js`（标记体检，E 有错退出1）、`node tools/choice_html_selftest.mjs`（选项 HTML 18 断言）、**`node tools/scene_html_render_selftest.mjs`（正文最终态 64 断言，新样板必加）**。`lint_story.mjs` 已 `stripHtml` 不误报，`ai_phrase_scan*.py` 也已补去标签。
-- ⚠**浏览器渲染自检三坑**（写在脚本注释里）：teleport 后必须等 DOM 落定（否则空串）；**`stopTyping()` 只 clearInterval、不补齐剩余文本**（要最终态得给 `typeText` 打瞬时补丁）；跨行 span 断言要取"该 class 下换行最多的 span"。
+- ⚠**浏览器渲染自检六坑**（写在脚本注释里）：① teleport 后必须等 DOM 落定（否则空串）；② **`stopTyping()` 只 clearInterval、不补齐剩余文本**（要最终态得打瞬时补丁）；③ 跨行 span 断言要取"该 class 下换行最多的 span"；④ **分段文本（`text` 是数组）走 `typeSegments` 不是 `typeText`**，补丁要打两个、还原也要还原两个（只还原 typeText → 补丁版 typeSegments 泄漏到下条用例，前缀断言集体假失败 227/227）；⑤ **QTE 场景走 `innerHTML` 直通、不设 `typingFullText`**，拿它比前缀会读到上条用例的残留值 → 读 `storyData[currentScene].qte` 判 `instant`，直通场景只断言"一次显示完整+非空"；⑥ 累加器 `__segAcc` 每条用例开头要清空。
 - ⚠**既存 4 处 markup bug 已于 09-28 全部修复**（全库 lint E 归零）：上实南校 `<span>` 未闭合、东明街道路径银行存款凭条 `<div>`、
   樱桃苑结局-丧尸的凝视两处 `<div>`。见 `tools/既存markup bug修复报告.md`。
 - ⚠**`sanitizeInlineHtml` 只过滤选项文本；正文 `innerHTML` 直接赋值、不过滤** → 正文里写 `<div style=…>` 会完整生效（撑破段落且带样式）。

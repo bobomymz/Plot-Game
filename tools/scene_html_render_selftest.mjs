@@ -88,6 +88,42 @@ const CASES = [
     must: ["卷帘门半开着", "一股机油混着腐臭的甜味"],
     cls: "smell",
   },
+  // 复旦江湾样板（第三个：纯对话/情感线，验证 think / mem / hand 在长对话里的密度）
+  {
+    id: "复旦江湾-材料楼-展板",
+    must: ["「介孔材料」", "面积抵得上半个篮球场", "看什么看，走了！",
+           "【系统提示】获得记忆[介孔材料]"],
+    cls: "sign print mem shout sys",
+  },
+  {
+    id: "复旦江湾-环境科学楼-305",
+    must: ["今天蚯蚓怎么样了？", "活体、待处理、已牺牲", "定时发布已取消",
+           "每一把土里都住着一座城市"],
+    cls: "leaf hand print term mem",
+  },
+  {
+    id: "复旦江湾-环境科学楼-楼梯",
+    must: ["像一块剥落的墙皮", "闷响", "袖口那里，破了一道口子"],
+    cls: "dust rot crit fire sfx think",
+  },
+  {
+    id: "忻老师家-家中",
+    must: ["茶几上一壶凉透的水", "从里面锁上的那种老式锁舌",
+           "当你看到这行字时，我们已经离开了。不要开门了，你不会想再见到我们的。",
+           "楼道里的低吼，一层一层地涨上来。"],
+    cls: "water warn hand sfx rot",
+  },
+  {
+    id: "忻老师家-学生救场",
+    must: ["两辆自行车横着撞开了单元门", "老师！！", "一分钟就行！"],
+    cls: "rot shout numb",
+  },
+  {
+    id: "结局-变了的忻老师",
+    must: ["他转过身来", "像三条烧焦的缝", "他张开了嘴",
+           "—— 结局：变了的忻老师 ——"],
+    cls: "gore rot crit end",
+  },
 ];
 
 const strip = (s) => String(s).replace(/<\/?[a-zA-Z][^>]*>/g, "");
@@ -99,8 +135,21 @@ await g.time({ dd: 1, hh: 12, mm: 0 });
 const snap = () => g.page.evaluate(() => {
   const el = document.getElementById("scene-text");
   return {
-    full: typeof typingFullText === "string" ? typingFullText : null,
+    // ⚠ QTE 场景走 `el.innerHTML = text` 分支，既不调 typeText 也不设 typingFullText →
+    //   此时的 typingFullText 是上一条用例的残留值，绝不能拿来断言。用 segAcc 是否为空来区分。
+    segAcc: typeof window.__segAcc === "string" ? window.__segAcc : "",
+    typed: window.__segAcc === "" && typeof typingFullText === "string" ? typingFullText : null,
+    full: (typeof window.__segAcc === "string" && window.__segAcc)
+        ? window.__segAcc
+        : (typeof typingFullText === "string" ? typingFullText : null),
     text: el ? el.textContent : null,
+    // 是否「一次性显示」（QTE 直通分支：el.innerHTML = text，不进打字机、不设 typingFullText）
+    instant: (() => {
+      const sc = storyData[currentScene];
+      if (!sc) return false;
+      const q = typeof sc.qte === "function" ? sc.qte(gameState) : sc.qte;
+      return !!q && !q.typewriter;
+    })(),
     spans: el ? [...el.querySelectorAll("span")].map((s) => s.className) : [],
     nested: el ? el.querySelectorAll("span span").length : -1,
   };
@@ -110,28 +159,53 @@ for (const c of CASES) {
   const tag = `[${c.id}]`;
 
   // ---------- A) 原版打字机：验证过程不吞字 ----------
+  // 先清掉上一条用例留下的 __segAcc，否则 snap() 会优先取它而不是 typingFullText
+  await g.page.evaluate(() => { window.__segAcc = ""; });
   await g.teleport(c.id);
   await wait(1200);                       // 让它打一段（80ms/字 → 约 15 字）
   const mid = await snap();
-  if (mid.full && mid.text) {
-    const plain = strip(mid.full);
+  // ⚠ 该场景是否走打字机：带 qte 且未声明 typewriter 的场景走 innerHTML 直通分支，
+  //   此时 typingFullText 是上一条用例的残留值，拿它比前缀必然错（09-28 踩过）。
+  const midIsTyping = !mid.instant;
+  if (midIsTyping && mid.text) {
+    const plain = strip(mid.typed);
     ok(`${tag} 打字中：输出是全文的严格前缀（不吞字/不乱序）`,
        plain.startsWith(mid.text) && mid.text.length > 0 && mid.text.length < plain.length,
        `${mid.text.length}/${plain.length} 字`);
   } else {
-    ok(`${tag} 打字中：输出是全文的严格前缀（不吞字/不乱序）`, false, "文本为空，渲染未完成");
+    // QTE 场景一次显示完：只能校验「已渲染且非空」
+    ok(`${tag} 无打字机（QTE 直通）：文本一次显示完整`,
+       !!mid.text && mid.text.length > 0, `${(mid.text || "").length} 字`);
   }
 
   // ---------- B) 瞬时补丁：验证最终态 ----------
+  // ⚠ 分段文本（text 是数组）每段的 typeText 都会覆盖 innerHTML，只留最后一段 →
+  //   断言会漏掉前面所有段。这里累加 __segAcc，让"最终态"= 全部段拼起来（09-28 踩过）。
   await g.page.evaluate(() => {
-    if (!window.__origTypeText) window.__origTypeText = typeText;
-    typeText = function (el, full, speed, cb) { el.innerHTML = full; sceneText.classList.remove("typing"); if (cb) cb(); };
+    if (!window.__origTypeText) {
+      window.__origTypeText = typeText;
+      window.__origTypeSegments = typeSegments;   // ⚠ 分段文本走 typeSegments，不打这个补丁只会拿到第一段
+    }
+    window.__segAcc = "";
+    const dump = (el, full, cb) => {
+      window.__segAcc += full;
+      el.innerHTML = window.__segAcc;
+      sceneText.classList.remove("typing");
+      if (cb) cb();
+    };
+    typeText = function (el, full, speed, cb) { dump(el, full, cb); };
+    typeSegments = function (el, segs, speed, cb) { dump(el, segs.join(""), cb); };
   });
   await g.teleport(c.id);
   const info = await snap();
-  await g.page.evaluate(() => { if (window.__origTypeText) { typeText = window.__origTypeText; } });
+  // ⚠ 两个都要还原：只还原 typeText 会让补丁版 typeSegments 泄漏到下一条用例的 A 段
+  await g.page.evaluate(() => {
+    if (window.__origTypeText) { typeText = window.__origTypeText; }
+    if (window.__origTypeSegments) { typeSegments = window.__origTypeSegments; }
+  });
 
-  const fullText = info.full ? strip(info.full) : "";
+  // QTE 直通场景补丁不生效（segAcc 为空）→ 用 DOM 实际文本做最终态
+  const fullText = info.segAcc ? strip(info.segAcc) : (info.text || "");
 
   ok(`${tag} 渲染出正文`, !!fullText && fullText.length > 0);
 
