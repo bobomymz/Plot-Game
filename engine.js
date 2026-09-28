@@ -1180,7 +1180,7 @@ function appendBacktrackToChoices(scene) {
 }
 
 // ====== 黑暗光锥（darkSearch：暗图 + 提亮双层 + 遮罩，光照 dwell 发现热点）======
-// 数据格式见 CLAUDE.md「黑暗光锥」节。设计要点：
+// 数据格式见 docs/引擎语法手册.md「黑暗光锥」节。设计要点：
 // · 发现即互动：热点可挂 choice（完整普通选项语义）——照亮瞬间追加渲染到下方
 //   选项区（choice-new 入场动画），点击走 createChoiceButton 统一链路；
 //   已发现（var=true）的热点，进场景时直接补渲染其选项（按 showCondition 过滤）。

@@ -63,7 +63,9 @@ files = files.sort();
 const rel = (p) => path.relative(ROOT, p).replace(/\\/g, "/");
 
 // ---------- 1) 源码级：扫字符串里的标记 ----------
-const tagRe = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>/g;
+// 注意：斜杠要单独分组——`</span>` 与 `/</g` 都含 "</"+字母，不分组会把
+// `String.replace(/</g, "&lt;")` 里的代码误判成标签 <g>（09-28 踩过）
+const tagRe = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>/g;
 // 注意：闭合标签以 </ 开头，正则必须把斜杠单独分组，否则 </span> 匹配不到（踩过一次坑）
 const pairRe = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b([^>]*?)(\/?)>/g;
 
@@ -77,9 +79,15 @@ for (const f of files) {
   tagRe.lastIndex = 0;
   while ((m = tagRe.exec(src)) !== null) {
     const raw = m[0];
-    const name = m[1].toLowerCase();
-    const attrs = m[2];
+    const name = m[2].toLowerCase();
+    const attrs = m[3];
     const line = lineOf(m.index);
+
+    // 闭合标签交给下面的配对栈检查，这里只管开标签（否则 </g> 之类会误报"不在白名单"）
+    if (m[1] === "/") continue;
+    // 比较运算符误匹配（如注释里的 `5<lag<=6`）：真 HTML 标签不会跨行写到下一行去。
+    // ⚠ 不要用"标签长度"做阈值——东明街道路径.js 里带长 inline style 的真 <div> 会被误放过。
+    if (/[\n\r]/.test(raw)) continue;
 
     if (BLOCK_TAGS.has(name)) {
       add(E, rf, `L${line} 块级标签 <${name}> 会撑破 <p id="scene-text">，只能用行内元素：${raw}`);
@@ -125,6 +133,15 @@ for (const f of files) {
   const bare = /[<&](?![a-zA-Z/!#=])|&(?![a-zA-Z#]{2,6};)(?![&=])/g;
   let bm;
   while ((bm = bare.exec(src)) !== null) {
+    // 跳过 JS 逻辑与 `&&`：条件表达式里满地都是（showCondition: "a && b"），不是剧情文本
+    if (src[bm.index + 1] === "&" || src[bm.index - 1] === "&") continue;
+    // 跳过非剧情文本行（09-28：这些占了全库 W 的大半，会把真问题埋掉）：
+    //   - 条件/跳转字段：condition / nextScene 里的比较运算符
+    //   - 图片路径：night&midnight.webp 这种文件名里的 & 不进 innerHTML
+    const lnStart = src.lastIndexOf("\n", bm.index) + 1;
+    const lnEnd = src.indexOf("\n", bm.index);
+    const lineTxt = src.slice(lnStart, lnEnd < 0 ? src.length : lnEnd);
+    if (/^\s*(show)?[Cc]ondition\s*:|^\s*(nextScene|elseScene|timeoutScene)\s*:|^\s*(image|morning|evening|night|midnight)\s*:|\.(webp|png|jpg|jpeg)/i.test(lineTxt)) continue;
     // 只关心出现在中文文本附近的（代码块里允许比较运算符：这里用简单启发式——前后有中文或引号）
     const s = Math.max(0, bm.index - 12), e = Math.min(src.length, bm.index + 12);
     const ctx = src.slice(s, e);

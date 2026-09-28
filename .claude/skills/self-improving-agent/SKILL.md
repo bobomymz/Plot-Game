@@ -220,7 +220,7 @@ When a learning is broadly applicable (not a one-off fix), promote it so every f
 ### How to Promote
 
 1. **Distill** the learning into a concise rule or fact
-2. **Add** to the matching section of the target CLAUDE.md — in this project, place it in the existing structure (信息索引 table row, 叙事与表述约定, 武器耐久, etc.); do not append an unstructured block at the end
+2. **Add** to the matching section of the target CLAUDE.md — in this project, CLAUDE.md is an index: hard rules go to `/skill project-rules` digest or CLAUDE.md 高频红线; detailed conventions go into the matching section of `docs/引擎语法手册.md` / `docs/剧情写作规范.md` / `docs/环境与运维.md` (or a 信息索引 table row); do not append an unstructured block at the end
 3. **Update** original entry:
    - Change `**Status**: pending` → `**Status**: promoted`
    - Add `**Promoted**: CLAUDE.md (project)` or `**Promoted**: CLAUDE.md (global)`

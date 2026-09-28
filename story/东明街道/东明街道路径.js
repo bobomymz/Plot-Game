@@ -808,7 +808,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     onEnter: { set: { hasBankSlip: true }, add: { itemCount: 1 } },
     text: "你蹲下来，从满地的宣传单页和碎纸中捡起一张还算完整的单据。\n\
 是一张建设银行的存款凭条——大概是6月28日上午柜台上还没来得及收起来的。\n\
-<div style=\"border-left: 3px solid #8B7355; padding-left: 14px; margin: 14px 0; font-family: 'Courier New', monospace; color: #c0c0c0; font-size: 14px; line-height: 1.8;\">\n\
+<span class='print'>\n\
 ━━━ 中国建设银行 · 存款凭条 ━━━<br>\n\
 <br>\n\
 网点：环林东路支行<br>\n\
@@ -817,7 +817,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
 户名：周启明<br>\n\
 金额：¥860.00<br>\n\
 ━━━━━━━━━━━━━━━━━━<br>\n\
-</div>\n\
+</span>\n\
 860块——大概是一个小店主三四天的流水。\n\
 你把凭条叠好塞进口袋，虽然也不知道留着还有什么用。",
     choices: [

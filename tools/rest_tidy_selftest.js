@@ -143,7 +143,10 @@ const zz = sd['整理整理'];
 const zzChoices = typeof zz.choices === 'function' ? zz.choices(baseState()) : zz.choices;
 const exit = zzChoices.find(c => c.nextScene === '{positionAfterOperation}');
 ok('整理整理有 {positionAfterOperation} 出口', !!exit);
-ok('出口文案为「不丢，谢谢」', !!exit && exit.text === '不丢，谢谢', exit && exit.text);
+// 09-28：出口文案早已由「不丢，谢谢」改成「×」（关闭＝不丢直接走），旧断言硬编码过期文案 → 恒红。
+// 改成"退出语义白名单"：既对齐现状，又仍然拦住"出口被改成别的场景/别的语义"。
+const EXIT_TEXTS = ['×', '不丢，谢谢', '离开', '回去'];
+ok('出口文案为退出语义', !!exit && EXIT_TEXTS.includes(exit.text), exit && exit.text);
 
 console.log('\n===== 结果：' + pass + ' 通过 / ' + fail + ' 失败 =====');
 process.exit(fail ? 1 : 0);

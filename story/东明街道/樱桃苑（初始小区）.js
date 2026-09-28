@@ -119,9 +119,9 @@ Object.assign(storyData, {
     image: "images/home/eyeUnderDoor.webp",
     style: "font-size: 19px;",                      // ← 整体字号
     text: "你俯下身，侧脸几乎贴着冰凉的瓷砖……\
-    <br><br><div style='color: rgba(8, 243, 47, 1); font-weight: bold; font-size: 22px;'>一只闪烁着绿光的眼睛正盯着你</div>\
-    <br><br><div style='color: #ff4444; font-weight: bold; font-size: 18px;'>短暂的死寂之后，整扇门猛地向内凸起——它进来了。</div>\n\
-—— 结局：当你凝视深渊时，深渊也在凝视着你。 ——",
+    <br><br><span class='sfx rot'>一只闪烁着绿光的眼睛正盯着你</span>\
+    <br><br><span class='crit'>短暂的死寂之后，整扇门猛地向内凸起——它进来了。</span>\n\
+<span class='end'>—— 结局：当你凝视深渊时，深渊也在凝视着你。 ——</span>",
   },
 
   "窗外的风景": {
