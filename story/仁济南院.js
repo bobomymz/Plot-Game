@@ -166,7 +166,7 @@ Object.assign(storyData, {
     text: "你看漏了一只。\n\
 它从门柱的阴影里窜出来，撞在你的侧腰上。你踉跄着转身，门口那几只已经围拢过来，手臂搭上你的肩膀和后背。\n\
 你被压倒在玻璃门前的空地上，手指还抠着门框上那截胶带。\n\
-\n—— 结局：正门失守 ——",
+\n<span class='end'>—— 结局：正门失守 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -180,7 +180,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "门诊大楼的正门半敞着，玻璃门上糊着报纸和胶带——有人试图封住它，又放弃了。门前的空地上倒着几具尸体，报纸被风掀起一角，下面的皮肉已经发亮。旋转门的格子里卡着一个人，玻璃上全是血手印。\n";
       if (vars.dd >= 6) {
-        desc += "更糟的是，医院外围的尸潮不知道什么时候围了上来——大门外的空地已经被一群游荡的丧尸堵死，挤也挤不进去。\n<span style='color: #ffaa00;'>【提示】大门已被尸潮堵死，只能另找入口。</span>";
+        desc += "更糟的是，医院外围的尸潮不知道什么时候围了上来——大门外的空地已经被一群游荡的丧尸堵死，挤也挤不进去。\n<span class='warn'>【提示】大门已被尸潮堵死，只能另找入口。</span>";
       } else if (vars._renjiGateCleared) {
         desc += "门口空了。正门半敞着，可以直接进大厅。";
       } else {
@@ -336,7 +336,7 @@ Object.assign(storyData, {
       var tool = vars._pryTool || "手里的工具";
       return "你把" + tool + "伸进挂锁里，用力一撬。挂锁“咔”地断开——那道已经开裂的铰链果然撑不住这一下。\n\
 整扇铁门朝你的方向轰然倒下。\n\
-\n—— 结局：铁门砸死 ——";
+\n<span class='end'>—— 结局：铁门砸死 ——</span>";
     },
     style: "color: #ff4444; font-weight: bold;"
   },
@@ -450,7 +450,7 @@ Object.assign(storyData, {
       onTimeout: "结局-仁济-车库尸群"
     },
     onEnter: function(vars) { vars.showZombies = true; },
-    text: "光在那片挤作一团的东西上停得太久了。\n十几颗头颅同时转过来，喉咙里滚出同一个音。它们开始动了——方向是你。\n<span style='color: #ffaa00;'>【提示】别愣着，它们不会一直等你。</span>",
+    text: "光在那片挤作一团的东西上停得太久了。\n十几颗头颅同时转过来，喉咙里滚出同一个音。它们开始动了——方向是你。\n<span class='warn'>【提示】别愣着，它们不会一直等你。</span>",
     choices: [
       {
         showCondition: "_rjLitElevator",
@@ -496,7 +496,7 @@ Object.assign(storyData, {
     image: "images/zombieWaveSmashYouIntoPieces.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },   // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "你终究没能跑过它们。\n十几条影子从车缝里挤出来，把你围在两根水泥柱之间。你的光落在地上，滚了半圈，停住了——安安静静地照着一根柱子，照着你再也够不到的东西。" + weaponBrokeText(vars) + "\n—— 结局：车库尸群 ——";
+      return "你终究没能跑过它们。\n十几条影子从车缝里挤出来，把你围在两根水泥柱之间。你的光落在地上，滚了半圈，停住了——安安静静地照着一根柱子，照着你再也够不到的东西。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：车库尸群 ——</span>";
     },
     style: "color: #ff4444; font-weight: bold;"
   },
@@ -543,7 +543,7 @@ Object.assign(storyData, {
     image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "你抓住门缝用力一拉。门滑开的瞬间，几只丧尸几乎是叠在一起从轿厢里倒出来——它们早就挤在门口，只差你这一下。\n\
 你甚至没能转身跑回坡道。\n\
-\n—— 结局：电梯轿厢 ——",
+\n<span class='end'>—— 结局：电梯轿厢 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -674,7 +674,7 @@ Object.assign(storyData, {
       var desc = "急诊大厅里一片狼藉。翻倒的轮椅、散落的病历、踩碎的药瓶。挂号台后面倒着两个人，穿着白大褂。墙上的楼层导览图还亮着，但屏幕已经裂了大半。\n\
 大厅深处有一扇门，门上的灯牌还亮着；一侧的连廊通往另一栋楼；楼梯间在大厅的另一头。\n";
       if (!vars._renjiERCleared) {
-        desc += "大厅中央，一只穿着病号服的丧尸正缓缓转过身来——它发现了你。\n<span style='color: #ffaa00;'>【提示】别愣着，它不会一直等你。</span>";
+        desc += "大厅中央，一只穿着病号服的丧尸正缓缓转过身来——它发现了你。\n<span class='warn'>【提示】别愣着，它不会一直等你。</span>";
       } else {
         desc += "病号服那只趴在导览图下面。大厅空出来了。";
       }
@@ -755,7 +755,7 @@ Object.assign(storyData, {
     text: "你没能抓住它的间隙。\n\
 它扑上来的那一下比你想的快，你的武器举到一半就被撞偏。牙齿咬进了你的小臂，它拖着你撞翻那辆轮椅。\n\
 金属轮子在地上空转了两圈，慢慢停下。\n\
-\n—— 结局：急诊失守 ——",
+\n<span class='end'>—— 结局：急诊失守 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -1045,7 +1045,7 @@ Object.assign(storyData, {
     text: "你盯漏了一道影子。\n\
 它从操作台后面直起腰，撞在你的胸口上。你退了两步，后腰顶在台沿，器械盘哗啦一声滑落。\n\
 应急电源还在嗡。它低头咬了下来。\n\
-\n—— 结局：检验科被咬 ——",
+\n<span class='end'>—— 结局：检验科被咬 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -1250,7 +1250,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "住院部的走廊很长，两侧的病房门大多紧闭，有几扇半开着。应急灯忽明忽暗，照着墙上几道暗红色的拖拽痕迹。\n";
       if (vars.dd >= 8) {
-        desc += "走廊深处传来密集的脚步声——住院部已经彻底失守了，整条走廊都是游荡的丧尸。\n<span style='color: #ffaa00;'>【提示】住院部已被尸潮占据，无法通行。</span>";
+        desc += "走廊深处传来密集的脚步声——住院部已经彻底失守了，整条走廊都是游荡的丧尸。\n<span class='warn'>【提示】住院部已被尸潮占据，无法通行。</span>";
       } else if (vars._renjiWardCleared) {
         desc += "你之前打过这里。输液架还歪在墙边，走廊空了。";
       } else {
@@ -1329,7 +1329,7 @@ Object.assign(storyData, {
     text: "你出手慢了一步。\n\
 它转过身，缠在手腕上的输液管甩出来，抽在你脸上。你踉跄着撞进病房的门框，还没站稳，它就压了上来。\n\
 走廊里再没有别的动静。\n\
-\n—— 结局：病区失守 ——",
+\n<span class='end'>—— 结局：病区失守 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -1614,7 +1614,7 @@ Object.assign(storyData, {
     text: "它的力气比你想的大太多。\n\
 一掌拍在你肩上，把你整个人砸在冰柜门上，金属嗡了一声。你还没来得及喘气，那张干裂的、黑得发亮的脸已经凑到了跟前。\n\
 那是你在这个世界上看到的最后一样东西。\n\
-\n—— 结局：黑皮丧尸 ——",
+\n<span class='end'>—— 结局：黑皮丧尸 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -1623,7 +1623,7 @@ Object.assign(storyData, {
     text: "你朝着高架的方向冲去，想要离开这家医院。\n\
 但外面的尸潮比你想象中更密。你刚冲出浦锦路，就被从四面八方涌来的丧尸吞没——它们早已把这家医院围得水泄不通，就等着有人从里面出来。\n\
 你在震耳欲聋的嘶吼声中被撕碎。\n\
-\n—— 结局：仁济围困 ——",
+\n<span class='end'>—— 结局：仁济围困 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -1631,7 +1631,7 @@ Object.assign(storyData, {
     image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "你推开虚掩的玻璃门，弯腰钻了进去。\n\
 门厅里的丧尸几乎是同一时刻转过身来——密密麻麻的一片，堵住了你退出去的路。你的手还按在玻璃门上，武器还在肩带里。\n\
-\n—— 结局：急诊门厅 ——",
+\n<span class='end'>—— 结局：急诊门厅 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -1750,7 +1750,7 @@ Object.assign(storyData, {
     text: [
       "你按下召唤钮。灯亮了一下，井道里传来沉闷的运行声——停在B1的那部电梯，居然真的动了。",
       "数字从B1跳到1。叮。门开了。\n轿厢里挤满了丧尸。它们几乎是涌着扑出来的。",
-      "\n—— 结局：电梯召唤 ——"
+      "\n<span class='end'>—— 结局：电梯召唤 ——</span>"
     ],
     style: "color: #ff4444; font-weight: bold;"
   },
@@ -1884,7 +1884,7 @@ Object.assign(storyData, {
   "仁济南院-中草药房-喝花茶": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiHerbalRoom.png */,
     onEnter: { add: { strength: 1 } },
-    text: "你抓了一把花茶放进杯子里，接了点热水泡开。药香混着花香升腾起来，在空荡荡的中草药房里显得格外安宁。你捧着杯子慢慢喝了几口，温热的茶水流进胃里，疲惫的身体舒缓了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你抓了一把花茶放进杯子里，接了点热水泡开。药香混着花香升腾起来，在空荡荡的中草药房里显得格外安宁。你捧着杯子慢慢喝了几口，温热的茶水流进胃里，疲惫的身体舒缓了不少。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "仁济南院-中草药房" }
     ]
@@ -1939,7 +1939,7 @@ Object.assign(storyData, {
   "仁济南院-护士站-喝葡萄糖": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiNurseStation.png */,
     onEnter: { add: { strength: 1 } },
-    text: "你拧开那瓶葡萄糖的铝盖，仰头灌了几口。甜腻的糖水顺着喉咙滑下去——太久没尝到甜味了，你几乎要被这熟悉的味道呛到。你靠在护士站台边缓了缓，感觉体力恢复了一些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你拧开那瓶葡萄糖的铝盖，仰头灌了几口。甜腻的糖水顺着喉咙滑下去——太久没尝到甜味了，你几乎要被这熟悉的味道呛到。你靠在护士站台边缓了缓，感觉体力恢复了一些。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "仁济南院-护士站" }
     ]
@@ -2072,7 +2072,7 @@ Object.assign(storyData, {
     },
     text: "你把那瓶脉动塞进背包侧兜。瓶子贴着后背，还留着一丝凉——不知道是谁，在最后那几天里把它藏进床单底下，然后没能等到喝它的时候。\n\
 瓶里是满的，一口没动。你决定先留着。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得一瓶水（水瓶已装满），想喝时在“整理一下物品”里喝。</span>",
+<span class='sys'>【系统提示】获得一瓶水（水瓶已装满），想喝时在“整理一下物品”里喝。</span>",
     choices: [
       { text: "继续", nextScene: "仁济南院-特需病房", effect: updateTime(1) }
     ]
@@ -2093,7 +2093,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiVIPWard.png */,
     onEnter: { add: { strength: 1 } },
     text: "你拧开脉动，灌了几口——冰凉的、带着人工甜味的液体顺着喉咙滑下去，是你这几天喝到的最像样的东西。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "仁济南院-特需病房" }
     ]
@@ -2134,7 +2134,7 @@ Object.assign(storyData, {
     },
     text: "你按住塌陷的坐垫往下翻——沙发架子发出一声刺耳的嘎吱。\n\
 门边矮柜里猛地撞出一个人影。它扑过来时你只来得及抬起胳膊挡了一下，爪子还是擦过小臂，渗出一道血线。你一脚踹开它，它后脑磕在柜角上，抽搐了几下，软了。\n\
-<span style='color: #ffaa00; font-style: italic;'>【系统提示】你受了伤。伤口会加快体力消耗。</span>",
+<span class='sys warn'>【系统提示】你受了伤。伤口会加快体力消耗。</span>",
     choices: [
       { text: "继续翻沙发", nextScene: "仁济南院-特需病房-沙发" },
       { text: "先缓一缓", nextScene: "仁济南院-特需病房" }
@@ -2249,7 +2249,7 @@ Object.assign(storyData, {
     image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "你随手拉开半开的柜门。\n\
 里面蜷着的东西几乎是弹出来的——牙齿先碰到你的喉咙。你甚至没看清它的脸。\n\
-\n—— 结局：特需偷袭 ——",
+\n<span class='end'>—— 结局：特需偷袭 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 

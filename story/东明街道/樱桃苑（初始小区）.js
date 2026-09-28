@@ -17,8 +17,8 @@ Object.assign(storyData, {
     text: function(vars) {
       if(vars._visit["初始卧室"] === 1) {
         return "你是建平中学的毕业生，高考已经结束，日子仿佛被抽去了骨架，软塌塌地摊在六月闷热的空气里。这天早上你醒来时，阳光已经穿过半旧的窗帘，在地板上烙下懒洋洋的光斑。\
-    <span style='font-size: 12px;'>请往下滑动哦</span>\n\
-闹钟显示7:30，如果是在往日，早读已经过去一半了。\n哦，这么算的话，再过半小时，妈妈就买早餐回来了。<span style='font-size: 12px;'>鼠标点击此框可以快速过剧情哦，若再点一次可以展开</span>\n<span style='font-size: 12px;'>带 🔍 标记的场景图可以点开细看。</span>";
+    <span class='sys'>请往下滑动哦</span>\n\
+闹钟显示7:30，如果是在往日，早读已经过去一半了。\n哦，这么算的话，再过半小时，妈妈就买早餐回来了。<span class='sys'>鼠标点击此框可以快速过剧情哦，若再点一次可以展开</span>\n<span class='sys'>带 🔍 标记的场景图可以点开细看。</span>";
       }
       if (vars.dd == 1 && vars.hh >= 17) return "天色渐渐暗了下来。窗外的光线变成了暗橙色，房间里越来越暗。偶尔传来几声奇怪的响动——可能是风声，也可能是别的什么。\n妈妈还是没有回来。";
       if (vars.dd == 1 && vars.hh >= 14) return "已经是下午了。阳光从窗帘的缝隙斜斜地照进来，在地板上拖出长长的影子。\n你翻了个身，盯着天花板。时间好像被拉长了。";
@@ -64,7 +64,7 @@ Object.assign(storyData, {
 
   "什么都没有": {
     image: "images/home/nothingUnderBed.webp",
-    text: "床底什么都没有，说了什么都没有。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    text: "床底什么都没有，说了什么都没有。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     onEnter: {
       add: { strength: -1 }
 // 反复查看会扣体力，然后累死（搞笑）
@@ -79,7 +79,7 @@ Object.assign(storyData, {
 
   "结局-开幕雷击": {
     image: "images/zombieKnockYouDown.webp",
-    text: "你打开房门，一个丧尸冲了进来————剧终\n你猜为什么游戏叫这个名字？:\n—— 结局：开幕雷击 ——"
+    text: "你打开房门，一个丧尸冲了进来————剧终\n你猜为什么游戏叫这个名字？:\n<span class='end'>—— 结局：开幕雷击 ——</span>"
   },
 
   "玄关": {
@@ -147,7 +147,7 @@ Object.assign(storyData, {
 
   "结局-自尽": {
     image: "images/home/一跃解千愁.webp",
-    text: "最明智的选择，尸潮什么的，与我无关——————————————\n—— 结局：自由落体 ——",
+    text: "最明智的选择，尸潮什么的，与我无关——————————————\n<span class='end'>—— 结局：自由落体 ——</span>",
     choices: [
       {
         text: "重生之我直面尸潮",
@@ -163,7 +163,7 @@ Object.assign(storyData, {
       add: { strength: 3 }
     },
     text: "你看了眼床底，手机怎么没了？这里只有一包方便面。\n这是你两个月前藏的私货，你想起来了。毕业前没来得及在学校食堂消耗掉，所以带回家里了。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复3点体力，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】你回复3点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "方便面真好吃",
@@ -301,13 +301,13 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 闪色失败按档位概率损坏武器（共享节点，覆盖所有汇入此处的闪色失败）
     text: function(vars) {
-      return "你灵活地躲开丧尸的爪子，但反应慢了半拍，丧尸转身又扑了上来……你被丧尸咬死了。" + weaponBrokeText(vars) + "\n—— 结局：视力有待提高 ——";
+      return "你灵活地躲开丧尸的爪子，但反应慢了半拍，丧尸转身又扑了上来……你被丧尸咬死了。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：视力有待提高 ——</span>";
     }
   },
 
   "结局-丧尸破门而入": {
     image: "images/home/zombieBreakDoor.webp",
-    text: "突然，丧尸猛地撞开了门，你脑袋挨了重重一击，晕了过去。\n—— 结局：丧尸破门而入 ——"
+    text: "突然，丧尸猛地撞开了门，你脑袋挨了重重一击，晕了过去。\n<span class='end'>—— 结局：丧尸破门而入 ——</span>"
   },
 
   "家门外": {
@@ -333,7 +333,7 @@ Object.assign(storyData, {
       var desc = "你一路狂奔冲进楼梯间，胸口剧烈地起伏。一只丧尸突然闪到了你的身后！\n\
 你只能快速选择一个楼层离开，或者躲起来，祈祷丧尸不会追你……";
       if (vars._lastScene === "教程-识别颜色躲丧尸") {
-        desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+        desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       return desc;
     },
@@ -407,7 +407,7 @@ Object.assign(storyData, {
     image: "images/home/电梯门开了.webp",
     text: "电梯门突然开了，丧尸冲进来咬死了你。\n\
 想 必 你 下 次 会 更 加 果 断 吧。\n\
-—— 结局：电梯惊魂 ——"
+<span class='end'>—— 结局：电梯惊魂 ——</span>"
   },
 
   "3楼-安全": {
@@ -455,7 +455,7 @@ Object.assign(storyData, {
 
   "结局-反应太慢被咬死了": {
     image: "images/zombieKnockYouDown.webp",
-    text: "丧尸冲了上来，把你扑在地上。没来得及反应，你就被咬死了。\n\n—— 结局：反应太慢被咬死了 ——",
+    text: "丧尸冲了上来，把你扑在地上。没来得及反应，你就被咬死了。\n\n<span class='end'>—— 结局：反应太慢被咬死了 ——</span>",
     choices: [
       {
         text: "重来！这次不算！",
@@ -470,7 +470,7 @@ Object.assign(storyData, {
       set: { repeatedClickTimes: 0 }
     },
     text: "一个黑衣人突然从墙角闪了出来，一棍子打飞了丧尸。他转头看向你，一半脸庞隐藏在鸭舌帽的阴影下。\n\
-<em><span style='color: #f8d305ff;'>算你好运。跟着我，我可以带你出小区。</span></em>\n\
+<em>算你好运。跟着我，我可以带你出小区。</em>\n\
 你决定？",
     choices: [
       {
@@ -490,7 +490,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 被扑倒时按档位概率损坏武器（共享节点，覆盖所有汇入此处的战斗失败/QTE超时）
     text: function(vars) {
       return "丧尸冲了上来，猛地把你扑倒在地。没来得及反应，你就被咬死了。" + weaponBrokeText(vars) + "\n\
-—— 结局：被丧尸扑倒咬死 ——";
+<span class='end'>—— 结局：被丧尸扑倒咬死 ——</span>";
     }
   },// 会自动给出重新开始按钮
 
@@ -499,13 +499,13 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 体力不足专版，与共享节点保持同样的断武器处理
     text: function(vars) {
       return "你抬脚迎了上去，可这一下软绵绵的，没能把它推开半分。\n丧尸冲了上来，猛地把你扑倒在地。你想撑起身子，胳膊却使不上一点劲。" + weaponBrokeText(vars) + "\n\
-—— 结局：被丧尸扑倒咬死 ——";
+<span class='end'>—— 结局：被丧尸扑倒咬死 ——</span>";
     }
   },
 
   "结局-1楼-party": {
     image: "images/home/1楼-party.webp",
-    text: "你到了一楼大厅。一群丧尸正在开party，一看见你就<em><span style='color:red;'>非常热情</span></em>地围拢过来。\n你甚至来不及尖叫。\n\n—— 结局：一楼派对 ——",
+    text: "你到了一楼大厅。一群丧尸正在开party，一看见你就<em><span class='crit'>非常热情</span></em>地围拢过来。\n你甚至来不及尖叫。\n\n<span class='end'>—— 结局：一楼派对 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
 
@@ -713,7 +713,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: "images/home/老六偷袭未果.webp",
     onEnter: { set: { _sleepingZombieGone: true } },
     text: "你对它丧失了兴趣，转身离开。\n\
-只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后<span style = 'font-weight: bold;'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
+只听得背后传来木头长椅的嘎吱一响，背后阴风袭来，你吓了一大跳，往后<span class='sfx'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
 回头一看，正是椅子上的那个睡神，它竟是一只丧尸！\n\
 趁着它暂时晕过去了，你得赶紧离开了。",
     choices: [
@@ -737,7 +737,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 可双腿沉得厉害，你想快走两步，膝盖却像灌了铅。\n\
 身后传来木头长椅的一声轻响——等你反应过来要回头，那道阴风已经贴到了后颈。\n\
 你只觉得颈侧一痛，眼前一黑，便什么都不知道了。\n\
-—— 结局：背后的偷袭 ——"
+<span class='end'>—— 结局：背后的偷袭 ——</span>"
   },
 
   "西出口-丧尸堵路": {
@@ -798,12 +798,12 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: "images/zombieKnockYouDown.webp",
     onEnter: {shake: true},
     text: "你一脚踢出，被丧尸一口咬住，你被咬死了。\n\
-—— 结局：嘎吱嘎吱 ——"
+<span class='end'>—— 结局：嘎吱嘎吱 ——</span>"
   },
 
   "KO丧尸": {
     image: "images/home/KOzombie.webp",
-    text: "你一拳挥出，将丧尸击倒，又补了几脚，它不动了。看来一时半会儿不会有问题了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    text: "你一拳挥出，将丧尸击倒，又补了几脚，它不动了。看来一时半会儿不会有问题了。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     onEnter: updateTime(1, { add: { strength: -1 } }), // 花1分钟揍丧尸
     choices: [
       {
@@ -937,14 +937,14 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "结局-防爆门没锁上": {
     image: "images/home/防爆门失败.webp",
     text: "你关上门转身想跑，丧尸突然撞开了门，向你扑来。你在劫难逃……\n\
-—— 结局：被丧尸扑倒咬死 ——"
+<span class='end'>—— 结局：被丧尸扑倒咬死 ——</span>"
   },
 
   "丧尸被防爆门夹扁": {
     image: "images/home/防爆门成功.webp",
     onEnter: { add: { strength: -1 } },
     text: "在丧尸冲过来时，你侧身把防爆门关上了，它的半只手臂夹在了中间，却仍不断挥舞着。\n\
-你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+你向右旋转圆形把手，防爆门锁死，成功地用防爆门把将丧尸夹扁。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续前进",
@@ -1058,11 +1058,11 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
       var desc = "你在一个小房间里。这个房间空无一人，只有一张桌子和墙上的一些告示。";
       var n = vars.visitWaitingRoomTimes || 0;
       if (n >= 3) {
-        desc += "\n<span style='color: #ff4444;'>铁门那头传来连续的刮擦声，一声接一声——很近了，有什么东西正贴着门缝往里挤。这里不能再待下去了。</span>";
+        desc += "\n<span class='crit'>铁门那头传来连续的刮擦声，一声接一声——很近了，有什么东西正贴着门缝往里挤。这里不能再待下去了。</span>";
       } else if (n === 2) {
-        desc += "\n<span style='color: #ffaa00;'>你听到门外似乎传来了什么声音——很轻，是鞋底蹭过水泥地的那种摩擦声，一下，又一下，比刚才更清楚了。这地方本来不该有别人。</span>";
+        desc += "\n<span class='warn'>你听到门外似乎传来了什么声音——很轻，是鞋底蹭过水泥地的那种摩擦声，一下，又一下，比刚才更清楚了。这地方本来不该有别人。</span>";
       } else if (n === 1) {
-        desc += "\n<span style='color: #ffaa00;'>你听到门外似乎传来了什么声音，很轻，隔了几秒才又响了一下。也许是你听错了。</span>";
+        desc += "\n<span class='warn'>你听到门外似乎传来了什么声音，很轻，隔了几秒才又响了一下。也许是你听错了。</span>";
       }
       return desc;
     },
@@ -1207,7 +1207,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
       timeout: 8000,
       onTimeout: "结局-被丧尸扑倒咬死"
     },
-    text: "你往走廊深处走，发现了一个楼梯间。<span style='color:red;'>突然，你听到砰的一声，进来的那扇铁门被硬生生撞开了，一个魁梧的丧尸钻了进来。</span>你要怎么办？",
+    text: "你往走廊深处走，发现了一个楼梯间。<span class='crit'>突然，你听到砰的一声，进来的那扇铁门被硬生生撞开了，一个魁梧的丧尸钻了进来。</span>你要怎么办？",
     choices: [
       {
         text: "继续前进找紧急出口",
@@ -1241,7 +1241,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "结局-门锁上了": {
     image: "images/home/lock.webp",
-    text: "不好意思，门锁了。\n你还没来得及骂检修人员，就被丧尸创飞了。\n\n—— 结局：门锁上了 ——"
+    text: "不好意思，门锁了。\n你还没来得及骂检修人员，就被丧尸创飞了。\n\n<span class='end'>—— 结局：门锁上了 ——</span>"
   },
 
   "结局-初遇毒气型丧尸": {
@@ -1252,7 +1252,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 你躲进了暗处，大气都不敢喘。\n\
 那只丧尸大抵脑子撞坏了，愣是不知道你去哪了，只能悻悻离开。再等了一会儿，没声音了。\n\
 你正暗自庆幸时，一只绿眼丧尸从黑暗中探出，你随即晕了过去，再也没有醒来。\n\
-—— 结局：浓郁的香味 ——"
+<span class='end'>—— 结局：浓郁的香味 ——</span>"
   },
 
   "民防设施-物资区": {
@@ -1309,7 +1309,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "结局-民防设施楼梯断裂": {
     image: "images/home/踩塌台阶.webp",
     text: "你转头就跑，跳下楼梯，木板发出不堪重负的嘎吱声，随即断裂。你掉入了深邃的黑暗中，转眼便被丧尸吞噬。\n\
-—— 结局：看你还跳不跳 ——"
+<span class='end'>—— 结局：看你还跳不跳 ——</span>"
   },
 
   "民防设施-通风管道": {
@@ -1346,7 +1346,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "结局-死路一条": {
     image: "images/zombiePounceOnYou.webp",
     text: "你走错了路，前面是死路一条。\n\
-丧尸的那绿色的眼睛是你最后的记忆。\n—— 结局：死路一条 ——"
+丧尸的那绿色的眼睛是你最后的记忆。\n<span class='end'>—— 结局：死路一条 ——</span>"
   },
 
   "拳打脚踢": {
@@ -1360,7 +1360,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     text: "你率先发动了攻击。\n\
 前面那只丧尸向你缓缓走来，你一个滑铲闪过去，冲向后面那只愣神的丧尸，一拳正中脑门。\n\
 丧尸一个踉跄将要倒地，被你擒住手臂，一个过肩摔，把它重重砸在它的同伙上。\n\
-两只丧尸缓缓爬起来，眼睛似乎在燃烧。你决定？\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+两只丧尸缓缓爬起来，眼睛似乎在燃烧。你决定？\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "躲进旁边的房间",
@@ -1378,7 +1378,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     onEnter: updateTime(3, { add: { strength: -1 } }), // 花3分钟再打一次
     text: "你从墙上掰下来一根长长的铁管，狠狠砸在丧尸们的脑袋上。\n\
 咚！咚！        \n\
-嗯，现在不会有问题了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+嗯，现在不会有问题了。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "往里面走",
@@ -1583,7 +1583,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
       } else {
         body += "你想起了物资区的纸箱，想起那个老式防毒面具。你从它旁边走过的时候，没有伸手。\n";
       }
-      return body + "—— 结局：护住口鼻是没有用的 ——";
+      return body + "<span class='end'>—— 结局：护住口鼻是没有用的 ——</span>";
     }
   },
 
@@ -1703,7 +1703,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "樱桃苑-4楼-胜利": {
     image: "images/home/4楼另一端.webp",
     text: "你看穿了它们的攻击节奏。在第一个丧尸扑过来的瞬间，你侧身闪过，顺势把它推进了旁边的杂物堆。第二个被地上的尸体绊倒，你一脚踩住它的后背，借力跃过第三个伸来的手——第四个还在门口挣扎着挤出来，你一个箭步冲过了走廊。\n\
-身后传来碰撞和低吼声，但它们暂时追不上来了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+身后传来碰撞和低吼声，但它们暂时追不上来了。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "上楼到5楼",
@@ -1726,7 +1726,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     },
     text: function(vars) {
       var pain = vars.noPainSense
-        ? "\n<span style='color: #9aa0a6;'>肩膀撞在墙上，声音很闷。那一瞬间你甚至觉得，撞的不是自己。</span>"
+        ? "\n<span class='numb'>肩膀撞在墙上，声音很闷。那一瞬间你甚至觉得，撞的不是自己。</span>"
         : "\n剧痛让你眼前一黑。";
       return "你记错了——判断失误的代价是惨重的。一只丧尸从你预判的反方向扑了过来，你被撞得踉跄后退，肩膀狠狠撞在墙上。" + pain + "\n你拼尽全力从两只丧尸之间的缝隙挤了出去，跌跌撞撞逃回了楼梯间。" + weaponBrokeText(vars);
     },
@@ -1898,7 +1898,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "小区草地-被追": {
     image: function(vars) { return vars.weather === "雨" ? "images/home/小区草地被追-雨天.webp" : "images/home/小区草地被追.webp"; },
     onEnter: { add: { chasedByZombies: 2, strength: -1 } },
-    text: "你犹豫太久了。一只丧尸已经走到了你面前，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    text: "你犹豫太久了。一只丧尸已经走到了你面前，一张灰白色的脸几乎贴到了你的鼻尖。\n你猛地侧身，但还是被它抓住了手臂。一阵剧痛传来，你拼命挣脱，连滚带爬地冲进了物业楼，砰地把门撞上。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "冲进物业楼",

@@ -13,7 +13,7 @@ Object.assign(storyData, {
       vars.currentPos = "全家便利店";
     },
     text: function(vars) {
-      return "你来到了全家便利店。\n<span style='font-weight: bold;'>全家熟悉的专属开门声音传来，门缓缓打开。</span>\n也许你可以吃一些东西垫垫肚子。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
+      return "你来到了全家便利店。\n<span class='sfx'>全家熟悉的专属开门声音传来，门缓缓打开。</span>\n也许你可以吃一些东西垫垫肚子。\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
       {
@@ -44,7 +44,7 @@ Object.assign(storyData, {
 柜台没有人，只有显示屏循环播放着会员套餐的广告。\n\
 靠收银台的促销货架被翻得乱七八糟，只剩几个被拆开的空纸箱。";
       if (vars._visit["全家便利店（环林东路）"] && (!vars.FamilymartHasZombie || vars._visit["全家便利店-零食引路"] > 0)) {
-        base += "\n<span style='color: #aaa;'>上次那只丧尸已经不在了。柜台后面的员工通道半开着，里面黑漆漆的，也许有什么有用的东西。</span>";
+        base += "\n<span class='dust'>上次那只丧尸已经不在了。柜台后面的员工通道半开着，里面黑漆漆的，也许有什么有用的东西。</span>";
       }
       return base;
     },
@@ -191,7 +191,7 @@ Object.assign(storyData, {
   "全家便利店-员工通道-丧尸的偷袭-迎战": {
     image: "images/小区周边/全家和公交站/仓库.webp",
     onEnter: initMemoryGame(["红","蓝","绿","黄"], 8),
-    text: "货架顶端的黑影蹬直了腿——扑下来的速度快得不像话，灰色的身影在手电光里撕出一道残影。\n货架后侧的那只也动了，压着嗓子从另一头朝你围过来。\n<span style='color: #ffaa00;'>前后都是牙。你必须在半秒内判断扑击的轨迹！</span>",
+    text: "货架顶端的黑影蹬直了腿——扑下来的速度快得不像话，灰色的身影在手电光里撕出一道残影。\n货架后侧的那只也动了，压着嗓子从另一头朝你围过来。\n<span class='warn'>前后都是牙。你必须在半秒内判断扑击的轨迹！</span>",
     choices: [
       {
         text: "输入你看到的颜色分布（例如：2红2蓝2绿2黄）",
@@ -275,7 +275,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },   // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "你终究没能同时盯住两个方向。\n头顶的残影压下来的瞬间，货架后的那双灰手也攥住了你的脚踝——你在漆黑的仓库里被前后撕开。\n手电滚落在地，光柱静静照着天花板，直到电池耗尽。" + weaponBrokeText(vars) + "\n—— 结局：仓库里的两只丧尸 ——";
+      return "你终究没能同时盯住两个方向。\n头顶的残影压下来的瞬间，货架后的那双灰手也攥住了你的脚踝——你在漆黑的仓库里被前后撕开。\n手电滚落在地，光柱静静照着天花板，直到电池耗尽。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：仓库里的两只丧尸 ——</span>";
     }
   },
 
@@ -283,7 +283,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
-      return "你的手电全洒在那扇小门上——门后只有拖把和成捆的纸箱，什么都没有。\n可你想看的太多了。背对的那片黑，你一秒钟都没照过。\n灰色的手指扣上你肩膀的时候，你连手电都没来得及松手。" + weaponBrokeText(vars) + "\n—— 结局：背后的黑影 ——";
+      return "你的手电全洒在那扇小门上——门后只有拖把和成捆的纸箱，什么都没有。\n可你想看的太多了。背对的那片黑，你一秒钟都没照过。\n灰色的手指扣上你肩膀的时候，你连手电都没来得及松手。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：背后的黑影 ——</span>";
     }
   },
 
@@ -292,8 +292,8 @@ Object.assign(storyData, {
     onEnter: updateTime(1, { add : { strength: 1 } }),
     text: "薯片在你口中嘎嘣作响，嗯，真好吃。\n\
 突然，员工通道的门被一只丧尸撞开了。它双眼通红，眼神呆滞地盯着你，好像眼力不太好。\n\
-<span style='font-style: italic;'>这么快的吗？</span>\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
+<span class='think'>这么快的吗？</span>\n\
+<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
 你选择？", // 迅捷丧尸，速度快，对声音灵敏，
     choices: [
       {
@@ -375,7 +375,7 @@ Object.assign(storyData, {
   "结局-你太慢啦": {
     image: "images/zombieKnockYouDown.webp",
     text: "你抬脚准备离开，那只丧尸转过身来，像一道闪电一样闪现到你面前。\n\
-<span style='color: red; font-weight: bold;'>GAME OVER</span>\n—— 结局：你太慢啦 ——"
+<span class='crit'>GAME OVER</span>\n<span class='end'>—— 结局：你太慢啦 ——</span>"
   },
 
   "结局-脚步声太大啦": {
@@ -383,7 +383,7 @@ Object.assign(storyData, {
     text: "你转身躲了起来，大气也不敢喘，缓慢地向门口挪动身子。\n\
 突然，脚下的地板发出嘎吱一声。\n\
 那只丧尸蹭的一下直起身来，猛地向你的位置扑来。\n\
-你被咬死了。\n—— 结局：脚步声太大啦 ——"
+你被咬死了。\n<span class='end'>—— 结局：脚步声太大啦 ——</span>"
   },
 
   "躲在货架后": {
@@ -454,7 +454,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/pipeAttack.png */,
     onEnter: { set: { FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" } },
     text: "你猛地出拳，正中丧尸面门，右手生疼，而丧尸已经倒地不起。\n\
-一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-3，当前体力：{strength}。</span>",
+一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。\n<span class='sys warn'>【系统提示】体力-3，当前体力：{strength}。</span>",
     choices: [
       {
         text: "拿上工牌",
@@ -475,7 +475,7 @@ Object.assign(storyData, {
       var desc = "你回手掏出钢管，狠狠地抽在它腿上。只听得嘎吱一声脆响，不知是钢管还是它骨头断裂的声音。那只丧尸已经瘫倒在了地上，像一条扭曲的蛆在蠕动。\
 一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。";
       if (vars._lastScene === "邦邦邦") { // 迅捷线"打腿"入口不扣体力，不提示
-        desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+        desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       return desc;
     },
@@ -496,7 +496,7 @@ Object.assign(storyData, {
     image: "images/小区周边/全家和公交站/面包.webp",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些面包，感觉肚子有了一些能量。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -509,7 +509,7 @@ Object.assign(storyData, {
     image: "images/小区周边/全家和公交站/饭团.webp",
     onEnter: updateTime(5, { set : { strength: 10 } }), // 体力回满
     text: "你吃了一些饭团，感觉肚子有了一些能量。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】你回复了大量体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -524,9 +524,9 @@ Object.assign(storyData, {
     text: "你随手从冰柜里抓起一瓶冰凉的柠檬水，咕嘟咕嘟一饮而尽。片刻之后，你感觉胃部传来一阵绞痛。\n\
 ——你已经一个早上没吃饭了，现在这么快灌下去，怕是又要拉肚子了。\n\
 你窜出店找到一个小小的洗手间，打开门，\n\
-<span style='font-weight: bold;'>一只丧尸在盯着你。</span>\n\
+<span class='rot'>一只丧尸在盯着你。</span>\n\
 你还没来得及关门，它已经扑了上来。冰凉的味道在胃里翻涌，你的意识被黑暗吞没。\n\
-—— 结局：厕所惊魂 ——"
+<span class='end'>—— 结局：厕所惊魂 ——</span>"
   },
 
   "公交车站（环林东路）": {
@@ -570,7 +570,7 @@ Object.assign(storyData, {
 
   "结局-被尸潮群殴": {
     image: "images/zombiesBeatYou.webp",
-    text: "<span style='color: #ff4444; font-weight: bold;'>丧尸一拥而上，把你撕成了碎片。</span>\n—— 结局：被尸潮群殴 ——"
+    text: "<span class='crit'>丧尸一拥而上，把你撕成了碎片。</span>\n<span class='end'>—— 结局：被尸潮群殴 ——</span>"
   },
 
   // ========== 饼干引路 + 员工通道 ==========
@@ -659,9 +659,9 @@ Object.assign(storyData, {
       if (vars.FamilymartHasZombie) {
         return "你摸黑走进员工通道。太暗了，只能用手扶着墙慢慢往前挪。\n脚下突然踩到什么东西——咔嚓一声，像是一包薯片被你踩碎了。\n\
 你心里一紧。黑暗中，你听到了呼吸声。\n不是你的。\n一道黑影从走廊深处猛地窜了出来——是只丧尸！它刚才被你的脚步声吸引，一直在黑暗中等你。它的速度快得惊人，灰色的身影在黑暗中几乎看不清轨迹。\n\
-<span style='color: #ffaa00;'>你必须在一瞬间判断它的攻击方向！</span>";
+<span class='warn'>你必须在一瞬间判断它的攻击方向！</span>";
       }
-      return "你摸黑走进员工通道。太暗了，只能用手扶着墙慢慢往前挪。\n上次那只迅捷丧尸已经不在了，走廊里很安静，只有你自己的呼吸声。\n你摸黑挪了半天——这种一步一摸索的走法比正常走路累得多，额头都沁出了汗。只找到几件挂在墙上的旧工作服和一个上锁的储物柜。\n<span style='color: #888;'>也许下次带个手电筒来会有收获。</span>";
+      return "你摸黑走进员工通道。太暗了，只能用手扶着墙慢慢往前挪。\n上次那只迅捷丧尸已经不在了，走廊里很安静，只有你自己的呼吸声。\n你摸黑挪了半天——这种一步一摸索的走法比正常走路累得多，额头都沁出了汗。只找到几件挂在墙上的旧工作服和一个上锁的储物柜。\n<span class='numb'>也许下次带个手电筒来会有收获。</span>";
     },
     choices: function(vars) {
       var cs = [];
@@ -719,7 +719,7 @@ Object.assign(storyData, {
       if (vars._employeeWeapon === "斧") {
         return "黑暗中你抡起斧头，对准那道扑来的黑影横扫过去。斧刃劈进它的脖颈，它闷声栽倒，抽搐了几下不再动了。\n\
 你喘着粗气，把斧刃上的污血在墙边蹭了蹭——这一斧动静不小，得赶紧离开。\n\
-你抹黑退了出来，回到了便利店。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+你抹黑退了出来，回到了便利店。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       if (vars._employeeWeapon === "枪") {
         return "你拔枪对准黑影扣下扳机——\n\
@@ -728,7 +728,7 @@ Object.assign(storyData, {
       }
       return "那道黑影扑到半空时，你早已攥紧匕首反手迎上——刀尖刺进它的下颚，直贯而入。它僵在你面前，随即软了下去。\n\
 你甩开尸体，屏着气听了一会儿——还好，没引来更多动静。\n\
-你抹黑退了出来，回到了便利店。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+你抹黑退了出来，回到了便利店。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -741,7 +741,7 @@ Object.assign(storyData, {
   "全家便利店-员工通道-踢飞丧尸": {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/员工通道-暗.png */,
     onEnter: updateTime(1, { set: { FamilymartHasZombie: false } }),
-    text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱哗啦啦地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n砰——门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱哗啦啦地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n砰——门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -754,7 +754,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。" + weaponBrokeText(vars) + "\n—— 结局：员工通道的迅捷丧尸 ——";
+      return "黑暗中你根本无法判断它从哪个方向扑来。\n迅捷丧尸在黑暗中的速度快得超乎想象——你甚至没来得及举起手臂格挡，它已经把你扑倒在地。\n你的最后记忆是它冰冷的牙齿刺入你的脖子。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：员工通道的迅捷丧尸 ——</span>";
     }
   },
 
@@ -768,8 +768,8 @@ Object.assign(storyData, {
     text: [
       "清静下来的店门口，你终于注意到那辆被撞歪的早点车。车斗里翻倒着一只你妈用了好几年的帽子。",
       "车斗底下压着袋没来得及拎走的肉包，塑料袋口松着。你蹲下去，从肉包里摸出一部手机——是你的。屏幕碎了一道口，还剩最后一丝电。",
-      "你把它摁亮，微信停在最后几屏：\n<span style='color: #aaa;'>6/28 06:57 妈：醒了吗？锅里有粥，妈出去买早饭，很快回来。</span>",
-      "<span style='color: #aaa;'>6/28 07:35 妈：店里忽然乱起来了，外面也是。你锁好门，千万别出来，等妈回——</span>",
+      "你把它摁亮，微信停在最后几屏：\n<span class='term'>6/28 06:57 妈：醒了吗？锅里有粥，妈出去买早饭，很快回来。</span>",
+      "<span class='term'>6/28 07:35 妈：店里忽然乱起来了，外面也是。你锁好门，千万别出来，等妈回——</span>",
       "最后一条没有发出去。消息停在转圈的箭头，像半句话悬在半空。",
       "你握着手机蹲了很久。天亮得刺眼。"
     ],

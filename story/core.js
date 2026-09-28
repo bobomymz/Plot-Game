@@ -628,7 +628,7 @@ const storyData = {
   // -------- 起始 / 全局节点 --------
   "结局-体力耗尽": {
     image: "images/outOfStrength.webp",
-    text: "你的体力彻底耗尽……眼前一黑，倒在了冰冷的地面上。\n再也没有醒来。\n\n—— 结局：体力耗尽 ——",
+    text: "你的体力彻底耗尽……眼前一黑，倒在了冰冷的地面上。\n再也没有醒来。\n\n<span class='end'>—— 结局：体力耗尽 ——</span>",
     style: "color: #ff4444; font-weight: bold;"
   },
   "直面尸潮": {
@@ -645,7 +645,7 @@ const storyData = {
   "结局-尸潮撕碎了你": {
     image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "尸潮彻底包围了你，你被撕碎了。\n\
-—— 结局：尸潮撕碎了你 ——"
+<span class='end'>—— 结局：尸潮撕碎了你 ——</span>"
   },
   "整理整理": { // 汇总一下物品
     image: "images/整理整理.webp" ,
@@ -1237,9 +1237,9 @@ const storyData = {
     },
     text: function(vars) {
       if (vars._drankToxicWater) {
-        return "你拧开瓶盖喝了几口。水面上浮着一层淡淡的油光，味道也说不上新鲜——你皱了皱眉，还是咽了下去。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+        return "你拧开瓶盖喝了几口。水面上浮着一层淡淡的油光，味道也说不上新鲜——你皱了皱眉，还是咽了下去。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>";
       }
-      return "你拧开瓶盖，仰头喝了几口。微凉的水顺着喉咙流下，干渴的身体舒服了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+      return "你拧开瓶盖，仰头喝了几口。微凉的水顺着喉咙流下，干渴的身体舒服了不少。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>";
     },
     choices: [
       { text: "继续", nextScene: "整理整理" }
@@ -1259,7 +1259,7 @@ const storyData = {
       } else {
         desc += "这身衣服留在你手里，一团白布。\n";
       }
-      return desc + "<span style='color: #00fbffff; font-style: italic;'>【系统提示】已脱下无尘服，现在可以进食饮水了。</span>";
+      return desc + "<span class='sys'>【系统提示】已脱下无尘服，现在可以进食饮水了。</span>";
     },
     choices: [
       { text: "继续", nextScene: "整理整理" }
@@ -1274,7 +1274,7 @@ const storyData = {
       vars.itemCount = Math.max(0, vars.itemCount - 1);
       return {};
     },
-    text: "你撕开冻肉的包装，也顾不上它还没完全解冻，咬了一大口。冰碴混着肉香在嘴里化开——虽然凉得牙根发酸，但至少是真肉。你三两口把它吃完，感觉力气恢复了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力回满，当前体力：{strength}。</span>",
+    text: "你撕开冻肉的包装，也顾不上它还没完全解冻，咬了一大口。冰碴混着肉香在嘴里化开——虽然凉得牙根发酸，但至少是真肉。你三两口把它吃完，感觉力气恢复了不少。\n<span class='sys'>【系统提示】体力回满，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1283,7 +1283,7 @@ const storyData = {
   "整理整理-吃饼干": {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasBiscuit: false } }),
-    text: "你拆开包装袋，掰了一块压缩饼干放进嘴里。干巴巴的，嚼起来有点硬，但那股麦香让你想起还没出事时的日子。你就着水咽了下去，胃里终于有了点东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你拆开包装袋，掰了一块压缩饼干放进嘴里。干巴巴的，嚼起来有点硬，但那股麦香让你想起还没出事时的日子。你就着水咽了下去，胃里终于有了点东西。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1292,7 +1292,7 @@ const storyData = {
   "整理整理-吃炒米": {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasCatSnack: false } }),
-    text: "你撕开脆脆炒米的包装袋，抓了一把扔进嘴里。米粒爆得酥脆，咸香里带点海苔味，就是干得噎人，你捶着胸口顺了半天气。以前火锅店门口拿来打发排队客的小零嘴，现在也成了正经口粮。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你撕开脆脆炒米的包装袋，抓了一把扔进嘴里。米粒爆得酥脆，咸香里带点海苔味，就是干得噎人，你捶着胸口顺了半天气。以前火锅店门口拿来打发排队客的小零嘴，现在也成了正经口粮。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1301,7 +1301,7 @@ const storyData = {
   "整理整理-吃磨牙饼干": {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasTeethingBiscuit: false } }),
-    text: "你拆开磨牙饼干的罐子，拿出一根咬了一口——硬得离谱，几乎没什么味道，只有一点淡淡的谷物甜。这是给没长牙的婴儿磨牙的东西。你嚼了很久才咽下去，居然还挺顶饿。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你拆开磨牙饼干的罐子，拿出一根咬了一口——硬得离谱，几乎没什么味道，只有一点淡淡的谷物甜。这是给没长牙的婴儿磨牙的东西。你嚼了很久才咽下去，居然还挺顶饿。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1310,7 +1310,7 @@ const storyData = {
   "整理整理-吃食堂干粮": {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 2, itemCount: -1 }, set: { hasCanteenFood: false } }),
-    text: "你撬开一个罐头，就着干粮慢慢吃了一顿。罐头咸得齁人，干粮噎嗓子，但胃里有了实在的东西，身上也暖了些。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    text: "你撬开一个罐头，就着干粮慢慢吃了一顿。罐头咸得齁人，干粮噎嗓子，但胃里有了实在的东西，身上也暖了些。\n<span class='sys'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1319,7 +1319,7 @@ const storyData = {
   "整理整理-吃小饼干": {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasSnackCookie: false } }),
-    text: "你拆开味千拉面前台顺手拿的小饼干，一口一个。黄油的香气在嘴里化开，甜得有点腻——但这种时候，甜就是好东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你拆开味千拉面前台顺手拿的小饼干，一口一个。黄油的香气在嘴里化开，甜得有点腻——但这种时候，甜就是好东西。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1328,7 +1328,7 @@ const storyData = {
   "整理整理-吃夹心饼干": {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 1, itemCount: -1 }, set: { hasCracker: false } }),
-    text: "你掰开夹心饼干，先把中间的奶油夹心舔干净，再把饼干嚼碎咽下去。热量不高，但好歹压住了胃里那股空落落的感觉。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你掰开夹心饼干，先把中间的奶油夹心舔干净，再把饼干嚼碎咽下去。热量不高，但好歹压住了胃里那股空落落的感觉。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1337,7 +1337,7 @@ const storyData = {
   "整理整理-吃火腿肠": {
     image: "images/整理整理.webp",
     onEnter: updateTime(1, { add: { strength: 2, itemCount: -1 }, set: { hasHamSausage: false } }),
-    text: "你撕开火腿肠的肠衣，两三口就解决了一根。咸香的肉味在嘴里散开——淀粉多肉少，但嚼着就是比饼干踏实。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    text: "你撕开火腿肠的肠衣，两三口就解决了一根。咸香的肉味在嘴里散开——淀粉多肉少，但嚼着就是比饼干踏实。\n<span class='sys'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1347,7 +1347,7 @@ const storyData = {
     image: "images/整理整理.webp",
     onEnter: updateTime(2, { add: { itemCount: -1, instantNoodle: -1 }, set: { strength: 10 } }),
     text: "没有热水，你把面饼掰成小块干嚼，调料包撕开个口，倒一点在手心里舔着就面吃。又咸又干，呛得直咳嗽，但碳水下肚的踏实感骗不了人。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1356,7 +1356,7 @@ const storyData = {
   "整理整理-吃罐头": {
     image: "images/整理整理.webp",
     onEnter: updateTime(2, { add: { strength: 4, itemCount: -1 }, set: { hasCannedFood: false } }),
-    text: "你拉开罐头拉环，顾不上找筷子，直接用手捞着吃。油水混着肉块滑进胃里，连汤都喝得一滴不剩——这是这几天来最像样的一顿。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+4，当前体力：{strength}。</span>",
+    text: "你拉开罐头拉环，顾不上找筷子，直接用手捞着吃。油水混着肉块滑进胃里，连汤都喝得一滴不剩——这是这几天来最像样的一顿。\n<span class='sys'>【系统提示】体力+4，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1375,9 +1375,9 @@ const storyData = {
     },
     text: function(vars) {
       if (vars._vitaminCured) {
-        return "你撕开包装，把两片维生素C丢进嘴里嚼碎，就着水咽了下去。酸酸甜甜的味道在舌根化开，一路凉丝丝地滑到胃里。\n过了一会儿，你身上那股散不掉的寒气慢慢退了，额头也不怎么烫了——这盒维C好像真把感冒压了下去。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】感冒已缓解，体力+1，当前体力：{strength}。</span>";
+        return "你撕开包装，把两片维生素C丢进嘴里嚼碎，就着水咽了下去。酸酸甜甜的味道在舌根化开，一路凉丝丝地滑到胃里。\n过了一会儿，你身上那股散不掉的寒气慢慢退了，额头也不怎么烫了——这盒维C好像真把感冒压了下去。\n<span class='sys'>【系统提示】感冒已缓解，体力+1，当前体力：{strength}。</span>";
       }
-      return "你撕开包装，把两片维生素C丢进嘴里嚼碎，就着水咽了下去。酸酸甜甜的味道在舌根化开，喉咙和鼻子都清爽了几分。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>";
+      return "你撕开包装，把两片维生素C丢进嘴里嚼碎，就着水咽了下去。酸酸甜甜的味道在舌根化开，喉咙和鼻子都清爽了几分。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>";
     },
     choices: [
       { text: "继续", nextScene: "整理整理" }
@@ -1404,7 +1404,7 @@ const storyData = {
       if (vars._iodineBoxJustEmptied) {
         desc += "\n这一盒正好用完，你顺手把空盒子丢进了垃圾桶。";
       }
-      return desc + "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，不再加快体力消耗。</span>";
+      return desc + "\n<span class='sys'>【系统提示】伤口已消毒，不再加快体力消耗。</span>";
     },
     choices: [
       { text: "继续", nextScene: "整理整理" }
@@ -1419,7 +1419,7 @@ const storyData = {
       vars.itemCount = Math.max(0, vars.itemCount - 1);
       return updateTime(1)(vars);
     },
-    text: "你拧开医用酒精的瓶盖，一股冲鼻的气味涌了出来。手边没有棉球，你索性把瓶口凑到伤口上方，让酒精直接淋下去。\n刺痛顺着抓痕钻进胳膊，你咬紧牙关撑了几秒，指节攥得发白。等那股劲儿退下去，渗血的爪印总算冲干净了。\n瓶子已经见了底，你随手把它丢在一边。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，不再加快体力消耗。</span>",
+    text: "你拧开医用酒精的瓶盖，一股冲鼻的气味涌了出来。手边没有棉球，你索性把瓶口凑到伤口上方，让酒精直接淋下去。\n刺痛顺着抓痕钻进胳膊，你咬紧牙关撑了几秒，指节攥得发白。等那股劲儿退下去，渗血的爪印总算冲干净了。\n瓶子已经见了底，你随手把它丢在一边。\n<span class='sys'>【系统提示】伤口已消毒，不再加快体力消耗。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1442,7 +1442,7 @@ const storyData = {
       vars.itemCount = Math.max(0, vars.itemCount - 1);
       return updateTime(1)(vars);
     },
-    text: "你抠出那粒无标签的淡黄色药丸，放在手心端详了一下，还是放进嘴里用水送了下去。药丸没有味道，说不上来是什么感觉——但你隐约觉得，身体里那股沉甸甸的压迫感好像减轻了一点。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你服下了那粒无标签的药丸。</span>",
+    text: "你抠出那粒无标签的淡黄色药丸，放在手心端详了一下，还是放进嘴里用水送了下去。药丸没有味道，说不上来是什么感觉——但你隐约觉得，身体里那股沉甸甸的压迫感好像减轻了一点。\n<span class='sys'>【系统提示】你服下了那粒无标签的药丸。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1474,7 +1474,7 @@ const storyData = {
       vars.itemCount = Math.max(0, vars.itemCount - 1);
       return updateTime(5)(vars);
     },
-    text: "你掰下一粒退烧药，就着半瓶水咽了下去。药效来得不算快，但过了好一会儿，你身上那股散不掉的寒气慢慢退了，额头也不再发烫。\n你抹了把汗，整个人虚脱似的坐了一会儿——总算不发烧了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】感冒已治愈。</span>",
+    text: "你掰下一粒退烧药，就着半瓶水咽了下去。药效来得不算快，但过了好一会儿，你身上那股散不掉的寒气慢慢退了，额头也不再发烫。\n你抹了把汗，整个人虚脱似的坐了一会儿——总算不发烧了。\n<span class='sys'>【系统提示】感冒已治愈。</span>",
     choices: [
       { text: "继续", nextScene: "整理整理" }
     ]
@@ -1536,6 +1536,6 @@ const storyData = {
 
   "结局-汞中毒尸变": {
     image: "images/zombiePounceOnYou.webp",
-    text: "你的手开始不受控制地颤抖。视野边缘在变暗，像有人从四周慢慢拉上帷幕。\n最后的清醒时刻，你低头看向自己的手——皮肤已经变成了暗灰色，在日光下泛着诡异的金属光泽。\n你张开嘴想喊什么，但喉咙里只发出了一声低沉的喉音。\n—— 结局：汞中毒尸变 ——"
+    text: "你的手开始不受控制地颤抖。视野边缘在变暗，像有人从四周慢慢拉上帷幕。\n最后的清醒时刻，你低头看向自己的手——皮肤已经变成了暗灰色，在日光下泛着诡异的金属光泽。\n你张开嘴想喊什么，但喉咙里只发出了一声低沉的喉音。\n<span class='end'>—— 结局：汞中毒尸变 ——</span>"
   },
 };

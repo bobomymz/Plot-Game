@@ -258,7 +258,7 @@ Object.assign(storyData, {
       var desc = "你走到龙头区一侧的足球场。说是足球场，但已经面目全非。看着眼前3道白色的网，你知道这里已经变成了网球场。\n\
 儿时的回忆涌上心头————小时候你在这里上足球课，每次踢完还要去吉祥馄饨吃午饭。那个足球俱乐部叫做U-ball，你有个球上写着他们的名字。\n\
 这个俱乐部早就倒闭了。\n";
-      desc += "<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[U-ball]——有些东西你以为永远不会忘，但等你再回来时，它已经不在了。</span>";
+      desc += "<span class='sys'>【系统提示】获得记忆[U-ball]——有些东西你以为永远不会忘，但等你再回来时，它已经不在了。</span>";
       return desc;
     },
     choices: [
@@ -381,9 +381,9 @@ Object.assign(storyData, {
     onEnter: updateTime(15, { add: { strength: 5 } }),
     text: function(vars) {
       if (vars._visit['金谊广场-吉祥馄饨-聊'] > 0) {
-        return "你指了指灶台。“饿了，帮我煮碗馄饨？”陈默愣了一下，显然没想到你会在这种时候提这种要求。他沉默了两秒，还是走过去掀开冰柜——里面居然还有半袋冷冻的荠菜鲜肉馄饨。\n灶火重新点起来，热汤翻滚。他把一碗馄饨推到你面前，自己没动筷子。“我不饿，你吃。”\n你埋头吃了起来。荠菜的清香混着肉味，热汤顺着喉咙暖到胃里。这是末世里难得的一顿正经饭。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+5，当前体力：{strength}。</span>";
+        return "你指了指灶台。“饿了，帮我煮碗馄饨？”陈默愣了一下，显然没想到你会在这种时候提这种要求。他沉默了两秒，还是走过去掀开冰柜——里面居然还有半袋冷冻的荠菜鲜肉馄饨。\n灶火重新点起来，热汤翻滚。他把一碗馄饨推到你面前，自己没动筷子。“我不饿，你吃。”\n你埋头吃了起来。荠菜的清香混着肉味，热汤顺着喉咙暖到胃里。这是末世里难得的一顿正经饭。\n<span class='sys'>【系统提示】体力+5，当前体力：{strength}。</span>";
       }
-      return "你指了指灶台，比划了一下煮馄饨的动作。那个戴鸭舌帽的黑衣人看了你一眼，没有拒绝——他走过去掀开冰柜，里面居然还有半袋冷冻的荠菜鲜肉馄饨。\n他沉默地生火、煮水、下馄饨，全程没说一句话。一碗热腾腾的馄饨端到你面前，他退开两步，继续蹲回角落翻他的旧纸箱。\n荠菜的清香混着肉味，热汤顺着喉咙暖到胃里。虽然对方态度冷淡，但这碗馄饨是真的。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+5，当前体力：{strength}。</span>";
+      return "你指了指灶台，比划了一下煮馄饨的动作。那个戴鸭舌帽的黑衣人看了你一眼，没有拒绝——他走过去掀开冰柜，里面居然还有半袋冷冻的荠菜鲜肉馄饨。\n他沉默地生火、煮水、下馄饨，全程没说一句话。一碗热腾腾的馄饨端到你面前，他退开两步，继续蹲回角落翻他的旧纸箱。\n荠菜的清香混着肉味，热汤顺着喉咙暖到胃里。虽然对方态度冷淡，但这碗馄饨是真的。\n<span class='sys'>【系统提示】体力+5，当前体力：{strength}。</span>";
     },
     choices: [
       { text: "继续", nextScene: "金谊广场-吉祥馄饨", effect: updateTime(1) }
@@ -430,7 +430,7 @@ Object.assign(storyData, {
         ? "陈默把菜刀换到左手，给你腾出了空间——他朝你一点头，像是想起了当初在小区里救你的那一下。\n"
         : "陈默——现在你知道他的名字了——把菜刀换到左手，给你腾出了空间。\n";
       desc += "你们一起从吉祥馄饨的卷帘门里冲了出来。停车场的丧尸被你们的动静吸引，有几只从河边转过身来。\n集中注意力——看清它们的动作轨迹！";
-      desc += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return desc;
     },
     choices: function(vars) {
@@ -475,7 +475,7 @@ Object.assign(storyData, {
       desc += "他把菜刀收好，从口袋里掏出一张折得四四方方的纸——是一张手绘的地图，线条粗糙但标注极细。\n";
       desc += "“我跑了五年外卖，东明路这一片烂熟。”他展开地图，指头落在派出所那一带。“北边派出所在东明路顶头，可中间那片全被翻倒的公交、撞死的轿车堵死了，正面根本过不去。唯一有一趟——从斜对面那条后街巷子绕进消防通道，贴着围墙根一路走，能避开整条车龙，直接摸到派出所门口。这条线我画好圈了。没这张图，你连那条巷子都找不着。”\n";
       desc += "他把地图折好，塞进你手里。“你救了我一次。这算还你的——留着去翻派出所的红利吧。”\n";
-      desc += "<span style='color: #00fbffff; font-style: italic;'>【系统提示】陈默好感度提升。你获得了去警察局的穿行路线图（东明路车阵·后街巷）。</span>";
+      desc += "<span class='sys'>【系统提示】陈默好感度提升。你获得了去警察局的穿行路线图（东明路车阵·后街巷）。</span>";
       return desc;
     },
     choices: [
@@ -783,7 +783,7 @@ Object.assign(storyData, {
       var tail = vars.noPainSense
         ? "你靠着通道的墙壁大口喘气。抓伤在渗血，你等着那股火辣辣的疼——它没有来。伤口静得像不属于你。" + mercuryPainNote(vars)
         : "你靠着通道的墙壁大口喘气，手臂上的抓伤火辣辣地疼。";
-      return "你慢了半拍——丧尸从侧面撞上了你，你们一起摔在站厅的瓷砖地上。\n它的指甲划破了你的手臂，你忍着痛一脚踹开它，爬起来跌跌撞撞冲进了通往B1的通道。\n" + tail + weaponBrokeText(vars) + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
+      return "你慢了半拍——丧尸从侧面撞上了你，你们一起摔在站厅的瓷砖地上。\n它的指甲划破了你的手臂，你忍着痛一脚踹开它，爬起来跌跌撞撞冲进了通往B1的通道。\n" + tail + weaponBrokeText(vars) + "\n<span class='sys warn'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       { text: "继续前进", nextScene: "金谊广场-B1 心谊如意街", effect: updateTime(1) }
@@ -864,7 +864,7 @@ Object.assign(storyData, {
   "金谊广场-1F肯德基-吃鸡块": {
     image: "images/金谊广场/吃鸡块.webp",
     onEnter: { add: { strength: 3 } },
-    text: "你拆开一盒鸡块，撕开番茄酱的小包。\n冷掉了，但还能吃。你坐在油腻的地板上，把两盒鸡块一扫而光。\n胃里终于有了点实在的东西。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
+    text: "你拆开一盒鸡块，撕开番茄酱的小包。\n冷掉了，但还能吃。你坐在油腻的地板上，把两盒鸡块一扫而光。\n胃里终于有了点实在的东西。\n<span class='sys'>【系统提示】体力+3，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "金谊广场-1F肯德基", effect: updateTime(1) }
     ]
@@ -1157,7 +1157,7 @@ Object.assign(storyData, {
   "金谊广场-4F-影院-吃爆米花": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/4F影院大厅.jpg */,
     onEnter: updateTime(2, { add: { strength: 1 } }),
-    text: "你抓起一把爆米花放进嘴里——硬得像石头，嚼得腮帮子发酸。焦糖味早就散尽了，只剩一股放久了的甜腻。\n你费了好大劲才咽下去几颗，胃里总算有了点东西垫底。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你抓起一把爆米花放进嘴里——硬得像石头，嚼得腮帮子发酸。焦糖味早就散尽了，只剩一股放久了的甜腻。\n你费了好大劲才咽下去几颗，胃里总算有了点东西垫底。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "金谊广场-4F-影院", effect: updateTime(1) }
     ]
@@ -1236,9 +1236,9 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "你拿起那半瓶威士忌，拧开盖子。酒味很冲。\n你咬紧牙关，把酒倒在手臂的伤口上——一阵剧烈的刺痛从伤口蔓延到整个手臂，你差点叫出声来。\n";
       if (!vars.hurtByZombie) {
-        desc += "刺痛过后，伤口周围的皮肤泛着红，但看起来干净了不少。\n至少，伤口不会再继续恶化了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】伤口已消毒，感染风险降低。</span>";
+        desc += "刺痛过后，伤口周围的皮肤泛着红，但看起来干净了不少。\n至少，伤口不会再继续恶化了。\n<span class='sys'>【系统提示】伤口已消毒，感染风险降低。</span>";
       } else {
-        desc += "但刺痛过后，伤口看起来并没有好转——反而更红了。酒精杀死了表面的细菌，但病毒已经太深了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】酒精消毒未能清除感染。伤口仍在恶化。</span>";
+        desc += "但刺痛过后，伤口看起来并没有好转——反而更红了。酒精杀死了表面的细菌，但病毒已经太深了。\n<span class='sys warn'>【系统提示】酒精消毒未能清除感染。伤口仍在恶化。</span>";
       }
       return desc;
     },
@@ -1338,7 +1338,7 @@ Object.assign(storyData, {
   "金谊广场-B1奥乐齐-搜刮-吃完": {
     image: "images/placeholder.png" /* TODO: images/金谊广场/B1奥乐齐.jpg */,
     onEnter: { add: { strength: 1 } },
-    text: "你坐在收银台旁边，打开压缩饼干和午餐肉，狼吞虎咽地吃了起来。在这末世里，能有东西吃已经是一种奢侈了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你坐在收银台旁边，打开压缩饼干和午餐肉，狼吞虎咽地吃了起来。在这末世里，能有东西吃已经是一种奢侈了。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "金谊广场-B1奥乐齐", effect: updateTime(1) }
     ]
@@ -1425,7 +1425,7 @@ Object.assign(storyData, {
     onEnter: { add: { maskRemainingUses: -1 } },
     text: function(vars) {
       if (vars.maskRemainingUses <= 0) {
-        return "你又撬开了几辆车的车门，搜刮了一些杂物。\n面罩的滤层开始发涩——活性炭快到极限了。你得赶紧离开这里。\n<span style='color: #ff4444;'>【警告】防毒面具滤层已耗尽。</span>";
+        return "你又撬开了几辆车的车门，搜刮了一些杂物。\n面罩的滤层开始发涩——活性炭快到极限了。你得赶紧离开这里。\n<span class='crit'>【警告】防毒面具滤层已耗尽。</span>";
       }
       return "你又撬开了几辆车的车门，搜刮了一些杂物。这时，你转头看到旁边有个货梯间。\n防毒面具的滤层微微发涩——还能撑一会儿，但别在这里待太久。";
     },
@@ -1453,7 +1453,7 @@ Object.assign(storyData, {
       if ((vars._visit['金谊广场-吉祥馄饨-杀出去'] > 0)) {
         desc += "\n你想起陈默给你的那张地图——那些近道，那些近路，那些只有他才知道的缝隙。这个世界很大，但总有人知道怎么走。";
       }
-      desc += "\n<span style='color: #888;'>（金谊广场探索完毕 — 后续内容待展开）</span>";
+      desc += "\n<span class='numb'>（金谊广场探索完毕 — 后续内容待展开）</span>";
       return desc;
     },
     choices: [

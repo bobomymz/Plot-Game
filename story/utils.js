@@ -77,8 +77,8 @@ function restRecover(v, amount) {
 // 返回值以 \n 开头、内含 {strength} 插值（text 函数返回值仍会做插值），直接拼在描述末尾即可。
 function restHint(vars, okText) {
   if (vars._restBlocked)
-    return "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。</span>";
-  return "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】" + (okText || "体力+1") + "，当前体力：{strength}。</span>";
+    return "\n<span class='sys'>【系统提示】你已经差不多歇够了。</span>";
+  return "\n<span class='sys'>【系统提示】" + (okText || "体力+1") + "，当前体力：{strength}。</span>";
 }
 
 // ====== 休息节点 · 就地整理背包入口（全图休息节点通用） ======
@@ -267,7 +267,7 @@ function describeZombieWave(vars) {
   // 回头路警告
   if (vars._backtrackWarning) {
     vars._backtrackWarning = false;
-    result += "\n\n<span style='color: #ffaa00;'>你折返的脚步在空旷的走廊里回荡——它们听到你的方向了。</span>";
+    result += "\n\n<span class='warn'>你折返的脚步在空旷的走廊里回荡——它们听到你的方向了。</span>";
   }
 
   return result;
@@ -296,9 +296,9 @@ function mercuryTier(load) {
 function mercuryPainNote(vars) {
   if (mercuryTier(vars && vars.mercuryLoad) < 2) return "";
   var pool = [
-    "\n<span style='color: #9aa0a6;'>应该是疼的。你等着那股疼上来，它没有来——只有一片迟钝的麻木，从伤口向外漫开。</span>",
-    "\n<span style='color: #9aa0a6;'>伤口在渗血。你盯着看了一会儿，才想起来这里本该很疼。</span>",
-    "\n<span style='color: #9aa0a6;'>你低头确认了一下伤口的深度，心里某个地方知道这很严重——但身体没有给你任何反馈。</span>"
+    "\n<span class='numb'>应该是疼的。你等着那股疼上来，它没有来——只有一片迟钝的麻木，从伤口向外漫开。</span>",
+    "\n<span class='numb'>伤口在渗血。你盯着看了一会儿，才想起来这里本该很疼。</span>",
+    "\n<span class='numb'>你低头确认了一下伤口的深度，心里某个地方知道这很严重——但身体没有给你任何反馈。</span>"
   ];
   return pool[Math.floor(Math.random() * pool.length)];
 }
@@ -312,14 +312,14 @@ function mercuryMirrorNote(vars, surface) {
   if (mercuryTier(vars && vars.mercuryLoad) < 1) return "";
   surface = surface || "镜子";
   if (surface === "水面") {
-    return "\n<span style='color: #9aa0a6;'>河面很稳，倒影清清楚楚。你看了一会儿才发现不对——水里那张脸太灰了，灰得像蒙了一层没擦净的粉。你抬手碰了碰自己的脸颊，水面跟着晃开，那张脸散成一片。" +
+    return "\n<span class='numb'>河面很稳，倒影清清楚楚。你看了一会儿才发现不对——水里那张脸太灰了，灰得像蒙了一层没擦净的粉。你抬手碰了碰自己的脸颊，水面跟着晃开，那张脸散成一片。" +
            "</span>";
   }
   if (surface === "车窗") {
-    return "\n<span style='color: #9aa0a6;'>车玻璃蒙了层薄灰，正好当镜用。你无意间瞥见自己的脸——灰的。不是光线的事，你凑近了些，那层灰色还在。" +
+    return "\n<span class='numb'>车玻璃蒙了层薄灰，正好当镜用。你无意间瞥见自己的脸——灰的。不是光线的事，你凑近了些，那层灰色还在。" +
            "</span>";
   }
-  return "\n<span style='color: #9aa0a6;'>你抬眼看了下镜子。那张脸还在，只是没了该有的颜色——灰的，像蒙了一层没擦净的粉。你凑近了些，确认不是光线的问题。" +
+  return "\n<span class='numb'>你抬眼看了下镜子。那张脸还在，只是没了该有的颜色——灰的，像蒙了一层没擦净的粉。你凑近了些，确认不是光线的问题。" +
          "</span>";
 }
 
@@ -453,7 +453,7 @@ function combatDrainText(vars) {
   var c = vars._lastCombatDrain;
   if (!c) return "";
   vars._lastCombatDrain = 0;
-  return "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-" + c + "，当前体力：{strength}。</span>";
+  return "\n<span class='sys warn'>【系统提示】体力-" + c + "，当前体力：{strength}。</span>";
 }
 
 // ====== 日记本系统（数据层；浏览场景与正文表见 story/日记本.js） ======

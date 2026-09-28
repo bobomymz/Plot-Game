@@ -132,7 +132,7 @@ Object.assign(storyData, {
         "他站起来拍了拍裤子，把金属管往肩上一扛。“我打算进去逛逛——这么大的商场，总不能什么都不剩吧。你看看有没有什么好东西，回头碰上了跟我说。”\n山地车被他随手锁在了喷泉边的路灯杆上。“反正也没人偷。”"
       ];
       if (vars._lastScene === "新达汇-喷泉广场-高锦睿-帮忙") { // 仅闪色打赢的入口扣了1体力（旁观/被救入口不扣）
-        seg[seg.length - 1] += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+        seg[seg.length - 1] += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       return seg; },
     choices: [
@@ -453,7 +453,7 @@ Object.assign(storyData, {
   "新达汇-B1保安室-抽屉-吃桃酥": {
     onEnter: { set: { showPowerOut: true }, add: { strength: 2 }  },
     image: "images/placeholder.png" /* TODO: images/新达汇/B1值班台抽屉-吃桃酥.jpg */,
-    text: "你把桃酥吃掉了。<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力。当前体力：{strength}。</span>",
+    text: "你把桃酥吃掉了。<span class='sys'>【系统提示】你回复2点体力。当前体力：{strength}。</span>",
     choices: [
       {
         text: "合上抽屉",
@@ -471,9 +471,9 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "1F-中庭"); v.showPowerOut = true; return { set: { positionAfterOperation: "新达汇-1F中庭" } }; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "你站在1F中庭。挑空大厅，阳光从天窗洒下来。环形走廊在头顶层层叠叠，中庭中央有一株大型绿植。\n"
- + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>远处传来猫叫。</span>\n" : "")
+ + (vars._catChasing && !vars._powerOut ? "<span class='warn'>远处传来猫叫。</span>\n" : "")
  + (!vars._catChasing && !vars._powerOut && vars._catFed && Math.random() < 0.3 ? 
-  "<span style='color: #888;'>中庭的大绿植叶片轻轻抖动了一下——那只变异猫从叶子间探出头，看了你一眼，又缩了回去。</span>\n" : "")
+  "<span class='numb'>中庭的大绿植叶片轻轻抖动了一下——那只变异猫从叶子间探出头，看了你一眼，又缩了回去。</span>\n" : "")
  + describeZombieWave(vars); },
     choices: [
       {
@@ -686,8 +686,8 @@ Object.assign(storyData, {
     onEnter: function(v) { var g = restTidyGuard(v); if (g) return g; v.showPowerOut = true; restRecover(v, 1); var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
     text: function(vars) {
       var hint = vars._restBlocked
-        ? "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
-        : "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>";
+        ? "<span class='sys'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
+        : "<span class='sys'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>";
       return "你在后厨的角落坐下，撕开一包袋装拉面干嚼。盐味冲鼻子，比店里现煮的差远了，好歹嘴里不空。\n\
 你靠墙休息了一会儿，外面的声音渐渐远去了。\n" + hint;
     },
@@ -705,8 +705,8 @@ Object.assign(storyData, {
     onEnter: function(v) { var g = restTidyGuard(v); if (g) return g; v.showPowerOut = true; restRecover(v, 1); var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
     text: function(vars) {
       var hint = vars._restBlocked
-        ? "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
-        : "<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>";
+        ? "<span class='sys'>【系统提示】你已经差不多歇够了。甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>"
+        : "<span class='sys'>【系统提示】你回复1点体力，甩掉了一些追兵。当前体力：{strength}，尸潮等级：{chasedByZombies}。</span>";
       return "吃的是没有了，但你在后厨的角落坐下休息了一会儿，外面的声音渐渐远去了。\n" + hint;
     },
     choices: [
@@ -811,7 +811,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "1F南走廊中段。这里有一片开放式休息区——几把椅子歪斜地摆着，几盆绿植已经蔫了，叶片无精打采地垂着。";
       if (!vars._1f_wireFixed && !vars._powerOut) {
-        desc += "\n<span style='color: #ffaa00;'>前方地上有一根断裂的电线搭在积水里，噼啪地冒着火花——挡住了路。</span>";
+        desc += "\n<span class='warn'>前方地上有一根断裂的电线搭在积水里，噼啪地冒着火花——挡住了路。</span>";
       } else if (!vars._1f_wireFixed && vars._powerOut) {
         desc += "\n地上有一根断裂的电线横在面前——停电了，它现在无害，你可以直接跨过去。";
       } else {
@@ -1129,7 +1129,7 @@ Object.assign(storyData, {
       var desc = "你从落货口里捞出一只空矿泉水瓶。瓶盖拧得端端正正，瓶身干得发亮——喝干它的人在这一层待了很久，却没舍得把瓶子随手丢掉。";
       if (vars.vendingBottleLeft > 0) desc += "\n落货口里还剩 " + vars.vendingBottleLeft + " 只空瓶。";
       else desc += "\n落货口里剩下的瓶子，都被你捞空了。";
-      desc += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>";
+      desc += "\n<span class='sys'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>";
       return desc;
     },
     choices: [
@@ -1157,7 +1157,7 @@ Object.assign(storyData, {
       return { add: { strength: 2, chasedByZombies: 1 } };
     },
     text: function(vars) {
-      return "你抡起" + (vars._pryTool || heavyWeaponName(vars)) + "对准断口补了几下，整块玻璃哗啦啦塌下来。两瓶矿泉水顺着货道骨碌碌滚落，你一把捞起来，拧开灌了几大口——冰凉的甜水淌进喉咙，力气回了几分。\n可碎玻璃和摔罐的哐当声在空旷的商场里荡出去老远，铁栏后的丧尸被这动静勾了过来。<span style='color: #00fbffff; font-style: italic;'>【体力 +2 · 追击 +1】</span>" + weaponBrokeText(vars);
+      return "你抡起" + (vars._pryTool || heavyWeaponName(vars)) + "对准断口补了几下，整块玻璃哗啦啦塌下来。两瓶矿泉水顺着货道骨碌碌滚落，你一把捞起来，拧开灌了几大口——冰凉的甜水淌进喉咙，力气回了几分。\n可碎玻璃和摔罐的哐当声在空旷的商场里荡出去老远，铁栏后的丧尸被这动静勾了过来。<span class='sys'>【体力 +2 · 追击 +1】</span>" + weaponBrokeText(vars);
     },
     choices: [
       { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
@@ -1168,7 +1168,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/vendingMachine.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: function(vars) {
-      return "你挥起" + meleeWeaponName(vars) + "去找发力的角度——它太短太脆，敲在厚玻璃上只留下几道白印，反倒因为抡得狠，震得你整只手掌发麻。\n哐哐的声音在空荡荡的电梯厅里格外刺耳，铁栏后的丧尸被这动静引了过来，玻璃却纹丝没动。<span style='color: #ff5555; font-style: italic;'>【追击 +1 · 一无所获】</span>";
+      return "你挥起" + meleeWeaponName(vars) + "去找发力的角度——它太短太脆，敲在厚玻璃上只留下几道白印，反倒因为抡得狠，震得你整只手掌发麻。\n哐哐的声音在空荡荡的电梯厅里格外刺耳，铁栏后的丧尸被这动静引了过来，玻璃却纹丝没动。<span class='crit'>【追击 +1 · 一无所获】</span>";
     },
     choices: [
       { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
@@ -1297,7 +1297,7 @@ Object.assign(storyData, {
     image: "images/新达汇/2F中庭.webp",
     onEnter: function(v) { transit(v, "2F-中庭环廊"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
-    text: function(vars) { return "2F中庭环廊。玻璃围栏让人能直接看到1F中庭。环形走廊两侧是各种零售店铺。\n" + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声在回荡。</span>\n" : "") + describeZombieWave(vars); },
+    text: function(vars) { return "2F中庭环廊。玻璃围栏让人能直接看到1F中庭。环形走廊两侧是各种零售店铺。\n" + (vars._catChasing && !vars._powerOut ? "<span class='warn'>猫叫声在回荡。</span>\n" : "") + describeZombieWave(vars); },
     choices: [
       {
         text: "去北走廊中段",
@@ -1595,9 +1595,9 @@ Object.assign(storyData, {
 但隔音太差了——你能听到外面传来的拖沓脚步声越聚越多。它们在试衣间外面停了下来，发出低沉的嘶吼。\n\
 你被困住了。过了很久它们才散去，但你意识到躲进货架林立的服装店不是一个好主意——屏障太多，根本不知道哪个角落藏着什么。";
       if (vars._powerOut) return "你拉开一间隔间的门钻了进去，反手锁上门。\n隔间的空间不大，勉强能站一个人。你贴着墙壁，听到外面有拖沓的脚步声——有什么东西摸进了店里。\n\
-脚步声在试衣间门口徘徊了一会儿，然后远去了。你等了几分钟，确认安全后才推开门。\n<span style='color: #ffaa00;'>货架林立的服装店实在不是个好藏身处。</span>";
+脚步声在试衣间门口徘徊了一会儿，然后远去了。你等了几分钟，确认安全后才推开门。\n<span class='warn'>货架林立的服装店实在不是个好藏身处。</span>";
       return "你拉开一间隔间的门钻了进去，反手锁上门。\n隔间的空间不大，勉强能站一个人。你贴着墙壁，听到外面的感应门又响了几声——有什么东西进来了。\n\
-脚步声在试衣间门口徘徊了一会儿，然后远去了。你等了几分钟，确认安全后才推开门。\n<span style='color: #ffaa00;'>警报声引来了更多丧尸。</span>";
+脚步声在试衣间门口徘徊了一会儿，然后远去了。你等了几分钟，确认安全后才推开门。\n<span class='warn'>警报声引来了更多丧尸。</span>";
     },
     choices: [
       {
@@ -1733,7 +1733,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "3F-中庭环廊"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "这里是3F中庭，墙上有彩色的卡通墙绘，天花板上挂着落了一半的气球。\n"
-       + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声就在这一层。</span>\n" : "") + describeZombieWave(vars); },
+       + (vars._catChasing && !vars._powerOut ? "<span class='warn'>猫叫声就在这一层。</span>\n" : "") + describeZombieWave(vars); },
     choices: [
       {
         text: "去北走廊中段",
@@ -1829,7 +1829,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/childrenShop.png */,
     onEnter: function(v) { v.showPowerOut = true; var e = updateTime(30, { add: { chasedByZombies: -1 } })(v); v._travelMinutes = 0; return e; },
     text: "童装店里空荡荡的，只有几个落满灰的塑料模特歪倒在地上。你绕到收银台后面蹲下来，这里正好被柜体挡住，从外面完全看不到。\n\
-你缩在阴影里，听着外面的走廊里的脚步声来来回回——但它们没有停下来。过了很久，脚步声拐进了对面铺子。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>",
+你缩在阴影里，听着外面的走廊里的脚步声来来回回——但它们没有停下来。过了很久，脚步声拐进了对面铺子。\n<span class='sys'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>",
     choices: [
       {
         text: "从收银台后站起来",
@@ -1871,7 +1871,7 @@ Object.assign(storyData, {
     onEnter: function(v) { transit(v, "3F-南走廊西"); v.showPowerOut = true; return {}; },
     qte: mallQTE(20000, "结局-丧尸的围殴"),
     text: function(vars) { return "3F南走廊西段。卡通墙绘密集，走廊尽头是卡通尼乐园的入口。\n"
- + (vars._catChasing && !vars._powerOut ? "<span style='color: #ffaa00;'>猫叫声从儿童乐园方向传来。</span>\n" : "")
+ + (vars._catChasing && !vars._powerOut ? "<span class='warn'>猫叫声从儿童乐园方向传来。</span>\n" : "")
  + (!vars._catChasing && !vars._powerOut && vars._catFed && Math.random() < 0.3 ? "墙上的卡通猫墙绘旁边——一只真猫正蹲在消防管道的支架上，安静地俯视着你经过。\n" : "") + describeZombieWave(vars); },
     choices: [
       {
@@ -1995,8 +1995,8 @@ Object.assign(storyData, {
       if (vars._visit["新达汇-3F大型综合儿童乐园"] === 1) {
         return "你走进卡通尼乐园。游戏机的屏幕大多暗着。一只体型异常的猫蹲在抓娃娃机顶上，绿眼睛在昏暗的光线下发光。它与你对视了一秒，然后从你脚边窜出了门外。\n\
 这里并没有什么有用的东西，你转身离开。\n\
-走了几步，你就听到猫叫声从身后传来。<span style='font-style: italic;'>其声呜呜然，如怨如慕，如泣如诉。</span>\n\
-<span style='color: #ffaa00;'>它跟上你了。</span>";
+走了几步，你就听到猫叫声从身后传来。<span class='think'>其声呜呜然，如怨如慕，如泣如诉。</span>\n\
+<span class='warn'>它跟上你了。</span>";
       }
       if (vars._catChasing) return "你又来到了卡通尼乐园。那只变异猫不知什么时候回来了，蹲在滑梯顶上，尾巴缓缓摆动。它看到你，没有跑——只是盯着你。";
       return "你又来到了卡通尼乐园。这里空荡荡的，没什么有用的东西。";
@@ -2447,7 +2447,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-麻辣": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
     onEnter: { add: { strength: -1 }, set: { showPowerOut: true,  _triedHotpot: true } },
-    text: "🌶麻辣锅底——你涮了一片午餐肉——太久没吃辣，胃完全受不了。<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    text: "🌶麻辣锅底——你涮了一片午餐肉——太久没吃辣，胃完全受不了。<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -2459,7 +2459,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-番茄": {
     image: "images/placeholder.png" /* TODO: images/新达汇/hotpotRestaurant.png */,
     onEnter: { add: { strength: 1 }, set: { showPowerOut: true,  _triedHotpot: true } },
-    text: "🍅番茄锅底温和多了。吃了一顿饱饭。<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "🍅番茄锅底温和多了。吃了一顿饱饭。<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -2471,7 +2471,7 @@ Object.assign(storyData, {
   "新达汇-4F火锅-菌菇": {
     image: "images/新达汇/菌菇火锅.webp",
     onEnter: { add: { strength: 2 }, set: { showPowerOut: true,  _triedHotpot: true } },
-    text: "🍄菌菇汤底鲜甜暖胃。<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    text: "🍄菌菇汤底鲜甜暖胃。<span class='sys'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -2502,7 +2502,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/riceRestaurant.png */,
     onEnter: function(v) { v.showPowerOut = true; return updateTime(5, { add: { strength: 2 } })(v); },
     text: "你绕过保温台，掀开菜盘的盖子。红烧肉、番茄炒蛋、炒青菜——都凉透了，油脂凝固成一层白膜，但好在还没有馊味。\n\
-你挑了几样看着还能吃的，就着凉米饭扒了几口。末世里能吃上一口“凉乎的”剩菜，已经算走运了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+你挑了几样看着还能吃的，就着凉米饭扒了几口。末世里能吃上一口“凉乎的”剩菜，已经算走运了。\n<span class='sys'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-4F大米先生", effect: updateTime(1) }
     ]
@@ -2550,7 +2550,7 @@ Object.assign(storyData, {
   "新达汇-4F日料店-找吃的": {
     image: "images/placeholder.png" /* TODO: images/新达汇/japaneseRestaurant.png */,
     onEnter: function(v) { v.showPowerOut = true; return updateTime(5, { add: { strength: 2 } })(v); },
-    text: "你踮着脚绕过满地的碎玻璃和酒液，掀开后厨冷藏柜的盖子。里面躺着几盒密封的寿司拼盘和饭团——贴着当天的标签，冰袋还没完全化。\n你拆开一盒，就着冰凉的米饭吞下去。三文鱼已经不新鲜了，但你告诉自己至少没馊。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    text: "你踮着脚绕过满地的碎玻璃和酒液，掀开后厨冷藏柜的盖子。里面躺着几盒密封的寿司拼盘和饭团——贴着当天的标签，冰袋还没完全化。\n你拆开一盒，就着冰凉的米饭吞下去。三文鱼已经不新鲜了，但你告诉自己至少没馊。\n<span class='sys'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-4F日料店", effect: updateTime(1) }
     ]
@@ -2565,7 +2565,7 @@ Object.assign(storyData, {
       } else {
         desc += "\n你僵在原地，屏住呼吸。过了好一会儿，外面没有什么反应——但你已经不太想在这个满地碎玻璃的地方多待了。";
       }
-      desc += "\n<span style='color: #ffaa00;'>踩到碎瓷片的声音引来了注意。</span>";
+      desc += "\n<span class='warn'>踩到碎瓷片的声音引来了注意。</span>";
       return desc;
     },
     choices: [
@@ -2923,7 +2923,7 @@ Object.assign(storyData, {
     text: "你拉开椅子坐下，打开电圈烤炉。肉虽然已经不冰了，但还没完全坏——你挑了几片看着新鲜的，铺在烤盘上。\n\
 油脂在电圈上滋滋作响，肉香飘散开来。你夹起一片，没蘸料————虽然你平时也不怎么蘸————咬下去。虽然没有配菜，这是末世以来你吃过最像样的一顿。\n\
 你警惕地看了一眼门口。香味也许会把什么引来……但管不了那么多了。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+3，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】体力+3，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-5F石物恋", effect: updateTime(1) }
     ]
@@ -2979,7 +2979,7 @@ Object.assign(storyData, {
   "新达汇-5F左庭右院-吃外卖": {
     onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/牛肉炒饭.webp",
-    text: "外卖真好吃。<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    text: "外卖真好吃。<span class='sys'>【系统提示】体力+2，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-5F左庭右院", effect: updateTime(1) }
     ]
@@ -3039,7 +3039,7 @@ Object.assign(storyData, {
         if (!(vars._visit['新达汇-5F游戏厅-捡币'] > 0)) desc += "几台机器上还残留着没被拿走的游戏币。";
         desc += "过了很久，外面的脚步声终于远去了。";
       }
-      return desc + "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>";
+      return desc + "\n<span class='sys'>【系统提示】你甩掉了一些追兵。当前尸潮等级：{chasedByZombies}。</span>";
     },
     choices: [
       {
@@ -3238,7 +3238,7 @@ Object.assign(storyData, {
     },
     onEnter: { set: { showRain: true } },
     text: function(vars) {
-      var desc = "APP弹出对话框：**请验证取餐码**。\n";
+      var desc = "APP弹出对话框：<span class='term'>请验证取餐码</span>。\n";
       if (vars._powerOut && vars._droneBattery <= 0) return desc + "不好，无人机指示灯已熄灭了，没电了。晚了。";
       return desc;
     },
@@ -3279,7 +3279,7 @@ Object.assign(storyData, {
     image: "images/新达汇/乘无人机飞走.webp",
     onEnter: { set: { showRain: true } },
     text: "取餐码正确。你爬上无人机，无人机缓缓升起。\n你飞越了新达汇的喷泉广场、三林路的十字路口，飞过华夏西路高架桥上的尸潮——飞向某个未知的方向。\n\
-<span style='color: #f8d305ff;'>—— 无人机的救赎 · 好结局 ——</span>",
+<span class='end'>—— 无人机的救赎 · 好结局 ——</span>",
     style: "text-align: center;",
     choices: [
       {
@@ -3530,7 +3530,7 @@ Object.assign(storyData, {
   "结局-电梯厅被围": {
     image: "images/zombieKnockYouDown.webp",
     text: "你朝电梯厅的方向走去。但前方的通道里传来了密集的脚步声——一群丧尸从电梯厅的方向涌了出来。\n它们太多了。你转身想跑，但身后的退路也被截断了。\n尸潮从前后两个方向同时涌来，你被堵在了走廊中间。\n\
-—— 结局：电梯厅被围 ——"
+<span class='end'>—— 结局：电梯厅被围 ——</span>"
   },
 
   // ==================== 后勤通道网 ====================
@@ -3545,7 +3545,7 @@ Object.assign(storyData, {
       return {};
     },
     text: function(v) { return "你推开防火门，走进一条狭窄的后勤走廊。头顶的管道裸露着，凝结的水珠偶尔滴落在地上，发出清晰的啪嗒声。应急灯发出惨白的光，照出墙面上斑驳的油渍和霉斑。\n走廊中段有一扇钢门，贴着“高压危险”的褪色警示——门上的锁芯却是簇新的黄铜色，跟周围的一切格格不入。门缝底下的地面上散着七八个空矿泉水瓶，瓶身瘪瘪的，全都朝着门的方向。\n"
- + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>你反手把防火门轻轻带上——门锁咔哒一声扣死。外面的声音一下子被隔开了，这里很安全。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>身后的防火门被什么东西撞了一下，闷响了一声。你加快脚步拐了两个弯，追兵被岔路搞糊涂了——甩掉了不少。</span>" : "") + describeZombieWave(v); },
+ + (v.chasedByZombies <= 1 ? "<span class='sys'>你反手把防火门轻轻带上——门锁咔哒一声扣死。外面的声音一下子被隔开了，这里很安全。</span>" : v.chasedByZombies == 2 ? "<span class='warn'>身后的防火门被什么东西撞了一下，闷响了一声。你加快脚步拐了两个弯，追兵被岔路搞糊涂了——甩掉了不少。</span>" : "") + describeZombieWave(v); },
     choices: [
       {
         text: "走近看看那扇装着新锁芯的钢门",
@@ -3602,7 +3602,7 @@ Object.assign(storyData, {
     image: "images/新达汇/B1垃圾清运通道.webp",
     text: function(v) { var d = "走廊在这里拐了一个弯，变得更窄了。墙上的应急灯有一盏不亮了，照得通道明暗交错。地面上有一层滑腻的污水渍，踩上去鞋底直打滑。\n\
 前方有一堆倾倒的货架堵住了半边走廊——生锈的铁架横七竖八地卡在中间，只留出一条勉强能侧身挤过去的窄缝。";
-      if (v.chasedByZombies > 0) d += "\n<span style='color: #ff4444;'>身后传来丧尸熟悉的脚步声——越来越近了，不知道是什么时候跟上来的。你没有时间犹豫。</span>"; 
+      if (v.chasedByZombies > 0) d += "\n<span class='crit'>身后传来丧尸熟悉的脚步声——越来越近了，不知道是什么时候跟上来的。你没有时间犹豫。</span>"; 
     return d; },
     choices: [
       {
@@ -3743,7 +3743,7 @@ Object.assign(storyData, {
       if (vars._visit["新达汇-B1配电房-内部"] === 1) {
         return "你把那具瘦得脱形的身影按倒在地。他挣了几下，不动了。胸牌歪在制服外面——“刘志鹏 · 保安部”，照片上是个笑得很用力的小伙子。\n你环顾这间不到四平米的小屋。\n\
 满地都是矿泉水瓶——不是门外那几个，是几十个，空的，瘪的，从门口一直铺到墙角。\n配电柜前的空地上，一件保安外套叠得整整齐齐，被当作枕头压过，还留着一个人形的凹痕。\n\
-墙上没有任何字。他什么都没写。配电柜侧面钉着一个小抽屉，半开着。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+墙上没有任何字。他什么都没写。配电柜侧面钉着一个小抽屉，半开着。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       return "配电房里很安静。刘志鹏躺在门边，空瓶还铺在地上，外套还叠在墙角。配电柜侧面的小抽屉半开着。";
     },
@@ -3794,7 +3794,7 @@ Object.assign(storyData, {
       else if (v.chasedByZombies == 2) v.chasedByZombies = 1;
       return {};
     },
-    text: function(v) { return "你推开味千拉面后厨的铁门，走进一条窄长的后勤走廊。地面上有几道深深的车辙印——是运货推车反复碾压留下的。头顶的灯管忽明忽暗，发出轻微的嗡鸣。走廊向前延伸，拐过一个弯消失在视线外。\n" + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>你回头把铁门带上——门锁卡进了门框。外面的声音一下子被隔开了，这里很安全。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>你刚走进来，身后的铁门就被撞得哐哐响。你快步拐过一个弯，声响渐远——追兵被狭窄的走廊拖住了。</span>" : "") + describeZombieWave(v); },
+    text: function(v) { return "你推开味千拉面后厨的铁门，走进一条窄长的后勤走廊。地面上有几道深深的车辙印——是运货推车反复碾压留下的。头顶的灯管忽明忽暗，发出轻微的嗡鸣。走廊向前延伸，拐过一个弯消失在视线外。\n" + (v.chasedByZombies <= 1 ? "<span class='sys'>你回头把铁门带上——门锁卡进了门框。外面的声音一下子被隔开了，这里很安全。</span>" : v.chasedByZombies == 2 ? "<span class='warn'>你刚走进来，身后的铁门就被撞得哐哐响。你快步拐过一个弯，声响渐远——追兵被狭窄的走廊拖住了。</span>" : "") + describeZombieWave(v); },
     choices: [
       {
         text: "沿着走廊往前走——通向商场方向",
@@ -3887,7 +3887,7 @@ Object.assign(storyData, {
     onEnter: updateTime(5, { set: { positionAfterOperation: "新达汇-1F后勤仓库" } }),
     text: function(vars) {
       return "你掏出" + cuttingToolName(vars) + "，刀刃贴着胶带接头划进去，一圈一圈把两箱的封口都挑开。胶带啪地崩断，箱盖弹了起来——里面码得整整齐齐的矿泉水，塑封都没拆，瓶身上还凝着薄薄一层水汽。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】纸箱已划开，可以取水了。</span>";
+<span class='sys'>【系统提示】纸箱已划开，可以取水了。</span>";
     },
     choices: [
       { text: "拿一瓶", nextScene: "新达汇-1F后勤仓库-拿水", effect: updateTime(1) },
@@ -3909,7 +3909,7 @@ Object.assign(storyData, {
       var desc = "你从纸箱里抽出一瓶矿泉水——塑封完好，生产日期是六月下旬，应该是安全的。";
       if (vars.newdahuiWarehouseWaterLeft > 0) desc += "\n箱子里还剩 " + vars.newdahuiWarehouseWaterLeft + " 瓶。";
       else desc += "\n这是箱子里最后一瓶了。";
-      desc += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】水瓶已装满干净的水。</span>";
+      desc += "\n<span class='sys'>【系统提示】水瓶已装满干净的水。</span>";
       return desc;
     },
     choices: [
@@ -3930,7 +3930,7 @@ Object.assign(storyData, {
       var desc = "你把瓶里那点水倒在地上，从纸箱里抽出新的一瓶，拧开，把水缓缓灌进自己的瓶子，拧紧瓶盖。\n清亮的水贴着瓶壁晃了晃，一点杂味都没有。";
       if (vars.newdahuiWarehouseWaterLeft > 0) desc += "\n箱子里还剩 " + vars.newdahuiWarehouseWaterLeft + " 瓶。";
       else desc += "\n纸箱见了底，刚灌的是头一份。";
-      desc += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】瓶里换上了干净的水。</span>";
+      desc += "\n<span class='sys'>【系统提示】瓶里换上了干净的水。</span>";
       return desc;
     },
     choices: [
@@ -3950,7 +3950,7 @@ Object.assign(storyData, {
     },
     text: "你拿起箱盖上那瓶已开封的矿泉水。瓶口敞着，剩了小半瓶，瓶壁上落了一层灰——放了好几天，谁也不知道里头进了什么。\n\
 你把剩水倒进角落的拖把池，只留下瓶子。瓶身是普通的农夫山泉，干净，结实，拧上盖一滴不漏。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>",
+<span class='sys'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-1F后勤仓库", effect: updateTime(1) }
     ]
@@ -3961,7 +3961,7 @@ Object.assign(storyData, {
     onEnter: { set: { positionAfterOperation: "新达汇-1F后勤仓库" } },
     text: "你捏住胶带接头往外使劲——胶带缠了好几层，绷得笔直，手心一滑就脱开了。指甲先劈了一道口子，纸箱的封口连一道褶都没起。\n\
 瓶身上那层薄薄的水汽，隔着纸箱的缝隙透出来，看得见，拿不着。\n\
-<span style='color: #ffaa00; font-style: italic;'>【系统提示】徒手撕不开——需要美工刀这类能划开胶带的东西。</span>",
+<span class='sys warn'>【系统提示】徒手撕不开——需要美工刀这类能划开胶带的东西。</span>",
     choices: [
       { text: "算了", nextScene: "新达汇-1F后勤仓库", effect: updateTime(1) }
     ]
@@ -3977,7 +3977,7 @@ Object.assign(storyData, {
       else if (v.chasedByZombies == 2) v.chasedByZombies = 1;
       return {};
     },
-    text: function(v) { return "你从服装店的员工间走出来，站在2F的后勤走廊上。这里比下面几层干燥，地面上铺着防滑地砖，墙上每隔几米就有一盏应急灯。走廊很安静——能听到远处中庭隐约的回音。\n" + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>员工间的门在你背后自动合上了——弹簧锁扣死了。走廊空荡荡的，只有应急灯的嗡鸣声。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>你关好员工间的门，脚步声在走廊里回荡了几秒。追你的丧尸被关在了另一边——至少撤退了一些。</span>" : "") + describeZombieWave(v); },
+    text: function(v) { return "你从服装店的员工间走出来，站在2F的后勤走廊上。这里比下面几层干燥，地面上铺着防滑地砖，墙上每隔几米就有一盏应急灯。走廊很安静——能听到远处中庭隐约的回音。\n" + (v.chasedByZombies <= 1 ? "<span class='sys'>员工间的门在你背后自动合上了——弹簧锁扣死了。走廊空荡荡的，只有应急灯的嗡鸣声。</span>" : v.chasedByZombies == 2 ? "<span class='warn'>你关好员工间的门，脚步声在走廊里回荡了几秒。追你的丧尸被关在了另一边——至少撤退了一些。</span>" : "") + describeZombieWave(v); },
     choices: [
       {
         text: "去走廊另一头的杂物间看看",
@@ -4057,7 +4057,7 @@ Object.assign(storyData, {
       }
       d += "阴影的深处站着一个摇摇晃晃的轮廓——一只穿着维修工服的丧尸堵在走廊正中间，手里还攥着一把活扳手。它面朝着你，似乎还没看清——但窄走廊没有任何绕过去的空间。";
       if (v._catFed) d += "\n走廊口的消防管道支架上蹲着那只变异猫。它没有像往常那样看你——它盯着走廊深处那个摇晃的影子，一动不动，也不出声。";
-      if (v.chasedByZombies > 0) d += "\n<span style='color: #ff4444;'>身后传来窸窣的脚步声——你身后的动静让它停下了摇晃，缓缓转过头来。</span>";
+      if (v.chasedByZombies > 0) d += "\n<span class='crit'>身后传来窸窣的脚步声——你身后的动静让它停下了摇晃，缓缓转过头来。</span>";
       return d;
     },
     choices: [
@@ -4202,7 +4202,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var d = "扳手从他手里脱落，砸在地上，脆响在走廊里滚了很远。\n他晃了晃，直挺挺地向后倒下去——扬起的灰在应急灯下慢慢落定。\n这是一张五十岁上下的脸，颧骨很高，鼻梁两侧留着眼镜的压痕。眼镜早就不在了。\n他胸前的工牌翻了过来：“王建国 · 物业工程部”。照片上的男人不苟言笑，和躺在地上的这张脸是同一张。";
       if (vars._catFed) d += "\n那只变异猫不知什么时候从管道上跳了下来。它绕着倒下的身影走了一圈，闻了闻他的工牌，然后在离他一步远的地方卧下了。\n它没有叫。";
-      d += "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      d += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return d;
     },
     choices: [
@@ -4261,7 +4261,7 @@ Object.assign(storyData, {
       else if (v.chasedByZombies == 2) v.chasedByZombies = 1;
       return {};
     },
-    text: function(v) { return "你走进一条宽敞的后勤通道——两旁的墙壁上覆盖着不锈钢板，头顶是密集的排烟管道和消防喷淋头。空气里混杂着油脂、辣油和花椒的气味，像被凝固在了时间里。\n" + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>身后的防火门在排烟管道的轰鸣中合上了。这条走廊——干净、干燥、空旷。追兵被挡在了门外。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>身后的防火门被狠狠撞了一下，闷响混在排风管的嗡鸣里。你加快脚步走了几段，撞门声渐渐稀疏了。</span>" : "") + describeZombieWave(v); },
+    text: function(v) { return "你走进一条宽敞的后勤通道——两旁的墙壁上覆盖着不锈钢板，头顶是密集的排烟管道和消防喷淋头。空气里混杂着油脂、辣油和花椒的气味，像被凝固在了时间里。\n" + (v.chasedByZombies <= 1 ? "<span class='sys'>身后的防火门在排烟管道的轰鸣中合上了。这条走廊——干净、干燥、空旷。追兵被挡在了门外。</span>" : v.chasedByZombies == 2 ? "<span class='warn'>身后的防火门被狠狠撞了一下，闷响混在排风管的嗡鸣里。你加快脚步走了几段，撞门声渐渐稀疏了。</span>" : "") + describeZombieWave(v); },
     choices: [
       {
         text: "去看看走廊尽头的仓库",
@@ -4307,7 +4307,7 @@ Object.assign(storyData, {
       else if (v.chasedByZombies == 2) v.chasedByZombies = 1;
       return {};
     },
-    text: function(v) { return "5F的后勤走廊狭窄而低矮——天花板上的管道几乎要碰到头。隔墙传来管道里的滴答声——残留的油脂在水管里缓慢流动，像是什么东西在墙后面窃窃私语。走廊两侧各有一扇门，分别通向不同的餐厅后厨。\n" + (v.chasedByZombies <= 1 ? "<span style='color: #00fbffff;'>你反手关好后厨门——门锁卡进了门框。低矮的天花板和交错的管道让丧尸很难成群挤进来。暂时安全了。</span>" : v.chasedByZombies == 2 ? "<span style='color: #ffaa00;'>你冲进来关好门，追兵撞了几下门板后散开了大半——窄管道挡住了它们的来路。</span>" : "") + describeZombieWave(v); },
+    text: function(v) { return "5F的后勤走廊狭窄而低矮——天花板上的管道几乎要碰到头。隔墙传来管道里的滴答声——残留的油脂在水管里缓慢流动，像是什么东西在墙后面窃窃私语。走廊两侧各有一扇门，分别通向不同的餐厅后厨。\n" + (v.chasedByZombies <= 1 ? "<span class='sys'>你反手关好后厨门——门锁卡进了门框。低矮的天花板和交错的管道让丧尸很难成群挤进来。暂时安全了。</span>" : v.chasedByZombies == 2 ? "<span class='warn'>你冲进来关好门，追兵撞了几下门板后散开了大半——窄管道挡住了它们的来路。</span>" : "") + describeZombieWave(v); },
     choices: [
       {
         text: "去看看走廊尽头的清洁工具间",
@@ -4365,12 +4365,12 @@ Object.assign(storyData, {
     image: "images/新达汇/后勤通道被堵.webp",
     text: "你一头扎进后勤通道，反手甩上防火门。\n\
 但外面的尸群太多了——门闩在撞击中呻吟了两秒，然后整扇门向内炸开。脚步声从四面八方涌来，在狭窄的走廊里反射成一片混乱的轰鸣。\n\
-你跑过一个又一个岔路口，推开一扇又一扇门——\n最后一扇是锁死的。\n你转身时它们已经堵住了来路。\n—— 结局：困兽 ——"
+你跑过一个又一个岔路口，推开一扇又一扇门——\n最后一扇是锁死的。\n你转身时它们已经堵住了来路。\n<span class='end'>—— 结局：困兽 ——</span>"
   },
   "结局-后勤通道暗算": {
     image: "images/zombiePounceOnYou.webp" /* TODO: images/新达汇/backHallB1.png */,
     text: "你试图在黑暗中屏住呼吸——但身后的脚步声出卖了你。\n窄走廊里无处可躲。身前是障碍，身后是追兵。狭窄的水泥墙把它们的嘶吼声压缩成了一道道针扎般的回音。\n\
-—— 结局：后勤通道的暗算 ——"
+<span class='end'>—— 结局：后勤通道的暗算 ——</span>"
   },
 
   // ==================== 保安组暗线结局 ====================
@@ -4379,7 +4379,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
     text: function(vars) {
       return "他手里的活扳手比你想象的快得多。\n你倒下去之前，最后看清的是他胸前晃动的工牌。\n派工单的背面，铅笔的“正”字旁边，又多了一笔。" + weaponBrokeText(vars) + "\n\
-—— 结局：维修工的最后一单 ——";
+<span class='end'>—— 结局：维修工的最后一单 ——</span>";
     }
   },
   "结局-等水的人": {
@@ -4387,7 +4387,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
     text: function(vars) {
       return "你没能拦住他。\n他扑上来的时候甚至没有咬你——他把脸死死埋进你的颈侧，像是要喝水一样地贴着，喉咙里的嘶声一点点平息下来，满足得像叹了口气。\n在这间不到四平米的房间里，一个渴了很多天的人，终于等到了自己走进门来的水。" + weaponBrokeText(vars) + "\n\
-—— 结局：等水的人 ——";
+<span class='end'>—— 结局：等水的人 ——</span>";
     }
   }
 });

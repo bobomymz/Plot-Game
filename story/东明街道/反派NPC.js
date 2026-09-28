@@ -178,7 +178,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 兵刃相接打输，按档位概率损坏武器
     text: function(vars) {
-      return "你慢了半拍。只是半拍。\n钢管带着风砸下来，结结实实落在你太阳穴上。眼前一黑前的最后一个念头，是那个男人蹲下身，翻着你的包，骂骂咧咧：“就这点吃的？那你赶什么路啊，兄弟。”" + weaponBrokeText(vars) + "\n——结局：被一个抢吃的打死了 ——";
+      return "你慢了半拍。只是半拍。\n钢管带着风砸下来，结结实实落在你太阳穴上。眼前一黑前的最后一个念头，是那个男人蹲下身，翻着你的包，骂骂咧咧：“就这点吃的？那你赶什么路啊，兄弟。”" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：被一个抢吃的打死了 ——</span>";
     },
     style: "color: #ff4444; font-weight: bold;"
   },

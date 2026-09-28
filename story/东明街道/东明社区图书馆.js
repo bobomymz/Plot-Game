@@ -141,7 +141,7 @@ Object.assign(storyData, {
     onEnter: { add: { strength: -1 } },
     text: function(vars) {
       let wpn = meleeWeaponName(vars) || "手中的家伙";
-      return "你压低脚步跟了上去。志愿者丧尸正对着墙上被书砸出的痕迹发呆——它不太聪明的样子。\n你举起" + wpn + "，对着它的后脑勺来了一下。它扑通一声倒在地上，不动了。\n你把它拖到前台后面，至少看上去不那么扎眼了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      return "你压低脚步跟了上去。志愿者丧尸正对着墙上被书砸出的痕迹发呆——它不太聪明的样子。\n你举起" + wpn + "，对着它的后脑勺来了一下。它扑通一声倒在地上，不动了。\n你把它拖到前台后面，至少看上去不那么扎眼了。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -160,7 +160,7 @@ Object.assign(storyData, {
     text: function(vars) {
       let wpn = meleeWeaponName(vars) || "手中的家伙";
       return "你握紧" + wpn + "，大步迎了上去。志愿者丧尸听到脚步声转过身来，张开嘴发出嘶哑的吼叫——但你比它快。\n\
-一记结实的打击正中它的头部。它晃了晃，倒在地上不再动弹。\n你喘了口气。动静有点大，可能会把其他地方的东西引过来。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+一记结实的打击正中它的头部。它晃了晃，倒在地上不再动弹。\n你喘了口气。动静有点大，可能会把其他地方的东西引过来。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -173,7 +173,7 @@ Object.assign(storyData, {
   "结局-图书馆-大厅-徒劳": {
     image: "images/zombieKnockYouDown.webp",
     text: "你冲向志愿者丧尸，但手里没有像样的武器——你只能用拳头。\n你一拳打在它胸口，它只是退了两步，然后猛地抓住了你的手臂。它的力气比你想象中大得多。\n\
-你挣扎着想甩开它，但大厅里的动静引来了更多麻烦——藏书区方向传来了回应般的低吼。\n两只丧尸一前一后堵住了你的退路。\n\n—— 结局：图书馆-大厅-徒劳 ——"
+你挣扎着想甩开它，但大厅里的动静引来了更多麻烦——藏书区方向传来了回应般的低吼。\n两只丧尸一前一后堵住了你的退路。\n\n<span class='end'>—— 结局：图书馆-大厅-徒劳 ——</span>"
   },
 
   // ==================== 阅览室 ====================
@@ -263,7 +263,7 @@ Object.assign(storyData, {
     onEnter: { add: { strength: -1 } },
     text: "你侧身闪过它的扑击，肩膀狠狠撞在旁边的书架上。书架晃了晃——你又加了一把力。\n\
 沉重的书架朝格子衬衫丧尸倒了下去，把它连带着旁边的桌椅一起压在了下面。书页像雪花一样在空中飞舞。\n\
-书架下面传来低沉的嘶吼声，但很快就没有动静了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+书架下面传来低沉的嘶吼声，但很快就没有动静了。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "穿过阅览室继续前进",
@@ -277,7 +277,7 @@ Object.assign(storyData, {
     onEnter: { add: { strength: -1 } },
     text: function(vars) {
       let wpn = meleeWeaponName(vars) || "手中的家伙";
-      return "你挥出" + wpn + "，准准地砸在了它的脑袋上。它踉跄了一步，但居然没有倒下——反而挥舞着那本厚书朝你脸上招呼过来。\n你后退两步，趁它重心不稳，又是一下。这一次它终于趴下了。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      return "你挥出" + wpn + "，准准地砸在了它的脑袋上。它踉跄了一步，但居然没有倒下——反而挥舞着那本厚书朝你脸上招呼过来。\n你后退两步，趁它重心不稳，又是一下。这一次它终于趴下了。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -294,7 +294,7 @@ Object.assign(storyData, {
       var pain = vars.noPainSense
         ? "手臂上多了几道口子，血顺着往下淌。奇怪的是，你什么也感觉不到。" + mercuryPainNote(vars)
         : "手臂上火辣辣地疼。";
-      return "你只能用拳头。你躲开它挥舞的书，一拳打在它脸上——但自己也被它挠了一下，" + pain + "\n你在阅览椅上磕绊着后退，抓起一把椅子挡在身前，总算把它顶开了一段距离。趁这个机会，你转身冲向了藏书区的方向。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
+      return "你只能用拳头。你躲开它挥舞的书，一拳打在它脸上——但自己也被它挠了一下，" + pain + "\n你在阅览椅上磕绊着后退，抓起一把椅子挡在身前，总算把它顶开了一段距离。趁这个机会，你转身冲向了藏书区的方向。\n<span class='sys warn'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -566,12 +566,12 @@ Object.assign(storyData, {
     text: "你伸手去推书架，想把这排书墙整个掀过去挡住它。可平时一推就晃的书架，这会儿怎么也推不动——你的手臂在发抖，使不上力。\n\
 丧尸已经扑到了跟前。书架晃了晃，反过来朝你这边倾覆下来，几百本书劈头盖脸地砸落。\n\
 在意识消散之前，你听到的最后声音，是丧尸踩着书页走过来的脚步声。\n\
-\n—— 结局：书堆之下 ——"
+\n<span class='end'>—— 结局：书堆之下 ——</span>"
   },
 
   "结局-图书馆-书架间": {
     image: "images/placeholder.png" /* TODO: images/library/libraryBookshelf.png */,
-    text: "你在书架间犹豫了太久。\n当你终于做出决定时，已经来不及了——脚步声从身后逼近，前方也出现了另一只丧尸的影子。\n狭窄的书架通道成了你的牢笼。前后都是丧尸，你无路可逃。\n\n—— 结局：书架之间 ——"
+    text: "你在书架间犹豫了太久。\n当你终于做出决定时，已经来不及了——脚步声从身后逼近，前方也出现了另一只丧尸的影子。\n狭窄的书架通道成了你的牢笼。前后都是丧尸，你无路可逃。\n\n<span class='end'>—— 结局：书架之间 ——</span>"
   },
 
   // ==================== 休息 ====================

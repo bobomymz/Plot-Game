@@ -183,7 +183,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你来到了一个十字路口。东面远处是杨高南路立交桥，西边沿三林路有一排商铺，南边通向安盛街，北面的环林东路上有一个公交车站。\n你需要选择前进的方向。快点选哦，周围的丧尸就要围拢过来了。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n"
+<span class='sys'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n"
  + describeWeather(vars) + "\n" + describeZombieWave(vars)
  + combatDrainText(vars); // 益丰打群架等带 _lastCombatDrain 标记的入口在此事后提示
     },
@@ -355,7 +355,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你来到了一个十字路口。西边通向金谊广场，南边通向新达汇，它们都是大商场，可能有丰富的物资；北面是东明路，东面是三林路，住宅楼的阴影下还有一个长者食堂。\n\
 你需要选择前进的方向。\n快选哦，周围的丧尸就要围拢过来了。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n"
+<span class='sys'>【系统提示】不要长时间在户外走动，天气很热，体力会大量消耗，请玩家及时寻找补给品。</span>\n"
  + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },
     choices: [
@@ -630,7 +630,7 @@ Object.assign(storyData, {
     text: "你翻过栏杆的时候，桥下那十几只总算有了反应——不是来拦你，是给你让位置。\n\
 水面比看上去近，也比看上去凉。\n\
 三林塘港的水不起浪，你沉下去的时候，它们还在原地站着，脸朝着水。你终于和它们站到了同一边。\n\
-—— 结局：三林塘 ——",
+<span class='end'>—— 结局：三林塘 ——</span>",
     choices: [
       { text: "重生之我直面尸潮", nextScene: "start" }
     ]
@@ -640,7 +640,7 @@ Object.assign(storyData, {
     image: "images/zombiesBeatYou.webp",
     text: "你反应太慢啦，被丧尸围殴至死。\n\
 想 必 下 次 你 会 快 点 选 吧 ~\n\
-—— 结局：丧尸的围殴 ——"
+<span class='end'>—— 结局：丧尸的围殴 ——</span>"
   },
 
 
@@ -778,7 +778,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     text: "你贴着墙壁，翻过柜子，小心翼翼地绕到办公桌旁。保安丧尸在你身后徒劳地嘶吼着，但你够到了那瓶水。\n\
 你赶忙翻回来，大松一口气坐在椅子上，椅背嘎吱作响。\n\
 拧开瓶盖灌了几口，清凉的液体顺着喉咙滑下去——在这种天气里，一瓶干净的水比什么都珍贵。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
+<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
 你低头，嘲讽地看向那只丧尸，它正努力地向你移动。“你叫什么名字啊？”耳边只传来虚弱的嘶吼声。”知道你不会说话。好吧，拜拜了。“\n\
 你绕过挣扎的保安，回到了门厅。",
     choices: [
@@ -891,7 +891,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     image: "images/小区周边/联华超市/吃香肠.webp",
     onEnter: { set: { positionAfterOperation: "联华超市-吃香肠" } },
     text: "你吃了一根香肠。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
+<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
 你继续探索联华超市。",
     choices: [
       {
@@ -906,7 +906,7 @@ ATM机被砸开了，屏幕碎裂，里面空空如也——这时候钱也没�
     onEnter: { add: { strength: 1 } },
     text: "你撕开一包旺旺雪饼，就着一瓶脉动吃了下去。虽然不是什么大餐，但在这种时候，能吃饱就是幸福。\n\
 旺旺雪饼熟悉的味道在空气中弥漫开，又迅速散去。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
+<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n\
 货架上还有几根香肠，你要吃吗？",
     choices: [
       {

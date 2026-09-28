@@ -61,7 +61,7 @@ function diaryRender(vars) {
     var e = log[i];
     var eRun = e.run || 1;
     if (eRun !== prevRun) {
-      parts.push("<span style=\"color:#8a7f6a;font-style:italic;\">（往前，字迹换了墨色——像是更早的自己写下的。）</span>");
+      parts.push("<span class='think'>（往前，字迹换了墨色——像是更早的自己写下的。）</span>");
       prevRun = eRun;
     }
     var dayKey = eRun + "|" + e.dd;
@@ -78,10 +78,10 @@ function diaryRender(vars) {
       body = !ent ? "（这一页的字迹被水洇开了，认不出来。）"
              : (typeof ent === "string" ? ent : (ent.body || "……"));
     }
-    if (eRun < curRun) body = "<span style=\"color:#bfb7a3;\">" + body + "</span>";
+    if (eRun < curRun) body = "<span class='hand'>" + body + "</span>";
     parts.push(body);
   }
-  parts.push("<span style=\"color:#8a7f6a;\">（第 " + (page + 1) + " / " + total + " 页）</span>");
+  parts.push("<span class='clock'>（第 " + (page + 1) + " / " + total + " 页）</span>");
   return parts.join("<br><br>");
 }
 

@@ -65,7 +65,7 @@ function makeFlatDoor(door, floorScene, flavor, opts) {
     },
     text: function(vars) {
       var tip = function(g) {
-        return "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+" + g + "，当前体力：{strength}。</span>";
+        return "\n<span class='sys'>【系统提示】体力+" + g + "，当前体力：{strength}。</span>";
       };
       if (vars[key] === 6) {
         return "你绕过丧尸的尸体走进厨房，拉开橱柜——几包密封的挂面和两罐午餐肉，保质期还早得很。你撕开一包挂面干嚼，又开了一罐午餐肉，连汤都喝干净了。" + tip(3);
@@ -186,7 +186,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你挥舞" + (meleeWeaponName(vars) || "手中的家伙") + "，朝那些变异猫大声吼叫。它们弓起背，发出愤怒的嘶吼，但并没有扑上来——它们似乎还保留着一丝对人类的畏惧。\n\
 对峙了几秒后，带头的那只大猫转身跑进了花坛深处，其他的也跟着散了。\n\
-这一通虚张声势耗得你不轻——吼得嗓子发干，胳膊也抡酸了。\n小区暂时安全了，至少入口是。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+这一通虚张声势耗得你不轻——吼得嗓子发干，胳膊也抡酸了。\n小区暂时安全了，至少入口是。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -369,7 +369,7 @@ Object.assign(storyData, {
 那时，弟弟才3岁，你正是玩滑板板车的年纪。有一天，你在滑板车上看见妈妈抱着弟弟回家了，你不加思索跟了上去，把奶奶丢在了广场里，独自在风中凌乱。\n\
 回到家，当然是被臭骂了一顿。\n\
 现在这番情景，怕是能活着见到奶奶都很困难了。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】拾取记忆[滑板车的盲从]</span>",
+<span class='sys'>【系统提示】拾取记忆[滑板车的盲从]</span>",
     choices: [
       {
         text: "继续",
@@ -427,7 +427,7 @@ Object.assign(storyData, {
       var desc = "你走近健身区，发现长椅上坐着一个丧尸。它是个六十来岁的老头，穿着一件洗得发白的中山装，胸口口袋鼓鼓的——好像塞着什么东西。\n\
 藤蔓从长椅下方的花坛里疯长出来，把它整个下半身缠得严严实实。它只能扭动上半身，朝你张着黑洞洞的嘴，发出嗬嗬的气声。";
       if (vars.hasCutter) {
-        desc += "\n<span style='color: #ffaa00;'>口袋里的美工刀正好可以用来割断这些藤蔓。</span>";
+        desc += "\n<span class='warn'>口袋里的美工刀正好可以用来割断这些藤蔓。</span>";
       } else if (vars.hasAxe || vars.hasCane || vars.hasMopHandle || vars.hasIronPipe) {
         desc += "\n你没带刀，但手里的" + heavyWeaponName(vars) + "足够长——可以试着拨开藤蔓，或者直接给它一下。";
       }
@@ -533,7 +533,7 @@ Object.assign(storyData, {
       var desc = "丧尸终于不动了。你蹲下身，翻开它中山装胸口的口袋。\n\
   里面掉出来一张折叠得整整齐齐的地图——是一张上海市浦东新区的交通图，上面用红笔圈出了几条主要的高架出口和加油站位置。背面还手写着几行小字：\n\
   “沪芦高速 S2 → 临港方向可行”\n“外环 S20 浦东段多处拥堵，建议绕行”\n“加油站：杨高南路、秀浦路、申江路”\n\
-  <span style='color: #ffaa00;'>这是一张开车出城的路线图。有了它，你可以规划更远的行程了。</span>\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+  <span class='warn'>这是一张开车出城的路线图。有了它，你可以规划更远的行程了。</span>\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return desc;
     },
     choices: [
@@ -550,7 +550,7 @@ Object.assign(storyData, {
   "三林安居苑-藤蔓丧尸-被咬": {
     image: "images/hurtByzombie.webp" /* TODO: images/安居苑/vineZombieBite.png */,
     text: "你刚把手伸过去，丧尸猛地扭头，一口咬住了你的手腕。\n剧烈的疼痛让你惨叫出声。藤蔓在挣扎中崩断了几根——丧尸挣脱了束缚，而你捂着手腕跌坐在地上，鲜血从指缝间涌出。\n\
-<span style='color: #ff4444;'>你被咬了。</span>",
+<span class='crit'>你被咬了。</span>",
     onEnter: updateTime(1, { set: { hurtByZombie: true, showRain: true }, add: { strength: -3, mercuryLoad: 10 } }),
     choices: [
       {
@@ -746,7 +746,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       if (vars.hasBag) {
         base += "斜挎的帆布袋也没浪费，收紧抽绳挂在包侧，还能再塞点零碎。";
       }
-      base += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】换上了双肩包，背包容量+1，当前容量：{bagVolume}。</span>";
+      base += "\n<span class='sys'>【系统提示】换上了双肩包，背包容量+1，当前容量：{bagVolume}。</span>";
       return base;
     },
     choices: [
@@ -1548,7 +1548,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 这是你小时候最喜欢的玩具。你叫它<em>小斯克莱特</em>，每天晚上都要抱着它才能睡着。搬家的那天，你翻遍了所有箱子都没找到它，最后在妈妈的催促下哭着上了搬家公司的车。\n\
 原来它一直在这里，在这张旧床底下，安静地等了你这么多年。\n\
 你把它捡起来，拍了拍灰，放在了书桌上。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[忘记搬家的松鼠]——有些东西你以为永远丢了，其实它一直在原地等你。</span>";
+<span class='sys'>【系统提示】获得记忆[忘记搬家的松鼠]——有些东西你以为永远丢了，其实它一直在原地等你。</span>";
       } else {
         desc += "\n床底下空空荡荡，只剩一层灰和一颗掉落的纽扣。";
       }
@@ -1641,7 +1641,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     onEnter: updateTime(5, { add: { strength: 5 } }),
     text: "你握着武器靠近厨房。那只丧尸试图爬过来抓你，被你一棍子敲翻在地。\n你打开橱柜——里面还有几包没开封的挂面和一瓶食用油。虽然面条没法生吃，但你发现料理台上还有半箱矿泉水，以及几罐八宝粥。\n\
 你打开一罐八宝粥喝了个精光。甜腻的味道让你想起小时候的早餐，但此刻它是你吃过最好吃的东西。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复5点体力，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】你回复5点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -1652,7 +1652,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 
   "三林安居苑-厨房危险": {
     image: "images/placeholder.png" /* TODO: images/安居苑/anJuYuanKitchenDanger.png */,
-    text: "你小心翼翼地靠近厨房。地上那只丧尸看到你，猛地一扑——它的手臂比你想象中要长。\n你躲闪不及，被它抓住了脚踝。你奋力挣扎，但它咬住了你的小腿。\n剧烈的疼痛让你惨叫出声，而你的叫声又引来了小区里其他潜伏的东西……\n黑暗里，无数只枯瘦的手从四面八方攥住了你。\n—— 结局：厨房危险 ——",
+    text: "你小心翼翼地靠近厨房。地上那只丧尸看到你，猛地一扑——它的手臂比你想象中要长。\n你躲闪不及，被它抓住了脚踝。你奋力挣扎，但它咬住了你的小腿。\n剧烈的疼痛让你惨叫出声，而你的叫声又引来了小区里其他潜伏的东西……\n黑暗里，无数只枯瘦的手从四面八方攥住了你。\n<span class='end'>—— 结局：厨房危险 ——</span>",
     onEnter: { set: { hurtByZombie: true }, add: { strength: -3, mercuryLoad: 10 }, shake: true }
   },
 
@@ -1845,7 +1845,7 @@ Object.assign(storyData,
       },
       text: "你对着那张字条站了一会儿，低声说了句“谢谢”。\n\
 然后你撕开一包泡面干嚼起来，又开了一罐午餐肉，拧开一瓶矿泉水连灌了大半瓶。密封包装的食物没有一丝变质的迹象——这是你这几天吃得最踏实的一顿。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】体力+5，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】体力+5，当前体力：{strength}。</span>",
       choices: [
         { text: "离开", nextScene: "三林安居苑-7号楼-4楼" }
       ]
@@ -1858,7 +1858,7 @@ Object.assign(storyData,
       text: "你赤手空拳，却还是迎了上去。\n\
 它比你想象中快得多——你只觉得手腕一凉，整个人已经被扑倒在地。你用胳膊死死抵住它的下巴，腐臭的涎水一滴一滴落在你脸上。\n\
 力气正一点一点从胳膊里流走。黑暗里，似乎有更多脚步声，正朝这间屋子聚拢……\n\
-—— 结局：入户被扑倒 ——"
+<span class='end'>—— 结局：入户被扑倒 ——</span>"
     }
   }
 );

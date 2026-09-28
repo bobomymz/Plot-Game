@@ -182,7 +182,7 @@ function jpBellNote(vars) {
       line += "\n你愣了一下——早就放假了。打铃系统还按着课表在走，没人来关掉它。";
     }
     if (!line) return "";
-    return "\n<span style='color:#8fa8c8; font-style:italic;'>" + line + "</span>";
+    return "\n<span class='think'>" + line + "</span>";
   }
   return "";
 }
@@ -266,10 +266,10 @@ function jpHarshHint(vars) {
   var lag = vars._harshLag || 0;
   var met = (vars._harshEncounters || 0) > 0;
   var catLine = (vars._jianpingCatFed && lag <= 6)
-    ? "\n<span style='color:#ff9a3c;'>脚边的橘猫忽然停下，背毛炸起，耳朵转向身后，喉咙里滚过低哑的呜咽。</span>"
+    ? "\n<span class='fire'>脚边的橘猫忽然停下，背毛炸起，耳朵转向身后，喉咙里滚过低哑的呜咽。</span>"
     : "";
-  if (lag <= 0) return catLine + "\n<span style='color:#ff4444;'>——" + (met ? "Harsh" : "那个身影") + "就在你眼前！</span>";
-  if (lag <= 2) return catLine + "\n<span style='color:#ffaa00;'>身后传来拖沓的脚步声，" + (met ? "Harsh" : "有什么东西") + "越来越近了……</span>";
+  if (lag <= 0) return catLine + "\n<span class='crit'>——" + (met ? "Harsh" : "那个身影") + "就在你眼前！</span>";
+  if (lag <= 2) return catLine + "\n<span class='warn'>身后传来拖沓的脚步声，" + (met ? "Harsh" : "有什么东西") + "越来越近了……</span>";
   if (lag <= 5) return catLine + (met ? "\n远处，Harsh还在跟着你。" : "\n远处似乎有个身影在跟着你。");
   return catLine || "";   // 5<lag<=6：只有橘猫能感觉到不对劲；再远则安静（不剧透）
 }
@@ -315,7 +315,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/jianping/campusGate.png */,
     onEnter: function(vars) { vars.showZombies = true; vars.currentArea = "建平中学"; vars.currentPlace = "建平"; vars.currentPos = "校园门口"; },
     text: function(vars) {
-      if(vars._lastScene === "建平-后门-开门") return "你刚从后门逃回来。身后是一片惊动的嘶吼——大部分丧尸被你引出了门，但它们记住了这片街区。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      if(vars._lastScene === "建平-后门-开门") return "你刚从后门逃回来。身后是一片惊动的嘶吼——大部分丧尸被你引出了门，但它们记住了这片街区。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return "你站在建平中学前门马路对面的一棵行道树后，没有急着靠近。\n\
 校门还是老样子——“上海市建平中学”七个金字静静地立在墙上，移动门半开。你能看到里面那片熟悉到骨子里的金苹果广场，和广场上歪歪斜斜游荡着的身影。\n\
 校门口内外都有丧尸，只是现在它们还没注意到你。你压低身子，盘算着怎么进去。\n" + describeWeather(vars) + describeZombieWave(vars);
@@ -432,7 +432,7 @@ Object.assign(storyData, {
       if ((vars._visit['建平-前门-清场'] > 0)) {
         return "前门的丧尸已经清空了。你上次冲进来时把它们都甩在了门外。\n现在这里安静了不少，可以自由进出。\n" + describeWeather(vars) + describeZombieWave(vars);
       }
-      return "你贴着墙根摸到前门。铁门半敞着，门内外的丧尸已经发现了你，正从两侧缓缓围拢过来。\n你必须趁它们合围之前冲进去。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+      return "你贴着墙根摸到前门。铁门半敞着，门内外的丧尸已经发现了你，正从两侧缓缓围拢过来。\n你必须趁它们合围之前冲进去。\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
       if ((vars._visit['建平-前门-清场'] > 0)) {
@@ -476,7 +476,7 @@ Object.assign(storyData, {
     }),
     onEnter: function(vars) { tryBreakWeapon(vars);triggerShake(); return {}; },
     text: function(vars) {
-      return "你记错了颜色的顺序——等你回过神来，丧尸已经扑到了你身上。" + weaponBrokeText(vars) + "\n—— 结局：前门失守 ——";
+      return "你记错了颜色的顺序——等你回过神来，丧尸已经扑到了你身上。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：前门失守 ——</span>";
     }
   },
 
@@ -588,13 +588,13 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
     text: "你举起手枪，对准扑来的丧尸扣下扳机——\n枪膛里只传来一声清脆的空响。\n没有子弹。\n\
 你愣了一下。就在这半秒里，丧尸已经扑到了面前，你来不及后悔，就被拖进了黑暗里。\n\
-—— 结局：空枪 ——"
+<span class='end'>—— 结局：空枪 ——</span>"
   },
 
   "建平-后门-斧头": {
     image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
     onEnter: initMemoryGame(["红","蓝","绿"], 5, { set: { showZombies: true, currentPos: "后门" } }),
-    text: "你抡起斧头，迎着丧尸群劈了过去——斧刃落下，一只丧尸的头应声而飞。\n但门内的丧尸太多了，你必须趁乱杀出一条血路。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    text: "你抡起斧头，迎着丧尸群劈了过去——斧刃落下，一只丧尸的头应声而飞。\n但门内的丧尸太多了，你必须趁乱杀出一条血路。\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>",
     choices: [
       {
         text: "输入你看到的颜色分布",
@@ -622,7 +622,7 @@ Object.assign(storyData, {
   "建平-后门-匕首": {
     image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
     onEnter: initMemoryGame(["红","蓝","绿"], 5, { set: { showZombies: true, currentPos: "后门" } }),
-    text: "你抽出匕首，反手握着，猫着腰冲进丧尸群。匕首捅进一只丧尸的下颚，温热的污血喷了你一手。\n你甩开尸体，继续往前。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    text: "你抽出匕首，反手握着，猫着腰冲进丧尸群。匕首捅进一只丧尸的下颚，温热的污血喷了你一手。\n你甩开尸体，继续往前。\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>",
     choices: [
       {
         text: "输入你看到的颜色分布",
@@ -650,7 +650,7 @@ Object.assign(storyData, {
   "建平-后门-开打": {
     image: "images/placeholder.png" /* TODO: images/jianping/backGate.png */,
     onEnter: initMemoryGame(["红","蓝","绿"], 8, { set: { showZombies: true, currentPos: "后门" } }),
-    text: "你赤手空拳迎着丧尸群冲了上去。没有武器，你只能靠反应和运气。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    text: "你赤手空拳迎着丧尸群冲了上去。没有武器，你只能靠反应和运气。\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>",
     choices: [
       {
         text: "输入你看到的颜色分布",
@@ -679,7 +679,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "你在丧尸群里乱了阵脚——它们扑上来，把你撕成了碎片。" + weaponBrokeText(vars) + "\n—— 结局：后门失守 ——";
+      return "你在丧尸群里乱了阵脚——它们扑上来，把你撕成了碎片。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：后门失守 ——</span>";
     }
   },
 
@@ -743,7 +743,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/建平/后门-内侧.webp */,
     onEnter: initMemoryGame(["红","蓝","绿"], 10, { set: { showZombies: true, currentPos: "后门" } }),
     text: function(vars) {
-      return (hasMeleeWeapon(vars) ? "你抄起" + meleeWeaponName(vars) : "你赤手空拳") + "，朝尸群的后背扑了上去。\n第一只倒下的瞬间，整片丧尸齐刷刷回头——黑压压的一片，全冲你来了。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+      return (hasMeleeWeapon(vars) ? "你抄起" + meleeWeaponName(vars) : "你赤手空拳") + "，朝尸群的后背扑了上去。\n第一只倒下的瞬间，整片丧尸齐刷刷回头——黑压压的一片，全冲你来了。\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: [
       {
@@ -816,7 +816,7 @@ Object.assign(storyData, {
       return {};
     },
     text: "你缓缓推开后门，门内静悄悄的——挤在这里的丧尸早就死透了，“尸体”横七竖八堆了一地。\n\
-<span style='font-style:italic;'>这能叫尸体吗？本来就是死的吧。</span>\n\
+<span class='think'>这能叫尸体吗？本来就是死的吧。</span>\n\
 你跨过尸体，走了进去。",
     choices: [
       { text: "走进后门", nextScene: "建平-后门辅路", effect: updateTime(1) }
@@ -827,7 +827,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "你放倒了最前面的几只，但它们是黑压压的一片——前面的倒下，后面的踩着尸体扑上来，根本没有尽头。\n你被淹没在尸群里。" + weaponBrokeText(vars) + "\n—— 结局：自投罗网 ——";
+      return "你放倒了最前面的几只，但它们是黑压压的一片——前面的倒下，后面的踩着尸体扑上来，根本没有尽头。\n你被淹没在尸群里。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：自投罗网 ——</span>";
     }
   },
 
@@ -1209,7 +1209,7 @@ Object.assign(storyData, {
       "你没怎么助跑，脚背一送——球不高不低地飞过禁区，擦着横梁下沿，钉进了球门死角。球在网里弹了两下，停住了。\n嗯，很有脚感。",
       "一阵回忆涌了上来。高三那会儿，在体育课，或者中午有空的时候，你们就爱抱着球来这儿。还没分队时，你就走到中圈，面对球门，一脚一脚地试，非要踢出那种擦着横梁下沿落进死角的球才算完。",
       "如今球门还在，可这个点了，不会再有铃声催你回教室了。",
-      "<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[起脚爆射]</span>"
+      "<span class='sys'>【系统提示】获得记忆[起脚爆射]</span>"
     ],
     choices: [
       { text: "把球留在球门里，离开", nextScene: "建平-操场", effect: updateTime(1) }
@@ -1430,7 +1430,7 @@ Object.assign(storyData, {
       if ((vars._visit['建平-挹芬楼-1F-西侧走廊-清场'] > 0)) {
         return "挹芬楼 1 楼西侧走廊。丧尸已经被你清掉了，电梯间和教室门口都安静了下来。" + describeZombieWave(vars);
       }
-      return "你踏进挹芬楼 1 楼西侧走廊——电梯间附近几只丧尸朝你扑来。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+      return "你踏进挹芬楼 1 楼西侧走廊——电梯间附近几只丧尸朝你扑来。\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
       if (!(vars._visit['建平-挹芬楼-1F-西侧走廊-清场'] > 0)) {
@@ -1486,7 +1486,7 @@ Object.assign(storyData, {
       if (vars._visit['建平-挹芬楼-1F-东侧走廊-清场'] > 0) {
         return "挹芬楼 1 楼东侧走廊。丧尸已经被你清掉了，楼梯口和休息区门口都安静了下来。" + describeZombieWave(vars);
       }
-      return "你走进挹芬楼 1 楼东侧走廊——楼梯口和休息区方向都有丧尸涌来。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+      return "你走进挹芬楼 1 楼东侧走廊——楼梯口和休息区方向都有丧尸涌来。\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
       if (!(vars._visit['建平-挹芬楼-1F-东侧走廊-清场'] > 0)) {
@@ -1570,7 +1570,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
-      return "你记错了颜色的顺序——挹芬楼的丧尸潮水般涌来，把你吞没了。" + weaponBrokeText(vars) + "\n—— 结局：挹芬楼失守 ——";
+      return "你记错了颜色的顺序——挹芬楼的丧尸潮水般涌来，把你吞没了。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：挹芬楼失守 ——</span>";
     }
   },
   "建平-挹芬楼-2F": {
@@ -1844,7 +1844,7 @@ Object.assign(storyData, {
   "建平-致真楼-1F-老吴杂物室-战斗": {
     image: "images/placeholder.png",
     onEnter: initMemoryGame(["红","蓝","绿"], 5, { set: { currentPos: "致真楼1F老吴杂物室" } }),
-    text: "老吴的丧尸扑了过来！\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    text: "老吴的丧尸扑了过来！\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>",
     choices: [
       {
         text: "输入你看到的颜色分布",
@@ -1902,7 +1902,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "你没能招架住老吴的丧尸——它把你扑倒在地，一口咬在喉咙上。" + weaponBrokeText(vars) + "\n—— 结局：被老吴咬死 ——";
+      return "你没能招架住老吴的丧尸——它把你扑倒在地，一口咬在喉咙上。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：被老吴咬死 ——</span>";
     }
   },
 
@@ -1954,7 +1954,7 @@ Object.assign(storyData, {
     },
     text: "实验台的抽屉里有几卷纱布和一根断了的木架杆。\n\
 你清理了一下杂乱的桌面，把纱布撕成条，一圈圈缠在杆头，拧开那瓶医用石蜡油浸透，再缠上一层，留出燃烧的余头。\n\
-你把它凑到酒精灯上借了个火，等布条把油吃透、火苗稳住，又把它吹熄——要用的时候再点上。石蜡油的气味在实验室里散开，不算浓。\n<span style='color:#00fbffff;font-style:italic;'>【系统提示】获得火把（不占背包）。</span>",
+你把它凑到酒精灯上借了个火，等布条把油吃透、火苗稳住，又把它吹熄——要用的时候再点上。石蜡油的气味在实验室里散开，不算浓。\n<span class='sys'>【系统提示】获得火把（不占背包）。</span>",
     choices: [
       { text: "收好火把", nextScene: "建平-致真楼-2F-化学实验室", effect: updateTime(1) }
     ]
@@ -2348,7 +2348,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-4F-高三14班-galgame-防波堤": {
     image: "images/placeholder.png",
-    text: "<span style='color:#7fb8e8ff;'>—— 屏幕 · 《Summer Pockets》 ——</span>\n鸟白岛南边的防波堤，夕阳把海面染成琥珀色。鸣濑白羽扶着栏杆，背对着主角，海风吹动她的白色发梢。\n白羽：“……鹰原同学。”\n白羽：“你有没有过……一种很奇怪的感觉？”\n白羽：“就好像今天走过的路、说过的话，还有这片海、这个夕阳……”\n白羽：“都像是，已经经历过很多很多次一样。”",
+    text: "<span class='term'>—— 屏幕 · 《Summer Pockets》 ——</span>\n鸟白岛南边的防波堤，夕阳把海面染成琥珀色。鸣濑白羽扶着栏杆，背对着主角，海风吹动她的白色发梢。\n白羽：“……鹰原同学。”\n白羽：“你有没有过……一种很奇怪的感觉？”\n白羽：“就好像今天走过的路、说过的话，还有这片海、这个夕阳……”\n白羽：“都像是，已经经历过很多很多次一样。”",
     choices: [
       { text: "最近太累了吧，别想太多", nextScene: "建平-远翔楼-4F-高三14班-galgame-失落的沉默", effect: updateTime(5) },
       { text: "我相信你说的感觉", nextScene: "建平-远翔楼-4F-高三14班-galgame-动摇的坦白", effect: updateTime(5) },
@@ -2358,7 +2358,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-4F-高三14班-galgame-失落的沉默": {
     image: "images/placeholder.png",
-    text: "<span style='color:#7fb8e8ff;'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span style='color:#ffb6c1ff; font-style: italic;'>【好感度 -10】</span>\n白羽的肩膀几不可察地僵了一下，轻轻“嗯”了一声，重新转过身去，望着海面。\n白羽：“……也是。”\n白羽：“大概，只是我一个人的胡思乱想吧。”",
+    text: "<span class='term'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span class='sys'>【好感度 -10】</span>\n白羽的肩膀几不可察地僵了一下，轻轻“嗯”了一声，重新转过身去，望着海面。\n白羽：“……也是。”\n白羽：“大概，只是我一个人的胡思乱想吧。”",
     choices: [
       { text: "别多想了，早点回去吧", nextScene: "建平-远翔楼-4F-高三14班-galgame-坏结算", effect: updateTime(5) },
       { text: "……其实，我也有点这种感觉", nextScene: "建平-远翔楼-4F-高三14班-galgame-普通结算", effect: updateTime(5) }
@@ -2367,7 +2367,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-4F-高三14班-galgame-动摇的坦白": {
     image: "images/placeholder.png",
-    text: "<span style='color:#7fb8e8ff;'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span style='color:#ffb6c1ff; font-style: italic;'>【好感度 +10】</span>\n白羽缓缓转过身来，眼睛里有一丝惊讶。\n白羽：“其实……我已经不止一次，度过这个夏天了。”\n白羽：“每一次结束，一切都会重新开始。所有人都会忘记，只有我一个人记得所有事。”\n白羽：“很奇怪吧。”",
+    text: "<span class='term'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span class='sys'>【好感度 +10】</span>\n白羽缓缓转过身来，眼睛里有一丝惊讶。\n白羽：“其实……我已经不止一次，度过这个夏天了。”\n白羽：“每一次结束，一切都会重新开始。所有人都会忘记，只有我一个人记得所有事。”\n白羽：“很奇怪吧。”",
     choices: [
       { text: "这种能力太痛苦了，不如试着忘掉？", nextScene: "建平-远翔楼-4F-高三14班-galgame-普通结算", effect: updateTime(5) },
       { text: "那以后，我陪你一起记。", nextScene: "建平-远翔楼-4F-高三14班-galgame-真结算", effect: updateTime(5) }
@@ -2376,7 +2376,7 @@ Object.assign(storyData, {
 
   "建平-远翔楼-4F-高三14班-galgame-尘封的真相": {
     image: "images/placeholder.png",
-    text: "<span style='color:#7fb8e8ff;'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span style='color:#ffb6c1ff; font-style: italic;'>【好感度 +25】</span>\n白羽猛地转过身，瞳孔缩了一下。\n白羽：“你……怎么会知道。”\n白羽：“没错。一次又一次，同样的夏天，同样的相遇，同样的……离别。”\n白羽：“我已经数不清，这是第几次了。”\n屏幕的白光晃了你一下——有那么一瞬间，你好像在白羽身后的海面上看见了倒扣的课桌，听见很远的地方传来拖沓的脚步声。\n你眨眨眼。防波堤，夕阳，海。什么都没有。",
+    text: "<span class='term'>—— 屏幕 · 《Summer Pockets》 ——</span>\n<span class='sys'>【好感度 +25】</span>\n白羽猛地转过身，瞳孔缩了一下。\n白羽：“你……怎么会知道。”\n白羽：“没错。一次又一次，同样的夏天，同样的相遇，同样的……离别。”\n白羽：“我已经数不清，这是第几次了。”\n屏幕的白光晃了你一下——有那么一瞬间，你好像在白羽身后的海面上看见了倒扣的课桌，听见很远的地方传来拖沓的脚步声。\n你眨眨眼。防波堤，夕阳，海。什么都没有。",
     choices: [
       { text: "为什么会这样？", nextScene: "建平-远翔楼-4F-高三14班-galgame-普通结算", effect: updateTime(5) },
       { text: "这一次，不会再是你一个人了。", nextScene: "建平-远翔楼-4F-高三14班-galgame-真结算", effect: updateTime(5) }
@@ -2407,7 +2407,7 @@ Object.assign(storyData, {
       vars._pengGalCleared = true;
       return { add: { strength: 1 } };
     },
-    text: "屏幕上弹出结算画面：「徐徐靠近」。白羽站在坡道上，朝主角轻轻挥了挥手。\n彭奕宸盯着结算画面看了一会儿，忽然起身，从书包柜里翻出他囤的泡面，撕开一桶，掰了半块面饼给你，又从铅笔盒里摸出半根火腿肠。\n“比我打得好。”他说，“吃。”\n你们就着饮水机里的温水，把面啃完了。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n收拾面桶的时候，他提了一句：收藏了个互动视频，有兴趣可以看看。",
+    text: "屏幕上弹出结算画面：「徐徐靠近」。白羽站在坡道上，朝主角轻轻挥了挥手。\n彭奕宸盯着结算画面看了一会儿，忽然起身，从书包柜里翻出他囤的泡面，撕开一桶，掰了半块面饼给你，又从铅笔盒里摸出半根火腿肠。\n“比我打得好。”他说，“吃。”\n你们就着饮水机里的温水，把面啃完了。\n<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>\n收拾面桶的时候，他提了一句：收藏了个互动视频，有兴趣可以看看。",
     choices: [
       { text: "看看收藏夹里那个视频", showCondition: function(v) { return !v.mixedMemorySet.has("腐烂尸城"); }, nextScene: "建平-远翔楼-4F-高三14班-看B站", effect: updateTime(1) },
       { text: "回教室", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(1) }
@@ -2421,7 +2421,7 @@ Object.assign(storyData, {
       vars._pengGalCleared = true;
       return { add: { strength: 2 } };
     },
-    text: "屏幕上弹出结算画面：「记忆同频」。几只半透明的七影蝶从海面掠过，在夕阳下泛着微光——解锁隐藏 CG「七影蝶的约定」。\n彭奕宸盯着屏幕，很久没动。\n“……这段我从来没见过。”他看看你，“你怎么想到往那上面问的？”\n你还没想好怎么回答，他已经起身，把整桶没开封的泡面和一颗卤蛋放到你面前，又顺手把屏幕亮度调低了一点。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
+    text: "屏幕上弹出结算画面：「记忆同频」。几只半透明的七影蝶从海面掠过，在夕阳下泛着微光——解锁隐藏 CG「七影蝶的约定」。\n彭奕宸盯着屏幕，很久没动。\n“……这段我从来没见过。”他看看你，“你怎么想到往那上面问的？”\n你还没想好怎么回答，他已经起身，把整桶没开封的泡面和一颗卤蛋放到你面前，又顺手把屏幕亮度调低了一点。\n<span class='sys'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-远翔楼-4F-高三14班-galgame-wqx存档", effect: updateTime(5) }
     ]
@@ -2455,7 +2455,7 @@ Object.assign(storyData, {
     // 视频早在出事前就下好躺在缓存里——没网也放得出来。
     text: "你坐回这张课桌，点开收藏夹——是你自己以前留的。《腐烂尸城》，一个互动视频，讲一座城市被尸潮吞没，幸存者们在废墟里挣扎求生。当年你大概是躲在这间教室看完的，看完还得赶去下一节课。缓存还在，不用网也放得出来。\n\
 画面里的丧尸、逃命的人群、绝望的呐喊……和你这些天的经历，是那么相似。\n你看着看着，仿佛自己也置身其中。\n\
- <span style='color:#ffaa00;'>【记忆】你获得了一段记忆：腐烂尸城。</span>",
+ <span class='warn'>【记忆】你获得了一段记忆：腐烂尸城。</span>",
     choices: [
       { text: "关掉视频", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
     ]
@@ -2464,7 +2464,7 @@ Object.assign(storyData, {
   "建平-远翔楼-4F-高三14班-方便面": {
     image: "images/placeholder.png",
     onEnter: { add: { strength: 1 } },
-    text: "彭奕宸把方便面掰成两半，递给你一半。\n就着没喝完的水，你们俩蹲在教室里，一人半包方便面。\n谈不上多好吃，但在这种时候，能和老同学分着吃口热乎的，比什么都强。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: "彭奕宸把方便面掰成两半，递给你一半。\n就着没喝完的水，你们俩蹲在教室里，一人半包方便面。\n谈不上多好吃，但在这种时候，能和老同学分着吃口热乎的，比什么都强。\n<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-远翔楼-4F-高三14班", effect: updateTime(5) }
     ]
@@ -2564,7 +2564,7 @@ Object.assign(storyData, {
       var warn = vars.gasIndex >= 80
         ? "【警告】煤气正在泄漏。你几乎站不稳了——再多吸一口就出不去了。"
         : "【警告】煤气正在泄漏，你感到一阵眩晕。";
-      return "后厨。一股浓重的煤气味扑面而来，呛得你直咳嗽。地上横七竖八地躺着几具尸体。\n<span style='color:#ffaa00;'>" + warn + "</span>";
+      return "后厨。一股浓重的煤气味扑面而来，呛得你直咳嗽。地上横七竖八地躺着几具尸体。\n<span class='warn'>" + warn + "</span>";
     },
     choices: function(vars) {
       var cs = [];
@@ -2608,7 +2608,7 @@ Object.assign(storyData, {
   "建平-食堂-煤气阀-战斗": {
     image: "images/placeholder.png",
     onEnter: initMemoryGame(["红","蓝","绿"], 3, { set: { currentPos: "食堂后厨" } }),
-    text: "厨师丧尸扑了过来！\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>",
+    text: "厨师丧尸扑了过来！\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>",
     choices: [
       {
         text: "输入你看到的颜色分布",
@@ -2633,7 +2633,7 @@ Object.assign(storyData, {
 
   "结局-煤气中毒": {
     image: "images/placeholder.png",
-    text: "你吸入的煤气越来越多，眼前发黑，双腿发软……\n你栽倒在后厨的地上，再也没有起来。\n—— 结局：煤气中毒 ——"
+    text: "你吸入的煤气越来越多，眼前发黑，双腿发软……\n你栽倒在后厨的地上，再也没有起来。\n<span class='end'>—— 结局：煤气中毒 ——</span>"
   },
 
   // ==================== 宿舍楼（单节点 · 简化） ====================
@@ -2672,7 +2672,7 @@ Object.assign(storyData, {
 宿舍前几年翻修过一遍，实木地板，8人一寝————看起来还不错，虽然你除了军训就没在这里住过。\n\
 记得高中时听说有人会偷偷在宿舍里玩游戏、打牌，这里就是一个灰色地带。" + describeZombieWave(vars);
       }
-      return "你推开宿舍的门——走廊里挤着不少丧尸，在昏暗的光线里漫无目的地游荡。得先把它们清掉。\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+      return "你推开宿舍的门——走廊里挤着不少丧尸，在昏暗的光线里漫无目的地游荡。得先把它们清掉。\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: function(vars) {
       if (!(vars._visit['建平-宿舍-内部-清场'] > 0)) {
@@ -2743,7 +2743,7 @@ Object.assign(storyData, {
     image: "images/zombieKnockYouDown.webp",
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
     text: function(vars) {
-      return "你记错了颜色的顺序——宿舍里的丧尸扑了上来，把你堵在了墙角。" + weaponBrokeText(vars) + "\n—— 结局：宿舍失守 ——";
+      return "你记错了颜色的顺序——宿舍里的丧尸扑了上来，把你堵在了墙角。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：宿舍失守 ——</span>";
     }
   },
 
@@ -2923,7 +2923,7 @@ Object.assign(storyData, {
       "“……谢谢。”她的声音很轻，“我刚才，是不是又说胡话了？你别怕我。”",
       "“我叫——”她顿住，眉头慢慢拧起来，“……我叫什么来着。”她放弃了，转头看向台阶上那排背包，“她们让我看着东西。她们怎么还不回来。”",
       "“饮水机是我喝空的……”她的声音又开始飘，“四楼还有一台……别喝……那台也……”",
-      "她从兜里摸出一颗薄荷味的润喉糖，硬塞进你手心：“给你。我留着……也没用了。”\n你剥开糖纸含进嘴里——一丝凉意顺着喉咙滑下去。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>"
+      "她从兜里摸出一颗薄荷味的润喉糖，硬塞进你手心：“给你。我留着……也没用了。”\n你剥开糖纸含进嘴里——一丝凉意顺着喉咙滑下去。\n<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>"
     ],
     choices: [
       { text: "退回阅览大厅", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
@@ -2977,7 +2977,7 @@ Object.assign(storyData, {
       var opener = vars._lastScene === "建平-弘渊楼-2F-李娟-转化"
         ? "她转过身来——那张脸上，已经找不到什么李娟的影子了。她朝你扑过来！"
         : "背后传来一声嘶哑的低鸣——她不知什么时候已经绕到了你身后，朝你扑过来！";
-      return opener + "\n<span style='color:#ffaa00;'>集中注意力，记住那些闪烁的颜色！</span>";
+      return opener + "\n<span class='warn'>集中注意力，记住那些闪烁的颜色！</span>";
     },
     choices: [
       {
@@ -3032,7 +3032,7 @@ Object.assign(storyData, {
   "建平-弘渊楼-2F-保温杯-粉色": {
     image: hyLib2FImg,
     onEnter: { set: { _hyCupsUsed: true }, add: { strength: 1, mercuryLoad: 10 } },
-    text: "你拧开那只粉色保温杯的杯盖，仰头灌了两口。水是温吞吞的，放久了的味道，说不上新鲜——你皱了皱眉，还是咽了下去。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你拧开那只粉色保温杯的杯盖，仰头灌了两口。水是温吞吞的，放久了的味道，说不上新鲜——你皱了皱眉，还是咽了下去。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "放回桌上", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
     ]
@@ -3041,7 +3041,7 @@ Object.assign(storyData, {
   "建平-弘渊楼-2F-保温杯-另一只": {
     image: hyLib2FImg,
     onEnter: { set: { _hyCupsUsed: true }, add: { strength: 1, mercuryLoad: 10 } },
-    text: "你特意避开了她指过的那只粉色保温杯，从旁边挑了一只印着小熊图案的，拧开仰头灌了两口。\n水一样是温吞吞的，放久了的味道，说不上新鲜。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你特意避开了她指过的那只粉色保温杯，从旁边挑了一只印着小熊图案的，拧开仰头灌了两口。\n水一样是温吞吞的，放久了的味道，说不上新鲜。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "放回桌上", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
     ]
@@ -3050,7 +3050,7 @@ Object.assign(storyData, {
   "建平-弘渊楼-2F-保温杯-喝水": {
     image: hyLib2FImg,
     onEnter: { set: { _hyCupsUsed: true }, add: { strength: 1, mercuryLoad: 10 } },
-    text: "你随手拿起一只保温杯，拧开仰头灌了两口。水是温吞吞的，放久了的味道，说不上新鲜——你皱了皱眉，还是咽了下去。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】体力+1，当前体力：{strength}。</span>",
+    text: "你随手拿起一只保温杯，拧开仰头灌了两口。水是温吞吞的，放久了的味道，说不上新鲜——你皱了皱眉，还是咽了下去。\n<span class='sys'>【系统提示】体力+1，当前体力：{strength}。</span>",
     choices: [
       { text: "放回桌上", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
     ]
@@ -3059,7 +3059,7 @@ Object.assign(storyData, {
   "建平-弘渊楼-2F-保温杯-灌水": {
     image: hyLib2FImg,
     onEnter: { set: { bottleWater: 1, waterToxic: true, _hyCupsUsed: true } },
-    text: "你拧开一只保温杯，把里面的水缓缓灌进水瓶，拧紧瓶盖。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】水瓶已灌满。</span>",
+    text: "你拧开一只保温杯，把里面的水缓缓灌进水瓶，拧紧瓶盖。\n<span class='sys'>【系统提示】水瓶已灌满。</span>",
     choices: [
       { text: "放回桌上", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
     ]
@@ -3073,7 +3073,7 @@ Object.assign(storyData, {
       if (vars._visit["建平-弘渊楼-1F-借阅处-饭卡"]) {
         desc += "意识模糊之前，你想起了借阅处玻璃板下的那张借书证——李娟。\n她等的同学没有回来。现在，她也不用再等了。\n";
       }
-      return desc + weaponBrokeText(vars) + "\n—— 结局：阅览室的常客 ——";
+      return desc + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：阅览室的常客 ——</span>";
     }
   },
   "建平-弘渊楼-3F": {
@@ -3393,7 +3393,7 @@ Object.assign(storyData, {
 她歪着头站在那儿，长着血盆大口，喉咙里发出低哑的嘶声。她挥臂朝你抓来——但动作很慢，你轻易就躲开了。\n\
 可就在这时，她仰起头，发出一声凄厉的嚎叫——那声音在空旷的校园里回荡，引来四面八方的丧尸！";
       if (vars._harshEncounters >= 2) {
-        desc += "\n<span style='color:#ffaa00;'>这已经是她第二次追上你了。</span>";
+        desc += "\n<span class='warn'>这已经是她第二次追上你了。</span>";
       }
       return desc;
     },
@@ -3460,7 +3460,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if (vars._harshEncounters >= 2) {
-        return "你把内胆丢向她。她一把抱住，低头嗅了嗅，随后缓缓转身，拖着那件校服内胆，一步一步地走远了——彻底消失在了走廊尽头。\n<span style='color:#00fbffff; font-style: italic;'>她走了，短期内不会再追来。</span>";
+        return "你把内胆丢向她。她一把抱住，低头嗅了嗅，随后缓缓转身，拖着那件校服内胆，一步一步地走远了——彻底消失在了走廊尽头。\n<span class='sys'>她走了，短期内不会再追来。</span>";
       }
       return "你把内胆丢向她。她一把抱住，低头嗅了嗅，像是认出了什么。\n她抱着那件校服内胆，缓缓转身走开了几步——但你能感觉到，她还会再追上来。";
     },
@@ -3489,7 +3489,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if (!vars._harshActive) {
-        return "你拼命跑，身后传来她那凄厉的嚎叫和渐渐杂乱的丧尸群——好在你七拐八绕，总算甩开了它们。\n你回头望去，那个身影已经不见了。\n<span style='color:#00fbffff; font-style: italic;'>她好像不追了。也许下次坐电梯之前，你该好好想想。</span>";
+        return "你拼命跑，身后传来她那凄厉的嚎叫和渐渐杂乱的丧尸群——好在你七拐八绕，总算甩开了它们。\n你回头望去，那个身影已经不见了。\n<span class='sys'>她好像不追了。也许下次坐电梯之前，你该好好想想。</span>";
       }
       return "你拼命跑，身后传来她的嚎叫和丧尸群杂乱的脚步声——你七拐八绕，好不容易才拉开一段距离。\n但你知道，她还在跟着你的轨迹。";
     },
@@ -3604,7 +3604,7 @@ Object.assign(storyData, {
     text: "你放轻脚步，在观众席第一排坐下。彭奕宸没回头，指尖的曲子断断续续——弹错一个音，他就退回那一小节，从头重来一遍。\n\
 你听了一会儿，忽然想起高三那会儿——那时候这琴还摆在走廊上。你中午吃完饭经过，总会放慢脚步，站下来听一会儿。琴声不紧不慢，能把下午第一节课前那点烦闷都熨平。\n\
 大概他也不知道，走廊里那架琴替他收留过多少个午后的听众。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[悠扬琴声]</span>",
+<span class='sys'>【系统提示】获得记忆[悠扬琴声]</span>",
     choices: [
       { text: "悄悄起身离开", nextScene: "建平-远翔楼-1F-圆厅", effect: updateTime(1) }
     ]
@@ -3724,7 +3724,7 @@ Object.assign(storyData, {
   "建平-挹芬楼-2F-高一教室-食品": {
     image: "images/建平/挹芬楼-2F-高一教室-食品.webp",
     onEnter: { add: { strength: 1 } },
-    text: "你翻出一个没拆封的面包和半瓶水。顾不上那么多，你撕开包装就吃。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: "你翻出一个没拆封的面包和半瓶水。顾不上那么多，你撕开包装就吃。\n<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-2F-高一教室", effect: updateTime(2) }
     ]
@@ -3779,7 +3779,7 @@ Object.assign(storyData, {
     text: "你把那只瓶子从桌缝里抽出来——被两张拼在一起的课桌夹了这么多天，瓶身压出一道浅痕，倒没裂。标签撕得只剩半张，瓶口松松地拧着盖。\n\
 你拧开闻了闻，里头是空的。瓶子本身倒是好东西：能装水，能带着走。\n\
 至于这栋楼里哪台饮水机还能出水、那水能不能喝——得你自己判断。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>",
+<span class='sys'>【系统提示】获得空水瓶，找到干净水源就能装满。</span>",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(1) }
     ]
@@ -3794,7 +3794,7 @@ Object.assign(storyData, {
       if (vars.hasBag) {
         base += "帆布袋收紧抽绳挂在包侧，还能再塞点零碎。";
       }
-      base += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】换上了书包，背包容量+1，当前容量：{bagVolume}。</span>";
+      base += "\n<span class='sys'>【系统提示】换上了书包，背包容量+1，当前容量：{bagVolume}。</span>";
       return base;
     },
     choices: [
@@ -3809,7 +3809,7 @@ Object.assign(storyData, {
   "建平-挹芬楼-3F-高一教室-讲台": {
     image: "images/placeholder.png",
     onEnter: { add: { strength: 3 } },
-    text: "你用钥匙串打开了讲台的抽屉。里面放着几包饼干、一盒午餐肉和一瓶没开封的水——老师塞抽屉里的。\n你撕开午餐肉就着饼干吃了些，胃里终于有了点实在的东西。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复3点体力，当前体力：{strength}。</span>",
+    text: "你用钥匙串打开了讲台的抽屉。里面放着几包饼干、一盒午餐肉和一瓶没开封的水——老师塞抽屉里的。\n你撕开午餐肉就着饼干吃了些，胃里终于有了点实在的东西。\n<span class='sys'>【系统提示】你回复3点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-3F-高一教室", effect: updateTime(3) }
     ]
@@ -3935,7 +3935,7 @@ Object.assign(storyData, {
   "建平-挹芬楼-5F-高二教室-碰尸体": {
     image: "images/placeholder.png",
     onEnter: { add: { mercuryLoad: 10 } },
-    text: "你伸手碰了碰他的肩膀——入手冰凉。\n你猛地缩回手，却已经来不及了。他的皮肤上带着一丝若有若无的金属光泽，你想起了管线图上那行字。\n<span style='color:#ffaa00;'>他的身体里，已经积满了那些看不见的东西。</span>",
+    text: "你伸手碰了碰他的肩膀——入手冰凉。\n你猛地缩回手，却已经来不及了。他的皮肤上带着一丝若有若无的金属光泽，你想起了管线图上那行字。\n<span class='warn'>他的身体里，已经积满了那些看不见的东西。</span>",
     choices: [
       { text: "退开", nextScene: "建平-挹芬楼-5F-高二教室", effect: updateTime(1) }
     ]
@@ -4002,7 +4002,7 @@ Object.assign(storyData, {
       vars.strength = Math.min(10, (vars.strength || 0) + 1);
       return {};
     },
-    text: "夹心饼干有点潮了，但还能吃。你两三口咽下去，又从柜子里摸出那盒牛奶漱了漱口——牛奶温得发腻，你只喝了两口就放下了。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+    text: "夹心饼干有点潮了，但还能吃。你两三口咽下去，又从柜子里摸出那盒牛奶漱了漱口——牛奶温得发腻，你只喝了两口就放下了。\n<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "建平-挹芬楼-6F-自习教室", effect: updateTime(2) }
     ]
@@ -4016,7 +4016,7 @@ Object.assign(storyData, {
       vars.itemCount += 1;
       return {};
     },
-    text: "你拆开盒子确认了一下，饼干没受潮，便重新包好收进背包。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】获得夹心饼干（占 1 格）。可以自己吃（回自习教室拆一包），也可以留着喂那只橘猫。</span>",
+    text: "你拆开盒子确认了一下，饼干没受潮，便重新包好收进背包。\n<span class='sys'>【系统提示】获得夹心饼干（占 1 格）。可以自己吃（回自习教室拆一包），也可以留着喂那只橘猫。</span>",
     choices: [
       { text: "收好", nextScene: "建平-挹芬楼-6F-自习教室", effect: updateTime(1) }
     ]
@@ -4168,7 +4168,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "你打开纸袋——是一份盖浇饭，还附着一瓶可乐。\n";
       if (vars.dd < 3) {
-        return desc + "袋子还温着，饭也没馊。你扒了两口，熟悉的油腻香味让你鼻子一酸。\n<span style='color:#00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
+        return desc + "袋子还温着，饭也没馊。你扒了两口，熟悉的油腻香味让你鼻子一酸。\n<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
       }
       return desc + "但已经放了太久——米饭结成硬块，菜叶发黑，散发出一股馊味。你闻了闻就把它丢回了垃圾桶。";
     },

@@ -102,7 +102,7 @@ Object.assign(storyData,{
       var hit = hasMeleeWeapon(vars)
         ? "你举起" + meleeWeaponName(vars) + "砸了下去，但手臂太软了——这一击只蹭到了它的后背。"
         : "你赤手空拳地扑了上去，但手臂太软了——这一拳只蹭到了它的后背。";
-      return hit + "\n白大褂丧尸猛地转过身，张开嘴朝你的手臂咬了下来。\n剧烈的疼痛让你眼前发黑……\n\n—— 结局：益丰-被反杀 ——";
+      return hit + "\n白大褂丧尸猛地转过身，张开嘴朝你的手臂咬了下来。\n剧烈的疼痛让你眼前发黑……\n\n<span class='end'>—— 结局：益丰-被反杀 ——</span>";
     }
   },
 
@@ -363,7 +363,7 @@ Object.assign(storyData,{
     text: "这只黑皮的药房员工举起针筒向你挥来，你抬手格挡；他又张开嘴向你肘部咬下，你抽出手向右闪开，脖子后缩，躲过他又一爪。\n\
 它发出低沉的怒吼向你再次扑来，你看准时机，抓住针筒，反手一拧将其夺下，再一脚将其踹到货架上，\n\
 轰的一声，数不清的药箱砸在它身上。有这个铁质货架压着，一时半会儿应该是起不来了。\n\
-你低头看了一眼夺下的针筒——筒壁上还残留着水渍。旁边就是垃圾桶，里面有一个被掰断的针头。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+你低头看了一眼夺下的针筒——筒壁上还残留着水渍。旁边就是垃圾桶，里面有一个被掰断的针头。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "检查夺下的针筒",
@@ -400,7 +400,7 @@ Object.assign(storyData,{
   "益丰大药房-办公室门口": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/办公室门口.png */,
     text: "你到了办公室门口。办公室的门关着，里面透出冷白的光。门上贴着一张被汗浸皱的便签。\n\
-<span style = 'font-style: italic;'><em>里面有人。我是店长赵广成。别撞门，推一下就开了。求你不是那种东西就行。</em></span></>\n",
+<span class='think'><em>里面有人。我是店长赵广成。别撞门，推一下就开了。求你不是那种东西就行。</em></span></>\n",
     qte: {
       timeout: 5000,
       onTimeout: "益丰大药房-办公室门口-门锁上了"
@@ -566,7 +566,7 @@ Object.assign(storyData,{
     },
     text: function(vars) {
       return "你慢了半拍，她的牙齿咬进了你的小臂。你痛呼一声甩开她，鲜血顺着手臂往下淌。她嘴角沾着血，又退回了阴影里。" + weaponBrokeText(vars) + "\n\
-<span style='color: #ff4444; font-style: italic;'>【系统提示】你被咬伤了！体力 -1，当前体力：{strength}。</span>";
+<span class='crit'>【系统提示】你被咬伤了！体力 -1，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -684,9 +684,9 @@ Object.assign(storyData,{
 
   "益丰大药房-呼叫开门": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/呼叫开门.png */,
-    text: "<span style = 'font-style: italic;'><em>喂！里面有人吗？我没被咬，我是正常人！</em></span>\n\
+    text: "<span class='think'><em>喂！里面有人吗？我没被咬，我是正常人！</em></span>\n\
 熟悉的咔哒声再次传来，门开了。一个矮胖的中年人把你拉了进去，他手上拿着一只鸡毛掸子。\n\
-<span style = 'font-style: italic;'>“我就是赵广成，你应该看见门外的便签了吧？不好意思，我以为丧尸摸到门口了……吓死我了”</span>\n赵广成把门摔上。砰。",
+<span class='think'>“我就是赵广成，你应该看见门外的便签了吧？不好意思，我以为丧尸摸到门口了……吓死我了”</span>\n赵广成把门摔上。砰。",
     choices: [
       {
         text: "坐下",
@@ -699,7 +699,7 @@ Object.assign(storyData,{
   "益丰大药房-推门进入办公室": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/推门进入办公室.png */,
     text: "你推门进入办公室。沙发上坐着一个中年人，手里紧紧攥着一个鸡毛掸子，但他看到你时神情就放松了下来。\n\
-<span style = 'font-style: italic;'><em>终于不是丧尸了。年轻人。这个，这个是掸灰的。不是要打人。我怕进来的是……我不知道是什么。你正常，对吧？你是正常人。</em></span>\n\
+<span class='think'><em>终于不是丧尸了。年轻人。这个，这个是掸灰的。不是要打人。我怕进来的是……我不知道是什么。你正常，对吧？你是正常人。</em></span>\n\
 ",
     choices: [
       {
@@ -718,7 +718,7 @@ Object.assign(storyData,{
     text: [
       "赵广成给你递了一瓶没开封的矿泉水——从他办公桌底下箱子里拿出来的，外包装还贴着超市的打折标签。",
       "他特别强调了一句：“这是我上星期买的，封好的，不是自来水灌的。自来水不干净，我跟利昂说过好几次了，最近水不对，他不听，老说烧开了就行，烧开了就能把细菌什么的除掉。他说的不无道理……但是，我就是觉得不对。对。嗯。你看吧。”",
-      "咕嘟咕嘟，你把水一饮而尽。<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}</span>",
+      "咕嘟咕嘟，你把水一饮而尽。<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}</span>",
       "这好像打开了他的话匣子。“我卖药二十年了，这个事我跟你说，不对劲。二十七号开始就有人来买退烧药，一个两个就算了，来的都是那种——你晓得吧，不是普通发烧。脸通红，嘴唇干得裂口子，进来第一句话不是‘多少钱’，是‘有没有水’。我开药店又不是开水站。”",
       "他摇了摇头。“利昂也注意到了。他跟我说‘老赵，最近退烧药走得快，要不要补货。’。我当时还说他瞎操心，现在看来——”",
       "”唉。一副末世景观。“你说。"
@@ -823,9 +823,9 @@ Object.assign(storyData,{
         ? "你又开口讨吃的。赵广成摇摇头，却还是从抽屉里摸出最后一块压缩饼干，掰了一半递给你：“省着点，就剩这些了。”"
         : "你张嘴讨口吃的。赵广成没小气——从办公桌抽屉里摸出一包压缩饼干，掰了一大块塞进你手里：“拿去，出门在外多不容易。”";
       if (vars._restBlocked) {
-        return head + "\n你就着矿泉水咽下去，早就不饿了，纯粹是尝个味。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你已经吃饱喝足，歇得很好了。</span>";
+        return head + "\n你就着矿泉水咽下去，早就不饿了，纯粹是尝个味。\n<span class='sys'>【系统提示】你已经吃饱喝足，歇得很好了。</span>";
       }
-      return head + "\n你就着矿泉水把饼干囫囵咽下，肚子里有了东西，人也有力气了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
+      return head + "\n你就着矿泉水把饼干囫囵咽下，肚子里有了东西，人也有力气了。\n<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>";
     },
     choices: [
       restTidyChoice("益丰大药房-匀口饭吃"),

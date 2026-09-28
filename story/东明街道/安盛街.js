@@ -176,7 +176,7 @@ Object.assign(storyData, {
 
   "结局-老头丧尸砸死你": {
     image: "images/zombieWaveSmashYouIntoPieces.webp",
-    text: "你冲上去的瞬间，老头丧尸举起拐杖狠狠砸了下来。\n它的力气大得惊人——你眼前一黑，倒在了冰冷的地面上。\n你为自己莽撞的攻击付出了代价。\n\n—— 结局：老头丧尸 ——"
+    text: "你冲上去的瞬间，老头丧尸举起拐杖狠狠砸了下来。\n它的力气大得惊人——你眼前一黑，倒在了冰冷的地面上。\n你为自己莽撞的攻击付出了代价。\n\n<span class='end'>—— 结局：老头丧尸 ——</span>"
   },
 
   "遭遇老头丧尸-犹豫": {
@@ -209,7 +209,7 @@ Object.assign(storyData, {
       night: "images/安盛街/老头丧尸倒下-night.webp"
     }),
     onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true, showRain: true } }),
-    text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "看看拐杖",
@@ -336,7 +336,7 @@ Object.assign(storyData, {
           desc += "\n周师傅发现你受伤了，担心地说：“你怎么还在外面乱跑？不知道现在什么情况吗？”他拿绷带给你简单包扎了一下。递给你一瓶水，“坐吧，休息一会儿。药房可能有药品，但现在还不是去拿的时候。”";
         }
         if (isNight && vars.chasedByZombies > 0) {
-          desc += "\n<span style='color: #ffaa00;'>外面丧尸的吼声此起彼伏——今晚在这里过夜应该能甩掉它们。</span>";
+          desc += "\n<span class='warn'>外面丧尸的吼声此起彼伏——今晚在这里过夜应该能甩掉它们。</span>";
         }
         return desc;
       }
@@ -395,7 +395,7 @@ Object.assign(storyData, {
         desc += "日光透过窗帘缝隙照进来，在地板上投下细长的光斑。周师傅在角落里磨着剪刀，沙沙作响。";
       }
       if (isNight && vars.chasedByZombies > 0) {
-        desc += "\n<span style='color: #ffaa00;'>窗外的低吼声时远时近——今晚在这里过夜应该能甩掉它们。</span>";
+        desc += "\n<span class='warn'>窗外的低吼声时远时近——今晚在这里过夜应该能甩掉它们。</span>";
       }
       return desc;
     },
@@ -481,7 +481,7 @@ Object.assign(storyData, {
       if (isNight) {
         basicDes = "周师傅拉出一张折叠床，递给你一条毯子。\n“今晚就安心睡吧，我守上半夜，你守下半夜。”\n你把身体埋进折叠床里，听着窗外偶尔传来的丧尸低吼声，竟出奇地睡着了。\n\
     第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
-        hint = "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复3点体力，当前体力：{strength}。</span>\
+        hint = "\n<span class='sys'>【系统提示】你回复3点体力，当前体力：{strength}。</span>\
 第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
       } else if(!isMorning) {
         basicDes = "你在理发椅上靠了一会儿。虽然只是短暂的小憩，但足够让酸痛的肌肉稍微放松一点。\n周师傅在门口望风，偶尔回头看你一眼。“别睡太久，天黑前最好有个打算。”";
@@ -796,10 +796,10 @@ Object.assign(storyData, {
       let tail = "收银台后面的小门看起来通往更里面——也许仓库里还有什么有用的东西————或者是更多丧尸。";
       if (hasMeleeWeapon(vars)) {
         return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n\
-你补了几下，确定它不会再动了。" + tail + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+你补了几下，确定它不会再动了。" + tail + "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       return "你从背后扑上去，把它整个人掀翻在水彩笔堆里。它扭头就咬，指甲在你手背上豁开几道口子——你用膝盖压住它的背，攥着它的头发往柜台棱角上磕，磕到第三下它就瘫了。\n\
-你从货架上扯了张包装纸，按住手背上的伤口。" + tail + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
+你从货架上扯了张包装纸，按住手背上的伤口。" + tail + "\n<span class='sys warn'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -822,7 +822,7 @@ Object.assign(storyData, {
         : "你赤手空拳扑上去，但手臂发软，按了个空。";
       return opening + "\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
 你太虚弱了，根本无力招架。\n\
-—— 结局：文具店被反杀 ——";
+<span class='end'>—— 结局：文具店被反杀 ——</span>";
     }
   },
 
@@ -1000,7 +1000,7 @@ Object.assign(storyData, {
   "安盛街-文具店铁柜-吃喝": {
     image: "images/安盛街/晨光文具店/仓库吃补给.webp",
     onEnter: { add: { strength: 2 } },
-    text: "你拧开矿泉水瓶盖，咕嘟咕嘟喝了几大口，又撕开饼干包装吃了两块。虽然不是什么美餐，但足够补充体力了。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
+    text: "你拧开矿泉水瓶盖，咕嘟咕嘟喝了几大口，又撕开饼干包装吃了两块。虽然不是什么美餐，但足够补充体力了。\n<span class='sys'>【系统提示】你回复2点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -1013,7 +1013,7 @@ Object.assign(storyData, {
     image: "images/安盛街/晨光文具店/仓库拿帆布袋.webp",
     onEnter: { set: { positionAfterOperation: "安盛街-文具店" } },
     text: "你提起那只帆布袋，掸了掸上面的灰。帆布厚实，肩带完好，袋口还有一根抽绳——比空手强多了。\n你把它斜挎在肩上，腾出手来。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得帆布袋，背包容量+1，当前容量：{bagVolume}。</span>",    choices: [
+<span class='sys'>【系统提示】获得帆布袋，背包容量+1，当前容量：{bagVolume}。</span>",    choices: [
       {
         text: "继续",
         nextScene: "安盛街-文具店"
@@ -1126,7 +1126,7 @@ Object.assign(storyData, {
   "安盛街-服装店-304柜-换衣": {
     image: "images/安盛街/服装店/换新衣.webp",
     onEnter: { add: { strength: 1 }, set: { shirt: "深蓝夹克" } },
-    text: "你脱下半路上沾了灰的衣服，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。已换上：{shirt}。</span>",
+    text: "你脱下半路上沾了灰的衣服，换上那件深蓝色的夹克。尺码正好，衣服叠得整整齐齐，还带着一股淡淡的樟脑味。\n你活动了一下肩膀——干净衣裳确实让人精神了不少。\n<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。已换上：{shirt}。</span>",
     choices: [
       {
         text: "继续看看304柜",
@@ -1189,7 +1189,7 @@ Object.assign(storyData, {
 
   "结局-安盛街-试衣间丧尸扑脸": {
     image: "images/zombieKnockYouDown.webp",
-    text: "丧尸猛地扑到你身上，你失去平衡仰面摔倒。\n还没来得及挣扎，它已经咬了下来。\n\n—— 结局：试衣间丧尸 ——"
+    text: "丧尸猛地扑到你身上，你失去平衡仰面摔倒。\n还没来得及挣扎，它已经咬了下来。\n\n<span class='end'>—— 结局：试衣间丧尸 ——</span>"
   },
 
   "结局-安盛街-试衣间丧尸扑脸-力竭": {
@@ -1197,13 +1197,13 @@ Object.assign(storyData, {
     text: "你抬脚踹了过去，可这一脚轻飘飘的，连它的冲势都没能挡下。\n\
 女丧尸扑到你身上，你仰面摔进试衣间里，后脑磕在墙上。\n\
 它已经咬了下来。\n\
-\n—— 结局：试衣间丧尸 ——"
+\n<span class='end'>—— 结局：试衣间丧尸 ——</span>"
   },
 
   "安盛街-服装店反击": {
     image: "images/安盛街/服装店/试衣间反击.webp",
     onEnter: { add: { strength: -1 } },
-    text: "你一脚正中丧尸的胸口，它被踹回了试衣间，撞在墙上发出沉闷的声响。\n趁它还没爬起来，你头也不回地冲出了服装店。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    text: "你一脚正中丧尸的胸口，它被踹回了试衣间，撞在墙上发出沉闷的声响。\n趁它还没爬起来，你头也不回地冲出了服装店。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "回安盛街",
@@ -1302,7 +1302,7 @@ Object.assign(storyData, {
     text: function(vars) {
       let desc = "这是一家临街的食品店，几箱饮料摞在门口，但胜在不起眼。玻璃门上贴满了促销海报，看不清里面的情况。";
       if (vars.chasedByZombies >= 3) {
-        desc += "\n<span style='color: #ff4444;'>远处的尸群正在逼近，你没有太多时间在这里逗留。</span>";
+        desc += "\n<span class='crit'>远处的尸群正在逼近，你没有太多时间在这里逗留。</span>";
       }
       return desc;
     },
@@ -1387,7 +1387,7 @@ Object.assign(storyData, {
     onEnter: updateTime(1, { add: { strength: 1 }, set: {showRain: true} }),
     text: "你飞快地抓起离你最近的一瓶水和一包饼干，转身就跑。店员丧尸慢悠悠地从柜台后面绕出来，但你已经在门外了。\n\
 你拧开瓶盖灌了几口水，体力恢复了一些。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】你回复1点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "把饼干塞进口袋",
@@ -1409,10 +1409,10 @@ Object.assign(storyData, {
       let loot = "你迅速扫荡了货架上剩下的东西：两瓶水、几包饼干，还有一罐午餐肉。虽然不是山珍海味，但足够补充体力了。";
       if (hasMeleeWeapon(vars)) {
         return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，一下子把店员丧尸打翻在地。它挣扎了几下，不动了。\n\
-" + loot + "\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>";
+" + loot + "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
       return "你扑上去把它按在柜台边上。它的指甲在你小臂上豁开两道口子，血珠往外渗——你用肩膀顶住它的下巴，直到它彻底没了力气。\n\
-" + loot + "\n小臂上的伤口还在渗血，回头得找点酒精或者碘伏处理。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-2，当前体力：{strength}。</span>";
+" + loot + "\n小臂上的伤口还在渗血，回头得找点酒精或者碘伏处理。\n<span class='sys warn'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
       {
@@ -1430,7 +1430,7 @@ Object.assign(storyData, {
     }),
     onEnter: { add: { strength: 4 } },
     text: "你拧开一瓶水，就着饼干和午餐肉吃了一顿。虽然冷了点，但能填饱肚子就是好事。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你回复4点体力，当前体力：{strength}。</span>",
+<span class='sys'>【系统提示】你回复4点体力，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续",
@@ -1453,7 +1453,7 @@ Object.assign(storyData, {
 
   "结局-安盛街-食品店被咬": {
     image: "images/zombieKnockYouDown.webp",
-    text: "你在货架前犹豫了太久。店员丧尸悄无声息地走到了你身后——\n等你察觉到脖子上传来的凉意时，已经太晚了。\n\n—— 结局：食品店被咬 ——"
+    text: "你在货架前犹豫了太久。店员丧尸悄无声息地走到了你身后——\n等你察觉到脖子上传来的凉意时，已经太晚了。\n\n<span class='end'>—— 结局：食品店被咬 ——</span>"
   },
 
   // ==================== 安盛街-尸潮遭遇战 ====================
@@ -1486,7 +1486,7 @@ Object.assign(storyData, {
 
   "结局-安盛街-被尸潮吞没": {
     image: "images/zombiesBeatYou.webp",
-    text: "你在街道中央犹豫了太久。\n尸潮像一面墙一样压了过来，无数双手抓住了你的衣服、手臂、脖子……\n你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\n—— 结局：被尸潮吞没 ——"
+    text: "你在街道中央犹豫了太久。\n尸潮像一面墙一样压了过来，无数双手抓住了你的衣服、手臂、脖子……\n你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\n<span class='end'>—— 结局：被尸潮吞没 ——</span>"
   },
 
   "结局-安盛街-被尸潮吞没-力竭": {
@@ -1495,7 +1495,7 @@ Object.assign(storyData, {
 可没跑出两步，大腿就酸得发软——你一头撞进人墙里，反倒被夹在了当中。\n\
 尸潮像一面墙一样合拢过来，无数双手抓住了你的衣服、手臂、脖子……\n\
 你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\
-\n—— 结局：被尸潮吞没 ——"
+\n<span class='end'>—— 结局：被尸潮吞没 ——</span>"
   },
 
   "安盛街-逃往安居苑": {
@@ -1611,7 +1611,7 @@ Object.assign(storyData, {
     onEnter: updateTime(2, { set: { showRain: true }, add: { strength: -1, chasedByZombies: 1 } }),
     text: "你深吸一口气，朝着最薄弱的缺口猛冲过去。一只丧尸伸手抓向你的衣领，被你一肘击翻；另一只从侧面扑来，你侧身闪过。\n\
 你的肺部在燃烧，腿像灌了铅一样沉重——但你不能停。\n\
-终于，你冲出了包围圈。身后的丧尸群还在追，但你已经甩开了距离。前方就是安盛街西侧，视野开阔了很多。\n<span style='color: #ffaa00; font-style: italic;'>【系统提示】体力-1，当前体力：{strength}。</span>",
+终于，你冲出了包围圈。身后的丧尸群还在追，但你已经甩开了距离。前方就是安盛街西侧，视野开阔了很多。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "继续往前",
@@ -1650,7 +1650,7 @@ Object.assign(storyData, {
       let desc = "你来到了安盛街西侧。这里比东侧更加破败——路面上到处是斑斑点点的血迹，有些已经发暗，有些还泛着潮。几辆废弃的车辆歪停在路边。\n\
 路边有一家食品店，卷帘门半掩着。再过去是一块歪斜的路牌，指向两个方向：右边是小区西门的方向，那里有个十字路口，左边沿大路一直走可以到新达汇商场。";
       if (vars.chasedByZombies >= 3) {
-        desc += "\n<span style='color: #ff4444;'>身后的丧尸越来越近了，你必须赶快决定去向。</span>";
+        desc += "\n<span class='crit'>身后的丧尸越来越近了，你必须赶快决定去向。</span>";
       }
       return desc + "\n" + describeWeather(vars) + "\n" + describeZombieWave(vars);
     },

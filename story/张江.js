@@ -326,7 +326,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
       return "你被它扑倒在加油机前的水泥地上，后脑磕在防撞柱上，眼前炸开一片金星。\n\
-它趴在你身上，工装上的油污蹭了你一脸。你最后看到的，是罩棚外那块“24小时便利”的灯箱——早就灭了。\n—— 结局：加油站 ——" + weaponBrokeText(vars);
+它趴在你身上，工装上的油污蹭了你一脸。你最后看到的，是罩棚外那块“24小时便利”的灯箱——早就灭了。\n<span class='end'>—— 结局：加油站 ——</span>" + weaponBrokeText(vars);
     }
   },
 
@@ -408,7 +408,7 @@ Object.assign(storyData, {
 “你——你是……”他绕过操作台走近两步，盯着你看了足足三秒，忽然笑出了声，“建平的！我带过你课题的那个！你怎么找到这儿来的？”\n\
 你把这几天的事拣着说了。他越听脸色越沉，最后拍了拍你的肩膀：“活着就好。活着就好。”\n\
 “这儿不缺电。”他朝机柜摆摆手，“UPS 撑着，楼顶还有块太阳能板，省着用能顶很久。我就是舍不得这些机器——都到这份上了，总得有台机器还记得点什么事。”\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得记忆[师生重逢]——在死城里，还有人认得你。</span>",
+<span class='sys'>【系统提示】获得记忆[师生重逢]——在死城里，还有人认得你。</span>",
     choices: [
       { text: "和他好好聊聊", nextScene: "张江-AI岛-机房-长谈给卡", effect: updateTime(2) }
     ]
@@ -818,7 +818,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
       return "你被它按在案板上。没切完的青菜贴上脸，叶子已经发蔫，还带着一点没散尽的水汽。\n\
-勺子不知滚到了哪里。后厨的地漏里，缓缓冒着一股馊味。\n—— 结局：上科大食堂 ——" + weaponBrokeText(vars);
+勺子不知滚到了哪里。后厨的地漏里，缓缓冒着一股馊味。\n<span class='end'>—— 结局：上科大食堂 ——</span>" + weaponBrokeText(vars);
     }
   },
 
@@ -989,7 +989,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
       return "你被按倒在发白的水泥地上。反光背心罩下来，旗绳还在空杆上抽。\n\
-伸缩门外就是华科路。你看见了，够不着。\n—— 结局：厂区广场 ——" + weaponBrokeText(vars);
+伸缩门外就是华科路。你看见了，够不着。\n<span class='end'>—— 结局：厂区广场 ——</span>" + weaponBrokeText(vars);
     }
   },
 
@@ -1091,7 +1091,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
       return "它把你抵在连廊的玻璃上。玻璃外是空荡荡的厂区广场，玻璃内是你越来越弱的挣扎。\n\
-它身上那件无尘服干净得反光——你最后想的是，这大概是你离“干净”最近的一次。\n—— 结局：连廊 ——" + weaponBrokeText(vars);
+它身上那件无尘服干净得反光——你最后想的是，这大概是你离“干净”最近的一次。\n<span class='end'>—— 结局：连廊 ——</span>" + weaponBrokeText(vars);
     }
   },
 
@@ -1204,7 +1204,7 @@ Object.assign(storyData, {
     onEnter: { set: { _wearingCleanSuit: true } },
     text: "你撕开压缩袋，抖开那身连体服。先是腿，再是胳膊，拉链从胸口一直拉到下巴，最后把帽子扣上、面罩压下去。\n\
 镜子里的人裹得严严实实，白得像颗行走的药棉。自己的呼吸声在面罩里放大了一圈，呼出的热气往上飘，糊在镜片边缘。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】已穿上无尘服。白区的人形不容易分辨你是不是活物——但你也一样分不清它们。穿着它不能进食饮水（可在整理整理中脱下）。</span>",
+<span class='sys'>【系统提示】已穿上无尘服。白区的人形不容易分辨你是不是活物——但你也一样分不清它们。穿着它不能进食饮水（可在整理整理中脱下）。</span>",
     choices: [
       { text: "回前厅", nextScene: "张江-华大-灰区" }
     ]
@@ -1335,7 +1335,7 @@ Object.assign(storyData, {
       var desc = "你按下【风淋启动】。面板“哔——”地叫了一声，屏幕上一行红字：外门未关闭，无法启动。\n";
       if (vars._airlockAlarmRang) {
         desc += "你又不死心地按了一下。这一回，“哔”声变成了长长的蜂鸣，头顶的警示灯转了起来——初级警报。\n\
-声音穿透舱壁往连廊那边灌。你透过外门的玻璃看见，广场那头有个白色的影子停住了脚，慢慢转过来。\n<span style='color: #ffaa00;'>有什么东西被警报引来了。</span>";
+声音穿透舱壁往连廊那边灌。你透过外门的玻璃看见，广场那头有个白色的影子停住了脚，慢慢转过来。\n<span class='warn'>有什么东西被警报引来了。</span>";
       } else {
         desc += "蜂鸣器不耐烦地催着你关门。";
       }
@@ -1390,7 +1390,7 @@ Object.assign(storyData, {
     onEnter: { set: { _airlockOuterClosed: false, _airlockBlowing: false, _airlockInnerOpen: false, _airlockStartFails: 0 } },
     text: "你推开内门。风停了，世界一下子安静得发闷。\n\
 门里是一条白得晃眼的走廊，头顶层层叠叠的管道和滤网压得很低，空气里有一股说不上来的味道——不是脏，恰恰相反，是干净得过头的味道，像医院，又比医院更空。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】你进入了洁净区。</span>",
+<span class='sys'>【系统提示】你进入了洁净区。</span>",
     choices: [
       { text: "往里走", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) }
     ]
@@ -1553,7 +1553,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你拉开外门跌出去，瘫在灰区的长凳上大口喘气。酸雾从舱门缝里追出来一缕，很快被送风口抽散了。\n\
-风淋舱的灯红红绿绿地闪了一阵，最后停在待机的黄。它尽了责，锁了门，放了气——至于里面的人死没死，不归它管。\n<span style='color: #ffaa00;'>厂房深处，好像有什么被这阵动静惊动了。</span>";
+风淋舱的灯红红绿绿地闪了一阵，最后停在待机的黄。它尽了责，锁了门，放了气——至于里面的人死没死，不归它管。\n<span class='warn'>厂房深处，好像有什么被这阵动静惊动了。</span>";
     },
     choices: [
       { text: "缓一缓", nextScene: "张江-华大-灰区", effect: updateTime(2) }
@@ -1565,7 +1565,7 @@ Object.assign(storyData, {
     text: "酸雾一口比一口深。你滑坐在舱底，后背抵着冰冷的喷嘴墙，手指还在无意识地够那块面板。\n\
 面板的红字闪到最后一格，安静地熄了。雾也慢慢散了——滤网尽职尽责地把污染物收了回去，把洁净还给了这间小屋。\n\
 你是在全世界最干净的房间里，被干净憋死的。\n\
-—— 结局：风淋舱 ——"
+<span class='end'>—— 结局：风淋舱 ——</span>"
   },
 
   // ==================== 洁净主走廊（开放式中转枢纽） ====================
@@ -1685,7 +1685,7 @@ Object.assign(storyData, {
     text: function(vars) {
       return "白色的身影把你压倒在同样白色的地坪上。红色警报灯一圈圈转着，把这一幕照得像舞台剧。\n\
 它们撕开你的衣服时格外小心，仿佛嫌你身上的尘埃会弄脏这间屋子。\n\
-—— 结局：白区 ——" + weaponBrokeText(vars);
+<span class='end'>—— 结局：白区 ——</span>" + weaponBrokeText(vars);
     }
   },
 
@@ -1729,7 +1729,7 @@ Object.assign(storyData, {
     text: "你贴着设备的阴影又看了几分钟。\n\
 它抬起手臂，按下什么，等待，再按下——动作精准得像台机器本身的一部分。可是它没有呼吸。胸口不起不伏，肩胛骨之间静得像一块案板。\n\
 一条喉音从面罩下面丝丝地渗出来，湿的，含混的，不是任何一种语言。\n\
-<span style='color: #ffaa00;'>这不是活人的动静。</span>",
+<span class='warn'>这不是活人的动静。</span>",
     choices: [
       { text: "心里有数了", nextScene: "张江-华大-白区-工位A" }
     ]
@@ -1827,7 +1827,7 @@ Object.assign(storyData, {
     text: "你多看了几分钟。\n\
 它写两笔，停一下，抬腕看表——表早就不走了，但它还是看了。然后它从口袋里摸出块压缩饼干，隔着面罩蹭了蹭嘴，又塞回去。\n\
 会看表，会嘴馋，会不耐烦地叹气。\n\
-<span style='color: #ffaa00;'>是活人。</span>",
+<span class='warn'>是活人。</span>",
     choices: [
       { text: "别轻举妄动", nextScene: "张江-华大-白区-工位B" }
     ]
@@ -1900,7 +1900,7 @@ Object.assign(storyData, {
     text: "你捂着口鼻又靠近了半米。\n\
 那股甜酸味浓起来了。它肚子上的布料洇出一圈湿痕，正在缓慢地扩大；蠕动的幅度比刚才大，像有什么急着要出来。\n\
 它的面罩接缝处，一丝白雾正往外渗，一丝，又一丝。\n\
-<span style='color: #ffaa00;'>这东西破了，遭殃的是方圆几米——别贴身。</span>",
+<span class='warn'>这东西破了，遭殃的是方圆几米——别贴身。</span>",
     choices: [
       { text: "退开两步", nextScene: "张江-华大-白区-工位C" }
     ]
@@ -1951,7 +1951,7 @@ Object.assign(storyData, {
       } else if (vars.hasGasMask) {
         desc += "\n几点飞溅落在你的面具上——滤罐早耗干了，那股甜酸味穿过橡胶缝贴上皮肤，一丝都没淡。";
       } else {
-        desc += "\n飞溅的液体星星点点落在你的手背和下巴上，凉丝丝的，带着那股甜酸味。你赶紧擦，越擦越觉得皮肤发麻。\n<span style='color: #ffaa00;'>有什么东西渗进来了。</span>";
+        desc += "\n飞溅的液体星星点点落在你的手背和下巴上，凉丝丝的，带着那股甜酸味。你赶紧擦，越擦越觉得皮肤发麻。\n<span class='warn'>有什么东西渗进来了。</span>";
       }
       return desc + weaponBrokeText(vars) + combatDrainText(vars);
     },
@@ -1967,7 +1967,7 @@ Object.assign(storyData, {
       return "它抱住了你。\n\
 在你倒下去之前，最后听见的是它肚皮裂开的那一声轻响——像拉开一罐放了太久的汽水。\n\
 白雾温柔地漫过来，甜得发腻。这间车间一尘不染，连你死在这里，都算是弄脏了它。\n\
-—— 结局：清洗槽 ——" + weaponBrokeText(vars);
+<span class='end'>—— 结局：清洗槽 ——</span>" + weaponBrokeText(vars);
     }
   },
 
@@ -2102,7 +2102,7 @@ Object.assign(storyData, {
       return "灭火器的底部砸在你的面罩上。镜片碎成蛛网，你眼前最后的东西是那片白色的、带着裂纹的天花板。\n\
 他还在砸。一下，又一下，嘴里翻来覆去喊着同一句话：“死开！死开啊！”\n\
 他到最后都不知道，被他砸倒的这个，是人。\n\
-—— 结局：好心办坏事 ——" + weaponBrokeText(vars);
+<span class='end'>—— 结局：好心办坏事 ——</span>" + weaponBrokeText(vars);
     }
   },
 
@@ -2202,7 +2202,7 @@ Object.assign(storyData, {
     text: "火把在夹层里烧得很旺。你举着它往里爬了十几米，才发现不对——烟没有地方去。\n\
 它们贴着天花板积起来，越积越厚，最后把你和火把一起泡在里面。你弓着背，退无可退，前面的管道和后面的管道一样烫。\n\
 安全出口的标志牌在烟里泛着幽幽的绿光，离你只有五米。它们大概到死都是绿的。\n\
-—— 结局：灯下黑 ——"
+<span class='end'>—— 结局：灯下黑 ——</span>"
   },
 
   // ==================== 动力站（洪金宝线主场景） ====================
@@ -2372,7 +2372,7 @@ Object.assign(storyData, {
         segs.push("“他把自己绑在了暖气片上。”你说，“到死，总阀都是关着的。”\n他抬起头，眼泪淌了满脸，却点了点头：“……他就是这样的人。”");
       }
       segs.push("过了很久，他抹了把脸，从怀里摸出那个笔记本，翻到写满名字和日期的那几页，一笔一笔，添上最后一行。\n“6 月 26 号起喝的自来水。28 号下午说口渴。当夜。”他念完，合上本子，“齐了。全对上了——时间线完整得……没有第二种解释。”\n他把本子递到你面前，双手，像递一份交接单：“带走。给需要的人看。”");
-      segs.push("<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得[洪金宝的案例记录表]——6/28 起，出事的都是“回家喝水的人”。</span>");
+      segs.push("<span class='sys'>【系统提示】获得[洪金宝的案例记录表]——6/28 起，出事的都是“回家喝水的人”。</span>");
       return segs;
     },
     choices: [
@@ -2402,7 +2402,7 @@ Object.assign(storyData, {
 “这老头子。”他说，“他就会这样。天塌下来，先想着别吓着别人。”\n\
 他转身的动作都轻快了，从纸箱里翻出藏着的泡面，用纯水泡上，又塞给你一包饼干：“吃！今天高兴！”\n\
 你捧着那碗面。热气熏在脸上，你不敢抬头看他。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】吃下泡面（体力+3，当前体力 {strength}）。</span>";
+<span class='sys'>【系统提示】吃下泡面（体力+3，当前体力 {strength}）。</span>";
       return desc;
     },
     choices: function(vars) {
@@ -2654,7 +2654,7 @@ Object.assign(storyData, {
 （这行名字，其实早就在表上了——你把 204 的事告诉他那天，他就写下了。今天，他只是终于知道，所有的名字为什么会在同一张纸上。）";
       } else {
         desc += "\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】洪金宝在案例表上记下了自己的推断——这足够他带着纯水、活着离开了。</span>";
+<span class='sys'>【系统提示】洪金宝在案例表上记下了自己的推断——这足够他带着纯水、活着离开了。</span>";
       }
       return desc;
     },
@@ -2676,7 +2676,7 @@ Object.assign(storyData, {
 “那天他喝多了。”他终于开口，声音很轻，“非说以后要拿诺奖，让我给他打工。我说行，月薪一根烤肠。”\n\
 他把照片翻过来，又翻回去，最后递还给你。\n\
 “你留着吧。”他说，“看得住它的人，替他保管。”\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得个人记忆[毕业快乐]。</span>",
+<span class='sys'>【系统提示】获得个人记忆[毕业快乐]。</span>",
     choices: [
       { text: "收好照片", nextScene: "张江-华大-动力站-聊天", effect: updateTime(1) }
     ]
@@ -2729,7 +2729,7 @@ Object.assign(storyData, {
       desc += "\n\
 他翻开笔记本，添上最后几行，然后撕下整页案例表，连同一个夹着几张复印件的文件袋，一起推到你面前。\n\
 “给需要的人看。”他说，“比什么都重要。”";
-      desc += "\n<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得[洪金宝的案例记录表]。</span>";
+      desc += "\n<span class='sys'>【系统提示】获得[洪金宝的案例记录表]。</span>";
       return desc;
     },
     choices: [
@@ -3223,7 +3223,7 @@ Object.assign(storyData, {
 坡下就是北岸。那栋灰白色的大楼立在河边，楼顶的字隔着河雾泛着光——隔着一百多米。\n\
 一百多米。你走了这么远的路，就差这一段。";
       }
-      return body + "\n—— 结局：川杨河 ——" + weaponBrokeText(vars);
+      return body + "\n<span class='end'>—— 结局：川杨河 ——</span>" + weaponBrokeText(vars);
     }
   },
 
@@ -3602,7 +3602,7 @@ Object.assign(storyData, {
       segs.push("报告的末页压着两枚红章：检验检测专用章，CMA。签名栏里是一个龙飞凤舞的名字：顾嘉铭，6 月 28 日。\n再下面一栏，取件人签收——空着。");
       segs.push("这栋楼里唯一测出真相的人，把报告攥在手里，在这间屋子里念了不知多少天的编号。差一天，就只差一天，它就能躺进待取件架的格子里。\n现在，它在你的手里了。");
       if (!(vars.hasGasMask && vars.maskRemainingUses > 0)) segs.push("缠斗里蹭到他皮肤的地方，隐隐地发麻。");
-      segs.push("<span style='color: #00fbffff; font-style: italic;'>【系统提示】获得[上海市检测中心报告]——官方全项检测，数据、签名、公章齐全。它不占背包。</span>");
+      segs.push("<span class='sys'>【系统提示】获得[上海市检测中心报告]——官方全项检测，数据、签名、公章齐全。它不占背包。</span>");
       segs[segs.length - 1] += combatDrainText(vars);
       return segs;
     },
@@ -3662,7 +3662,7 @@ Object.assign(storyData, {
       return "你在接待台边坐下，就着高侧窗的天光，翻开日记本，把报告从第一页抄起。\n\
 编号、日期、点位、检测方法、那个红色的数字、两枚章的名称——你抄得很慢，一个数字一个数字地对。抄到“取件人签收”那一栏，你的笔尖悬了一下。\n\
 空着的栏，就让它空着吧。你翻过页去。\n\
-<span style='color: #00fbffff; font-style: italic;'>【系统提示】报告的关键数据已抄进日记本——就算原件不在了，数字也还在。</span>";
+<span class='sys'>【系统提示】报告的关键数据已抄进日记本——就算原件不在了，数字也还在。</span>";
     },
     choices: [
       { text: "合上日记本", nextScene: "张江-检测中心-大厅", effect: updateTime(1) }
@@ -3690,7 +3690,7 @@ Object.assign(storyData, {
 最后陪着你的是日光灯镇流器里残余的一点嗡声——电都没了，那声音不知道是从哪儿来的。\n\
 这栋楼里测出过什么，你到死，都没能走到它面前。";
       }
-      return body + "\n—— 结局：检测中心 ——" + weaponBrokeText(vars);
+      return body + "\n<span class='end'>—— 结局：检测中心 ——</span>" + weaponBrokeText(vars);
     }
   },
 });

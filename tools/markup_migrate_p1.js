@@ -68,6 +68,18 @@ const MAP = {
   "#7fb8e8ff|1|0": "term",
   "#ff9a3c|0|1": "fire",           // 火/光
   "#ff9a3c|0|0": "fire",
+  "|1|0": "think",                 // 无色 + 斜体 = 内心独白/吐槽
+  "|0|0": "sys",                   // 完全无样式 = UI 教学提示（"请往下滑动哦"这类）
+  "#ffb6c1ff|1|0": "sys",          // 【好感度 ±N】——UI 反馈，归入系统提示（颜色由粉改青）
+  "red|0|0": "crit",               // 字面 red
+  "red|0|1": "crit",               // GAME OVER
+  "#ff5555|1|0": "crit",           // 【追击 +1 · 一无所获】
+  "#888|0|0": "numb",              // 次要灰字（彩蛋/补充提示）
+  "#8fa8c8|1|0": "think",          // 打铃系统 + 玩家愣神反应
+  // ⚠ 以下三类刻意不进 MAP（同一 key 内语义分裂，必须人眼逐个定，共 9 处）：
+  //   #f8d305ff|0|0 —— 2 处是结局行（→ end），1 处是 <em> 里的 NPC 台词（→ 保留 em、去色）
+  //   |0|1          —— 开门声(→sfx) / "一只丧尸在盯着你"(→rot) / "飞踹一脚"(→sfx)
+  //   #aaa|0|0      —— 2 处手机短信(→term) / 1 处场景描述(→dust)
 };
 
 // ---------- 普查 ----------
@@ -121,28 +133,23 @@ function applyInline() {
 function applyEnd() {
   const changed = [];
   const skip = [];
+  const samples = [];
   for (const rel of files) {
     const p = path.join(ROOT, rel);
     const src = fs.readFileSync(p, "utf8");
-    // 已经包了 end 的先行保护
-    const RE = /——\s*结局[：:][^\n"'<>]*?(?:——|-—)?(?=<|\n|"|'|\\n|$)/g;
     let n = 0;
-    const out = src.replace(RE, (hit) => {
-      // 前面 20 字符里若已有 class='end'> 说明已迁移
-      return hit;
-    });
-    // 上面只是占位：真正替换用带上下文的判断
-    let out2 = src;
-    out2 = out2.replace(/(<span class='end'>)?——\s*结局[：:]([^\n"'<>]*?)(——)?(?=(<\/span>)?\s*(?:\\n|"|'|<|\n|$))/g,
+    // ⚠ 前面若已有 class='end'> 说明已迁移（前两个样板改过），跳过避免二次包裹
+    const out = src.replace(/(<span class='end'>)?——\s*结局[：:]([^\n"'<>]*?)(——)?(?=(<\/span>)?\s*(?:\\n|"|'|<|\n|$))/g,
       (whole, open, body, dash, _close) => {
         if (open) return whole;           // 已迁移
         n++;
+        if (samples.length < 40) samples.push(`${rel}  「${whole}」→ end`);
         return `<span class='end'>—— 结局：${body}${dash || ""}</span>`;
       });
-    if (n) { if (APPLY) fs.writeFileSync(p, out2); changed.push(`${rel}: ${n} 处`); }
+    if (n) { if (APPLY) fs.writeFileSync(p, out); changed.push(`${rel}: ${n} 处`); }
     else skip.push(rel);
   }
-  return { changed, skip };
+  return { changed, skip, samples };
 }
 
 // ---------- ** 残留 ----------
@@ -171,10 +178,14 @@ if (MODE_MD) {
 }
 
 if (MODE_END) {
-  const { changed, skip } = applyEnd();
+  const { changed, skip, samples } = applyEnd();
   console.log(`=== 结局行迁移${APPLY ? "（已写入）" : "（预演，未写入）"} ===`);
   for (const c of changed) console.log("  " + c);
   console.log(`\n未命中文件 ${skip.length} 个（无结局行或已迁移）`);
+  if (!APPLY && samples.length) {
+    console.log(`\n--- 替换样例（前 ${samples.length} 条，确认没误伤再 --apply）---`);
+    for (const s of samples) console.log("  " + s);
+  }
   process.exit(0);
 }
 
