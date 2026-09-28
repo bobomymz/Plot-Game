@@ -1,0 +1,22 @@
+# Netlify 部署配置：只上线核心运行文件
+#
+# 为什么不用 included_files：那是 [functions] 节的打包配置，作用是往云函数
+# bundle 里塞文件，管不到静态站点上传（本项目也没有 functions）。
+# 静态站点控制"哪些文件上线"的机制是 publish 目录——不在发布目录里的
+# 文件不会上线。
+#
+# 为什么用 node 脚本而不是 rsync/cp：build.command 在「本地 Windows
+# （netlify deploy）」和「云端 Ubuntu（Git 集成构建）」上都要能跑，
+# Windows 没有 rsync，纯 Node 跨平台（见 tools/build-dist.mjs）。
+#
+# 两层白名单（详见 tools/build-dist.mjs 顶部注释）：
+#   顶层：index.html / style.css / engine.js / story/ / images/
+#   扩展名：story 只收 .js；images 只收 .webp/.png/.jpg/.jpeg/.gif/.svg
+# 设计文档（*.md）、tools/、docs/、.claude/ 等全部留在仓库、不上线。
+# 本地直接打开 index.html 的开发方式完全不受影响。
+#
+# ⚠ 维护提示：新增顶层运行资源 / 新图片格式 → 去 tools/build-dist.mjs
+# 的 TOP_FILES / DIR_RULES 登记。
+[build]
+  command = "node tools/build-dist.mjs"
+  publish = "dist"

@@ -1,5 +1,8 @@
 # Local Netlify folder
 .netlify
+
+# Netlify 构建产物（本地跑 netlify deploy --build 会生成，防 AutoPushGame 入库）
+dist/
 .loopx/
 .codex/
 .local/
