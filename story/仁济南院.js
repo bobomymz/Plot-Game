@@ -502,7 +502,7 @@ Object.assign(storyData, {
   },
 
   "仁济南院-地下停车场-电梯口": {
-    image: "images/placeholder.png" /* TODO: images/仁济南院/地下停车场-电梯口.webp */,
+    image: "images/仁济南院/B1门诊电梯.webp",
     onEnter: function(vars) { vars.showZombies = true; },
     text: function(vars) {
       if (vars._lastScene === "仁济南院-地下停车场-电梯-坏钮") {

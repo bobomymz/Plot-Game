@@ -13,7 +13,7 @@
 - 容量=`3+_bagTier+_bagExtra`；`bagVolume` 派生值永不 set/add；闸门 `vars._bagTier<N`/`!hasBag`。拾取四件套：`condition:"itemCount<bagVolume"`+`effect:{set,add:{itemCount:1}}`+`elseScene:"整理整理"`，新节点必须 set `positionAfterOperation`。⚠09-21 前旧档容量 4→3（`bag_migration_repro.js`）。
 - 休息整理入口：`restTidyChoice(id)`+`restTidyGuard(vars)`（utils.js，20 处）。**整理整理出口回入口场景→onEnter 重跑**，故休息 onEnter 必 guard（防重复计时/甩追兵/扣口粮/过夜跳天）；非休息入口同理。
 - 割锯工具（`cuttingToolName`）：美工刀>匕首>斧头>螺丝刀；不含铁管/拐杖/拖把杆/扫帚/钥匙。可多次打水，水瓶非紧平衡；`bottleWater` 0/1，丢弃须同清 `waterToxic`/`_hongBottleLabel`；保温杯另体系（建平弘渊楼2F，水全毒）。
-- 计数型可堆叠口粮：`instantNoodle` 0~3（全家货架，每包1格，吃=体力回满）、`vitaminC` 0~8；布尔改计数须同步 `FOOD_GIFTS`+`foodGiftChoices`（数字分支只扣1）。⚠字段迁移块要排在 `fillMissingDefaults` 补默认值循环**之前**（写后面=恒假死代码）。
+- 计数型可堆叠口粮：`instantNoodle` 0~3（全家*员工通道杂物间*纸箱，每包1格，吃=体力回满；09-28 由便利店内货架移入）、`vitaminC` 0~8；布尔改计数须同步 `FOOD_GIFTS`+`foodGiftChoices`（数字分支只扣1）。⚠字段迁移块要排在 `fillMissingDefaults` 补默认值循环**之前**（写后面=恒假死代码）。
 
 ## 体力/天气
 - ⚠遥测块只能追加 engine.js 末尾，三处 `__wrapState` 保持单行；**场景锚点必须带 `: {` 后缀**。疲劳属"当前这段连续移动"：tier→0 自动清 `_fatiguePaid`，剧情只归零 `_travelMinutes`。引擎无自动提示，手写三通道；橙 `#ffaa00` `【系统提示】体力-N，当前体力：{strength}。`；死亡结局不补。

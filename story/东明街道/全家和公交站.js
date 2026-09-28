@@ -41,15 +41,8 @@ Object.assign(storyData, {
       var base = "你走进熟悉又陌生的便利店。\n\
 前面的冷藏区放着一些牛奶、鲜肉盒、饮料，以及你常买来作为早餐的饭团。\n\
 中间的货架上排满了面包，以及薯片、糖果等各种零食。\n\
-柜台没有人，只有显示屏循环播放着会员套餐的广告。";
-      if (vars.familyMartNoodleLeft > 0) {
-        base += "\n靠收银台的促销货架上还码着" + vars.familyMartNoodleLeft + "包泡面，包装上落了一层薄灰。";
-      } else {
-        base += "\n靠收银台的促销货架已经空了——泡面一包不剩。";
-      }
-      if(vars.instantNoodle > 0 && vars.familyMartNoodleLeft > 0) {
-        base += "货架上还有泡面，但你包里已经带了" + vars.instantNoodle + "包了。";
-      }
+柜台没有人，只有显示屏循环播放着会员套餐的广告。\n\
+靠收银台的促销货架被翻得乱七八糟，只剩几个被拆开的空纸箱。";
       if (vars._visit["全家便利店（环林东路）"] && (!vars.FamilymartHasZombie || vars._visit["全家便利店-零食引路"] > 0)) {
         base += "\n<span style='color: #aaa;'>上次那只丧尸已经不在了。柜台后面的员工通道半开着，里面黑漆漆的，也许有什么有用的东西。</span>";
       }
@@ -91,13 +84,6 @@ Object.assign(storyData, {
         effect: updateTime(2)
       },
       {
-        showCondition: "familyMartNoodleLeft > 0",
-        text: "拿一包泡面",
-        condition: "itemCount < bagVolume",
-        nextScene: "全家-拿泡面",
-        elseScene: "整理整理"
-      },
-      {
         showCondition: "chasedByZombies <= 1 && itemCount > 0",
         text: "🎒整理一下物品",
         nextScene: "整理整理"
@@ -109,8 +95,9 @@ Object.assign(storyData, {
     ]
   },
 
+  // 从杂物间纸箱里取一包泡面（原为便利店促销货架上随手拿，已移入员工通道杂物间）
   "全家-拿泡面": {
-    image: "images/小区周边/全家和公交站/全家便利店内部.webp",
+    image: "images/小区周边/全家和公交站/仓库.webp",
     onEnter: function(vars) {
       vars.instantNoodle += 1;
       vars.itemCount += 1;
@@ -118,13 +105,13 @@ Object.assign(storyData, {
       return updateTime(1)(vars);
     },
     text: function(vars) {
-      var desc = "你从促销货架上拿了一包泡面，拍掉包装上的灰，塞进背包。没有热水也能掰碎了干嚼——在这种时候，它比货架上的薯片实在多了。";
-      if (vars.familyMartNoodleLeft > 0) desc += "\n货架上还剩" + vars.familyMartNoodleLeft + "包。";
-      else desc += "\n这是货架上最后一包了。";
+      var desc = "你从墙角那只没封口的纸箱里抽出一包泡面，拍掉包装上的灰，塞进背包。没有热水也能掰碎了干嚼——在这种时候，它比货架上的薯片实在多了。";
+      if (vars.familyMartNoodleLeft > 0) desc += "\n纸箱里还剩" + vars.familyMartNoodleLeft + "包。";
+      else desc += "\n这是纸箱里最后一包了。";
       return desc;
     },
     choices: [
-      { text: "继续", nextScene: "全家便利店内部" }
+      { text: "继续", nextScene: "全家便利店-员工通道-丧尸的偷袭-杂物间" }
     ]
   },
 
@@ -172,7 +159,8 @@ Object.assign(storyData, {
           choice: {   // 有丧尸时=陷阱（光全洒在小门上，背后那片黑一秒都没照过——远处那只就埋伏在旁边）；清场后可正常翻找
             text: function(v) { return v.FamilymartHasZombie ? "凑近看看那扇小门" : "翻看那间杂物间"; },
             showCondition: function(v) {
-              return v.FamilymartHasZombie || !(v._visit["全家便利店-员工通道-丧尸的偷袭-杂物间"] > 0);
+              // 清场后：没翻过、或泡面还没拿完 → 可进（拿完且翻过则不再重复显示）
+              return v.FamilymartHasZombie || !(v._visit["全家便利店-员工通道-丧尸的偷袭-杂物间"] > 0) || v.familyMartNoodleLeft > 0;
             },
             nextScene: function(v) {
               return v.FamilymartHasZombie ? "结局-员工通道-背后的偷袭" : "全家便利店-员工通道-丧尸的偷袭-杂物间";
@@ -241,15 +229,45 @@ Object.assign(storyData, {
     ]
   },
 
+  // 杂物间：有丧尸时凑近=死亡陷阱；清场后（QTE 打赢）或走安全走廊（饼干引路）可进入。
+  // 内含两条线索：便利店↔深夜食堂的双班表（苏晓），以及店员自留的泡面存货（原便利店促销货架，已移至此）。
   "全家便利店-员工通道-丧尸的偷袭-杂物间": {
     image: "images/小区周边/全家和公交站/仓库.webp",
-    text: "杂物间不大，拖把、水桶和成捆的纸箱一直堆到顶。墙角钉着一块软木板，上面贴过一层又一层的班表，最上面那张被撕掉了半张，只剩最后两列还看得清——\n\
+    onEnter: function(vars) {
+      // 记住来路，供"退出去"与"背包满→整理整理"后返回：安全走廊 / QTE 仓库
+      if (vars._lastScene === "全家便利店-员工通道") vars.positionAfterOperation = "全家便利店-员工通道";
+      else if (vars._lastScene === "全家便利店-员工通道-丧尸的偷袭") vars.positionAfterOperation = "全家便利店-员工通道-丧尸的偷袭";
+      return {};
+    },
+    text: function(vars) {
+      if (vars._lastScene === "全家-拿泡面") {
+        return "你又回到杂物间。那只纸箱敞着口，拖把和水桶还是挤在墙角。";
+      }
+      var desc = "杂物间不大，拖把、水桶和成捆的纸箱一直堆到顶。墙角钉着一块软木板，上面贴过一层又一层的班表，最上面那张被撕掉了半张，只剩最后两列还看得清——\n\
 「周一—周五 07:00—15:00 全家（环林东路）」\n\
 「周一—周五 18:00—02:00 深夜食堂（新达汇东区）」\n\
 最后一行用红笔描过两遍：「夜班别迟到」。\n\
-两行字是同一只手写的。一边是便利店，一边是食堂。你对着这张班表站了一会儿。",
+两行字是同一只手写的。一边是便利店，一边是食堂。你对着这张班表站了一会儿。";
+      if (vars.familyMartNoodleLeft > 0) {
+        desc += "\n最里侧那只纸箱没封口，掀开盖，里面码着" + vars.familyMartNoodleLeft + "包泡面——压在最底下的，是店员给自己留的存货。";
+      } else {
+        desc += "\n最里侧那只纸箱敞着口，已经空了。";
+      }
+      return desc;
+    },
     choices: [
-      { text: "退出去", nextScene: "全家便利店-员工通道-丧尸的偷袭", effect: updateTime(1) }
+      {
+        showCondition: "familyMartNoodleLeft > 0",
+        text: "搬走一包泡面",
+        condition: "itemCount < bagVolume",
+        nextScene: "全家-拿泡面",
+        elseScene: "整理整理"
+      },
+      {
+        text: "退出去",
+        nextScene: function(vars) { return vars.positionAfterOperation || "全家便利店-员工通道-丧尸的偷袭"; },
+        effect: updateTime(1)
+      }
     ]
   },
 
@@ -584,10 +602,12 @@ Object.assign(storyData, {
   "全家便利店-员工通道": {
     image: function(vars) {
       if(vars._visit['全家便利店-零食引路']) return "images/小区周边/全家和公交站/储物柜里.webp";
-      return "images/全家和公交站/仓库-清场.webp";
+      return "images/小区周边/全家和公交站/仓库-清场.webp";
     },
     onEnter: function(vars) {
       vars.positionAfterOperation = "全家便利店-员工通道";
+      // 从杂物间折返回走廊：这一段走廊来时已经走过，不再重复计耗时（防止 onEnter 重跑重复扣时间）
+      if (vars._lastScene === "全家便利店-员工通道-丧尸的偷袭-杂物间") return {};
       return updateTime(3)(vars);
     },
     text: function(vars) {
@@ -609,6 +629,15 @@ Object.assign(storyData, {
         nextScene: "全家便利店内部",
         effect: updateTime(1, { set: { hasDoorKey1: true, _fmStaffTagSeen: true }, add: { itemCount: 1 } }),
         elseScene: "整理整理"
+      },
+      {
+        showCondition: function(vars) {
+          // 没翻过、或泡面还没拿完 → 可进（与 QTE 仓库里的杂物间热点同口径）
+          return !(vars._visit["全家便利店-员工通道-丧尸的偷袭-杂物间"] > 0) || vars.familyMartNoodleLeft > 0;
+        },
+        text: "翻看那间杂物间",
+        nextScene: "全家便利店-员工通道-丧尸的偷袭-杂物间",
+        effect: updateTime(1)
       },
       {
         text: "离开",

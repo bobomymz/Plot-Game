@@ -1948,7 +1948,8 @@ Object.assign(storyData, {
       vars.hasFireTorch = true;
       return {};
     },
-    text: "实验台的抽屉里有几卷纱布和一根断了的木架杆。你把纱布撕成条，一圈圈缠在杆头，拧开那瓶医用石蜡油浸透，再缠上一层，留出燃烧的余头。\n你把它凑到酒精灯上借了个火，等布条把油吃透、火苗稳住，又把它吹熄——要用的时候再点上。石蜡油的气味在实验室里散开，不算浓。\n<span style='color:#00fbffff;font-style:italic;'>【系统提示】获得火把（不占背包）。</span>",
+    text: "实验台的抽屉里有几卷纱布和一根断了的木架杆。你把纱布撕成条，一圈圈缠在杆头，拧开那瓶医用石蜡油浸透，再缠上一层，留出燃烧的余头。\n\
+你把它凑到酒精灯上借了个火，等布条把油吃透、火苗稳住，又把它吹熄——要用的时候再点上。石蜡油的气味在实验室里散开，不算浓。\n<span style='color:#00fbffff;font-style:italic;'>【系统提示】获得火把（不占背包）。</span>",
     choices: [
       { text: "收好火把", nextScene: "建平-致真楼-2F-化学实验室", effect: updateTime(1) }
     ]

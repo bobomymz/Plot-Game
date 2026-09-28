@@ -2,7 +2,8 @@
 // -*- coding: utf-8 -*-
 // 泡面「可堆叠」改造自测：用迷你引擎（忠实复刻 engine.js 的 renderChoices / checkCondition /
 // applyEffect / interpolateDisplay 语义）逐场景点击，验证：
-//   ① 全家促销货架可重复拿取、每包占 1 格、世界库存递减到 0 后选项消失
+//   ⓪ 入口迁移：泡面已从「便利店内促销货架」移入「员工通道·杂物间」，便利店内不再可拿
+//   ① 杂物间纸箱可重复拿取、每包占 1 格、世界库存递减到 0 后选项消失
 //   ② 整理整理里吃/丢都是「扣 1 包」而不是清零，归零后两个选项都不再出现
 //   ③ 背包满时走 elseScene（不凭空多占格）
 //   ④ FOOD_GIFTS 口粮赠送对数字型口粮只扣 1 份（不再把计数置 false）
@@ -143,36 +144,51 @@ function ok(name, cond, extra) {
   else { fail++; console.error('  FAIL ' + name + (extra !== undefined ? '  → ' + extra : '')); }
 }
 
-console.log('== S1 全家促销货架：可连拿 3 包，每包占 1 格 ==');
+const CORRIDOR = '全家便利店-员工通道';
+const STORAGE = '全家便利店-员工通道-丧尸的偷袭-杂物间';
+
+console.log('== S0 入口迁移：泡面从便利店内货架移入员工通道杂物间 ==');
+{
+  const st = newState({ itemCount: 0 });
+  enter('全家便利店内部', st);
+  ok('便利店内部不再有「拿一包泡面」', !hasRe(st, '全家便利店内部', /拿一包泡面/));
+  ok('便利店内部文案提示促销货架已空（空纸箱）', /空纸箱/.test(String(textOf('全家便利店内部', st))));
+
+  // 安全走廊（饼干引路线）也能进杂物间拿泡面——两侧走廊共用同一杂物间场景
+  const st2 = newState({ itemCount: 0, hasTorch: true });
+  st2._visit['全家便利店-零食引路'] = 1;
+  enter(CORRIDOR, st2);
+  ok('安全走廊可见「翻看那间杂物间」', has(st2, CORRIDOR, '翻看那间杂物间'));
+}
+
+console.log('== S1 杂物间纸箱：可连拿 3 包，每包占 1 格 ==');
 {
   let st = newState({ itemCount: 0 });
-  enter('全家便利店内部', st);
+  enter(STORAGE, st);
   ok('初始 instantNoodle = 0', st.instantNoodle === 0, st.instantNoodle);
-  ok('初始货架库存 = 3', st.familyMartNoodleLeft === 3, st.familyMartNoodleLeft);
-  ok('可见「拿一包泡面（货架上还剩 3 包）」', has(st, '全家便利店内部', '拿一包泡面'));
+  ok('初始杂物间库存 = 3', st.familyMartNoodleLeft === 3, st.familyMartNoodleLeft);
+  ok('可见「搬走一包泡面」', has(st, STORAGE, '搬走一包泡面'));
 
   for (let i = 1; i <= 3; i++) {
-    const dest = click('全家便利店内部', st, '拿一包泡面');
+    const dest = click(STORAGE, st, '搬走一包泡面');
     ok('第' + i + '次拿取 → 全家-拿泡面', dest === '全家-拿泡面', dest);
     enter(dest, st);
     ok('第' + i + '次：instantNoodle = ' + i, st.instantNoodle === i, st.instantNoodle);
     ok('第' + i + '次：itemCount 与包数一致（每包 1 格）', st.itemCount === i, st.itemCount);
-    ok('第' + i + '次：货架库存 = ' + (3 - i), st.familyMartNoodleLeft === 3 - i, st.familyMartNoodleLeft);
+    ok('第' + i + '次：杂物间库存 = ' + (3 - i), st.familyMartNoodleLeft === 3 - i, st.familyMartNoodleLeft);
     if (i < 3) {
-      ok('第' + i + '次：文案写明货架剩余', /还剩2包|还剩1包|最后一包/.test(String(textOf(dest, st))), textOf(dest, st));
-      enter('全家便利店内部', st);
+      ok('第' + i + '次：文案写明纸箱剩余', /还剩2包|还剩1包|最后一包/.test(String(textOf(dest, st))), textOf(dest, st));
+      enter(STORAGE, st);
       ok('第' + i + '次：拿取选项仍可见（不再限带 1 包）',
-        has(st, '全家便利店内部', '拿一包泡面'));
-      ok('第' + i + '次：店内文案提示包里已带 ' + i + ' 包',
-        new RegExp('包里已经带了' + i + '包了').test(String(textOf('全家便利店内部', st))));
+        has(st, STORAGE, '搬走一包泡面'));
     } else {
       ok('第3次：文案写明最后一包', /最后一包/.test(String(textOf(dest, st))));
     }
   }
 
-  enter('全家便利店内部', st);
-  ok('库存耗尽后不再显示拿取选项', !hasRe(st, '全家便利店内部', /拿一包泡面/));
-  ok('库存耗尽后文案切换为「已经空了」', /已经空了/.test(String(textOf('全家便利店内部', st))));
+  enter(STORAGE, st);
+  ok('库存耗尽后不再显示拿取选项', !hasRe(st, STORAGE, /搬走一包泡面/));
+  ok('库存耗尽后文案切换为「已经空了」', /已经空了/.test(String(textOf(STORAGE, st))));
 }
 
 console.log('== S2 整理整理：吃/丢都只扣 1 包，归零后选项消失 ==');
@@ -203,17 +219,19 @@ console.log('== S2 整理整理：吃/丢都只扣 1 包，归零后选项消失
 console.log('== S3 背包满：走 elseScene，不凭空占格 ==');
 {
   const st = newState({ itemCount: 3, _bagTier: 0, _bagExtra: 0 }); // bagVolume = 3
-  enter('全家便利店内部', st);
-  ok('背包满时拿取选项仍渲染（有 elseScene）', hasRe(st, '全家便利店内部', /拿一包泡面/));
-  const dest = click('全家便利店内部', st, '拿一包泡面');
+  // 模拟：安全走廊 → 翻看杂物间（杂物间 onEnter 记下返回点=来源走廊）
+  st._lastScene = CORRIDOR;
+  enter(STORAGE, st);
+  ok('背包满时拿取选项仍渲染（有 elseScene）', hasRe(st, STORAGE, /搬走一包泡面/));
+  const dest = click(STORAGE, st, '搬走一包泡面');
   ok('背包满 → elseScene 整理整理', dest === '整理整理', dest);
   ok('背包满：instantNoodle 不变', st.instantNoodle === 0, st.instantNoodle);
   ok('背包满：itemCount 不变', st.itemCount === 3, st.itemCount);
-  // 返回点：拿取失败走 整理整理，整理完必须回店内而不是被传送到别处
-  const back = renderChoices('整理整理', st).find(x => x.text === '不丢，谢谢');
-  ok('背包满时整理整理有出口选项', !!back);
+  // 返回点：拿取失败走 整理整理，整理完必须回来源走廊而不是被传送到别处
+  const back = renderChoices('整理整理', st).find(x => x.text === '×');   // 出口选项（showCondition: itemCount <= bagVolume）
+  ok('背包满时整理整理有出口选项「×」', !!back);
   const target = back ? String(back.choice.nextScene).replace(/\{(\w+)\}/g, (m, k) => st[k]) : '';
-  ok('整理完返回点 = 全家便利店内部', target === '全家便利店内部', target);
+  ok('整理完返回点 = 来源走廊 ' + CORRIDOR, target === CORRIDOR, target);
 }
 
 console.log('== S4 口粮赠送：数字型口粮只扣 1 份 ==');

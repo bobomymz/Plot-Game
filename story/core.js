@@ -144,8 +144,8 @@ const storyData = {
     teacherStudentsDead: false, // 给王老师毒水后学生变丧尸的死局标记
     fangTradeCount: 0,         // 方姐交易次数（上限3，满3次后她尸变，再进冷库深处即死）
     hasFrozenMeat: false,      // 是否有冻肉（菜市场方姐换的，体力回满，占1格）
-    instantNoodle: 0,          // 身上携带的泡面包数 0~3（全家促销货架，可堆叠，每包占1格；整理整理干嚼=体力回满）
-    familyMartNoodleLeft: 3,   // 全家货架泡面剩余（包）（世界库存，初始3；丢弃不回货架，同其它物品丢弃=损失）
+    instantNoodle: 0,          // 身上携带的泡面包数 0~3（全家员工通道杂物间存货，可堆叠，每包占1格；整理整理干嚼=体力回满）
+    familyMartNoodleLeft: 3,   // 全家员工通道杂物间泡面剩余（包）（世界库存，初始3；丢弃不回货架，同其它物品丢弃=损失）
     hasCannedFood: false,      // 是否有罐头（联华超市仓库，占1格；整理整理吃+4）
     lianhuaCannedLeft: 2,      // 联华仓库罐头剩余（罐），身上限带1罐，吃完可回拿
     // 钥匙
@@ -1152,7 +1152,7 @@ const storyData = {
         nextScene: "整理整理-导航"
       },
       {
-        text: "不丢，谢谢",
+        text: "×",
         showCondition: "itemCount <= bagVolume", // 只有当物品数量小于等于背包容量时，才能继续前进，否则需要整理整理物品
         nextScene: "{positionAfterOperation}"
       }

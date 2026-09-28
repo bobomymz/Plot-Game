@@ -1002,9 +1002,11 @@ html, body {
     bottom: 12px;
   }
 
-  /* QTE 条贴图片列左上（右上角是状态栏所在的侧栏顶），不再居中横跨两栏压住文本 */
+  /* QTE 条贴屏幕顶缘（右上角是状态栏所在的侧栏顶，本条左锚不与之相碰）：横屏 contain 的
+     16:9 图上下各留 ~50-75px 黑边，条贴顶后整体落进顶部黑边，不罩图片内容——
+     darkSearch+QTE 叠加场（全家员工通道等）光圈热点区不被挡（真机反馈：top+56 会盖住上半张图） */
   #qte-timer {
-    top: calc(env(safe-area-inset-top, 0px) + 56px);
+    top: calc(env(safe-area-inset-top, 0px) + 4px);
     left: calc(env(safe-area-inset-left, 0px) + 12px);
     transform: none;
     width: min(52vw, 480px);
