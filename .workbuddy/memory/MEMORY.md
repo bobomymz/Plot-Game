@@ -12,8 +12,10 @@
 ## 背包/水瓶
 - 容量=`3+_bagTier+_bagExtra`；`bagVolume` 派生值永不 set/add；闸门 `vars._bagTier<N`/`!hasBag`。拾取四件套：`condition:"itemCount<bagVolume"`+`effect:{set,add:{itemCount:1}}`+`elseScene:"整理整理"`，新节点必须 set `positionAfterOperation`。⚠09-21 前旧档容量 4→3（`bag_migration_repro.js`）。
 - 休息整理入口：`restTidyChoice(id)`+`restTidyGuard(vars)`（utils.js，20 处）。**整理整理出口回入口场景→onEnter 重跑**，故休息 onEnter 必 guard（防重复计时/甩追兵/扣口粮/过夜跳天）；非休息入口同理。
+- ⚠⚠**引擎走 `elseScene` 时【不执行选项 `effect`】**（engine.js:875 `createChoiceButton` 实测：`if(nowCondMet){effect;nextScene} else {elseScene}`）→ 拾取类的 `positionAfterOperation` **不能放 effect**（背包满走 elseScene 即失效，整理完 `{positionAfterOperation}` 落旧值/空串→死链），**必须由入口场景 `onEnter` 预设**（既有模式：`三林安居苑-小广场` onEnter 写死 `"三林安居苑-滑板车"`）。09-29 实例：401 半箱泡面可拿取（`_flat401NoodleLeft:3`，自测 `tools/flat401_noodle_selftest.js`）。
 - 割锯工具（`cuttingToolName`）：美工刀>匕首>斧头>螺丝刀；不含铁管/拐杖/拖把杆/扫帚/钥匙。可多次打水，水瓶非紧平衡；`bottleWater` 0/1，丢弃须同清 `waterToxic`/`_hongBottleLabel`；保温杯另体系（建平弘渊楼2F，水全毒）。
-- 计数型可堆叠口粮：`instantNoodle` 0~3（全家*员工通道杂物间*纸箱，每包1格，吃=体力回满；09-28 由便利店内货架移入）、`vitaminC` 0~8；布尔改计数须同步 `FOOD_GIFTS`+`foodGiftChoices`（数字分支只扣1）。⚠字段迁移块要排在 `fillMissingDefaults` 补默认值循环**之前**（写后面=恒假死代码）。
+- 计数型可堆叠口粮：`instantNoodle` 0~3（全家*员工通道杂物间*纸箱，每包1格，吃=体力回满；09-28 由便利店内货架移入）、`vitaminC` ≤9；布尔改计数须同步 `FOOD_GIFTS`+`foodGiftChoices`（数字分支只扣1）。⚠字段迁移块要排在 `fillMissingDefaults` 补默认值循环**之前**（写后面=恒假死代码）。
+- **可多持物品全库仅 3 件**（09-29 审计）：`instantNoodle` 0~3、`vitaminC` ≤9（货架8+白大褂抽屉1）、`iodineSwabBox` 0~3；边界 `gunAmmo` ≤3 发（不占格）。工具+报告 `tools/stackable_items_audit.js` / `tools/可堆叠物品审计报告.md`。⚠⚠**判定可多持看【获取闸门】，不看初值类型**：`世界库存 xxxLeft>0`=真堆叠；`!flag` 或 `_visit[节点]>0` =单件（`hasInnerLining` 初值是数字却被 `_visit[收好内胆]>0` 门控 → 实际只 1 件）。世界库存型 7 个（`supermarketWaterLeft`/`vendingBottleLeft`/`newdahuiWarehouseWaterLeft`/`familyMartNoodleLeft`/`lianhuaCannedLeft`/`_iodineSwabBoxLeft`/`_vitaminCLeft`）非玩家持有。
 
 ## 体力/天气
 - ⚠遥测块只能追加 engine.js 末尾，三处 `__wrapState` 保持单行；**场景锚点必须带 `: {` 后缀**。疲劳属"当前这段连续移动"：tier→0 自动清 `_fatiguePaid`，剧情只归零 `_travelMinutes`。引擎无自动提示，手写三通道；橙 `#ffaa00` `【系统提示】体力-N，当前体力：{strength}。`；死亡结局不补。

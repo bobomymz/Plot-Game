@@ -1306,8 +1306,10 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     text: function(vars) {
       var from401 = (vars._lastScene || "").indexOf("三林安居苑-7号楼-401") === 0;
       var desc = (from401 ? "你回到四楼走廊。" : "你走到四楼。") + "走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，铁丝是从里面缠上的。\n";
-      if (vars._flat401 > 0) {
-        desc += "你上次搬开的桌椅还歪在墙边，401的门虚掩着——里面已经没有任何秘密了。";
+      if (vars._flat401 >= 2) {
+        desc += "你上次搬开的桌椅还歪在墙边，401的门虚掩着——里面已经被你搬空了。";
+      } else if (vars._flat401 > 0) {
+        desc += "你上次搬开的桌椅还歪在墙边，401的门虚掩着——里面还有些你没能带走的东西。";
       } else {
         desc += "你在门口站了一会儿。里面没有任何动静。";
         if (vars.hasAxe || vars.hasIronPipe || vars.hasCane || vars.hasMopHandle) {
@@ -1807,7 +1809,7 @@ Object.assign(storyData,
   makeFlatDoor("501", "三林安居苑-7号楼-5楼", {
     enter: "501的门被你砸开了。木屑和锁舌的碎片散了一地，你侧身挤进去，反手把门掩上。",
     empty: "屋里整齐得过分，像是中介刚带人看完房。你拉开几个抽屉——空的。这户人家大概早就搬走了，只剩一屋子带不走的家具。",
-    food: "厨房的小阳台上堆着几箱没拆的快递。你拆开一看：整包的方便面、压缩饼干，还有一提矿泉水——这家人大概是个囤货爱好者。",
+    food: "厨房的小阳台上堆着几包没拆的快递。你拆开一看：压缩饼干，还有一提矿泉水——这家人大概是个囤货爱好者。",
     zombie: "你刚掩上门，客厅的沙发后面猛地立起一个黑影。这只丧尸又干又瘦，大概被困在屋里饿了太久——可它扑过来的力气，一点都不小。"
   }, { breakIn: true }),
   makeFlatDoor("503", "三林安居苑-7号楼-5楼", {
@@ -1837,38 +1839,54 @@ Object.assign(storyData,
 
     "三林安居苑-7号楼-401": {
       image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-401.webp */
+      // 背包满走 elseScene（整理整理）时不执行选项 effect，故返回点必须在入口场景预设：
+      // 整理完腾出空位 → 直接进拿取节点完成这一次拾取（与「小广场→滑板车」同一模式）
+      onEnter: { set: { positionAfterOperation: "三林安居苑-7号楼-401-拿泡面" } },
       text: function(vars) {
         var desc = "屋里拉着窗帘，空气里有一股密闭多日的酸腐味。你推开的这扇门背后，是一个末日里的保险箱——也是一个坟墓。\n\
 卧室的门开着。一个人蜷在床上，被子拉到胸口，像睡着了一样，只是露在被外的手已经干瘪发灰。床头柜上摆着一排空了的药板，和一张压在杯子底下的字条。\n\
 你展开字条，上面的字迹越到后面越抖：\n\
 “第三天被咬的。不敢去医院，也不敢死在外面。吃的都在墙角，留给后来的人。别学我。”\n\
-你顺着他指的方向看去——墙角整整齐齐码着半箱泡面、几罐午餐肉和一提矿泉水。他囤够了一个月的口粮，却没能熬过第一周。";
-        if (vars._flat401 >= 2) {
-          desc += "\n墙角的补给已经被你搬空了，只剩那张字条还压在杯子底下。";
+你顺着他指的方向看去——墙角整整齐齐码着半箱泡面。他囤够了一个月的口粮，却没能熬过第一周。";
+        if (vars._flat401NoodleLeft > 0) {
+          desc += "\n那半箱泡面还剩 " + vars._flat401NoodleLeft + " 包。";
+        } else {
+          desc += "\n墙角的泡面已经被你搬空了，只剩那张字条还压在杯子底下。";
         }
         return desc;
       },
-      choices: [
-        {
-          showCondition: "_flat401 == 1",
-          text: "收下墙角的补给，先踏踏实实吃一顿",
-          nextScene: "三林安居苑-7号楼-401-补给"
-        },
-        { text: "离开", nextScene: "三林安居苑-7号楼-4楼" }
-      ]
+      choices: function(vars) {
+        var cs = [];
+        if (vars._flat401NoodleLeft > 0) {
+          cs.push({
+            text: "拿走一包泡面（还剩 {_flat401NoodleLeft} 包）",
+            condition: "itemCount < bagVolume",
+            nextScene: "三林安居苑-7号楼-401-拿泡面",
+            elseScene: "整理整理"
+          });
+        }
+        cs.push({ text: "离开", nextScene: "三林安居苑-7号楼-4楼" });
+        return cs;
+      }
     },
 
-    "三林安居苑-7号楼-401-补给": {
+    "三林安居苑-7号楼-401-拿泡面": {
       image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-401.webp */
       onEnter: function(vars) {
-        vars._flat401 = 2;
-        return updateTime(5, { add: { strength: 5 } })(vars);
+        vars.instantNoodle += 1;
+        vars.itemCount += 1;
+        vars._flat401NoodleLeft = Math.max(0, (vars._flat401NoodleLeft || 0) - 1);
+        if (vars._flat401NoodleLeft <= 0) vars._flat401 = 2;   // 拿空：走廊/屋内描述切到"搬空了"
+        return updateTime(1)(vars);
       },
-      text: "你对着那张字条站了一会儿，低声说了句“谢谢”。\n\
-然后你撕开一包泡面干嚼起来，又开了一罐午餐肉，拧开一瓶矿泉水连灌了大半瓶。密封包装的食物没有一丝变质的迹象——这是你这几天吃得最踏实的一顿。\n\
-<span class='sys'>【系统提示】体力+5，当前体力：{strength}。</span>",
+      text: function(vars) {
+        var desc = "你盯着那半箱泡面看了一会儿，胃里空得发疼。最终你还是忍住了——伸手抽出一包，拍掉浮灰塞进背包。干嚼也能顶一顿，留着总比这会儿一口气吃完划算。";
+        if (vars._flat401NoodleLeft > 0) desc += "\n箱子里还剩 " + vars._flat401NoodleLeft + " 包。";
+        else desc += "\n这是箱子里最后一包了。";
+        return desc;
+      },
       choices: [
-        { text: "离开", nextScene: "三林安居苑-7号楼-4楼" }
+        { text: "继续", nextScene: "三林安居苑-7号楼-401" }
       ]
     },
 

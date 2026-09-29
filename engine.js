@@ -1642,6 +1642,12 @@ function fillMissingDefaults(state) {
     if (!("instantNoodle" in state)) state.instantNoodle = state.hasInstantNoodle ? 1 : 0;
     delete state.hasInstantNoodle;   // 旧名成脏键，迁移完就删（留着会让「有没有泡面」有两套真相）
   }
+  // 09-29：401 半箱泡面由「吃一顿 +5 体力」改为「可拿取，最多 3 包」（_flat401：1=已破未取空 / 2=已取空）。
+  // 老档 _flat401>=2 表示"已吃过"=箱底已空 ⇒ 新变量补 0；否则补满 3。
+  // ⚠ 必须排在补默认值循环【之前】，否则会被填成初值 3（已搬空的档又凭空冒出 3 包）。
+  if (!("_flat401NoodleLeft" in state)) {
+    state._flat401NoodleLeft = (state._flat401 >= 2) ? 0 : 3;
+  }
   for (const key in defs) {
     if (!(key in state)) state[key] = snapshotState(defs[key]);
   }
