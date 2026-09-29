@@ -278,12 +278,22 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-加油站-棚子-胜利",
-        elseScene: "结局-张江-加油站",
+        nextScene: flashCombatRouter("张江-加油站-棚子-胜利", "张江-加油站-棚子-战斗-受伤", "结局-张江-加油站"),
         timeout: 9000,
         timeoutScene: "结局-张江-加油站"
       }
+    ]
+  },
+
+  "张江-加油站-棚子-战斗-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtWinOnEnter({ pos: "张江-加油站-棚子", time: 2 }),
+    text: function(vars) {
+      return "它第一扑你没完全让开——指甲从你小臂上剐下去，<span class='crit'>火烧一样</span>。你闷哼一声，反手把它抡进桶堆，又补了两下，它才不动了。\n\
+棚子里安静下来，只剩铁皮被风拍打的<span class='sfx'>哐当</span>声。你按着胳膊上的血印，缓了好一阵。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "回去翻油桶", nextScene: "张江-加油站-棚子" }
     ]
   },
 
@@ -788,12 +798,23 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-上科大-食堂-后厨-胜利",
-        elseScene: "结局-张江-上科大食堂",
+        nextScene: flashCombatRouter("张江-上科大-食堂-后厨-胜利", "张江-上科大-食堂-后厨-战斗-受伤", "结局-张江-上科大食堂"),
         timeout: 9000,
         timeoutScene: "结局-张江-上科大食堂"
       }
+    ]
+  },
+
+  "张江-上科大-食堂-后厨-战斗-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtWinOnEnter({ pos: "张江-上科大-食堂-后厨", time: 2 }),
+    text: function(vars) {
+      return "你让它扑了个半实——肩膀被撞在案板角上，半边胳膊一阵发麻。你换了只手，抡圆了给它后脑一下，再一下，它才软下去。\n\
+围裙的带子散开，工牌掉在油污的地上：餐饮中心 · 临时工。\n\
+你扶着案板站了半天，才把气喘匀。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "去翻储物柜", nextScene: "张江-上科大-食堂-后厨" }
     ]
   },
 
@@ -958,12 +979,29 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-华大-广场-近路-胜",
-        elseScene: "结局-张江-厂区广场",
+        nextScene: flashCombatRouter("张江-华大-广场-近路-胜", "张江-华大-广场-近路-受伤", "结局-张江-厂区广场"),
         timeout: 9000,
         timeoutScene: "结局-张江-厂区广场"
       }
+    ]
+  },
+
+  "张江-华大-广场-近路-受伤": {
+    outdoor: true,
+    image: "images/placeholder.png", /* TODO: images/张江/厂区广场-近路-受伤.webp（反光背心人影缀在身后） */
+    onEnter: function(vars) {
+      var e = hurtFleeOnEnter({ chase: 1, time: 2 })(vars);
+      vars._plazaFigSeen = true;
+      return e;
+    },
+    text: function(vars) {
+      return "反光背心比你想的快。最前面那条抓着了你的衣角，指甲透过布料在小臂上剐出三道血印——你甩脱它，连滚带爬抢到西沿的墙根。\n\
+它们没有散。三条人影不紧不慢地缀在你后面，隔着十几米，不快，也不慢。\n\
+旗绳还在空杆上抽。你的心口跳得比它抽得还快。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "沿西沿，去保安亭", nextScene: "张江-华大-保安亭", effect: updateTime(2) },
+      { text: "去厂区广场", nextScene: "张江-华大-厂区广场" }
     ]
   },
 
@@ -1011,7 +1049,7 @@ Object.assign(storyData, {
     text: function(vars) {
       var desc = "一条玻璃连廊从办公楼上架过来，接进厂房侧面。透过玻璃能看见连廊尽头一扇厚重的门，门楣上挂着一块牌子：净化区。\n\
 连廊墙上贴着一张过塑的 A4 纸，标题印得方方正正：《风淋室操作规程》。";
-      if (vars._airlockAlarmZombie && !(vars._visit['张江-华大-连廊-遭遇-胜'] > 0)) {
+      if (vars._airlockAlarmZombie && !(vars._visit['张江-华大-连廊-遭遇-胜'] > 0 || vars._visit['张江-华大-连廊-遭遇-受伤'] > 0)) {
         desc += "\n连廊中段的玻璃门外，一个白点正在广场方向慢慢挪过来——是警报引来的。它隔着玻璃撞了一下，又撞了一下。";
       }
       return desc;
@@ -1024,7 +1062,7 @@ Object.assign(storyData, {
         nextScene: "张江-华大-连廊-规程",
         effect: updateTime(3)
       });
-      if (vars._airlockAlarmZombie && !(vars._visit['张江-华大-连廊-遭遇-胜'] > 0)) {
+      if (vars._airlockAlarmZombie && !(vars._visit['张江-华大-连廊-遭遇-胜'] > 0 || vars._visit['张江-华大-连廊-遭遇-受伤'] > 0)) {
         cs.push({
           text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "解决它" : "握紧拳头解决它"; },
           nextScene: "张江-华大-连廊-遭遇",
@@ -1062,12 +1100,23 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-华大-连廊-遭遇-胜",
-        elseScene: "结局-张江-连廊",
+        nextScene: flashCombatRouter("张江-华大-连廊-遭遇-胜", "张江-华大-连廊-遭遇-受伤", "结局-张江-连廊"),
         timeout: 9000,
         timeoutScene: "结局-张江-连廊"
       }
+    ]
+  },
+
+  "张江-华大-连廊-遭遇-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtWinOnEnter({ time: 2 }),
+    text: function(vars) {
+      return "它扑近的那下你没算准距离，<span class='crit'>指尖在你肩头剐走一块皮肉</span>。你咬着牙把它顶在玻璃门框上，一下，又一下，直到它滑下去不动了。\n\
+无尘服的头罩歪在一边，露出里面一张干灰的脸。警报的余音还在连廊里<span class='sfx'>嗡嗡</span>地绕。\n\
+你扶着墙，肩膀火辣辣的。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "回连廊", nextScene: "张江-华大-连廊" }
     ]
   },
 
@@ -1650,11 +1699,11 @@ Object.assign(storyData, {
         cs.push({ text: "退回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
         return cs;
       }
-      if (!(vars._visit['张江-华大-白区-工位战A-胜'] > 0)) cs.push({ text: "靠近光刻机那台设备边的人影", nextScene: "张江-华大-白区-工位A", effect: updateTime(2) });
+      if (!(vars._visit['张江-华大-白区-工位战A-胜'] > 0 || vars._visit['张江-华大-白区-工位战A-受伤'] > 0)) cs.push({ text: "靠近光刻机那台设备边的人影", nextScene: "张江-华大-白区-工位A", effect: updateTime(2) });
       else cs.push({ text: "光刻机边（已了结）", nextScene: "张江-华大-白区-工位A", effect: updateTime(1) });
       if (!vars._fabFigBDone) cs.push({ text: "靠近薄膜沉积设备边的人影", nextScene: "张江-华大-白区-工位B", effect: updateTime(2) });
       else cs.push({ text: "薄膜设备边（已了结）", nextScene: "张江-华大-白区-工位B", effect: updateTime(1) });
-      if (!(vars._visit['张江-华大-白区-工位战C-胜'] > 0)) cs.push({ text: "靠近化学清洗槽边的人影", nextScene: "张江-华大-白区-工位C", effect: updateTime(2) });
+      if (!(vars._visit['张江-华大-白区-工位战C-胜'] > 0 || vars._visit['张江-华大-白区-工位战C-受伤'] > 0)) cs.push({ text: "靠近化学清洗槽边的人影", nextScene: "张江-华大-白区-工位C", effect: updateTime(2) });
       else cs.push({ text: "清洗槽边（已了结）", nextScene: "张江-华大-白区-工位C", effect: updateTime(1) });
       cs.push({ text: "往东，穿过车间去动力站", nextScene: "张江-华大-动力站", effect: updateTime(4) });
       cs.push({ text: "回主走廊", nextScene: "张江-华大-洁净主走廊", effect: updateTime(2) });
@@ -1674,12 +1723,23 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝1绿1黄" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-华大-白区-围攻-胜",
-        elseScene: "结局-张江-白区",
+        nextScene: flashCombatRouter("张江-华大-白区-围攻-胜", "张江-华大-白区-围攻-受伤", "结局-张江-白区"),
         timeout: "14000 + _fabAlert * 1500",
         timeoutScene: "结局-张江-白区"
       }
+    ]
+  },
+
+  "张江-华大-白区-围攻-受伤": {
+    image: "images/placeholder.png", /* TODO: images/张江/白区-围攻-受伤.webp（带伤撤进安全门） */
+    onEnter: hurtFleeOnEnter({ chase: 1, time: 3 }),
+    text: function(vars) {
+      return "你打不穿它们。白影一层压着一层地涌过来，你被逼得步步后退，后腰撞上设备的护罩——一只手抓住了你的袖子，指甲透过布料扎进肉里。\n\
+你狠命一挣，连人带半截袖子撞开安全门，反手把门带死。门板震了几下，又几下，然后是指甲刮铁皮的声音，长的，慢的。\n\
+这一片，你没能打穿。它们就在门后面。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "回主走廊缓口气", nextScene: "张江-华大-洁净主走廊" }
     ]
   },
 
@@ -1715,7 +1775,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位A.webp */
     onEnter: function(vars) { vars.currentPos = "白区工位A"; },
     text: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位战A-胜'] > 0)) {
+      if ((vars._visit['张江-华大-白区-工位战A-胜'] > 0 || vars._visit['张江-华大-白区-工位战A-受伤'] > 0)) {
         return "光刻机边的那条人影已经躺倒在设备脚下了，白色无尘服摊在地上，像一截脱下来的蛇皮。\n\
 机器的待机灯还在一明一灭，不知道在等谁的操作。";
       }
@@ -1726,7 +1786,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位战A-胜'] > 0)) {
+      if ((vars._visit['张江-华大-白区-工位战A-胜'] > 0 || vars._visit['张江-华大-白区-工位战A-受伤'] > 0)) {
         return [{ text: "离开", nextScene: "张江-华大-白区", effect: updateTime(1) }];
       }
       var cs = [];
@@ -1777,12 +1837,23 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-华大-白区-工位战A-胜",
-        elseScene: "结局-张江-白区",
+        nextScene: flashCombatRouter("张江-华大-白区-工位战A-胜", "张江-华大-白区-工位战A-受伤", "结局-张江-白区"),
         timeout: 9000,
         timeoutScene: "结局-张江-白区"
       }
+    ]
+  },
+
+  "张江-华大-白区-工位战A-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtWinOnEnter({ time: 2 }),
+    text: function(vars) {
+      return "它抬手的路数确实是直的——可你让那一步，让错了。指甲在你前臂上剐出一道血口子，你趁它收势的空当绕到侧面，给了它后脑狠狠一下。\n\
+它撞在光刻机的护罩上，滑下去，不动了。防光帘晃了几晃，慢慢停住。\n\
+你按着胳膊上的口子，血一滴一滴掉在黄色的防光帘上。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "离开工位", nextScene: "张江-华大-白区" }
     ]
   },
 
@@ -1886,7 +1957,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位C.webp */
     onEnter: function(vars) { vars.currentPos = "白区工位C"; },
     text: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位战C-胜'] > 0)) {
+      if ((vars._visit['张江-华大-白区-工位战C-胜'] > 0 || vars._visit['张江-华大-白区-工位战C-受伤'] > 0)) {
         return "清洗槽边只剩一摊没干的痕迹，被地坪的排风拉出一道长长的痕。\n\
 槽子里的液体早就干了，结成一层暗色的壳。";
       }
@@ -1897,7 +1968,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: function(vars) {
-      if ((vars._visit['张江-华大-白区-工位战C-胜'] > 0)) {
+      if ((vars._visit['张江-华大-白区-工位战C-胜'] > 0 || vars._visit['张江-华大-白区-工位战C-受伤'] > 0)) {
         return [{ text: "离开", nextScene: "张江-华大-白区", effect: updateTime(1) }];
       }
       var cs = [];
@@ -1947,12 +2018,23 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-华大-白区-工位战C-胜",
-        elseScene: "结局-张江-毒气",
+        nextScene: flashCombatRouter("张江-华大-白区-工位战C-胜", "张江-华大-白区-工位战C-受伤", "结局-张江-毒气"),
         timeout: 9000,
         timeoutScene: "结局-张江-毒气"
       }
+    ]
+  },
+
+  "张江-华大-白区-工位战C-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtWinOnEnter({ time: 2 }),
+    text: function(vars) {
+      return "你逼它转身逼得急了——它肚子那截鼓胀蹭上排风管的边，布料“嘶”地裂开一道细缝，白雾喷了你一手腕，<span class='crit'>甜得发腻</span>。它趁乱抓了你一把，指甲隔着无尘服剐进小臂。\n\
+你骂了一声，把它整个掀进空槽。它瘪下去，不动了，裂缝里冒出的雾被排风口一把拽了上去。\n\
+手腕上的皮肤开始发麻，你拼命在裤子上蹭，越蹭越麻。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "离开工位", nextScene: "张江-华大-白区" }
     ]
   },
 
@@ -2072,12 +2154,33 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-华大-运维区-制服",
-        elseScene: "结局-张江-运维区",
+        nextScene: flashCombatRouter("张江-华大-运维区-制服", "张江-华大-运维区-遭遇战-受伤", "结局-张江-运维区"),
         timeout: "12000 + _fabAlert * 1500",
         timeoutScene: "结局-张江-运维区"
       }
+    ]
+  },
+
+  // 受伤档（对手是受惊的活人小刘）：不挂尸伤/汞（human:true），只扣体力+概率断武器
+  "张江-华大-运维区-遭遇战-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) {
+      var e = hurtWinOnEnter({ human: true, time: 2 })(vars);
+      vars._panicEmployeeState = (meleeWeaponTier(vars) >= 2) ? "dead" : "injured";
+      return e;
+    },
+    text: function(vars) {
+      if (vars._panicEmployeeState === "dead") {
+        return "灭火器砸中了你的肩胛，半边胳膊瞬间麻了。你踉跄半步，反手一记重击砸在他胸口——他整个人飞出去撞在配电柜上，滑下来，不动了。\n\
+面罩摔裂了。底下是一张年轻的、错愕的脸，嘴还张着，像有一肚子话没喊出来。\n\
+胸牌翻在外面：操作部，刘。他从头到尾，都以为自己在打丧尸。" + hurtCostText(vars, false);
+      }
+      return "灭火器擦着你的颧骨砸下来，眼前炸开一片金星。你凭着本能架开第二下，用手背给他面罩上来了一下——他后脑磕在柜门上，眼睛一翻，软软地滑了下去。\n\
+你捂着半边脸，血从指缝里渗出来。胸牌翻在外面：操作部，刘。\n\
+你探了探他的鼻息——活着。这小子打得是真狠，命也是真大。" + hurtCostText(vars, false);
+    },
+    choices: [
+      { text: "离开这里", nextScene: "张江-华大-运维区", effect: updateTime(1) }
     ]
   },
 
@@ -3096,12 +3199,26 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝1绿1黄" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-川杨河大桥-1-胜",
-        elseScene: "结局-张江-川杨河",
+        nextScene: flashCombatRouter("张江-川杨河大桥-1-胜", "张江-川杨河大桥-1-受伤", "结局-张江-川杨河"),
         timeout: 12000,
         timeoutScene: "结局-张江-川杨河"
       }
+    ]
+  },
+
+  "张江-川杨河大桥-1-受伤": {
+    image: "images/placeholder.png", /* TODO: images/张江/川杨河大桥-1-受伤.webp（小腿挂彩翻过车阵） */
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      return hurtFleeOnEnter({ chase: 0, time: 2 })(vars);
+    },
+    text: function(vars) {
+      return "你从车缝里挤过去，那只鼓着肚子的卡在最后一条缝里——它的指甲还是够到了你的小腿，隔着裤腿剐出四道血印。你蹬开它的手，连滚带爬翻过车阵。\n\
+整座桥的影子还在朝这边涌。面具的镜片上糊着一层水汽，你摸了摸弹匣，轻了一格。\n\
+桥还长着。腿上的血印随着脚步一下一下地跳。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续往前", nextScene: "张江-川杨河大桥-2", effect: updateTime(2) }
     ]
   },
 
@@ -3140,12 +3257,26 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝1绿1黄" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-川杨河大桥-2-胜",
-        elseScene: "结局-张江-川杨河",
+        nextScene: flashCombatRouter("张江-川杨河大桥-2-胜", "张江-川杨河大桥-2-受伤", "结局-张江-川杨河"),
         timeout: 11000,
         timeoutScene: "结局-张江-川杨河"
       }
+    ]
+  },
+
+  "张江-川杨河大桥-2-受伤": {
+    image: "images/placeholder.png", /* TODO: images/张江/川杨河大桥-2-受伤.webp（撞在车门上） */
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      return hurtFleeOnEnter({ chase: 0, time: 2 })(vars);
+    },
+    text: function(vars) {
+      return "它太快了。你贴着货车车头兜圈的时候慢了半拍——运动背心的影子从车顶扑下来，把你扑得撞在车门上，<span class='crit'>肩胛撞得半天抬不起手</span>。\n\
+你抡起最后一点力气给它脑袋来了一下，它栽进车底。你没等它抽完那两下，爬起来就跑。\n\
+弹匣又轻了一格。桥面从这里开始往下走——对岸的引桥已经在望了。坡顶上，那个暗灰色的影子还立在原地。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "下坡，去会会它", nextScene: "张江-川杨河大桥-3", effect: updateTime(2) }
     ]
   },
 
@@ -3183,11 +3314,36 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝1绿1黄" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-川杨河大桥-3-胜",
-        elseScene: "结局-张江-川杨河",
+        nextScene: flashCombatRouter("张江-川杨河大桥-3-胜", "张江-川杨河大桥-3-受伤", "结局-张江-川杨河"),
         timeout: 13000,
         timeoutScene: "结局-张江-川杨河"
+      }
+    ]
+  },
+
+  "张江-川杨河大桥-3-受伤": {
+    image: "images/placeholder.png", /* TODO: images/张江/川杨河大桥-3-受伤.webp（后背挂彩滚下引桥） */
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      return hurtFleeOnEnter({ chase: 0, time: 2 })(vars);
+    },
+    text: function(vars) {
+      var head = "它不着急，你着急。最后十几米你从它身侧硬冲——它的手横过来，<span class='crit'>五道指甲在你后背剐走一片布料和皮肉</span>，你借着冲力滚下引桥。\n";
+      var tail;
+      if (vars._bridgeFrom === "北") {
+        tail = "南岸的堤坝就在眼前。滨河路上那些贴着河沿的影子，从头到尾没有一只回过头。\n\
+你活着下了桥，趴在堤坝底下喘了半天。弹匣空了，后背的血把衣服黏在皮肤上。";
+      } else {
+        tail = "北岸到了。一排陌生的楼群立在河边，其中一栋灰白色的大楼，隔着河雾都显出轮廓。\n\
+你活着下了桥，趴在引桥底下喘了半天。弹匣空了，后背的血把衣服黏在皮肤上。";
+      }
+      return head + tail + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: function(vars) { return vars._bridgeFrom === "北" ? "张江-川杨河南岸堤" : "张江-河北岸-街口"; },
+        effect: updateTime(1)
       }
     ]
   },
@@ -3464,12 +3620,29 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-检测中心-瞎摸-胜",
-        elseScene: "结局-张江-检测中心",
+        nextScene: flashCombatRouter("张江-检测中心-瞎摸-胜", "张江-检测中心-瞎摸-受伤", "结局-张江-检测中心"),
         timeout: 9000,
         timeoutScene: "结局-张江-检测中心"
       }
+    ]
+  },
+
+  "张江-检测中心-瞎摸-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) {
+      var e = hurtWinOnEnter({ time: 2 })(vars);
+      vars._knowsReportRoom = true; // 同样摸到尽头看清了 305 的门牌
+      return e;
+    },
+    text: function(vars) {
+      return "你先动了手，但黑地里你慢了半拍——它的指甲在你脸上剐了一下，<span class='crit'>火辣辣的</span>。你闷声把它顶在门框上撞了两下，它才软下去。\n\
+白大褂的口袋里滚出一支记号笔，骨碌碌滚进黑暗里。\n\
+你捂着脸缓了半天，才借光看清走廊尽头：305，检测三室。\n\
+那扇门的观察窗后面，立着一条人影，一动不动。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "去 305 门口", nextScene: "张江-检测中心-三室外", effect: updateTime(1) },
+      { text: "去走廊", nextScene: "张江-检测中心-走廊", effect: updateTime(1) }
     ]
   },
 
@@ -3597,12 +3770,33 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝1绿1黄" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-检测中心-制服",
-        elseScene: "结局-张江-检测中心",
+        nextScene: flashCombatRouter("张江-检测中心-制服", "张江-检测中心-检测员战-受伤", "结局-张江-检测中心"),
         timeout: "16000 - _labAlert * 1500",
         timeoutScene: "结局-张江-检测中心"
       }
+    ]
+  },
+
+  // 受伤档：同样制服（非击杀）、同样拿到报告，代价更重——被他的指甲划伤+接触（汞走偏差惩罚）
+  "张江-检测中心-检测员战-受伤": {
+    image: "images/placeholder.png", /* TODO: images/张江/检测中心-报告-受伤.webp */
+    onEnter: function(vars) {
+      var e = hurtWinOnEnter({ time: 3 })(vars);
+      vars._hasTestReport = true;
+      return e;
+    },
+    text: function(vars) {
+      var segs = [];
+      segs.push("你被他扑倒在仪器桌上，后腰磕在桌沿，眼前黑了一下。他的指甲在你小臂上划开一道口子——伤口周围立刻泛起一阵麻。\n\
+你咬牙翻过身，抄起设备的连接线缠住他的胳膊，又把白大褂的袖子在身后打了个死结。他挣扎的力道大得吓人，缠了很久才不动了——嘴里还在念。\n“011……出了……签……”");
+      segs.push("你蹲在地上喘了半天，才想起他手里那几页纸。纸从他僵硬的手指里抽出来的时候，发出很轻的、纤维撕裂的响。\n\
+《应急水源专项检测报告》。编号 YJ-2026-0628-011。“甲基汞”三个字后面那个红色的数字，把标准限值甩出去几百倍。末页压着两枚红章：检验检测专用章，CMA。签名栏：顾嘉铭，6 月 28 日。取件人签收——空着。");
+      segs.push("<span class='sys'>【系统提示】获得[上海市检测中心报告]——官方全项检测，数据、签名、公章齐全。它不占背包。</span>");
+      segs[segs.length - 1] += hurtCostText(vars);
+      return segs;
+    },
+    choices: [
+      { text: "收好报告，离开这间屋子", nextScene: "张江-检测中心-走廊", effect: updateTime(1) }
     ]
   },
 
@@ -3644,11 +3838,29 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "张江-检测中心-撤离-胜",
-        elseScene: "结局-张江-检测中心",
+        nextScene: flashCombatRouter("张江-检测中心-撤离-胜", "张江-检测中心-撤离遭遇-受伤", "结局-张江-检测中心"),
         timeout: 10000,
         timeoutScene: "结局-张江-检测中心"
+      }
+    ]
+  },
+
+  "张江-检测中心-撤离遭遇-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtWinOnEnter({ time: 2 }),
+    text: function(vars) {
+      var tail = vars._labExitTo === "张江-检测中心-卸货区"
+        ? "你没再看第二眼，反手推开侧门，跌进卸货平台的天光里。"
+        : "你没再看第二眼，撒腿冲进大堂的天光里。";
+      return "你抄起墙边的灭火器砸过去，它偏头躲了半下——砸在肩膀上，灭火器脱了手。它顺势抓上你的前臂，<span class='crit'>指甲扎进肉里</span>。你贴着门框把它别开，一脚踹在它别扭的脖颈上，它才栽下去不动。\n" + tail + "\n\
+身后的走廊黑沉沉的，什么声音都没有了。" + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: function(v) {
+          return v._labExitTo === "张江-检测中心-卸货区" ? "出卸货区侧门" : "去大厅";
+        },
+        nextScene: function(v) { return v._labExitTo || "张江-检测中心-大厅"; }
       }
     ]
   },
@@ -3696,7 +3908,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { tryBreakWeapon(vars); return {}; },
     text: function(vars) {
       var body;
-      if ((vars._visit['张江-检测中心-制服'] > 0)) {
+      if ((vars._visit['张江-检测中心-制服'] > 0 || vars._visit['张江-检测中心-检测员战-受伤'] > 0)) {
         body = "你倒在大堂门口。玻璃门外就是天光，就是旗杆，就是那条能回去的街。\n\
 内袋里那几页纸，一页都没少——数据、签名、两枚红章，全都好好的。\n\
 只有“取件人签收”那一栏，还空着。\n\

@@ -17,10 +17,13 @@ Object.assign(storyData, {
       vars.currentPos = "五金店";
     },
     text: function(vars) {
-      // 后巷是本节点的子节点，绕完一圈回门口不该再播一次"来到五金店门口"
+      // 后巷/侧窗都是本节点的子节点，绕完一圈回门口不该再播一次"来到五金店门口"
       var l = vars._lastScene || "";
       if (l === "五金店-后巷" || l === "五金店-后巷-偷看左门") {
         return "你从后巷绕回正面，卷帘门又在眼前了。那道被顶弯的凹痕还在，<span class='smell'>空气里的腥甜味也还在</span>。" + describeWeather(vars);
+      }
+      if (l === "五金店-侧窗" || l === "五金店-侧窗-探索") {
+        return "你从侧窗翻出来，踩着墙根的碎砖落回地面。屋里那股<span class='smell'>化工甜腥味</span>还黏在衣服上，被雨一浇才散开一些。" + describeWeather(vars);
       }
       if(vars._visit["五金店"] > 1) return "你又来到了五金店门口。卷帘门还是半开着，那道顶弯的凹痕还在，<span class='smell'>空气里的腥甜味也还在</span>。" + describeWeather(vars);
       return "你来到三林路上那家老五金店。卷帘门半开着，只到膝盖高，边缘有一道被硬生生顶弯的凹痕——像是有东西从里面挤出去过。门缝里飘出<span class='smell'>一股机油混着腐臭的甜味</span>，若有若无，可你知道那不是错觉。\n<span class='dust'>里面黑漆漆的看不清，静得反常</span>——这种店不该这么安静。你注意到侧面的窗户破了一扇，后巷也能绕过去。" + describeWeather(vars);
@@ -152,6 +155,10 @@ Object.assign(storyData, {
       {
         text: "先看看墙上挂着什么工具",
         nextScene: "五金店-侧窗-探索"
+      },
+      {
+        text: "心里发毛，趁早原路翻出去",
+        nextScene: "五金店"
       }
     ]
   },
@@ -161,18 +168,50 @@ Object.assign(storyData, {
       morning: "images/小区周边/五金店/工具区.webp",
       night: "images/小区周边/五金店/工具区-night.webp"
     }),
-    onEnter: updateTime(2), // 花2分钟审视墙上工具
-    text: "你环顾工具区。墙上挂着一排扳手和螺丝刀，上面沾着机油和灰，但没生锈——五金店的东西保养得还行。你挑了一把趁手的扳手——虽然不是什么神兵利器，但总比空手强。\n\
-你正打算再翻翻看有什么有用的，突然听到门外传来声音——<span class='sfx'>嘎吱，嘎吱</span>——有人在拖着步子走。<span class='rot'>就在门的那一侧。</span>",
-    choices: [
-      {
-        text: "推开工具区的门看看",
-        nextScene: "结局-五金店-工具区"
-      },
-      {
-        text: "躲进货架之间，从缝隙里观察",
-        nextScene: "五金店-货架躲藏"
+    // 拾取「螺丝刀」若背包满走 elseScene（整理整理），而 elseScene 分支不执行选项 effect，
+    // 故返回点必须在入口预设（同 401 拿泡面模式；engine.js createChoiceButton 实测）
+    onEnter: function(vars) {
+      vars.positionAfterOperation = "五金店-侧窗-拿螺丝刀";
+      // 从「抽走螺丝刀」折返：门外脚步声首次进入时已交代，不重复计时/重播
+      if (vars._lastScene === "五金店-侧窗-拿螺丝刀") return {};
+      return updateTime(2)(vars); // 花2分钟审视墙上工具
+    },
+    text: function(vars) {
+      if (vars._lastScene === "五金店-侧窗-拿螺丝刀") {
+        return "你把螺丝刀塞进背包侧袋，退回工具区中央。门外那拖沓的脚步声还在——<span class='rot'>就在门的那一侧，一下，一下。</span>";
       }
+      return "你环顾工具区。墙上挂着一排扳手和螺丝刀，上面沾着机油和灰，但没生锈——五金店的东西保养得还行。\n\
+你正打算再翻翻看有什么有用的，突然听到门外传来声音——<span class='sfx'>嘎吱，嘎吱</span>——有人在拖着步子走。<span class='rot'>就在门的那一侧。</span>";
+    },
+    choices: function(vars) {
+      var cs = [];
+      // 螺丝刀全图原本只在建平（老吴杂物室/5F物理实验室锁柜，均需钥匙串）；
+      // 这里补一个更早、更近的来源，代价是五金店这条路线本身凶险
+      if (!vars.hasScrewdriver) {
+        cs.push({
+          text: "从墙上抽走一把螺丝刀",
+          condition: "itemCount < bagVolume",
+          nextScene: "五金店-侧窗-拿螺丝刀",
+          elseScene: "整理整理"
+        });
+      }
+      cs.push({ text: "推开工具区的门看看", nextScene: "结局-五金店-工具区" });
+      cs.push({ text: "躲进货架之间，从缝隙里观察", nextScene: "五金店-货架躲藏" });
+      cs.push({ text: "屏住呼吸，原路翻窗退出去", nextScene: "五金店" });
+      return cs;
+    }
+  },
+
+  "五金店-侧窗-拿螺丝刀": {
+    image: timeImage({
+      morning: "images/小区周边/五金店/工具区.webp",
+      night: "images/小区周边/五金店/工具区-night.webp"
+    }),
+    onEnter: updateTime(1, { set: { hasScrewdriver: true }, add: { itemCount: 1 } }),
+    text: "你踮起脚，从墙上摘下一把螺丝刀。十字头，木柄上缠着一圈发黑的电工胶布——是被人用旧了的。你掂了掂，塞进背包侧袋：轻，不硌人，拆个枪、撬个盖都用得上。\n\
+<span class='sys'>【系统提示】获得螺丝刀，当前背包：{itemCount}/{bagVolume}。</span>",
+    choices: [
+      { text: "收好", nextScene: "五金店-侧窗-探索" }
     ]
   },
 

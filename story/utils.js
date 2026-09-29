@@ -638,6 +638,98 @@ function checkFlashAnswer(vars) {
   return normalizeColorAnswer(vars._input) === normalizeColorAnswer(vars._currentAnswer);
 }
 
+// ====== 闪色三档判定（0偏=胜利 / 1~2偏=受伤 / ≥3偏或超时=死亡） ======
+// 偏差 = Σ|玩家报数 − 实际数|（跨全部颜色）：同色数量差几算几，报不存在的颜色按报的数量计
+// （报5个绿=5偏差，堵乱填刷分）；空输入/乱码偏差≥序列长度必死——与旧全等判定行为一致。
+// 例：标答 3红2蓝1绿，输入 2红1蓝 → 红1+蓝1+绿1 = 3 偏差（死亡档）。
+function colorCountMap(str) {
+  var counts = {}, m;
+  var re = /(\d+)([红蓝绿黄紫白])/g;
+  while ((m = re.exec(String(str || ""))) !== null) {
+    counts[m[2]] = (counts[m[2]] || 0) + parseInt(m[1], 10);
+  }
+  return counts;
+}
+
+// 当前闪色的偏差数（读 _input 与 _currentAnswer；提交与路由阶段两者都已就位）
+function flashAnswerDeviation(vars) {
+  var act = colorCountMap(vars._currentAnswer);
+  var ply = colorCountMap(vars._input);
+  var colors = ['红', '蓝', '绿', '黄', '紫', '白'];
+  var dev = 0;
+  for (var i = 0; i < colors.length; i++) {
+    dev += Math.abs((ply[colors[i]] || 0) - (act[colors[i]] || 0));
+  }
+  return dev;
+}
+
+// 三档路由：挂在输入型选项的 nextScene 上（原 condition/elseScene 删掉，提交恒走本函数分档）。
+// 用法：nextScene: flashCombatRouter("X-胜利", "X-受伤", "结局-X")
+// timeoutScene 维持死亡场景不动——超时=没作答，不吃受伤保底。
+function flashCombatRouter(winScene, hurtScene, deadScene) {
+  return function(vars) {
+    var dev = flashAnswerDeviation(vars);
+    if (dev <= 0) return winScene;
+    if (dev <= 2) return hurtScene;
+    return deadScene;
+  };
+}
+
+// 受伤档公共惩罚：汞+5×偏差（与偏差量成正比；Math.min 封顶，与复旦江湾写法一致）、
+// hurtByZombie、概率断武器（tryBreakWeapon 同死亡档概率）。玩家可见文案不点破汞机制。
+function hurtPenaltyBase(vars) {
+  var dev = flashAnswerDeviation(vars);
+  vars.mercuryLoad = Math.min(100, (vars.mercuryLoad || 0) + 5 * dev);
+  vars.hurtByZombie = true;
+  tryBreakWeapon(vars);
+  return dev;
+}
+
+// 受伤-干死（对战1~2只丧尸）：勉强拼死对方，但挂了彩。
+// 体力比正常胜利重一档（combatCost+1 → 2~3），记 _lastCombatDrain 供 hurtCostText 提示。
+// opts：{ pos: positionAfterOperation（干死后照常落点，抄胜利场景的值）, time: 战斗耗时分钟（走 updateTime）,
+//         human: true 对手是人（路霸等）——不挂尸伤/汞，只扣体力+概率断武器 }
+function hurtWinOnEnter(opts) {
+  opts = opts || {};
+  return function(vars) {
+    if (!opts.human) hurtPenaltyBase(vars);
+    else tryBreakWeapon(vars);
+    var c = combatCost(vars) + 1;
+    vars.strength = Math.max(0, vars.strength - c);
+    vars._lastCombatDrain = c;
+    if (opts.pos) vars.positionAfterOperation = opts.pos;
+    return opts.time ? (updateTime(opts.time)(vars) || {}) : {};
+  };
+}
+
+// 受伤-跑路（对战3只及以上丧尸）：边打边撤逃出来，战斗目标没消灭——惩罚标准与追兵一致：
+// 基础款 + chasedByZombies+N（后续躲藏/追兵机制自然衔接）。跑路是冲刺，体力固定-2、与武器档位无关。
+// opts：{ chase: 追兵数（默认1，传 0 = 只受伤不加追兵，如川杨河大桥桥头人群不过桥）, time: 逃跑耗时分钟（走 updateTime） }
+function hurtFleeOnEnter(opts) {
+  opts = opts || {};
+  return function(vars) {
+    hurtPenaltyBase(vars);
+    vars.strength = Math.max(0, vars.strength - 2);
+    vars._lastCombatDrain = 2;
+    var chase = (opts.chase === undefined ? 1 : opts.chase);
+    if (chase > 0) vars.chasedByZombies = (vars.chasedByZombies || 0) + chase;
+    return opts.time ? (updateTime(opts.time)(vars) || {}) : {};
+  };
+}
+
+// 受伤档代价提示（一次性，读后清除，仿 combatDrainText/weaponBrokeText 模式）：
+// 体力一行 + 抓伤状态一行（橙色 sys warn）；汞不出现——玩家可见文案禁止点破机制。
+// withWound=false 用于人类对手（路霸/受惊小刘）：只提示体力与武器，不播"被丧尸抓伤"。
+// 用法：text: function(vars) { return "你勉强干掉了它。" + hurtCostText(vars); }
+function hurtCostText(vars, withWound) {
+  var c = vars._lastCombatDrain;
+  vars._lastCombatDrain = 0;
+  var out = "";
+  if (c) out += "\n<span class='sys warn'>【系统提示】体力-" + c + "，当前体力：{strength}。</span>";
+  if (withWound !== false) out += "\n<span class='sys warn'>【系统提示】你被丧尸抓伤了，伤口火辣辣地渗血。</span>";
+  return out + weaponBrokeText(vars);
+}
+
 // 躲藏场景工厂：统一管理随机躲藏逻辑与 _hideFail 状态
 // 用法: "场景": hideOnLocation("images/placeholder.png" /* TODO: images/xxx.png */, "失败文案", "成功文案")
 // image / failText / successText 可以是字符串或 function(vars) => string

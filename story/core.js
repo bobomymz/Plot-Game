@@ -248,7 +248,7 @@ const storyData = {
     _drawerVitaminTaken: false, // 击杀白大褂后抽屉里那瓶维生素是否已收进背包（一次性，防重复刷）
     hasWatch: false,            // 机械手表（行政楼2F文印室，占背包，整理整理看时间）
     hasCSGun: false,            // 真人CS枪（废弃小楼1F纸箱，占背包，化学实验室拆成手电筒）
-    hasScrewdriver: false,      // 螺丝刀（物理实验室/老吴杂物室锁柜，钥匙串开，拆CS枪用，全图唯一）
+    hasScrewdriver: false,      // 螺丝刀（建平-5F物理实验室/1F老吴杂物室锁柜[需钥匙串开] + 五金店-侧窗工具区；拆CS枪/割胶带用）
     _pengPiano: 0,              // 彭奕宸弹琴位置：1=远翔楼圆厅 2=挹芬楼休息区 3=音乐教室；0=不在钢琴
     _yifenFood6F: false,        // 挹芬楼6F自习教室食品是否已拿
     _playgroundKicked: false,   // 操场那只足球是否已踢过（回忆[起脚爆射]，一次性）

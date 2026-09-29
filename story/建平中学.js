@@ -483,14 +483,28 @@ Object.assign(storyData, {
         {
           text: "输入你看到的颜色分布",
           input: { placeholder: "例如：3红2蓝" },
-          condition: checkFlashAnswer,
-          nextScene: "建平-前门-清场",
-          elseScene: "结局-前门失守",
+          nextScene: flashCombatRouter("建平-前门-清场", "建平-前门-受伤", "结局-前门失守"),
           timeout: 12000,            // 5色闪完约4秒，留约8秒输入
           timeoutScene: "结局-前门失守"
         }
       ];
     }
+  },
+
+  "建平-前门-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPos = "前门";
+      return hurtFleeOnEnter({ chase: 0, time: 1 })(vars);
+    },
+    text: function(vars) {
+      return "合围的丧尸还是抓到了你——一只手撕下你后背一片衣料，<span class='crit'>四道血痕火烧一样</span>。你狠命一挣，趁它们互相磕绊的空当一头撞进校园。\n\
+身后的铁门内外，扑空的丧尸挤作一团，一时半会儿挤不进来。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "进入金苹果广场", nextScene: "建平-金苹果广场", effect: updateTime(1) }
+    ]
   },
 
   "建平-前门-清场": {
@@ -637,12 +651,22 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "建平-后门-斧头-胜利",
-        elseScene: "结局-后门失守",
+        nextScene: flashCombatRouter("建平-后门-斧头-胜利", "建平-后门-斧头-受伤", "结局-后门失守"),
         timeout: 12000,
         timeoutScene: "结局-后门失守"
       }
+    ]
+  },
+
+  "建平-后门-斧头-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtFleeOnEnter({ chase: 1, time: 1 }),
+    text: function(vars) {
+      return "你抡着斧头连劈带砍，肩膀还是被一双手指甲剐掉了一块皮肉。你顾不上疼，踩着满地残肢从门边撞了出去。\n\
+铁门内外的丧尸跟着涌出来，<span class='rot'>嘶吼声在你背后连成一片</span>——别停下。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
   },
 
@@ -665,12 +689,22 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "建平-后门-匕首-胜利",
-        elseScene: "结局-后门失守",
+        nextScene: flashCombatRouter("建平-后门-匕首-胜利", "建平-后门-匕首-受伤", "结局-后门失守"),
         timeout: 12000,
         timeoutScene: "结局-后门失守"
       }
+    ]
+  },
+
+  "建平-后门-匕首-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtFleeOnEnter({ chase: 1, time: 1 }),
+    text: function(vars) {
+      return "你贴着门边左冲右突，一只手还是从人缝里探过来，指甲在你肩头剐出三道血口子。你反手一刀逼开它，从门缝里挤了出去。\n\
+涌出门的丧尸在你身后越聚越多，<span class='rot'>拖沓的脚步声追着你不放</span>。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
   },
 
@@ -693,12 +727,22 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "建平-后门-开打-胜利",
-        elseScene: "结局-后门失守",
+        nextScene: flashCombatRouter("建平-后门-开打-胜利", "建平-后门-开打-受伤", "结局-后门失守"),
         timeout: 16000,            // 8色闪完约6.4秒，留约9.6秒输入
         timeoutScene: "结局-后门失守"
       }
+    ]
+  },
+
+  "建平-后门-开打-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtFleeOnEnter({ chase: 1, time: 1 }),
+    text: function(vars) {
+      return "赤手空拳硬拼尸群，本来就是拿命在赌。你放倒了扑在最前面的一只，第二只的指甲还是剐进了你的小臂——<span class='crit'>你借着它的力道把它甩进尸堆</span>，从门边挤了出去。\n\
+身后的铁门内外乱作一团，涌出来的丧尸一步不落地跟着你。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
   },
   "建平-后门-开打-胜利": {
@@ -787,12 +831,27 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：4红3蓝3绿" },
-        condition: checkFlashAnswer,
-        nextScene: "建平-后门-内侧-清场",
-        elseScene: "结局-后门-自投罗网",
+        nextScene: flashCombatRouter("建平-后门-内侧-清场", "建平-后门-内侧-开打-受伤", "结局-后门-自投罗网"),
         timeout: 13000,            // 10色闪完约8秒，留约5秒输入——几乎必死
         timeoutScene: "结局-后门-自投罗网"
       }
+    ]
+  },
+
+  "建平-后门-内侧-开打-受伤": {
+    outdoor: true,
+    image: "images/placeholder.png" /* TODO: images/建平/后门-内侧.webp（带伤且战且退） */,
+    onEnter: function(vars) {
+      vars.showZombies = true;
+      vars.currentPos = "后门";
+      return hurtFleeOnEnter({ chase: 1, time: 1 })(vars);
+    },
+    text: function(vars) {
+      return "太多了。第一只倒下之后，黑压压的尸群把你彻底淹了过来——你抡倒一只，又有三只挤上来，指甲在你背上、胳膊上接连剐出血口子。\n\
+你放弃了清场的念头，抱着头且战且退，一路退回辅路。它们追出门，<span class='rot'>拖沓的脚步声在身后追了一路</span>。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "逃回辅路深处", nextScene: "建平-后门辅路", effect: updateTime(1) }
     ]
   },
 
@@ -1489,10 +1548,8 @@ Object.assign(storyData, {
           {
             text: "输入你看到的颜色分布",
             input: { placeholder: "例如：3红2蓝" },
-            condition: checkFlashAnswer,
             effect: {  },
-            nextScene: "建平-挹芬楼-1F-西侧走廊-清场",
-            elseScene: "结局-挹芬楼失守",
+            nextScene: flashCombatRouter("建平-挹芬楼-1F-西侧走廊-清场", "建平-挹芬楼-1F-西侧走廊-受伤", "结局-挹芬楼失守"),
             timeout: 12000,
             timeoutScene: "结局-挹芬楼失守"
           }
@@ -1506,6 +1563,19 @@ Object.assign(storyData, {
         { text: "去东侧走廊", nextScene: "建平-挹芬楼-1F-东侧走廊", effect: updateTime(1) }
       ];
     }
+  },
+
+  // 受伤档：电梯间的丧尸没清干净，且战且退回北门（走廊战斗入场 onEnter 已 +1 追兵，此处不再加）
+  "建平-挹芬楼-1F-西侧走廊-受伤": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼1F西侧走廊"; return hurtFleeOnEnter({ chase: 0, time: 1 })(vars); },
+    text: function(vars) {
+      return "电梯间的丧尸一波接一波——你打退两只，第三只的指甲还是剐进了你的小臂。走廊里挤进来的越来越多，<span class='warn'>清不完了</span>。\n\
+你捂着胳膊且战且退，退出大楼北门。<span class='rot'>嘶吼声在门厅里回荡着追出来</span>。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "退出挹芬楼北门", nextScene: "建平-挹芬楼北门", effect: updateTime(1) }
+    ]
   },
 
   "建平-挹芬楼-1F-西侧走廊-清场": {
@@ -1545,10 +1615,8 @@ Object.assign(storyData, {
           {
             text: "输入你看到的颜色分布",
             input: { placeholder: "例如：3红2蓝" },
-            condition: checkFlashAnswer,
             effect: {  },
-            nextScene: "建平-挹芬楼-1F-东侧走廊-清场",
-            elseScene: "结局-挹芬楼失守",
+            nextScene: flashCombatRouter("建平-挹芬楼-1F-东侧走廊-清场", "建平-挹芬楼-1F-东侧走廊-受伤", "结局-挹芬楼失守"),
             timeout: 12000,
             timeoutScene: "结局-挹芬楼失守"
           }
@@ -1561,6 +1629,19 @@ Object.assign(storyData, {
         { text: "去西侧走廊", nextScene: "建平-挹芬楼-1F-西侧走廊", effect: updateTime(1) }
       ];
     }
+  },
+
+  // 受伤档：楼梯口和休息区方向的丧尸没清干净，且战且退回南门（入场 onEnter 已 +1 追兵）
+  "建平-挹芬楼-1F-东侧走廊-受伤": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "挹芬楼1F东侧走廊"; return hurtFleeOnEnter({ chase: 0, time: 1 })(vars); },
+    text: function(vars) {
+      return "楼梯口和休息区方向的丧尸挤成了堆——你踹翻一只，背后又被另一只剐中小臂，血顺着袖口往下淌。<span class='warn'>这走廊一时半会儿清不完</span>。\n\
+你捂着伤口退出大楼南门。<span class='rot'>门厅里的嘶吼声一路追出来</span>，直到你退到门外老远才淡下去。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "退出挹芬楼南门", nextScene: "建平-挹芬楼南门", effect: updateTime(1) }
+    ]
   },
 
   "建平-挹芬楼-1F-东侧走廊-清场": {
@@ -1908,12 +1989,29 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "建平-致真楼-1F-老吴杂物室-击杀",
-        elseScene: "结局-被老吴咬死",
+        nextScene: flashCombatRouter("建平-致真楼-1F-老吴杂物室-击杀", "建平-致真楼-1F-老吴杂物室-战斗-受伤", "结局-被老吴咬死"),
         timeout: 12000,
         timeoutScene: "结局-被老吴咬死"
       }
+    ]
+  },
+
+  // 受伤档：同样制服老吴、同样拿到钥匙串和管线图，代价是挂彩
+  "建平-致真楼-1F-老吴杂物室-战斗-受伤": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      var e = hurtWinOnEnter({ time: 1 })(vars);
+      vars._laowuKilled = true;
+      if (!vars.hasKeyRing) { vars.hasKeyRing = true; vars.itemCount = vars.itemCount + 1; }
+      if (!vars.hasPipelineMap) { vars.hasPipelineMap = true; vars.itemCount = vars.itemCount + 1; }
+      return e;
+    },
+    text: function(vars) {
+      return "老吴比你想象的难缠——<span class='crit'>他的指甲在你前臂上剐出三道血口子</span>，你才把他按倒在地，用杂物堆里的铁丝捆了个结实。\n\
+你从他身上取下钥匙串，又捡起地上那张管线图。他不再动弹了。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "回杂物室", nextScene: "建平-致真楼-1F-老吴杂物室", effect: updateTime(1) }
     ]
   },
 
@@ -2693,12 +2791,27 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "建平-食堂-煤气阀-关阀",
-        elseScene: "结局-煤气中毒",
+        nextScene: flashCombatRouter("建平-食堂-煤气阀-关阀", "建平-食堂-煤气阀-战斗-受伤", "结局-煤气中毒"),
         timeout: 10000,
         timeoutScene: "结局-煤气中毒"
       }
+    ]
+  },
+
+  // 受伤档：还是把关阀做成了（煤气中毒结局只留给 ≥3 偏差/超时），代价是挂彩
+  "建平-食堂-煤气阀-战斗-受伤": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      var e = hurtWinOnEnter({ time: 1 })(vars);
+      vars._chefCleared = true;
+      return e;
+    },
+    text: function(vars) {
+      return "厨师丧尸比看上去难缠——你被它的指甲剐中小臂，<span class='crit'>火烧一样</span>。你忍着疼把它踹开，扑到阀门前用力拧紧。\n\
+“嘶——”漏气声渐渐停息。空气里那股煤气味淡了下去。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "回后厨", nextScene: "建平-食堂-后厨", effect: updateTime(1) }
     ]
   },
 
@@ -2760,10 +2873,8 @@ Object.assign(storyData, {
           {
             text: "输入你看到的颜色分布",
             input: { placeholder: "例如：3红2蓝" },
-            condition: checkFlashAnswer,
             effect: {  },
-            nextScene: "建平-宿舍-内部-清场",
-            elseScene: "结局-宿舍失守",
+            nextScene: flashCombatRouter("建平-宿舍-内部-清场", "建平-宿舍-内部-受伤", "结局-宿舍失守"),
             timeout: 12000,
             timeoutScene: "结局-宿舍失守"
           }
@@ -2774,6 +2885,19 @@ Object.assign(storyData, {
         { text: "回宿舍门口", nextScene: "建平-宿舍-门口", effect: updateTime(1) }
       ];
     }
+  },
+
+  // 受伤档：走廊里的丧尸清不完，退回楼门口（入场 onEnter 已 +1 追兵，此处不再加）
+  "建平-宿舍-内部-受伤": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) { vars.currentPos = "宿舍内部"; return hurtFleeOnEnter({ chase: 0, time: 1 })(vars); },
+    text: function(vars) {
+      return "走廊里的丧尸比预想的多——你放倒两只，第三只的指甲还是剐上了你的肩头。昏暗的光线里，更多的影子从寝室门里挤出来。\n\
+<span class='warn'>清不完了。</span>你捂着肩膀退回楼门口，把门撞上。<span class='rot'>里面撞门的声音响了一阵，才慢慢停了</span>。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "退回宿舍门口", nextScene: "建平-宿舍-门口", effect: updateTime(1) }
+    ]
   },
   "建平-宿舍-内部-休息": {
     image: timeImage({
@@ -2893,13 +3017,13 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       // 转化未杀：她堵着阅览大厅
-      if (vars._lijuanTurned && !(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0)) {
+      if (vars._lijuanTurned && !(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0 || vars._visit['建平-弘渊楼-2F-李娟-战斗-受伤'] > 0)) {
         return "阅览大厅安静得反常。\n远处落地窗边——那个人影不见了。\n长桌上的一只保温杯摔在地上，滚出老远。\n你后颈的汗毛竖了起来。" + describeZombieWave(vars);
       }
       var desc = "弘渊楼 2 楼的阅览大厅。右侧一排大窗透进柔和的天光，窗台上的盆栽还没枯透。\n\
 一组组圆桌和彩色座椅还保持着有人来过的样子——摊开的书本、歪倒的水杯，像是主人只是暂时走开。近处这张桌上，立着几只保温杯。\n\
 左侧的台阶坐区上，横七竖八靠着几个背包和袋子，一直没有人来认领。";
-      if ((vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0)) {
+      if ((vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0 || vars._visit['建平-弘渊楼-2F-李娟-战斗-受伤'] > 0)) {
         desc += "\n远处落地窗边，空了。";
       } else {
         desc += "\n远处落地窗边，坐着一个人影。";
@@ -2908,7 +3032,7 @@ Object.assign(storyData, {
       return desc + describeZombieWave(vars);
     },
     choices: function(vars) {
-      if (vars._lijuanTurned && !(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0)) {
+      if (vars._lijuanTurned && !(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0 || vars._visit['建平-弘渊楼-2F-李娟-战斗-受伤'] > 0)) {
         return [
           { text: function(v) { return hasMeleeWeapon(v) ? "握紧" + meleeWeaponName(v) + "迎战！" : "握紧拳头迎战！"; }, nextScene: "建平-弘渊楼-2F-李娟-战斗" },
           { text: "且战且退，退回楼梯", nextScene: "建平-弘渊楼-楼梯", effect: function(v) { v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return updateTime(1)(v); } }
@@ -3068,12 +3192,29 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "建平-弘渊楼-2F-李娟-解脱",
-        elseScene: "结局-阅览室的常客",
+        nextScene: flashCombatRouter("建平-弘渊楼-2F-李娟-解脱", "建平-弘渊楼-2F-李娟-战斗-受伤", "结局-阅览室的常客"),
         timeout: 11000,            // 4色闪完约3.2秒，留约7.8秒输入
         timeoutScene: "结局-阅览室的常客"
       }
+    ]
+  },
+
+  // 受伤档：同样让她停下（解脱），代价是挂彩；门控与"解脱"同权（走廊不再刷新她）
+  "建平-弘渊楼-2F-李娟-战斗-受伤": {
+    image: hyLib2FImg,
+    onEnter: hurtWinOnEnter({ time: 1 }),
+    text: function(vars) {
+      var move = hasMeleeWeapon(vars)
+        ? "你用" + meleeWeaponName(vars) + "挡开她的扑击"
+        : "你侧身挡开她的扑击";
+      var tail = vars._visit["建平-弘渊楼-1F-借阅处-饭卡"]
+        ? "落地窗外的树影落在她脸上。你忽然想起楼下借阅处玻璃板下那张借书证——李娟。"
+        : "落地窗外的树影落在她脸上。台阶上那排背包，还在等人认领。";
+      var segs = [move + "——<span class='crit'>她的指甲还是在你小臂上剐出三道血痕</span>。她撞在落地窗上，缓缓滑坐下去，不动了。", tail, hurtCostText(vars)];
+      return segs;
+    },
+    choices: [
+      { text: "退回阅览大厅", nextScene: "建平-弘渊楼-2F", effect: updateTime(1) }
     ]
   },
 
@@ -3245,7 +3386,7 @@ Object.assign(storyData, {
       } else {
         desc += "\n“食堂后厨的煤气漏了，现在那边呛得要死，我都不敢去了。得先把煤气阀关了才行——那玩意儿在后厨的小隔间里，好像还有几只厨师的丧尸堵在那儿。”";
       }
-      if (!(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0) && !vars._lijuanTurned) {
+      if (!(vars._visit['建平-弘渊楼-2F-李娟-解脱'] > 0 || vars._visit['建平-弘渊楼-2F-李娟-战斗-受伤'] > 0) && !vars._lijuanTurned) {
         desc += "\n“对了，”他忽然想起什么，“2楼阅览区那个女生，一直坐在落地窗边上。前几天我下楼拿泡面，她还会应人两声……现在不行了。你别离她太近。”";
       }
       return desc;
