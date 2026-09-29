@@ -126,7 +126,7 @@ Object.assign(storyData, {
         var phoneLine = fromKitchen ? "你摁亮手机想照个亮——屏幕闪了一下就黑了，电量见底。\n" : "";
         return head + phoneLine + "你只能摸黑往前挪，脚下踩到一只滚落的菜筐，差点绊倒。前方好像分出了岔路，但你什么也看不清。";
       }
-      var doorLine = fromKitchen ? "门在身后<span class='sfx'>咔哒</span>一声合上——" : "";
+      var doorLine = fromKitchen ? "门在身后咔哒一声合上——" : "";
       return head + doorLine + "你面前一片漆黑。\n你摸黑往前走了几步，脚下踩到一只滚落的菜筐，差点绊倒。手边似乎摸到了几面墙，前方好像分出了岔路，但你什么也看不清。";
     },
     choices: [

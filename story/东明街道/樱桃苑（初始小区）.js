@@ -794,7 +794,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     ]
   },
 
-  "结局-嘎<span class='sfx'>吱嘎吱</span>": {
+  "结局-嘎吱嘎吱": {
     image: "images/zombieKnockYouDown.webp",
     onEnter: {shake: true},
     text: "你一脚踢出，<span class='crit'>被丧尸一口咬住</span>，你被咬死了。\n\
