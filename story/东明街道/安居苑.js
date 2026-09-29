@@ -1843,13 +1843,22 @@ Object.assign(storyData,
       // 整理完腾出空位 → 直接进拿取节点完成这一次拾取（与「小广场→滑板车」同一模式）
       onEnter: { set: { positionAfterOperation: "三林安居苑-7号楼-401-拿泡面" } },
       text: function(vars) {
-        var desc = "屋里拉着窗帘，空气里有一股密闭多日的酸腐味。你推开的这扇门背后，是一个末日里的保险箱——也是一个坟墓。\n\
+        var l = vars._lastScene || "";
+        // 从「破门」进来 = 首次进屋，才播字条那段；从屋内子节点折返 = 回到屋里，不重播开篇
+        var back = l.indexOf("三林安居苑-7号楼-401-") === 0 && l !== "三林安居苑-7号楼-401-破门";
+        var desc = back
+          ? "你回到401屋里，目光又落回墙角。"
+          : "屋里拉着窗帘，空气里有一股密闭多日的酸腐味。你推开的这扇门背后，是一个末日里的保险箱——也是一个坟墓。\n\
 卧室的门开着。一个人蜷在床上，被子拉到胸口，像睡着了一样，只是露在被外的手已经干瘪发灰。床头柜上摆着一排空了的药板，和一张压在杯子底下的字条。\n\
 你展开字条，上面的字迹越到后面越抖：\n\
 “第三天被咬的。不敢去医院，也不敢死在外面。吃的都在墙角，留给后来的人。别学我。”\n\
 你顺着他指的方向看去——墙角整整齐齐码着半箱泡面。他囤够了一个月的口粮，却没能熬过第一周。";
         if (vars._flat401NoodleLeft > 0) {
-          desc += "\n那半箱泡面还剩 " + vars._flat401NoodleLeft + " 包。";
+          if (vars._visit['三林安居苑-7号楼-401-划开纸箱'] > 0) {
+            desc += "\n那半箱泡面还剩 " + vars._flat401NoodleLeft + " 包——箱口的胶带已经被你划开了。";
+          } else {
+            desc += "\n那半箱泡面封在纸箱里，胶带缠了好几层，接头处压得死死的。";
+          }
         } else {
           desc += "\n墙角的泡面已经被你搬空了，只剩那张字条还压在杯子底下。";
         }
@@ -1858,12 +1867,24 @@ Object.assign(storyData,
       choices: function(vars) {
         var cs = [];
         if (vars._flat401NoodleLeft > 0) {
-          cs.push({
-            text: "拿走一包泡面（还剩 {_flat401NoodleLeft} 包）",
-            condition: "itemCount < bagVolume",
-            nextScene: "三林安居苑-7号楼-401-拿泡面",
-            elseScene: "整理整理"
-          });
+          // 箱子是否已被划开：进去过「划开纸箱」节点就算一次（_visit 记录）。
+          // 一旦开过箱，此后即使割锯工具丢了，也能继续从敞开的箱里拿——不必反复校验工具。
+          var opened = vars._visit['三林安居苑-7号楼-401-划开纸箱'] > 0;
+          if (!opened) {
+            var tool = cuttingToolName(vars);
+            if (tool) {
+              cs.push({ text: "用" + tool + "划开纸箱", nextScene: "三林安居苑-7号楼-401-划开纸箱" });
+            } else {
+              cs.push({ text: "试着徒手撕开纸箱", nextScene: "三林安居苑-7号楼-401-撕不开" });
+            }
+          } else {
+            cs.push({
+              text: "拿走一包泡面（还剩 {_flat401NoodleLeft} 包）",
+              condition: "itemCount < bagVolume",
+              nextScene: "三林安居苑-7号楼-401-拿泡面",
+              elseScene: "整理整理"
+            });
+          }
         }
         cs.push({ text: "离开", nextScene: "三林安居苑-7号楼-4楼" });
         return cs;
@@ -1887,6 +1908,37 @@ Object.assign(storyData,
       },
       choices: [
         { text: "继续", nextScene: "三林安居苑-7号楼-401" }
+      ]
+    },
+
+    "三林安居苑-7号楼-401-划开纸箱": {
+      image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-401.webp */
+      // 开箱是一次性事件：进过本节点即 _visit['三林安居苑-7号楼-401-划开纸箱'] > 0。
+      // 此后即便玩家丢掉了割锯工具，也能继续从敞开的箱里拿泡面（不必再校验工具）。
+      onEnter: updateTime(2, { set: { positionAfterOperation: "三林安居苑-7号楼-401-拿泡面" } }),
+      text: function(vars) {
+        return "你把纸箱拖到窗边，借着窗帘缝里漏进来的一点光，用" + (cuttingToolName(vars) || "刀片") + "贴着胶带接缝划进去，一圈一圈把封口挑开。胶带<span class='sfx'>啪</span>地崩断，箱盖弹起——里面整整齐齐码着泡面，塑封都还是完好的。\n\
+<span class='sys'>【系统提示】纸箱已划开，可以取泡面了。</span>";
+      },
+      choices: [
+        {
+          text: "拿走一包泡面",
+          condition: "itemCount < bagVolume",
+          nextScene: "三林安居苑-7号楼-401-拿泡面",
+          elseScene: "整理整理"
+        },
+        { text: "先不拿", nextScene: "三林安居苑-7号楼-401" }
+      ]
+    },
+
+    "三林安居苑-7号楼-401-撕不开": {
+      image: "images/placeholder.png", /* TODO: images/安居苑/7号楼-401.webp */
+      // 徒手失败：白费力气，扣 1 点体力（体力见底会走全局触发器「结局-体力耗尽」，与全项目扣体力惯例一致）
+      onEnter: updateTime(1, { add: { strength: -1 } }),
+      text: "你捏住胶带接头往外使劲——缠了好几层的胶带绷得笔直，指尖一滑就脱开了。你又换了几个角度，连抠带掀，指甲劈了一道口子，箱子连一道褶都没起，倒是把自己累得直喘。\n\
+<span class='sys warn'>【系统提示】徒手撕不开——需要美工刀这类能割开胶带的东西。体力-1，当前体力：{strength}。</span>",
+      choices: [
+        { text: "算了", nextScene: "三林安居苑-7号楼-401" }
       ]
     },
 

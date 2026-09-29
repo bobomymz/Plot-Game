@@ -1,17 +1,24 @@
 #!/usr/bin/env node
 // -*- coding: utf-8 -*-
-// 「三林安居苑-7号楼-401」半箱泡面改造自测。
-// 改造：原「收下补给先吃一顿（体力+5，一次性）」→「可拿取，最多 3 包」，复用 instantNoodle 变量。
+// 「三林安居苑-7号楼-401」半箱泡面改造自测（v2：加割锯工具门槛）。
+// 改造史：
+//   v1 原「收下补给先吃一顿（体力+5，一次性）」→「可拿取，最多 3 包」，复用 instantNoodle 变量。
+//   v2 加工具门槛：须割锯类工具（cuttingToolName：美工刀>匕首>斧头>螺丝刀）才能划开纸箱；
+//      无工具 → 徒手撕不开 + 扣体力；开箱是一次性事件，用 _visit['…-划开纸箱'] 判定，
+//      开箱后即便丢了工具也能继续拿。
 // 迷你引擎忠实复刻 engine.js 的 renderChoices / checkCondition / applyEffect / interpolateDisplay 语义。
 // 验证：
-//   ① 新开局 _flat401NoodleLeft = 3，401 屋里可见拿取选项
-//   ② 连拿 3 包：instantNoodle / itemCount 同步 +1，世界库存递减，拿空后 _flat401 → 2
-//   ③ 拿空后选项消失、屋内文案切「搬空了」
-//   ④ 4 楼走廊文案按 _flat401 三态分流（0 未破 / 1 有剩 / 2 搬空）
-//   ⑤ 背包满走 elseScene（整理整理）→ **不执行选项 effect**（engine.js:875 实测），
+//   ① 新开局 _flat401NoodleLeft = 3；无工具 → 只见「试着徒手撕开纸箱」，不见拿取选项
+//   ② 有工具 → 见「用<工具>划开纸箱」；无工具 → 撕不开并扣 1 体力
+//   ③ 开箱（进「划开纸箱」节点）后 _visit 记录生效 → 屋里改用拿取选项；屋内文案切「胶带已被你划开」
+//   ④ **开箱后丢工具仍能拿**（核心需求：开箱一次性，不反复校验工具）
+//   ⑤ 连拿 3 包：instantNoodle / itemCount 同步 +1，世界库存递减，拿空后 _flat401 → 2
+//   ⑥ 拿空后选项消失、屋内文案切「搬空了」
+//   ⑦ 4 楼走廊文案按 _flat401 三态分流（0 未破 / 1 有剩 / 2 搬空）
+//   ⑧ 背包满走 elseScene（整理整理）→ **不执行选项 effect**（engine.js:875 实测），
 //      故返回点由入口场景 onEnter 预设；整理出口插值后必须落在拿取节点
-//   ⑥ 旧档迁移 _flat401>=2 ⇒ _flat401NoodleLeft=0（与 engine.js 同源校验 + 顺序断言）
-//   ⑦ 拿取节点文案（还剩 N 包 / 最后一包）
+//   ⑨ 旧档迁移 _flat401>=2 ⇒ _flat401NoodleLeft=0（与 engine.js 同源校验 + 顺序断言）
+//   ⑩ 入口描述分流：从「破门」进来播字条（首次），从屋内子节点折返不重播开篇
 // 用法：node tools/flat401_noodle_selftest.js
 "use strict";
 const fs = require('fs'), vm = require('vm'), path = require('path');
@@ -149,23 +156,111 @@ function ok(name, cond, extra) {
 
 const ROOM = '三林安居苑-7号楼-401';
 const PICK = '三林安居苑-7号楼-401-拿泡面';
+const OPEN = '三林安居苑-7号楼-401-划开纸箱';
+const TEAR = '三林安居苑-7号楼-401-撕不开';
 const CORRIDOR = '三林安居苑-7号楼-4楼';
+const BREAK = '三林安居苑-7号楼-401-破门';
 const pick3 = '拿走一包泡面（还剩 3 包）';
+const openLabel = '用美工刀划开纸箱';
+const tearLabel = '试着徒手撕开纸箱';
 
-console.log('== S1 新开局：401 半箱泡面可拿取（最多 3 包） ==');
+console.log('== S0 节点齐全 + 世界库存初值 ==');
+{
+  ok('场景表含「划开纸箱」节点', !!sd[OPEN]);
+  ok('场景表含「撕不开」节点', !!sd[TEAR]);
+  ok('_variables 声明 _flat401NoodleLeft 且初值 3', (sd._variables || {})._flat401NoodleLeft === 3, (sd._variables || {})._flat401NoodleLeft);
+  ok('「划开纸箱」出口回 401 屋里', sd[OPEN].choices.some(c => c.nextScene === ROOM));
+  ok('「撕不开」出口回 401 屋里', sd[TEAR].choices.some(c => c.nextScene === ROOM));
+}
+
+console.log('== S1 新开局（无工具）：徒手撕不开，不见拿取选项 ==');
 {
   const st = newState({ itemCount: 0 });
   enter(ROOM, st);
   ok('新开局 _flat401NoodleLeft = 3', st._flat401NoodleLeft === 3, st._flat401NoodleLeft);
   ok('新开局 _flat401 = 0（未破门）', st._flat401 === 0, st._flat401);
-  ok('401 屋里可见「拿走一包泡面（还剩 3 包）」', has(st, ROOM, pick3));
-  ok('401 文案写明还剩 3 包', /那半箱泡面还剩 3 包/.test(String(textOf(ROOM, st))), textOf(ROOM, st));
+  ok('无工具：见「试着徒手撕开纸箱」', has(st, ROOM, tearLabel));
+  ok('无工具：不见「用美工刀划开纸箱」', !has(st, ROOM, openLabel));
+  ok('无工具：不见拿取选项', !hasRe(st, ROOM, /拿走一包泡面/));
+  ok('文案写明泡面封在纸箱里', /那半箱泡面封在纸箱里/.test(String(textOf(ROOM, st))), textOf(ROOM, st));
   ok('不再有旧选项「收下墙角的补给，先踏踏实实吃一顿」', !hasRe(st, ROOM, /踏踏实实吃一顿/));
 }
 
-console.log('== S2 连拿 3 包：变量 / 占格 / 世界库存同步 ==');
+console.log('== S1b 有工具：见「用<工具>划开纸箱」 ==');
 {
-  let st = newState({ itemCount: 0 });
+  const st = newState({ itemCount: 0, hasCutter: true });
+  enter(ROOM, st);
+  ok('有美工刀：见「用美工刀划开纸箱」', has(st, ROOM, openLabel));
+  ok('有美工刀：不见徒手选项', !has(st, ROOM, tearLabel));
+}
+{
+  // 工具优先级：无美工刀但持螺丝刀 → 显示螺丝刀
+  const st = newState({ itemCount: 0, hasCutter: false, hasScrewdriver: true });
+  enter(ROOM, st);
+  ok('仅螺丝刀：见「用螺丝刀划开纸箱」', has(st, ROOM, '用螺丝刀划开纸箱'));
+}
+{
+  // 铁管/拐杖/拖把杆不算割锯工具（cuttingToolName 不含），应仍走徒手
+  const st = newState({ itemCount: 0, hasIronPipe: true, hasCane: true, hasMopHandle: true });
+  enter(ROOM, st);
+  ok('只持铁管/拐杖/拖把杆：不算割锯工具，仍徒手', has(st, ROOM, tearLabel) && !hasRe(st, ROOM, /划开纸箱/));
+}
+
+console.log('== S2 徒手撕不开：扣 1 体力 ==');
+{
+  const st = newState({ itemCount: 0, strength: 8 });
+  enter(ROOM, st);
+  const before = st.strength;
+  const dest = click(ROOM, st, tearLabel);
+  ok('徒手 → 进入「撕不开」节点', dest === TEAR, dest);
+  enter(dest, st);
+  ok('徒手扣 1 体力（8 → 7）', st.strength === before - 1, st.strength);
+  ok('节点文案写明体力-1', /体力-1/.test(String(textOf(TEAR, st))) && /\{strength\}/.test(sd[TEAR].text), textOf(TEAR, st));
+  ok('节点提示需要美工刀这类工具', /美工刀/.test(String(textOf(TEAR, st))) && /徒手撕不开/.test(String(textOf(TEAR, st))));
+  ok('撕不开后世界库存不变（箱子没开）', st._flat401NoodleLeft === 3, st._flat401NoodleLeft);
+  // 回屋后仍是徒手（箱未开）
+  enter(ROOM, st);
+  ok('撕不开后回屋：仍只见徒手选项', has(st, ROOM, tearLabel) && !hasRe(st, ROOM, /拿走一包泡面/));
+}
+
+console.log('== S3 划开纸箱：_visit 记录 → 屋里改用拿取选项 ==');
+{
+  const st = newState({ itemCount: 0, hasCutter: true });
+  enter(ROOM, st);
+  const dest = click(ROOM, st, openLabel);
+  ok('划开纸箱 → 进入「划开纸箱」节点', dest === OPEN, dest);
+  enter(dest, st);
+  ok('开箱后 _visit[划开纸箱] = 1', st._visit[OPEN] === 1, st._visit[OPEN]);
+  ok('开箱节点文案用「美工刀」', /美工刀/.test(String(textOf(OPEN, st))), textOf(OPEN, st));
+  ok('开箱节点文案提示「纸箱已划开」', /纸箱已划开/.test(String(textOf(OPEN, st))));
+  ok('开箱节点可直接拿（含拿取选项）', sd[OPEN].choices.some(c => c.nextScene === PICK));
+
+  enter(ROOM, st);
+  ok('开箱后回屋：见拿取选项「还剩 3 包」', has(st, ROOM, pick3));
+  ok('开箱后回屋：不再见徒手/划开选项', !has(st, ROOM, tearLabel) && !has(st, ROOM, openLabel));
+  ok('开箱后回屋文案切「胶带已经被你划开了」', /箱口的胶带已经被你划开了/.test(String(textOf(ROOM, st))), textOf(ROOM, st));
+}
+
+console.log('== S4 核心：开箱后丢掉工具，仍能继续拿 ==');
+{
+  const st = newState({ itemCount: 1, hasCutter: true });  // 开局背包里已有美工刀（占 1 格）
+  enter(ROOM, st);
+  enter(click(ROOM, st, openLabel), st);   // 划开箱
+  ok('开箱时手持美工刀', st.hasCutter === true);
+  st.hasCutter = false;                    // 玩家把美工刀丢了
+  st.itemCount -= 1;                       // 丢工具同步腾回 1 格
+  enter(ROOM, st);
+  ok('丢工具后：仍见拿取选项', has(st, ROOM, pick3), JSON.stringify(renderChoices(ROOM, st).map(x => x.text)));
+  ok('丢工具后：不再强求工具（无徒手/划开选项）', !has(st, ROOM, tearLabel) && !has(st, ROOM, openLabel));
+  const dest = click(ROOM, st, pick3);
+  ok('丢工具后：点拿取 → 拿泡面节点', dest === PICK, dest);
+  enter(dest, st);
+  ok('丢工具后：成功拿到 1 包', st.instantNoodle === 1, st.instantNoodle);
+}
+
+console.log('== S5 连拿 3 包：变量 / 占格 / 世界库存同步 ==');
+{
+  let st = newState({ itemCount: 0, _visit: { [OPEN]: 1 } });   // 预置：箱已开
   enter(ROOM, st);
   for (let i = 1; i <= 3; i++) {
     const label = '拿走一包泡面（还剩 ' + (4 - i) + ' 包）';
@@ -187,7 +282,7 @@ console.log('== S2 连拿 3 包：变量 / 占格 / 世界库存同步 ==');
   ok('拿空后 401 文案切「搬空了」', /已经被你搬空了/.test(String(textOf(ROOM, st))), textOf(ROOM, st));
 }
 
-console.log('== S3 4 楼走廊文案按 _flat401 三态分流 ==');
+console.log('== S6 4 楼走廊文案按 _flat401 三态分流 ==');
 {
   const st0 = newState({ _flat401: 0 });
   ok('未破门：走廊写「里面没有任何动静」', /没有任何动静/.test(String(textOf(CORRIDOR, st0))));
@@ -200,9 +295,9 @@ console.log('== S3 4 楼走廊文案按 _flat401 三态分流 ==');
   ok('已搬空：走廊仍可「走进401」', has(st2, CORRIDOR, '走进401'));
 }
 
-console.log('== S4 背包满：走 elseScene，返回点由入口场景 onEnter 预设 ==');
+console.log('== S7 背包满：走 elseScene，返回点由入口场景 onEnter 预设 ==');
 {
-  const st = newState({ itemCount: 3, _bagTier: 0, _bagExtra: 0 }); // bagVolume = 3
+  const st = newState({ itemCount: 3, _bagTier: 0, _bagExtra: 0, _visit: { [OPEN]: 1 } }); // bagVolume = 3，箱已开
   enter(ROOM, st);
   ok('入口 onEnter 已预设返回点 = 拿取节点', st.positionAfterOperation === PICK, st.positionAfterOperation);
   ok('背包满时拿取选项仍渲染（有 elseScene）', hasRe(st, ROOM, /拿走一包泡面/));
@@ -227,7 +322,20 @@ console.log('== S4 背包满：走 elseScene，返回点由入口场景 onEnter 
   ok('整理后进拿取节点：itemCount 2 → 3', st.itemCount === 3, st.itemCount);
 }
 
-console.log('== S5 旧档迁移：_flat401>=2 ⇒ _flat401NoodleLeft=0 ==');
+console.log('== S8 入口描述分流：破门进来才播字条 ==');
+{
+  const stA = newState({});
+  stA._lastScene = BREAK;
+  enter(ROOM, stA);
+  ok('从破门进来：播字条开篇（含「第三天被咬的」）', /第三天被咬的/.test(String(textOf(ROOM, stA))));
+
+  const stB = newState({ _visit: { [OPEN]: 1 } });
+  stB._lastScene = PICK;
+  enter(ROOM, stB);
+  ok('从拿取节点折返：不重播开篇', /你回到401屋里/.test(String(textOf(ROOM, stB))) && !/第三天被咬的/.test(String(textOf(ROOM, stB))), textOf(ROOM, stB));
+}
+
+console.log('== S9 旧档迁移：_flat401>=2 ⇒ _flat401NoodleLeft=0 ==');
 {
   const engineSrc = fs.readFileSync(path.join(ROOT, 'engine.js'), 'utf8');
   const iMig = engineSrc.indexOf('state._flat401NoodleLeft = (state._flat401 >= 2)');
@@ -260,13 +368,9 @@ console.log('== S5 旧档迁移：_flat401>=2 ⇒ _flat401NoodleLeft=0 ==');
   ok('新档已有 _flat401NoodleLeft 时不被迁移覆盖', newSave._flat401NoodleLeft === 1, newSave._flat401NoodleLeft);
 }
 
-console.log('== S6 与既有泡面体系的关系 ==');
+console.log('== S10 与既有泡面体系的关系 ==');
 {
-  const vars = sd._variables || {};
-  ok('_variables 声明 _flat401NoodleLeft 且初值 3', vars._flat401NoodleLeft === 3, vars._flat401NoodleLeft);
-
-  // 401 与全家共用 instantNoodle 变量（同一物品），401 是第二个来源、不消耗全家世界库存
-  const st = newState({ itemCount: 0 });
+  const st = newState({ itemCount: 0, _visit: { [OPEN]: 1 } });
   enter(ROOM, st);
   const dest = click(ROOM, st, pick3);
   enter(dest, st);

@@ -12,7 +12,7 @@
 ## 背包/水瓶
 - 容量=`3+_bagTier+_bagExtra`；`bagVolume` 派生值永不 set/add；闸门 `vars._bagTier<N`/`!hasBag`。拾取四件套：`condition:"itemCount<bagVolume"`+`effect:{set,add:{itemCount:1}}`+`elseScene:"整理整理"`，新节点必须 set `positionAfterOperation`。⚠09-21 前旧档容量 4→3（`bag_migration_repro.js`）。
 - 休息整理入口：`restTidyChoice(id)`+`restTidyGuard(vars)`（utils.js，20 处）。**整理整理出口回入口场景→onEnter 重跑**，故休息 onEnter 必 guard（防重复计时/甩追兵/扣口粮/过夜跳天）；非休息入口同理。
-- ⚠⚠**引擎走 `elseScene` 时【不执行选项 `effect`】**（engine.js:875 `createChoiceButton` 实测：`if(nowCondMet){effect;nextScene} else {elseScene}`）→ 拾取类的 `positionAfterOperation` **不能放 effect**（背包满走 elseScene 即失效，整理完 `{positionAfterOperation}` 落旧值/空串→死链），**必须由入口场景 `onEnter` 预设**（既有模式：`三林安居苑-小广场` onEnter 写死 `"三林安居苑-滑板车"`）。09-29 实例：401 半箱泡面可拿取（`_flat401NoodleLeft:3`，自测 `tools/flat401_noodle_selftest.js`）。
+- ⚠⚠**引擎走 `elseScene` 时【不执行选项 `effect`】**（engine.js:875 `createChoiceButton` 实测：`if(nowCondMet){effect;nextScene} else {elseScene}`）→ 拾取类的 `positionAfterOperation` **不能放 effect**（背包满走 elseScene 即失效，整理完 `{positionAfterOperation}` 落旧值/空串→死链），**必须由入口场景 `onEnter` 预设**（既有模式：`三林安居苑-小广场` onEnter 写死 `"三林安居苑-滑板车"`）。09-29 实例：401 半箱泡面可拿取（`_flat401NoodleLeft:3`，自测 `tools/flat401_noodle_selftest.js`）；同日 v2 加**割锯工具门槛**（`cuttingToolName` 非空才可「划开纸箱」，徒手撕不开 −1 体力；开箱后 `_visit` 门控使丢工具仍可拿）。
 - 割锯工具（`cuttingToolName`）：美工刀>匕首>斧头>螺丝刀；不含铁管/拐杖/拖把杆/扫帚/钥匙。可多次打水，水瓶非紧平衡；`bottleWater` 0/1，丢弃须同清 `waterToxic`/`_hongBottleLabel`；保温杯另体系（建平弘渊楼2F，水全毒）。
 - 计数型可堆叠口粮：`instantNoodle` 0~3（全家*员工通道杂物间*纸箱，每包1格，吃=体力回满；09-28 由便利店内货架移入）、`vitaminC` ≤9；布尔改计数须同步 `FOOD_GIFTS`+`foodGiftChoices`（数字分支只扣1）。⚠字段迁移块要排在 `fillMissingDefaults` 补默认值循环**之前**（写后面=恒假死代码）。
 - **可多持物品全库仅 3 件**（09-29 审计）：`instantNoodle` 0~3、`vitaminC` ≤9（货架8+白大褂抽屉1）、`iodineSwabBox` 0~3；边界 `gunAmmo` ≤3 发（不占格）。工具+报告 `tools/stackable_items_audit.js` / `tools/可堆叠物品审计报告.md`。⚠⚠**判定可多持看【获取闸门】，不看初值类型**：`世界库存 xxxLeft>0`=真堆叠；`!flag` 或 `_visit[节点]>0` =单件（`hasInnerLining` 初值是数字却被 `_visit[收好内胆]>0` 门控 → 实际只 1 件）。世界库存型 7 个（`supermarketWaterLeft`/`vendingBottleLeft`/`newdahuiWarehouseWaterLeft`/`familyMartNoodleLeft`/`lianhuaCannedLeft`/`_iodineSwabBoxLeft`/`_vitaminCLeft`）非玩家持有。
@@ -24,6 +24,7 @@
 
 ## `_visit`/过夜/QTE/shake
 - 只读不写；`vars.x`→`(_visit['场景']>0)`，`!x`→`!_visit['场景']`；键名必须=真实场景 ID（悬空键不报错、条件恒假→选项永不出现）。改计数键名前算首达路径：全库自引用本场景 ID（引擎先自增后渲染）。
+- **一次性「开启/解锁」动作**（开箱、划胶带、撬锁）做成**独立节点**，用 `_visit['<动作节点>']>0` 记录其已发生；此后**不再校验工具**——世界状态已改变，玩家事后丢了工具也能继续操作（避免"开过箱却因丢刀而拿不了"）。实例：新达汇后勤水（`_visit['新达汇-1F后勤仓库-开箱']`）、401 半箱泡面（`_visit['三林安居苑-7号楼-401-划开纸箱']`）。
 - **入口描述差异化**：多入度节点的 text 必须按 `_lastScene` 分流（样板 `金谊广场.js` 16 处 head 变量、`长者食堂.js`）。**先把默认句改成任何来源都成立的安全句，再给特殊来源加差异化**——只追加"你之前来过"却不改首句会更矛盾（`新达汇-1F味千拉面` 教训）。子节点/多来源返回统一用"你回到X"式安全句（②回环）；**电梯/楼梯来源别播"你推开X门/走坡道"**（方位动作错位，如 `B1`/`家门外`）。审计工具 `node tools/entry_desc_audit.mjs [区域]`（报告 `tools/多入口描述审计报告.md` 第十三节）；**真 bug 已全库修完，全图仅剩 3 个 P0 = `_visit` 门控合成状态误报（人工收口）**。工具已支持：工厂节点识别（`makeXxx` 动态生成，第九~十一节）+ **前缀匹配覆盖识别**（`indexOf("前缀")`/`startsWith("前缀")`，第十三节：`coveredBy` 光搜来源名识别不了前缀写法）。⚠判定覆盖必须在**剔除 nextScene 行的源码**里搜来源名，否则大量漏检。
 - `天黑必须过夜` 29 选项；建筑类过夜点两层门槛：`showCondition` 加 `_visit['建筑内部']>0`、原 `condition`/`elseScene` 保留。场景级=`node.qte`，选项级=`choice.timeout`；工厂 `mallQTE`/`jpChaseQTE`/`travelScene`。shake 已 31 处；`applyEffect` 只认 set/add/mul。
 
