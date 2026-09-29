@@ -1119,7 +1119,7 @@ Object.assign(storyData, {
     image: "images/金谊广场/4F.webp" /* TODO: images/金谊广场/4F影院.jpg */,
     onEnter: { set: { positionAfterOperation: "金谊广场-4F", currentArea: "金谊广场", currentPlace: "金谊广场", currentPos: "4F" } },
     text: function(vars) {
-      var desc = "你来到四楼。华夏金谊影院的招牌还亮着——不知道是发电机在转还是备用电源。大厅里循环播放着一段片尾字幕，在空无一人的影院里反复回响。\n";
+      var desc = "四楼。华夏金谊影院的招牌还亮着——不知道是发电机在转还是备用电源。大厅里循环播放着一段片尾字幕，在空无一人的影院里反复回响。\n";
       desc += "放映厅的门半开着，你能看到座椅上坐着几个人——不，是几具尸体。他们躲进来等电影，最后死在了座位上。\n";
       desc += "影院旁边是一家坂吉屋，后厨的门虚掩着。";
       if (!vars.hasBottle) {

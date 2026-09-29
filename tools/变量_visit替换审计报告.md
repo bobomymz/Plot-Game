@@ -6,14 +6,14 @@
 
 ## 一、总览
 
-- `core.js _variables` 定义变量:**286** 个
-- 有剧情写入点的:258 个;无写入点:28 个(其中疑似完全未使用 10 个,见附录A)
-- **可直接替换(A1):27 个**;拆子场景后可替换(A2):2 个;持有类需人工复核(A3):14 个
-- 可替换合计 29 个(不含 A3)——替换后 `_variables` 最多可减少 29 个定义(10%)
+- `core.js _variables` 定义变量:**309** 个
+- 有剧情写入点的:269 个;无写入点:40 个(其中疑似完全未使用 9 个,见附录A)
+- **可直接替换(A1):31 个**;拆子场景后可替换(A2):2 个;持有类需人工复核(A3):9 个
+- 可替换合计 33 个(不含 A3)——替换后 `_variables` 最多可减少 33 个定义(11%)
 - 疑似"写而不读"(写入后无任何读取,直接删即可):Z 级 11 个(见第〇章)
-- B级(单向布尔但被规则引擎/多场景写入引用,需重构):21 个
-- C级(不建议替换):175 个;D级(计数型,可改 _visit 次数):8 个
-- 剧情代码中已有 `_visit['…']` 用法:455 处(惯例已确立,A级替换与既有写法一致)
+- B级(单向布尔但被规则引擎/多场景写入引用,需重构):23 个
+- C级(不建议替换):184 个;D级(计数型,可改 _visit 次数):9 个
+- 剧情代码中已有 `_visit['…']` 用法:468 处(惯例已确立,A级替换与既有写法一致)
 
 
 ## 〇、疑似"写而不读"的变量(可直接删除,无需替换,共 11 个)
@@ -35,7 +35,7 @@
 | `_jinbaoFed` | 张江（华大半导体 · 洪金宝 | 谎言线的加班补给是否已给过（泡面/功能饮料） | 张江-华大-动力站-谎言 |
 | `shoes` | 张江（华大半导体 · 洪金宝 | 鞋子 | 金谊广场-2F-换装 |
 
-## 二、A1级:可直接替换(共 27 个)
+## 二、A1级:可直接替换(共 31 个)
 
 全部满足:初始 false → 只写 true 一次 → 无复位 → 写入点在专用子场景 → 未被 `_reactive/_globalTriggers/_screenEffects/_caps` 引用。
 替换写法:删除变量定义,原 set true 的 effect 删除,所有读点改为 `_visit['写入场景'] > 0`(若原文是"到过之后再来"分支,注意 `> 1` 语义)。
@@ -44,6 +44,7 @@
 | --- | --- | --- | --- | --- |
 | `_paraffinTaken` | 场景状态 | 益丰大药房库房石蜡油是否已被拿走（一次性守卫；交易掉后不可重拿） | 益丰大药房-左边货架翻找 | 1 |
 | `_supermarketCompromised` | 场景状态 | 联华超市地下室是否已暴露不再安全 | 联华超市-地下室-撬锁 | 2 |
+| `_metGaoAtMall` | 上实南校临时道具（不占背包容 | 是否已在新达汇喷泉广场遇过高锦睿（喷泉广场-高锦睿-聊 置 true；华为店 | 新达汇-喷泉广场-高锦睿-聊 | 2 |
 | `_jinbaobeiFrontOpen` | 上实南校临时道具（不占背包容 | 金宝贝前门是否已用钥匙牌打开 | 新达汇-3F金宝贝早教中心 | 1 |
 | `_wiredCorrectly` | 上实南校临时道具（不占背包容 | 新达汇B1停车场：配电箱接线是否已恢复供电（车库检查进度，_garageOp | 新达汇-B1停车场-接线成功 | 1 |
 | `_metPETeacher` | 上实南校临时道具（不占背包容 | 上实南校2号楼走廊：是否已遭遇体育老师丧尸（走廊再次进入的差异化承接） | 上实南校-2号楼走廊 | 1 |
@@ -61,11 +62,14 @@
 | `_renjiLabCleared` | 仁济医院 - 状态 | 检验科守卫丧尸是否清除 | 仁济南院-检验科-守卫战-胜利 | 2 |
 | `_renjiWardCleared` | 仁济医院 - 状态 | 住院部丧尸是否清除 | 仁济南院-住院部走廊-胜利 | 2 |
 | `_morgueCleared` | 仁济医院 - 状态 | 太平间黑皮丧尸是否处理 | 仁济南院-太平间-黑皮丧尸-胜利 | 1 |
+| `_rjLitGlass` | 仁济医院 - 状态 | 车库深处：废车碎玻璃已知（照亮=知道绕开；踩过一次也置真=学会） | 仁济南院-地下停车场-踩到碎玻璃 | 1 |
 | `_xinDead` | 建平中学 - 状态 | 忻老师是否已被丧尸杀死（带 ch>=3 尸潮进远翔楼3F物理办公室 → “遇 | 建平-远翔楼-3F-物理办公室-遇害 | 1 |
 | `_xinScratched` | 建平中学 - 状态 | 忻老师江湾挂彩标记（环境楼楼梯，全分支为真；③再叠逃窗深伤） | 复旦江湾-环境科学楼-楼梯 | 2 |
 | `_xinTurned` | 建平中学 - 状态 | ③④不给药延迟引信：进物理办公室 = 被咬死结局 | 结局-变了的忻老师 | 0 |
 | `_lijuanCupTold` | 建平中学 - 状态 | 李娟清醒时是否指认过自己的保温杯（解锁桌面喝水双选项陷阱） | 建平-弘渊楼-2F-李娟 | 1 |
 | `_drawerVitaminTaken` | 建平中学 - 状态 | 击杀白大褂后抽屉里那瓶维生素是否已收进背包（一次性，防重复刷） | 益丰大药房-击杀 | 1 |
+| `_linghaiNetworked` | 建平中学 - 状态 | 灵海社活动室大屏幕是否已连上校园内网（密码 zhktzhkt，一次性） | 建平-行政楼-3F-灵海社活动室-课程表 | 1 |
+| `_linghaiBoardKicked` | 建平中学 - 状态 | 活动室那块"智慧课堂"白板是否已被踹开（一次性搞笑） | 建平-行政楼-3F-灵海社活动室-踹白板 | 1 |
 | `_airlockAlarmZombie` | 张江（华大半导体 · 洪金宝 | 风淋初级警报是否引来丧尸进外走廊（此后连廊多一场遭遇） | 张江-华大-风淋舱-强启失败 | 1 |
 | `_airlockAlarmRang` | 张江（华大半导体 · 洪金宝 | 风淋警报是否刚在本场景响过（强启失败场景 text 分支用，读后由下次进入覆 | 张江-华大-风淋舱-强启失败 | 1 |
 | `_fangDieselGiven` | 张江（华大半导体 · 洪金宝 | 方姐的柴油交易是否已给过（张江还有活人的消息换，一次性） | 菜市场-交易-柴油 | 1 |
@@ -80,34 +84,30 @@
 | `_sleepingZombieGone` | 场景状态 | 小区道路椅子上躺着的那个丧尸走了没有 | 反杀老6 | 1 |
 | `_xinPillGiven` | 建平中学 - 状态 | ③④已把无标签药丸给忻老师（整理整理里无提示选项，作者已拍板） | 整理整理 | 1 |
 
-## 四、A3级:持有/物品线索类,人工复核(共 14 个)
+## 四、A3级:持有/物品线索类,人工复核(共 9 个)
 
 静态上是单向布尔,但语义是"背包/身上是否拥有某物"。其中**占背包**的绝不能用 _visit(丢弃/容量逻辑依赖独立变量);
 **不占背包的钥匙/线索类**(如门禁卡、报告、手机)当前没有丢弃逻辑,替换在机械上可行,但会让"拥有物品"耦合在"到过拾取场景"上——以后若加"被没收/用掉"剧情会断,建议保留。
 
 | 变量 | 分组 | 说明(core.js注释) | 写入场景 | 引用文件数 |
 | --- | --- | --- | --- | --- |
-| `_hasCampusKey` | 上实南校临时道具（不占背包容 | 员工通道钥匙串（教务室铁皮柜割锁获得，教学楼走员工通道下楼用） | 上实南校-教务室-开柜 | 1 |
 | `_hasThermometer` | 上实南校临时道具（不占背包容 | 温度计（化学实验室取，给小赵测温判断是否发炎） | 上实南校-化学实验室-面具有 | 1 |
 | `_hasPoliceMap` | 常规物品 | 是否掌握去警察局的穿行路线（金谊广场陈默地图，解锁上实南校北段车阵） | 金谊广场-停车场-救完 | 1 |
-| `hasDoorKey2` | 钥匙 | 是否有门钥匙2（新达汇B1配电房黄铜钥匙，王建国遗物） | 新达汇-3F后勤走廊-王建国的口袋 | 1 |
-| `hasDoorKey3` | 钥匙 | 是否有门钥匙3（新达汇3F金宝贝前门钥匙牌，配电房抽屉） | 新达汇-B1配电房-抽屉 | 1 |
-| `hasRenjiCard` | 钥匙 | 是否有仁济检验科门禁卡（安居苑203室双肩包夹层，钥匙类） | 三林安居苑-8号楼-203室-门禁卡 | 2 |
 | `hasWangPhone` | 钥匙 | 王知筠手机（仁济检验科） | 仁济南院-检验科-手机 | 2 |
 | `hasWangNotebook` | 钥匙 | 王知筠实验记录本（仁济检验科） | 仁济南院-检验科-记录本 | 1 |
 | `hasMercuryReport` | 钥匙 | 检测报告备份（仁济太平间） | 仁济南院-太平间-报告 | 1 |
 | `hasPipelineMap` | 建平中学 - 状态 | 管线图（老吴杂物室，"水有毒"真相线索） | 建平-致真楼-1F-老吴杂物室-搜尸体 | 1 |
-| `hasKeyRing` | 建平中学 - 状态 | 钥匙串（老吴身上，开工具间/教室/阀门箱） | 建平-致真楼-1F-老吴杂物室-搜尸体 | 1 |
 | `_hasFabKeycard` | 张江（华大半导体 · 洪金宝 | fab 门禁卡（科创老师复制的华大访客卡，进厂唯一途径） | 张江-AI岛-机房-长谈给卡 | 1 |
 | `_hasFriendPhoto` | 张江（华大半导体 · 洪金宝 | 曹睿泽与洪金宝的合照（不占背包，可给老师/洪金宝看） | 张江-上科大-宿舍-合照 | 1 |
 | `_hasTestReport` | 张江（华大半导体 · 洪金宝 | 上海市检测中心的盖章报告（不占背包，L3物证） | 张江-检测中心-制服 | 1 |
 
-## 五、B级:需先重构(共 21 个)
+## 五、B级:需先重构(共 23 个)
 
 单向布尔,但写入点分散在多个场景,或被规则引擎(_reactive 等)引用。替换前需先收敛写入点;被规则引用的改动牵涉 core.js 规则层,优先级放低。
 
 | 变量 | 分组 | 说明(core.js注释) | 写入点(场景) | 替换后读法(多场景需 OR 合并) |
 | --- | --- | --- | --- | --- |
+| `_fmStaffTagSeen` | 场景状态 | 全家储物柜员工外套名牌（苏晓）已看到——深夜食堂探索认脸伏笔 | `全家便利店-员工通道-丧尸的偷袭-储物柜`; `全家便利店-员工通道` | `_visit['全家便利店-员工通道'] > 0` \|\| `_visit['全家便利店-员工通道-丧尸的偷袭-储物柜'] > 0` |
 | `defeatedOldMan` | 场景状态 | 是否已击败安盛街老头丧尸 | `遭遇老头丧尸-犹豫`; `安盛街-踹倒老头丧尸`; `绕过老头丧尸` | `_visit['安盛街-踹倒老头丧尸'] > 0` \|\| `_visit['绕过老头丧尸'] > 0` \|\| … |
 | `_hasAlcoholLamp` | 上实南校临时道具（不占背包容 | 酒精灯和火柴（化学实验室取，2号楼1楼砸体育老师丧尸） | `上实南校-化学实验室-面具有`; `上实南校-化学实验室-憋气` | `_visit['上实南校-化学实验室-憋气'] > 0` \|\| `_visit['上实南校-化学实验室-面具有'] > 0` |
 | `_triedHotpot` | 上实南校临时道具（不占背包容 | 是否吃过新达汇大渝火锅（一次性） | `新达汇-4F火锅-麻辣`; `新达汇-4F火锅-番茄`; `新达汇-4F火锅-菌菇` | `_visit['新达汇-4F火锅-番茄'] > 0` \|\| `_visit['新达汇-4F火锅-菌菇'] > 0` \|\| … |
@@ -124,13 +124,14 @@
 | `_hyCupsUsed` | 建平中学 - 状态 | 2楼桌面保温杯交互是否已用过（喝水/灌瓶任一后关闭，防刷汞） | `建平-弘渊楼-2F-保温杯-粉色`; `建平-弘渊楼-2F-保温杯-另一只`; `建平-弘渊楼-2F-保温杯-喝水` 等4处 | `_visit['建平-弘渊楼-2F-保温杯-另一只'] > 0` \|\| `_visit['建平-弘渊楼-2F-保温杯-喝水'] > 0` \|\| … |
 | `_pengGalCleared` | 建平中学 - 状态 | 是否帮彭奕宸打完galgame | `建平-远翔楼-4F-高三14班-galgame-普通结算`; `建平-远翔楼-4F-高三14班-galgame-真结算` | `_visit['建平-远翔楼-4F-高三14班-galgame-普通结算'] > 0` \|\| `_visit['建平-远翔楼-4F-高三14班-galgame-真结算'] > 0` |
 | `_yifenFood6F` | 建平中学 - 状态 | 挹芬楼6F自习教室食品是否已拿 | `建平-挹芬楼-6F-自习教室-食品-吃掉`; `建平-挹芬楼-6F-自习教室-食品-收下` | `_visit['建平-挹芬楼-6F-自习教室-食品-吃掉'] > 0` \|\| `_visit['建平-挹芬楼-6F-自习教室-食品-收下'] > 0` |
+| `_bellFirstHeard` | 建平中学 - 状态 | 是否已听过第一声铃（首次追加"没人关掉它"旁白，一次性） | `(函数 jpBellNote)` | `_visit['(函数 jpBellNote)'] > 0` |
 | `_jinbaoFriendCommission` | 张江（华大半导体 · 洪金宝 | 洪金宝是否已拜托玩家顺路看曹睿泽（上科大） | `张江-华大-动力站-委托`; `张江-华大-动力站-曹睿泽-委托` | `_visit['张江-华大-动力站-委托'] > 0` \|\| `_visit['张江-华大-动力站-曹睿泽-委托'] > 0` |
 | `_jinbaoCaseComplete` | 张江（华大半导体 · 洪金宝 | 是否拿到案例记录表（确证版，真相链物证） | `张江-华大-动力站-告知`; `张江-华大-动力站-补救` | `_visit['张江-华大-动力站-告知'] > 0` \|\| `_visit['张江-华大-动力站-补救'] > 0` |
 | `_dieselDelivered` | 张江（华大半导体 · 洪金宝 | 柴油是否已送达动力站（送达→洪金宝撤离顺延一天） | `张江-华大-动力站-柴油-交` | `_visit['张江-华大-动力站-柴油-交'] > 0` |
 | `_fabFigBDone` | 张江（华大半导体 · 洪金宝 | 白区三工位人影是否已了结（杀/误杀/对话过） | `张江-华大-白区-工位B-对话`; `张江-华大-白区-工位B-误杀` | `_visit['张江-华大-白区-工位B-对话'] > 0` \|\| `_visit['张江-华大-白区-工位B-误杀'] > 0` |
 | `_plazaFigSeen` | 张江（华大半导体 · 洪金宝 | 是否已凑近看过华大厂区广场的人影（一次性观察） | `张江-华大-广场-人影`; `张江-华大-广场-近路-胜` | `_visit['张江-华大-广场-人影'] > 0` \|\| `_visit['张江-华大-广场-近路-胜'] > 0` |
 
-## 六、D级:计数型(共 8 个)
+## 六、D级:计数型(共 9 个)
 
 只增不减的数值变量。若对应动作可独立成场景,可改用 `_visit['动作场景']` 的次数语义;否则保留。
 特别点名:`visitExitTimes` / `visitWaitingRoomTimes` 是手写的"访问某场景次数"计数器,就是 `_visit` 语义的重复造轮子,应优先替换。
@@ -144,21 +145,22 @@
 | `repeatedClickTimes` | 操作状态 | 点击重复次数，可以用来设置连点环节 | 初遇陈默、结局-来自丧尸的惊吓 | 1 |
 | `_bagExtra` | 常规物品 | 附件加成（袋子等，如帆布袋 +1） | 三林安居苑-卧室-仔细、安盛街-文具店铁柜 | 0 |
 | `_waterDispenserUses` | 常规物品 | 饮水机已使用次数（最多10次） | 长者食堂-饮水机-接水 | 1 |
+| `instantNoodle` | 常规物品 | 身上携带的泡面包数 0~3（全家员工通道杂物间存货，可堆叠，每包占1格；整理 | 整理整理、整理整理-吃泡面 | 0 |
 | `hasInnerLining` | 建平中学 - 状态 | 校服内胆数量（丢给 Harsh 驱赶，单次消耗） | 建平-废弃小楼-3F-团委工作室-收好内胆 | 1 |
 
-## 七、C级:不建议替换(共 175 个)
+## 七、C级:不建议替换(共 184 个)
 
 | 原因 | 数量 | 变量 |
 | --- | --- | --- |
-| 存在复位/双向写 | 79 | `mm`、`hurtByZombie`、`hasCold`、`_rainExposure`、`chasedByZombies`、`_travelMinutes`、`_restBlocked`、`_hasAcid`、`_yorozuyaUnlocked`、`_catChasing`、`_extinguisherUsed`、`hasBankSlip`、`hasBroom`、`hasDiary`、`hasTorch`、`hasGasMask`、`hasIronPipe`、`hasCane`、`hasMopHandle`、`hasCutter`、`hasAxe`、`hasGun`、`hasDagger`、`hasCharger`、`hasBiscuit`、`hasMap`、`hasLubricant`、`hasCrumpledLeaflet`、`hasPhone`、`hasLiquidParaffin`、`hasBottle`、`bottleWater`、`waterToxic`、`hasFrozenMeat`、`hasInstantNoodle`、`hasCannedFood`、`hasEbikeKey`、`hasDoorKey1`、`hasCarKey`、`hasCatSnack`、`hasKey502`、`hasCommitteeKey`、`hasEbike`、`hasScooter`、`hasRustyBike`、`hasBag`、`hasMercuryPill`、`hasAntibiotic`、`hasPainkiller`、`hasBandage`、`_iodineBoxJustEmptied`、`hasAlcohol`、`hasSutureKit`、`hasTourniquet`、`hasAnesthetic`、`_harshActive`、`_harshCaught`、`hasMultimeter`、`hasCanteenFood`、`hasFeverMed`、`hasWatch`、`hasCSGun`、`hasScrewdriver`、`hasSnackCookie`、`hasHamSausage`、`hasCracker`、`hasTeethingBiscuit`、`hasFakeAntidote`、`_lastCombatDrain`、`_hongBottleLabel`、`hasDieselCan`、`_wearingCleanSuit`、`_airlockOuterClosed`、`_airlockBlowing`、`_airlockInnerOpen`、`_airlockStartFails`、`_airlockLockedOut`、`_airlockLeakRounds`、`_leakSolved` |
-| 表达式写值(动态计算) | 63 | `strength`、`hh`、`mercuryLoad`、`_fatiguePaid`、`_mercuryChronicHour`、`_catFed`、`_ramenVisited`、`_backhallDead`、`_droneBattery`、`_powerRoomOpen`、`_got3fExtinguisher`、`_pipeBroke`、`_knownSideDoorPassword`、`_jinyiHasFoodForSurvivors`、`_flat401`、`itemCount`、`gunAmmo`、`_cafeteriaEnterMinute`、`phoneBattery`、`foundDadCar`、`waterGivenToTeacher`、`supermarketWaterLeft`、`vendingBottleLeft`、`newdahuiWarehouseWaterLeft`、`familyMartNoodleLeft`、`lianhuaCannedLeft`、`hasCar`、`iodineSwabBox`、`_iodineSwabInBox`、`wangPhoneBattery`、`_backGateOpened`、`_harshLag`、`_harshEncounters`、`_harshLastTick`、`_teacherLeft`、`_xinOfferDay`、`_xinOutcome`、`_xinKnowsTruth`、`_xinOutcomeDay`、`_lijuanTurned`、`vitaminC`、`_vitaminCured`、`_pengPiano`、`_playgroundKicked`、`hasFireTorch`、`_harshDead`、`_garageFireCabinet`、`_jianpingCatFed`、`_roadBull`、`_roadBullBeatenDay`、`_roadBullPaidDay`、`_quackSpot`、`_quackDay`、`_jpStairFloor`、`_lastShotFired`、`gasIndex`、`_fabAlert`、`_airlockMaskOn`、`_leakJustHurt`、`_knowsReportRoom`、`_labAlert`、`_remediedFromLie`、`_bridgeStage` |
-| 字符串/位置指针、表达式写值(动态计算) | 20 | `weather`、`_deliveryCode`、`_marketEntry`、`_harshReturn`、`_phoneOrigin`、`_liuCorpse`、`_pengGalResult`、`_catReturn`、`_bullBack`、`_stairKillNote`、`_pryTool`、`_toldJinbaoTruth`、`_panicEmployeeState`、`_bridgeFrom`、`_labExitTo`、`shirt`、`_elevatorTarget`、`currentArea`、`currentPlace`、`currentPos` |
+| 存在复位/双向写 | 85 | `mm`、`hurtByZombie`、`hasCold`、`_rainExposure`、`chasedByZombies`、`_travelMinutes`、`_restBlocked`、`_restTidyReturn`、`_hasCampusKey`、`_hasAcid`、`_yorozuyaUnlocked`、`_catChasing`、`_extinguisherUsed`、`hasBankSlip`、`hasBroom`、`hasDiary`、`_diaryPage`、`hasTorch`、`hasGasMask`、`hasIronPipe`、`hasCane`、`hasMopHandle`、`hasCutter`、`hasAxe`、`hasGun`、`hasDagger`、`hasCharger`、`hasBiscuit`、`hasMap`、`hasLubricant`、`hasCrumpledLeaflet`、`hasPhone`、`hasLiquidParaffin`、`hasBottle`、`bottleWater`、`waterToxic`、`hasFrozenMeat`、`hasCannedFood`、`hasEbikeKey`、`hasDoorKey1`、`hasDoorKey2`、`hasDoorKey3`、`hasCarKey`、`hasCatSnack`、`hasKey502`、`hasCommitteeKey`、`hasRenjiCard`、`hasEbike`、`hasScooter`、`hasRustyBike`、`hasBag`、`hasMercuryPill`、`hasAntibiotic`、`hasPainkiller`、`hasBandage`、`_iodineBoxJustEmptied`、`hasAlcohol`、`hasSutureKit`、`hasTourniquet`、`hasAnesthetic`、`_harshActive`、`_harshCaught`、`hasMultimeter`、`hasKeyRing`、`hasCanteenFood`、`hasFeverMed`、`hasWatch`、`hasCSGun`、`hasScrewdriver`、`hasSnackCookie`、`hasHamSausage`、`hasCracker`、`hasTeethingBiscuit`、`hasFakeAntidote`、`_lastCombatDrain`、`_hongBottleLabel`、`hasDieselCan`、`_wearingCleanSuit`、`_airlockOuterClosed`、`_airlockBlowing`、`_airlockInnerOpen`、`_airlockStartFails`、`_airlockLockedOut`、`_airlockLeakRounds`、`_leakSolved` |
+| 表达式写值(动态计算) | 64 | `strength`、`hh`、`mercuryLoad`、`_fatiguePaid`、`_mercuryChronicHour`、`_catFed`、`_ramenVisited`、`_backhallDead`、`_droneBattery`、`_powerRoomOpen`、`_got3fExtinguisher`、`_pipeBroke`、`_knownSideDoorPassword`、`_jinyiHasFoodForSurvivors`、`_flat401`、`itemCount`、`_runNumber`、`gunAmmo`、`_cafeteriaEnterMinute`、`phoneBattery`、`foundDadCar`、`waterGivenToTeacher`、`supermarketWaterLeft`、`vendingBottleLeft`、`newdahuiWarehouseWaterLeft`、`familyMartNoodleLeft`、`lianhuaCannedLeft`、`hasCar`、`iodineSwabBox`、`_iodineSwabInBox`、`wangPhoneBattery`、`_backGateOpened`、`_harshLag`、`_harshEncounters`、`_harshLastTick`、`_teacherLeft`、`_xinOfferDay`、`_xinOutcome`、`_xinKnowsTruth`、`_xinOutcomeDay`、`_lijuanTurned`、`vitaminC`、`_vitaminCured`、`_pengPiano`、`_playgroundKicked`、`hasFireTorch`、`_harshDead`、`_garageFireCabinet`、`_jianpingCatFed`、`_roadBull`、`_roadBullBeatenDay`、`_roadBullPaidDay`、`_quackSpot`、`_quackDay`、`_jpStairFloor`、`_lastShotFired`、`gasIndex`、`_fabAlert`、`_airlockMaskOn`、`_leakJustHurt`、`_knowsReportRoom`、`_labAlert`、`_remediedFromLie`、`_bridgeStage` |
+| 字符串/位置指针、表达式写值(动态计算) | 21 | `weather`、`_deliveryCode`、`_marketEntry`、`_harshReturn`、`_phoneOrigin`、`_liuCorpse`、`_pengGalResult`、`_lastBellKey`、`_catReturn`、`_bullBack`、`_stairKillNote`、`_pryTool`、`_toldJinbaoTruth`、`_panicEmployeeState`、`_bridgeFrom`、`_labExitTo`、`shirt`、`_elevatorTarget`、`currentArea`、`currentPlace`、`currentPos` |
 | 含复位或状态语义,依赖独立变量 | 4 | `maskRemainingUses`、`_bagTier`、`_iodineSwabBoxLeft`、`_vitaminCLeft` |
 | 引擎/系统维护、表达式写值(动态计算) | 3 | `showRain`、`showZombies`、`showPowerOut` |
 | 初始true资源型(可被消耗为false)、存在复位/双向写 | 2 | `foodUnderBed`、`FamilymartHasZombie` |
+| 复杂结构(Set/数组/对象)、表达式写值(动态计算) | 2 | `_diaryLog`、`_harshTrack` |
 | 字符串/位置指针、引擎/系统维护、表达式写值(动态计算) | 2 | `_weaponJustBroke`、`positionAfterOperation` |
 | 初始true资源型(可被消耗为false)、表达式写值(动态计算) | 1 | `windy` |
-| 复杂结构(Set/数组/对象)、表达式写值(动态计算) | 1 | `_harshTrack` |
 
 ## 八、替换注意事项
 
@@ -181,7 +183,6 @@
 | `_flat302` | 金谊广场 |  |
 | `_hyBorrowCardSeen` | 建平中学 - 状态 | 是否看过 1F 借阅处的借书证（知道"李娟"的名字） |
 | `gameMemoryThres` | 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） | 解锁A结局所需游戏记忆的个数 |
-| `gameMemorySet` | 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） | 目前已获得的游戏记忆集合 |
 | `personalMemoryThres` | 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） | 解锁B结局所需个人记忆的个数 |
 | `pants` | 张江（华大半导体 · 洪金宝支线，见 张江设计稿.md §九） | 裤子 |
 
@@ -189,22 +190,20 @@
 
 | 变量 | 写入点(文件:行·场景) |
 | --- | --- |
-| `_backtrackWarning` | utils.js:196·(函数 transit); utils.js:246·(函数 describeZombieWave) |
-| `_cafeteriaElapsed` | 长者食堂.js:104·长者食堂-打门口丧尸 |
-| `_currentAnswer` | utils.js:459·(函数 initMemoryGame); 建平中学.js:362·建平-前门; 建平中学.js:1145·建平-挹芬楼-1F-西侧走廊; 建平中学.js:1201·建平-挹芬楼-1F-东侧走廊 |
-| `_currentSeq` | utils.js:458·(函数 initMemoryGame); 建平中学.js:361·建平-前门; 建平中学.js:1144·建平-挹芬楼-1F-西侧走廊; 建平中学.js:1200·建平-挹芬楼-1F-东侧走廊 |
-| `_drankToxicWater` | core.js:1171·整理整理-喝水 |
-| `_employeeWeapon` | 全家和公交站.js:517·全家便利店-员工通道-摸黑; 全家和公交站.js:524·全家便利店-员工通道-摸黑; 全家和公交站.js:535·全家便利店-员工通道-摸黑 |
-| `_foundHongMask` | 安居苑.js:1104·三林安居苑-8号楼-204室-防毒面具; 安居苑.js:1119·三林安居苑-8号楼-204室-防毒面具 |
-| `_foundHongNotebook` | 安居苑.js:1084·三林安居苑-8号楼-204室-笔记本 |
-| `_gasMaskGarage` | 建平中学.js:991·建平-地下车库-工具间-开门 |
-| `_gateWeapon` | 金谊广场.js:556·金谊广场-正门硬闯; 金谊广场.js:559·金谊广场-正门硬闯; 金谊广场.js:568·金谊广场-正门硬闯 |
-| `_hideFail` | utils.js:502·(函数 hideOnLocation); utils.js:505·(函数 hideOnLocation); 建平中学.js:224·(函数 jpHide); 建平中学.js:227·(函数 jpHide) |
-| `_metGaoAtMall` | 新达汇.js:121·新达汇-喷泉广场-高锦睿-聊 |
-| `_prevPos1` | utils.js:202·(函数 transit) |
-| `_prevPos2` | utils.js:201·(函数 transit) |
-| `_roofOpened` | 安居苑.js:1355·三林安居苑-7号楼-天台破锁 |
-| `_seqPlayed` | utils.js:460·(函数 initMemoryGame); 建平中学.js:363·建平-前门; 建平中学.js:1146·建平-挹芬楼-1F-西侧走廊; 建平中学.js:1202·建平-挹芬楼-1F-东侧走廊 |
-| `_sprintDest` | utils.js:215·(函数 sprintAway) |
-| `_tryDoor` | 樱桃苑（初始小区）.js:1739·樱桃苑-5楼; 樱桃苑（初始小区）.js:1744·樱桃苑-5楼 |
-| `askTunnelLore` | 安盛街.js:441·理发店-交谈 |
+| `_backtrackWarning` | utils.js:219·(函数 transit); utils.js:269·(函数 describeZombieWave) |
+| `_cafeteriaElapsed` | 长者食堂.js:105·长者食堂-打门口丧尸 |
+| `_currentAnswer` | utils.js:616·(函数 initMemoryGame); 建平中学.js:426·建平-前门; 建平中学.js:1423·建平-挹芬楼-1F-西侧走廊; 建平中学.js:1479·建平-挹芬楼-1F-东侧走廊 |
+| `_currentSeq` | utils.js:615·(函数 initMemoryGame); 建平中学.js:425·建平-前门; 建平中学.js:1422·建平-挹芬楼-1F-西侧走廊; 建平中学.js:1478·建平-挹芬楼-1F-东侧走廊 |
+| `_drankToxicWater` | core.js:1231·整理整理-喝水 |
+| `_employeeWeapon` | 全家和公交站.js:684·全家便利店-员工通道-摸黑; 全家和公交站.js:691·全家便利店-员工通道-摸黑; 全家和公交站.js:702·全家便利店-员工通道-摸黑 |
+| `_foundHongMask` | 安居苑.js:1116·三林安居苑-8号楼-204室-防毒面具; 安居苑.js:1131·三林安居苑-8号楼-204室-防毒面具 |
+| `_foundHongNotebook` | 安居苑.js:1096·三林安居苑-8号楼-204室-笔记本 |
+| `_gateWeapon` | 金谊广场.js:620·金谊广场-正门硬闯; 金谊广场.js:623·金谊广场-正门硬闯; 金谊广场.js:632·金谊广场-正门硬闯 |
+| `_hideFail` | utils.js:659·(函数 hideOnLocation); utils.js:662·(函数 hideOnLocation); 建平中学.js:287·(函数 jpHide); 建平中学.js:290·(函数 jpHide) |
+| `_prevPos1` | utils.js:225·(函数 transit) |
+| `_prevPos2` | utils.js:224·(函数 transit) |
+| `_roofOpened` | 安居苑.js:1378·三林安居苑-7号楼-天台破锁 |
+| `_seqPlayed` | utils.js:617·(函数 initMemoryGame); 建平中学.js:427·建平-前门; 建平中学.js:1424·建平-挹芬楼-1F-西侧走廊; 建平中学.js:1480·建平-挹芬楼-1F-东侧走廊 |
+| `_sprintDest` | utils.js:238·(函数 sprintAway) |
+| `_tryDoor` | 樱桃苑（初始小区）.js:1777·樱桃苑-5楼; 樱桃苑（初始小区）.js:1782·樱桃苑-5楼 |
+| `askTunnelLore` | 安盛街.js:454·理发店-交谈 |

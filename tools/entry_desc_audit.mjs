@@ -224,8 +224,18 @@ for (const sid of ids) {
   const srcNoJump = rawSrc.replace(/(nextScene|elseScene|timeoutScene|positionAfterOperation)[^\n]*/g, "");
   // ⚠必须在**剔除跳转行之后**的文本里搜：nextScene:"子场景" 里也会出现来源名，
   // 用它判定会把大量未差异化节点误判为"已覆盖"（2026-09-29 踩过）。
-  const coveredBy = (s) => srcNoJump.includes(s);
-  const diffed = /_lastScene/.test(rawSrc) || /_visit\s*[\[.]/.test(rawSrc);
+  const coveredBy = (s) => {
+    if (srcNoJump.includes(s)) return true;
+    // 前缀匹配识别：源码写 `_lastScene.indexOf("前缀")` / `.startsWith("前缀")` 时，
+    // 任何以该前缀开头的来源都被运行时分流覆盖（字面搜索看不到拼出来的来源名，
+    // 如 `上实南校-图书馆-给水` 被 `indexOf("上实南校-图书馆")` 覆盖）。
+    for (const m of srcNoJump.matchAll(/(?:indexOf|startsWith)\(\s*"([^"]+)"\s*\)/g)) {
+      if (s.startsWith(m[1])) return true;
+    }
+    return false;
+  };
+  // diffed 延迟到第 239 行 allHeads 之后重算：需「运行时对不同 _lastScene 返回不同首句」信号，
+  // 才能识别工厂/动态生成节点（其源码取不到字面定义，sceneSrcOf 恒空 → 纯源码判定会漏）。
 
   const effective = [...effective0];
   const uncovered = effective.filter((s) => s !== "整理整理" && !coveredBy(s));
@@ -237,14 +247,26 @@ for (const sid of ids) {
     headBySrc.get(s).push(h);
   }
   const allHeads = [...new Set([...headBySrc.values()].flat())];
+  // 工厂/动态节点识别：若对不同 _lastScene 返回不同首句，说明 text 内部已对来源分流
+  //（等同手写 _lastScene 分支，如 makeFlatDoor 的「从楼层进播 enter / 从子场景返回播"你回到"」）。
+  // 源码切片取不到工厂节点定义 → 纯源码判定 diffed 恒 false，必须用运行时信号兜底。
+  const diffed = /_lastScene/.test(rawSrc) || /_visit\s*[\[.]/.test(rawSrc) || allHeads.length > 1;
+  const isChild = (s) => s.startsWith(sid + "-") || s.startsWith(sid + "（");
 
   // 命中标签：任一分支首句含入口式表述
   const hits = allHeads.map((h) => ({ h, tags: tagOf(h) })).filter((x) => x.tags.length);
   if (!hits.length) continue;
 
   // 未被文案覆盖的来源 → 各自会落到哪句默认描述
-  const uncoveredDetail = uncovered.map((s) => ({ src: s, heads: headBySrc.get(s) || [] }));
-  const badGroup = uncoveredDetail.filter((d) => d.heads.some((h) => tagOf(h).length));
+  const uncoveredDetail = uncovered.map((s) => ({ src: s, heads: headBySrc.get(s) || [], child: isChild(s) }));
+  // ⚠工厂/动态节点识别（2026-09-29 第四轮后补）：子节点返回且首句未重播进门动作
+  //（如"你回到X室""你退回房间"）属正确的返回承接，不算 bug；只有返回仍重播
+  // 进门动词（"你推开/你走进"）才是真回环。源码切片取不到工厂节点，故用运行时首句判定。
+  const badGroup = uncoveredDetail.filter((d) => d.heads.some((h) => {
+    if (!tagOf(h).length) return false;
+    if (d.child && !STRONG_ENTRY.test(stripHtml(h))) return false;
+    return true;
+  }));
   if (!badGroup.length) continue;
 
   // 共用同一句（默认句）的未覆盖来源
@@ -257,13 +279,16 @@ for (const sid of ids) {
     share.get(k).srcs.add(d.src);
   }
   // 父子回环：来源是本场景的子节点（ID 前缀相同）
-  const isChild = (s) => s.startsWith(sid + "-") || s.startsWith(sid + "（");
   const childBack = uncovered.filter(isChild);
   const selfLoop = uncovered.includes(sid);
 
-  // 定级：P0=子节点/自环返回却播进门句（必错）；P1=多个未覆盖来源共用到达句；P2=单个
+  // ⚠工厂/动态节点识别：仅当子节点返回仍重播「进门动词」（推门/走进/钻进/跨进…）才算真回环；
+  // 返回播"你回到/你退回"等中性承接句属正确分化（如 makeFlatDoor 已修）。
+  const hardChild = childBack.filter((s) => (headBySrc.get(s) || []).some((h) => STRONG_ENTRY.test(stripHtml(h))));
+
+  // 定级：P0=子节点/自环返回却重播进门句（必错）；P1=多个未覆盖来源共用到达句；P2=单个
   let level = "P2";
-  if (childBack.length || selfLoop) level = "P0";
+  if (hardChild.length || selfLoop) level = "P0";
   else if ([...share.values()].some((s) => s.srcs.size >= 2)) level = "P1";
 
   rows.push({

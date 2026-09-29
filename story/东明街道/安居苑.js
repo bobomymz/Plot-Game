@@ -22,7 +22,8 @@ function makeFlatDoor(door, floorScene, flavor, opts) {
     },
     text: function(vars) {
       var state = vars[key];
-      var desc = flavor.enter;
+      // 从楼层（首次进入）播完整进门句；从 -战斗 子场景返回时只播简版，避免重播“你推开X的门”动作（② 回环修复）
+      var desc = (vars._lastScene === floorScene) ? flavor.enter : ("你回到" + door + "室。");
       if (state === 1) return desc + "\n" + flavor.empty;
       if (state === 2) return desc + "\n" + flavor.food;
       if (state === 3) return desc + "\n厨房已经被你搜空了，连一点碎屑都没剩下。";
@@ -272,10 +273,15 @@ Object.assign(storyData, {
       vars.positionAfterOperation = "三林安居苑-滑板车";
     },
     text: function(vars) {
-      var desc = "你走进三林安居苑的小广场。小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。\n\
+      var l = vars._lastScene || "";
+      var head = "你走进三林安居苑的小广场。";
+      if (l === "三林安居苑-滑板车") head = "你拎起滑板车，直起身。";
+      else if (l === "三林安居苑-藤蔓丧尸-被咬") head = "你挣开那只手，退到小广场中央。";
+      else if (l === "三林安居苑-小广场-歇脚") head = "你歇过这一阵，站起来。";
+      var desc = head + "小广场的周围是一圈石质台阶，你小时玩滑板车时，奶奶就会坐在那里。\n\
 小广场另一侧有一间风格古朴的长亭，是小朋友们玩奥特曼卡牌和陀螺的地方。\
 再往后，就是老年人走的鹅卵石路，小时候的你一直不明白，那种路怎么会有人走得下去。";      
-      if (vars._lastScene === "三林安居苑-鹅卵石路" && vars.hasKey502) {
+      if (l === "三林安居苑-鹅卵石路" && vars.hasKey502) {
         desc += "\n你捏了捏口袋里那枚钥匙——上面写着“502”，对应七号楼五楼那扇门。";
       }
       return desc + "\n" + describeWeather(vars);
@@ -589,10 +595,14 @@ Object.assign(storyData, {
   "三林安居苑-8号楼-2楼": {
     image: "images/安居苑/8号楼-2楼.webp",
     onEnter: { set: { currentPos: "8号楼2楼" } },
-    text: "你走到二楼。走廊里很安静，只有风一下一下地拍打着窗框。\n\
+    text: function(vars) {
+      var l = vars._lastScene || "";
+      var fromRoom = l.indexOf("三林安居苑-8号楼-203") === 0 || l.indexOf("三林安居苑-8号楼-204") === 0;
+      return (fromRoom ? "你回到二楼走廊。" : "你走到二楼。") + "走廊里很安静，只有风一下一下地拍打着窗框。\n\
 两扇门在眼前：203和204。\n\
 203的门关着，门下缝隙透出的光线很暗——里面没人活动的迹象。门把手上落了一层薄灰。\n\
-204的门虚掩着，门缝里飘出一股淡淡的闷腐味——说不清是什么，但让你本能地不想多闻。",
+204的门虚掩着，门缝里飘出一股淡淡的闷腐味——说不清是什么，但让你本能地不想多闻。";
+    },
     choices: [
       {
         text: "推开204虚掩的门",
@@ -1166,7 +1176,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   // ========== 居民楼 ==========
   "三林安居苑-7号楼-1楼门口": {
     image: "images/安居苑/居民楼1楼.webp",
-    text: "你走到7号楼门口，铁门大开，楼道幽暗。即使是夏天，里面仍透出一丝阴冷。",
+    text: function(vars) {
+      if (vars._lastScene === "三林安居苑-7号楼-1楼走廊") {
+        return "你从楼道里退出来，回到7号楼门口。铁门还敞着，里面的阴冷被夏日的光一冲，淡了些。";
+      }
+      return "你走到7号楼门口，铁门大开，楼道幽暗。即使是夏天，里面仍透出一丝阴冷。";
+    },
     choices: [
       {
         text: "进去看看",
@@ -1265,8 +1280,12 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   "三林安居苑-7号楼-3楼": {
     image: "images/placeholder.png",
     onEnter: updateTime(1),
-    text: "你走到三楼。一股馊掉的食物味从某扇门的门缝里飘出来，混杂着淡淡的腐臭。两天没人管，彻底馊了。\n\
-另一扇门虚掩着，门缝里一片漆黑。你听不见里面有声音，但也不想凑近去确认。",
+    text: function(vars) {
+      var l = vars._lastScene || "";
+      var fromRoom = l.indexOf("三林安居苑-7号楼-301") === 0 || l.indexOf("三林安居苑-7号楼-302") === 0;
+      return (fromRoom ? "你回到三楼走廊。" : "你走到三楼。") + "一股馊掉的食物味从某扇门的门缝里飘出来，混杂着淡淡的腐臭。两天没人管，彻底馊了。\n\
+另一扇门虚掩着，门缝里一片漆黑。你听不见里面有声音，但也不想凑近去确认。";
+    },
     choices: [
       { text: "推开301的门", nextScene: "三林安居苑-7号楼-301" },
       { text: "推开302的门", nextScene: "三林安居苑-7号楼-302" },
@@ -1285,7 +1304,8 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     image: "images/placeholder.png",
     onEnter: updateTime(1),
     text: function(vars) {
-      var desc = "你走到四楼。走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，铁丝是从里面缠上的。\n";
+      var from401 = (vars._lastScene || "").indexOf("三林安居苑-7号楼-401") === 0;
+      var desc = (from401 ? "你回到四楼走廊。" : "你走到四楼。") + "走廊尽头的一扇门被从里面用桌椅和纸箱堵得死死的，门缝上还缠着几圈铁丝——有人在这里躲过，铁丝是从里面缠上的。\n";
       if (vars._flat401 > 0) {
         desc += "你上次搬开的桌椅还歪在墙边，401的门虚掩着——里面已经没有任何秘密了。";
       } else {
@@ -1322,7 +1342,8 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     image: "images/placeholder.png",
     onEnter: updateTime(1),
     text: function(vars) {
-      var desc = "你走到六楼——这栋楼的顶层。601的门锁着，门把手上没怎么落灰，像是前些天还有人在进出。\n";
+      var fromRoof = vars._lastScene === "三林安居苑-7号楼-天台";
+      var desc = (fromRoof ? "你从天台回到六楼。" : "你走到六楼——这栋楼的顶层。") + "601的门锁着，门把手上没怎么落灰，像是前些天还有人在进出。\n";
       if (vars._roofOpened) {
         desc += "楼梯尽头的天台门歪开着，锁链断成两截耷拉在门把手上——你上次用斧头劈开的那道口子还在。\n";
       } else {
@@ -1357,7 +1378,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
       vars._roofOpened = true;
       return updateTime(1, { add: { chasedByZombies: 1 } })(vars);  // 劈锁的动静在楼道里回荡
     },
-    text: "你抡起斧头，对准锁链的环扣砸下去。\n<span class='sfx'>铛——</span>铁器碰撞的声音在空旷的楼道里炸开，震得你虎口发麻。你连砸两下，锈链上崩出一串火星，<span class='sfx'>啪</span>地一声断成两截。挂锁连着半截铁链，叮叮当当地滚到了墙角。\n你把断链拨到一边，推开了通往天台的门。",
+    text: "你抡起斧头，对准锁链的环扣砸下去。\n<span class='sfx'>铛——</span>铁器碰撞的声音在空旷的楼道里炸开，震得你虎口发麻。你连砸两下，锈链上崩出一串火星，<span class='sfx'>啪</span>地一声断成两截。挂锁连着半截铁链，<span class='sfx'>叮叮当当</span>地滚到了墙角。\n你把断链拨到一边，推开了通往天台的门。",
     choices: [
       { text: "推门上天台", nextScene: "三林安居苑-7号楼-天台" }
     ]
@@ -1698,7 +1719,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
   "三林安居苑-骑车失败": {
     image: "images/安居苑/骑车失败.webp",
     onEnter: { set: { showRain: true } },
-    text: "你跨上自行车，用力踩下踏板。链条发出刺耳的嘎<span class='sfx'>吱</span>声——车轮勉强转了一圈，然后卡住了，害得你摔在地上\n\
+    text: "你跨上自行车，用力踩下踏板。链条发出刺耳的<span class='sfx'>嘎吱</span>声——车轮勉强转了一圈，然后卡住了，害得你摔在地上\n\
 链条锈得太厉害了，没有润滑油根本没法正常骑行。也许在什么地方能找到防锈液……",
     choices: [
       {

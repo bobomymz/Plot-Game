@@ -629,7 +629,6 @@ const storyData = {
   "结局-体力耗尽": {
     image: "images/outOfStrength.webp",
     text: "你的体力彻底耗尽……眼前一黑，倒在了冰冷的地面上。\n再也没有醒来。\n\n<span class='end'>—— 结局：体力耗尽 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
   "直面尸潮": {
     image: "images/youMeetZombies.webp",
@@ -1536,6 +1535,6 @@ const storyData = {
 
   "结局-汞中毒尸变": {
     image: "images/zombiePounceOnYou.webp",
-    text: "你的手开始不受控制地颤抖。视野边缘在变暗，像有人从四周慢慢拉上帷幕。\n最后的清醒时刻，你低头看向自己的手——皮肤已经变成了暗灰色，在日光下泛着诡异的金属光泽。\n你张开嘴想喊什么，但喉咙里只发出了一声低沉的喉音。\n<span class='end'>—— 结局：汞中毒尸变 ——</span>"
+    text: "你的手开始不受控制地颤抖。视野边缘在变暗，像有人从四周慢慢拉上帷幕。\n最后的清醒时刻，你低头看向自己的手——皮肤已经变成了暗灰色，在日光下泛着诡异的金属光泽。\n你张开嘴想喊什么，<span class='rot'>但喉咙里只发出了一声低沉的喉音</span>。\n<span class='end'>—— 结局：汞中毒尸变 ——</span>"
   },
 };

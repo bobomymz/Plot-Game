@@ -204,10 +204,23 @@ for (const sid of ids) {
   harvestLiterals(sc.qte);
   harvestLiterals(sc.onEnter);
   if (typeof sc.choices === "function") harvestLiterals(sc.choices);
-  else if (Array.isArray(sc.choices)) for (const c of sc.choices) {
-    if (!c || typeof c !== "object") continue;
-    for (const k of ["nextScene", "elseScene", "timeoutScene", "condition", "showCondition", "effect"]) harvestLiterals(c[k]);
+    else if (Array.isArray(sc.choices)) for (const c of sc.choices) {
+      if (!c || typeof c !== "object") continue;
+      for (const k of ["nextScene", "elseScene", "timeoutScene", "condition", "showCondition", "effect"]) harvestLiterals(c[k]);
+    }
   }
+
+// 工厂/动态子场景识别（补入边，消除孤立误报）：
+// 形如 `hub + "-战斗/厨房/砸门"` 的子场景，其入边来自工厂 hub（运行时 nextScene 拼接，
+// 源码无字面量、变体也未必走到 -> 静态 harvestLiterals 与变体收集都漏）。
+// hub 特征：text 为函数且对 _lastScene 分流（makeFlatDoor 等工厂约定，2026-09-29 补）。
+for (const sid of ids) {
+  const i = sid.lastIndexOf("-");
+  if (i <= 0) continue;
+  const parent = sid.slice(0, i);
+  if (!idSet.has(parent)) continue;
+  const p = storyData[parent];
+  if (p && typeof p.text === "function" && /_lastScene/.test(p.text.toString())) inbound.add(sid);
 }
 
 // 孤立场景（无入边；start/触发器目标豁免）

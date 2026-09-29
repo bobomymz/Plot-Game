@@ -129,7 +129,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMainGate.png */,
     onEnter: initMemoryGame(["红", "蓝", "绿"], 9),
     text: "你压低身子，朝门诊大楼的正门冲过去。门口的丧尸被你的动静惊动，摇摇晃晃地围了过来。\n\
-你必须盯紧每一个扑上来的影子，记清它们的轮廓，才能从缝隙里钻过去。",
+<span class='crit'>你必须盯紧每一个扑上来的影子</span>，记清它们的轮廓，才能从缝隙里钻过去。",
     choices: [
       {
         text: "输入你看到的颜色分布",
@@ -167,7 +167,6 @@ Object.assign(storyData, {
 它从门柱的阴影里窜出来，撞在你的侧腰上。你踉跄着转身，门口那几只已经围拢过来，手臂搭上你的肩膀和后背。\n\
 你被压倒在玻璃门前的空地上，手指还抠着门框上那截胶带。\n\
 \n<span class='end'>—— 结局：正门失守 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-门诊大门": {
@@ -296,8 +295,8 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiAmbulanceRam.png */,
     onEnter: { set: { _renjiGateOpen: true }, add: { chasedByZombies: 1 } },
     text: "你钻进驾驶室，拧动钥匙——引擎意外地还能打着火。你一脚挂上倒挡，狠狠踩下油门。\n\
-救护车猛地向后蹿去，车尾狠狠撞在铁门上——铰链彻底断裂，整扇铁门带着刺耳的金属声轰然倒下，正好砸在门后那几只丧尸身上。\n\
-引擎盖裂开一条缝，冷却液顺着车底往外渗——这辆车是走不了了，但门开了。空地这边安静了，可引擎的轰鸣已经滚进楼里，远处有什么东西被惊动，低低地应了一声。",
+救护车猛地向后蹿去，车尾狠狠撞在铁门上——铰链彻底断裂，整扇铁门带着刺耳的金属声<span class='sfx'>轰</span>然倒下，正好砸在门后那几只丧尸身上。\n\
+引擎盖裂开一条缝，冷却液顺着车底往外渗——这辆车是走不了了，但门开了。空地这边安静了，可引擎的<span class='sfx'>轰</span>鸣已经滚进楼里，远处有什么东西被惊动，低低地应了一声。",
     choices: [
       { text: "继续", nextScene: "仁济南院-救护车通道" }
     ]
@@ -335,10 +334,9 @@ Object.assign(storyData, {
     text: function(vars) {
       var tool = vars._pryTool || "手里的工具";
       return "你把" + tool + "伸进挂锁里，用力一撬。挂锁“咔”地断开——那道已经开裂的铰链果然撑不住这一下。\n\
-整扇铁门朝你的方向轰然倒下。\n\
+整扇铁门朝你的方向<span class='sfx'>轰</span>然倒下。\n\
 \n<span class='end'>—— 结局：铁门砸死 ——</span>";
     },
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-地下停车场": {
@@ -482,7 +480,7 @@ Object.assign(storyData, {
       vars._rjLitGlass = true;
       return updateTime(1, { add: { chasedByZombies: 1 } })(vars);
     },
-    text: "“咔嚓”——脚下炸开一声脆响，你僵在原地。\n碎玻璃。满地的碎玻璃，正闪着你带下来的那点光。\n声音在车库的柱子之间滚了很远。你竖着耳朵听了好几秒——没有别的动静。你踮起脚，小心地绕开那片反光，往电梯口挪。",
+    text: "“<span class='sfx'>咔嚓</span>”——脚下炸开一声脆响，你僵在原地。\n碎玻璃。满地的碎玻璃，正闪着你带下来的那点光。\n声音在车库的柱子之间滚了很远。你竖着耳朵听了好几秒——没有别的动静。你踮起脚，小心地绕开那片反光，往电梯口挪。",
     choices: [
       {
         text: "继续",
@@ -498,7 +496,6 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你终究没能跑过它们。\n十几条影子从车缝里挤出来，把你围在两根水泥柱之间。你的光落在地上，滚了半圈，停住了——安安静静地照着一根柱子，照着你再也够不到的东西。" + weaponBrokeText(vars) + "\n<span class='end'>—— 结局：车库尸群 ——</span>";
     },
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-地下停车场-电梯口": {
@@ -544,7 +541,6 @@ Object.assign(storyData, {
     text: "你抓住门缝用力一拉。门滑开的瞬间，几只丧尸几乎是叠在一起从轿厢里倒出来——它们早就挤在门口，只差你这一下。\n\
 你甚至没能转身跑回坡道。\n\
 \n<span class='end'>—— 结局：电梯轿厢 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-后勤通道": {
@@ -753,10 +749,9 @@ Object.assign(storyData, {
   "结局-仁济-急诊失守": {
     image: "images/hurtByZombie.webp",
     text: "你没能抓住它的间隙。\n\
-它扑上来的那一下比你想的快，你的武器举到一半就被撞偏。牙齿咬进了你的小臂，它拖着你撞翻那辆轮椅。\n\
+<span class='crit'>它扑上来的那一下比你想的快</span>，你的武器举到一半就被撞偏。牙齿咬进了你的小臂，它拖着你撞翻那辆轮椅。\n\
 金属轮子在地上空转了两圈，慢慢停下。\n\
 \n<span class='end'>—— 结局：急诊失守 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   // ==================== 门诊药房 ====================
@@ -946,7 +941,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-撬门": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
-    text: "你把铁棍插进门缝，用力撬。门锁发出令人牙酸的嘎吱声——\n",
+    text: "你把铁棍插进门缝，用力撬。门锁发出令人牙酸的<span class='sfx'>嘎吱</span>声——\n",
     choices: [
       {
         text: "继续用力撬",
@@ -993,7 +988,7 @@ Object.assign(storyData, {
       return { set: { _renjiNoise: true } };
     },
     text: function(vars) {
-      return "门锁“啪”地一声弹开了——你的胳膊酸得几乎抬不起来。动静不小，但好歹是把门撬开了。\n\
+      return "门锁“<span class='sfx'>啪</span>”地一声弹开了——你的胳膊酸得几乎抬不起来。动静不小，但好歹是把门撬开了。\n\
 你冲进去，迎面就是那只丧尸。" + weaponBrokeText(vars);
     },
     choices: [
@@ -1030,7 +1025,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你抓住破绽，把它放倒。它瘫在操作台边，白大褂上沾满试剂和血。\n\
-应急电源还在嗡。人声没了。你环顾四周——这里，就是王知筠最后工作的地方。" + combatDrainText(vars);
+应急电源还在<span class='sfx'>嗡</span>。人声没了。你环顾四周——这里，就是王知筠最后工作的地方。" + combatDrainText(vars);
     },
     choices: [
       {
@@ -1043,17 +1038,16 @@ Object.assign(storyData, {
   "结局-仁济-检验科被咬": {
     image: "images/zombiesBeatYou.webp",
     text: "你盯漏了一道影子。\n\
-它从操作台后面直起腰，撞在你的胸口上。你退了两步，后腰顶在台沿，器械盘哗啦一声滑落。\n\
-应急电源还在嗡。它低头咬了下来。\n\
+它从操作台后面直起腰，撞在你的胸口上。你退了两步，后腰顶在台沿，器械盘<span class='sfx'>哗啦</span>一声滑落。\n\
+应急电源还在<span class='sfx'>嗡</span>。它低头咬了下来。\n\
 \n<span class='end'>—— 结局：检验科被咬 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-检验科-内部": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLabInside.png */,
     onEnter: function(vars) { vars.currentPos = "检验科"; return {}; },
     text: function(vars) {
-      var desc = "检验科的灯还亮着，应急电源嗡嗡作响。一台离心机盖子掀着，转子停在半途。试剂架还在，培养皿有几只扣在台沿上——这里的主人离开得很匆忙，又很平静。\n";
+      var desc = "检验科的灯还亮着，应急电源<span class='sfx'>嗡嗡</span>作响。一台离心机盖子掀着，转子停在半途。试剂架还在，培养皿有几只扣在台沿上——这里的主人离开得很匆忙，又很平静。\n";
       if (!vars.hasWangPhone && !vars.hasWangNotebook) {
         desc += "操作台的一角，放着一部手机和一本牛皮纸封面的笔记本。手机屏幕暗着，笔记本的封面上写着“2026 实验记录”。";
       } else if (!vars.hasWangPhone) {
@@ -1206,7 +1200,7 @@ Object.assign(storyData, {
 
   "仁济南院-检验科-躲藏": renjiHide(
     "images/placeholder.png" /* TODO: images/仁济南院/renjiLabInside.png */,
-    "你把门从里面扣上，蹲在操作台后面。走廊里的拖步声贴着门缝过去，又远了。检验科里只剩下应急灯的嗡嗡声。",
+    "你把门从里面扣上，蹲在操作台后面。走廊里的拖步声贴着门缝过去，又远了。检验科里只剩下应急灯的<span class='sfx'>嗡嗡</span>声。",
     "仁济南院-检验科-内部"
   ),
 
@@ -1330,7 +1324,6 @@ Object.assign(storyData, {
 它转过身，缠在手腕上的输液管甩出来，抽在你脸上。你踉跄着撞进病房的门框，还没站稳，它就压了上来。\n\
 走廊里再没有别的动静。\n\
 \n<span class='end'>—— 结局：病区失守 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-住院部走廊-幸存者": {
@@ -1383,7 +1376,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiSupply.png */,
     onEnter: { set: { positionAfterOperation: "仁济南院-手术供应室" } },
     text: function(vars) {
-      var desc = "你来到手术供应室。这里的器械柜大多还锁着，但有几个抽屉被人撬开了。\n";
+      var desc = "手术供应室。这里的器械柜大多还锁着，但有几个抽屉被人撬开了。\n";
       if (vars.hasSutureKit && vars.hasTourniquet && vars.hasAnesthetic) {
         desc += "无菌柜里该拿的都拿了。";
       } else {
@@ -1480,7 +1473,7 @@ Object.assign(storyData, {
       if (vars._morgueCleared) {
         desc += "你上次来的时候，已经处理掉了这里的东西。";
       } else if ((vars._visit['仁济南院-太平间-通风开启'] > 0)) {
-        desc += "墙上的通风系统在嗡嗡地转，那股甜腻的气味淡了不少。";
+        desc += "墙上的通风系统在<span class='sfx'>嗡嗡</span>地转，那股甜腻的气味淡了不少。";
       }
       return desc;
     },
@@ -1550,7 +1543,7 @@ Object.assign(storyData, {
   "仁济南院-太平间-通风开启": {
     image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
     onEnter: {  },
-    text: "你按下按钮。头顶的通风管道嗡嗡地响了起来，新鲜的空气灌了进来，那股甜腻的尸臭被一点点冲散。\n\
+    text: "你按下按钮。头顶的通风管道<span class='sfx'>嗡嗡</span>地响了起来，新鲜的空气灌了进来，那股甜腻的尸臭被一点点冲散。\n\
 你等了一会儿，直到能正常呼吸为止。",
     choices: [
       {
@@ -1599,7 +1592,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你把它放倒了。那层黑色的皮比想象中更硬。\n\
-它砸在冰柜门上，金属嗡了一声就停了。" + combatDrainText(vars);
+它砸在冰柜门上，金属<span class='sfx'>嗡</span>了一声就停了。" + combatDrainText(vars);
     },
     choices: [
       {
@@ -1612,19 +1605,17 @@ Object.assign(storyData, {
   "结局-仁济-黑皮丧尸": {
     image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "它的力气比你想的大太多。\n\
-一掌拍在你肩上，把你整个人砸在冰柜门上，金属嗡了一声。你还没来得及喘气，那张干裂的、黑得发亮的脸已经凑到了跟前。\n\
+一掌拍在你肩上，把你整个人砸在冰柜门上，金属<span class='sfx'>嗡</span>了一声。你还没来得及喘气，那张干裂的、黑得发亮的脸已经凑到了跟前。\n\
 那是你在这个世界上看到的最后一样东西。\n\
 \n<span class='end'>—— 结局：黑皮丧尸 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "结局-仁济-尸潮围困": {
     image: "images/zombieWaveSmashYouIntoPieces.webp",
     text: "你朝着高架的方向冲去，想要离开这家医院。\n\
 但外面的尸潮比你想象中更密。你刚冲出浦锦路，就被从四面八方涌来的丧尸吞没——它们早已把这家医院围得水泄不通，就等着有人从里面出来。\n\
-你在震耳欲聋的嘶吼声中被撕碎。\n\
+<span class='rot'>你在震耳欲聋的嘶吼声中被撕碎</span>。\n\
 \n<span class='end'>—— 结局：仁济围困 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "结局-仁济-急诊门厅": {
@@ -1632,7 +1623,6 @@ Object.assign(storyData, {
     text: "你推开虚掩的玻璃门，弯腰钻了进去。\n\
 门厅里的丧尸几乎是同一时刻转过身来——密密麻麻的一片，堵住了你退出去的路。你的手还按在玻璃门上，武器还在肩带里。\n\
 \n<span class='end'>—— 结局：急诊门厅 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-太平间-报告": {
@@ -1749,16 +1739,15 @@ Object.assign(storyData, {
     image: "images/仁济南院/好奇心害死猫.webp",
     text: [
       "你按下召唤钮。灯亮了一下，井道里传来沉闷的运行声——停在B1的那部电梯，居然真的动了。",
-      "数字从B1跳到1。叮。门开了。\n轿厢里挤满了丧尸。它们几乎是涌着扑出来的。",
+      "数字从B1跳到1。<span class='sfx'>叮</span>。门开了。\n轿厢里挤满了丧尸。它们几乎是涌着扑出来的。",
       "\n<span class='end'>—— 结局：电梯召唤 ——</span>"
     ],
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "仁济南院-影像科": {
     image: "images/仁济南院/影像科.webp",
     onEnter: function(vars) { vars.currentPos = "影像科"; return {}; },
-    text: "影像科的门半掩着。CT室的金属门虚掩，X光片散落在地上，踩上去嘎吱作响。\n\
+    text: "影像科的门半掩着。CT室的金属门虚掩，X光片散落在地上，踩上去<span class='sfx'>嘎吱</span>作响。\n\
 操作台旁瘫着一个穿白大褂的人，已经死了——胸口还别着放射科的胸牌。\n\
 墙上贴着一张辐射警告标志，黑色的三叶形图案格外醒目。",
     choices: [
@@ -1775,7 +1764,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "输液大厅"; return {}; },
     text: "二楼的输液大厅里，成排的输液椅还保持着原样，吊瓶架倒了一地，药液已经干涸。\n\
 地上散落着几样小东西——一个塑料小汽车、一只掉了鞋带的小鞋。\n\
-天花板的吊扇还在慢慢转，吱呀声一下一下敲着。\n\
+天花板的吊扇还在慢慢转，<span class='sfx'>吱呀</span>声一下一下敲着。\n\
 大厅一侧的连廊通向急诊医技楼。",
     choices: [
       {
@@ -2132,7 +2121,7 @@ Object.assign(storyData, {
       vars._renjiVipZombieCleared = true;
       return { add: { strength: -2, mercuryLoad: 10 }, set: { hurtByZombie: true } };
     },
-    text: "你按住塌陷的坐垫往下翻——沙发架子发出一声刺耳的嘎吱。\n\
+    text: "你按住塌陷的坐垫往下翻——沙发架子发出一声刺耳的<span class='sfx'>嘎吱</span>。\n\
 门边矮柜里猛地撞出一个人影。它扑过来时你只来得及抬起胳膊挡了一下，爪子还是擦过小臂，渗出一道血线。你一脚踹开它，它后脑磕在柜角上，抽搐了几下，软了。\n\
 <span class='sys warn'>【系统提示】你受了伤。伤口会加快体力消耗。</span>",
     choices: [
@@ -2250,7 +2239,6 @@ Object.assign(storyData, {
     text: "你随手拉开半开的柜门。\n\
 里面蜷着的东西几乎是弹出来的——牙齿先碰到你的喉咙。你甚至没看清它的脸。\n\
 \n<span class='end'>—— 结局：特需偷袭 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   // ==================== 楼梯间（连接楼层 · 可上可下） ====================

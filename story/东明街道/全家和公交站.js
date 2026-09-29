@@ -65,11 +65,6 @@ Object.assign(storyData, {
         nextScene: "全家-吃饭团"
       },
       {
-        showCondition: "!_visit['结局-全家-喝饮料腹泻']",
-        text: "喝饮料",
-        nextScene: "结局-全家-喝饮料腹泻"
-      },
-      {
         showCondition: "hasTorch",
         text: "打手电筒探索员工通道",
         condition: "_visit['全家便利店-零食引路'] || !FamilymartHasZombie",
@@ -172,7 +167,7 @@ Object.assign(storyData, {
     text: function(vars) {
       if (!vars.FamilymartHasZombie)
         return "仓库里安静下来，只剩你自己的呼吸声。光圈扫过的地方，再没有什么会动了。\n该拿的东西，现在可以从容去拿了。";
-      if (vars._lastScene === "全家便利店-员工通道-丧尸的偷袭-储物柜" || vars._lastScene === "整理整理")
+      if (vars._lastScene === "全家便利店-员工通道-丧尸的偷袭-储物柜" || vars._lastScene === "整理整理" || vars._lastScene === "全家便利店-员工通道-丧尸的偷袭-险胜")
         return "你回到光圈里。";
       if (vars._lastScene === "全家便利店-员工通道-丧尸的偷袭")
         return "光圈外那些看不见的东西，正在朝你收拢。";   // 回溯落回（两只已发现）：战斗按钮就在下面
@@ -348,7 +343,7 @@ Object.assign(storyData, {
     image: "images/hurtByzombie.webp",
     onEnter: updateTime(1, { set : { hurtByZombie: true, FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" }, add: { mercuryLoad: 10 } }),
     text: function(vars) {
-      return "你狠狠揍了丧尸几拳，它掐住你的脖子，和你纠缠在地上。你努力控住它的嘴，<span class='sfx'>砰</span>！<span class='sfx'>砰</span>！砰！终于，它倒下了，但你身上多了不少抓痕和咬痕，不知道有没有受伤。" + combatDrainText(vars);
+      return "你狠狠揍了丧尸几拳，它掐住你的脖子，和你纠缠在地上。你努力控住它的嘴，<span class='sfx'>砰</span>！<span class='sfx'>砰</span>！<span class='sfx'>砰</span>！终于，它倒下了，但你身上多了不少抓痕和咬痕，不知道有没有受伤。" + combatDrainText(vars);
     },
     choices: [
       {
@@ -381,7 +376,7 @@ Object.assign(storyData, {
   "结局-脚步声太大啦": {
     image: "images/zombieKnockYouDown.webp",
     text: "你转身躲了起来，大气也不敢喘，缓慢地向门口挪动身子。\n\
-突然，脚下的地板发出嘎<span class='sfx'>吱</span>一声。\n\
+突然，脚下的地板发出<span class='sfx'>嘎吱</span>一声。\n\
 那只丧尸蹭的一下直起身来，猛地向你的位置扑来。\n\
 你被咬死了。\n<span class='end'>—— 结局：脚步声太大啦 ——</span>"
   },
@@ -472,7 +467,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/pipeAttack.png */,
     onEnter: { set: { FamilymartHasZombie: false, positionAfterOperation: "全家便利店内部" } },
     text: function(vars) {
-      var desc = "你回手掏出钢管，狠狠地抽在它腿上。只听得嘎<span class='sfx'>吱</span>一声脆响，不知是钢管还是它骨头断裂的声音。那只丧尸已经瘫倒在了地上，像一条扭曲的蛆在蠕动。\
+      var desc = "你回手掏出钢管，狠狠地抽在它腿上。只听得<span class='sfx'>嘎吱</span>一声脆响，不知是钢管还是它骨头断裂的声音。那只丧尸已经瘫倒在了地上，像一条扭曲的蛆在蠕动。\
 一个牌子掉在了地上，你伸手捡起。这应该是它的工牌，它是这里的实习店员，估计早上一开业就被咬了。";
       if (vars._lastScene === "邦邦邦") { // 迅捷线"打腿"入口不扣体力，不提示
         desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
@@ -516,17 +511,6 @@ Object.assign(storyData, {
         nextScene: "全家便利店内部"
       }
     ]
-  },
-
-  "结局-全家-喝饮料腹泻": {
-    image: "images/小区周边/全家和公交站/公厕里的丧尸.webp",
-    onEnter: updateTime(2),
-    text: "你随手从冰柜里抓起一瓶冰凉的柠檬水，咕嘟咕嘟一饮而尽。片刻之后，你感觉胃部传来一阵绞痛。\n\
-——你已经一个早上没吃饭了，现在这么快灌下去，怕是又要拉肚子了。\n\
-你窜出店找到一个小小的洗手间，打开门，\n\
-<span class='rot'>一只丧尸在盯着你。</span>\n\
-你还没来得及关门，它已经扑了上来。冰凉的味道在胃里翻涌，你的意识被黑暗吞没。\n\
-<span class='end'>—— 结局：厕所惊魂 ——</span>"
   },
 
   "公交车站（环林东路）": {
@@ -579,7 +563,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/饼干引路.png */,
     text: "你把手电筒用力朝员工通道的方向扔了过去。\n\
 零食袋砸在金属门上，那只迅捷丧尸的注意力瞬间被吸引——它像一道闪电般扑向声音的来源，一头扎进了黑漆漆的员工通道。\n\
-紧接着，通道深处传来<span class='sfx'>咣</span>当一声巨响——它似乎撞翻了什么重物，然后是一阵杂乱的刮擦声……渐渐安静了下来。\n你等了几秒，确认它没有回来。员工通道的门半开着，里面一片漆黑。",
+紧接着，通道深处传来<span class='sfx'>咣当</span>一声巨响——它似乎撞翻了什么重物，然后是一阵杂乱的刮擦声……渐渐安静了下来。\n你等了几秒，确认它没有回来。员工通道的门半开着，里面一片漆黑。",
     choices: [
       {
         showCondition: "hasTorch",

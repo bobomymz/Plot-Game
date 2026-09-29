@@ -736,7 +736,7 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      if (vars._ramenVisited) return "你蹲下身，手指扣住卷帘门底部的边缘，用力往上一抬——嘎<span class='sfx'>吱</span>一声，卷帘门弹了起来。你迅速钻了进去。";
+      if (vars._ramenVisited) return "你蹲下身，手指扣住卷帘门底部的边缘，用力往上一抬——<span class='sfx'>嘎吱</span>一声，卷帘门弹了起来。你迅速钻了进去。";
       return "你蹲下身，手指扣住卷帘门底部的边缘，用力往上一抬——卷帘门卡住了。你换了个角度再试，轨道咬死，反而发出刺耳的金属摩擦声。声音在走廊里回荡开来——你听到远处传来拖沓的脚步声，越来越近。\n你只好放弃，转身离开。";
     },
     choices: [
@@ -1164,7 +1164,7 @@ Object.assign(storyData, {
       return { add: { strength: 2, chasedByZombies: 1 } };
     },
     text: function(vars) {
-      return "你抡起" + (vars._pryTool || heavyWeaponName(vars)) + "对准断口补了几下，整块玻璃<span class='sfx'>哗啦啦</span>塌下来。两瓶矿泉水顺着货道骨碌碌滚落，你一把捞起来，拧开灌了几大口——冰凉的甜水淌进喉咙，力气回了几分。\n可碎玻璃和摔罐的<span class='sfx'>哐</span>当声在空旷的商场里荡出去老远，铁栏后的丧尸被这动静勾了过来。<span class='sys'>【体力 +2 · 追击 +1】</span>" + weaponBrokeText(vars);
+      return "你抡起" + (vars._pryTool || heavyWeaponName(vars)) + "对准断口补了几下，整块玻璃<span class='sfx'>哗啦啦</span>塌下来。两瓶矿泉水顺着货道骨碌碌滚落，你一把捞起来，拧开灌了几大口——冰凉的甜水淌进喉咙，力气回了几分。\n可碎玻璃和摔罐的<span class='sfx'>哐当</span>声在空旷的商场里荡出去老远，铁栏后的丧尸被这动静勾了过来。<span class='sys'>【体力 +2 · 追击 +1】</span>" + weaponBrokeText(vars);
     },
     choices: [
       { text: "回电梯厅", nextScene: "新达汇-1F电梯厅", effect: updateTime(1) },
@@ -1185,7 +1185,7 @@ Object.assign(storyData, {
   "新达汇-5F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
     text: "你推开防火门，走进楼梯间。墙上标着「5F」。台阶上扔着一只被踩扁的外卖纸袋，油渍渗到水泥缝里。从这里可以上屋顶或往下走。",
-    onEnter: function(v) { transit(v, "5F-消防通道"); return { add: { chasedByZombies: 1 } }; },
+    onEnter: function(v) { transit(v, "5F-消防通道"); return {}; },
     choices: [
       {
         text: "上屋顶（体力-1）",
@@ -1207,7 +1207,7 @@ Object.assign(storyData, {
   "新达汇-4F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
     text: "你推开防火门，走进楼梯间。墙上标着「4F」。休息平台靠墙立着一块「4F 服装 / 生活」的楼层导视牌，边框掉了一颗螺丝。",
-    onEnter: function(v) { transit(v, "4F-消防通道"); return { add: { chasedByZombies: 1 } }; },
+    onEnter: function(v) { transit(v, "4F-消防通道"); return {}; },
     choices: [
       {
         text: "往上走到5F（体力-1）",
@@ -1228,7 +1228,9 @@ Object.assign(storyData, {
   },
   "新达汇-3F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
-    text: "你推开防火门，走进楼梯间。墙上标着「3F」。脚步声在混凝土楼梯井里回荡。\n楼梯平台的消火栓箱玻璃裂着纹，里面还立着一只干粉灭火器。",
+    text: "你推开防火门，走进楼梯间。墙上标着「3F」。\n\
+脚步声在混凝土楼梯井里回荡。\n\
+楼梯平台的消火栓箱玻璃裂着纹，里面还立着一只干粉灭火器。",
     onEnter: function(v) { transit(v, "3F-消防通道"); return { add: { chasedByZombies: 1 } }; },
     choices: [
       {
@@ -1257,7 +1259,7 @@ Object.assign(storyData, {
   "新达汇-2F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
     text: "你推开防火门，走进楼梯间。墙上标着「2F」。扶手上缠着半截「小心台阶」的黄黑胶带，一头耷拉着。",
-    onEnter: function(v) { transit(v, "2F-消防通道"); return { add: { chasedByZombies: 1 } }; },
+    onEnter: function(v) { transit(v, "2F-消防通道"); return {}; },
     choices: [
       {
         text: "往上走到3F（体力-1）",
@@ -1279,7 +1281,7 @@ Object.assign(storyData, {
   "新达汇-1F消防通道": {
     image: "images/placeholder.png" /* TODO: images/新达汇/stairwell.png */,
     text: "你推开防火门，走进楼梯间。墙上标着「1F」。门背后钉着一张手写的“员工通道请随手关门”，字被汗渍洇开了。",
-    onEnter: function(v) { transit(v, "1F-消防通道"); return { add: { chasedByZombies: 1 } }; },
+    onEnter: function(v) { transit(v, "1F-消防通道"); return { add: {} }; },
     choices: [
       {
         text: "往上走到2F（体力-1）",
@@ -1950,7 +1952,7 @@ Object.assign(storyData, {
   "新达汇-3F南走廊中-摸黑": {
     image: "images/placeholder.png" /* TODO: images/新达汇/3fSouth.png */,
     onEnter: { set: { showPowerOut: true }, add: { chasedByZombies: 1 } },
-    text: "你伸着手在黑暗中摸索前进。脚下嘎<span class='sfx'>吱</span>一声——你踩碎了什么塑料玩具。声音虽不大，但在安静的走廊里还是挺清楚的。",
+    text: "你伸着手在黑暗中摸索前进。脚下<span class='sfx'>嘎吱</span>一声——你踩碎了什么塑料玩具。声音虽不大，但在安静的走廊里还是挺清楚的。",
     choices: [
       {
         text: "继续走",
@@ -3580,7 +3582,7 @@ Object.assign(storyData, {
   },
   "新达汇-B1设备间": {
     image: "images/新达汇/B1设备间.webp",
-    text: "你推开一扇半掩的铁门，走进一间设备间。\n\
+    text: "设备间。\n\
 几台锈蚀的空调主机<span class='sfx'>嗡嗡</span>作响，管道从天花板穿过，上面贴着褪色的标签。\n\
 墙角的工具架上散落着几把扳手和螺丝刀——都是固定在地面上。旁边挂着一本翻开的设备巡检记录表。",
     choices: [
@@ -3635,7 +3637,7 @@ Object.assign(storyData, {
   },
   "新达汇-B1废弃仓库": {
     image: "images/新达汇/B1废弃仓库.webp",
-    text: "你走进一间废弃的小仓库。配电箱的盖板掉在地上，几根电线裸露在外。墙角堆着几个落满灰的纸箱和几袋水泥——水泥已经完全结块了。\n\
+    text: "废弃的小仓库。配电箱的盖板掉在地上，几根电线裸露在外。墙角堆着几个落满灰的纸箱和几袋水泥——水泥已经完全结块了。\n\
 靠墙还有一个老旧的工具箱，盖子上用记号笔写着“王建国”。",
     choices: [
       {
@@ -4010,7 +4012,7 @@ Object.assign(storyData, {
   },
   "新达汇-2F杂物间": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall2f.png */,
-    text: "你推开杂物间的门。里面堆满了废弃的衣架、模特假人的断肢和几卷落满灰的地毯。墙上贴着一张褪色的海报——是两年前商场的周年庆活动。角落里有一个铁皮柜，柜门上挂着一把弹子锁。旁边还塞着一个皱巴巴的帆布袋。",
+    text: "杂物间。里面堆满了废弃的衣架、模特假人的断肢和几卷落满灰的地毯。墙上贴着一张褪色的海报——是两年前商场的周年庆活动。角落里有一个铁皮柜，柜门上挂着一把弹子锁。旁边还塞着一个皱巴巴的帆布袋。",
     choices: [
       {
         text: "翻一翻那个帆布袋",
@@ -4139,7 +4141,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F通风机房": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall3f.png */,
-    text: "你走进通风机房。几台大型通风设备正在运转，发出低沉的<span class='sfx'>轰</span>鸣声。墙上挂着几根消防水管和灭火器。角落里有一个检修口，盖板松动着。靠墙还有一个铁架，上面散落着扳手、手套和几个瓶瓶罐罐。",
+    text: "通风机房。几台大型通风设备正在运转，发出低沉的<span class='sfx'>轰</span>鸣声。墙上挂着几根消防水管和灭火器。角落里有一个检修口，盖板松动着。靠墙还有一个铁架，上面散落着扳手、手套和几个瓶瓶罐罐。",
     choices: [
       {
         text: "走到铁架旁翻翻看有什么",
@@ -4345,7 +4347,7 @@ Object.assign(storyData, {
   },
   "新达汇-5F清洁工具间": {
     image: "images/placeholder.png" /* TODO: images/新达汇/backHall5f.png */,
-    text: "你推开门——是一间清洁工具间。几把拖把靠墙立着，水桶里还残留着半桶浑浊的水，水面浮着一层灰白色的霉膜。墙上挂着一本保洁签到表，最后一次签名的日期是6月25日。签到表旁边用圆珠笔贴着一张皱巴巴的便条。",
+    text: "清洁工具间。几把拖把靠墙立着，水桶里还残留着半桶浑浊的水，水面浮着一层灰白色的霉膜。墙上挂着一本保洁签到表，最后一次签名的日期是6月25日。签到表旁边用圆珠笔贴着一张皱巴巴的便条。",
     choices: [
       {
         text: "凑近看看那张便条",

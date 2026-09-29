@@ -497,6 +497,57 @@
   <p><b>配额满</b>：安居苑「<span class="sfx">铛——</span>……<span class="sfx">啪</span>地一声断成两截……叮叮当当地滚到墙角」→ 前两处已用满，叮叮当当<b>不标</b></p>
 </div>
 
+<h2>P2 第二批 · 建平 / 仁济 / 张江 / 夜晚剧情（09-29）· 净增 117 处 + 修掉两处规则缺陷</h2>
+<div class="cap">
+  第二批覆盖 story 根目录大文件：<code>建平中学</code> +40 · <code>张江</code> +44 · <code>仁济南院</code> +20 ·
+  <code>夜晚剧情</code> +6 · <code>core</code> +1 · 东明补漏 +2 · <code>utils</code> 通用池 +4。
+  全库 P2 标记现共 <b>411 处</b>。本批还顺手修掉第一批遗留的「半截拟声」问题（全库 28 处）。
+</div>
+
+<h3 style="width:88%;max-width:1200px;margin:18px auto 6px;font-size:14px;font-weight:normal;color:var(--ash)">① 战斗 / 潜行（建平中学）—— crit 与 rot 交替，密度随「会不会死人」走</h3>
+<div class="panel">
+  <p>你放倒了最前面的几只，但它们是黑压压的一片——前面的倒下，<span class="crit">后面的踩着尸体扑上来</span>，根本没有尽头。<span class="end">—— 结局：自投罗网 ——</span></p>
+  <p><span class="crit">老吴的丧尸扑了过来</span>！<span class="warn">集中注意力，记住那些闪烁的颜色！</span></p>
+  <p>最外面一只丧尸缓缓回过头，浑浊的眼珠对上你的视线。<span class="rot">嘶吼声炸开</span>，整片尸群齐刷刷转身，朝你涌过来——你头皮发麻，转身就逃，<span class="rot">嘶吼声却追着你响了一路</span>。</p>
+  <p>喊声只出了一半。尸群漫过办公桌，<span class="crit">把他连人带椅子扑倒在地</span>，试卷散了一地，<span class="rot">惨叫声很快淹没在成片的低吼里</span>。</p>
+</div>
+
+<h3 style="width:88%;max-width:1200px;margin:18px auto 6px;font-size:14px;font-weight:normal;color:var(--ash)">② 工厂 / 机械环境（张江）—— sfx 是主力，「喉音」才用 rot</h3>
+<div class="panel">
+  <p>你注意到：它没有呼吸的起伏。<span class="rot">喉咙深处滚着一线含混的、湿漉漉的喉音</span>，像烧开水前的那种响。</p>
+  <p>你侧身一让，灭火器的喷嘴擦着你耳朵撞在柜门上，<span class="sfx">哐</span>一声巨响。</p>
+  <p>你后退半步，<span class="crit">盯住它扑上来的节奏——躲开</span>，还手，别被逼到角落里。</p>
+</div>
+
+<h3 style="width:88%;max-width:1200px;margin:18px auto 6px;font-size:14px;font-weight:normal;color:var(--ash)">③ 修复：半截拟声 → 整体放大（全库 28 处，第一批遗留 18 + 第二批 10）</h3>
+<div class="panel">
+  <p><b>修复前</b>：门锁发出令人牙酸的嘎<span class="sfx">吱</span>声 &nbsp;——「吱」被放大、「嘎」没有，半个词很刺眼</p>
+  <p><b>修复后</b>：门锁发出令人牙酸的<span class="sfx">嘎吱</span>声</p>
+  <p><b>修复前</b>：刮得路牌<span class="sfx">吱</span>嘎作响 &nbsp;→&nbsp; <b>修复后</b>：刮得路牌<span class="sfx">吱嘎</span>作响</p>
+  <p><b>修复前</b>：<span class="sfx">砰</span>！<span class="sfx">砰砰</span>砰！ &nbsp;→&nbsp; <b>修复后</b>：<span class="sfx">砰</span>！<span class="sfx">砰砰砰</span>！</p>
+</div>
+
+<h3 style="width:88%;max-width:1200px;margin:18px auto 6px;font-size:14px;font-weight:normal;color:var(--ash)">④ 新增守卫：机械声不误标 rot</h3>
+<div class="panel">
+  <p><code>rot</code> 的「低吼」会误命中「发电机低吼着」「水泵」等机械声（张江动力站）。
+  已加守卫：含 <code>发电机|水泵|电机|马达|引擎|机器|风机|配电</code> 的分句不上 <code>rot</code>。</p>
+</div>
+
+<h3 style="width:88%;max-width:1200px;margin:18px auto 6px;font-size:14px;font-weight:normal;color:var(--ash)">⑤ 方案 A 已实施：清掉 28 处死亡结局的场景级红色 style（09-29 拍板）</h3>
+<div class="panel">
+  <p>原来这 28 处死亡结局带 <code>style:"color:#ff4444;font-weight:bold"</code>（引擎把整段刷红加粗），
+  导致 P1 的 <span class="end">—— 结局 ——</span> 行<b>失去对比度</b>。已按<b>方案 A</b>删掉场景级 style，
+  改由 <code>end</code> span 独立承担结局行血红；清掉后脚本守卫自动失效，<b>顺带补回 4 处 crit / rot</b>。</p>
+
+  <p class="cap" style="margin:14px 0 4px">① 改前（整段被场景级 style 刷红加粗，结局行淹在里面）</p>
+  <p style="color:#ff4444;font-weight:bold">你没能抓住它的间隙。它扑上来的那一下比你想的快，你的武器举到一半就被撞偏。牙齿咬进了你的小臂，它拖着你撞翻那辆轮椅。<span class="end">—— 结局：急诊失守 ——</span></p>
+
+  <p class="cap" style="margin:14px 0 4px">② 改后（正常正文 + 局部 crit 强调 + 结尾一行干血红）</p>
+  <p>你没能抓住它的间隙。<span class="crit">它扑上来的那一下比你想的快</span>，你的武器举到一半就被撞偏。牙齿咬进了你的小臂，它拖着你撞翻那辆轮椅。<br><span class="end">—— 结局：急诊失守 ——</span></p>
+
+  <p class="cap" style="margin:10px 0 0">↑ 死亡观感从「整段红」变成「正常叙事，遇袭处一点红，结局行干血红」——与全库其它结局统一</p>
+</div>
+
 <h2>色板</h2>
 <div class="swatches">
   <span class="sw" style="color:#cfc7b6">--ink 正文</span>

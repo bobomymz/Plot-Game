@@ -36,9 +36,10 @@ for (const d of DIRS) {
 const RULES = [
   {
     key: "sfx", cls: "sfx", expand: "word", maxLen: 10, quota: 2,
-    // 长词优先（交替分支里长分支写在前面）；单字拟声只收高置信的几个
+    // ⚠ 长词优先（交替分支里长分支写在前面）；单字拟声只收高置信的几个
     // ⚠ ABAB/AABB 式（咕咚咕咚、淅淅沥沥）必须整体命中，只命中后半个字会包出「咕[咚]咕[咚]」的怪相
-    re: /(?:咕咚咕咚|咕噜咕噜|淅淅沥沥|噼里啪啦|轰隆隆|哗啦啦|叽里咕噜|叮铃咣啷)|(?:咔嚓|哗啦|啪嗒|叮当|哐啷|吱呀|嗡嗡|沙沙|砰砰|嗒嗒|咔咔|轰隆|哗哗|吱吱|咯吱|噼啪|滴答|铿锵|咕咚|咕噜|叮咚|噗通|扑通|咔哒|吧嗒|乒乓)(?:——|—)?|(?:砰|啪|哐|轰|嗡|哗|吱|咚|嗤|唰|嗖|铿|铛|咣|嘭|叮)(?:——|—)?/g,
+    // ⚠ 复合词必须整体收录，否则「嘎吱」「哐当」会被单字规则拆成「嘎[吱]」「[哐]当」（半截放大，比不标更难看）
+    re: /(?:咕咚咕咚|咕噜咕噜|淅淅沥沥|噼里啪啦|轰隆隆|哗啦啦|叽里咕噜|叮铃咣啷|叮铃铃|吱嘎|嘎吱|哐当|咣当)|(?:咔嚓|哗啦|啪嗒|叮当|哐啷|吱呀|嗡嗡|叮铃|沙沙|砰砰|嗒嗒|咔咔|轰隆|哗哗|吱吱|咯吱|噼啪|滴答|铿锵|咕咚|咕噜|叮咚|噗通|扑通|咔哒|吧嗒|乒乓)(?:——|—)?|(?:砰|啪|哐|轰|嗡|哗|吱|咚|嗤|唰|嗖|铿|铛|咣|嘭|叮)(?:——|—)?/g,
   },
   {
     key: "crit", cls: "crit", expand: "clause", maxLen: 24, quota: 2,
@@ -126,11 +127,32 @@ function idZones(line) {
 function runFile(rel) {
   const p = path.join(ROOT, rel);
   const src0 = fs.readFileSync(p, "utf8");
+  const rawLines = src0.split("\n");        // 未 mask 的原文行（用于把已存在的同类标记计入配额）
   const { masked, spans } = mask(src0);
   const lines = masked.split("\n");
   const outLines = [];
   const hits = [];      // 普查输出
   let applied = 0;
+
+  // ⚠⚠ 场景级 style 守卫（engine.js:1531 把 scene.style 直接刷在 #scene-text 容器上）：
+  // 【2026-09-29 方案 A】全库 28 处死亡结局的 `style:"color:#ff4444..."` 已由
+  //   tools/markup_strip_death_style.js 删除，改由 <span class='end'> 独立承担结局行血红。
+  //   故本守卫只针对「**红色系** style」——那种场景整段是红+粗：
+  //     · crit（红粗）视觉零增量 → 跳过
+  //     · rot（脏黄绿）会破坏整段统一的死亡红 → 跳过
+  //   sfx 是字号放大、不吃父级 color，效果仍保留。
+  // ⚠ 非红色 style（居中/字号/日记本楷体）不影响 crit/rot 的观感，不再误跳。
+  //   万一日后重新引入红色 style，本守卫会自动恢复生效。
+  const styleScene = new Array(lines.length).fill(false);
+  {
+    let start = -1, hasRedStyle = false;
+    const flush = (end) => { if (start >= 0 && hasRedStyle) for (let k = start; k < end; k++) styleScene[k] = true; };
+    for (let li = 0; li < lines.length; li++) {
+      if (/^\s*"[^"]+"\s*:\s*\{/.test(lines[li])) { flush(li); start = li; hasRedStyle = false; }
+      else if (start >= 0 && /^\s*style\s*:\s*["'][^"']*color\s*:\s*#ff4444/i.test(lines[li])) hasRedStyle = true;
+    }
+    flush(lines.length);
+  }
 
   for (let li = 0; li < lines.length; li++) {
     const line = lines[li];
@@ -148,6 +170,27 @@ function runFile(rel) {
     const segs = line.split("\\n");
     const used = segs.map(() => ({ sfx: 0, strong: 0, total: 0 }));
     const edits = [];   // {segIdx, start, end, cls, word}
+
+    // ⚠⚠ 把本行**已存在的** sfx/crit/rot/shout 标记也计入段配额：
+    //   mask() 会把已标记的 <span> 抹成占位符（避免二次包裹），于是重跑时它们不计入配额，
+    //   多轮 apply 会在同一段里越标越多、突破 ≤2/≤3 的上限（建平中学.js:2239 踩过）。
+    //   注意只计这四类；P1 的 end/sys、P3 的 think/hand 等不算 P2 配额。
+    {
+      const raw = rawLines[li] || "";
+      const rePre = /<span class='(sfx|crit|rot|shout)'[^>]*>/g;
+      let pm;
+      while ((pm = rePre.exec(raw)) !== null) {
+        const sPos = pm.index;
+        let acc2 = 0, si = 0;
+        for (let k = 0; k < segs.length; k++) {
+          if (sPos >= acc2 && sPos <= acc2 + segs[k].length) { si = k; break; }
+          acc2 += segs[k].length + 2;
+        }
+        const q2 = used[si];
+        if (pm[1] === "sfx") q2.sfx++; else q2.strong++;
+        q2.total++;
+      }
+    }
 
     for (const rule of RULES) {
       if (CAT && rule.key !== CAT) continue;
@@ -173,6 +216,28 @@ function runFile(rel) {
           hits.push({ rel, li: li + 1, cls: rule.cls, word: plain, why: "含否定/存疑", skip: true });
           continue;
         }
+        // 死亡场景（场景级 style 整段红）里 crit/rot 无视觉增量 → 跳过（sfx 保留）
+        if (rule.cls !== "sfx" && styleScene[li]) {
+          hits.push({ rel, li: li + 1, cls: rule.cls, word: plain, why: "死亡场景整段已红(场景级style)", skip: true });
+          continue;
+        }
+        // rot 是「丧尸/非人生物声」专用；发电机/水泵这类机械声也会被「低吼」误命中（张江动力站踩过）
+        if (rule.cls === "rot" && /发电机|水泵|电机|马达|引擎|机器|风机|配电/.test(plain)) {
+          hits.push({ rel, li: li + 1, cls: rule.cls, word: plain, why: "机械声非丧尸声", skip: true });
+          continue;
+        }
+        // ⚠⚠ 相邻同类合并必须在**配额判断之前**：
+        //   合并只是把新命中并进已有 span、不新增配额；若放到配额之后，后一个匹配会先被
+        //   「段内sfx已满2」拦下、永远走不到合并分支，留下「砰砰**砰**」这种半截放大。
+        //   （建平中学.js:2239「砰！砰砰砰！」踩过）
+        // 间隔 ≤1 个非标点字符也算相邻：否则「咕咚咕咚」会包成「咕[咚]咕[咚]」
+        const near = edits.find((ed) => {
+          if (ed.cls !== rule.cls) return false;
+          if (ed.end === s || ed.start === e) return true;
+          const gap = ed.end < s ? line.slice(ed.end, s) : line.slice(e, ed.start);
+          return gap.length === 1 && !/[\s""'`，,。.！!？?；;：:—…\\]/.test(gap);
+        });
+        if (near) { near.start = Math.min(near.start, s); near.end = Math.max(near.end, e); continue; }
         // 定位所属段
         let acc = 0, segIdx = 0;
         for (let k = 0; k < segs.length; k++) {
@@ -184,18 +249,8 @@ function runFile(rel) {
         if (isStrong && q.strong >= 2) { hits.push({ rel, li: li + 1, cls: rule.cls, word: plain, why: "段内强强调已满2", skip: true }); continue; }
         if (!isStrong && q.sfx >= 2) { hits.push({ rel, li: li + 1, cls: rule.cls, word: plain, why: "段内sfx已满2", skip: true }); continue; }
         if (q.total >= 3) { hits.push({ rel, li: li + 1, cls: rule.cls, word: plain, why: "段内合计已满3", skip: true }); continue; }
-        // 与已有 edit 重叠则跳过（crit > shout > rot > sfx，按顺序先到先得）
-        const overlap = edits.find((ed) => s < ed.end && e > ed.start);
-        if (overlap) { if (overlap.cls === rule.cls) continue; continue; }
-        // 相邻同类合并（"砰砰"+"砰" 拆成两个 span 会碎，观感差）
-        // 间隔 ≤1 个非标点字符也算相邻：否则「咕咚咕咚」会包成「咕[咚]咕[咚]」
-        const near = edits.find((ed) => {
-          if (ed.cls !== rule.cls) return false;
-          if (ed.end === s || ed.start === e) return true;
-          const gap = ed.end < s ? line.slice(ed.end, s) : line.slice(e, ed.start);
-          return gap.length === 1 && !/[\s""'`，,。.！!？?；;：:—…\\]/.test(gap);
-        });
-        if (near) { near.start = Math.min(near.start, s); near.end = Math.max(near.end, e); continue; }
+        // 与其他类已选区域重叠则跳过（crit > shout > rot > sfx，按规则顺序先到先得）
+        if (edits.some((ed) => s < ed.end && e > ed.start)) continue;
         if (isStrong) q.strong++; else q.sfx++;
         q.total++;
         edits.push({ segIdx, start: s, end: e, cls: rule.cls, word: plain });

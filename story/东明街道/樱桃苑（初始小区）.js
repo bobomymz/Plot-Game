@@ -312,9 +312,16 @@ Object.assign(storyData, {
 
   "家门外": {
     image: "images/home/outsideHome.webp",
-    text: "你打开门，面前是空荡荡的走廊。聒噪的蝉鸣从窗户灌入你的耳蜗。\n\
+    text: function(vars) {
+      if (vars._lastScene === "电梯") {
+        return "电梯停在2楼，轿厢门滑开。外面是一条空荡荡的走廊，聒噪的蝉鸣从窗户灌入你的耳蜗。\n\
 ————————\n\
-你走到楼梯间准备下楼。",
+你走到楼梯间准备下楼。";
+      }
+      return "你打开门，面前是空荡荡的走廊。聒噪的蝉鸣从窗户灌入你的耳蜗。\n\
+————————\n\
+你走到楼梯间准备下楼。";
+    },
     choices: [
       {
         text: "下1楼",
@@ -412,7 +419,7 @@ Object.assign(storyData, {
 
   "3楼-安全": {
     image: "images/home/3楼.webp",
-    text: "你走到3楼。这里不知何时已经堆满了家具，你无法进入。",
+    text: "电梯停在3楼。这里不知何时已经堆满了家具，你无法进入。",
     choices: [
       {
         text: "返回楼梯间",
@@ -506,13 +513,17 @@ Object.assign(storyData, {
   "结局-1楼-party": {
     image: "images/home/1楼-party.webp",
     text: "你到了一楼大厅。一群丧尸正在开party，一看见你就<em><span class='crit'>非常热情</span></em>地围拢过来。\n你甚至来不及尖叫。\n\n<span class='end'>—— 结局：一楼派对 ——</span>",
-    style: "color: #ff4444; font-weight: bold;"
   },
 
   "B1": {
     image: "images/home/B1.webp",
     onEnter: { set: { currentPlace: "初始小区", currentPos: "地下车库" } },
-    text: "你推开消防门，顺着水泥坡道走进 B1 地下车库。感应灯没亮，只有安全出口的绿灯在远处亮着，照出一排排沉默的车尾。",
+    text: function(vars) {
+      if (vars._lastScene === "家门口电梯" || vars._lastScene === "电梯") {
+        return "电梯沉到 B1，轿厢门缓缓打开。感应灯没亮，只有安全出口的绿灯在远处亮着，照出一排排沉默的车尾。";
+      }
+      return "你推开消防门，顺着水泥坡道走进 B1 地下车库。感应灯没亮，只有安全出口的绿灯在远处亮着，照出一排排沉默的车尾。";
+    },
     choices: [
       {
         text: "返回楼梯间",
@@ -713,7 +724,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
     image: "images/home/老六偷袭未果.webp",
     onEnter: { set: { _sleepingZombieGone: true } },
     text: "你对它丧失了兴趣，转身离开。\n\
-只听得背后传来木头长椅的嘎<span class='sfx'>吱</span>一响，背后阴风袭来，你吓了一大跳，往后<span class='sfx'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
+只听得背后传来木头长椅的<span class='sfx'>嘎吱</span>一响，背后阴风袭来，你吓了一大跳，往后<span class='sfx'>飞踹一脚</span>，把什么东西踹飞了出去。\n\
 回头一看，正是椅子上的那个睡神，它竟是一只丧尸！\n\
 趁着它暂时晕过去了，你得赶紧离开了。",
     choices: [
@@ -834,7 +845,11 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "地下非机动车停靠区": {
     image: "images/home/nonMotorized.webp",
-    text: "你来到了地下非机动车停靠区，这里有不少自行车和电瓶车。<span class='rot'>楼梯上方隐约传来丧尸的低吼声</span>……",
+    text: function(vars) {
+      var back = vars._lastScene === "自行车上锁了" || vars._lastScene === "电瓶车上锁了";
+      var head = back ? "你回到这排车旁边，又打量了一圈。" : "你来到了地下非机动车停靠区，";
+      return head + "这里有不少自行车和电瓶车。<span class='rot'>楼梯上方隐约传来丧尸的低吼声</span>……";
+    },
     choices: [
       {
         text: "继续前进",
@@ -1308,7 +1323,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "结局-民防设施楼梯断裂": {
     image: "images/home/踩塌台阶.webp",
-    text: "你转头就跑，跳下楼梯，木板发出不堪重负的嘎<span class='sfx'>吱</span>声，随即断裂。你掉入了深邃的黑暗中，转眼便被丧尸吞噬。\n\
+    text: "你转头就跑，跳下楼梯，木板发出不堪重负的<span class='sfx'>嘎吱</span>声，随即断裂。你掉入了深邃的黑暗中，转眼便被丧尸吞噬。\n\
 <span class='end'>—— 结局：看你还跳不跳 ——</span>"
   },
 
@@ -1467,9 +1482,14 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
 
   "民防设施-进风机房": {
     image: "images/home/fanRoom.webp",
-    text: "你来到了进风机房。\n\
+    text: function(vars) {
+      if (vars._lastScene === "日记本的空白页" || vars._lastScene === "日记本的提示-打开鼓风机") {
+        return "你回到进风机房里。大型电动脚踏两用风机就在眼前，金属管道在头顶盘成一张密网。";
+      }
+      return "你来到了进风机房。\n\
 这里有大型电动脚踏两用风机，断电时可人力踩踏送风，配套庞大保温风管、电气控制箱，整间布满金属管道，密密麻麻，如同蜘蛛网。\n\
-外面传来<span class='sfx'>砰砰砰</span>的敲门声，你必须尽快做出抉择。",
+外面传来<span class='sfx'>砰砰砰</span>的敲门声，你必须尽快做出抉择。";
+    },
     choices: [
       {
         text: "走为上策",
@@ -1743,7 +1763,7 @@ F5的按钮早就被撬掉了——不知道是谁干的。",
   "樱桃苑-5楼": {
     image: "images/home/5楼.webp",
     onEnter: { set: { currentPos: "居民楼" } },
-    text: "五楼走廊很安静。地面上铺着已经开始翘边的复合地板，踩上去嘎<span class='sfx'>吱</span>作响。并排三扇门：501、502、503，门牌是那种老式的蓝色塑料片，501的“5”已经歪了，快要掉下来。\n501的门上贴着一张褪色的“福”字，下面用透明胶粘着一个手写的纸牌——“如有人找，请打居委会电话”。字迹工整，是练过毛笔的老人写的。\n502门上没有任何装饰。503的门缝下面塞着一角超市传单，已经被踩得模糊了。",
+    text: "五楼走廊很安静。地面上铺着已经开始翘边的复合地板，踩上去<span class='sfx'>嘎吱</span>作响。并排三扇门：501、502、503，门牌是那种老式的蓝色塑料片，501的“5”已经歪了，快要掉下来。\n501的门上贴着一张褪色的“福”字，下面用透明胶粘着一个手写的纸牌——“如有人找，请打居委会电话”。字迹工整，是练过毛笔的老人写的。\n502门上没有任何装饰。503的门缝下面塞着一角超市传单，已经被踩得模糊了。",
     choices: [
       {
         text: "推开501的门",

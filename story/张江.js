@@ -41,7 +41,7 @@ Object.assign(storyData, {
   "张江-落地坡道": travelScene(
     "你贴着护栏走下匝道，坡道尽头横着一辆侧翻的电瓶车，你跨过去，踏上了张江的地面。\n\
 匝道口立着一块蓝底白字的指示牌：人工智能岛 →，上海科技大学 ←。西南方向，一座加油站的罩棚从树梢后面探出来，罩棚下几台加油机的显示屏全黑着。\n\
-这一带是科技园区，楼都不高，玻璃幕墙干干净净——干净得像还没人来得及弄脏它。街上很静，静得能听见红绿灯变换时那一声轻微的咔哒。",
+这一带是科技园区，楼都不高，玻璃幕墙干干净净——干净得像还没人来得及弄脏它。街上很静，静得能听见红绿灯变换时那一声轻微的<span class='sfx'>咔哒</span>。",
     "张江-人工智能岛闸机外",
     {
       image: "images/placeholder.png", /* TODO: images/张江/落地坡道.webp */
@@ -211,7 +211,7 @@ Object.assign(storyData, {
       vars.currentPos = "加油站";
     },
     text: function(vars) {
-      var desc = "你走到加油站跟前。罩棚下面四台加油机立着，油枪还插在座里，显示屏全黑了。\n\
+      var desc = "加油站。罩棚下面四台加油机立着，油枪还插在座里，显示屏全黑了。\n\
 便利店占着加油站的一角，玻璃门上贴着褪色的“24小时”。后场方向搭着一座铁皮棚，棚门半开，里面黑洞洞的。";
       return desc + "\n" + describeWeather(vars);
     },
@@ -237,7 +237,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/加油站-棚子.webp */
     onEnter: function(vars) { vars.currentPos = "加油站铁皮棚"; },
     text: function(vars) {
-      var desc = "后场的铁皮棚半开着。棚子深处码着几只铁皮油桶，有的空了，歪倒在一边——但最里面那只立得笔直，你试着掂了掂把手，掂不动；摇一摇，里面哗啦作响，是满的。";
+      var desc = "后场的铁皮棚半开着。棚子深处码着几只铁皮油桶，有的空了，歪倒在一边——但最里面那只立得笔直，你试着掂了掂把手，掂不动；摇一摇，里面<span class='sfx'>哗啦</span>作响，是满的。";
       if (!(vars._visit['张江-加油站-棚子-胜利'] > 0)) {
         desc += "\n你刚要往里走，油桶后面的阴影里慢慢立起一个人形——穿着站里的工装外套，前襟一大片发黑的血迹。它转过头，朝你张开了嘴。";
       } else {
@@ -272,8 +272,8 @@ Object.assign(storyData, {
   "张江-加油站-棚子-战斗": {
     image: "images/placeholder.png", /* TODO: images/张江/加油站-棚子-战斗.webp */
     onEnter: initMemoryGame(["红", "蓝", "绿"], 4),
-    text: "它从油桶后面挤了出来，撞得空桶哐当乱响。棚子的铁皮墙把它的吼声放大了一圈。\n\
-你后退半步，盯住它扑上来的节奏——躲开，还手，别被逼到角落里。",
+    text: "它从油桶后面挤了出来，撞得空桶<span class='sfx'>哐当</span>乱响。棚子的铁皮墙把它的吼声放大了一圈。\n\
+你后退半步，<span class='crit'>盯住它扑上来的节奏——躲开</span>，还手，别被逼到角落里。",
     choices: [
       {
         text: "输入你看到的颜色分布",
@@ -296,7 +296,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你侧身让过它的第一扑，顺势抄起手边一只空油桶，抡在它的后脑上。它栽进桶堆里，挣了两下，不动了。\n\
-棚子里安静下来，只剩铁皮被风拍打的哐当声。" + combatDrainText(vars);
+棚子里安静下来，只剩铁皮被风拍打的<span class='sfx'>哐当</span>声。" + combatDrainText(vars);
     },
     choices: [
       { text: "回去翻油桶", nextScene: "张江-加油站-棚子" }
@@ -354,7 +354,7 @@ Object.assign(storyData, {
     onEnter: function(vars) { vars.currentPos = "公司前台"; },
     text: "玻璃门没锁。前台桌上立着一块公司的水牌，logo 下面是一行小字：“让机器学会学习”。\n\
 通往里面的走廊尽头，有一扇门上贴着手写的 A4 纸：“机房·闲人免进”，纸的边角卷了。\n\
-门缝底下透出一线光，还有服务器风扇那种持续的、低低的嗡嗡声。",
+门缝底下透出一线光，还有服务器风扇那种持续的、低低的<span class='sfx'>嗡嗡</span>声。",
     choices: [
       { text: "推开那扇门", nextScene: "张江-AI岛-机房", effect: updateTime(2) },
       { text: "去园区", nextScene: "张江-AI岛-园区内", effect: updateTime(1) }
@@ -370,7 +370,7 @@ Object.assign(storyData, {
 靠墙的操作台前坐着一个人，背对着你，正就着两台显示器的光鼓捣什么。听到门响，他的手停住了。\n\
 “……说过多少次了，闲人免——”他回过头，看清你的脸，后半句卡在了喉咙里。";
       }
-      return "机房里机柜风扇嗡嗡地响着，混着空调的冷气。老师还守在他那排显示器前面——这栋楼里最亮、也最吵的角落。";
+      return "机房里机柜风扇<span class='sfx'>嗡嗡</span>地响着，混着空调的冷气。老师还守在他那排显示器前面——这栋楼里最亮、也最吵的角落。";
     },
     choices: function(vars) {
       var cs = [];
@@ -805,7 +805,7 @@ Object.assign(storyData, {
       return updateTime(2)(vars);
     },
     text: function(vars) {
-      return "你侧身让过第一扑，把它撞在储物柜上。柜门砰地关上，它滑下去，围裙的带子散开，工牌掉在油污的地上：餐饮中心 · 临时工。\n\
+      return "你侧身让过第一扑，把它撞在储物柜上。柜门<span class='sfx'>砰</span>地关上，它滑下去，围裙的带子散开，工牌掉在油污的地上：餐饮中心 · 临时工。\n\
 后厨里只剩抽油烟机不知从哪来的一点余响。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
@@ -840,10 +840,10 @@ Object.assign(storyData, {
       else desc += "\n透过伸缩门的缝，能看见广场上有几条人影在慢慢地晃——隔着这道门，看不清是人是尸。";
       desc += "\n远处厂房的玻璃幕墙一层层排开，像一块竖起来的电路板。";
       if (vars._jinbaoLeft) {
-        desc += "\n读卡器的指示灯灭了。你伸手推了推伸缩门——门轮子锈住了，吱呀一声，居然让出半米宽的缝。\n电没了，电磁锁比一只手都拦不住。";
+        desc += "\n读卡器的指示灯灭了。你伸手推了推伸缩门——门轮子锈住了，<span class='sfx'>吱呀</span>一声，居然让出半米宽的缝。\n电没了，电磁锁比一只手都拦不住。";
       } else {
         desc += "\n读卡器的指示灯亮着一圈幽幽的绿。这年头，亮着的绿灯比丧尸还少见。";
-        if (vars.isNight) desc += "\n厂房靠里侧的窗户透着灯光，隔着广场，能听见发电机低低的嗡嗡声。";
+        if (vars.isNight) desc += "\n厂房靠里侧的窗户透着灯光，隔着广场，能听见发电机低低的<span class='sfx'>嗡嗡</span>声。";
       }
       return desc + "\n" + describeWeather(vars);
     },
@@ -1079,7 +1079,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "它扑空的瞬间，你侧身让过，顺势把它撞在玻璃门框上。它软软地滑下去，无尘服的头罩歪在一边，露出里面一张干灰的脸。\n\
-你喘匀了气。警报的余音还在连廊里嗡嗡地绕。" + weaponBrokeText(vars) + combatDrainText(vars);
+你喘匀了气。警报的余音还在连廊里<span class='sfx'>嗡嗡</span>地绕。" + weaponBrokeText(vars) + combatDrainText(vars);
     },
     choices: [
       { text: "回连廊", nextScene: "张江-华大-连廊" }
@@ -1224,7 +1224,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-配电箱.webp */
     onEnter: { set: { _airlockLockedOut: false, _airlockOuterClosed: false, _airlockBlowing: false, _airlockInnerOpen: false } },
     text: "你循着红色指示灯找到墙边的配电箱，翻开盖板，里面的复位钮蒙着灰。按下去，等了几秒——\n\
-“咔哒”一声，风淋舱面板的红灯转成了待机的黄。互锁解除了。\n\
+“<span class='sfx'>咔哒</span>”一声，风淋舱面板的红灯转成了待机的黄。互锁解除了。\n\
 折腾这几分钟，够你在长凳上喘匀三口气。",
     choices: [
       { text: "回前厅", nextScene: "张江-华大-灰区" }
@@ -1246,10 +1246,11 @@ Object.assign(storyData, {
         if (vars.hasDieselCan) darkCabin += "\n你还扛着那桶柴油。没电了，舱门倒是不拦人——拦人的是这几十斤铁皮。";
         return darkCabin;
       }
-      var desc = "你走进风淋舱。舱不大，两三个人并肩的宽度，四面墙布满喇叭口似的喷嘴。外门在你身后合拢到一半，内门那边亮着一块红色的小牌：联锁。\n\
+      var internalReturn = ["张江-华大-风淋舱-关门", "张江-华大-风淋舱-开门", "张江-华大-风淋舱-强启失败"].indexOf(vars._lastScene) >= 0;
+      var desc = (internalReturn ? "风淋舱里。" : "你走进风淋舱。") + "舱不大，两三个人并肩的宽度，四面墙布满喇叭口似的喷嘴。外门在你身后合拢到一半，内门那边亮着一块红色的小牌：联锁。\n\
 面板就在手边，一块不大的屏幕，下面两个键——【风淋启动】【紧急复位】。";
       if (vars._airlockInnerOpen) desc += "\n面板上的倒计时走完了，屏幕定格在一个绿色的“完成”，内门的红牌变成了绿灯。";
-      else if (vars._airlockBlowing) desc += "\n风正在吹。气流从四面八方喷出来，打得连体服啪啪作响。";
+      else if (vars._airlockBlowing) desc += "\n风正在吹。气流从四面八方喷出来，打得连体服<span class='sfx'>啪啪</span>作响。";
       else if (vars._airlockOuterClosed) desc += "\n外门关得严严实实。面板屏幕上是一行待机字样：外门已关闭，等待启动。";
       else desc += "\n外门还开着一条缝，风从缝里灌进来，面板屏幕上一行小字：请关闭外门。";
       if ((vars._visit['张江-华大-连廊-规程'] > 0)) desc += "\n墙上那张规程你还记得：先关外门，按启动，等倒计时走完，“嘀”一声，内门开。";
@@ -1354,7 +1355,7 @@ Object.assign(storyData, {
       return updateTime(1)(vars);
     },
     text: function(vars) {
-      var desc = "高速气流从四面八方的喷嘴里喷出来，风压实打实地打在身上，袖口啪啪拍脸，睁眼都费劲。\n\
+      var desc = "高速气流从四面八方的喷嘴里喷出来，风压实打实地打在身上，袖口<span class='sfx'>啪啪</span>拍脸，睁眼都费劲。\n\
 面板屏幕上，倒计时一格一格地跳：25、24、23……\n\
 据说这一套是要把人身上的浮尘、皮屑、纤维统统吹掉——在进入那间一尘不染的房间之前。";
       if (vars._airlockLeakRounds > 0) desc += "\n舱里还残着一股淡淡的酸味，像上次泄漏留下的记性。";
@@ -1408,7 +1409,7 @@ Object.assign(storyData, {
       vars._airlockStartFails = 0;
       return {};
     },
-    text: "你肩膀撞上内门的瞬间，舱里的气流像被惹怒了一样猛地反扑——出风口“轰”地喷出一股全功率的强风，把你整个人掀得倒退两步，后腰磕在喷嘴棱上，眼前发了一阵黑。\n\
+    text: "你肩膀撞上内门的瞬间，舱里的气流像被惹怒了一样猛地反扑——出风口“<span class='sfx'>轰</span>”地喷出一股全功率的强风，把你整个人掀得倒退两步，后腰磕在喷嘴棱上，眼前发了一阵黑。\n\
 蜂鸣声炸开，面板红字乱跳：互锁过载。内门的牌子重新翻回红色，外门也“咔”地锁死了。\n\
 风停了。舱里安静下来，只剩下警示灯一明一灭。这扇门，一时半会儿是打不开了——得出去把系统复位。",
     choices: [
@@ -1441,8 +1442,8 @@ Object.assign(storyData, {
         if (vars._airlockMaskOn) desc += "\n面具还扣在脸上，每一口都淡了一半——还没到撑不住的时候。";
         else desc += "\n喉咙像被人掐着，每吸一口都在烧。";
       } else {
-        desc = "你刚把外门拉开一条缝，舱内“轰”的一声——压差崩了。\n\
-一股看不见的东西从洁净区那侧的缝隙里反灌进来，紧跟着喷嘴开始往外吐酸雾，白蒙蒙的，呛得眼睛发辣。两扇门同时“咔哒”锁死，面板红字疯狂闪烁：压差故障，污染物反灌。\n\
+        desc = "你刚把外门拉开一条缝，舱内“<span class='sfx'>轰</span>”的一声——压差崩了。\n\
+一股看不见的东西从洁净区那侧的缝隙里反灌进来，紧跟着喷嘴开始往外吐酸雾，白蒙蒙的，呛得眼睛发辣。两扇门同时“<span class='sfx'>咔哒</span>”锁死，面板红字疯狂闪烁：压差故障，污染物反灌。\n\
 这是 AMC——气态分子污染物。厂房手册上说，这东西在洁净区是被滤网锁住的猛兽；现在它跟你关在了同一个笼子里。";
         if (vars._airlockMaskOn) desc += "\n你摸出防毒面具扣在脸上。滤罐是过期的，橡胶都发硬了——但每一口呛人的酸味都淡了一半。老洪，谢了。";
         else if (vars.hasGasMask) desc += "\n你摸出防毒面具扣在脸上——滤罐里的活性炭早耗干了。酸味一丝没淡，顺着橡胶缝往里灌，喉咙火烧火燎。";
@@ -1486,7 +1487,7 @@ Object.assign(storyData, {
       var desc = "你胡乱按下面板上够得着的每一个键。蜂鸣声变了个调，酸雾又是一阵浓——" + (vars._leakJustHurt ? "你又呛了一口，肺里火烧似的疼。" : "面具替你挡下了这一口。");
       if (Math.random() < 0.45) {
         vars._leakSolved = true;
-        desc += "\n终于，不知道是哪个键起了作用——喷雾弱了下去，门锁“咔哒”一声解开。";
+        desc += "\n终于，不知道是哪个键起了作用——喷雾弱了下去，门锁“<span class='sfx'>咔哒</span>”一声解开。";
       } else {
         vars._leakSolved = false;
         desc += "\n红字还在跳。雾还在冒。";
@@ -1515,7 +1516,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       return "你摸到面板下那颗红色的键，按住。三秒——蜂鸣声矮下去，喷雾一阵强、一阵弱，最后“嘶”地吐了口余气，停了。\n\
-两扇门的锁“咔哒”一声，同时解开。\n" + (vars._leakJustHurt ? "你扶着墙干呕了两声，喉咙里全是酸味。" : "面具的镜片上凝着一层白雾。");
+两扇门的锁“<span class='sfx'>咔哒</span>”一声，同时解开。\n" + (vars._leakJustHurt ? "你扶着墙干呕了两声，喉咙里全是酸味。" : "面具的镜片上凝着一层白雾。");
     },
     choices: [
       {
@@ -1720,7 +1721,7 @@ Object.assign(storyData, {
       }
       var desc = "光刻机是车间里最金贵的设备，罩着黄色的防光帘。帘子边立着一条人影，背对着你。\n\
 它的手臂每隔几秒抬起、放下，抬起、放下——像在重复同一个操作，不知疲倦，也绝不出错。";
-      if ((vars._visit['张江-华大-白区-工位A-观察'] > 0)) desc += "\n你注意到：它没有呼吸的起伏。喉咙深处滚着一线含混的、湿漉漉的喉音，像烧开水前的那种响。";
+      if ((vars._visit['张江-华大-白区-工位A-观察'] > 0)) desc += "\n你注意到：它没有呼吸的起伏。<span class='rot'>喉咙深处滚着一线含混的、湿漉漉的喉音</span>，像烧开水前的那种响。";
       if ((vars._visit['张江-华大-夹层-俯瞰'] > 0) && !(vars._visit['张江-华大-白区-工位A-观察'] > 0)) desc += "\n（你在夹层的格栅上俯瞰过这片——靠光刻机这条，位置从没挪过。）";
       return desc;
     },
@@ -1748,7 +1749,7 @@ Object.assign(storyData, {
     onEnter: {  },
     text: "你贴着设备的阴影又看了几分钟。\n\
 它抬起手臂，按下什么，等待，再按下——动作精准得像台机器本身的一部分。可是它没有呼吸。胸口不起不伏，肩胛骨之间静得像一块案板。\n\
-一条喉音从面罩下面丝丝地渗出来，湿的，含混的，不是任何一种语言。\n\
+<span class='rot'>一条喉音从面罩下面丝丝地渗出来</span>，湿的，含混的，不是任何一种语言。\n\
 <span class='warn'>这不是活人的动静。</span>",
     choices: [
       { text: "心里有数了", nextScene: "张江-华大-白区-工位A" }
@@ -1758,7 +1759,7 @@ Object.assign(storyData, {
   "张江-华大-白区-工位A-试探": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-工位A.webp */
     text: "你隔着两台设备的距离，轻轻敲了敲护罩。\n\
-那条人影停了半秒——然后猛地转过头来，脸“啪”地贴上防光帘的玻璃。\n\
+那条人影停了半秒——然后猛地转过头来，脸“<span class='sfx'>啪</span>”地贴上防光帘的玻璃。\n\
 面罩后面是一张干灰的脸，眼珠浑浊，像两颗泡久了的鱼眼。\n\
 它离开设备，朝你来了。",
     choices: [
@@ -1999,7 +2000,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-运维区.webp（水泵、配电柜、灭火器） */
     onEnter: function(vars) { vars.currentPos = "辅助运维区"; },
     text: function(vars) {
-      var desc = "辅助运维区比白区窄得多，两边是轰隆隆的水泵和一排配电柜，管道从头顶横穿过去，滴着冷凝水。\n\
+      var desc = "辅助运维区比白区窄得多，两边是<span class='sfx'>轰隆隆</span>的水泵和一排配电柜，管道从头顶横穿过去，滴着冷凝水。\n\
 地上摊着一只撬开的工具箱，扳手、万用表撒了一地。";
       if (vars._jinbaoLeft) {
         desc += "\n水泵停了。这一区安静得只剩下你自己的脚步声，工具还摊在原地，蒙了层薄灰。";
@@ -2051,9 +2052,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-运维区-虚惊.webp */
     onEnter: { set: { _panicEmployeeState: "calmed" } },
     text: "你刚绕过配电柜，那截白影“腾”地弹起来——一具灭火器抡圆了朝你头上砸！\n\
-你侧身一让，灭火器的喷嘴擦着你耳朵撞在柜门上，“哐”一声巨响。\n\
+你侧身一让，灭火器的喷嘴擦着你耳朵撞在柜门上，“<span class='sfx'>哐</span>”一声巨响。\n\
 “别过来别过来别——”喊声卡住了。他看清了你的脸。面罩后面那双眼睛瞪得溜圆：“……人？你是人？！”\n\
-他腿一软坐在地上，灭火器哐啷滚到一边：“我当是它们……哥，你可别怪我，这几天我看见白色的就头皮炸。”\n\
+他腿一软坐在地上，灭火器<span class='sfx'>哐啷</span>滚到一边：“我当是它们……哥，你可别怪我，这几天我看见白色的就头皮炸。”\n\
 他姓刘，进厂第三年的操作员，声音还在抖：“厂里活下来的都缩在东头动力站。你要过去吗？我认路——中间那片车间别自己走，贴着我。”",
     choices: [
       { text: "请他带路去动力站", nextScene: "张江-华大-动力站-初遇", effect: updateTime(6) },
@@ -2064,7 +2065,7 @@ Object.assign(storyData, {
   "张江-华大-运维区-遭遇战": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-运维区-遭遇战.webp */
     onEnter: initMemoryGame(["红", "蓝", "绿"], function(vars) { return 5 + Math.min(1, vars._fabAlert); }),
-    text: "白影从配电柜后面弹出来，一声变了调的嘶吼——一具灭火器带着风声抡向你的面罩！\n\
+    text: "白影从配电柜后面弹出来，<span class='rot'>一声变了调的嘶吼——一具灭火器带着风声抡向你的面罩</span>！\n\
 他也穿着无尘服，你也穿着无尘服。他看不清你的脸，你隔着面罩也看不清他的表情。\n\
 只有一具灭火器，实实在在地砸过来。",
     choices: [
@@ -2240,7 +2241,7 @@ Object.assign(storyData, {
     text: function(vars) {
       if (vars._jinbaoLeft) {
         return "你推开动力站那扇厚重的防火门。门没锁——里面也没人锁它了。\n\
-发电机的嗡嗡声消失了，仪表盘黑着，只剩安全出口的指示牌泛着一点绿。空气里还留着一点柴油味，像一台机器刚咽气不久。";
+发电机的<span class='sfx'>嗡嗡</span>声消失了，仪表盘黑着，只剩安全出口的指示牌泛着一点绿。空气里还留着一点柴油味，像一台机器刚咽气不久。";
       }
       if ((vars._visit['张江-华大-动力站-会面'] > 0)) {
         var back = "你回到动力站。";
@@ -2255,7 +2256,7 @@ Object.assign(storyData, {
         desc = "你顺着检修口的爬梯下到底，掀开一块格栅板——底下就是动力站。\n\
 一个正蹲在仪表前的人猛地回头，手里的扳手差点脱手：“夹、夹层？!你从上面下来的？!”";
       } else {
-        desc = "你穿过车间东侧的气密门，走进一间被机器轰鸣填满的厂房。发电机、水泵、成排的滤柱，指示灯一明一灭。\n\
+        desc = "你穿过车间东侧的气密门，走进一间被机器<span class='sfx'>轰</span>鸣填满的厂房。发电机、水泵、成排的滤柱，指示灯一明一灭。\n\
 一个蹲在仪表前的人猛地站起来，顺手抄起了手边的钢管。";
       }
       if (vars._fabAlert > 0) desc += "\n“警报是不是你弄响的？”他没放下钢管，声音绷得很紧，“响过之后，我们以为又来了一批。”";
@@ -2360,10 +2361,10 @@ Object.assign(storyData, {
 瓶身上那行圆珠笔字，隔着两米都看得清——“芜湖 6.25”。\n\
 他站了起来。一步一步走过来，动作慢得像怕惊掉什么。他伸手，没碰瓶子，指尖悬在标签上方。\n\
 “这瓶子……”他的声音哑了，“你从我爸那儿拿的。”\n\
-不是问句。屋里安静得能听见发电机的每一声嗡鸣。\n\
+不是问句。屋里安静得能听见发电机的每一声<span class='sfx'>嗡</span>鸣。\n\
 “我爸呢。”";
       }
-      return "屋里安静得能听见发电机的每一声嗡鸣。\n\
+      return "屋里安静得能听见发电机的每一声<span class='sfx'>嗡</span>鸣。\n\
 他站在你面前，手里还捏着那半杯水，指节因为用力泛了白。\n\
 “我爸呢。”";
     },
@@ -2446,7 +2447,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-沉默.webp */
     onEnter: { set: { _toldJinbaoTruth: "silent" } },
     text: "“我不清楚那边的情况。”你说，“我……没去过那一片。”\n\
-他看了你很久。久到发电机都嗡了十几轮。\n\
+他看了你很久。久到发电机都<span class='sfx'>嗡</span>了十几轮。\n\
 “……好。”他说。就一个字。\n\
 他把那半杯水收了回去，重新坐回仪表台前，背对着你。厂房屋顶的灯把他的影子拉得很长，长到把你隔开。\n\
 “水在东边，自己接。”他的声音听不出情绪，“别碰黄色标签的阀。”",
@@ -2494,7 +2495,7 @@ Object.assign(storyData, {
         if (vars.hasDieselCan) {
           desc += "老陈看见你肩上那桶油，眼睛一亮，下巴朝发电机点了点：“就搁那儿。来，帮我抬一下。”\n";
         } else {
-          desc += "老陈抬眼看了你一眼：“加油站那边……有信儿没有？”他顿了顿，声音压在发电机的轰鸣里，“油表一天比一天难看。”\n";
+          desc += "老陈抬眼看了你一眼：“加油站那边……有信儿没有？”他顿了顿，声音压在发电机的<span class='sfx'>轰</span>鸣里，“油表一天比一天难看。”\n";
         }
       } else if (!(vars._visit['张江-华大-白区-工位B-误杀'] > 0) && vars.dd < 3 && !vars._dieselDelivered) {
         desc += "老陈拍了拍发电机外壳：“油还够几天。省着烧。”\n";
@@ -2761,8 +2762,8 @@ Object.assign(storyData, {
   "张江-华大-动力站-柴油-接": {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-柴油.webp */
     onEnter: {  },
-    text: "老陈把你拉到发电机边上，压着那台机器的轰鸣说话。\n\
-“小伙子。”他搓着手，搓出老茧摩擦的沙沙声，“冒昧问一句——外面……还找得到柴油吗？”\n\
+    text: "老陈把你拉到发电机边上，压着那台机器的<span class='sfx'>轰</span>鸣说话。\n\
+“小伙子。”他搓着手，搓出老茧摩擦的<span class='sfx'>沙沙</span>声，“冒昧问一句——外面……还找得到柴油吗？”\n\
 他拍了拍发电机：“这桶油，撑不过三天了。它一停，纯水系统停，灯灭——洪工他们仨，就得摸黑走人。”\n\
 “北蔡镇罗山立交下来，有个加油站。”洪金宝在旁边补了一句，“再有就是……你要是认识搞冷链的、开货车的，他们手里兴许有存货。”\n\
 老陈看着你，浑浊的眼睛里全是光：“一桶就行。多大代价，我们认。”",
@@ -2778,7 +2779,7 @@ Object.assign(storyData, {
     text: "你把那只死沉的铁皮桶挪进动力站，桶底在地上犁出一道白印。\n\
 老陈扑过来的速度不像他那个岁数的人。他拧开桶盖闻了一口，眼睛眯起来，像闻到了陈年的好酒。\n\
 “满的！还是满的！”他冲洪金宝喊，嗓子都劈了，“洪工！三天——不，这能烧到五天！”\n\
-洪金宝帮着你把桶抬到发电机边上，插管，泵油。机器的轰鸣沉了半拍，又稳稳地接上——像一个人缓过来的一口气。\n\
+洪金宝帮着你把桶抬到发电机边上，插管，泵油。机器的<span class='sfx'>轰</span>鸣沉了半拍，又稳稳地接上——像一个人缓过来的一口气。\n\
 “这一桶，”老陈抹了把脸，不知是汗还是泪，“够它再唱一天。”\n\
 洪金宝在你肩上按了一下，什么也没说。但这栋楼里的灯，今晚是踏实的。",
     choices: [
@@ -2838,7 +2839,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png", /* TODO: images/张江/华大-动力站-灌水.webp */
     onEnter: { set: { bottleWater: 1, waterToxic: false } },
     text: function(vars) {
-      var desc = "你拧开瓶盖，把瓶子接到出水口底下。水柱注进瓶身，咕咚咕咚，把瓶壁上的空气一丝丝挤上去。\n";
+      var desc = "你拧开瓶盖，把瓶子接到出水口底下。水柱注进瓶身，<span class='sfx'>咕咚咕咚</span>，把瓶壁上的空气一丝丝挤上去。\n";
       if (vars._hongBottleLabel && !(vars._visit['张江-华大-动力站-灌水'] > 0)) {
         if (vars._toldJinbaoTruth === "" && (vars._visit['张江-华大-动力站-会面'] > 0) && !vars._jinbaoLeft) {
           desc += "\n\
@@ -2895,7 +2896,7 @@ Object.assign(storyData, {
         desc = "你把行军床从墙角拖开一张，掸了掸灰躺上去。发电机不响了，屋里静得能听见自己的心跳。\n\
 床头那几只水桶立在一排，白得像哨兵。有人来过，有人留下水，有人走了——而你还能躺在这儿喘口气。\n";
       } else {
-        desc = "洪金宝给你匀了半张行军床。发电机的轰鸣成了最好的白噪音，滤柱的绿灯在天花板上投下一片安心的颜色。\n\
+        desc = "洪金宝给你匀了半张行军床。发电机的<span class='sfx'>轰</span>鸣成了最好的白噪音，滤柱的绿灯在天花板上投下一片安心的颜色。\n\
 “睡吧。”他说，“这栋楼里，就这儿说了算的是我。”\n";
       }
       return desc + restHint(vars);
@@ -2991,7 +2992,7 @@ Object.assign(storyData, {
 北侧隔着铁网就是滨河路。河面浑黄，贴着河沿那片黑压压的人影从这儿也能看见，一个挨一个，脸朝着水。\n" +
         (vars._jinbaoLeft
           ? "围栏里头静悄悄的。那台发电机不知从哪天起，就再没震动过，你脚底下只剩川杨河的风声。\n"
-          : "围栏里头，动力站那台发电机的震动顺着地面传到你脚底，嗡嗡的，像踩在一头打盹的牲口背上。\n") +
+          : "围栏里头，动力站那台发电机的震动顺着地面传到你脚底，<span class='sfx'>嗡嗡</span>的，像踩在一头打盹的牲口背上。\n") +
         "便道东头，围栏根下开着一道卸油用的卷帘门。";
       if ((vars._visit['张江-厂界便道'] > 0)) {
         desc += "\n你上次顶门的那半块砖还在，卷帘底下留着半人高的一道缝。";
@@ -3024,7 +3025,7 @@ Object.assign(storyData, {
       vars.showZombies = true;
     },
     text: function(vars) {
-      var desc = "你爬上川杨河的南岸堤坝。河面很宽，水色浑黄，缓缓地往东流。\n\
+      var desc = "川杨河南岸堤坝上。河面很宽，水色浑黄，缓缓地往东流。\n\
 堤下的滨河路上黑压压的一片——那些东西全贴着河沿挤，一个挨一个，脸朝着水，一动不动地挤着。没有一只理会你。它们只是想到水边去。\n\
 往北望，一座大桥横在河上。桥面上也是它们——引桥的坡道上、护栏边、车缝里，密密地立着。风从河面上过来，隔得老远，隐约带来一股甜腻的味道。";
       // 汞 20+ 皮肤灰白：浑黄河水是天然的反光面
@@ -3198,7 +3199,7 @@ Object.assign(storyData, {
       return updateTime(2)(vars);
     },
     text: function(vars) {
-      var head = "你绕过它倒下的位置，一口气冲下引桥。鞋底磕在伸缩缝的铁板上，哐、哐、哐——每一声都在你身后追着你跑。\n";
+      var head = "你绕过它倒下的位置，一口气冲下引桥。鞋底磕在伸缩缝的铁板上，<span class='sfx'>哐、哐、哐——</span>每一声都在你身后追着你跑。\n";
       if (vars._bridgeFrom === "北") {
         return head + "南岸的堤坝就在眼前。滨河路上那些贴着河沿的影子，从头到尾没有一只回过头。\n\
 你活着下了桥。弹匣空了。桥上的东西在你身后重新聚拢，像水面合上一颗石子砸出来的洞——这座桥，你这辈子大概不想再走第二遍。";
@@ -3325,7 +3326,7 @@ Object.assign(storyData, {
       vars.currentPos = "检测中心大门";
     },
     text: function(vars) {
-      return "检测中心的大门前立着一排旗杆，旗绳抽打着空荡荡的杆身，啪啪地响。\n\
+      return "检测中心的大门前立着一排旗杆，旗绳抽打着空荡荡的杆身，<span class='sfx'>啪啪</span>地响。\n\
 两扇玻璃门，一扇关着，一扇开了一条缝——门禁闸机黑着屏，闸板歪在半开的位置，像有人走得急。门楣上方一块蓝底白字的牌子：公正 · 科学 · 准确 · 高效。\n\
 门里的挑高大堂黑洞洞的，只有高侧窗漏下来几束天光，光柱里浮着灰。" + "\n" + describeWeather(vars);
     },
@@ -3480,7 +3481,7 @@ Object.assign(storyData, {
       return updateTime(2)(vars);
     },
     text: function(vars) {
-      return "你抢在它扑上来之前先动了手。它撞在门框上，滑下去，白大褂的口袋里滚出一支记号笔，骨碌碌滚进黑暗里。\n\
+      return "<span class='crit'>你抢在它扑上来之前先动了手</span>。它撞在门框上，滑下去，白大褂的口袋里滚出一支记号笔，骨碌碌滚进黑暗里。\n\
 你扶着墙把气喘匀。这一趟打出的动静不小——整层楼都听见了。\n\
 定下神，你才借光看清走廊尽头：305，检测三室。\n\
 那扇门的观察窗后面，立着一条人影，一动不动。门板底下，隐隐透出一种含混的、念念有词的声音。" + weaponBrokeText(vars) + combatDrainText(vars);
@@ -3565,8 +3566,8 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你贴着仪器挪过去。五步，三步，一步。你的手搭上试剂柜的柜门边框——\n\
 抡出去！\n\
-整扇柜门砸在他脸侧和肩膀上，玻璃哗啦碎了一地，棕色的小瓶子骨碌碌滚了一屋子。那声响在这栋死楼里炸开，一层楼都听见了。\n\
-他踉跄着撞在仪器桌上，半边脸淌下暗色的血。可他没有倒。他转过头来——很慢，脖子里发出干燥的咔咔声。\n\
+整扇柜门砸在他脸侧和肩膀上，玻璃<span class='sfx'>哗啦</span>碎了一地，棕色的小瓶子骨碌碌滚了一屋子。那声响在这栋死楼里炸开，一层楼都听见了。\n\
+他踉跄着撞在仪器桌上，半边脸淌下暗色的血。可他没有倒。他转过头来——很慢，脖子里发出干燥的<span class='sfx'>咔咔</span>声。\n\
 好打的对手。更吵的楼。";
     },
     choices: [
@@ -3707,7 +3708,7 @@ Object.assign(storyData, {
 这栋楼早就替你把答案测出来了。就放在你够不着的那只手里。";
       } else {
         body = "白大褂的影子把你按倒在走廊的黑暗里。天光还停在高窗上，下不来。\n\
-最后陪着你的是日光灯镇流器里残余的一点嗡声——电都没了，那声音不知道是从哪儿来的。\n\
+最后陪着你的是日光灯镇流器里残余的一点<span class='sfx'>嗡</span>声——电都没了，那声音不知道是从哪儿来的。\n\
 这栋楼里测出过什么，你到死，都没能走到它面前。";
       }
       return body + "\n<span class='end'>—— 结局：检测中心 ——</span>" + weaponBrokeText(vars);

@@ -373,7 +373,6 @@ Object.assign(storyData, {
   // ==================== 方姐尸变（死局） ====================
   "菜市场-方姐尸变": {
     image: "images/placeholder.png" /* TODO: images/菜市场/方姐尸变.jpg */,
-    style: "color: #ff4444;",
     onEnter: { shake: true },   // 推开门，方姐转过身来 —— 一直都在，只是早已不是人
     text: [
       "你推开门。",

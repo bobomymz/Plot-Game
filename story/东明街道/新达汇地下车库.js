@@ -251,7 +251,7 @@ Object.assign(storyData, {
   "新达汇-B1停车场-搜面包车": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingG.png */,
     onEnter: { add: { _garageOps: 1, chasedByZombies: 1 } },
-    text: "你翻进车厢，在纸箱里摸索了一会儿——有几包受潮的压缩饼干和几瓶过期的矿泉水。吃的倒是有，但没有钥匙。\n你在翻动纸箱时发出了不小的声响——纸箱倒了一个，<span class='sfx'>哐</span>当一声掉在地上。回音在空旷的车库里传得很远很远。",
+    text: "你翻进车厢，在纸箱里摸索了一会儿——有几包受潮的压缩饼干和几瓶过期的矿泉水。吃的倒是有，但没有钥匙。\n你在翻动纸箱时发出了不小的声响——纸箱倒了一个，<span class='sfx'>哐当</span>一声掉在地上。回音在空旷的车库里传得很远很远。",
     choices: [
       { text: "赶紧离开这里", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
     ]
