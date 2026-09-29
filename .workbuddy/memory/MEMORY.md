@@ -22,6 +22,7 @@
 
 ## `_visit`/过夜/QTE/shake
 - 只读不写；`vars.x`→`(_visit['场景']>0)`，`!x`→`!_visit['场景']`；键名必须=真实场景 ID（悬空键不报错、条件恒假→选项永不出现）。改计数键名前算首达路径：全库自引用本场景 ID（引擎先自增后渲染）。
+- **入口描述差异化**：多入度节点的 text 必须按 `_lastScene` 分流（样板 `金谊广场.js` 16 处 head 变量、`长者食堂.js`）。**先把默认句改成任何来源都成立的安全句，再给特殊来源加差异化**——只追加"你之前来过"却不改首句会更矛盾（`新达汇-1F味千拉面` 教训）。审计工具 `node tools/entry_desc_audit.mjs [区域]`（全图 167 候选/P0 39，报告 `tools/多入口描述审计报告.md`）；⚠判定覆盖必须在**剔除 nextScene 行的源码**里搜来源名，否则大量漏检。
 - `天黑必须过夜` 29 选项；建筑类过夜点两层门槛：`showCondition` 加 `_visit['建筑内部']>0`、原 `condition`/`elseScene` 保留。场景级=`node.qte`，选项级=`choice.timeout`；工厂 `mallQTE`/`jpChaseQTE`/`travelScene`。shake 已 31 处；`applyEffect` 只认 set/add/mul。
 
 ## 文风/气味

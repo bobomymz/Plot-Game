@@ -1251,7 +1251,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       { text: "推开201的门", nextScene: "三林安居苑-7号楼-201" },
       { text: "推开202的门", nextScene: "三林安居苑-7号楼-202" },
-      { text: "继续上楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) },
+      { text: "上楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) },
       { text: "下楼", nextScene: "三林安居苑-7号楼-1楼走廊", effect: updateTime(1) },
       {
         showCondition: "itemCount > 0",
@@ -1270,7 +1270,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     choices: [
       { text: "推开301的门", nextScene: "三林安居苑-7号楼-301" },
       { text: "推开302的门", nextScene: "三林安居苑-7号楼-302" },
-      { text: "继续上楼", nextScene: "三林安居苑-7号楼-4楼", effect: updateTime(1) },
+      { text: "上楼", nextScene: "三林安居苑-7号楼-4楼", effect: updateTime(1) },
       { text: "下楼", nextScene: "三林安居苑-7号楼-2楼", effect: updateTime(1) },
       {
         showCondition: "itemCount > 0",
@@ -1307,7 +1307,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         text: "走进401",
         nextScene: "三林安居苑-7号楼-401"
       },
-      { text: "继续上楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) },
+      { text: "上楼", nextScene: "三林安居苑-7号楼-5楼", effect: updateTime(1) },
       { text: "下楼", nextScene: "三林安居苑-7号楼-3楼", effect: updateTime(1) },
       {
         showCondition: "itemCount > 0",
@@ -1424,7 +1424,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         nextScene: "三林安居苑-7号楼-503-砸门"
       },
       {
-        text: "继续上楼",
+        text: "上楼",
         nextScene: "三林安居苑-7号楼-6楼",
         effect: updateTime(1)
       },
@@ -1447,8 +1447,8 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
     text: "你握住门把手用力拧了一下——锁死了，纹丝不动。看来需要找到钥匙才行。",
     choices: [
       {
-        text: "下楼",
-        nextScene: "三林安居苑-7号楼-4楼"
+        text: "离开",
+        nextScene: "三林安居苑-7号楼-5楼"
       }
     ]
   },
@@ -1468,7 +1468,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
         effect: updateTime(2)
       },
       {
-        text: "去客厅",
+        text: "仔细查看客厅",
         nextScene: "三林安居苑-502-客厅",
         effect: updateTime(2)
       },
@@ -1515,7 +1515,7 @@ Hg 2.4ng/L；浊度 12NTU；天气阴；4℃冷藏，未加固定剂；采样人
 茶几上放着一个玻璃烟灰缸，里面的烟蒂早已干透发黄。墙上挂着一幅泛黄的十字绣，红线绣着“家和万事兴”，左下角还绣了一行小字：“2008.5.1 妈妈”。\n沙发旁的边几上立着一个木质相框，照片里是一对中年夫妻和一个小男孩，在天安门前笑得灿烂。",
     choices: [
       {
-        text: "回到走廊",
+        text: "继续",
         nextScene: "三林安居苑-502"
       }
     ]

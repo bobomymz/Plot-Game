@@ -17,6 +17,11 @@ Object.assign(storyData, {
       vars.currentPos = "五金店";
     },
     text: function(vars) {
+      // 后巷是本节点的子节点，绕完一圈回门口不该再播一次"来到五金店门口"
+      var l = vars._lastScene || "";
+      if (l === "五金店-后巷" || l === "五金店-后巷-偷看左门") {
+        return "你从后巷绕回正面，卷帘门又在眼前了。那道被顶弯的凹痕还在，<span class='smell'>空气里的腥甜味也还在</span>。" + describeWeather(vars);
+      }
       if(vars._visit["五金店"] > 1) return "你又来到了五金店门口。卷帘门还是半开着，那道顶弯的凹痕还在，<span class='smell'>空气里的腥甜味也还在</span>。" + describeWeather(vars);
       return "你来到三林路上那家老五金店。卷帘门半开着，只到膝盖高，边缘有一道被硬生生顶弯的凹痕——像是有东西从里面挤出去过。门缝里飘出<span class='smell'>一股机油混着腐臭的甜味</span>，若有若无，可你知道那不是错觉。\n<span class='dust'>里面黑漆漆的看不清，静得反常</span>——这种店不该这么安静。你注意到侧面的窗户破了一扇，后巷也能绕过去。" + describeWeather(vars);
      },

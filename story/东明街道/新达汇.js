@@ -634,8 +634,15 @@ Object.assign(storyData, {
     onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/味千拉面.webp",
     text: function(vars) {
-      var desc = "你钻进卷帘门，来到味千拉面店内。\n灶台上的汤锅已经冷透了，汤面凝了一层白色的油脂。后厨的操作台上散落着几包未拆封的袋装拉面——不是店里的货，看起来是员工自己囤的。";
-      if (vars._ramenVisited) desc += "\n你之前已经来过这里，卷帘门还维持着你离开时的样子。";
+      // ⚠重访提示必须替换首句、不能追加在末尾：否则「你钻进卷帘门」+「你之前已经来过」自相矛盾
+      var l = vars._lastScene || "";
+      var head;
+      if (l === "新达汇-1F味千拉面-小饼干" || l === "新达汇-1F味千拉面-没吃的" || l === "新达汇-1F味千拉面-徒手") head = "你从前台后面退开，重新站在店里。";
+      else if (l === "新达汇-1F味千拉面-休息") head = "你从后厨的角落站起来。";
+      else if (l === "新达汇-1F后勤走廊西") head = "你推开后厨那道铁门，回到拉面店里。";
+      else if (l === "新达汇-1F北走廊西") head = "你从商场走廊侧身拨开店门，进来的是那家味千拉面。";
+      else head = "你钻进卷帘门，来到味千拉面店内。";
+      var desc = head + "\n灶台上的汤锅已经冷透了，汤面凝了一层白色的油脂。后厨的操作台上散落着几包未拆封的袋装拉面——不是店里的货，看起来是员工自己囤的。";
       desc += "\n" + describeZombieWave(vars);
       desc += weaponBrokeText(vars); // 撬卷帘门把工具撬报废了（仅损坏发生的当次进入会拼上这句）
       return desc;
@@ -2989,8 +2996,10 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/新达汇/arcade.png */,
     text: function(vars) {
       let basicDes = "";
+      var l = vars._lastScene || "";
+      var fromMachine = (l === "新达汇-5F游戏厅-投篮机" || l === "新达汇-5F游戏厅-娃娃机");
       if (vars._powerOut) basicDes += "游戏厅一片漆黑。街机和娃娃机的屏幕全都暗了。";
-      else basicDes += "你走进游戏厅。抓娃娃机和街机的屏幕大多亮着，《拳皇97》定格在选人画面，靠里那排投篮机的计分屏滚动着“INSERT COIN”。电源居然还没断。";
+      else basicDes += (fromMachine ? "你从机台前退开。" : "你走进游戏厅。") + "抓娃娃机和街机的屏幕大多亮着，《拳皇97》定格在选人画面，靠里那排投篮机的计分屏滚动着“INSERT COIN”。电源居然还没断。";
       basicDes += "\n" + describeZombieWave(vars);
       return basicDes;
     },
@@ -3839,7 +3848,10 @@ Object.assign(storyData, {
     image: "images/新达汇/1F后勤仓库.webp",
     onEnter: { set: { positionAfterOperation: "新达汇-1F后勤仓库" } },
     text: function(vars) {
-      var desc = "你推开门。这是一间小型储物仓库，货架上堆着一些落满灰的清洁用品。\n\
+      var l = vars._lastScene || "";
+      var head = "你推开门。";
+      if (l === "新达汇-1F后勤仓库-拿水" || l === "新达汇-1F后勤仓库-换水" || l === "新达汇-1F后勤仓库-已开封瓶" || l === "新达汇-1F后勤仓库-撕不开") head = "你从纸箱前退开，环顾这间小仓库。";
+      var desc = head + "这是一间小型储物仓库，货架上堆着一些落满灰的清洁用品。\n\
 靠墙码着两箱矿泉水，纸箱上的胶带缠了好几层，接头处严丝合缝——搬进来的人还没来得及拆。";
       if (vars._visit['新达汇-1F后勤仓库-开箱'] > 0) desc = desc.replace("还没来得及拆。", "还没来得及拆，封口已经被你划开了。");
       if (!vars.hasBottle) desc += "\n箱盖上还搁着一瓶已经开封的矿泉水——看起来是某个员工留下的。";
