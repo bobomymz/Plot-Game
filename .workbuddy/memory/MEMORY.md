@@ -8,6 +8,7 @@
 ## 战斗
 - 徒手化＝改文案+onEnter 分支，勿新增场景；代价包 `{add:{strength:-2,mercuryLoad:10},set:{hurtByZombie:true}}`。体力门槛失败结局只改 elseScene 指向。
 - `combatCost`=tier≥2?1:2；失败包=体力−1~−3、汞+10~+15、hurt、`tryBreakWeapon`。惩罚三处：onEnter、选项 effect、场景级 `qte.onTimeout`（最易漏）。`isEnding()`：id 以『结局』开头或文案含『—— 结局：』。
+- **闪色战斗判定（09-29 改造，全库 47 场）**：`偏差=Σ|玩家报数−实际数|`（绝对偏差，非百分比）→ **0=胜/1~2=伤/≥3或超时=死**。三档 `nextScene: flashCombatRouter(胜,伤,死)`；「答错不致死」的 5 场用两档 `flashCombatRouterSafe(成功,非致死)`；教程保留原致死。伤两形态：1~2只=干死 `hurtWinOnEnter`，3只+=跑路 `hurtFleeOnEnter`（体力-2+追兵，`chase:0` 可关）。惩罚工厂在 utils.js（汞 +5×偏差封顶100）；受伤场景一律**独立**（复刻胜利出口）；超时维持死亡。路由闭包挂 `__sceneRefs` 供 lint 补入边（否则误报孤立）。工具 `flash_battle_audit.js`/`flash_battle_selftest.js`。
 
 ## 背包/水瓶
 - 容量=`3+_bagTier+_bagExtra`；`bagVolume` 派生值永不 set/add；闸门 `vars._bagTier<N`/`!hasBag`。拾取四件套：`condition:"itemCount<bagVolume"`+`effect:{set,add:{itemCount:1}}`+`elseScene:"整理整理"`，新节点必须 set `positionAfterOperation`。⚠09-21 前旧档容量 4→3（`bag_migration_repro.js`）。

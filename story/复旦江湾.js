@@ -484,10 +484,20 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "忻老师家-学生救场-胜利",
-        elseScene: "结局-被丧尸扑倒咬死"
+        nextScene: flashCombatRouter("忻老师家-学生救场-胜利", "忻老师家-学生救场-受伤", "结局-被丧尸扑倒咬死")
       }
+    ]
+  },
+
+  "忻老师家-学生救场-受伤": {
+    image: "images/placeholder.png" /* TODO: images/复旦江湾/学生救场.webp（复用） */,
+    onEnter: function(vars) { hurtWinOnEnter({})(vars); return {}; },
+    text: function(vars) {
+      return "你慢了半步——<span class='crit'>楼梯口那只的手抠进了你的小臂</span>，你反手抡开，和忻老师一左一右把楼梯口死死抵住。\n\
+自行车锁、扳手、伞架，四个人还是把那只别在了栏杆上。从三楼清到单元门口的时候，你那条小臂已经麻了。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "收队，回建平", nextScene: "回建平-车程", effect: updateTime(10) }
     ]
   },
 

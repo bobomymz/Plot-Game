@@ -198,6 +198,9 @@ for (const sid of ids) {
 const harvestLiterals = (fn) => {
   if (typeof fn !== "function") return;
   for (const m of fn.toString().matchAll(/["'`]([^"'`\n]+)["'`]/g)) if (idSet.has(m[1])) inbound.add(m[1]);
+  // 路由工厂（flashCombatRouter / flashCombatRouterSafe）把场景 ID 当字符串实参传入，
+  // 返回的闭包源码里只有变量名、没有字面量 → 显式读 __sceneRefs 补入边（2026-09-29）。
+  if (Array.isArray(fn.__sceneRefs)) for (const s of fn.__sceneRefs) if (typeof s === "string" && s) inbound.add(s);
 };
 for (const sid of ids) {
   const sc = storyData[sid];

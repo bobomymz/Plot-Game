@@ -6,7 +6,7 @@
 //     打死(_roadBull=1)永久解除；打跑(_roadBullBeatenDay=dd)或交食物(_roadBullPaidDay=dd)当天放行、次日恢复。
 //   C 天台卖假药的郎中 —— 每天在"金谊广场-天台"或"新达汇-屋顶花园"随机一方摆摊，
 //     用一份口粮换一瓶来路不明的"解毒剂"（假药，占格，吃后无效果）。
-// 工具依赖：hasFood / consumeOneFood / roadBullBlocked / meleeWeaponTier / meleeWeaponName / initMemoryGame / checkFlashAnswer
+// 工具依赖：hasFood / consumeOneFood / roadBullBlocked / meleeWeaponTier / meleeWeaponName / initMemoryGame / flashCombatRouter / hurtWinOnEnter / hurtCostText
 
 // 跨天重摇郎中当天方位（_quackSpot：0没摆/1金谊天台/2新达汇屋顶）。
 // 每次进入天台时调用；只在换天时重摇，同一天内固定在一个方位（防玩家跨天台无限刷）。
@@ -147,12 +147,29 @@ Object.assign(storyData, {
       {
         text: "盯住他的破绽，输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝2绿" },
-        condition: checkFlashAnswer,
-        nextScene: "三林路-路霸-打赢",
-        elseScene: "结局-被路霸打死",
+        nextScene: flashCombatRouter("三林路-路霸-打赢", "三林路-路霸-搏斗-受伤", "结局-被路霸打死"),
         timeout: 14000,
         timeoutScene: "结局-被路霸打死"
       }
+    ]
+  },
+  // 受伤档：对手是人（路霸）——不挂尸伤/汞，只扣体力+概率断武器；打赢侧的处理照抄（刀斧=永久清，轻武器=打跑）
+  "三林路-路霸-搏斗-受伤": {
+    image: "images/placeholder.png",
+    onEnter: function(vars) {
+      hurtWinOnEnter({ human: true })(vars);
+      if (meleeWeaponTier(vars) >= 3) vars._roadBull = 1;      // 刀/斧架起来够凶，一下撂倒，永久清
+      else vars._roadBullBeatenDay = vars.dd;                   // 轻武器/空手只能把他打跑，他明天还会回来
+      return {};
+    },
+    text: function(vars) {
+      if (meleeWeaponTier(vars) >= 3) {
+        return "他的钢管在你肩头擦出一道口子，<span class='crit'>血立刻渗了出来</span>。你闷哼一声不进反退——瞅准他砸空的空隙狠狠还了一记，正中他肩头。他钢管脱手，人矮了半截，直挺挺栽在地上不动了。\n远处的丧尸被这边的动静吸引，开始往这儿赶。" + hurtCostText(vars, false);
+      }
+      return "厮打中他的钢管在你胳膊上划开一道口子，<span class='crit'>火辣辣地疼</span>。你硬撑着抓住他收棍的空档，连消带打把他逼开。他踉跄着退开几步，捂着腰撂下一句“……你等着，我有的是时间”，钻进废车堆跑没影了。\n这条道今天是通了，但这梁子，八成明儿还得见。" + hurtCostText(vars, false);
+    },
+    choices: [
+      { text: "继续走", nextScene: bullLanding, effect: function(v) { if (v._roadBull === 1) v.chasedByZombies = Math.min(5, v.chasedByZombies + 1); return {}; } }
     ]
   },
   "三林路-路霸-打赢": {

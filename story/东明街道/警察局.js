@@ -150,9 +150,7 @@ Object.assign(storyData, {
       {
         text: "输入你记下的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "警察局",
-        elseScene: "警察局-北段-持图失败"
+        nextScene: flashCombatRouterSafe("警察局", "警察局-北段-持图失败")
       }
     ]
   },

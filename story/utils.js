@@ -667,12 +667,27 @@ function flashAnswerDeviation(vars) {
 // 用法：nextScene: flashCombatRouter("X-胜利", "X-受伤", "结局-X")
 // timeoutScene 维持死亡场景不动——超时=没作答，不吃受伤保底。
 function flashCombatRouter(winScene, hurtScene, deadScene) {
-  return function(vars) {
+  var router = function(vars) {
     var dev = flashAnswerDeviation(vars);
     if (dev <= 0) return winScene;
     if (dev <= 2) return hurtScene;
     return deadScene;
   };
+  // 目标以字符串实参传入，闭包源码里没有字面量 → 挂 __sceneRefs 供 tools/lint_story.mjs 补记入边
+  // （否则数组式 choices 里的路由目标会被误判「无任何入边（孤立场景）」）。
+  router.__sceneRefs = [winScene, hurtScene, deadScene];
+  return router;
+}
+
+// 两档路由：用于「答错也不致死」的场景（被救 / 被抓伤逃脱 / 被咬伤 / 路线失败等）。
+// 0 偏差=成功，其余=原非死亡结果（无死亡档）——波波 09-29 定：这 5 场保持非致死，不升难度。
+// 用法：nextScene: flashCombatRouterSafe("X-成功", "X-被救")
+function flashCombatRouterSafe(winScene, setbackScene) {
+  var router = function(vars) {
+    return flashAnswerDeviation(vars) <= 0 ? winScene : setbackScene;
+  };
+  router.__sceneRefs = [winScene, setbackScene];   // 同上：供 lint 补记入边
+  return router;
 }
 
 // 受伤档公共惩罚：汞+5×偏差（与偏差量成正比；Math.min 封顶，与复旦江湾写法一致）、

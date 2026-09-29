@@ -439,9 +439,7 @@ Object.assign(storyData, {
       cs.push({
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "金谊广场-停车场-救完",
-        elseScene: "结局-被丧尸扑倒咬死",
+        nextScene: flashCombatRouter("金谊广场-停车场-救完", "金谊广场-吉祥馄饨-杀出去-受伤", "结局-被丧尸扑倒咬死"),
         timeout: 20000,
         timeoutScene: "结局-被丧尸扑倒咬死"
       });
@@ -462,6 +460,19 @@ Object.assign(storyData, {
       }
       return cs;
     }
+  },
+
+  // 受伤档：停车场群尸（多只）——且战且退挂彩冲出来，仍与陈默会合（走 救完 保留地图奖励）
+  "金谊广场-吉祥馄饨-杀出去-受伤": {
+    image: "images/hurtByzombie.webp",
+    onEnter: hurtFleeOnEnter({ chase: 1 }),
+    text: function(vars) {
+      return "停车场的丧尸比你们预想的多。你且战且退，一只的指甲还是剐上了你的肩膀，<span class='crit'>火辣辣地裂开一道口子</span>。\n\
+你和陈默背靠背杀出一条缝，撞开卷帘门滚了出去。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续", nextScene: "金谊广场-停车场-救完" }
+    ]
   },
 
   "金谊广场-停车场-救完": {
@@ -609,9 +620,7 @@ Object.assign(storyData, {
       cs.push({
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "金谊广场-正门硬闯-成功",
-        elseScene: "结局-被丧尸扑倒咬死",
+        nextScene: flashCombatRouter("金谊广场-正门硬闯-成功", "金谊广场-正门硬闯-受伤", "结局-被丧尸扑倒咬死"),
         timeout: 18000,
         timeoutScene: "结局-被丧尸扑倒咬死"
       });
@@ -636,6 +645,18 @@ Object.assign(storyData, {
       }
       return cs;
     }
+  },
+
+  // 受伤档：旋转门合围（多只）——挤进中庭挂彩（该场景 onEnter 已自带追兵+1，跑路不再叠 chase）
+  "金谊广场-正门硬闯-受伤": {
+    image: "images/hurtByzombie.webp",
+    onEnter: hurtFleeOnEnter({ chase: 0 }),
+    text: function(vars) {
+      return "门内的丧尸从几个方向同时扑来。你撞开当先一只，另一只的指甲擦着你的侧腰划过去，<span class='crit'>火辣辣地裂开</span>。你顾不得疼，硬挤进门缝，反手用力一推——卡着尸体的旋转门转了半圈，正好把追到门边的丧尸挡在了外面。\n你靠着墙喘了几口气。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续", nextScene: "金谊广场-1F 门面层", effect: updateTime(1) }
+    ]
   },
 
   "金谊广场-正门硬闯-成功": {
@@ -752,9 +773,7 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝3绿" },
-        condition: checkFlashAnswer,
-        nextScene: "金谊广场-地铁站厅-成功",
-        elseScene: "金谊广场-地铁站厅-失败",
+        nextScene: flashCombatRouterSafe("金谊广场-地铁站厅-成功", "金谊广场-地铁站厅-失败"),
         effect: updateTime(2),
         timeout: 20000,
         timeoutScene: "金谊广场-地铁站厅-失败"

@@ -134,9 +134,7 @@ Object.assign(storyData, {
       cs.push({
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝" },
-        condition: checkFlashAnswer,
-        nextScene: "三林路-东明路 十字路口",
-        elseScene: "结局-被丧尸扑倒咬死",
+        nextScene: flashCombatRouter("三林路-东明路 十字路口", "长者食堂-门外丧尸-受伤", "结局-被丧尸扑倒咬死"),
         timeout: 15000,
         timeoutScene: "结局-被丧尸扑倒咬死"
       });
@@ -157,6 +155,19 @@ Object.assign(storyData, {
       }
       return cs;
     }
+  },
+
+  // 受伤档：单只（门外丧尸）——勉强放倒它，但被抓伤
+  "长者食堂-门外丧尸-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtWinOnEnter({}),
+    text: function(vars) {
+      return "它扑上来的第二下你没完全让开——<span class='crit'>指甲从你胳膊上剐下去</span>。你忍痛侧身，反手把它掀翻在地，又补了两下，它才不动了。\n\
+你甩了甩发麻的手，快步离开门口。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续", nextScene: "三林路-东明路 十字路口" }
+    ]
   },
 
   "长者食堂-内部": {

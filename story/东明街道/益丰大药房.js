@@ -348,12 +348,32 @@ Object.assign(storyData,{
       {
         text: "输入你看到的颜色",
         input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
-        condition: checkFlashAnswer,
-        elseScene: "结局-颜色错误，被丧尸咬死",
+        nextScene: flashCombatRouter("益丰大药房-击倒针筒丧尸", "益丰大药房-库房丧尸-受伤", "结局-颜色错误，被丧尸咬死"),
         effect: updateTime(5, { add: { strength: -1 } }),
-        nextScene: "益丰大药房-击倒针筒丧尸",
         timeout: 25000,
         timeoutScene: "结局-被丧尸扑倒咬死"
+      }
+    ]
+  },
+
+  // 受伤档：单只（针筒丧尸）——勉强夺下针筒把它踹倒，但被划伤；出口与胜利场景一致
+  "益丰大药房-库房丧尸-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtWinOnEnter({}),
+    text: function(vars) {
+      return "它第二次扑来时你慢了半拍——<span class='crit'>针尖擦着你的小臂划开一道口子</span>。你咬牙忍痛，反手扣住它的手腕把针筒夺下，再一脚把它踹进那堆药箱里。\n\
+<span class='sfx'>轰</span>的一声，数不清的药箱砸在它身上。有这个铁质货架压着，一时半会儿它起不来了。你低头看了眼夺下的针筒——筒壁上还残留着水渍。" + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: "检查夺下的针筒",
+        nextScene: "益丰大药房-检查针筒",
+        effect: updateTime(1)
+      },
+      {
+        text: "继续往深处探索",
+        nextScene: "益丰大药房-办公室门口",
+        effect: updateTime(1)
       }
     ]
   },
@@ -536,12 +556,10 @@ Object.assign(storyData,{
       {
         text: "输入你看到的颜色分布（例如：2红1蓝1绿）",
         input: { placeholder: "例如：2红1蓝1绿" },
-        condition: checkFlashAnswer,
-        elseScene: "益丰大药房-被咬到了",
-        nextScene: "益丰大药房-沟通躲开",
+        nextScene: flashCombatRouterSafe("益丰大药房-沟通躲开", "益丰大药房-被咬到了"),
         effect: updateTime(2),
         timeout: 15000,
-        timeoutScene: "结局-被丧尸扑倒咬死"
+        timeoutScene: "益丰大药房-被咬到了"
       }
     ]
   },
@@ -981,13 +999,24 @@ Object.assign(storyData,{
       {
         text: "输入你看到的颜色",
         input: { placeholder: "例如：3红2蓝 或 2蓝3红" },
-        condition: checkFlashAnswer,
-        elseScene: "结局-颜色错误，被丧尸咬死",
+        nextScene: flashCombatRouter("三林路-环林东路 十字路口", "益丰大药房-群架-受伤", "结局-颜色错误，被丧尸咬死"),
         effect: updateTime(5, { add: { strength: -1 }, set: { _lastCombatDrain: 1 } }), // 标记扣值供十字路口 text 事后提示
-        nextScene: "三林路-环林东路 十字路口",
         timeout: 15000,
         timeoutScene: "结局-被丧尸扑倒咬死"
       }
+    ]
+  },
+
+  // 受伤档：丧尸一拥而上（多只）——杀出一条缝逃出来，与胜利同出口
+  "益丰大药房-群架-受伤": {
+    image: "images/hurtByzombie.webp",
+    onEnter: hurtFleeOnEnter({ chase: 1 }),
+    text: function(vars) {
+      return "丧尸一拥而上，你根本数不清有几只手朝你抓来。你护住头脸硬冲，胳膊上还是<span class='crit'>被抓开好几道口子</span>。\n\
+你撞开药房门，连滚带爬地冲了出去——身后是一片拖沓的脚声。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续", nextScene: "三林路-环林东路 十字路口" }
     ]
   },
 });

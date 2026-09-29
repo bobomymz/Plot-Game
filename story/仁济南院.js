@@ -134,12 +134,26 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红4蓝2绿" },
-        condition: checkFlashAnswer,
-        nextScene: "仁济南院-门诊大门-记忆闪色-成功",
+        nextScene: flashCombatRouter("仁济南院-门诊大门-记忆闪色-成功", "仁济南院-门诊大门-记忆闪色-受伤", "结局-仁济-正门失守"),
         effect: updateTime(3),
-        elseScene: "结局-仁济-正门失守",
         timeout: 20000,
         timeoutScene: "结局-仁济-正门失守"
+      }
+    ]
+  },
+
+  // 受伤档：闯进大厅但挂彩（时间由选项 effect 的 updateTime(3) 统一推进，故不另加）；门口的丧尸没清，再走正门还得再闯
+  "仁济南院-门诊大门-记忆闪色-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: hurtFleeOnEnter({ chase: 0 }),
+    text: function(vars) {
+      return "你被一只手拽住了背包带——<span class='crit'>指甲透过布料剐进你的肩膀</span>。你反手把它搡开，趁尸群磕绊成一团的空当，从门缝里硬挤进了大厅。\n\
+玻璃门在你身后合上。门外，指甲刮着玻璃，<span class='rot'>一声连着一声</span>。" + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: "仁济南院-门诊大厅"
       }
     ]
   },
@@ -719,11 +733,24 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：3红2蓝2绿" },
-        condition: checkFlashAnswer,
-        nextScene: "仁济南院-急诊大厅-胜利",
-        elseScene: "结局-仁济-急诊失守",
+        nextScene: flashCombatRouter("仁济南院-急诊大厅-胜利", "仁济南院-急诊大厅-受伤", "结局-仁济-急诊失守"),
         timeout: 12000,
         timeoutScene: "结局-仁济-急诊失守"
+      }
+    ]
+  },
+
+  "仁济南院-急诊大厅-受伤": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiER.png */,
+    onEnter: function(vars) { hurtWinOnEnter({})(vars); vars._renjiERCleared = true; return {}; },
+    text: function(vars) {
+      return "你慢了半拍——<span class='crit'>它的指甲刮过你的肩膀，扯开一道口子</span>。你咬牙侧身，用尽力气才把它摁倒在那辆翻倒的轮椅上。\n\
+大厅终于安静下来。你靠在墙上喘了几口气。" + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: "仁济南院-急诊大厅"
       }
     ]
   },
@@ -1008,11 +1035,24 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝2绿1黄" },
-        condition: checkFlashAnswer,
-        nextScene: "仁济南院-检验科-守卫战-胜利",
-        elseScene: "结局-仁济-检验科被咬",
+        nextScene: flashCombatRouter("仁济南院-检验科-守卫战-胜利", "仁济南院-检验科-守卫战-受伤", "结局-仁济-检验科被咬"),
         timeout: 12000,
         timeoutScene: "结局-仁济-检验科被咬"
+      }
+    ]
+  },
+
+  "仁济南院-检验科-守卫战-受伤": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiLab.png */,
+    onEnter: function(vars) { hurtWinOnEnter({})(vars); vars._renjiLabCleared = true; return {}; },
+    text: function(vars) {
+      return "你盯漏了它半步——那股化学试剂的味道呛得你眼睛发酸，<span class='crit'>它的指甲划开了你的手背</span>。你忍着刺痛绕到侧面，把它放倒。\n\
+它瘫在操作台边，白大褂上沾满试剂和血。应急电源还在<span class='sfx'>嗡</span>。你环顾四周——这里，就是王知筠最后工作的地方。" + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: "开始搜刮",
+        nextScene: "仁济南院-检验科-内部"
       }
     ]
   },
@@ -1292,11 +1332,24 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝2绿" },
-        condition: checkFlashAnswer,
-        nextScene: "仁济南院-住院部走廊-胜利",
-        elseScene: "结局-仁济-病区失守",
+        nextScene: flashCombatRouter("仁济南院-住院部走廊-胜利", "仁济南院-住院部走廊-战斗-受伤", "结局-仁济-病区失守"),
         timeout: 10000,
         timeoutScene: "结局-仁济-病区失守"
+      }
+    ]
+  },
+
+  "仁济南院-住院部走廊-战斗-受伤": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiWard.png */,
+    onEnter: function(vars) { hurtWinOnEnter({})(vars); vars._renjiWardCleared = true; return {}; },
+    text: function(vars) {
+      return "你出手慢了一线——它手腕上的输液管甩过来抽在你脸上，<span class='crit'>火辣辣一道印子</span>，指甲又在你肩头剐了一把。你借着它收手的空当把它顶在墙上，按到它不再动弹。\n\
+护士服那只滑坐在墙根。走廊里能听见自己的脚步，和你擂鼓一样的心跳。" + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: "仁济南院-住院部走廊"
       }
     ]
   },
@@ -1575,11 +1628,24 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红2蓝2绿1黄1白" },
-        condition: checkFlashAnswer,
-        nextScene: "仁济南院-太平间-黑皮丧尸-胜利",
-        elseScene: "结局-仁济-黑皮丧尸",
+        nextScene: flashCombatRouter("仁济南院-太平间-黑皮丧尸-胜利", "仁济南院-太平间-黑皮丧尸-受伤", "结局-仁济-黑皮丧尸"),
         timeout: 14000,
         timeoutScene: "结局-仁济-黑皮丧尸"
+      }
+    ]
+  },
+
+  "仁济南院-太平间-黑皮丧尸-受伤": {
+    image: "images/placeholder.png" /* TODO: images/仁济南院/renjiMorgue.png */,
+    onEnter: function(vars) { hurtWinOnEnter({})(vars); vars._morgueCleared = true; return {}; },
+    text: function(vars) {
+      return "那层黑色的皮比想象中更硬——你的第一下没打实，<span class='crit'>它反手一掌把你搡在冰柜上</span>，指甲在你胸口剐出几道血印。你咬牙抵住柜门，用尽全身力气把它掀翻。\n\
+它砸在冰柜门上，金属<span class='sfx'>嗡</span>了一声就停了。你扶着柜子，半天没直起腰。" + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: "继续",
+        nextScene: "仁济南院-太平间"
       }
     ]
   },

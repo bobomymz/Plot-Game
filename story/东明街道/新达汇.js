@@ -72,9 +72,7 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "新达汇-喷泉广场-高锦睿-聊",
-        elseScene: "新达汇-喷泉广场-高锦睿-被救",
+        nextScene: flashCombatRouterSafe("新达汇-喷泉广场-高锦睿-聊", "新达汇-喷泉广场-高锦睿-被救"),
         effect: updateTime(2, { add: { strength: -1 } }),
         timeout: 10000,                     // ← 10秒倒计时（4色闪完约3秒，留约7秒输入）
         timeoutScene: "新达汇-喷泉广场-高锦睿-被救"
@@ -3735,13 +3733,32 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "新达汇-B1配电房-内部",
-        elseScene: "结局-等水的人",
+        nextScene: flashCombatRouter("新达汇-B1配电房-内部", "新达汇-B1配电房-开门-受伤", "结局-等水的人"),
         effect: updateTime(2, { add: { strength: -1 } }),
         timeout: 9000,
         timeoutScene: "结局-等水的人"
       }
+    ]
+  },
+  // 受伤档：单只（保安刘志鹏）——勉强把他放倒，但挂了彩；抽屉/退出与胜利场景同出口
+  "新达汇-B1配电房-开门-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) { vars.showPowerOut = true; hurtWinOnEnter({})(vars); return {}; },
+    text: function(vars) {
+      return "他第一下你没能完全让开——<span class='crit'>指甲从你小臂上剐下去</span>。你闷哼一声，反手把他狠狠压向配电柜，又补了两下，他才不动了。\n\
+胸牌歪在制服外面——“刘志鹏 · 保安部”，照片上是个笑得很用力的小伙子。" + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: "拉开配电柜侧面的小抽屉",
+        nextScene: "新达汇-B1配电房-抽屉",
+        effect: updateTime(1),
+      },
+      {
+        text: "退出去，把钢门重新带上",
+        nextScene: "新达汇-B1配电房门外",
+        effect: updateTime(1),
+      },
     ]
   },
   "新达汇-B1配电房-内部": {
@@ -4197,13 +4214,48 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布",
         input: { placeholder: "例如：2红1蓝1绿" },
-        condition: checkFlashAnswer,
-        nextScene: "新达汇-3F后勤走廊-王建国",
-        elseScene: "结局-维修工的最后一单",
+        nextScene: flashCombatRouter("新达汇-3F后勤走廊-王建国", "新达汇-3F后勤走廊-工服丧尸-受伤", "结局-维修工的最后一单"),
         effect: updateTime(2, { add: { strength: -1 } }),
         timeout: 9000,
         timeoutScene: "结局-维修工的最后一单"
       }
+    ]
+  },
+  // 受伤档：单只（工服丧尸王建国）——勉强放倒他但挂彩；灭火器同样喷完、动静同样引尸（照抄胜利场景 onEnter/出口）
+  "新达汇-3F后勤走廊-工服丧尸-受伤": {
+    image: "images/youKillZombies.webp",
+    onEnter: function(v) {
+      v.showPowerOut = true;
+      if (v._got3fExtinguisher) v._got3fExtinguisher = false;   // 灭火器喷完
+      hurtWinOnEnter({})(v);
+      v.chasedByZombies = (v.chasedByZombies || 0) + 1;
+      return {};
+    },
+    text: function(vars) {
+      var d = "他挥下的第一下你没能完全格开——<span class='crit'>活扳手擦着你的肩头砸下去</span>。你闷哼一声抢进半步，把手里的东西狠狠砸在他持械的手臂上。扳手从他手里脱落，砸在地上。\n";
+      d += "他晃了晃，直挺挺地向后倒下去——扬起的灰在应急灯下慢慢落定。\n";
+      d += "这是一张五十岁上下的脸，颧骨很高，鼻梁两侧留着眼镜的压痕。眼镜早就不在了。\n";
+      d += "他胸前的工牌翻了过来：“王建国 · 物业工程部”。";
+      if (vars._catFed) d += "\n那只变异猫不知什么时候从管道上跳了下来。它绕着倒下的身影走了一圈，闻了闻他的工牌，然后在离他一步远的地方卧下了。\n它没有叫。";
+      return d + hurtCostText(vars);
+    },
+    choices: [
+      {
+        text: function(v) { return (v._visit['新达汇-3F后勤走廊-王建国的口袋'] > 0) ? "再翻一次他的口袋" : "搜一搜他身上的东西"; },
+        nextScene: "新达汇-3F后勤走廊-王建国的口袋",
+        effect: updateTime(1),
+        showCondition: "!_visit['新达汇-3F后勤走廊-王建国的口袋'] || !hasDoorKey2",
+      },
+      {
+        text: "从原路退回去",
+        nextScene: "新达汇-3F后勤走廊",
+        effect: updateTime(1),
+      },
+      {
+        text: "往东继续走",
+        nextScene: "新达汇-3F后勤走廊东",
+        effect: updateTime(2),
+      },
     ]
   },
   "新达汇-3F后勤走廊-王建国": {

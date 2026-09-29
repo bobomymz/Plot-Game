@@ -113,6 +113,9 @@ function walk(startId, chooser, maxSteps) {
     let c = typeof pick === "number" ? vis[pick] : vis.find((x) => String(x.text).indexOf(pick) >= 0);
     if (!c) return { trail, err: "选项未命中「" + pick + "」@" + id + "，可见：" + vis.map((x) => x.text).join(" | ") };
     if (c.effect) { try { applyEffect(c.effect); } catch (e) { return { trail, err: "effect 异常 " + id + " :: " + e.message }; } }
+    // 闪色输入题（choice.input）：nextScene 是 flashCombatRouter 工厂，靠 _input 与 _currentAnswer 的偏差分档。
+    // 这里填"完美答案"（_input = _currentAnswer）→ 偏差 0，走胜利/成功档，符合本章"全歼"路径的测试意图。
+    if (c.input) gameState._input = gameState._currentAnswer || "";
     const nid = resolve(c.nextScene);
     if (nid == null) return { trail, err: "nextScene undefined @" + id };
     id = nid;

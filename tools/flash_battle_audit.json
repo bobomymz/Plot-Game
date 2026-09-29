@@ -3,13 +3,15 @@
     "id": "教程-识别颜色躲丧尸",
     "file": "东明街道/樱桃苑（初始小区）.js",
     "lenArg": "[\"红\",\"蓝\"],5",
-    "hasRouter": false,
+    "hasRouter": true,
+    "tier": 1,
     "hasOldCond": true,
     "elseScene": "结局-颜色错误，被丧尸咬死",
     "timeoutScene": "结局-被丧尸扑倒咬死",
     "timeout": 12000,
     "isFactory": false,
     "targets": null,
+    "whitelisted": true,
     "inbound": [
       "东明街道/樱桃苑（初始小区）.js: nextScene: \"教程-识别颜色躲丧尸\"",
       "东明街道/樱桃苑（初始小区）.js: \"教程-识别颜色躲丧尸\": {",
@@ -20,13 +22,18 @@
     "id": "樱桃苑-4楼",
     "file": "东明街道/樱桃苑（初始小区）.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "樱桃苑-4楼-失败",
+    "hasRouter": true,
+    "tier": 2,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "樱桃苑-4楼-失败",
     "timeout": 12000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "樱桃苑-4楼-胜利",
+      "樱桃苑-4楼-失败"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/樱桃苑（初始小区）.js: nextScene: \"樱桃苑-4楼\"",
       "东明街道/樱桃苑（初始小区）.js: nextScene: \"樱桃苑-4楼\"",
@@ -38,13 +45,19 @@
     "id": "长者食堂-打门口丧尸",
     "file": "东明街道/长者食堂.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],len,extraEffect",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-被丧尸扑倒咬死",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-被丧尸扑倒咬死",
     "timeout": 15000,
     "isFactory": true,
-    "targets": null,
+    "targets": [
+      "三林路-东明路 十字路口",
+      "长者食堂-门外丧尸-受伤",
+      "结局-被丧尸扑倒咬死"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/长者食堂.js: nextScene: \"长者食堂-打门口丧尸\",",
       "东明街道/长者食堂.js: \"长者食堂-打门口丧尸\": {",
@@ -55,13 +68,19 @@
     "id": "益丰大药房-库房里的丧尸",
     "file": "东明街道/益丰大药房.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],7",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-颜色错误，被丧尸咬死",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-被丧尸扑倒咬死",
     "timeout": 25000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "益丰大药房-击倒针筒丧尸",
+      "益丰大药房-库房丧尸-受伤",
+      "结局-颜色错误，被丧尸咬死"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/益丰大药房.js: nextScene: \"益丰大药房-库房里的丧尸\",",
       "东明街道/益丰大药房.js: \"益丰大药房-库房里的丧尸\": {"
@@ -71,13 +90,18 @@
     "id": "益丰大药房-沟通被咬",
     "file": "东明街道/益丰大药房.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],len",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "益丰大药房-被咬到了",
-    "timeoutScene": "结局-被丧尸扑倒咬死",
+    "hasRouter": true,
+    "tier": 2,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": "益丰大药房-被咬到了",
     "timeout": 15000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "益丰大药房-沟通躲开",
+      "益丰大药房-被咬到了"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/益丰大药房.js: nextScene: \"益丰大药房-沟通被咬\",",
       "东明街道/益丰大药房.js: \"益丰大药房-沟通被咬\": {",
@@ -88,13 +112,19 @@
     "id": "益丰大药房-与丧尸打群架",
     "file": "东明街道/益丰大药房.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],10,{shake:true}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-颜色错误，被丧尸咬死",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-被丧尸扑倒咬死",
     "timeout": 15000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "三林路-环林东路 十字路口",
+      "益丰大药房-群架-受伤",
+      "结局-颜色错误，被丧尸咬死"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/益丰大药房.js: nextScene: \"益丰大药房-与丧尸打群架\",",
       "东明街道/益丰大药房.js: \"益丰大药房-与丧尸打群架\": {"
@@ -104,13 +134,18 @@
     "id": "新达汇-喷泉广场-高锦睿-帮忙",
     "file": "东明街道/新达汇.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "新达汇-喷泉广场-高锦睿-被救",
+    "hasRouter": true,
+    "tier": 2,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "新达汇-喷泉广场-高锦睿-被救",
     "timeout": 10000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "新达汇-喷泉广场-高锦睿-聊",
+      "新达汇-喷泉广场-高锦睿-被救"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/新达汇.js: cs.push({ text: \"冲上去帮忙\", nextScene: \"新达汇-喷泉广场-高锦睿-帮忙\", effect: updateTime(2) });",
       "东明街道/新达汇.js: \"新达汇-喷泉广场-高锦睿-帮忙\": {",
@@ -121,13 +156,19 @@
     "id": "新达汇-B1配电房-开门",
     "file": "东明街道/新达汇.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-等水的人",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-等水的人",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "新达汇-B1配电房-内部",
+      "新达汇-B1配电房-开门-受伤",
+      "结局-等水的人"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/新达汇.js: nextScene: \"新达汇-B1配电房-开门\",",
       "东明街道/新达汇.js: \"新达汇-B1配电房-开门\": {"
@@ -137,13 +178,19 @@
     "id": "新达汇-3F后勤走廊-工服丧尸",
     "file": "东明街道/新达汇.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-维修工的最后一单",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-维修工的最后一单",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "新达汇-3F后勤走廊-王建国",
+      "新达汇-3F后勤走廊-工服丧尸-受伤",
+      "结局-维修工的最后一单"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/新达汇.js: nextScene: \"新达汇-3F后勤走廊-工服丧尸\",",
       "东明街道/新达汇.js: \"新达汇-3F后勤走廊-工服丧尸\": {"
@@ -153,13 +200,19 @@
     "id": "全家便利店-员工通道-丧尸的偷袭-迎战",
     "file": "东明街道/全家和公交站.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],8",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-员工通道-丧尸的偷袭",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-员工通道-丧尸的偷袭",
     "timeout": 14000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "全家便利店-员工通道-丧尸的偷袭-险胜",
+      "全家便利店-员工通道-丧尸的偷袭-受伤",
+      "结局-员工通道-丧尸的偷袭"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/全家和公交站.js: onFound: function(v) { return (v._fmLitShelf && v._fmLitFar) ? \"全家便利店-员工通道-丧尸的偷袭-迎战\" : \"\";",
       "东明街道/全家和公交站.js: nextScene: \"全家便利店-员工通道-丧尸的偷袭-迎战\"",
@@ -171,13 +224,19 @@
     "id": "全家便利店-员工通道-摸黑",
     "file": "东明街道/全家和公交站.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],9",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-员工通道-迅捷丧尸咬死",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-员工通道-迅捷丧尸咬死",
     "timeout": 15000,
     "isFactory": true,
-    "targets": null,
+    "targets": [
+      "全家便利店-员工通道-踢飞丧尸",
+      "全家便利店-员工通道-摸黑-受伤",
+      "结局-员工通道-迅捷丧尸咬死"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/全家和公交站.js: nextScene: \"全家便利店-员工通道-摸黑\",",
       "东明街道/全家和公交站.js: nextScene: \"全家便利店-员工通道-摸黑\",",
@@ -188,13 +247,19 @@
     "id": "金谊广场-吉祥馄饨-杀出去",
     "file": "东明街道/金谊广场.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\",\"白\"],7,{add:{strength:-1}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-被丧尸扑倒咬死",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-被丧尸扑倒咬死",
     "timeout": 20000,
     "isFactory": true,
-    "targets": null,
+    "targets": [
+      "金谊广场-停车场-救完",
+      "金谊广场-吉祥馄饨-杀出去-受伤",
+      "结局-被丧尸扑倒咬死"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/金谊广场.js: cs.push({ text: \"带他杀出停车场\", nextScene: \"金谊广场-吉祥馄饨-杀出去\", effect: updateTime(2) });",
       "东明街道/金谊广场.js: nextScene: \"金谊广场-吉祥馄饨-杀出去\",",
@@ -205,13 +270,19 @@
     "id": "金谊广场-正门硬闯",
     "file": "东明街道/金谊广场.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\",\"白\"],9,{add:{chasedByZombies:1}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-被丧尸扑倒咬死",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-被丧尸扑倒咬死",
     "timeout": 18000,
     "isFactory": true,
-    "targets": null,
+    "targets": [
+      "金谊广场-正门硬闯-成功",
+      "金谊广场-正门硬闯-受伤",
+      "结局-被丧尸扑倒咬死"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/金谊广场.js: nextScene: \"金谊广场-正门硬闯\",",
       "东明街道/金谊广场.js: \"金谊广场-正门硬闯\": {"
@@ -221,29 +292,61 @@
     "id": "金谊广场-地铁站厅",
     "file": "东明街道/金谊广场.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],8,{set:{currentArea:\"金谊广场\",currentPlace:\"金谊广场\",currentPos:\"地铁站厅\"}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "金谊广场-地铁站厅-失败",
+    "hasRouter": true,
+    "tier": 2,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "金谊广场-地铁站厅-失败",
     "timeout": 20000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "金谊广场-地铁站厅-成功",
+      "金谊广场-地铁站厅-失败"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/金谊广场.js: { text: \"下进地铁站厅\", nextScene: \"金谊广场-地铁站厅\", effect: updateTime(2) },",
       "东明街道/金谊广场.js: \"金谊广场-地铁站厅\": {"
     ]
   },
   {
+    "id": "警察局-北段-持图穿行",
+    "file": "东明街道/警察局.js",
+    "lenArg": "[\"红\",\"蓝\",\"绿\"],7",
+    "hasRouter": true,
+    "tier": 2,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": null,
+    "isFactory": false,
+    "targets": [
+      "警察局",
+      "警察局-北段-持图失败"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "东明街道/上实南校.js: return vars._hasPoliceMap ? \"警察局-北段-持图穿行\" : \"警察局-北段-无图路口\";",
+      "东明街道/警察局.js: if (vars._lastScene === \"警察局-北段-持图穿行\") {",
+      "东明街道/警察局.js: \"警察局-北段-持图穿行\": {"
+    ]
+  },
+  {
     "id": "三林路-路霸-搏斗",
     "file": "东明街道/反派NPC.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],len",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-被路霸打死",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-被路霸打死",
     "timeout": 14000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "三林路-路霸-打赢",
+      "三林路-路霸-搏斗-受伤",
+      "结局-被路霸打死"
+    ],
+    "whitelisted": false,
     "inbound": [
       "东明街道/反派NPC.js: cs.push({ text: \"握紧\" + meleeWeaponName(vars) + \"，正面迎战\", nextScene: \"三林路-路霸-搏斗\" });",
       "东明街道/反派NPC.js: cs.push({ text: \"赤手空拳，硬拼一下\", nextScene: \"三林路-路霸-搏斗\" });",
@@ -254,13 +357,19 @@
     "id": "仁济南院-门诊大门-记忆闪色",
     "file": "仁济南院.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],9",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-仁济-正门失守",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-仁济-正门失守",
     "timeout": 20000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "仁济南院-门诊大门-记忆闪色-成功",
+      "仁济南院-门诊大门-记忆闪色-受伤",
+      "结局-仁济-正门失守"
+    ],
+    "whitelisted": false,
     "inbound": [
       "仁济南院.js: \"仁济南院-门诊大门-记忆闪色\": {",
       "仁济南院.js: nextScene: \"仁济南院-门诊大门-记忆闪色\","
@@ -270,13 +379,19 @@
     "id": "仁济南院-急诊大厅-战斗",
     "file": "仁济南院.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],7",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-仁济-急诊失守",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-仁济-急诊失守",
     "timeout": 12000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "仁济南院-急诊大厅-胜利",
+      "仁济南院-急诊大厅-受伤",
+      "结局-仁济-急诊失守"
+    ],
+    "whitelisted": false,
     "inbound": [
       "仁济南院.js: onTimeout: \"仁济南院-急诊大厅-战斗\"",
       "仁济南院.js: nextScene: \"仁济南院-急诊大厅-战斗\"",
@@ -287,13 +402,19 @@
     "id": "仁济南院-检验科-守卫战",
     "file": "仁济南院.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],7",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-仁济-检验科被咬",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-仁济-检验科被咬",
     "timeout": 12000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "仁济南院-检验科-守卫战-胜利",
+      "仁济南院-检验科-守卫战-受伤",
+      "结局-仁济-检验科被咬"
+    ],
+    "whitelisted": false,
     "inbound": [
       "仁济南院.js: nextScene: \"仁济南院-检验科-守卫战\"",
       "仁济南院.js: nextScene: \"仁济南院-检验科-守卫战\"",
@@ -305,13 +426,19 @@
     "id": "仁济南院-住院部走廊-战斗",
     "file": "仁济南院.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],6",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-仁济-病区失守",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-仁济-病区失守",
     "timeout": 10000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "仁济南院-住院部走廊-胜利",
+      "仁济南院-住院部走廊-战斗-受伤",
+      "结局-仁济-病区失守"
+    ],
+    "whitelisted": false,
     "inbound": [
       "仁济南院.js: nextScene: \"仁济南院-住院部走廊-战斗\"",
       "仁济南院.js: \"仁济南院-住院部走廊-战斗\": {"
@@ -321,13 +448,19 @@
     "id": "仁济南院-太平间-黑皮丧尸",
     "file": "仁济南院.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\",\"白\"],8",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-仁济-黑皮丧尸",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-仁济-黑皮丧尸",
     "timeout": 14000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "仁济南院-太平间-黑皮丧尸-胜利",
+      "仁济南院-太平间-黑皮丧尸-受伤",
+      "结局-仁济-黑皮丧尸"
+    ],
+    "whitelisted": false,
     "inbound": [
       "仁济南院.js: nextScene: \"仁济南院-太平间-黑皮丧尸\"",
       "仁济南院.js: nextScene: \"仁济南院-太平间-黑皮丧尸\"",
@@ -335,16 +468,45 @@
     ]
   },
   {
+    "id": "建平-前门",
+    "file": "建平中学.js",
+    "lenArg": "(动态/工厂)",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": null,
+    "isFactory": true,
+    "targets": [
+      "建平-前门-清场",
+      "建平-前门-受伤",
+      "结局-前门失守"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "建平中学.js: { text: \"去前门看看\", nextScene: \"建平-前门\", effect: updateTime(5) },",
+      "建平中学.js: \"建平-前门\": {",
+      "建平中学.js: { text: \"去前门\", nextScene: \"建平-前门\", effect: updateTime(2) },",
+      "建平中学.js: var BELL_EXCLUDE_ID = { \"建平-前门\": 1, \"建平-挹芬楼-1F-西侧走廊\": 1 };"
+    ]
+  },
+  {
     "id": "建平-后门-斧头",
     "file": "建平中学.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],5,{set:{showZombies:true,currentPos:\"后门\"}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-后门失守",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-后门失守",
     "timeout": 12000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "建平-后门-斧头-胜利",
+      "建平-后门-斧头-受伤",
+      "结局-后门失守"
+    ],
+    "whitelisted": false,
     "inbound": [
       "建平中学.js: if (vars.hasAxe) cs.push({ text: \"抡起斧头劈过去！\", nextScene: \"建平-后门-斧头\" });",
       "建平中学.js: \"建平-后门-斧头\": {"
@@ -354,13 +516,19 @@
     "id": "建平-后门-匕首",
     "file": "建平中学.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],5,{set:{showZombies:true,currentPos:\"后门\"}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-后门失守",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-后门失守",
     "timeout": 12000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "建平-后门-匕首-胜利",
+      "建平-后门-匕首-受伤",
+      "结局-后门失守"
+    ],
+    "whitelisted": false,
     "inbound": [
       "建平中学.js: if (vars.hasDagger) cs.push({ text: \"抽出匕首近身！\", nextScene: \"建平-后门-匕首\" });",
       "建平中学.js: \"建平-后门-匕首\": {"
@@ -370,13 +538,19 @@
     "id": "建平-后门-开打",
     "file": "建平中学.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],8,{set:{showZombies:true,currentPos:\"后门\"}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-后门失守",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-后门失守",
     "timeout": 16000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "建平-后门-开打-胜利",
+      "建平-后门-开打-受伤",
+      "结局-后门失守"
+    ],
+    "whitelisted": false,
     "inbound": [
       "建平中学.js: cs.push({ text: \"空手硬拼！\", nextScene: \"建平-后门-开打\" });",
       "建平中学.js: \"建平-后门-开打\": {"
@@ -386,29 +560,93 @@
     "id": "建平-后门-内侧-开打",
     "file": "建平中学.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],10,{set:{showZombies:true,currentPos:\"后门\"}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-后门-自投罗网",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-后门-自投罗网",
     "timeout": 13000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "建平-后门-内侧-清场",
+      "建平-后门-内侧-开打-受伤",
+      "结局-后门-自投罗网"
+    ],
+    "whitelisted": false,
     "inbound": [
       "建平中学.js: nextScene: \"建平-后门-内侧-开打\"",
       "建平中学.js: \"建平-后门-内侧-开打\": {"
     ]
   },
   {
+    "id": "建平-挹芬楼-1F-西侧走廊",
+    "file": "建平中学.js",
+    "lenArg": "(动态/工厂)",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": null,
+    "isFactory": true,
+    "targets": [
+      "建平-挹芬楼-1F-西侧走廊-清场",
+      "建平-挹芬楼-1F-西侧走廊-受伤",
+      "结局-挹芬楼失守"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "建平中学.js: { text: \"进入挹芬楼\", nextScene: \"建平-挹芬楼-1F-西侧走廊\", effect: updateTime(1) }",
+      "建平中学.js: \"建平-挹芬楼-1F-西侧走廊\": {",
+      "建平中学.js: { text: \"继续\", nextScene: \"建平-挹芬楼-1F-西侧走廊\", effect: updateTime(1) }",
+      "建平中学.js: { text: \"去西侧走廊\", nextScene: \"建平-挹芬楼-1F-西侧走廊\", effect: updateTime(1) }",
+      "建平中学.js: \"建平-挹芬楼-西楼梯\": jpStair(\"建平-挹芬楼\", \"挹芬楼西侧楼梯间\", [1, 2, 3, 4, 5, 6], 0, { 1: \"建平-挹芬楼-1F-西侧走廊\" }",
+      "建平中学.js: \"建平-挹芬楼-电梯\": jpElevator(\"建平-挹芬楼\", \"挹芬楼电梯间\", [1, 2, 3, 4, 5, 6], { 1: \"建平-挹芬楼-1F-西侧走廊\" }),",
+      "建平中学.js: { text: \"离开\", nextScene: \"建平-挹芬楼-1F-西侧走廊\", effect: updateTime(1) }",
+      "建平中学.js: var BELL_EXCLUDE_ID = { \"建平-前门\": 1, \"建平-挹芬楼-1F-西侧走廊\": 1 };"
+    ]
+  },
+  {
+    "id": "建平-挹芬楼-1F-东侧走廊",
+    "file": "建平中学.js",
+    "lenArg": "(动态/工厂)",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": null,
+    "isFactory": true,
+    "targets": [
+      "建平-挹芬楼-1F-东侧走廊-清场",
+      "建平-挹芬楼-1F-东侧走廊-受伤",
+      "结局-挹芬楼失守"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "建平中学.js: { text: \"进入挹芬楼\", nextScene: \"建平-挹芬楼-1F-东侧走廊\", effect: updateTime(1) }",
+      "建平中学.js: { text: \"去东侧走廊\", nextScene: \"建平-挹芬楼-1F-东侧走廊\", effect: updateTime(1) }",
+      "建平中学.js: \"建平-挹芬楼-1F-东侧走廊\": {",
+      "建平中学.js: { text: \"继续\", nextScene: \"建平-挹芬楼-1F-东侧走廊\", effect: updateTime(1) }",
+      "建平中学.js: { text: \"回东侧走廊\", nextScene: \"建平-挹芬楼-1F-东侧走廊\", effect: updateTime(1) }",
+      "建平中学.js: \"建平-挹芬楼-东楼梯\": jpStair(\"建平-挹芬楼\", \"挹芬楼东侧楼梯间\", [1, 2, 3, 4, 5, 6], 0, { 1: \"建平-挹芬楼-1F-东侧走廊\" }"
+    ]
+  },
+  {
     "id": "建平-致真楼-1F-老吴杂物室-战斗",
     "file": "建平中学.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],5,{set:{currentPos:\"致真楼1F老吴杂物室\"}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-被老吴咬死",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-被老吴咬死",
     "timeout": 12000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "建平-致真楼-1F-老吴杂物室-击杀",
+      "建平-致真楼-1F-老吴杂物室-战斗-受伤",
+      "结局-被老吴咬死"
+    ],
+    "whitelisted": false,
     "inbound": [
       "建平中学.js: }, nextScene: \"建平-致真楼-1F-老吴杂物室-战斗\", elseScene: \"整理整理\" },",
       "建平中学.js: \"建平-致真楼-1F-老吴杂物室-战斗\": {"
@@ -418,29 +656,66 @@
     "id": "建平-食堂-煤气阀-战斗",
     "file": "建平中学.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],3,{set:{currentPos:\"食堂后厨\"}}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-煤气中毒",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-煤气中毒",
     "timeout": 10000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "建平-食堂-煤气阀-关阀",
+      "建平-食堂-煤气阀-战斗-受伤",
+      "结局-煤气中毒"
+    ],
+    "whitelisted": false,
     "inbound": [
       "建平中学.js: { text: \"战斗！\", nextScene: \"建平-食堂-煤气阀-战斗\" },",
       "建平中学.js: \"建平-食堂-煤气阀-战斗\": {"
     ]
   },
   {
+    "id": "建平-宿舍-内部",
+    "file": "建平中学.js",
+    "lenArg": "(动态/工厂)",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": null,
+    "isFactory": true,
+    "targets": [
+      "建平-宿舍-内部-清场",
+      "建平-宿舍-内部-受伤",
+      "结局-宿舍失守"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "夜晚剧情.js: { text: \"继续\", nextScene: \"建平-宿舍-内部\" }",
+      "建平中学.js: { text: \"进入宿舍\", nextScene: \"建平-宿舍-内部\", effect: updateTime(1) },",
+      "建平中学.js: \"建平-宿舍-内部\": {",
+      "建平中学.js: { text: \"起来\", nextScene: \"建平-宿舍-内部\", effect: updateTime(1) },",
+      "建平中学.js: { text: \"继续\", nextScene: \"建平-宿舍-内部\", effect: updateTime(1) }",
+      "建平中学.js: { text: \"继续\", nextScene: \"建平-宿舍-内部\", effect: updateTime(1) }"
+    ]
+  },
+  {
     "id": "建平-弘渊楼-2F-李娟-战斗",
     "file": "建平中学.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],4,{set:{currentPos:\"弘渊楼2F阅览室\"},shake:true}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-阅览室的常客",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-阅览室的常客",
     "timeout": 11000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "建平-弘渊楼-2F-李娟-解脱",
+      "建平-弘渊楼-2F-李娟-战斗-受伤",
+      "结局-阅览室的常客"
+    ],
+    "whitelisted": false,
     "inbound": [
       "建平中学.js: { text: function(v) { return hasMeleeWeapon(v) ? \"握紧\" + meleeWeaponName(v) + \"迎战！\" : \"握紧拳头",
       "建平中学.js: { text: \"迎战！\", nextScene: \"建平-弘渊楼-2F-李娟-战斗\", effect: updateTime(1) }",
@@ -448,16 +723,43 @@
     ]
   },
   {
+    "id": "忻老师家-学生救场-战斗",
+    "file": "复旦江湾.js",
+    "lenArg": "[\"红\",\"蓝\",\"绿\"],6",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": null,
+    "isFactory": false,
+    "targets": [
+      "忻老师家-学生救场-胜利",
+      "忻老师家-学生救场-受伤",
+      "结局-被丧尸扑倒咬死"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "复旦江湾.js: { text: \"抵住楼梯口，等他们上来\", nextScene: \"忻老师家-学生救场-战斗\", effect: updateTime(2) }",
+      "复旦江湾.js: \"忻老师家-学生救场-战斗\": {"
+    ]
+  },
+  {
     "id": "张江-加油站-棚子-战斗",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-加油站",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-加油站",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-加油站-棚子-胜利",
+      "张江-加油站-棚子-战斗-受伤",
+      "结局-张江-加油站"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: nextScene: \"张江-加油站-棚子-战斗\",",
       "张江.js: \"张江-加油站-棚子-战斗\": {"
@@ -467,13 +769,19 @@
     "id": "张江-上科大-食堂-后厨-战斗",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-上科大食堂",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-上科大食堂",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-上科大-食堂-后厨-胜利",
+      "张江-上科大-食堂-后厨-战斗-受伤",
+      "结局-张江-上科大食堂"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: nextScene: \"张江-上科大-食堂-后厨-战斗\",",
       "张江.js: \"张江-上科大-食堂-后厨-战斗\": {"
@@ -483,13 +791,19 @@
     "id": "张江-华大-广场-近路",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-厂区广场",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-厂区广场",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-华大-广场-近路-胜",
+      "张江-华大-广场-近路-受伤",
+      "结局-张江-厂区广场"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: nextScene: \"张江-华大-广场-近路\",",
       "张江.js: \"张江-华大-广场-近路\": {"
@@ -499,13 +813,19 @@
     "id": "张江-华大-连廊-遭遇",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-连廊",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-连廊",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-华大-连廊-遭遇-胜",
+      "张江-华大-连廊-遭遇-受伤",
+      "结局-张江-连廊"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: nextScene: \"张江-华大-连廊-遭遇\",",
       "张江.js: \"张江-华大-连廊-遭遇\": {"
@@ -515,13 +835,19 @@
     "id": "张江-华大-白区-围攻",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],function(vars",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-白区",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-白区",
     "timeout": "14000 + _fabAlert * 1500",
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-华大-白区-围攻-胜",
+      "张江-华大-白区-围攻-受伤",
+      "结局-张江-白区"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: nextScene: \"张江-华大-白区-围攻\",",
       "张江.js: \"张江-华大-白区-围攻\": {"
@@ -531,13 +857,19 @@
     "id": "张江-华大-白区-工位战A",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-白区",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-白区",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-华大-白区-工位战A-胜",
+      "张江-华大-白区-工位战A-受伤",
+      "结局-张江-白区"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: nextScene: \"张江-华大-白区-工位战A\",",
       "张江.js: { text: \"迎战\", nextScene: \"张江-华大-白区-工位战A\", effect: updateTime(1) },",
@@ -548,13 +880,19 @@
     "id": "张江-华大-白区-工位战C",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-毒气",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-毒气",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-华大-白区-工位战C-胜",
+      "张江-华大-白区-工位战C-受伤",
+      "结局-张江-毒气"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: nextScene: \"张江-华大-白区-工位战C\",",
       "张江.js: { text: \"迎战\", nextScene: \"张江-华大-白区-工位战C\", effect: updateTime(1) },",
@@ -565,13 +903,19 @@
     "id": "张江-华大-运维区-遭遇战",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],function(vars",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-运维区",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-运维区",
     "timeout": "12000 + _fabAlert * 1500",
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-华大-运维区-制服",
+      "张江-华大-运维区-遭遇战-受伤",
+      "结局-张江-运维区"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: cs.push({ text: \"走近那截发抖的白影\", nextScene: \"张江-华大-运维区-遭遇战\", effect: updateTime(1) });",
       "张江.js: \"张江-华大-运维区-遭遇战\": {"
@@ -581,13 +925,19 @@
     "id": "张江-川杨河大桥-1",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],5",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-川杨河",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-川杨河",
     "timeout": 12000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-川杨河大桥-1-胜",
+      "张江-川杨河大桥-1-受伤",
+      "结局-张江-川杨河"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: nextScene: \"张江-川杨河大桥-1\",",
       "张江.js: \"张江-川杨河大桥-1\": {",
@@ -598,14 +948,21 @@
     "id": "张江-川杨河大桥-2",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],6,{shake:true}",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-川杨河",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-川杨河",
     "timeout": 11000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-川杨河大桥-2-胜",
+      "张江-川杨河大桥-2-受伤",
+      "结局-张江-川杨河"
+    ],
+    "whitelisted": false,
     "inbound": [
+      "张江.js: { text: \"继续往前\", nextScene: \"张江-川杨河大桥-2\", effect: updateTime(2) }",
       "张江.js: { text: \"继续往前\", nextScene: \"张江-川杨河大桥-2\", effect: updateTime(2) }",
       "张江.js: \"张江-川杨河大桥-2\": {"
     ]
@@ -614,14 +971,21 @@
     "id": "张江-川杨河大桥-3",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],6",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-川杨河",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-川杨河",
     "timeout": 13000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-川杨河大桥-3-胜",
+      "张江-川杨河大桥-3-受伤",
+      "结局-张江-川杨河"
+    ],
+    "whitelisted": false,
     "inbound": [
+      "张江.js: { text: \"下坡，去会会它\", nextScene: \"张江-川杨河大桥-3\", effect: updateTime(2) }",
       "张江.js: { text: \"下坡，去会会它\", nextScene: \"张江-川杨河大桥-3\", effect: updateTime(2) }",
       "张江.js: \"张江-川杨河大桥-3\": {"
     ]
@@ -630,13 +994,19 @@
     "id": "张江-检测中心-瞎摸",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-检测中心",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-检测中心",
     "timeout": 9000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-检测中心-瞎摸-胜",
+      "张江-检测中心-瞎摸-受伤",
+      "结局-张江-检测中心"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: cs.push({ text: \"走廊尽头黑得看不清——挨个房间摸过去\", nextScene: \"张江-检测中心-瞎摸\", effect: updateTime(4) });",
       "张江.js: \"张江-检测中心-瞎摸\": {"
@@ -646,13 +1016,19 @@
     "id": "张江-检测中心-检测员战",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],function(vars",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-检测中心",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-检测中心",
     "timeout": "16000 - _labAlert * 1500",
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-检测中心-制服",
+      "张江-检测中心-检测员战-受伤",
+      "结局-张江-检测中心"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: { text: \"试着喊一声：“有人吗？”\", nextScene: \"张江-检测中心-检测员战\", effect: updateTime(1) },",
       "张江.js: { text: \"直接冲上去动手\", nextScene: \"张江-检测中心-检测员战\", effect: updateTime(1) },",
@@ -665,13 +1041,19 @@
     "id": "张江-检测中心-撤离遭遇",
     "file": "张江.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],5",
-    "hasRouter": false,
-    "hasOldCond": true,
-    "elseScene": "结局-张江-检测中心",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
     "timeoutScene": "结局-张江-检测中心",
     "timeout": 10000,
     "isFactory": false,
-    "targets": null,
+    "targets": [
+      "张江-检测中心-撤离-胜",
+      "张江-检测中心-撤离遭遇-受伤",
+      "结局-张江-检测中心"
+    ],
+    "whitelisted": false,
     "inbound": [
       "张江.js: if (v._labAlert > 0 && !(v._visit['张江-检测中心-撤离-胜'] > 0)) return \"张江-检测中心-撤离遭遇\";",
       "张江.js: if (v._labAlert > 0 && !(v._visit['张江-检测中心-撤离-胜'] > 0)) return \"张江-检测中心-撤离遭遇\";",

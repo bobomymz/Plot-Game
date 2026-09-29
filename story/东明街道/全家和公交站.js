@@ -191,13 +191,23 @@ Object.assign(storyData, {
       {
         text: "输入你看到的颜色分布（例如：2红2蓝2绿2黄）",
         input: { placeholder: "例如：2红2蓝2绿2黄" },
-        condition: checkFlashAnswer,
-        elseScene: "结局-员工通道-丧尸的偷袭",
+        nextScene: flashCombatRouter("全家便利店-员工通道-丧尸的偷袭-险胜", "全家便利店-员工通道-丧尸的偷袭-受伤", "结局-员工通道-丧尸的偷袭"),
         timeout: 14000,   // 4色×8 闪完约 6.4s，留约 7.6s 输入（触屏自动补时 1.5×）
         timeoutScene: "结局-员工通道-丧尸的偷袭",
-        effect: updateTime(2),
-        nextScene: "全家便利店-员工通道-丧尸的偷袭-险胜"
+        effect: updateTime(2)
       }
+    ]
+  },
+
+  "全家便利店-员工通道-丧尸的偷袭-受伤": {
+    image: "images/小区周边/全家和公交站/仓库.webp",
+    onEnter: function(vars) { hurtWinOnEnter({})(vars); vars.FamilymartHasZombie = false; return {}; },
+    text: function(vars) {
+      return "你判断慢了半拍——<span class='crit'>扑下来的那只爪子扫过你的肩膀</span>，扯开一道口子。你矮身硬顶，把撞进货架的那只压住，反手抡开货架后侧凑上来的第二只。\n\
+两具尸体倒在纸箱堆里。仓库里终于只剩下你自己的心跳声。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续搜", nextScene: "全家便利店-员工通道-丧尸的偷袭", effect: updateTime(1) }
     ]
   },
 
@@ -654,10 +664,8 @@ Object.assign(storyData, {
         cs.push({
           text: "输入你看到的颜色分布（例如：3红3蓝3绿）",
           input: { placeholder: "例如：3红3蓝3绿" },
-          condition: checkFlashAnswer,
-          elseScene: "结局-员工通道-迅捷丧尸咬死",
+          nextScene: flashCombatRouter("全家便利店-员工通道-踢飞丧尸", "全家便利店-员工通道-摸黑-受伤", "结局-员工通道-迅捷丧尸咬死"),
           effect: updateTime(2, { add: { strength: -1 } }),
-          nextScene: "全家便利店-员工通道-踢飞丧尸",
           timeout: 15000,                     // 9色闪完约7秒，留约8秒输入（原10000只剩3秒，太紧）
           timeoutScene: "结局-员工通道-迅捷丧尸咬死"
         });
@@ -726,6 +734,21 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/员工通道-暗.png */,
     onEnter: updateTime(1, { set: { FamilymartHasZombie: false } }),
     text: "你在黑暗中精准地预判了它的扑击轨迹——侧身一闪，它擦着你的肩膀扑了个空，一头撞在了走廊的金属货架上，发出沉闷的巨响。\n趁它还没爬起来，你飞起一脚狠狠踹在它身上，把它踢回了员工通道深处。货架上的纸箱<span class='sfx'>哗啦啦</span>地塌了下来，暂时压住了它。\n你抓住这个间隙，一把拉上员工通道的门，用身体死死顶住。\n<span class='sfx'>砰——</span>门那边传来猛烈的撞击声。又是一下。然后安静了。\n你靠着门大口喘气，心脏快要跳出胸腔。几秒后，你抹黑退了出来，回到了便利店。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    choices: [
+      {
+        text: "继续",
+        nextScene: "全家便利店内部"
+      }
+    ]
+  },
+
+  "全家便利店-员工通道-摸黑-受伤": {
+    image: "images/placeholder.png" /* TODO: images/小区周边/全家和公交站/员工通道-暗.png */,
+    onEnter: function(vars) { hurtWinOnEnter({})(vars); vars.FamilymartHasZombie = false; return {}; },
+    text: function(vars) {
+      return "你慢了半拍——<span class='crit'>那道黑影擦着你扑空的同时，爪尖还是剐开了你的胳膊</span>。你忍着刺痛侧身一让，它一头撞在金属货架上，你抢上去一脚把它踹回通道深处。\n\
+你拉上员工通道的门，用身体死死顶住。<span class='sfx'>砰——</span>门那边撞了两下，然后安静了。" + hurtCostText(vars);
+    },
     choices: [
       {
         text: "继续",
