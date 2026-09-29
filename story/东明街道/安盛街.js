@@ -209,7 +209,7 @@ Object.assign(storyData, {
       night: "images/安盛街/老头丧尸倒下-night.webp"
     }),
     onEnter: updateTime(1, { add: { strength: -1 }, set: { defeatedOldMan: true, showRain: true } }),
-    text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，咕咚一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
+    text: "你一脚踹在它的膝盖上。老头丧尸失去平衡，<span class='sfx'>咕咚</span>一声摔倒在地，拐杖也脱手飞了出去。\n它在地上挣扎着想爬起来，但关节似乎不太灵活，一时半会儿起不来。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
         text: "看看拐杖",
@@ -290,7 +290,7 @@ Object.assign(storyData, {
       if (!vars._visit["理发店内部"]) { // 没来过
         basicDes = "你快步向前走去，来到了熟悉的理发店门口。\n";
         if (isNight) {
-          basicDes += "卷帘门半拉着，但玻璃门后面透出微弱的烛光。那个熟悉的老板——周师傅，正透过门缝警惕地向外张望。他看到是你，愣了一下，随即掏出钥匙，咔哒一声打开玻璃门上的U形锁。\n“快进来，快进来！外面可不安全。”他压低声音招呼道。";
+          basicDes += "卷帘门半拉着，但玻璃门后面透出微弱的烛光。那个熟悉的老板——周师傅，正透过门缝警惕地向外张望。他看到是你，愣了一下，随即掏出钥匙，<span class='sfx'>咔哒</span>一声打开玻璃门上的U形锁。\n“快进来，快进来！外面可不安全。”他压低声音招呼道。";
         } else {
           basicDes += "搬到这片地方后，你基本上都在这里理发了。然而此刻玻璃门紧锁着，窗帘拉得严严实实，只有门口旋转灯箱还在无声地转着。\n你敲了敲门，过了好一会儿，门后才传来一个低沉的声音：“谁？”";
         }
@@ -326,7 +326,7 @@ Object.assign(storyData, {
     text: function(vars) {
       let isNight = vars.hh >= 19 || vars.hh <= 6;
       if (vars._visit["理发店内部"] === 1) {
-        let desc = "你推开门走进理发店，门上的风铃发出熟悉的叮当声。\n空气里混合着洗发水和消毒水的气味。四把理发椅静静地立在镜子前，手推车上挂着各种剪刀和推子，储藏室里堆着几箱矿泉水和方便面——看来周师傅早有准备。";
+        let desc = "你推开门走进理发店，门上的风铃发出熟悉的<span class='sfx'>叮当</span>声。\n空气里混合着洗发水和消毒水的气味。四把理发椅静静地立在镜子前，手推车上挂着各种剪刀和推子，储藏室里堆着几箱矿泉水和方便面——看来周师傅早有准备。";
         if (isNight) {
           desc += "\n周师傅迅速锁好门，拉紧窗帘。“这几天外面越来越不对劲了，”他边说边给你倒了杯水，“能活着走到这里，你小子运气不错。”";
         } else if(!vars.hurtByZombie){
@@ -392,7 +392,7 @@ Object.assign(storyData, {
       if (isNight) {
         desc += "烛光摇曳，周师傅在一旁清点物资，偶尔抬头看看窗外。";
       } else {
-        desc += "日光透过窗帘缝隙照进来，在地板上投下细长的光斑。周师傅在角落里磨着剪刀，沙沙作响。";
+        desc += "日光透过窗帘缝隙照进来，在地板上投下细长的光斑。周师傅在角落里磨着剪刀，<span class='sfx'>沙沙</span>作响。";
       }
       if (isNight && vars.chasedByZombies > 0) {
         desc += "\n<span class='warn'>窗外的低吼声时远时近——今晚在这里过夜应该能甩掉它们。</span>";
@@ -479,7 +479,7 @@ Object.assign(storyData, {
       let basicDes = "";
       let hint = restHint(vars, "你回复1点体力");
       if (isNight) {
-        basicDes = "周师傅拉出一张折叠床，递给你一条毯子。\n“今晚就安心睡吧，我守上半夜，你守下半夜。”\n你把身体埋进折叠床里，听着窗外偶尔传来的丧尸低吼声，竟出奇地睡着了。\n\
+        basicDes = "周师傅拉出一张折叠床，递给你一条毯子。\n“今晚就安心睡吧，我守上半夜，你守下半夜。”\n你把身体埋进折叠床里，<span class='rot'>听着窗外偶尔传来的丧尸低吼声</span>，竟出奇地睡着了。\n\
     第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
         hint = "\n<span class='sys'>【系统提示】你回复3点体力，当前体力：{strength}。</span>\
 第二天醒来时，阳光透过窗帘缝隙洒在地上。外面的丧尸不知道什么时候散了。你感觉精神好了许多。";
@@ -521,7 +521,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/anshengStreet/barberShopInside.png */,
     text: function(vars) {
       let desc = "你环顾理发店。镜台上整齐地排列着剪刀、推子、梳子，墙上贴着几张褪色的发型海报。角落里堆着矿泉水和几箱方便面——周师傅囤了不少物资。\n\
-柜台后面有一台老式收音机，此刻正发出沙沙的静电声。周师傅说它已经两天没收到任何信号了。";
+柜台后面有一台老式收音机，此刻正发出<span class='sfx'>沙沙</span>的静电声。周师傅说它已经两天没收到任何信号了。";
       if (!vars.hasMopHandle && vars.itemCount < vars.bagVolume) { // 如果背包已满，就不要强调这句话了
         desc += "\n门后面立着一根备用的拖把杆。"
       }
@@ -692,7 +692,7 @@ Object.assign(storyData, {
       return f(vars);
     }, 
     onEnter: { add: { chasedByZombies: 1 }, set: { showZombies: true } },
-    text: "你在街中央站得太久了。丧尸从街道两端围拢过来，低吼声此起彼伏。你不能再犹豫了——必须立刻做出选择。",
+    text: "你在街中央站得太久了。丧尸从街道两端围拢过来，<span class='rot'>低吼声此起彼伏</span>。你不能再犹豫了——必须立刻做出选择。",
     choices: [
       {
         text: "一头扎进最近的店铺",
@@ -728,10 +728,10 @@ Object.assign(storyData, {
       var insideBack = ["安盛街-收银台", "安盛街-文具店击杀", "安盛街-文具店搜刮-快速", "安盛街-文具店搜刮-仔细", "安盛街-文具店铁柜", "安盛街-文具店铁柜-吃喝", "安盛街-文具店铁柜-拿走帆布袋"].indexOf(vars._lastScene) >= 0;
       if ((vars._visit['安盛街-文具店击杀'] > 0)) {
         if (insideBack) return "你回到店堂里。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
-        return "你推开吱呀作响的玻璃门，走进文具店。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
+        return "你推开<span class='sfx'>吱呀</span>作响的玻璃门，走进文具店。店里很安静，收银台后面已经没有动静了。地上的水彩笔还残留着斑驳的颜料痕迹。";
       }
       if (insideBack) return "你回到店堂里。货架还是歪歪扭扭的，本子、笔、修正带散落一地。收银台后面窸窸窣窣的动静还在。";
-      return "你推开吱呀作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的咔嚓声。\n\
+      return "你推开<span class='sfx'>吱呀</span>作响的玻璃门，走进文具店。店里的货架歪歪扭扭，本子、笔、修正带散落一地，踩上去发出纸张被碾碎的<span class='sfx'>咔嚓</span>声。\n\
 收银台后面有动静——纸页在响，有东西在翻。";
     },
     choices: [
@@ -798,7 +798,7 @@ Object.assign(storyData, {
         return "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，狠狠砸了下去。少年丧尸还没来得及抬头就被砸翻在地，水彩笔滚了一地。\n\
 你补了几下，确定它不会再动了。" + tail + "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       }
-      return "你从背后扑上去，把它整个人掀翻在水彩笔堆里。它扭头就咬，指甲在你手背上豁开几道口子——你用膝盖压住它的背，攥着它的头发往柜台棱角上磕，磕到第三下它就瘫了。\n\
+      return "<span class='crit'>你从背后扑上去</span>，把它整个人掀翻在水彩笔堆里。它扭头就咬，指甲在你手背上豁开几道口子——你用膝盖压住它的背，攥着它的头发往柜台棱角上磕，磕到第三下它就瘫了。\n\
 你从货架上扯了张包装纸，按住手背上的伤口。" + tail + "\n<span class='sys warn'>【系统提示】体力-2，当前体力：{strength}。</span>";
     },
     choices: [
@@ -820,7 +820,7 @@ Object.assign(storyData, {
       var opening = hasMeleeWeapon(vars)
         ? "你举起" + (meleeWeaponName(vars) || "手中的家伙") + "，但你的手臂发软，这一击只擦过了丧尸的肩膀。"
         : "你赤手空拳扑上去，但手臂发软，按了个空。";
-      return opening + "\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，像一头野兽般扑了过来——\n\
+      return opening + "\n少年丧尸猛地转过头，那双灰白的眼珠直直锁定了你。它发出一声尖啸，<span class='crit'>像一头野兽般扑了过来——</span>\n\
 你太虚弱了，根本无力招架。\n\
 <span class='end'>—— 结局：文具店被反杀 ——</span>";
     }
@@ -951,7 +951,7 @@ Object.assign(storyData, {
 
   "安盛街-文具店仓库": {
     image: "images/安盛街/晨光文具店/仓库.webp",
-    text: "你推开吱嘎作响的铁门，走进文具店后面的小仓库。货架上堆满了各种文具和办公用品，墙角有几箱没拆封的打印纸。\n\
+    text: "你推开<span class='sfx'>吱</span>嘎作响的铁门，走进文具店后面的小仓库。货架上堆满了各种文具和办公用品，墙角有几箱没拆封的打印纸。\n\
 你的目光落在角落的一个铁柜上——上面贴着“员工物品”的标签，柜门虚掩着。",
     choices: [
       {
@@ -1189,13 +1189,13 @@ Object.assign(storyData, {
 
   "结局-安盛街-试衣间丧尸扑脸": {
     image: "images/zombieKnockYouDown.webp",
-    text: "丧尸猛地扑到你身上，你失去平衡仰面摔倒。\n还没来得及挣扎，它已经咬了下来。\n\n<span class='end'>—— 结局：试衣间丧尸 ——</span>"
+    text: "<span class='crit'>丧尸猛地扑到你身上</span>，你失去平衡仰面摔倒。\n还没来得及挣扎，它已经咬了下来。\n\n<span class='end'>—— 结局：试衣间丧尸 ——</span>"
   },
 
   "结局-安盛街-试衣间丧尸扑脸-力竭": {
     image: "images/zombieKnockYouDown.webp",
     text: "你抬脚踹了过去，可这一脚轻飘飘的，连它的冲势都没能挡下。\n\
-女丧尸扑到你身上，你仰面摔进试衣间里，后脑磕在墙上。\n\
+<span class='crit'>女丧尸扑到你身上</span>，你仰面摔进试衣间里，后脑磕在墙上。\n\
 它已经咬了下来。\n\
 \n<span class='end'>—— 结局：试衣间丧尸 ——</span>"
   },
@@ -1442,7 +1442,7 @@ Object.assign(storyData, {
   "安盛街-食品店逃跑": {
     image: "images/安盛街/食品店/逃跑.webp",
     onEnter: updateTime(1),
-    text: "你转身就跑，店员丧尸慢吞吞地跟在后面，但还没追到门口就放弃了——它似乎被什么东西绊倒了，哗啦一声摔在地上。\n管他呢，跑就对了。",
+    text: "你转身就跑，店员丧尸慢吞吞地跟在后面，但还没追到门口就放弃了——它似乎被什么东西绊倒了，<span class='sfx'>哗啦</span>一声摔在地上。\n管他呢，跑就对了。",
     choices: [
       {
         text: "继续",
@@ -1486,14 +1486,14 @@ Object.assign(storyData, {
 
   "结局-安盛街-被尸潮吞没": {
     image: "images/zombiesBeatYou.webp",
-    text: "你在街道中央犹豫了太久。\n尸潮像一面墙一样压了过来，无数双手抓住了你的衣服、手臂、脖子……\n你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\n<span class='end'>—— 结局：被尸潮吞没 ——</span>"
+    text: "你在街道中央犹豫了太久。\n尸潮像一面墙一样压了过来，<span class='crit'>无数双手抓住了你的衣服、手臂、脖子</span>……\n你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\n<span class='end'>—— 结局：被尸潮吞没 ——</span>"
   },
 
   "结局-安盛街-被尸潮吞没-力竭": {
     image: "images/zombiesBeatYou.webp",
     text: "你挑了个看起来最薄的缺口，闷头冲过去。\n\
 可没跑出两步，大腿就酸得发软——你一头撞进人墙里，反倒被夹在了当中。\n\
-尸潮像一面墙一样合拢过来，无数双手抓住了你的衣服、手臂、脖子……\n\
+尸潮像一面墙一样合拢过来，<span class='crit'>无数双手抓住了你的衣服、手臂、脖子</span>……\n\
 你甚至来不及喊叫，就被拖进了那团蠕动的黑暗中。\n\
 \n<span class='end'>—— 结局：被尸潮吞没 ——</span>"
   },
@@ -1535,7 +1535,7 @@ Object.assign(storyData, {
     onEnter: updateTime(2, { set: { showRain: true } }),
     text: "你转身就跑，沿着来时的路狂奔。理发店的灯箱是你唯一认得的坐标。\n\
 你用尽全力拍打玻璃门：“周师傅！开门！是我！”\n\
-门锁咔哒一声打开了，一只手把你拉了进去。周师傅迅速锁好门，拉上窗帘。\
+门锁<span class='sfx'>咔哒</span>一声打开了，一只手把你拉了进去。周师傅迅速锁好门，拉上窗帘。\
 外面传来杂乱的脚步声和低吼——但它们没有停留，直接从门前过去了。\n\
 “你运气真是太好了，”周师傅擦着额头的汗，“下次可别引这么多回来。”",
     choices: [
@@ -1703,9 +1703,9 @@ Object.assign(storyData, {
 
   "安盛街东侧-躲藏": hideOnLocation("images/placeholder.png" /* TODO: images/anshengStreet/eastEntrance.png */,
     "你侧身挤进路边一个半塌的报刊亭，但铁皮墙突然被什么东西撞了一下——一只丧尸在无意识地撞墙。铁皮发出凹痕声，再待下去就要被发现。你只能一脚踹开门，冲了出去。",
-    "你侧身挤进路边一个半塌的报刊亭。里面散落着过期杂志和碎玻璃。你蹲在柜台后面，从缝隙里看着街道。几只丧尸从亭外经过，没往里面看一眼。等了很久，你才推开吱呀作响的门走出来。"),
+    "你侧身挤进路边一个半塌的报刊亭。里面散落着过期杂志和碎玻璃。你蹲在柜台后面，从缝隙里看着街道。几只丧尸从亭外经过，没往里面看一眼。等了很久，你才推开<span class='sfx'>吱呀</span>作响的门走出来。"),
   "安盛街西侧-躲藏": hideOnLocation("images/placeholder.png" /* TODO: images/anshengStreet/westStreet.png */,
-    "你躲到一块倒下的巨型广告牌后面，但铁架发出吱嘎声——几只丧尸爬上了倒下的广告牌。铁架在摇晃，快撑不住了！你一脚踹开最近的那只，从铁架缝隙里钻了出去。",
+    "你躲到一块倒下的巨型广告牌后面，但铁架发出<span class='sfx'>吱</span>嘎声——几只丧尸爬上了倒下的广告牌。铁架在摇晃，快撑不住了！你一脚踹开最近的那只，从铁架缝隙里钻了出去。",
     "你躲到一块倒下的巨型广告牌后面。铁架和帆布形成了一个三角空间，像街边的一个临时掩体。外面的丧尸在广告牌另一侧徘徊，看不见你。等声音远去，你才从里面爬出来。"),
 });
 

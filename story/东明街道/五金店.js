@@ -302,7 +302,7 @@ Object.assign(storyData, {
         vars._weaponJustBroke = "";
         vars._supermarketCompromised = true;
       } else {
-        desc += "\n铁管在你的用力下发出<span class='sfx'>嘎吱嘎吱</span>的声音——锁环开始变形了。你又加了一把力，只听<span class='sfx'>咔嚓</span>一声，锁环崩断了。铁栅栏门吱呀一声弹开了一条缝。";
+        desc += "\n铁管在你的用力下发出<span class='sfx'>嘎吱嘎吱</span>的声音——锁环开始变形了。你又加了一把力，只听<span class='sfx'>咔嚓</span>一声，锁环崩断了。铁栅栏门<span class='sfx'>吱呀</span>一声弹开了一条缝。";
         countHeavyUse(vars, "铁管"); // 撬开也算一次重活：若正好是第3次，门开了但铁管也报废了
         desc += weaponBrokeText(vars);
       }

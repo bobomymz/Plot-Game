@@ -37,16 +37,16 @@ explorer index.html
 
 | 文档 | 定位 |
 |---|---|
-| `docs/引擎语法手册.md` | **引擎支持什么写法**：场景字段语法速查、选项、条件系统+变量注册、效果、QTE、输入框、`_lastScene`、分段文本、记忆闪色、屏幕特效、图片查看器、黑暗光锥、z-index |
+| `docs/引擎语法手册.md` | **引擎支持什么写法**：场景字段语法速查、选项、条件系统+变量注册、效果、QTE、输入框、`_lastScene`、分段文本、正文/选项 HTML 标记（语义 class）、记忆闪色、屏幕特效、图片查看器、黑暗光锥、z-index |
 | `docs/剧情写作规范.md` | **怎么写剧情**：游戏状态变量表、showCondition vs condition 最佳实践、物品/背包/武器耐久/战斗体力/整理整理/日记本/疲劳、添加新剧情步骤、叙事与表述约定、测试 |
 | `docs/环境与运维.md` | git 自动推送定时任务、代理配置 |
 | `设计细节.md` / `人物档案.md` / `核心设定3.0.md` | 世界观与规划设定（层级见上） |
-| `.claude/skills/*/SKILL.md` | 专项工作流：story-testing（测试）、puzzle-chain-design（解密链）、area-story-design（新区域）、geo-optimization（图审计）等 |
+| `.claude/skills/*/SKILL.md` | 专项工作流：story-testing（测试）、puzzle-chain-design（解密链）、area-story-design（新区域）、geo-optimization（图审计）、text-markup（剧情文本视觉标记）等 |
 
 ### 查什么 → 去哪
 | 想知道/想做 | 去 |
 |---|---|
-| 引擎写法：场景字段/条件/QTE/输入框/闪色/分段文本/图片查看器/黑暗光锥/z-index | `docs/引擎语法手册.md` → 拿不准再读 engine.js |
+| 引擎写法：场景字段/条件/QTE/输入框/闪色/分段文本/正文上色标记/图片查看器/黑暗光锥/z-index | `docs/引擎语法手册.md` → 拿不准再读 engine.js |
 | 设计规范：变量表/物品与背包/守卫最佳实践/武器耐久/战斗体力/日记本/疲劳/新机制（感冒/户外/冷兵器分级） | `docs/剧情写作规范.md` + utils.js 对应节 |
 | 新增剧情文件/场景/图片的步骤 | `docs/剧情写作规范.md`「添加新剧情」 |
 | 硬性红线完整清单（长对话防遗忘） | `/skill project-rules` |
@@ -63,6 +63,7 @@ explorer index.html
 | 剧情测试/走查（L1 lint·L4 E2E helper·坑点清单·无截图原则） | `.claude/skills/story-testing/SKILL.md` + `node tools/lint_story.mjs` / `tools/test_helper.mjs` |
 | 解密链设计/优化（难度杠杆分级·已用套路清单·物品预算·方案先行） | `.claude/skills/puzzle-chain-design/SKILL.md` + `node tools/chain_audit.mjs` |
 | 新区域整体设计（四阶段编排·区域差异矩阵·入口契约·DoD） | `.claude/skills/area-story-design/SKILL.md` + `node tools/area_check.mjs <区域>`（区域方案落盘 `docs/区域方案-<名>.md`） |
+| 剧情文本视觉标记（P2/P3 上色·class 表·配额·markup lint·新增 class 三处同步·inline style/结局行迁移） | `.claude/skills/text-markup/SKILL.md` + `node tools/text_markup_lint.js` / `tools/text_markup_scan.js` |
 | 自动推送/git 每小时定时提交 | `docs/环境与运维.md` |
 
 ### 新增机制的同步清单

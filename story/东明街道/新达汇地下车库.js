@@ -101,8 +101,8 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
     onEnter: { set: { _wiredCorrectly: true } },
     text: function(vars) {
-      if (vars._powerOut) return "你推上电闸。灯管闪了两下——然后灭了。配电箱深处传来一声低沉的嗡鸣，但什么也没有发生。总闸没电，你这里的电闸推上去也没用。";
-      return "你推上电闸。头顶的灯管闪了几下，发出一阵嗡嗡声——然后亮了。暖黄色的灯光驱散了整个B区的黑暗。\n你终于能看清周围的全貌了。";
+      if (vars._powerOut) return "你推上电闸。灯管闪了两下——然后灭了。配电箱深处传来一声低沉的<span class='sfx'>嗡</span>鸣，但什么也没有发生。总闸没电，你这里的电闸推上去也没用。";
+      return "你推上电闸。头顶的灯管闪了几下，发出一阵<span class='sfx'>嗡嗡</span>声——然后亮了。暖黄色的灯光驱散了整个B区的黑暗。\n你终于能看清周围的全貌了。";
     },
     choices: [
       { text: "返回C区", nextScene: "新达汇-B1停车场C区", effect: updateTime(1) }
@@ -112,7 +112,7 @@ Object.assign(storyData, {
   "新达汇-B1停车场-接线失败": {
     image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
     onEnter: { add: { chasedByZombies: 1 } },
-    text: "你把线接上了，但推上电闸的瞬间——啪！一阵火花闪过，灯没亮。你接错了。\n短路的声音在空旷的停车场里回荡……肯定引起了什么东西的注意。你得小心了。",
+    text: "你把线接上了，但推上电闸的瞬间——<span class='sfx'>啪</span>！一阵火花闪过，灯没亮。你接错了。\n短路的声音在空旷的停车场里回荡……肯定引起了什么东西的注意。你得小心了。",
     choices: [
       { text: "再试一次", nextScene: "新达汇-B1停车场-接线", effect: updateTime(2) },
       { text: "算了，不接", nextScene: "新达汇-B1停车场C区" }
@@ -223,7 +223,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
     onEnter: { add: { _garageOps: 1 } },
     text: [
-      "你打开后备箱，里面有一个小黄人行李箱，鼓鼓的。你拉开拉链，一只丧尸的手突然窜了出来，掐住了你的脖子。",
+      "你打开后备箱，里面有一个小黄人行李箱，鼓鼓的。你拉开拉链，<span class='crit'>一只丧尸的手突然窜了出来</span>，掐住了你的脖子。",
       "你挣脱那只手，夺路而逃。",
       "这时，传来一阵水声。\n然后是脚步声，由远及近。\n从四面八方而来。"
     ],
@@ -251,7 +251,7 @@ Object.assign(storyData, {
   "新达汇-B1停车场-搜面包车": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingG.png */,
     onEnter: { add: { _garageOps: 1, chasedByZombies: 1 } },
-    text: "你翻进车厢，在纸箱里摸索了一会儿——有几包受潮的压缩饼干和几瓶过期的矿泉水。吃的倒是有，但没有钥匙。\n你在翻动纸箱时发出了不小的声响——纸箱倒了一个，哐当一声掉在地上。回音在空旷的车库里传得很远很远。",
+    text: "你翻进车厢，在纸箱里摸索了一会儿——有几包受潮的压缩饼干和几瓶过期的矿泉水。吃的倒是有，但没有钥匙。\n你在翻动纸箱时发出了不小的声响——纸箱倒了一个，<span class='sfx'>哐</span>当一声掉在地上。回音在空旷的车库里传得很远很远。",
     choices: [
       { text: "赶紧离开这里", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
     ]

@@ -16,7 +16,7 @@ Object.assign(storyData,{
         return "你再次走进药房。柜台后面，白大褂丧尸的尸体还静静躺在原地，地上的血迹已经干涸发黑。角落里有几只蟑螂在散落的药盒间爬来爬去，在安静的空间里发出细微的窸窣声。\n货架上的药品依旧东倒西歪，能搜刮的上次基本都拿过了。";
       }
       if (insideBack) {
-        return "你回到药房待客区，脚下的药盒被踩得沙沙作响。柜台后面那阵窸窸窣窣的声音还在——那东西还在老地方。";
+        return "你回到药房待客区，脚下的药盒被踩得<span class='sfx'>沙沙</span>作响。柜台后面那阵窸窸窣窣的声音还在——那东西还在老地方。";
       }
       return "你走进药房，脚踩在散落的药盒上发出细微的声响。货架上的药品东倒西歪，但还有些零散的盒子散落在地上。\n柜台后面传来窸窸窣窣的声音——好像有什么东西蹲在那里。";
     },
@@ -80,7 +80,7 @@ Object.assign(storyData,{
   "益丰大药房-柜台后": {
     image: "images/小区周边/益丰大药房/白大褂.webp" /* TODO: images/小区周边/益丰大药房/发现白大褂.webp */,
     onEnter: { shake: true },   // 白大褂丧尸突然窜出
-    text: "你绕到柜台侧面。一只穿着白大褂的丧尸突然窜了出来，你急忙闪开。它好像没看到你一样，蹲在地上，疯狂地撕咬一盒不知道什么的药。",
+    text: "你绕到柜台侧面。<span class='crit'>一只穿着白大褂的丧尸突然窜了出来</span>，你急忙闪开。它好像没看到你一样，蹲在地上，疯狂地撕咬一盒不知道什么的药。",
     choices: [
       {
         text: "给它来一下",
@@ -111,7 +111,7 @@ Object.assign(storyData,{
     onEnter: { set: { hurtByZombie: false, positionAfterOperation: "益丰大药房-击杀" } },
     text: function(vars) {
       var kill = hasMeleeWeapon(vars)
-        ? "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，白大褂丧尸扑倒在地，不动了。"
+        ? "你举起" + meleeWeaponName(vars) + "，一记干脆利落的攻击，<span class='crit'>白大褂丧尸扑倒在地</span>，不动了。"
         : "你从背后把它扑倒在柜台边上，抡起拳头照它后脑砸了几下，它抽了两下，没再起来。";
       var desc = kill + "\n你蹲下来翻看它刚才啃咬的药箱——里面居然还有几盒没拆封的碘伏棉签和弹性绷带。柜台下面的抽屉里还有一瓶维生素片。\n你撕开碘伏棉签，清理了身上的伤口——至少那些抓痕不会感染了。";
       if (vars._drawerVitaminTaken) desc += "\n抽屉里那瓶维生素片你已经收进包里了。";
@@ -342,7 +342,7 @@ Object.assign(storyData,{
 它穿着一件皱巴巴的白大褂——是药房的员工。但它的身体看起来不太对劲：裸露的皮肤覆盖着一层暗沉的黑色，像被什么东西从头到脚染过一遍。\n\
 视线下移，你看到它手上攥着一个针筒。\n\
 在摇曳的灯光下，你隐约感觉前面的货架深处还藏着什么东西。\n\
-不等你思考，它已经向你扑了过来。",
+不等你思考，<span class='crit'>它已经向你扑了过来</span>。",
     onEnter: initMemoryGame(["红","蓝","绿"], 7),
     choices: [
       {
@@ -362,7 +362,7 @@ Object.assign(storyData,{
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/击倒针筒丧尸.png */,
     text: "这只黑皮的药房员工举起针筒向你挥来，你抬手格挡；他又张开嘴向你肘部咬下，你抽出手向右闪开，脖子后缩，躲过他又一爪。\n\
 它发出低沉的怒吼向你再次扑来，你看准时机，抓住针筒，反手一拧将其夺下，再一脚将其踹到货架上，\n\
-轰的一声，数不清的药箱砸在它身上。有这个铁质货架压着，一时半会儿应该是起不来了。\n\
+<span class='sfx'>轰</span>的一声，数不清的药箱砸在它身上。有这个铁质货架压着，一时半会儿应该是起不来了。\n\
 你低头看了一眼夺下的针筒——筒壁上还残留着水渍。旁边就是垃圾桶，里面有一个被掰断的针头。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>",
     choices: [
       {
@@ -421,7 +421,7 @@ Object.assign(storyData,{
 
   "益丰大药房-办公室门口-门锁上了": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/办公室门口.png */,
-    text: "你还在犹豫时，门把手传来咔哒一声，好像锁上了。你听到货架深处好像传来了脚步声。",
+    text: "你还在犹豫时，门把手传来<span class='sfx'>咔哒</span>一声，好像锁上了。你听到货架深处好像传来了脚步声。",
     choices: [
       {
         text: "撞门",
@@ -531,7 +531,7 @@ Object.assign(storyData,{
       let eff = initMemoryGame(["红","蓝","绿"], len)(vars); // 初始化记忆游戏
       return eff;
     },
-    text: "她听到你的声音，身体猛地一颤——然后朝你扑了过来。你必须在一瞬间判断她的动作轨迹，侧身避开！",
+    text: "她听到你的声音，身体猛地一颤——<span class='crit'>然后朝你扑了过来</span>。你必须在一瞬间判断她的动作轨迹，侧身避开！",
     choices: [
       {
         text: "输入你看到的颜色分布（例如：2红1蓝1绿）",
@@ -653,7 +653,7 @@ Object.assign(storyData,{
       if (vars.hurtByZombie) {
         return [
           "你敲门。赵广成把门拉开一条缝——目光落在你手臂上那道还在渗血的牙印时，他的表情从紧张变成了恐惧。",
-          "“你被咬了！”他的声音变了调，“你他妈被咬了还往我这里跑？！滚——滚远点！！”\n他猛地把门摔上，门锁咔哒一声重新锁死。",
+          "“你被咬了！”他的声音变了调，“你他妈被咬了还往我这里跑？！滚——滚远点！！”\n他猛地把门摔上，门锁<span class='sfx'>咔哒</span>一声重新锁死。",
           "你站在门外，走廊里只剩下你自己。"
         ];
       }
@@ -685,8 +685,8 @@ Object.assign(storyData,{
   "益丰大药房-呼叫开门": {
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/呼叫开门.png */,
     text: "<span class='think'><em>喂！里面有人吗？我没被咬，我是正常人！</em></span>\n\
-熟悉的咔哒声再次传来，门开了。一个矮胖的中年人把你拉了进去，他手上拿着一只鸡毛掸子。\n\
-<span class='think'>“我就是赵广成，你应该看见门外的便签了吧？不好意思，我以为丧尸摸到门口了……吓死我了”</span>\n赵广成把门摔上。砰。",
+熟悉的<span class='sfx'>咔哒</span>声再次传来，门开了。一个矮胖的中年人把你拉了进去，他手上拿着一只鸡毛掸子。\n\
+<span class='think'>“我就是赵广成，你应该看见门外的便签了吧？不好意思，我以为丧尸摸到门口了……吓死我了”</span>\n赵广成把门摔上。<span class='sfx'>砰</span>。",
     choices: [
       {
         text: "坐下",
@@ -870,7 +870,7 @@ Object.assign(storyData,{
   "益丰大药房-丧尸偷袭，仓皇逃窜": {
     image: "images/hurtByzombie.webp",
     onEnter: {set: {hurtByZombie: true}, add: {mercuryLoad: 10}},
-    text: "你穿过走廊，从库房走出。和阳光一起洒入药房的，还有无数丧尸的嘶吼。你仓皇逃出药房，还被抓了好几下。",
+    text: "你穿过走廊，从库房走出。和阳光一起洒入药房的，<span class='rot'>还有无数丧尸的嘶吼</span>。你仓皇逃出药房，还被抓了好几下。",
     choices: [
       {
         text: "快跑！",
@@ -927,7 +927,7 @@ Object.assign(storyData,{
     image: "images/placeholder.png" /* TODO: images/小区周边/益丰大药房/断电.png */,
     onEnter: {  },
     text: "你按下几个黑色按钮，周围灯光一闪一闪的，然后一个个熄灭了。你听到远处传来了骂骂咧咧的声音，然后是开门声。\n\
-突然，传来一声尖叫，响声贯穿整个药房。你听到窸窸窣窣的脚步声。黑暗中隐约传来嘎吱嘎吱的声音。\n\
+突然，传来一声尖叫，响声贯穿整个药房。你听到窸窸窣窣的脚步声。黑暗中隐约传来嘎<span class='sfx'>吱嘎吱</span>的声音。\n\
 你快速地关闭了配电箱。",// 赵广成办公室被你断电了，于是他出来看看发生什么了，正好碰上已经尸变的女学徒，尖叫声引来了门口的丧尸，卒
     choices: [
       {
