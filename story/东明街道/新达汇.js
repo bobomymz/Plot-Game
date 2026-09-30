@@ -512,7 +512,8 @@ Object.assign(storyData, {
     onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/infoScreen.png */,
     text: "电子公告屏显示着停运前的楼层导览。\n\
-【1F】华为体验店 | 味千拉面\n【2F】Nike | 海澜之家 | 雅戈尔\n【3F】卡通尼乐园 | 金宝贝 | 爱婴室\n【4F】大渝火锅 | 大米先生 | 日料店 | CGV影城\n【5F】石物恋·烧肉 | 左庭右院 | 游戏厅\n\
+【1F】华为体验店 | 味千拉面\n【2F】Nike | 海澜之家 | 雅戈尔\n【3F】卡通尼乐园 | 金宝贝 | 爱婴室\n\
+【4F】大渝火锅 | 大米先生 | 日料店 | CGV影城\n【5F】石物恋·烧肉 | 左庭右院 | 游戏厅\n\
 屏幕右下角贴着一张手写便签：“猫在3F，别喂它，它只认保安。——物业”",
     choices: [
       {
