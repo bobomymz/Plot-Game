@@ -2625,13 +2625,131 @@ Object.assign(storyData, {
   "新达汇-4F放映厅3": {
     onEnter: { set: { showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/theater3.png */,
-    text: "银幕上定格着《飞驰人生3》的片尾字幕。最后一排的角落有什么东西蜷缩着——没有动。",
+    text: function(vars) {
+      if (vars._cinemaGrandpa) return "银幕上还定格着《飞驰人生3》的片尾字幕。最后一排空了，坐垫上留着一圈压平的人形褶皱。";
+      return "银幕上定格着《飞驰人生3》的片尾字幕。最后一排的角落有什么东西蜷缩着——没有动。";
+    },
     choices: [
       {
         text: "悄悄退出",
         nextScene: "新达汇-4F影厅走廊",
         effect: updateTime(1),
       },
+      {
+        text: "过去看看怎么回事",
+        nextScene: "新达汇-4F放映厅3-发现幸存者",
+        effect: updateTime(1),
+        showCondition: "!_cinemaGrandpa",
+      }
+    ]
+  },
+  "新达汇-4F放映厅3-发现幸存者": {
+    onEnter: { set: { showPowerOut: true } },
+    image: "images/placeholder.png" /* TODO: images/新达汇/theater3.png */,
+    text: function(vars) {
+      var basicDes = "你慢慢走向最后一排。那个东西开始动了，抬起头来——你看到的是一张疲惫的人脸。\n\
+“哎呦我去，我怎么睡这么久……年轻人，现在几点了？”";
+      if(vars.hasPhone) basicDes += "你从包里掏出手机看了一眼：“{hh}:{mm}。”\n";
+      else basicDes += "“不知道，我没带手机。”\n";
+      basicDes += "“你也是来看《飞驰人生3》的？来扶我一把……哎呦我这老腰。年轻人，外面这么安静，是出什么事了吗？现在商场应该没关吧。”\n\
+“啊……是的没关……”\n\
+“那就奇怪了……我回家洗个澡去。”那人起身向门口走去，你刚想拦住他，他已经定在了门口，瞬间又把身子缩了回来。\n\
+“不……不是，外面这些是啥啊？”他面色惊恐地看着你。\n\
+“嘘！”你急忙让他闭嘴。此时，外面已传来了啪嗒、啪嗒的脚步声，越来越近——";
+      return basicDes;
+    },
+    choices: [
+      {
+        text: "把他按到座椅后面躲好",
+        nextScene: "新达汇-4F放映厅3-躲藏",
+        effect: updateTime(1),
+      },
+      {
+        text: "迎上去拦住进来的东西",
+        nextScene: "新达汇-4F放映厅3-迎战",
+        effect: updateTime(1),
+      },
+      {
+        text: "趁门还没被堵死，先溜出去",
+        nextScene: "新达汇-4F放映厅3-弃他而去",
+        effect: updateTime(1),
+      },
+    ]
+  },
+  // 大爷人设：睡过头但一点就透；嗓门大是生理问题不是智力问题；倔、要面子、拒绝护送
+  "新达汇-4F放映厅3-躲藏": {
+    onEnter: function(v) { v.showPowerOut = true; return updateTime(3)(v); },
+    image: "images/placeholder.png" /* TODO: images/新达汇/theater3.png */,
+    text: "你一把把大爷按进最后一排的座椅之间。他老腰蹲不下去，只能半躺进两排座位的夹缝里，疼得直抽冷气——但一声没吭。\n\
+门开了。两道歪斜的影子蹭进来，脚步声在过道里拖着，混着喉咙里拉风箱一样的嘶声。\n\
+“外头这些……不是人了吧？”大爷贴着你耳朵压低了声音。他是真的在用力压——但老人的气声约等于正常说话，一个字一个字砸在你心口上。\n\
+你一只手死死按住他的嘴。他眼睛瞪得溜圆，怀里紧紧抱着那只随身马扎——看得出来，他心里门儿清。\n\
+两只丧尸在银幕底下站了半天，像是在看定格的片尾字幕，直到远处传来一声铁皮垃圾桶倒地的巨响，才循声出了门，脚步声渐渐远去。\n\
+你松开手。大爷长长出了一口气，冲你竖了个大拇指。",
+    choices: [
+      { text: "继续", nextScene: "新达汇-4F放映厅3-谢礼", effect: updateTime(1) }
+    ]
+  },
+  "新达汇-4F放映厅3-迎战": {
+    onEnter: function(v) { v.showPowerOut = true; return initMemoryGame(["红","蓝","绿"], 4)(v); },
+    image: "images/placeholder.png" /* TODO: images/新达汇/theater3.png */,
+    text: function(vars) {
+      var w = meleeWeaponName(vars);
+      var arm = w ? "你握紧手里的" + w : "你攥紧了拳头";
+      return "你把大爷往座椅后面一推：“蹲好，别出声。”\n\
+他这回一点就透，抱着那只随身马扎缩了下去。\n\
+门被撞开——两只丧尸踩着满地爆米花蹭了进来，喉咙里的嘶声在空荡的观众席里来回撞。" + arm + "，你迎了上去。";
+    },
+    choices: [
+      {
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：2红1蓝1绿" },
+        nextScene: flashCombatRouter("新达汇-4F放映厅3-谢礼", "新达汇-4F放映厅3-迎战-失手", "结局-包场"),
+        effect: updateTime(2, { add: { strength: -1 } }),
+        timeout: 9000,
+        timeoutScene: "结局-包场"
+      }
+    ]
+  },
+  "新达汇-4F放映厅3-迎战-失手": {
+    image: "images/youKillZombies.webp",
+    onEnter: function(vars) { vars.showPowerOut = true; hurtWinOnEnter({})(vars); return {}; },
+    text: function(vars) {
+      return "第二只扑得太快，你没能完全让开——<span class='crit'>指甲在你小臂上剐出一道血印</span>。你踉跄着撞在座椅上，它跟着压了上来。\n\
+一只马扎横空抡过来，“<span class='sfx'>啪</span>”地一声闷响，正拍在它侧脸上。\n\
+“欺负年轻人算什么本事！”大爷站在座椅上抡圆了又是一下，中气十足。这一只总算不动了。\n\
+他把马扎往地上一顿，扶着腰直起来，冲你咧嘴一笑。" + hurtCostText(vars);
+    },
+    choices: [
+      { text: "继续", nextScene: "新达汇-4F放映厅3-谢礼", effect: updateTime(1) }
+    ]
+  },
+  "新达汇-4F放映厅3-谢礼": {
+    onEnter: function(v) { v.showPowerOut = true; v._cinemaGrandpa = true; return updateTime(2, { add: { strength: 2 } })(v); },
+    image: "images/placeholder.png" /* TODO: images/新达汇/theater3.png */,
+    text: function(vars) {
+      return "影厅里总算安静下来。大爷瘫在座椅上缓了好一阵，才长长出了一口气。\n\
+“老头子我睡一觉的工夫，外头天就塌了。”他咂咂嘴，接受现实的速度快得吓人，“前两天保安小刘还给我递烟，神神秘秘说商场要清场搞活动……合着是这么回事。”\n\
+他从兜里摸出一把水果糖，硬塞进你手里：“拿着，含一颗，压惊。”\n\
+你剥了一颗扔进嘴里——橘子味，甜得发齁。这世道，这口甜显得格外奢侈。\n<span class='sys'>【系统提示】体力+2，当前体力：{strength}。</span>\n\
+你说要送他下楼。他摆摆手就站了起来，抄起马扎往腋下一夹：“不用。我天天来这儿，闭着眼都认得路——从员工楼梯下去，比你们年轻人绕正门快多了。”\n\
+走到门口，他又回过头，压着他那约等于正常说话的嗓门：“小伙子，这世道，自己也当心。”\n\
+说完，他拄着马扎颤颤悠悠地出了门，头也没回。";
+    },
+    choices: [
+      { text: "去影厅走廊", nextScene: "新达汇-4F影厅走廊", effect: updateTime(1) }
+    ]
+  },
+  "新达汇-4F放映厅3-弃他而去": {
+    onEnter: function(v) { v.showPowerOut = true; v._cinemaGrandpa = true; return updateTime(2, { add: { chasedByZombies: 1 } })(v); },
+    image: "images/placeholder.png" /* TODO: images/新达汇/theater3.png */,
+    text: "你猫下腰，贴着墙根往正门溜。经过最后一排时，大爷看见了你——他没喊你，也没追，只是冲你摆了摆手，示意你快走，别管他。\n\
+他另一只手已经抄起了那只马扎，横在胸前，背靠着银幕站定。\n\
+你从门缝挤出去的最后一瞬，听见身后传来他中气十足的一声：“来啊——老头子练过太极！”\n\
+然后是马扎砸在地上的闷响。然后，是别的声音。\n\
+你不想再听了。影厅走廊的尽头，脚步声正朝这边蹭过来。",
+    choices: [
+      { text: "去影厅走廊", nextScene: "新达汇-4F影厅走廊", effect: updateTime(1) }
     ]
   },
   "新达汇-4F扶梯组": {
@@ -4455,6 +4573,19 @@ Object.assign(storyData, {
     text: function(vars) {
       return "你没能拦住他。\n他<span class='crit'>扑上来</span>的时候甚至没有咬你——他把脸死死埋进你的颈侧，像是要喝水一样地贴着，喉咙里的嘶声一点点平息下来，满足得像叹了口气。\n在这间不到四平米的房间里，一个渴了很多天的人，终于等到了自己走进门来的水。" + weaponBrokeText(vars) + "\n\
 <span class='end'>—— 结局：等水的人 ——</span>";
+    }
+  },
+
+  // ==================== 放映厅大爷插曲结局 ====================
+  "结局-包场": {
+    image: "images/zombiePounceOnYou.webp",
+    onEnter: function(vars) { tryBreakWeapon(vars); return {}; }, // 战斗失败按档位概率损坏武器
+    text: function(vars) {
+      return "你没能拦住它们。\n\
+黑暗里，大爷的嗓门还在响：“小伙子？！小伙子你别吓老头子——”\n\
+声音很快也停了。银幕上还定格着《飞驰人生3》的片尾字幕——出品人、制片、鸣谢，一行一行，再也不会往下走了。\n\
+这一场，从头到尾只有你们两个观众。" + weaponBrokeText(vars) + "\n\
+<span class='end'>—— 结局：包场 ——</span>";
     }
   }
 });

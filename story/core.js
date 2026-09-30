@@ -56,6 +56,7 @@ const storyData = {
     _metGaoAtMall: false,      // 是否已在新达汇喷泉广场遇过高锦睿（喷泉广场-高锦睿-聊 置 true；华为店/监控墙/贩卖机三处联动靠它，⚠此前漏注册，字符串条件引用会静默吞选项）
     _catChasing: false,        // 新达汇变异猫是否在追玩家
     _catFed: false,            // 新达汇变异猫是否已被喂食（中立）
+    _cinemaGrandpa: false,     // 新达汇4F放映厅大爷插曲是否已收束（谢礼/弃他而去置 true；放映厅3重访时隐藏相遇选项）
     _ramenVisited: false,      // 新达汇1F味千拉面是否已被撬开
     _backhallDead: false,      // 新达汇后勤通道被堵死即死标记
     _powerOut: false,          // 新达汇总电闸是否已拉（商场永久断电）
