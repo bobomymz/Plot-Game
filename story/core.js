@@ -79,6 +79,7 @@ const storyData = {
     _garageSearchFrom: "",     // 新达汇B1停车场：本轮搜车起点区（退出搜查回原地；F区摸黑遭遇判定用）
     _garageSearchPending: false, // 新达汇B1停车场：是否处于搜车链中（链中"换个位置再搜"不覆盖起点）
     _garageDecayDays: 0,       // 新达汇B1停车场：本次进入时噪音衰减的天数（>0 时A区正文播报"散了一些"）
+    _garageFMarked: false,     // 新达汇B1停车场：摸黑撞见过守车丧尸并记住车位（F区未通电/通电首句呼应）
     _pipeBroke: false,         // 五金店暗道：铁管撬砸是否已失败（true=砸不断，走另一出口）
     _metPETeacher: false,      // 上实南校2号楼走廊：是否已遭遇体育老师丧尸（走廊再次进入的差异化承接）
     _peTeacherDead: false,     // 上实南校2号楼走廊：体育老师丧尸是否已被击杀

@@ -28,7 +28,7 @@
 ## `_visit`/过夜/QTE
 - 只读不写；键名必须=真实场景 ID（悬空键不报错、条件恒假→选项永不出现）。改计数键名前算首达路径。
 - **一次性「开启/解锁」动作做独立节点**，用 `_visit['<动作节点>']>0` 记录；此后不再校验工具（世界状态已改变）。
-- 入口描述差异化：多入度节点按 `_lastScene` 分流（样板`金谊广场.js`/`长者食堂.js`）。**先把默认句改成安全句，再加差异化**；电梯/楼梯来源别播推门动作。审计 `node tools/entry_desc_audit.mjs`；⚠判定覆盖须在剔除 nextScene 行的源码里搜来源名；已支持工厂节点+前缀匹配识别。
+- 入口描述差异化：多入度节点按 `_lastScene` 分流（样板`金谊广场.js`/`长者食堂.js`）。**先把默认句改成安全句，再加差异化**；电梯/楼梯来源别播推门动作。审计 `node tools/entry_desc_audit.mjs`；⚠判定覆盖须在剔除 nextScene 行的源码里搜来源名；已支持工厂节点+前缀匹配识别。⚠⚠**来源分支必须写完整场景 ID 字面量**——`XDGAR+"D区"` 这类常量拼接审计器识别不了（10-01 车库 C/D 区踩过）。
 - 建筑类过夜两层门槛：showCondition 加 `_visit['建筑内部']>0`、原 condition/elseScene 保留。场景级=`node.qte`，选项级=`choice.timeout`；工厂 `mallQTE`/`jpChaseQTE`/`travelScene`。`applyEffect` 只认 set/add/mul。
 
 ## 文风/气味

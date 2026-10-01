@@ -10,6 +10,19 @@
 
 var XDGAR = "新达汇-B1停车场";
 
+// 夜间判定（坡道口的"天光"按小时切换；isNight 派生量的同款口径）
+function xdGarNight(vars) {
+  return vars.hh >= 19 || vars.hh < 6;
+}
+
+// 噪音水位统一反馈：ops>=3 起水声变密，>=5 连爬行声都贴上来（步行区共用一套措辞）
+function xdGarNoise(vars) {
+  var ops = vars._garageOps || 0;
+  if (ops >= 5) return "\n<span class='warn'>排水沟的水声已经连成片，间或混着爪子刮水泥的动静——它们就在车道附近。</span>";
+  if (ops >= 3) return "\n<span class='warn'>排水沟那头，有节奏的拍水声一声比一声密。</span>";
+  return "";
+}
+
 // 车库照明三态："lit"=通电 / "torch"=手电 / "dim"=手机微光 / "dark"=全黑
 function xdGarSight(vars) {
   if (vars._wiredCorrectly) return "lit";
@@ -82,10 +95,14 @@ Object.assign(storyData, {
     text: function(vars) {
       var outside = (vars._lastScene === "新达汇-B1走廊" || vars._lastScene === "新达汇车库出口");
       var day3 = vars.dd >= 3;
-      var desc = outside ? "你从外面的天光里折回来，顺着坡道下到入口的平台。" : "你回到停车场入口的平台。";
+      var droveOut = vars._visit["新达汇-B1停车场-上车点火"] > 0;
+      var desc = outside ? ("你从外面的" + (xdGarNight(vars) ? "夜色" : "天光") + "里折回来，顺着坡道下到入口的平台。") : "你回到停车场入口的平台。";
       if (vars._wiredCorrectly) {
         desc += "头顶的灯一盏盏亮着，暖黄色的光把坡道照得通透，几盏应急灯反倒显得可有可无。";
-        if (day3) desc += "\n两道新鲜的轮胎印从坡道口一路碾进来，压过积水的地方在灯光下亮得反光——湿痕顺着坡道一路往车库深处去，中间没有断过。";
+        if (day3) {
+          desc += "\n两道新鲜的轮胎印从坡道口一路碾进来，压过积水的地方在灯光下亮得反光——湿痕顺着坡道一路往车库深处去，中间没有断过。";
+          if (droveOut) desc += "\n另有一道更新鲜的印子，从库里往外碾出去，正正压过坡道口那截断杆。";
+        }
       } else {
         desc += "坡道从这里往下延伸进车库深处，头顶几盏应急灯还亮着，昏黄的光勉强照出主通道的轮廓。";
         if (day3) desc += "\n地面上有两道轮胎印，从坡道口一路碾进来——压过积水的地方还没干透，是最近才留下的。";
@@ -112,17 +129,23 @@ Object.assign(storyData, {
   "新达汇-B1停车场B区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingB.png */,
     text: function(vars) {
+      var src = vars._lastScene;
+      var head;
+      if (src === "新达汇-B1停车场A区") head = "你从入口平台那头拐进主通道。";
+      else if (src === "新达汇-B1停车场I区") head = "你从横道切回主通道中段。";
+      else head = "你折回主通道中段。";
       var sight = xdGarSight(vars);
+      var desc;
       if (sight === "lit") {
-        return "灯亮着。主通道被暖黄色的灯光照得一览无余：防火门在你左手边第二根立柱后面，中段横道的口子在右手边，车道尽头在最深处那头。四个方向的岔口都看得清清楚楚。";
+        desc = head + "灯亮着，暖黄色的光把四个岔口照得一览无余：防火门在左手边第二根立柱后，横道口在右手边，车道尽头在最深处那头。";
+      } else if (sight === "torch") {
+        desc = head + "手电的光束劈开黑暗，照出立柱上一格格车位编号——防火门的轮廓在左手边，右手边是横道的岔口，最深处那头黑得像一口井。";
+      } else if (sight === "dim") {
+        desc = head + "举着手机，靠屏幕的微光辨认方向——电量还剩 " + vars.phoneBattery + "%。左侧有一扇防火门的轮廓，右侧隐约有一条岔路。";
+      } else {
+        desc = head + "这里几乎没有光。左侧好像有一扇门的轮廓，右侧隐约有一条岔路。";
       }
-      if (sight === "torch") {
-        return "你站在主通道中段。手电的光束劈开黑暗，照出立柱上一格格车位编号——防火门的轮廓在左手边，右手边是横道的岔口，最深处那头黑得像一口井。";
-      }
-      if (sight === "dim") {
-        return "你站在主通道中段，举着手机，靠屏幕的微光辨认方向——电量还剩 " + vars.phoneBattery + "%。左侧有一扇防火门的轮廓，右侧隐约有一条岔路。";
-      }
-      return "你站在主通道中段，一只手扶着立柱。这里几乎没有光。左侧好像有一扇门的轮廓，右侧隐约有一条岔路。";
+      return desc + xdGarNoise(vars);
     },
     choices: [
       { text: "去车道尽头", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
@@ -156,8 +179,8 @@ Object.assign(storyData, {
         effect: updateTime(2),
         showCondition: "!_wiredCorrectly"
       },
-      { text: "走下台阶到旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(1) },
-      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) }
+      { text: "走下台阶到旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(1), condition: "_garageOps < 5", elseScene: "新达汇-B1停车场-强制驱逐" },
+      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1), condition: "_garageOps < 5", elseScene: "新达汇-B1停车场-强制驱逐" }
     ]
   },
 
@@ -239,7 +262,15 @@ Object.assign(storyData, {
       }
       var desc = head + "地面比上面低了一截，脚下的水泥地湿漉漉的，踩上去有细碎的回声。\n地面上有一排排水沟的铁栅栏——栅栏缝隙里能看到浑浊的水面。";
       if (sight === "lit") {
-        desc += "灯光斜斜地打下来，水面在昏黄里泛着暗色的光。那阵有节奏的拍水声还在——水面下，一道细长的影子贴着栅栏慢慢横移，从这头，到那头。";
+        desc += "灯光斜斜地打下来，水面在昏黄里泛着暗色的光。";
+        if (vars.dd >= 3) {
+          desc += "栅栏边的水泥地上有几道拖痕，最深的一道通向台阶口；还有几根栅栏，被从里面顶歪了。";
+        }
+        if ((vars._garageOps || 0) >= 5 || vars._visit["新达汇-B1停车场-上车点火"] > 0) {
+          desc += "水面涨上来一截——那阵有节奏的拍水声还在，一道细长的影子贴着栅栏慢慢横移，从这头，到那头。";
+        } else {
+          desc += "那阵有节奏的拍水声还在，水面下的动静看不分明。";
+        }
       } else if (sight === "torch") {
         desc += "手电的光扫过去，水面泛着暗色的光，看起来不深，但有一种……细微的、有节奏的拍水声从下面传来。\n你不太确定那是水流还是别的东西。";
       } else if (sight === "dim") {
@@ -275,14 +306,20 @@ Object.assign(storyData, {
   "新达汇-B1停车场E区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingE.png */,
     text: function(vars) {
+      var src = vars._lastScene;
+      var head;
+      if (src === "新达汇-B1停车场H区") head = "你翻过杂物堆，从检修通道里出来，到了东北拐角。";
+      else if (src === "新达汇-B1停车场K区") head = "你从第二停车排穿出来，到了东北拐角。";
+      else if (src === "新达汇-B1停车场F区") head = "你从深处折回东北拐角。";
+      else head = "你拐进东北拐角。";
       var sight = xdGarSight(vars);
       if (sight === "lit" || sight === "torch") {
-        return "你来到停车场东北角。这里停着一辆白色荣威SUV，驾驶座的门虚掩着，座位上放着一个空了半截的矿泉水瓶。\n你检查了钥匙孔——上面有明显的划痕，有人拿东西撬过。方向盘上落了一层薄灰，这辆车至少一周没动过了。";
+        return head + "这里停着一辆白色荣威SUV，驾驶座的门虚掩着，座位上放着一个空了半截的矿泉水瓶。\n你检查了钥匙孔——上面有明显的划痕，有人拿东西撬过。方向盘上落了一层薄灰，这辆车至少一周没动过了。";
       }
       if (sight === "dim") {
-        return "你摸黑走到东北角，手机屏幕照出一辆车的轮廓——车门虚掩着。你伸手进车里摸索了一会儿，只摸到一个矿泉水瓶和一些票据。没有钥匙。";
+        return head + "手机屏幕照出一辆车的轮廓——车门虚掩着。你伸手进车里摸索了一会儿，只摸到一个矿泉水瓶和一些票据。没有钥匙。";
       }
-      return "你摸黑走到一处角落，手碰到了什么——是一辆车。车身冰凉，车门虚掩着。你伸手进车里摸索了一会儿，只摸到了一个矿泉水瓶和一些票据。";
+      return head + "手碰到了什么——是一辆车。车身冰凉，车门虚掩着。你伸手进车里摸索了一会儿，只摸到了一个矿泉水瓶和一些票据。";
     },
     choices: [
       { text: "翻过杂物堆走检修通道", nextScene: "新达汇-B1停车场H区", effect: updateTime(2) },
@@ -312,9 +349,12 @@ Object.assign(storyData, {
       } else if (!vars._wiredCorrectly) {
         // Day3+：车在，但没通电时无法辨认
         body = "车库最深处的角落。黑暗里传来一种细微的、有节奏的湿润声音，像是什么东西在进食。\n你在黑暗里分不清车位的轮廓——只知道那个方向的空气里，多了一股新鲜的血腥气。";
-      } else if (vars.hasCar) {
+        if (vars._garageFMarked) body += "\n<span class='think'>但有个参照忘不了——那辆引擎盖是温的，在左手边第二个车位。你摸黑记下的。</span>";
+      // 车库线已点火开走（用本线标记，不用全局 hasCar——王老师线拿车不该擦掉这里的事故点）
+      } else if (vars._visit["新达汇-B1停车场-上车点火"] > 0) {
         // 车已开走：空车位（关掉二次点火，状态闭环）
         body = "车道尽头的角落空了。地面上留着一圈干干净净的长方形车印，四边带着轮胎碾出的湿边。驾驶座的门大敞着，遮阳板翻落在一旁。\n排水沟的栅栏歪着，栅栏边那具尸体还在，手里攥着半张购物清单。点火器上空空荡荡——车和钥匙，都不在了。";
+        if (vars.dd >= 5) body += "\n车位的边缘，已经开始落灰了。";
       } else if (vars._visit["新达汇-B1停车场-车旁遭遇"] > 0) {
         // 打赢但没马上开走：水声不退，拖延有代价
         if (vars.dd >= 5) {
@@ -329,6 +369,7 @@ Object.assign(storyData, {
         } else {
           body = "车道尽头的角落里停着一辆车——<span class='crit'>一辆深灰色的荣威轿车，车身上没有灰。</span>\n驾驶座的门敞开着，车灯熄着，但引擎盖摸上去是温的。车旁的排水沟栅栏歪了两根，一个佝偻的影子正伏在车门边，一下一下地朝车厢里啃咬着什么。\n影子旁边还有一只，正从排水沟里往外爬。";
         }
+        if (vars._garageFMarked) body = "灯亮了。你上回摸黑记下的位置——就是它。\n" + body;
         if (vars._knowsSurvivorCar) {
           body += "\n<span class='think'>长廊的人说过——小明前天开着车出去，到现在没回来。就是它了。</span>";
         }
@@ -338,13 +379,13 @@ Object.assign(storyData, {
     choices: [
       {
         text: "靠近那辆车",
-        showCondition: "dd >= 3 && _wiredCorrectly && !hasCar && !_visit['新达汇-B1停车场-车旁遭遇']",
+        showCondition: "dd >= 3 && _wiredCorrectly && !_visit['新达汇-B1停车场-上车点火'] && !_visit['新达汇-B1停车场-车旁遭遇']",
         nextScene: "新达汇-B1停车场-车旁遭遇",
         effect: updateTime(1)
       },
       {
         text: "上车",
-        showCondition: "dd >= 3 && _wiredCorrectly && !hasCar && (_visit['新达汇-B1停车场-车旁搜身'] > 0 || _visit['新达汇-B1停车场-车旁搜身-受伤'] > 0)",
+        showCondition: "dd >= 3 && _wiredCorrectly && !_visit['新达汇-B1停车场-上车点火'] && (_visit['新达汇-B1停车场-车旁搜身'] > 0 || _visit['新达汇-B1停车场-车旁搜身-受伤'] > 0)",
         nextScene: "新达汇-B1停车场-上车点火"
       },
       {
@@ -362,11 +403,9 @@ Object.assign(storyData, {
   // ==================== 车旁战斗（2只排水沟丧尸） ====================
   "新达汇-B1停车场-车旁遭遇": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
-    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 7, { add: { strength: -1 } }),
+    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 7),
     text: function(vars) {
-      var desc = "你放轻脚步靠近。伏在车门边的那只先直起了身——<span class='crit'>它半边身子还是湿的，排水沟的污泥顺着下巴往下淌</span>。另一只从栅栏边爬出来，动作又快又轻。\n它们把你堵在车道和排水沟之间。没有退路了——盯住它们的动作，找节奏！";
-      desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
-      return desc;
+      return "你放轻脚步靠近。伏在车门边的那只先直起了身——<span class='crit'>它半边身子还是湿的，排水沟的污泥顺着下巴往下淌</span>。另一只从栅栏边爬出来，动作又快又轻。\n它们把你堵在车道和排水沟之间。没有退路了——盯住它们的动作，找节奏！";
     },
     choices: [
       {
@@ -385,13 +424,14 @@ Object.assign(storyData, {
 
   "新达汇-B1停车场-车旁搜身": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { add: { chasedByZombies: 1, strength: -1 } }, // 战斗消耗记在胜利节点（开战页不扣）
     text: function(vars) {
       var phoneLine = (vars.dd >= 5)
         ? "他的手机摔在脚边，屏幕裂成了蛛网，黑着——电池早就耗干了，谁也没有来过。"
         : "他的手机摔在脚边，屏幕裂成了蛛网，还亮着——锁屏壁纸是个笑得很开的小女孩，输入界面停在一条没发出去的短信上：“东西太多，我跑第二趟”\n<span class='term'>信号栏空空如也。</span>";
       var desc = "最后一只抽搐着倒下，不动了。你喘匀了气，才敢看那具尸体。\n是个年轻人，穿一件洗得发白的外套，手里还攥着半张购物清单——新达汇超市的目录，背面用圆珠笔写着一行字：“多的卖给长廊。”\n" + phoneLine + "\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>——他刚停好车，还没来得及拔。";
       desc += "\n<span class='warn'>车库里回荡着打斗的动静。水声正从四面八方聚拢过来。</span>";
+      desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return desc;
     },
     choices: [
@@ -404,7 +444,10 @@ Object.assign(storyData, {
     image: "images/hurtByzombie.webp",
     onEnter: hurtWinOnEnter({ time: 1 }),
     text: function(vars) {
-      var desc = "你勉强把两只都干掉了——代价是胳膊上添了一道口子，血顺着手腕往下淌。" + hurtCostText(vars) + "\n那具年轻的尸体倒在车轮边，手里攥着半张购物清单。他的手机屏幕还亮着，锁屏壁纸是个小女孩。驾驶座里，钥匙还插在点火器上。";
+      var phoneLine = (vars.dd >= 5)
+        ? "他的手机摔在脚边，屏幕裂成了蛛网，黑着。"
+        : "他的手机屏幕还亮着，锁屏壁纸是个小女孩。";
+      var desc = "你勉强把两只都干掉了——代价是胳膊上添了一道口子，血顺着手腕往下淌。" + hurtCostText(vars) + "\n那具年轻的尸体倒在车轮边，手里攥着半张购物清单。" + phoneLine + "驾驶座里，钥匙还插在点火器上。";
       desc += "\n<span class='warn'>动静已经传出去了。排水沟那头的水声连成了片。</span>";
       return desc;
     },
@@ -417,11 +460,9 @@ Object.assign(storyData, {
   // ==================== 摸黑遭遇（未通电撞上守车的丧尸） ====================
   "新达汇-B1停车场-摸黑遭遇": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
-    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 8, { add: { strength: -1 } }),
+    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 8),
     text: function(vars) {
-      var desc = "你的手摸到一辆车——引擎盖是温的。还没等你反应过来，<span class='crit'>一只湿漉漉的手已经攥住了你的手腕</span>。\n黑暗里你看不清它的脸，只闻得到排水沟的腥臭。挣脱，还是赌一把？\n集中注意力——凭声音和触感判断它的动作！";
-      desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
-      return desc;
+      return "你的手摸到一辆车——引擎盖是温的。还没等你反应过来，<span class='crit'>一只湿漉漉的手已经攥住了你的手腕</span>。\n黑暗里你看不清它的脸，只闻得到排水沟的腥臭。挣脱，还是赌一把？\n集中注意力——凭声音和触感判断它的动作！";
     },
     choices: [
       {
@@ -440,9 +481,9 @@ Object.assign(storyData, {
 
   "新达汇-B1停车场-摸黑-脱身": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    onEnter: { add: { chasedByZombies: 1, strength: -1 }, set: { _garageFMarked: true } },
     text: function(vars) {
-      return "你借着它的力道把它甩了出去，抄起半截轮胎架砸了下去——不动了。\n黑暗里，你的手摸到那辆车的车门：温的，没锁。钥匙孔的位置，你甚至摸到了插在点火器上的钥匙的轮廓。\n<span class='warn'>但水声已经围上来了。黑灯瞎火的，你分不清哪辆是它——再摸下去就是送死。</span>\n你退了出去。记住这个位置——下次，带着光来。";
+      return "你借着它的力道把它甩了出去，抄起半截轮胎架砸了下去——不动了。\n黑暗里，你的手摸到那辆车的车门：温的，没锁。钥匙孔的位置，你甚至摸到了插在点火器上的钥匙的轮廓。\n<span class='warn'>但水声已经围上来了。黑灯瞎火的，你分不清哪辆是它——再摸下去就是送死。</span>\n你退了出去。记住这个位置——下次，带着光来。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
       { text: "退回深处通道", nextScene: "新达汇-B1停车场F区", effect: updateTime(1) }
@@ -451,7 +492,10 @@ Object.assign(storyData, {
 
   "新达汇-B1停车场-摸黑-带伤": {
     image: "images/hurtByzombie.webp",
-    onEnter: hurtWinOnEnter({ time: 1 }),
+    onEnter: function(vars) {
+      vars._garageFMarked = true;
+      return hurtWinOnEnter({ time: 1 })(vars);
+    },
     text: function(vars) {
       return "你在黑暗里赌赢了——它倒了，你的胳膊上也挂了彩。" + hurtCostText(vars) + "\n喘息间，你的指尖碰到旁边一辆车的车门：温的，没锁。点火器上插着什么，你甚至来不及确认。\n<span class='warn'>水声近得已经不需要判断方位。黑暗里多待一秒都是赌命。</span>\n你摸黑退了出去。位置记住了——下次，带着光来。";
     },
@@ -464,11 +508,24 @@ Object.assign(storyData, {
   "新达汇-B1停车场G区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingG.png */,
     text: function(vars) {
+      var src = vars._lastScene;
+      var head;
+      if (src === "新达汇-B1停车场A区") head = "你从入口平台拐进西侧车道。";
+      else if (src === "新达汇-B1停车场I区") head = "你从横道切到西侧车道。";
+      else if (src === "新达汇-B1停车场D区") head = "你顺着西侧斜坡爬上来，回到西侧车道。";
+      else if (src === "新达汇-B1停车场L区") head = "你从第二停车排挤出来，回到西侧车道。";
+      else head = "你回到西侧车道。";
       var sight = xdGarSight(vars);
+      var desc;
       if (sight === "lit" || sight === "torch") {
-        return "西侧车道靠墙停着一辆银色五菱面包车。后门没有锁，车厢里堆满了纸箱和杂物。方向盘上落满了灰——这辆车已经很久没人碰过了。\n车道往南通向中段横道，角落里有一道通往旧区的斜坡。";
+        desc = head + "车道靠墙停着一辆银色五菱面包车，后门没有锁，车厢里堆满了纸箱和杂物，方向盘上落满了灰——这辆车已经很久没人碰过了。\n车道东头有一扇半开的铁门，穿过去就是主通道；中段横道的口子也在东边，角落里还有一道通往旧区的斜坡。";
+      } else {
+        desc = head + "手指碰到一个冰冷的金属车身——车厢门没锁，里面堆着一些纸箱。空气比主通道那边更潮，隐隐有水汽的味道。";
       }
-      return "你摸黑走到西侧车道，手指碰到了一个冰冷的金属车身。车厢门没锁，你能摸到里面堆着一些纸箱。空气比主通道那边更潮，隐隐有水汽的味道。";
+      if ((vars._garageOps || 0) >= 5 || vars._visit["新达汇-B1停车场-上车点火"] > 0) {
+        desc += "\n<span class='warn'>车道边的排水沟栅栏缝里，水面比别处高了一截，正贴着缝往外渗。</span>";
+      }
+      return desc + xdGarNoise(vars);
     },
     choices: [
       { text: "翻后车厢搜一搜", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) },
@@ -484,7 +541,13 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingH.png */,
     text: function(vars) {
       var sight = xdGarSight(vars);
-      var desc = "拐角处堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。购物车里有一只落满灰的毛绒熊玩偶，半埋在杂物里。旁边的立柱上，有人用马克笔写了两行字：\n“车别乱开。有的不是空的。——302的胖子”";
+      var desc;
+      if (sight === "dark") {
+        // 全黑：读不了墙上的字
+        desc = "拐角处堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。购物车里有什么软乎乎的东西，你伸手摸到了半只毛绒熊的耳朵。";
+      } else {
+        desc = "拐角处堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。购物车里有一只落满灰的毛绒熊玩偶，半埋在杂物里。旁边的立柱上，有人用马克笔写了两行字：\n“车别乱开。有的不是空的。——302的胖子”";
+      }
       if (sight === "lit" || sight === "torch") {
         desc += "\n杂物堆后面塞着一根带血的撬棍，撬棍底下压着一张折叠的保养单——荣威4S店的，车牌号一栏，写的正是东北角那辆白色SUV。\n<span class='think'>有人比你更早想过这辆车的主意。没成。</span>\n杂物堆侧边留出一条刚够侧身通过的缝——有人清出来的，通向东北拐角的检修通道。";
       }
@@ -500,10 +563,21 @@ Object.assign(storyData, {
   "新达汇-B1停车场I区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingI.png */,
     text: function(vars) {
+      var src = vars._lastScene;
+      var head;
+      if (src === "新达汇-B1停车场B区") head = "你从主通道切进中段横道。";
+      else if (src === "新达汇-B1停车场G区") head = "你从西侧车道切进中段横道。";
+      else head = "你从第二停车排拐上中段横道。";
+      var desc;
       if (xdGarSight(vars) === "lit") {
-        return "中段横道是一条横穿车库的窄车道，两排立柱把车影切成一段一段的。从这里切过去，东侧主通道和西侧车道之间不用再绕入口平台。\n中段有一根立柱上刻满了“正”字，一笔一划刻得很深，密密麻麻数不清有多少个——有人在这里数过什么，数了很久。";
+        desc = head + "这条横穿车库的窄车道里，两排立柱把车影切成一段一段的。从这里切过去，东侧主通道和西侧车道之间不用再绕入口平台。\n中段有一根立柱上刻满了“正”字，一笔一划刻得很深，密密麻麻数不清有多少个——有人在这里数过什么，数了很久。";
+        if (vars.dd >= 3 && (vars._garageOps || 0) >= 3) {
+          desc += "\n最底下那个“正”字的最后一笔，刻痕还是新的，露着白茬——有人还在数。";
+        }
+      } else {
+        desc = head + "两排立柱擦着肩膀过去。方向感告诉你——这条道横着连通车库的东西两侧。指尖划过其中一根立柱，上面刻着一道道深浅不一的凹槽，密得硌手。";
       }
-      return "你摸进一条横穿车库的窄车道，两排立柱擦着肩膀过去。方向感告诉你——这条道横着连通车库的东西两侧。指尖划过其中一根立柱，上面刻着一道道深浅不一的凹槽，密得硌手。";
+      return desc + xdGarNoise(vars);
     },
     choices: [
       { text: "往东去主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
@@ -517,8 +591,11 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/rampBottom.png */,
     text: function(vars) {
       var desc = "下行车道的尽头是出口坡道的起点。收费亭歪在一边，玻璃碎了大半。";
+      var droveOut = vars._visit["新达汇-B1停车场-上车点火"] > 0;
       if (vars.dd >= 3) {
-        desc += "\n<span class='crit'>出口的栏杆断成了两截，断口很新</span>——横杆被什么重物从里往外撞断的，收费亭的窗口又多了几道新的撞击凹痕。最近有车从这里闯了进来。";
+        desc += (droveOut)
+          ? "\n出口的栏杆断成了两截，断口向外翻卷——被第二次撞开的。收费亭的顶上，还留着一块新砸出来的凹痕。"
+          : "\n<span class='crit'>出口的栏杆断成了两截，断口很新</span>——横杆被什么重物从里往外撞断的，收费亭的窗口又多了几道新的撞击凹痕。最近有车从这里闯了进来。";
       }
       desc += "\n亭子侧墙上贴着一张消防疏散图，有机玻璃罩着，还没碎。";
       return desc;
@@ -533,7 +610,7 @@ Object.assign(storyData, {
   "新达汇-B1停车场-疏散图": {
     image: "images/placeholder.png" /* TODO: images/xindahui/evacuationMap.png */,
     onEnter: { set: { _garageMapSeen: true } },
-    text: "你凑近疏散图。有机玻璃罩上积了灰，但图面还清楚：\nB1停车场被一条环形车道分成内外两圈——外圈沿着外墙，从入口平台经东北拐角绕到西侧；内圈是主通道和中段横道，横着切过去能省一半路。\n配电室在防火门后，挨着主通道。出口坡道在入口平台的东南角——出去就是辅路。\n<span class='sys'>【系统提示】你记住了B1停车场的布局。</span>",
+    text: "你凑近疏散图。有机玻璃罩上积了灰，但图面还清楚：\nB1停车场被一条环形车道分成内外两圈——外圈沿着外墙，从入口平台经东北拐角绕到西侧；内圈是主通道和中段横道，横着切过去能省一半路。\n配电室在防火门后，挨着主通道。出口坡道在入口平台的东南角——出去就是辅路。\n<span class='sys'>【系统提示】你记住了两处要紧的位置：出口坡道在东南角，配电室在防火门后。</span>",
     choices: [
       {
         text: "记下了",
@@ -546,14 +623,16 @@ Object.assign(storyData, {
   "新达汇-B1停车场K区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingK.png */,
     text: function(vars) {
-      if (xdGarSight(vars) === "dark") {
-        return "你摸进主通道旁的停车排。车挨着车，中间只留一条窄缝，手电照不到的地方全是金属的棱角。";
+      var sight = xdGarSight(vars);
+      if (sight === "dark") {
+        return "你摸进主通道旁的停车排。车挨着车，中间只留一条窄缝，伸手全是金属的棱角。";
       }
       var desc = "主通道旁边是第二停车排，两排车头对着车头，中间只留一条缝。大多是落了灰的家用车，有一辆的后备箱盖开着，像一张等了很久的嘴。";
-      if (xdGarSight(vars) === "lit") {
+      if (sight === "lit") {
         desc += "\n后备箱是空的，箱底垫着一张被水汽洇过的超市传单——纸角朝着车道尽头那头翘着，水痕洇开的方向也是。这排车离排水沟远，湿气是从深处飘过来的。";
       } else {
-        desc += "\n你探头往那辆开着后备箱的车里看了一眼——空的，箱底垫着一张纸，被水汽洇得发皱。";
+        // 手电/手机：看见线索的一半（传单和朝向），推理留给通电后
+        desc += "\n你探头往那辆开着后备箱的车里照了照——空的，箱底垫着一张纸，被水汽洇得发皱。纸角翘着，朝着车道尽头那头。";
       }
       return desc;
     },
@@ -568,14 +647,16 @@ Object.assign(storyData, {
   "新达汇-B1停车场L区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingL.png */,
     text: function(vars) {
-      if (xdGarSight(vars) === "dark") {
+      var sight = xdGarSight(vars);
+      if (sight === "dark") {
         return "你摸进西侧的停车排。这里的车停得更乱，有几辆是斜插着的。脚下的地面黏腻腻的，不知道是什么。";
       }
       var desc = "西侧的第二停车排比东边更挤，有几辆车是斜插着停的，像停到一半出了什么事。地面上散着几只一次性手套——修车的人留下的，或者是更晚的什么东西。";
-      if (xdGarSight(vars) === "lit") {
+      if (sight === "lit") {
         desc += "\n你捡起其中一只翻过来看——指缝里嵌着几截黄色的绝缘胶布碎屑，和配电室里那种电线外皮上缠的，是同一种东西。";
       } else {
-        desc += "\n你捏起一只手套搓了搓——指缝里嵌着什么硬硬的小碎屑，摸不出来是什么。";
+        // 手电/手机：认出是胶布，来源留给通电后
+        desc += "\n你捡起其中一只，凑到光跟前翻过来看——指缝里嵌着几截黄色的碎屑，是绝缘胶布。";
       }
       return desc;
     },
@@ -710,7 +791,7 @@ Object.assign(storyData, {
       return {};
     },
     text: function(vars) {
-      return "你趁它半个身子还卡在车门里，照着后脑给了结实地一下。它抽了两下，不动了。\n" + combatDrainText(vars) + "车里没什么值钱的东西——它死前大概翻过一遍了。";
+      return "你抄起" + (meleeWeaponName(vars) || "手里的家伙") + "，趁它半个身子还卡在车门里，狠狠来了一下。它抽了两下，不动了。\n" + combatDrainText(vars) + "车里没什么值钱的东西——它死前大概翻过一遍了。";
     },
     choices: [
       { text: "离开这里", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
@@ -729,9 +810,11 @@ Object.assign(storyData, {
         return "排水沟那边传来一阵剧烈的翻涌声——水花四溅，然后是什么沉重的东西爬上了地面的声音。你没有回头看。你跑了。";
       }
       if (vars._garageOps >= 3) {
-        return "你隐约听到排水沟的方向传来水声——是有节奏的拍打声，不像水流，更像别的东西。地下停车场不再安静了。";
+        return "你隐约听到排水沟的方向传来水声——是有节奏的拍打声，不像水流，更像别的东西。一声比一声密。地下停车场不再安静了。";
       }
-      return "你站在原地喘了口气。地下停车场依然一片寂静。";
+      return (vars.chasedByZombies > 0)
+        ? "你站在原地喘了口气。刚才闹出的动静，回音还在车库里荡——这里已经不算安分了。"
+        : "你站在原地喘了口气。到目前为止，你的动静还算克制。";
     },
     choices: [
       {
@@ -769,9 +852,8 @@ Object.assign(storyData, {
       onTimeout: "结局-车库围堵"
     },
     text: function(vars) {
-      var desc = "你拉开车门钻进驾驶座。<span class='crit'>钥匙就插在点火器上</span>——他刚停好车，还没来得及拔。\n你拧动钥匙。引擎轰的一声炸醒，声音在封闭的车库里来回撞，比任何嘶吼都响。\n<span class='crit'>整个车库都听见了。</span>";
-      desc += "\n<span class='warn'>排水沟的方向，水声炸开了。</span>\n挂挡——现在！";
-      return desc;
+      // QTE 跳过打字机立即计时——正文必须短到能在时限内读完
+      return "钥匙就在点火器上。你拧下去——<span class='crit'>引擎炸醒，整个车库都听见了。</span>\n<span class='warn'>排水沟的方向，水声炸开了。</span>挂挡！";
     },
     choices: [
       { text: "挂挡，冲出车位！", nextScene: "新达汇-B1停车场-驾驶-深处掉头" }
@@ -840,20 +922,16 @@ Object.assign(storyData, {
 
   "新达汇-B1停车场-驾驶-西车道": {
     image: "images/placeholder.png" /* TODO: images/xindahui/driveG.png */,
-    // 西车道贴着旧区排水沟：路上要甩开扒上来的东西、绕开拖出来的栅栏，这一格额外消耗一次操作
-    onEnter: function(vars) {
-      xdGarDriveEnter(vars);
-      xdGarDriveEnter(vars);
-      return {};
-    },
+    onEnter: xdGarDriveEnter,
     text: function(vars) {
-      var desc = "西侧车道贴着旧区的边走。地面开始泛潮，雨刮器扫过一道从地缝里漫出来的水渍——<span class='crit'>排水沟的水正在往上涨，有什么东西顺着车道边的栅栏往外爬</span>。\n一只灰白的手扒上了后保险杠，你猛打方向才把它甩脱；前面车道上横着半截从沟里拖出来的栅栏，你绕过去，又慢了一拍。这段路，费时得很。";
+      var desc = "西侧车道贴着旧区的边走。地面开始泛潮，雨刮器扫过一道从地缝里漫出来的水渍——<span class='crit'>排水沟的水正在往上涨，有什么东西顺着车道边的栅栏往外爬</span>。\n一只灰白的手扒上了后保险杠，你猛打方向才把它甩脱；前面车道上横着半截从沟里拖出来的栅栏，你得绕过去。打这里过，就得费这个工夫。";
       desc += xdGarMapHint(vars, "沿西侧车道直行就是入口平台——图上只标了出口在东南角，没标这一段贴着旧区。") + xdGarDriveText(vars);
       return desc;
     },
     choices: [
-      { text: "直行奔入口平台", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-入口平台", effect: updateTime(1) },
-      { text: "拐横道往东", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-横道", effect: updateTime(1) }
+      // 离开这一格时才付第二次过路费：先读到"费时"，再决定要不要付
+      { text: "直行奔入口平台", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-入口平台", effect: updateTime(1, { add: { _escapeOps: -1 } }) },
+      { text: "拐横道往东", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-横道", effect: updateTime(1, { add: { _escapeOps: -1 } }) }
     ]
   },
 
@@ -861,7 +939,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/driveA.png */,
     onEnter: xdGarDriveEnter,
     text: function(vars) {
-      var desc = "入口平台到了——开阔，头顶的应急灯把车漆照出一点反光。出口坡道就在右手边，坡道顶上透下来一线灰白的天光。";
+      var desc = "入口平台到了——开阔，头顶的应急灯把车漆照出一点反光。出口坡道就在右手边，坡道顶上透下来一线" + (xdGarNight(vars) ? "沉沉的夜色" : "灰白的天光") + "。";
       desc += xdGarMapHint(vars, "出口坡道就在东南角，坡道顶上就是辅路。") + xdGarDriveText(vars);
       return desc;
     },
@@ -876,7 +954,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/driveJ.png */,
     onEnter: xdGarDriveEnter,
     text: function(vars) {
-      var desc = "坡道口。收费亭歪在一边，<span class='crit'>断成两截的栏杆还挂在原地</span>——他闯进来时撞断的。坡道顶上的天光越来越亮。\n身后，水声连成了一片。";
+      var desc = "坡道口。收费亭歪在一边，<span class='crit'>断成两截的栏杆还挂在原地</span>——他闯进来时撞断的。坡道顶上透进来的" + (xdGarNight(vars) ? "夜色" : "天光") + "越来越亮。\n身后，水声连成了一片。";
       desc += xdGarMapHint(vars, "过了这根断杆，外面就是辅路。") + xdGarDriveText(vars);
       return desc;
     },
@@ -893,7 +971,15 @@ Object.assign(storyData, {
       onTimeout: "结局-车库围堵"
     },
     text: function(vars) {
-      return "<span class='crit'>你转过一个弯，车灯的光柱尽头——全是影子。</span>\n它们从停车排里、从排水沟的栅栏缝里、从立柱后面涌出来，把车道堵得只剩一条缝。前保险杠已经能听到拍打引擎盖的声音。\n孤注一掷——找那条缝，冲过去！";
+      var fromName = ({
+        "新达汇-B1停车场-驾驶-东车道": "东车道",
+        "新达汇-B1停车场-驾驶-主通道": "主通道",
+        "新达汇-B1停车场-驾驶-横道": "横道",
+        "新达汇-B1停车场-驾驶-西车道": "西侧车道",
+        "新达汇-B1停车场-驾驶-入口平台": "入口平台",
+        "新达汇-B1停车场-驾驶-坡道口": "坡道口"
+      })[vars._lastScene] || "车道";
+      return "<span class='crit'>你转过一个弯，车灯的光柱尽头——全是影子。</span>\n它们从停车排里、从排水沟的栅栏缝里、从立柱后面涌出来，把" + fromName + "堵得只剩一条缝。前保险杠已经能听到拍打引擎盖的声音。\n孤注一掷——从" + fromName + "一路撞回坡道，找那条缝，冲过去！";
     },
     choices: [
       {
@@ -907,7 +993,8 @@ Object.assign(storyData, {
   "新达汇-B1停车场-驾驶-冲出坡道": {
     image: "images/placeholder.png" /* TODO: images/xindahui/driveRamp.png */,
     text: function(vars) {
-      return "你把油门踩穿。车身擦着断杆冲上坡道，<span class='sfx'>哐</span>的一声，断杆飞出去砸在收费亭顶上。\n天光灌进挡风玻璃。后视镜里，坡道口的水声渐渐被引擎声盖过去。\n<span class='crit'>你把整个东明街道的地下，甩在了身后。</span>";
+      var night = xdGarNight(vars);
+      return "你把油门踩穿。车身擦着断杆冲上坡道，<span class='sfx'>哐</span>的一声，断杆飞出去砸在收费亭顶上。\n" + (night ? "夜色灌进挡风玻璃，坡道顶上就是街口。" : "天光灌进挡风玻璃。") + "后视镜里，坡道口的水声渐渐被引擎声盖过去。\n<span class='crit'>你把整个东明街道的地下，甩在了身后。</span>";
     },
     choices: [
       { text: "继续", nextScene: "新达汇车库出口" }
@@ -932,7 +1019,7 @@ Object.assign(storyData, {
     },
     text: function(vars) {
       if (vars.hasCar && vars._visit["新达汇-B1停车场-上车点火"] > 0) {
-        return "你把车停在辅路边，引擎还散着热。出口坡道在身后张着黑黢黢的口子，断杆耷拉在坡道顶上。\n这辆深灰色的荣威现在是你的了——有车，很多以前要靠腿的地方，如今一脚油门的事。";
+        return "你把车停在辅路边，引擎还散着热。出口坡道在身后张着黑黢黢的口子，断杆耷拉在坡道顶上。\n这辆深灰色的荣威现在是你的了——有车，很多以前要靠腿的地方，如今一脚油门的事。\n辅路往东通向安盛街和环林东路方向，往西的路牌指向金谊广场——但距离不近，大概要走半小时。\n绕回商场正面的喷泉广场只要几分钟。";
       }
       var desc = "你来到新达汇商场背后的一条辅路。旁边是地下车库的出口坡道，铁栅栏半开着，收费亭被撞歪了斜在一边。";
       if (vars.dd >= 3) {
