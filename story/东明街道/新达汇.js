@@ -196,6 +196,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-B1下沉广场入口",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-B1美食广场" } }
+      }
     ]
   },
   "新达汇-B1走廊": {
@@ -903,7 +909,8 @@ Object.assign(storyData, {
   "新达汇-1F数码店": {
     image: "images/新达汇/华为体验店.webp",
     // 感应门报警引尸：断电后门失效，不再引尸
-    onEnter: function(vars) { vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
+    // ⚠ 从「整理整理」返回会重跑 onEnter，guard 拦住，否则再引一次尸
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
     text: function(vars) {
       if (vars._metGaoAtMall) {
         if (vars._powerOut) return "华为体验店里一片漆黑。感应门没电了，你推开玻璃门走了进去。\n展示台前蹲着一个人——锅盖头，深色卫衣，手里攥着一台黑了屏的展示机。\n\
@@ -933,6 +940,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-1F南走廊东",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-1F数码店", _restTidyReturn: true } }
+      }
     ]
   },
   "新达汇-1F数码店-手机": {
@@ -1562,12 +1575,19 @@ Object.assign(storyData, {
         nextScene: "新达汇-2F北走廊西",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-2F-Nike店" } }
+      }
     ]
   },
   "新达汇-2F服装店": {
     image: "images/新达汇/服装店.webp",
     // 感应门报警引尸：断电后门失效，不再引尸
-    onEnter: function(vars) { vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
+    // ⚠ 从「整理整理」返回会重跑 onEnter，guard 拦住，否则再引一次尸
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
     text: function(vars) { return (vars._powerOut
         ? "海澜之家的玻璃门没电了，你用手扒开一条缝挤了进去。\n"
         : "你刚靠近海澜之家的玻璃门，感应器就发出一声短促的电子提示音，门缓缓滑开。声音不大，但在安静的走廊里足够传到很远。\n")
@@ -1593,6 +1613,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-2F北走廊中",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-2F服装店", _restTidyReturn: true } }
+      }
     ]
   },
   "新达汇-2F服装店-陷阱": {
@@ -1980,6 +2006,7 @@ Object.assign(storyData, {
   },
   "新达汇-3F大型综合儿童乐园": {
     onEnter: function(vars) {
+      var g = restTidyGuard(vars); if (g) return g;   // 从「整理整理」返回不重跑
       vars.showPowerOut = true;
       // 首次进入、未喂食、未断电 → 变异猫开始尾随（text 里靠 _visit===1 先播首遇文本）
       if (!vars._powerOut && !vars._catFed && vars._visit["新达汇-3F大型综合儿童乐园"] === 1) {
@@ -2021,6 +2048,12 @@ Object.assign(storyData, {
           nextScene: "新达汇-3F后勤走廊东",
           effect: updateTime(2),
           showCondition: "_visit['新达汇-1F后勤走廊西'] > 0",
+        },
+        {
+          showCondition: "itemCount > 0",
+          text: "🎒整理一下物品",
+          nextScene: "整理整理",
+          effect: { set: { positionAfterOperation: "新达汇-3F大型综合儿童乐园", _restTidyReturn: true } }
         }
       ];
       // 变异猫尾随时可掏吃的喂它：口粮走统一"给食物"模板（FOOD_GIFTS 全清单，含脆脆炒米）
@@ -2085,10 +2118,18 @@ Object.assign(storyData, {
         effect: updateTime(1),
         showCondition: "!_visit['新达汇-1F后勤走廊西'] && !_jinbaobeiFrontOpen",
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-3F金宝贝早教中心" } }
+      }
     ]
   },
   "新达汇-3F爱婴室": {
-    onEnter: { set: { showPowerOut: true } },
+    // ⚠ 本节点是拾取点（背包满走 elseScene「整理整理」，此时不执行选项 effect），
+    //   故 positionAfterOperation 必须由 onEnter 预设，否则整理完退出会落到上一个场景的残留值。
+    onEnter: { set: { showPowerOut: true, positionAfterOperation: "新达汇-3F爱婴室" } },
     image: "images/placeholder.png" /* TODO: images/新达汇/babyStore.png */,
     text: function(vars) {
       var desc = "你走进爱婴室。彩虹渐变logo，白底彩色地砖配木纹货架。婴儿湿巾的包装早就被人拆开过，干得像纸。\n矿泉水货架上剩下的几瓶全是空的——瓶盖却又都被拧了回去，一瓶一瓶立得整整齐齐。";
@@ -2109,6 +2150,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-3F北走廊东",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-3F爱婴室" } }
+      }
     ]
   },
   "新达汇-3F扶梯组": {
@@ -2450,6 +2497,12 @@ Object.assign(storyData, {
         effect: updateTime(1),
         showCondition: "_triedHotpot",
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-4F大渝火锅" } }
+      }
     ]
   },
   "新达汇-4F火锅-麻辣": {
@@ -2504,6 +2557,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-4F北走廊西",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-4F大米先生" } }
+      }
     ]
   },
   "新达汇-4F大米先生-吃剩菜": {
@@ -2553,6 +2612,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-4F南走廊西",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-4F日料店" } }
+      }
     ]
   },
   "新达汇-4F日料店-找吃的": {
@@ -2587,7 +2652,8 @@ Object.assign(storyData, {
   "新达汇-4F电影院大厅": {
     image: "images/placeholder.png" /* TODO: images/新达汇/cinemaLobby.png */,
     // 感应门报警引尸：断电后门失效，不再引尸
-    onEnter: function(vars) { vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
+    // ⚠ 从「整理整理」返回会重跑 onEnter，guard 拦住，否则再引一次尸
+    onEnter: function(vars) { var g = restTidyGuard(vars); if (g) return g; vars.showPowerOut = true; return { add: { chasedByZombies: vars._powerOut ? 0 : 1 } }; },
     text: function(vars) {
       if (vars._powerOut) return "影城的玻璃感应门黑着，你使劲扒开一道缝钻了进去。售票处的电子屏也灭了，爆米花撒了一地。影厅走廊延伸向黑暗深处。";
       return "影城的玻璃感应门在你靠近时无声打开——它居然还有电。伴随着一声低沉的电子提示音，你的身影被门框上的摄像头捕捉到了。\n售票处电子屏还在闪烁，爆米花撒了一地。影厅走廊延伸向黑暗深处。";
@@ -2603,6 +2669,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-4F南走廊中",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-4F电影院大厅", _restTidyReturn: true } }
+      }
     ]
   },
   "新达汇-4F影厅走廊": {
@@ -2640,6 +2712,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-4F放映厅3-发现幸存者",
         effect: updateTime(1),
         showCondition: "!_cinemaGrandpa",
+      },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-4F放映厅3" } }
       }
     ]
   },
@@ -3041,6 +3119,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-5F北走廊西",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-5F石物恋" } }
+      }
     ]
   },
   "新达汇-5F石物恋-烤肉": {
@@ -3083,17 +3167,23 @@ Object.assign(storyData, {
         nextScene: "新达汇-5F北走廊中",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-5F左庭右院" } }
+      }
     ]
   },
   "新达汇-5F左庭右院-取外卖": {
     image: "images/新达汇/外卖.webp",
     onEnter: { set: { showPowerOut: true,  _deliveryCode: "473829" } }, // 只读取取餐码线索，不占背包容量
-    text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：“北青公路某号某室”。\n你撕开包裹——里面是一份盖浇饭，凉了，但还完整。",
+    text: "包裹上贴着美团订单标签，取餐码：<b>473829</b>。送货地址：“北青公路121号”。\n你撕开包裹——里面是一份盖浇饭，凉了，但还完整。",
     choices: [
       {
         text: "吃掉那份外卖",
         nextScene: "新达汇-5F左庭右院-吃外卖",
-        effect: updateTime(3, { add: { strength: 2 } }),
+        effect: updateTime(3, { add: { strength: 5 } }),
       },
       {
         text: "回到走廊",
@@ -3105,7 +3195,7 @@ Object.assign(storyData, {
   "新达汇-5F左庭右院-吃外卖": {
     onEnter: { set: { showPowerOut: true } },
     image: "images/新达汇/牛肉炒饭.webp",
-    text: "外卖真好吃。<span class='sys'>【系统提示】体力+2，当前体力：{strength}。</span>",
+    text: "外卖真好吃。<span class='sys'>【系统提示】体力+5，当前体力：{strength}。</span>",
     choices: [
       { text: "继续", nextScene: "新达汇-5F左庭右院", effect: updateTime(1) }
     ]
@@ -3129,11 +3219,6 @@ Object.assign(storyData, {
         showCondition: "chasedByZombies >= 2",
       },
       {
-        text: "四处看看机台后面有什么",
-        nextScene: "新达汇-5F游戏厅-躲藏",
-        showCondition: "chasedByZombies <= 1",
-      },
-      {
         text: "把机台上没收走的游戏币拢一拢",
         nextScene: "新达汇-5F游戏厅-捡币",
         showCondition: "!_visit['新达汇-5F游戏厅-捡币']",
@@ -3153,6 +3238,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-5F南走廊西",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-5F游戏厅" } }
+      }
     ]
   },
   "新达汇-5F游戏厅-躲藏": {
@@ -3193,7 +3284,7 @@ Object.assign(storyData, {
   },
 
   "新达汇-5F游戏厅-投篮机": {
-    onEnter: { set: { showPowerOut: true } },
+    onEnter: { set: { showPowerOut: true }, add: {chasedByZombies: 1} },
     image: "images/placeholder.png" /* TODO: images/新达汇/basketballMachine.png */,
     text: "你塞进两枚币，机器立刻来了精神——倒计时开始，篮球从滚道里一颗颗吐出来。\n你投了十几颗。命中的时候机器放礼炮音效，<span class='shout'>大喊“好球</span>！”，声音在空荡荡的游戏厅里炸开。你缩了缩脖子，回头看了一眼入口。\n最后屏幕定格在你的分数上。不算高。但这是出事以来，你头一次为了“玩”而做一件事。",
     choices: [
@@ -3342,6 +3433,12 @@ Object.assign(storyData, {
         nextScene: "新达汇-屋顶花园入口",
         effect: updateTime(1),
       },
+      {
+        showCondition: "itemCount > 0",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-屋顶花园" } }
+      }
     ]
   },
   "新达汇-屋顶花园-看无人机": {
@@ -3516,6 +3613,12 @@ Object.assign(storyData, {
         effect: updateTime(1),
         showCondition: "!_yorozuyaUnlocked",
       },
+      {
+        showCondition: "itemCount > 0 && _yorozuyaUnlocked",
+        text: "🎒整理一下物品",
+        nextScene: "整理整理",
+        effect: { set: { positionAfterOperation: "新达汇-哥哥的深夜食堂" } }
+      }
     ]
   },
   "新达汇-哥哥的深夜食堂-解锁": {

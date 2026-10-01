@@ -17,7 +17,10 @@
 
 ## 背包/水瓶
 - 容量=`3+_bagTier+_bagExtra`；`bagVolume` 派生值永不 set/add；闸门 `vars._bagTier<N`/`!hasBag`。拾取四件套：`condition:"itemCount<bagVolume"`+`effect:{set,add:{itemCount:1}}`+`elseScene:"整理整理"`，新节点必须 set `positionAfterOperation`。⚠09-21 前旧档容量 4→3（`bag_migration_repro.js`）。
-- 休息整理入口：`restTidyChoice(id)`+`restTidyGuard(vars)`（utils.js，20 处）。**整理整理出口回入口场景→onEnter 重跑**，故休息 onEnter 必 guard（防重复计时/甩追兵/扣口粮/过夜跳天）；非休息入口同理。
+- 休息整理入口：`restTidyChoice(id)`+`restTidyGuard(vars)`（utils.js，20 处；新达汇店铺另加 17 处，自测 `tools/xindahui_shop_tidy_selftest.js` 75/0）。**整理整理出口回入口场景→onEnter 重跑**，故休息 onEnter 必 guard（防重复计时/甩追兵/扣口粮/过夜跳天）；非休息入口同理。候选点分析 `tools/tidy_entry_candidates.js`（`--file=`/`--prefix=`/`--md`）。
+  ⚠**判定"要不要 guard"看是否写核心状态量**，不看有没有 `updateTime`：`onEnter:{add:{...}}`、`v.chasedByZombies=0/1`（甩追兵/引尸）、`v.strength=…` 都算；`showPowerOut=true` 幂等不算。`rest_tidy_audit.js` 已认 guard（曾误报 4 处）。
+  ⚠⚠**`transit(v,pos)` 含回头检测**（utils.js:210，pos===`_prevPos2` 且被追→chased+1）：走廊/中庭类节点 onEnter 都调它，返回重跑**第二次起必误判"回头"白挨 +1 追兵** → 这类节点加入口必须 guard。
+  ⚠**对象式/减档赋值 onEnter 同样会重复结算**：`onEnter:{add:{...}}`、函数里 `v.chasedByZombies=0/1`（如 `新达汇-B1后勤走廊`甩追兵、`新达汇-1F数码店`加追兵）→ 返回重跑=白嫖。旧审计只查 `updateTime/++/=true`，漏这一类。
 - ⚠⚠**引擎走 `elseScene` 时【不执行选项 `effect`】**（engine.js:875 `createChoiceButton` 实测：`if(nowCondMet){effect;nextScene} else {elseScene}`）→ 拾取类的 `positionAfterOperation` **不能放 effect**（背包满走 elseScene 即失效，整理完 `{positionAfterOperation}` 落旧值/空串→死链），**必须由入口场景 `onEnter` 预设**（既有模式：`三林安居苑-小广场` onEnter 写死 `"三林安居苑-滑板车"`）。09-29 实例：401 半箱泡面可拿取（`_flat401NoodleLeft:3`，自测 `tools/flat401_noodle_selftest.js`）；同日 v2 加**割锯工具门槛**（`cuttingToolName` 非空才可「划开纸箱」，徒手撕不开 −1 体力；开箱后 `_visit` 门控使丢工具仍可拿）；同日**五金店侧窗工具区**补第二处螺丝刀来源（`五金店-侧窗-探索` onEnter 预设 `"五金店-侧窗-拿螺丝刀"` + `_lastScene` 折返守卫，自测 `tools/wujindian_screwdriver_selftest.js`）。
 - 割锯工具（`cuttingToolName`）：美工刀>匕首>斧头>螺丝刀（螺丝刀来源=建平 1F老吴杂物室/5F物理实验室锁柜[均需钥匙串] + **五金店-侧窗工具区**，09-29 补后者）。不含铁管/拐杖/拖把杆/扫帚/钥匙。可多次打水，水瓶非紧平衡；`bottleWater` 0/1，丢弃须同清 `waterToxic`/`_hongBottleLabel`；保温杯另体系（建平弘渊楼2F，水全毒）。
 - 计数型可堆叠口粮：`instantNoodle` 0~3（全家*员工通道杂物间*纸箱，每包1格，吃=体力回满；09-28 由便利店内货架移入）、`vitaminC` ≤9；布尔改计数须同步 `FOOD_GIFTS`+`foodGiftChoices`（数字分支只扣1）。⚠字段迁移块要排在 `fillMissingDefaults` 补默认值循环**之前**（写后面=恒假死代码）。

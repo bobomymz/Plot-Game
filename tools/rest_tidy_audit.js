@@ -127,10 +127,15 @@ for (const h of hits) {
   const sc = sd[h.id];
   if (!sc) continue;
   const src = (sc.onEnter && typeof sc.onEnter === 'function') ? sc.onEnter.toString() : '';
+  // ⚠ 已用 restTidyGuard 守卫的节点，返回时整个 onEnter 被吃掉，不会再重复结算 —— 不算风险。
+  //   （2026-10-01：新达汇三家「感应门引尸」店铺加了 guard 后仍被本段误报，特此识别。）
+  if (/restTidyGuard\s*\(/.test(src)) continue;
   const flags = [];
   if (/updateTime\s*\(/.test(src)) flags.push('推进时间');
   if (/\+\+|--/.test(src)) flags.push('自增计数');
-  if (/=\s*true/.test(src)) flags.push('置标记');
+  // 幂等置标记（showPowerOut = true）重跑无害，只在疑似状态量上才报
+  if (/=\s*true/.test(src) && !/showPowerOut\s*=\s*true/.test(src.replace(/showPowerOut\s*=\s*true/g, ''))) flags.push('置标记');
+  if (/=\s*true/.test(src) && /_\w*(Chasing|Dead|Fed|Unlocked|Open)\s*=\s*true/.test(src)) flags.push('状态标记');
   if (flags.length) risky.push({ id: h.id, file: h.file, line: h.line, flags: flags.join('/') });
 }
 console.log('\n===== 既有整理入口（非休息节点）' + hits.length + ' 个；其中 onEnter 有一次性/时间副作用、返回时会重复结算的：' + risky.length + ' 个 =====');
