@@ -1,48 +1,121 @@
-// ========== 新达汇·B1地下停车场 ==========
-// 8区域网格探索，三辆车找钥匙，操作计数驱赶机制
-// 核心变量：_garageOps（操作次数，≥3预警≥5驱逐）
-// 核心变量：_wiredCorrectly（是否恢复供电）
+// ========== 新达汇·B1地下停车场（2026-10-01 改造版） ==========
+// 12区网状结构。Day3 起出现主线目标：金谊广场幸存者小明开车进来搬物资，被排水沟上来的
+// 丧尸袭击身亡，车（钥匙插在点火器上）留在 F 区深处——打赢车旁战斗即可开走，无需钥匙。
+// 障碍链：dd>=3 时间门槛 → 配电室接线通电（独立回路，不受商场总闸影响）→ 车旁闪色战斗
+// → 点火（引擎声=全场信号）→ 限定操作次数的驾驶逃亡 → 撞断杆出库。
+// 随机搜车：未通电/非目标区搜车走加权随机池（空车/即食食品/出声/锁车惊吓），每次 +1 噪音。
+// 方案文档：docs/区域方案-新达汇地下车库改造.md
+
+var XDGAR = "新达汇-B1停车场";
+
+// 车库照明三态："lit"=通电 / "torch"=手电 / "dim"=手机微光 / "dark"=全黑
+function xdGarSight(vars) {
+  if (vars._wiredCorrectly) return "lit";
+  if (vars.hasTorch) return "torch";
+  if (vars.hasPhone && vars.phoneBattery > 0) return "dim";
+  return "dark";
+}
+
+// 随机搜车路由（加权）：F区摸黑可能撞上守着小明的车的丧尸（比通电后正面打更险）。
+// __sceneRefs 供 lint_story 补记入边（否则随机池节点会被误判孤立场景）。
+function xdGarSearchRouter(vars) {
+  var r = Math.random();
+  if (vars.dd >= 3 && !vars._wiredCorrectly && vars._lastScene === XDGAR + "F区" && r < 0.3) {
+    return XDGAR + "-摸黑遭遇";
+  }
+  if (r < 0.35) return XDGAR + "-搜车-空车";
+  if (r < 0.55) return (vars._garageLootLeft > 0) ? XDGAR + "-搜车-捡到吃的" : XDGAR + "-搜车-空车";
+  if (r < 0.80) return XDGAR + "-搜车-出声";
+  return XDGAR + "-搜车-锁车惊吓";
+}
+xdGarSearchRouter.__sceneRefs = [
+  XDGAR + "-摸黑遭遇", XDGAR + "-搜车-空车", XDGAR + "-搜车-捡到吃的",
+  XDGAR + "-搜车-出声", XDGAR + "-搜车-锁车惊吓"
+];
+
+// 驾驶节点通用 onEnter：每移动一格，逃亡倒计时 -1
+function xdGarDriveEnter(vars) {
+  vars._escapeOps = Math.max(0, (vars._escapeOps || 0) - 1);
+  return {};
+}
+
+// 驾驶节点正文尾部：按剩余次数递进的声音暗示（等候区模式：玩家可见文案不点破机制）
+function xdGarDriveText(vars) {
+  var n = vars._escapeOps || 0;
+  if (n <= 1) {
+    return "\n<span class='crit'>后视镜里已经全是影子了。它们贴着车道两侧行进，速度和车一样快。</span>";
+  }
+  if (n <= 3) {
+    return "\n<span class='warn'>水声和拍打车身的闷响从四面八方跟上来，一声比一声近。方向感开始变得不重要——重要的是别停。</span>";
+  }
+  return "\n身后，排水沟的方向炸开一片水声。整个车库都听见了这声引擎。";
+}
+
+// 看过疏散图的玩家，驾驶时有方向提示（不构成选项、不耗次数）
+function xdGarMapHint(vars) {
+  return vars._garageMapSeen
+    ? "\n疏散图上的线路在你脑子里过了一遍——出口坡道在入口平台的东南角。"
+    : "";
+}
 
 Object.assign(storyData, {
 
-  // ==================== 入口区 ====================
+  // ==================== A区 · 入口平台（网状枢纽之一） ====================
   "新达汇-B1停车场A区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingA.png */,
-    onEnter: { set: { currentPlace: "新达汇", currentPos: "地下车库" } },
-    text: "你来到停车场A区。这是离走廊最近的一片区域，头顶还有几盏灯亮着，昏黄的光勉强勾勒出停车位的轮廓。\n前方一走下去就是主通道，两侧延伸入黑暗中——左边隐约能看到一些车辆轮廓，右边拐过去似乎是一个角落。",
+    onEnter: function(vars) {
+      vars.currentPlace = "新达汇";
+      vars.currentPos = "地下车库";
+      // 跨日衰减：每天 -2，驱逐不清零（旧版"驱逐=白板重刷"漏洞的修正）
+      var last = (vars._garageLastDay === undefined) ? vars.dd : vars._garageLastDay;
+      if (vars.dd > last) {
+        vars._garageOps = Math.max(0, (vars._garageOps || 0) - (vars.dd - last) * 2);
+      }
+      vars._garageLastDay = vars.dd;
+      return {};
+    },
+    text: function(vars) {
+      var desc = "你来到停车场入口的平台。坡道从这里往下延伸进车库深处，头顶几盏应急灯还亮着，昏黄的光勉强照出主通道的轮廓。";
+      if (vars.dd >= 3) {
+        desc += "\n地面上有两道轮胎印，从坡道口一路碾进来——压过积水的地方还没干透，是最近才留下的。";
+      }
+      desc += "\n主通道往前通向车库深处，左侧是西侧车道，右侧拐角堆着杂物。";
+      return desc;
+    },
     choices: [
-      { text: "沿着主通道往前走", nextScene: "新达汇-B1停车场B区", effect: updateTime(2) },
-      { text: "左拐进西侧通道", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
+      { text: "沿主通道往前走", nextScene: "新达汇-B1停车场B区", effect: updateTime(2) },
+      { text: "左拐进西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
       { text: "右拐到拐角处看看", nextScene: "新达汇-B1停车场H区", effect: updateTime(1) },
-      { text: "从坡道出去", nextScene: "新达汇车库出口", effect: updateTime(2) },
+      { text: "下行车道去坡道口", nextScene: "新达汇-B1停车场J区", effect: updateTime(1) },
+      { text: "搜查入口附近的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) },
       { text: "去B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(2) }
     ]
   },
 
-  // ==================== 主通道（中枢） ====================
+  // ==================== B区 · 主通道东段（网状枢纽） ====================
   "新达汇-B1停车场B区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingB.png */,
     text: function(vars) {
-      var desc = "你站在停车场主通道的中段。这里几乎没有光线，只有远处入口区的灯光在墙壁上投下一层模糊的轮廓。";
-      if (vars._wiredCorrectly) {
-        desc = "灯已经亮了。整个B区被暖黄色的灯光照亮，视野一览无余。你可以看到各个方向通向哪里。";
-      } else if (vars.hasTorch) {
-        desc += "\n手电筒的光束劈开黑暗，让你能看清四周——前方通向更深处，左右各有岔路。";
-      } else if (vars.hasPhone && vars.phoneBattery > 0) {
-        desc += "\n你举着手机，靠屏幕的微光和摸索前进——电量还剩 " + vars.phoneBattery + "%。前方是一条黑暗的通道，左侧有一扇防火门的轮廓，右侧隐约有一条岔路。";
-      } else {
-        desc += "\n你只能摸黑前进，一只手扶着墙。前方是一条黑暗的通道，左侧好像有一扇门的轮廓，右侧隐约有一条岔路。";
+      var sight = xdGarSight(vars);
+      if (sight === "lit") {
+        return "灯亮着。主通道被暖黄色的灯光照得一览无余，你能看清每个方向的岔口：防火门、东北拐角、第二停车排，还有深处那片角落。";
       }
-      if (vars._lastScene === "新达汇-B1停车场-拿钥匙") {
-        desc += "\n你按了按外套内袋——荣威车钥匙的棱角硌着手心。";
+      if (sight === "torch") {
+        return "你站在主通道中段。手电的光束劈开黑暗，照出立柱上一格格车位编号——前方通向更深处，左右各有岔路。";
       }
-      return desc;
+      if (sight === "dim") {
+        return "你站在主通道中段，举着手机，靠屏幕的微光辨认方向——电量还剩 " + vars.phoneBattery + "%。左侧有一扇防火门的轮廓，右侧隐约有一条岔路。";
+      }
+      return "你站在主通道中段，一只手扶着立柱。这里几乎没有光。左侧好像有一扇门的轮廓，右侧隐约有一条岔路。";
     },
     choices: [
-      { text: "往前走——通到更深处", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
-      { text: "左前方有扇防火门", nextScene: "新达汇-B1停车场C区", effect: updateTime(2) },
-      { text: "右前方的通道", nextScene: "新达汇-B1停车场E区", effect: updateTime(2) },
-      { text: "去A区", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
+      { text: "往深处走", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
+      { text: "左前方的防火门", nextScene: "新达汇-B1停车场C区", effect: updateTime(2) },
+      { text: "右前方的东北拐角", nextScene: "新达汇-B1停车场E区", effect: updateTime(2) },
+      { text: "拐进第二停车排", nextScene: "新达汇-B1停车场K区", effect: updateTime(1) },
+      { text: "穿横道去西侧", nextScene: "新达汇-B1停车场I区", effect: updateTime(1) },
+      { text: "回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) },
+      { text: "搜查主通道两侧的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
     ]
   },
 
@@ -60,8 +133,8 @@ Object.assign(storyData, {
         effect: updateTime(2),
         showCondition: "!_wiredCorrectly"
       },
-      { text: "走下三级台阶到旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(1) },
-      { text: "去B区主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) }
+      { text: "走下台阶到旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(1) },
+      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) }
     ]
   },
 
@@ -101,7 +174,9 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
     onEnter: { set: { _wiredCorrectly: true } },
     text: function(vars) {
-      if (vars._powerOut) return "你推上电闸。灯管闪了两下——然后灭了。配电箱深处传来一声低沉的<span class='sfx'>嗡</span>鸣，但什么也没有发生。总闸没电，你这里的电闸推上去也没用。";
+      if (vars._powerOut) {
+        return "你推上电闸。灯管闪了两下——然后亮了。\n你愣了一下。保安室拉掉的是商场的总闸，管不到这片——地下车库的照明走配电室自己的回路。灯一盏接一盏地亮起来，暖黄色的光铺满整个B区。\n你终于能看清周围的全貌了。";
+      }
       return "你推上电闸。头顶的灯管闪了几下，发出一阵<span class='sfx'>嗡嗡</span>声——然后亮了。暖黄色的灯光驱散了整个B区的黑暗。\n你终于能看清周围的全貌了。";
     },
     choices: [
@@ -119,145 +194,433 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== D区 · 排水沟（环境叙事） ====================
+  // ==================== D区 · 旧区排水沟（低一层） ====================
   "新达汇-B1停车场D区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingD.png */,
     text: function(vars) {
-      var light = (vars._wiredCorrectly || vars.hasTorch) ? "灯光" : ((vars.hasPhone && vars.phoneBattery > 0) ? "手机的微光" : "黑暗中依稀的轮廓");
-      return "你走下几级台阶，来到停车场旧区。地面比上面低了一截，脚下的水泥地湿漉漉的，踩上去有细碎的回声。\n地面上有一排排水沟的铁栅栏——栅栏缝隙里能看到浑浊的水面。水面在" + light + "下泛着暗色的光，看起来不深，但有一种……细微的、有节奏的拍水声从下面传来。\n你不太确定那是水流还是别的东西。";
+      var sight = xdGarSight(vars);
+      var light = (sight === "lit" || sight === "torch") ? "灯光" : (sight === "dim" ? "手机的微光" : "黑暗中依稀的轮廓");
+      return "你走下台阶，来到停车场旧区。地面比上面低了一截，脚下的水泥地湿漉漉的，踩上去有细碎的回声。\n地面上有一排排水沟的铁栅栏——栅栏缝隙里能看到浑浊的水面。水面在" + light + "下泛着暗色的光，看起来不深，但有一种……细微的、有节奏的拍水声从下面传来。\n你不太确定那是水流还是别的东西。";
     },
     choices: [
       { text: "仔细看看栅栏上的刻字", nextScene: "新达汇-B1停车场-涂鸦" },
-      { text: "沿斜坡往下走", nextScene: "新达汇-B1停车场F区", effect: updateTime(3) },
-      { text: "上台阶回C区", nextScene: "新达汇-B1停车场C区", effect: updateTime(1) }
+      { text: "沿斜坡往深处去", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
+      { text: "爬西侧斜坡上去", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
+      { text: "上台阶回配电室", nextScene: "新达汇-B1停车场C区", effect: updateTime(1) },
+      { text: "搜查旧区的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
     ]
   },
 
   "新达汇-B1停车场-涂鸦": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingD.png */,
-    text: "你蹲下来看铁栅栏边缘。有人用马克笔在水泥地上写了一行字，字迹潦草但用力：\n“别在车里过夜。它们会从排水沟爬上来。——一个忠告”\n下面还有一行更小的字，后来补的：\n“不听就算了。”\n你站起来，看了一眼排水沟的栅栏。铁条之间的缝隙大约有十厘米宽。足够什么东西伸出来。",
+    text: function(vars) {
+      var desc = "你蹲下来看铁栅栏边缘。有人用马克笔在水泥地上写了一行字，字迹潦草但用力：\n“别在车里过夜。它们会从排水沟爬上来。——一个忠告”\n下面还有一行更小的字，后来补的：\n“不听就算了。”\n你站起来，看了一眼排水沟的栅栏。铁条之间的缝隙大约有十厘米宽。足够什么东西伸出来。";
+      if (vars.dd >= 3) {
+        desc += "\n<span class='think'>栅栏边的水泥地上，有几道新鲜的拖痕，一直延伸向深处。写这行字的人，恐怕没想到还有人会重蹈覆辙。</span>";
+      }
+      return desc;
+    },
     choices: [
       { text: "离开这里", nextScene: "新达汇-B1停车场D区" }
     ]
   },
 
-  // ==================== E区 · 白色SUV（假线索） ====================
+  // ==================== E区 · 东北拐角（白荣威·假线索） ====================
   "新达汇-B1停车场E区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingE.png */,
     text: function(vars) {
-      if (vars._wiredCorrectly || vars.hasTorch) {
-        return "你来到停车场东北角停着一辆白色荣威SUV。驾驶座的门虚掩着，座位上放着一个空了半截的矿泉水瓶，看起来不久前还有人待过。\n你检查了钥匙孔——上面有明显的划痕，有人拿东西撬过。方向盘上落了一层薄灰，这辆车至少一周没动过了。";
+      var sight = xdGarSight(vars);
+      if (sight === "lit" || sight === "torch") {
+        return "你来到停车场东北角。这里停着一辆白色荣威SUV，驾驶座的门虚掩着，座位上放着一个空了半截的矿泉水瓶。\n你检查了钥匙孔——上面有明显的划痕，有人拿东西撬过。方向盘上落了一层薄灰，这辆车至少一周没动过了。";
       }
-      return "你摸黑走到一处角落，手碰到了什么——是一辆车。车身冰凉，车门虚掩着。你伸手进车里摸索了一会儿，只摸到了一个矿泉水瓶和一些票据。没有钥匙。";
+      if (sight === "dim") {
+        return "你摸黑走到东北角，手机屏幕照出一辆车的轮廓——车门虚掩着。你伸手进车里摸索了一会儿，只摸到一个矿泉水瓶和一些票据。没有钥匙。";
+      }
+      return "你摸黑走到一处角落，手碰到了什么——是一辆车。车身冰凉，车门虚掩着。你伸手进车里摸索了一会儿，只摸到了一个矿泉水瓶和一些票据。";
     },
     choices: [
-      { text: "仔细搜一下手套箱和储物格", nextScene: "新达汇-B1停车场-搜SUV", effect: updateTime(3) },
-      { text: "返回B区", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) }
+      { text: "翻过杂物堆走检修通道", nextScene: "新达汇-B1停车场H区", effect: updateTime(2) },
+      { text: "往深处去", nextScene: "新达汇-B1停车场F区", effect: updateTime(1) },
+      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
+      { text: "去第二停车排", nextScene: "新达汇-B1停车场K区", effect: updateTime(1) },
+      { text: "搜查拐角的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
     ]
   },
 
-  "新达汇-B1停车场-搜SUV": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/parkingE.png */,
-    onEnter: { add: { _garageOps: 1 } },
-    text: "你翻了手套箱、中央扶手箱和车门储物格——只有过期的保险单、几张停车票和一包已经潮了的纸巾。没有任何钥匙的踪影。",
-    choices: [
-      { text: "看来这辆车没用", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
-    ]
-  },
-
-  // ==================== F区 · 黑色大众轿车（真钥匙） ====================
+  // ==================== F区 · 深处（★事故点） ====================
   "新达汇-B1停车场F区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
     text: function(vars) {
-      if (vars._wiredCorrectly || vars.hasTorch) {
-        return "你沿着通道一直走到了尽头。手在黑暗中摸到了一辆车——车身光滑，右后的轮胎像新换的。借着光看清了：一辆黑色大众轿车。\n\
-  遮阳板半翻着。皮质座椅已经起毛，看起来车龄不小。后备箱里好像有东西，但是看不清是行李箱还是什么。";
+      // Day3 之前：车还没来，普通角落
+      if (vars.dd < 3) {
+        var sight0 = xdGarSight(vars);
+        if (sight0 === "lit" || sight0 === "torch") {
+          return "你沿着通道一直走到尽头。这里是车库最深的角落，灯照不到的地方堆着几个废弃的轮胎架。角落里的车都落满了灰——很久没人动过了。";
+        }
+        return "停车场最深处的角落。你的手依次摸过几辆车的引擎盖——全是凉的，覆着厚厚的灰。这里很久没有车动过了。";
       }
-      if (vars.hasPhone && vars.phoneBattery > 0) {
-        return "停车场最深处的角落里，你举着手机摸到了一辆车——屏幕微光照出黑色车身，没有落太多灰——有人在最近几天还开过它。车里一片黑，手机这点光看不清细节。";
+      // Day3+：车在，但没通电时无法辨认
+      if (!vars._wiredCorrectly) {
+        return "车库最深处的角落。黑暗里传来一种细微的、有节奏的湿润声音，像是什么东西在进食。\n你在黑暗里分不清车位的轮廓——只知道那个方向的空气里，多了一股新鲜的血腥气。";
       }
-      return "停车场最深处的角落里停着一辆车——你是靠手摸出来的。车身干净，没有落太多灰——有人在最近几天还开过它。车里一片黑，什么都看不清。";
+      // 通电 + Day3：目标车
+      if (vars._visit["新达汇-B1停车场-车旁遭遇"] > 0) {
+        return "车道尽头的角落里，那辆深灰色的荣威轿车安静地停着。驾驶座的门敞开着，车旁的排水沟栅栏歪了两根，栅栏边摊着一具被啃咬过的尸体。\n驾驶座里，钥匙还插在点火器上。";
+      }
+      var desc = "车道尽头的角落里停着一辆车——<span class='crit'>一辆深灰色的荣威轿车，车身上没有灰。</span>\n驾驶座的门敞开着，车灯熄着，但引擎盖摸上去是温的。车旁的排水沟栅栏歪了两根，一个佝偻的影子正伏在车门边，一下一下地朝车厢里啃咬着什么。\n影子旁边还有一只，正从排水沟里往外爬。";
+      if (vars._knowsSurvivorCar) {
+        desc += "\n<span class='think'>长廊的人说过——小明前天开着车出去，到现在没回来。就是它了。</span>";
+      }
+      return desc;
     },
     choices: [
       {
-        text: "拉开驾驶座的门",
-        condition: "!hasCarKey",
-        nextScene: "新达汇-B1停车场-拿钥匙",
-        effect: updateTime(1),
-        elseScene: "新达汇-B1停车场-没钥匙"
+        text: "靠近那辆车",
+        showCondition: "dd >= 3 && _wiredCorrectly && !_visit['新达汇-B1停车场-车旁遭遇']",
+        nextScene: "新达汇-B1停车场-车旁遭遇",
+        effect: updateTime(1)
       },
-      { // 后备箱有丧尸在箱子里
-        text: "检查后备箱",
-        nextScene: "新达汇-B1停车场-检查后备箱",
-        effect: updateTime(1) 
+      {
+        text: "上车",
+        showCondition: "dd >= 3 && _wiredCorrectly && _visit['新达汇-B1停车场-车旁搜身'] > 0",
+        nextScene: "新达汇-B1停车场-上车点火"
       },
-      { text: "返回B区", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(2) }
+      {
+        text: "搜查角落的车",
+        showCondition: "dd < 3 || !_wiredCorrectly",
+        nextScene: "新达汇-B1停车场-搜车",
+        effect: updateTime(2)
+      },
+      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(2) },
+      { text: "上台阶回旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(1) },
+      { text: "回东北拐角", nextScene: "新达汇-B1停车场E区", effect: updateTime(1) }
     ]
   },
 
-  "新达汇-B1停车场-拿钥匙": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/carKey.png */,
-    onEnter: { add: { _garageOps: 1 }, set: { positionAfterOperation: "新达汇-B1停车场-拿钥匙" } },
-    text: "你坐进车里，翻开遮阳板——一把车钥匙掉在你手里。\n钥匙上贴着荣威的标志————不是这辆车的。\n如果能找到那辆车，也许能早点离开东明街道。",
+  // ==================== 车旁战斗（2只排水沟丧尸） ====================
+  "新达汇-B1停车场-车旁遭遇": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
+    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 7, { add: { strength: -1 } }),
+    text: function(vars) {
+      var desc = "你放轻脚步靠近。伏在车门边的那只先直起了身——<span class='crit'>它半边身子还是湿的，排水沟的污泥顺着下巴往下淌</span>。另一只从栅栏边爬出来，动作又快又轻。\n它们把你堵在车道和排水沟之间。没有退路了——盯住它们的动作，找节奏！";
+      desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      return desc;
+    },
     choices: [
       {
-        text: "收好钥匙",
-        condition: "itemCount < bagVolume",
-        nextScene: "新达汇-B1停车场B区",
-        effect: { set: { hasCarKey: true }, add: { itemCount: 1 } },
-        elseScene: "整理整理"
+        text: "输入你看到的颜色分布",
+        input: { placeholder: "例如：3红2蓝" },
+        nextScene: flashCombatRouter(
+          "新达汇-B1停车场-车旁搜身",
+          "新达汇-B1停车场-车旁搜身-受伤",
+          "结局-车库遭遇战"
+        ),
+        timeout: 20000,
+        timeoutScene: "结局-车库遭遇战"
       }
     ]
   },
 
-  "新达汇-B1停车场-没钥匙": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/carKey.png */,
-    onEnter: { add: { _garageOps: 1 }, set: { positionAfterOperation: "新达汇-B1停车场-没钥匙" } },
-    text: "你坐进车里，翻找了一会儿。这里除了一本驾驶手册以外并没有什么像样的东西。你只能悻悻离开。",
-    choices: [
-      { text: "返回B区", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) }
-    ]
-  },
-
-  "新达汇-B1停车场-检查后备箱": {
+  "新达汇-B1停车场-车旁搜身": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
-    onEnter: { add: { _garageOps: 1 } },
-    text: [
-      "你打开后备箱，里面有一个小黄人行李箱，鼓鼓的。你拉开拉链，<span class='crit'>一只丧尸的手突然窜了出来</span>，掐住了你的脖子。",
-      "你挣脱那只手，夺路而逃。",
-      "这时，传来一阵水声。\n然后是脚步声，由远及近。\n从四面八方而来。"
-    ],
+    onEnter: { add: { chasedByZombies: 1 } },
+    text: function(vars) {
+      var desc = "最后一只抽搐着倒下，不动了。你喘匀了气，才敢看那具尸体。\n是个年轻人，穿一件洗得发白的外套，手里还攥着半张购物清单——新达汇超市的目录，背面用圆珠笔写着一行字：“多的卖给长廊。”\n他的手机摔在脚边，屏幕裂成了蛛网，还亮着——锁屏壁纸是个笑得很开的小女孩，输入界面停在一条没发出去的短信上：“东西太多，我跑第二趟”\n<span class='term'>信号栏空空如也。</span>\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>——他刚停好车，还没来得及拔。";
+      desc += "\n<span class='warn'>车库里回荡着打斗的动静。水声正从四面八方聚拢过来。</span>";
+      return desc;
+    },
     choices: [
-      { text: "拼命跑回F区", nextScene: "新达汇-B1停车场F区", effect: updateTime(1, { add: { chasedByZombies: 1 } }) }
+      { text: "上车，马上走", nextScene: "新达汇-B1停车场-上车点火" },
+      { text: "先退开，缓一缓", nextScene: "新达汇-B1停车场F区", effect: updateTime(1) }
     ]
   },
 
-  // ==================== G区 · 银色面包车（假线索+噪音） ====================
+  "新达汇-B1停车场-车旁搜身-受伤": {
+    image: "images/hurtByzombie.webp",
+    onEnter: hurtWinOnEnter({ time: 1 }),
+    text: function(vars) {
+      var desc = "你勉强把两只都干掉了——代价是胳膊上添了一道口子，血顺着手腕往下淌。" + hurtCostText(vars) + "\n那具年轻的尸体倒在车轮边，手里攥着半张购物清单。他的手机屏幕还亮着，锁屏壁纸是个小女孩。驾驶座里，钥匙还插在点火器上。";
+      desc += "\n<span class='warn'>动静已经传出去了。水声正从四面八方聚拢过来。</span>";
+      return desc;
+    },
+    choices: [
+      { text: "上车，马上走", nextScene: "新达汇-B1停车场-上车点火" },
+      { text: "先退开，缓一缓", nextScene: "新达汇-B1停车场F区", effect: updateTime(1) }
+    ]
+  },
+
+  // ==================== 摸黑遭遇（未通电撞上守车的丧尸） ====================
+  "新达汇-B1停车场-摸黑遭遇": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
+    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 8, { add: { strength: -1 } }),
+    text: function(vars) {
+      var desc = "你的手摸到一辆车——引擎盖是温的。还没等你反应过来，<span class='crit'>一只湿漉漉的手已经攥住了你的手腕</span>。\n黑暗里你看不清它的脸，只闻得到排水沟的腥臭。挣脱，还是赌一把？\n集中注意力——凭声音和触感判断它的动作！";
+      desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      return desc;
+    },
+    choices: [
+      {
+        text: "输入你感觉到的动作节奏",
+        input: { placeholder: "例如：3红2蓝" },
+        nextScene: flashCombatRouter(
+          "新达汇-B1停车场-摸黑-脱身",
+          "新达汇-B1停车场-摸黑-带伤",
+          "结局-车库遭遇战"
+        ),
+        timeout: 18000,
+        timeoutScene: "结局-车库遭遇战"
+      }
+    ]
+  },
+
+  "新达汇-B1停车场-摸黑-脱身": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
+    onEnter: { add: { chasedByZombies: 1 } },
+    text: function(vars) {
+      return "你借着它的力道把它甩了出去，抄起半截轮胎架砸了下去——不动了。\n黑暗里，你的手摸到那辆车的车门：温的，没锁。钥匙孔的位置，你甚至摸到了插在点火器上的钥匙的轮廓。\n<span class='warn'>但水声已经围上来了。黑灯瞎火的，你分不清哪辆是它——再摸下去就是送死。</span>\n你退了出去。记住这个位置——下次，带着光来。";
+    },
+    choices: [
+      { text: "退回深处通道", nextScene: "新达汇-B1停车场F区", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-摸黑-带伤": {
+    image: "images/hurtByzombie.webp",
+    onEnter: hurtWinOnEnter({ time: 1 }),
+    text: function(vars) {
+      return "你在黑暗里赌赢了——它倒了，你的胳膊上也挂了彩。" + hurtCostText(vars) + "\n你的手摸到那辆车的车门：温的，没锁。钥匙孔的位置，你甚至摸到了插在点火器上的钥匙的轮廓。\n<span class='warn'>但水声已经围上来了。黑灯瞎火的，你分不清哪辆是它——再摸下去就是送死。</span>\n你退了出去。记住这个位置——下次，带着光来。";
+    },
+    choices: [
+      { text: "退回深处通道", nextScene: "新达汇-B1停车场F区", effect: updateTime(1) }
+    ]
+  },
+
+  // ==================== G区 · 西侧车道（面包车） ====================
   "新达汇-B1停车场G区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingG.png */,
     text: function(vars) {
-      if (vars._wiredCorrectly || vars.hasTorch) {
-        return "西侧角落停着一辆银色五菱面包车。后门没有锁，车厢里堆满了纸箱和杂物。方向盘上落满了灰——这辆车已经很久没人碰过了。\n不太像是最近被开过的车。";
+      var sight = xdGarSight(vars);
+      if (sight === "lit" || sight === "torch") {
+        return "西侧车道靠墙停着一辆银色五菱面包车。后门没有锁，车厢里堆满了纸箱和杂物。方向盘上落满了灰——这辆车已经很久没人碰过了。\n车道往南通向中段横道，角落里有一道通往旧区的斜坡。";
       }
-      return "你摸黑走到西侧角落，手指碰到了一个冰冷的金属车身。车厢门没锁，你能摸到里面堆着一些纸箱。";
+      return "你摸黑走到西侧车道，手指碰到了一个冰冷的金属车身。车厢门没锁，你能摸到里面堆着一些纸箱。空气比主通道那边更潮，隐隐有水汽的味道。";
     },
     choices: [
-      { text: "爬上后车厢翻一翻纸箱", nextScene: "新达汇-B1停车场-搜面包车", effect: updateTime(3) },
-      { text: "穿过一道铁门", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
-      { text: "回车场A区", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
+      { text: "翻后车厢搜一搜", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) },
+      { text: "穿横道去东侧", nextScene: "新达汇-B1停车场I区", effect: updateTime(1) },
+      { text: "下斜坡去旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(2) },
+      { text: "穿过铁门回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
+      { text: "回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
     ]
   },
 
-  "新达汇-B1停车场-搜面包车": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/parkingG.png */,
-    onEnter: { add: { _garageOps: 1, chasedByZombies: 1 } },
-    text: "你翻进车厢，在纸箱里摸索了一会儿——有几包受潮的压缩饼干和几瓶过期的矿泉水。吃的倒是有，但没有钥匙。\n你在翻动纸箱时发出了不小的声响——纸箱倒了一个，<span class='sfx'>哐当</span>一声掉在地上。回音在空旷的车库里传得很远很远。",
+  // ==================== H区 · 拐角杂物堆（检修通道） ====================
+  "新达汇-B1停车场H区": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingH.png */,
+    text: function(vars) {
+      var sight = xdGarSight(vars);
+      var desc = "拐角处堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。购物车里有一只落满灰的毛绒熊玩偶，半埋在杂物里。墙上有人用马克笔写着：\n“它们会从排水沟爬上来。”";
+      if (sight === "lit" || sight === "torch") {
+        desc += "\n杂物堆后面塞着一根带血的撬棍，撬棍底下压着一张折叠的保养单——荣威4S店的，车牌号一栏，写的正是东北角那辆白色SUV。\n<span class='think'>有人比你更早想过这辆车的主意。没成。</span>\n杂物堆侧边留出一条刚够侧身通过的缝——有人清出来的，通向东北拐角的检修通道。";
+      }
+      return desc;
+    },
     choices: [
-      { text: "赶紧离开这里", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
+      { text: "侧身穿过检修通道", nextScene: "新达汇-B1停车场E区", effect: updateTime(2) },
+      { text: "退回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(1) },
+      { text: "搜查拐角附近", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
     ]
   },
 
-  // ==================== 操作计数检查 ====================
+  // ==================== I区 · 中段横道（内切捷径） ====================
+  "新达汇-B1停车场I区": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingI.png */,
+    text: function(vars) {
+      if (xdGarSight(vars) === "lit") {
+        return "中段横道是一条横穿车库的窄车道，两排立柱把车影切成一段一段的。从这里切过去，东侧主通道和西侧车道之间不用再绕入口平台。";
+      }
+      return "你摸进一条横穿车库的窄车道，两排立柱擦着肩膀过去。方向感告诉你——这条道横着连通车库的东西两侧。";
+    },
+    choices: [
+      { text: "往东去主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
+      { text: "往西去西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(1) },
+      { text: "拐进第二停车排", nextScene: "新达汇-B1停车场L区", effect: updateTime(1) },
+      { text: "搜查横道两侧的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
+    ]
+  },
+
+  // ==================== J区 · 坡道下段（收费亭·疏散图·断杆） ====================
+  "新达汇-B1停车场J区": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/rampBottom.png */,
+    text: function(vars) {
+      var desc = "下行车道的尽头是出口坡道的起点。收费亭歪在一边，玻璃碎了大半。";
+      if (vars.dd >= 3) {
+        desc += "\n<span class='crit'>出口的栏杆断成了两截，断口很新</span>——横杆被什么重物从里往外撞断的，收费亭的窗口又多了几道新的撞击凹痕。最近有车从这里闯了进来。";
+      }
+      desc += "\n亭子侧墙上贴着一张消防疏散图，有机玻璃罩着，还没碎。";
+      return desc;
+    },
+    choices: [
+      { text: "查看消防疏散图", nextScene: "新达汇-B1停车场-疏散图", effect: updateTime(1) },
+      { text: "沿坡道出库", nextScene: "新达汇车库出口", effect: updateTime(2) },
+      { text: "回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-疏散图": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/evacuationMap.png */,
+    onEnter: { set: { _garageMapSeen: true } },
+    text: "你凑近疏散图。有机玻璃罩上积了灰，但图面还清楚：\nB1停车场被一条环形车道分成内外两圈——外圈沿着外墙，从入口平台经东北拐角绕到西侧；内圈是主通道和中段横道，横着切过去能省一半路。\n配电室在防火门后，挨着主通道。出口坡道在入口平台的东南角——出去就是辅路。\n<span class='sys'>【系统提示】你记住了B1停车场的布局。</span>",
+    choices: [
+      {
+        text: "记下了",
+        nextScene: function(v) { return v._lastScene || "新达汇-B1停车场J区"; }
+      }
+    ]
+  },
+
+  // ==================== K区 · 第二停车排·东 ====================
+  "新达汇-B1停车场K区": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingK.png */,
+    text: function(vars) {
+      if (xdGarSight(vars) === "dark") {
+        return "你摸进主通道旁的停车排。车挨着车，中间只留一条窄缝，手电照不到的地方全是金属的棱角。";
+      }
+      return "主通道旁边是第二停车排，两排车头对着车头，中间只留一条缝。大多是落了灰的家用车，有一辆的后备箱盖开着，像一张等了很久的嘴。";
+    },
+    choices: [
+      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
+      { text: "穿到东北拐角", nextScene: "新达汇-B1停车场E区", effect: updateTime(1) },
+      { text: "搜查停车排的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
+    ]
+  },
+
+  // ==================== L区 · 第二停车排·西 ====================
+  "新达汇-B1停车场L区": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/parkingL.png */,
+    text: function(vars) {
+      if (xdGarSight(vars) === "dark") {
+        return "你摸进西侧的停车排。这里的车停得更乱，有几辆是斜插着的。脚下的地面黏腻腻的，不知道是什么。";
+      }
+      return "西侧的第二停车排比东边更挤，有几辆车是斜插着停的，像停到一半出了什么事。地面上散着几只一次性手套——修车的人留下的，或者是更晚的什么东西。";
+    },
+    choices: [
+      { text: "去西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(1) },
+      { text: "回中段横道", nextScene: "新达汇-B1停车场I区", effect: updateTime(1) },
+      { text: "搜查停车排的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
+    ]
+  },
+
+  // ==================== 随机搜车系统 ====================
+  "新达汇-B1停车场-搜车": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
+    onEnter: { add: { _garageOps: 1 } },
+    text: function(vars) {
+      var sight = xdGarSight(vars);
+      var desc = (sight === "lit")
+        ? "你放轻脚步，靠近最近的一排车。灯光下能看清车牌和车型，翻找起来也快得多。"
+        : "你放轻脚步，靠近最近的一辆车。黑暗里只能靠手摸——车门把手、车窗缝、储物格。每一次拉拽都可能出声。";
+      if (vars._garageOps >= 3 && vars._garageOps < 5) {
+        desc += "\n<span class='warn'>排水沟的方向，又传来那种有节奏的拍水声。比刚才近了。</span>";
+      }
+      return desc;
+    },
+    choices: [
+      {
+        text: "开始搜查",
+        nextScene: xdGarSearchRouter,
+        effect: updateTime(2)
+      },
+      { text: "不搜了，退回去", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-搜车-空车": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
+    text: function(vars) {
+      var models = ["一辆白色的大众polo", "一辆黑色的日产轩逸", "一辆落满灰的别克凯越", "一辆车窗贴满膜的本田飞度"];
+      var m = models[Math.floor(Math.random() * models.length)];
+      if (xdGarSight(vars) === "lit") {
+        return "是" + m + "。你拉开驾驶座翻了一遍——储物格里只有过期的保险单和几张停车票。方向盘上的灰厚得能写字，这辆车在爆发前就没人动过。";
+      }
+      return "是" + m + "。你在黑暗里把它摸了个遍——储物格、遮阳板、座椅底下。除了几张摸不出字的票据，什么都没有。";
+    },
+    choices: [
+      { text: "换个位置再搜", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(1) },
+      { text: "不搜了", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-搜车-捡到吃的": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
+    onEnter: function(vars) {
+      vars._garageLootLeft = Math.max(0, (vars._garageLootLeft || 0) - 1);
+      var gain = Math.random() < 0.5 ? 1 : 2;
+      vars.strength = Math.min(10, (vars.strength || 0) + gain);
+      return {};
+    },
+    text: function(vars) {
+      var picks = [
+        "副驾的遮阳板上夹着两根未开封的能量棒，包装还没瘪——是车里主人落下的。",
+        "后排座椅缝里卡着一块真空包装的面包，保质期还差几天才到。",
+        "储物格里翻出一小盒午餐肉，拉环完好，罐身上落着灰。"
+      ];
+      var p = picks[Math.floor(Math.random() * picks.length)];
+      return p + "\n你撕开包装，三两口吃了下去。胃里有了东西，手脚重新听使唤了。\n<span class='sys'>【系统提示】体力有所恢复，当前体力：{strength}。</span>";
+    },
+    choices: [
+      { text: "换个位置再搜", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(1) },
+      { text: "不搜了", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-搜车-出声": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
+    onEnter: { add: { chasedByZombies: 1 } },
+    text: "你拉开副驾车门的瞬间——<span class='sfx'>哐当</span>！车门内侧挂着的灭火器支架被带了下来，砸在水泥地上，滚出去老远。\n回音在空旷的车库里荡了三个来回。你僵在原地，听着自己的心跳。\n黑暗深处，有什么东西改变了方向。",
+    choices: [
+      { text: "赶紧退开", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-搜车-锁车惊吓": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
+    text: function(vars) {
+      return "你拉开车门——<span class='crit'>一张脸从车里直冲着你抬起来</span>。\n它不知在车里待了多久，干瘪的手指抠着门框往外套。你向后踉跄，后腰撞在旁边的车身上。<span class='sfx'>咚</span>的一声，整个车库都听得见。";
+    },
+    choices: [
+      {
+        text: "撒腿就跑",
+        nextScene: "新达汇-B1停车场-车库检查",
+        effect: updateTime(1, { add: { chasedByZombies: 1 } })
+      },
+      {
+        text: "抄起家伙结果了它",
+        showCondition: "hasMeleeWeapon",
+        nextScene: "新达汇-B1停车场-搜车-惊吓击杀",
+        effect: updateTime(2, { add: { chasedByZombies: 1 } })
+      }
+    ]
+  },
+
+  "新达汇-B1停车场-搜车-惊吓击杀": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
+    onEnter: function(vars) {
+      var c = combatCost(vars);
+      vars.strength = Math.max(0, vars.strength - c);
+      vars._lastCombatDrain = c;
+      tryBreakWeapon(vars);
+      return {};
+    },
+    text: function(vars) {
+      return "你趁它半个身子还卡在车门里，照着后脑给了结实地一下。它抽了两下，不动了。\n" + combatDrainText(vars) + "车里没什么值钱的东西——它死前大概翻过一遍了。";
+    },
+    choices: [
+      { text: "离开这里", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
+    ]
+  },
+
+  // ==================== 噪音检查 / 强制驱逐 ====================
   "新达汇-B1停车场-车库检查": {
     image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingB.png */,
     text: function(vars) {
@@ -282,38 +645,212 @@ Object.assign(storyData, {
 
   "新达汇-B1停车场-强制驱逐": {
     image: "images/placeholder.png" /* TODO: images/xindahui/b1Corridor.png */,
-    onEnter: { set: { _garageOps: 0 } },
-    text: "你拔腿就跑，穿过B区、冲过A区，一路没有回头。直到站在B1走廊的灯光下，你才敢停下来喘气。\n身后的停车场深处，水声还在回荡。",
+    text: "你拔腿就跑，穿过主通道、冲过入口平台，一路没有回头。直到站在B1走廊的灯光下，你才敢停下来喘气。\n身后的停车场深处，水声还在回荡。\n<span class='think'>车库里的东西记仇了。今天最好别再进去——过一晚，等它们散了再说。</span>",
     choices: [
       { text: "回到B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(1) }
     ]
   },
 
-  // ==================== H区 · 死胡同（环境叙事） ====================
-  "新达汇-B1停车场H区": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/parkingH.png */,
-    text: "你拐进角落，但前面是一堵墙——死胡同。这里堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。\n购物车里有一只落满灰的毛绒熊玩偶，半埋在杂物里。墙上有人用马克笔写着：\n\
-“它们会从排水沟爬上来。”",
+  // ==================== 上车点火（QTE：失败=死亡） ====================
+  "新达汇-B1停车场-上车点火": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/ignition.png */,
+    onEnter: function(vars) {
+      vars._escapeOps = 6;
+      vars.chasedByZombies = Math.min(5, (vars.chasedByZombies || 0) + 1);
+      return {};
+    },
+    qte: {
+      timeout: "Math.max(3000, 8000 - chasedByZombies * 800)",
+      onTimeout: "结局-车库围堵"
+    },
+    text: function(vars) {
+      var desc = "你拉开车门钻进驾驶座。<span class='crit'>钥匙就插在点火器上</span>——他刚停好车，还没来得及拔。\n你拧动钥匙。引擎轰的一声炸醒，声音在封闭的车库里来回撞，比任何嘶吼都响。\n<span class='crit'>整个车库都听见了。</span>";
+      desc += "\n<span class='warn'>排水沟的方向，水声炸开了。</span>\n挂挡——现在！";
+      return desc;
+    },
     choices: [
-      { text: "退回A区", nextScene: "新达汇-B1停车场A区", effect: updateTime(1) }
+      { text: "挂挡，冲出车位！", nextScene: "新达汇-B1停车场-驾驶-深处掉头" }
     ]
   },
 
-  // ==================== H区 · 死胡同（环境叙事） ====================
+  // ==================== 驾驶逃亡（限定操作次数） ====================
+  // 倒计时 _escapeOps=6 起，每移动一格 -1；次数耗尽后再移动 = 围堵 QTE（失败=死亡）。
+  // 行车线路成环（外圈+内切横道），路线不唯一；看过疏散图可得方向提示。
+  "新达汇-B1停车场-驾驶-深处掉头": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveF.png */,
+    onEnter: xdGarDriveEnter,
+    text: function(vars) {
+      var desc = "你倒车、掉头，车尾扫翻了一排雪糕筒。<span class='sfx'>哐啷</span>——雪糕筒滚出去老远。车头对准来时的车道，车灯把两排车影照得忽明忽暗。";
+      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      return desc;
+    },
+    choices: [
+      { text: "往东，走东北拐角外圈", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-东车道", effect: updateTime(1) },
+      { text: "往西，走西侧车道逆行", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-西车道", effect: updateTime(1) }
+    ]
+  },
 
+  "新达汇-B1停车场-驾驶-东车道": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveEast.png */,
+    onEnter: xdGarDriveEnter,
+    text: function(vars) {
+      var desc = "你沿外圈车道往东北方向开。两侧的车影一模一样——同样的车身、同样的车距，像同一段路在重复。拐角处的柱子上喷着褪色的转向箭头，指向两个方向。";
+      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      return desc;
+    },
+    choices: [
+      { text: "拐进主通道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-主通道", effect: updateTime(1) },
+      { text: "切横道抄近路", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-横道", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-驾驶-主通道": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveB.png */,
+    onEnter: xdGarDriveEnter,
+    text: function(vars) {
+      var desc = "主通道比来时宽绰，但车灯的光柱里，<span class='crit'>影子开始从两侧的停车排里渗出来</span>——它们朝着引擎声的方向汇聚，正横穿过你的车道。";
+      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      return desc;
+    },
+    choices: [
+      { text: "直行冲向入口平台", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-入口平台", effect: updateTime(1) },
+      { text: "拐横道绕开它们", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-横道", effect: updateTime(1) },
+      { text: "掉头回东车道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-东车道", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-驾驶-横道": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveI.png */,
+    onEnter: xdGarDriveEnter,
+    text: function(vars) {
+      var desc = "你切进中段横道。两排立柱贴着后视镜掠过去，车速不敢提起来——这条道窄得只容一台车。";
+      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      return desc;
+    },
+    choices: [
+      { text: "往东去主通道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-主通道", effect: updateTime(1) },
+      { text: "往西去西侧车道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-西车道", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-驾驶-西车道": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveG.png */,
+    onEnter: xdGarDriveEnter,
+    text: function(vars) {
+      var desc = "西侧车道贴着旧区的边走。地面开始泛潮，雨刮器扫过一道从地缝里漫出来的水渍——<span class='crit'>排水沟的水正在往上涨，有什么东西顺着车道边的栅栏往外爬</span>。";
+      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      return desc;
+    },
+    choices: [
+      { text: "直行奔入口平台", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-入口平台", effect: updateTime(1) },
+      { text: "拐横道往东", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-横道", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-驾驶-入口平台": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveA.png */,
+    onEnter: xdGarDriveEnter,
+    text: function(vars) {
+      var desc = "入口平台到了——开阔，头顶的应急灯把车漆照出一点反光。出口坡道就在右手边，坡道顶上透下来一线灰白的天光。";
+      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      return desc;
+    },
+    choices: [
+      { text: "冲上出口坡道！", nextScene: "新达汇-B1停车场-驾驶-坡道口", effect: updateTime(1) },
+      { text: "掉头回主通道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-主通道", effect: updateTime(1) },
+      { text: "拐回东车道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-东车道", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-驾驶-坡道口": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveJ.png */,
+    onEnter: xdGarDriveEnter,
+    text: function(vars) {
+      var desc = "坡道口。收费亭歪在一边，<span class='crit'>断成两截的栏杆还挂在原地</span>——他闯进来时撞断的。坡道顶上的天光越来越亮。\n身后，水声连成了一片。";
+      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      return desc;
+    },
+    choices: [
+      { text: "油门踩到底——撞开断杆！", nextScene: "新达汇-B1停车场-驾驶-冲出坡道", effect: updateTime(1) },
+      { text: "掉头回入口平台", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-入口平台", effect: updateTime(1) }
+    ]
+  },
+
+  "新达汇-B1停车场-驾驶-围堵": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveSurrounded.png */,
+    qte: {
+      timeout: "Math.max(3000, 8000 - chasedByZombies * 800)",
+      onTimeout: "结局-车库围堵"
+    },
+    text: function(vars) {
+      return "<span class='crit'>你转过一个弯，车灯的光柱尽头——全是影子。</span>\n它们从停车排里、从排水沟的栅栏缝里、从立柱后面涌出来，把车道堵得只剩一条缝。前保险杠已经能听到拍打引擎盖的声音。\n孤注一掷——找那条缝，冲过去！";
+    },
+    choices: [
+      {
+        text: "踩死油门，赌那条缝！",
+        nextScene: "新达汇-B1停车场-驾驶-冲出坡道",
+        effect: updateTime(1, { add: { strength: -2 }, set: { hurtByZombie: true } })
+      }
+    ]
+  },
+
+  "新达汇-B1停车场-驾驶-冲出坡道": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveRamp.png */,
+    text: function(vars) {
+      return "你把油门踩穿。车身擦着断杆冲上坡道，<span class='sfx'>哐</span>的一声，断杆飞出去砸在收费亭顶上。\n天光灌进挡风玻璃。后视镜里，坡道口的水声渐渐被引擎声盖过去。\n<span class='crit'>你把整个东明街道的地下，甩在了身后。</span>";
+    },
+    choices: [
+      { text: "继续", nextScene: "新达汇车库出口" }
+    ]
+  },
+
+  // ==================== 出口（辅路） ====================
   "新达汇车库出口": {
     image: "images/placeholder.png" /* TODO: images/xindahui/garageExit.png */,
     onEnter: function(vars) {
       vars.showZombies = true;
       vars.currentPlace = "新达汇";
       vars.currentPos = "车库出口";
+      // 若从驾驶链出库，在此交割载具（一次性；步行再来不会重复结算）
+      if (vars._visit["新达汇-B1停车场-上车点火"] > 0 && !vars.hasCar) {
+        vars.hasCar = true;
+        vars.hasEbike = false;
+        vars.hasRustyBike = false;
+        vars.chasedByZombies = Math.max(0, (vars.chasedByZombies || 0) - 1); // 躲进车里稍微安全一点
+      }
+      return {};
     },
-    text: "你来到新达汇商场背后的一条辅路。旁边是地下车库的出口坡道，铁栅栏半开着，收费亭被撞歪了斜在一边。\n辅路往东通向安盛街和环林东路方向，往西的路牌指向金谊广场——但距离不近，大概要走半小时。\n绕回商场正面的喷泉广场只要几分钟。",
+    text: function(vars) {
+      if (vars.hasCar && vars._visit["新达汇-B1停车场-上车点火"] > 0) {
+        return "你把车停在辅路边，引擎还散着热。出口坡道在身后张着黑黢黢的口子，断杆耷拉在坡道顶上。\n这辆深灰色的荣威现在是你的了——有车，很多以前要靠腿的地方，如今一脚油门的事。";
+      }
+      var desc = "你来到新达汇商场背后的一条辅路。旁边是地下车库的出口坡道，铁栅栏半开着，收费亭被撞歪了斜在一边。";
+      if (vars.dd >= 3) {
+        desc += "\n坡道口的栏杆断成了两截，断口很新——最近有车从这里闯了进去，再没出来。";
+      }
+      desc += "\n辅路往东通向安盛街和环林东路方向，往西的路牌指向金谊广场——但距离不近，大概要走半小时。\n绕回商场正面的喷泉广场只要几分钟。";
+      return desc;
+    },
     choices: [
       { text: "回喷泉广场", nextScene: "新达汇-喷泉广场", effect: updateTime(3) },
       { text: "往西去金谊广场", nextScene: "金谊广场地面入口", effect: updateTime(30) },
       { text: "进入车库", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
     ]
+  },
+
+  // ==================== 死亡结局 ====================
+  "结局-车库遭遇战": {
+    image: "images/hurtByzombie.webp",
+    text: function(vars) {
+      return "排水沟里爬出来的东西比你想的多。第一只被你砸倒，第二只从侧面扑上来，第三只咬住了你的小腿——你倒下去的时候，看到那辆深灰色的荣威静静停在两步之外，钥匙还插在点火器上。\n<span class='end'>—— 结局：车库遭遇战 ——</span>";
+    }
+  },
+
+  "结局-车库围堵": {
+    image: "images/hurtByzombie.webp",
+    text: function(vars) {
+      return "引擎的轰鸣引来了整个车库的东西。它们拍打着车窗、压上引擎盖，车灯的光柱里全是晃动的影子。你踩死油门，车身却在原地打滑——一只灰白的手从侧窗探进来，抓住了你的衣领。\n熄火之后，车库里安静得只剩下水声。\n<span class='end'>—— 结局：车库围堵 ——</span>";
+    }
   },
 
 });
