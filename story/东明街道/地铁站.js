@@ -217,6 +217,7 @@ Object.assign(storyData, {
 
   "地铁站-站厅-工具串到手": {
     image: "images/placeholder.png" /* TODO: images/地铁站/工具串.webp */,
+    onEnter: { set: { positionAfterOperation: "地铁站-站厅-工具串到手" } },   // 背包满走「整理整理」后的出口（effect 在 elseScene 分支不执行，须由入口预设）
     text: function(vars) {
       var desc = "工具串到你手里了——皮革腰包沉甸甸的，五六把钥匙，一套内六角扳手，还有半截写着编号的塑料牌。\n\
 维修工的脸朝你的方向歪了歪，又垂了下去。你后退两步，才发现自己一直憋着气。";
@@ -235,8 +236,10 @@ Object.assign(storyData, {
       },
       {
         text: "先拎在手里，翻过闸机去安检区",
-        nextScene: "地铁站-安检区",
-        effect: updateTime(2)
+        condition: "itemCount < bagVolume && !hasMetroTools",
+        elseScene: "整理整理",
+        effect: updateTime(2, { set: { hasMetroTools: true }, add: { itemCount: 1 } }),
+        nextScene: "地铁站-安检区"
       }
     ]
   },
@@ -428,7 +431,11 @@ Object.assign(storyData, {
 
   "地铁站-配电间-合黄闸": {
     image: "images/placeholder.png" /* TODO: images/地铁站/配电间.webp */,
-    onEnter: updateTime(1, { set: { _stationPowered: true }, add: { chasedByZombies: 1 } }),
+    // 已供电后重入（"看一眼运转中的配电柜"）不重复计时/加噪——首次合闸才结算
+    onEnter: function(vars) {
+      if (vars._stationPowered) return {};
+      return updateTime(1, { set: { _stationPowered: true }, add: { chasedByZombies: 1 } })(vars);
+    },
     text: "黄色柄合下的瞬间，整座车站像被人从梦里推醒了。\n\
 站台方向，屏蔽门系统的指示灯一格一格转绿；车站广播发出一声电流杂音般的咳嗽，又归于沉默。站台端头的充电桩亮起绿灯——那节列车的蓄电池正在预充。\n\
 <span class='rot'>而在更深的地方，在隧道两头的黑暗里，有什么东西也醒了——你听见一声悠长的、拖着的吼。</span>\n\
@@ -452,6 +459,7 @@ Object.assign(storyData, {
   // ==================== 站务室（支线：情报 + 规程 + 物资） ====================
   "地铁站-站务室": {
     image: "images/placeholder.png" /* TODO: images/地铁站/站务室.webp */,
+    onEnter: { set: { positionAfterOperation: "地铁站-站务室" } },   // 拿水/拿饼干背包满走「整理整理」后的出口（同上，须由入口预设）
     text: function(vars) {
       var desc = "站务室的木门一推就开。屋里比走廊暖和一点，还残留着茶叶和打印纸的味道。\n\
 值班台上的监控屏靠独立电池还亮着一格，蓝光映着摊开的值班日志——最后一行停在6月28日，字迹越写越潦草。墙角立着一个贴着红十字的应急柜。";
@@ -1233,8 +1241,7 @@ Object.assign(storyData, {
     choices: [
       {
         text: "推下牵引推杆",
-        nextScene: "地铁站-迪士尼方向",
-        effect: updateTime(5)
+        nextScene: "地铁站-迪士尼方向"
       },
       {
         text: "松开手，回到车厢再想想",
@@ -1255,7 +1262,8 @@ Object.assign(storyData, {
     choices: [
       {
         text: "下车",
-        nextScene: "结局-迪士尼-幸存者聚居地"
+        nextScene: "结局-迪士尼-幸存者聚居地",
+        effect: updateTime(20)
       }
     ]
   }

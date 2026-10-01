@@ -2,10 +2,17 @@
 import { launchGame } from "./test_helper.mjs";
 
 const g = await launchGame();
-await g.page.waitForTimeout(1200);
+await g.page.waitForFunction(() => document.querySelectorAll(".choice-btn").length > 0, null, { timeout: 20000 });
 await g.click("开始游戏");
-await g.page.waitForTimeout(500);
+await g.page.waitForTimeout(300);
 console.log("启动场景:", await g.page.evaluate(() => currentScene));
+const skip = () => g.page.evaluate(() => { try { stopTyping(); } catch (e) {} });
+const go = async (id) => {
+  await g.page.evaluate(() => { document.getElementById("choices-area").innerHTML = ""; });
+  await g.teleport(id);
+  await g.page.waitForFunction(() => document.querySelectorAll(".choice-btn").length > 0, null, { timeout: 20000 });
+  await skip();
+};
 let fails = 0;
 const ok = (cond, label) => { console.log((cond ? "PASS" : "FAIL") + " " + label); if (!cond) fails++; };
 const st = () => g.page.evaluate(() => ({
@@ -16,7 +23,7 @@ const st = () => g.page.evaluate(() => ({
 const txt = () => g.page.evaluate(() => document.body.innerText.replace(/\s+/g, " "));
 
 // ============ 路线A：侦查流（零战斗零手电通关） ============
-await g.teleport("11号线-三林东站");
+await go("11号线-三林东站");
 await g.click("在入口处观察一会儿再下去");
 await g.click("捡个水瓶扔向大厅另一头，趁乱去翻维修工的腰间");   // QTE 5s
 await g.click("稳住手，把腰扣一颗颗解开");
@@ -54,7 +61,7 @@ console.log("--- A 报告 ---\n" + (await g.reportText()));
 
 // ============ 路线B：莽夫流（无钥匙→站台死火→折返补课） ============
 await g.restart();
-await g.teleport("11号线-三林东站");
+await go("11号线-三林东站");
 await g.click("快步通过闸机，进入站厅");                          // QTE 8s
 await g.click("趁它们还没完全反应过来，冲过去");
 await g.click("直接冲过去");                                     // 硬冲 chased+2
@@ -89,7 +96,7 @@ console.log("--- B 报告 ---\n" + (await g.reportText()));
 // ============ 路线C：噪声清算（隧道尸潮 + 屏息泄压 + 跳闸） ============
 await g.restart();
 await g.set({ chasedByZombies: 4, hasMetroTools: true });
-await g.teleport("地铁站-员工通道-走廊");
+await go("地铁站-员工通道-走廊");
 await g.click("沿员工楼梯下到站台西端");                          // ch=4 → elseScene
 s = await st();
 ok(s.cs === "地铁站-站台层-隧道尸潮", "C1 噪音4进站台被尸潮截住");
