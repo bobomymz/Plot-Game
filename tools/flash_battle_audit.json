@@ -153,6 +153,28 @@
     ]
   },
   {
+    "id": "新达汇-4F放映厅3-迎战",
+    "file": "东明街道/新达汇.js",
+    "lenArg": "[\"红\",\"蓝\",\"绿\"],4",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": "结局-包场",
+    "timeout": 9000,
+    "isFactory": false,
+    "targets": [
+      "新达汇-4F放映厅3-谢礼",
+      "新达汇-4F放映厅3-迎战-失手",
+      "结局-包场"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "东明街道/新达汇.js: nextScene: \"新达汇-4F放映厅3-迎战\",",
+      "东明街道/新达汇.js: \"新达汇-4F放映厅3-迎战\": {"
+    ]
+  },
+  {
     "id": "新达汇-B1配电房-开门",
     "file": "东明街道/新达汇.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\"],4",

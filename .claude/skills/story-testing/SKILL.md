@@ -87,6 +87,7 @@ await g.close();
 13. **vm 静态检查**：极端状态变体（全真/全假/夜晚）可能掏出不可达分支的空 text（jpHide 工厂空 failText）——降为 W 人工核对，勿当 E。
 14. **打字没播完就读 `text()`**：helper 的 `text()` 内部调 `stopTyping()`——只清定时器+回调、**不补全文**（engine.js），会把半截文本冻在原地，断言必假败。断言文本前先 `waitChoices()`（或 evaluate 里 `if (typingTimer) document.getElementById("scene-text").click()` 跳打字机）；`set()`/teleport 后立刻读 text 同样中招——重渲染会重跑打字机。（2026-09-27 仁济车库实录，曾误报为"recap 丢失"）
 15. **切场景后打字期间旧选项按钮残留 DOM**：renderScene 只把 `#choices-area` `display:none`（engine.js），innerHTML 要等打字播完的 renderChoices 才清空重建；`click()` 按 textContent 匹配不看可见性——漏 `waitChoices` 时"选项未找到"的报错列表其实是**上一场景**的旧按钮，极易误读成"页面跳回了上一场景"。真引擎无此问题（玩家看不见隐藏区）。（2026-09-27 仁济车库实录）
+16. **`waitChoices()` 本身不够——沉降原语用"点 `#scene-text` 跳打字机"**：坑15 的残留按钮在部分路径下**并不隐藏**（choices-area 一直可见），`waitChoices`/等可见都会在打字开播前就返回；此时 `text()` 的 `stopTyping()` 只触发回调**不补全文**（坑14），断言必假败（文本断尾、选项抓到上一场景的）。正确写法：每次 click/teleport 后 `evaluate(() => { if (typingTimer) document.getElementById("scene-text").click(); })`（engine.js:158 处理器：补全文+同步触发 renderChoices），再等 ~100ms 后读 text()/choices()。（2026-09-30 新达汇放映厅走查实录）
 
 ## 人工验收单（真需要人眼的活，模板）
 

@@ -625,7 +625,6 @@ Object.assign(storyData, {
     image: "images/placeholder.png",
     text: "列车停稳，门开了。站台空无一人，电子屏还在滚动无关紧要的提醒。通往乐园的通道口横着半扇铁栅栏，里面黑漆漆一片。\n（作者尚未更新此处）",
     choices: [
-      { text: "沿隧道走回三林路", nextScene: "东明路-三林路" }
     ]
   }
 });

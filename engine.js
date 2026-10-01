@@ -1476,12 +1476,23 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   }
 
   // 全局触发器：在状态更改后立即检查是否有触发
-  const triggeredScene = checkGlobalTriggers();
-  if (triggeredScene) {
-    currentScene = triggeredScene;
-    // 跳过当前场景的渲染，直接跳转至结局
-    renderScene(triggeredScene, false, _depth + 1);
-    return;
+  // ⚠ 结局场景是终态，不再响应全局触发器——否则夜晚（hh>=19）进入任何过夜死亡结局时，
+  // 「天黑必须过夜」触发器（priority 5）会在结局落地瞬间再次命中，把玩家弹回过夜菜单，
+  // 结局画面永远不可达（2026-10-01 波波报告：Day2 在自己家过夜本该触发死亡结局，却弹回菜单）。
+  // 过夜安全屋不受影响：其 onEnter 先把 hh 拨回 7，触发器本就不会命中。
+  // 触发器目标本身是结局的（如 结局-体力耗尽）原本就因 resolved === currentScene 天然豁免，
+  // 此守卫补齐其余结局。非「结局」前缀的结局全库仅 4 个且均为静态文案（见
+  // tools/night_ending_bounce_selftest.js 的命名检查），第二条判定按静态文案兜底。
+  const isEndingScene = sceneId.startsWith("结局") ||
+    (typeof scene.text === "string" && scene.text.includes("—— 结局："));
+  if (!isEndingScene) {
+    const triggeredScene = checkGlobalTriggers();
+    if (triggeredScene) {
+      currentScene = triggeredScene;
+      // 跳过当前场景的渲染，直接跳转至结局
+      renderScene(triggeredScene, false, _depth + 1);
+      return;
+    }
   }
 
   // ★ 场景抖动（onEnter 中声明 shake: true）
