@@ -5,6 +5,11 @@
 - `_variables` 是 `gameState` 唯一来源；未声明名→条件抛错→**选项不显示**（非 false），报错常点错变量名，须全量审计。派生量放 `_reactive.computed`；新派生值优先写 utils.js 普通函数。初值：计数 0（add）、布尔 false、串 ""。
 - 三件套：`condition_audit`(0/0)、`scene_fn_selftest`(0 异常)、`sprint_away_audit`(0 P0)；**清单唯一权威=`tools/story_files.js`**，新脚本禁硬编码 FILES（漏跟=假绿）。存档 `fillMissingDefaults`+`refreshComputed` 挂 `applySave`/`backtrack`；只新增变量不必 bump `SAVE_VERSION`，**改字段含义必须 bump 或写反推迁移**。
 
+## 回溯（10-01 改落点）
+- 落点**不是栈顶**，是**历史中最近且当时有 ≥2 个可行选项**的节点（链状剧情回上一个节点＝原路再死一次）。实现：`countSceneChoices(id, state)`（复刻 renderChoices 可见性：showCondition → condition/elseScene；input 型渲染期不判 condition）+ `findBacktrackIndex()`；`backtrack()` 用 `historyStack.length = idx` 截断（不是 pop）。
+- ⚠ 判定必须用**该条历史自带的快照 gameState**（当前状态的选项可见性 ≠ 当时）；判定前 `snapshotState` 深拷贝再求值（防函数式 choices 副作用污染待恢复快照）。
+- 兜底：整条历史都是单选项链、或分支节点超出 `BACKTRACK_SCAN_CAP=60` → 退回栈顶（旧行为，保证有地方可去）。结局/零选项节点（计数 0）永不作落点。自测 `tools/backtrack_target_selftest.js`（20 断言，无头真引擎）。
+
 ## 战斗
 - 徒手化＝改文案+onEnter 分支，勿新增场景；代价包 `{add:{strength:-2,mercuryLoad:10},set:{hurtByZombie:true}}`。体力门槛失败结局只改 elseScene 指向。
 - `combatCost`=tier≥2?1:2；失败包=体力−1~−3、汞+10~+15、hurt、`tryBreakWeapon`。惩罚三处：onEnter、选项 effect、场景级 `qte.onTimeout`（最易漏）。`isEnding()`：id 以『结局』开头或文案含『—— 结局：』。

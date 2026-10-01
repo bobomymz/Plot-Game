@@ -463,12 +463,13 @@ Object.assign(storyData, {
   "结局-反应太慢被咬死了": {
     image: "images/zombieKnockYouDown.webp",
     text: "丧尸冲了上来，把你扑在地上。没来得及反应，你就被咬死了。\n\n<span class='end'>—— 结局：反应太慢被咬死了 ——</span>",
+    /*
     choices: [
       {
         text: "重来！这次不算！",
         nextScene: "start"
       }
-    ]
+    ]*/
   },
 
   "初遇陈默": {

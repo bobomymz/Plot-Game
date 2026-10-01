@@ -769,12 +769,63 @@ function pushHistory() {
   //backtrackBtn.style.display = 'inline-block';  // 有历史就显示顶部按钮
 }
 
+// ====== 回溯落点选择：历史里「最近、且当时有 ≥2 个可行选项」的节点 ======
+// 背景（2026-10-01 波波提出）：旧行为一律落到栈顶（上一个节点）。但在链状剧情里，
+// 上一个节点往往只有唯一出口——玩家回溯回去只能再点同一条路、原样走回死亡点，回溯等于没用。
+// 新行为：从栈顶往下找第一条「当时确实有 ≥2 个选项可选」的历史，落到那里。
+//
+// ⚠ 必须用【该条历史自带的 gameState 快照】判定，不能用当前 gameState：
+//   选项可见性随状态变化（去过一次就没了、要带工具才有），只有当时的状态才知道当时有几个选项。
+// ⚠ 判定前先深拷贝一份再求值：choices 是函数时由剧情现场生成，理论上可能带副作用，
+//   不能让"数一数有几个选项"这件事污染随后要恢复的快照。
+
+const BACKTRACK_SCAN_CAP = 60;   // 最多往回看多少条历史（越界就退回旧行为，避免长局无谓开销）
+
+// 复刻 renderChoices 的可见性判定（showCondition → condition/elseScene；input 型渲染期不判 condition）
+function countSceneChoices(sceneId, state) {
+  const scene = storyData && storyData[sceneId];
+  if (!scene) return 0;                      // 悬空 ID：视作无选项，跳过
+  let cs = scene.choices;
+  if (typeof cs === "function") {
+    try { cs = cs(state); } catch (e) { return 0; }
+  }
+  if (!cs || !cs.length) return 0;
+  let n = 0;
+  for (const c of cs) {
+    if (!c) continue;
+    if (c.showCondition && !checkCondition(c.showCondition, state)) continue;
+    if (!c.input) {
+      const ok = checkCondition(c.condition, state);
+      if (!ok && c.elseScene === undefined) continue;
+    }
+    n++;
+  }
+  return n;
+}
+
+// 返回应落到的历史下标；整条历史都是单选项链时返回栈顶（= 旧行为，不至于无处可去）
+function findBacktrackIndex() {
+  const from = Math.max(0, historyStack.length - BACKTRACK_SCAN_CAP);
+  for (let i = historyStack.length - 1; i >= from; i--) {
+    const h = historyStack[i];
+    if (!h || !h.gameState) continue;
+    // 旧档快照可能缺后加的变量键 → 字符串条件抛 ReferenceError → 被判成"不可见"。
+    // 先补齐默认值再判（与 applySave/backtrack 对快照的处置一致，只补缺、不覆盖）。
+    fillMissingDefaults(h.gameState);
+    const probe = snapshotState(h.gameState);
+    if (countSceneChoices(h.sceneId, probe) > 1) return i;
+  }
+  return historyStack.length - 1;
+}
+
 function backtrack() {
   if (historyStack.length === 0) return;
   stopTyping();
   clearQTE();   // 终止 QTE
   clearMemoryFlash(); // 终止记忆闪色动画
-  const prev = historyStack.pop();
+  const idx = findBacktrackIndex();     // 最近的「有 ≥2 个选项」的历史节点
+  const prev = historyStack[idx];
+  historyStack.length = idx;            // 落点及其之后的历史全部作废（多余的步数一并丢弃）
   // 回调到旧快照同样要补默认值：栈里可能有读档时带进来的旧项（见 applySave）
   gameState = __wrapState(fillMissingDefaults(prev.gameState), "backtrack");   // 回溯恢复后重新挂遥测代理
   // 旧存档的历史项没有 reactiveState：保留当前节流记录比清空安全（清空会让已付过的规则立刻重新武装）
