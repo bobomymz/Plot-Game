@@ -251,27 +251,30 @@ Object.assign(storyData, {
   "新达汇-B1停车场F区": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
     text: function(vars) {
+      // 从战斗/摸黑脱身退回时的差异化承接（否则"走到尽头"与"你退了出去"矛盾）
+      var ret = (vars._lastScene === "新达汇-B1停车场-摸黑-脱身" || vars._lastScene === "新达汇-B1停车场-摸黑-带伤" || vars._lastScene === "新达汇-B1停车场-车旁搜身-受伤")
+        ? "你退回到车库深处。" : "";
+      var body;
       // Day3 之前：车还没来，普通角落
       if (vars.dd < 3) {
         var sight0 = xdGarSight(vars);
         if (sight0 === "lit" || sight0 === "torch") {
-          return "你沿着通道一直走到尽头。这里是车库最深的角落，灯照不到的地方堆着几个废弃的轮胎架。角落里的车都落满了灰——很久没人动过了。";
+          body = "你沿着通道一直走到尽头。这里是车库最深的角落，灯照不到的地方堆着几个废弃的轮胎架。角落里的车都落满了灰——很久没人动过了。";
+        } else {
+          body = "停车场最深处的角落。你的手依次摸过几辆车的引擎盖——全是凉的，覆着厚厚的灰。这里很久没有车动过了。";
         }
-        return "停车场最深处的角落。你的手依次摸过几辆车的引擎盖——全是凉的，覆着厚厚的灰。这里很久没有车动过了。";
+      } else if (!vars._wiredCorrectly) {
+        // Day3+：车在，但没通电时无法辨认
+        body = "车库最深处的角落。黑暗里传来一种细微的、有节奏的湿润声音，像是什么东西在进食。\n你在黑暗里分不清车位的轮廓——只知道那个方向的空气里，多了一股新鲜的血腥气。";
+      } else if (vars._visit["新达汇-B1停车场-车旁遭遇"] > 0) {
+        body = "车道尽头的角落里，那辆深灰色的荣威轿车安静地停着。驾驶座的门敞开着，车旁的排水沟栅栏歪了两根，栅栏边摊着一具被啃咬过的尸体。\n驾驶座里，钥匙还插在点火器上。";
+      } else {
+        body = "车道尽头的角落里停着一辆车——<span class='crit'>一辆深灰色的荣威轿车，车身上没有灰。</span>\n驾驶座的门敞开着，车灯熄着，但引擎盖摸上去是温的。车旁的排水沟栅栏歪了两根，一个佝偻的影子正伏在车门边，一下一下地朝车厢里啃咬着什么。\n影子旁边还有一只，正从排水沟里往外爬。";
+        if (vars._knowsSurvivorCar) {
+          body += "\n<span class='think'>长廊的人说过——小明前天开着车出去，到现在没回来。就是它了。</span>";
+        }
       }
-      // Day3+：车在，但没通电时无法辨认
-      if (!vars._wiredCorrectly) {
-        return "车库最深处的角落。黑暗里传来一种细微的、有节奏的湿润声音，像是什么东西在进食。\n你在黑暗里分不清车位的轮廓——只知道那个方向的空气里，多了一股新鲜的血腥气。";
-      }
-      // 通电 + Day3：目标车
-      if (vars._visit["新达汇-B1停车场-车旁遭遇"] > 0) {
-        return "车道尽头的角落里，那辆深灰色的荣威轿车安静地停着。驾驶座的门敞开着，车旁的排水沟栅栏歪了两根，栅栏边摊着一具被啃咬过的尸体。\n驾驶座里，钥匙还插在点火器上。";
-      }
-      var desc = "车道尽头的角落里停着一辆车——<span class='crit'>一辆深灰色的荣威轿车，车身上没有灰。</span>\n驾驶座的门敞开着，车灯熄着，但引擎盖摸上去是温的。车旁的排水沟栅栏歪了两根，一个佝偻的影子正伏在车门边，一下一下地朝车厢里啃咬着什么。\n影子旁边还有一只，正从排水沟里往外爬。";
-      if (vars._knowsSurvivorCar) {
-        desc += "\n<span class='think'>长廊的人说过——小明前天开着车出去，到现在没回来。就是它了。</span>";
-      }
-      return desc;
+      return ret ? ret + body : body;
     },
     choices: [
       {
@@ -282,7 +285,7 @@ Object.assign(storyData, {
       },
       {
         text: "上车",
-        showCondition: "dd >= 3 && _wiredCorrectly && _visit['新达汇-B1停车场-车旁搜身'] > 0",
+        showCondition: "dd >= 3 && _wiredCorrectly && (_visit['新达汇-B1停车场-车旁搜身'] > 0 || _visit['新达汇-B1停车场-车旁搜身-受伤'] > 0)",
         nextScene: "新达汇-B1停车场-上车点火"
       },
       {
@@ -340,7 +343,7 @@ Object.assign(storyData, {
     onEnter: hurtWinOnEnter({ time: 1 }),
     text: function(vars) {
       var desc = "你勉强把两只都干掉了——代价是胳膊上添了一道口子，血顺着手腕往下淌。" + hurtCostText(vars) + "\n那具年轻的尸体倒在车轮边，手里攥着半张购物清单。他的手机屏幕还亮着，锁屏壁纸是个小女孩。驾驶座里，钥匙还插在点火器上。";
-      desc += "\n<span class='warn'>动静已经传出去了。水声正从四面八方聚拢过来。</span>";
+      desc += "\n<span class='warn'>动静已经传出去了。排水沟那头的水声连成了片。</span>";
       return desc;
     },
     choices: [
@@ -388,7 +391,7 @@ Object.assign(storyData, {
     image: "images/hurtByzombie.webp",
     onEnter: hurtWinOnEnter({ time: 1 }),
     text: function(vars) {
-      return "你在黑暗里赌赢了——它倒了，你的胳膊上也挂了彩。" + hurtCostText(vars) + "\n你的手摸到那辆车的车门：温的，没锁。钥匙孔的位置，你甚至摸到了插在点火器上的钥匙的轮廓。\n<span class='warn'>但水声已经围上来了。黑灯瞎火的，你分不清哪辆是它——再摸下去就是送死。</span>\n你退了出去。记住这个位置——下次，带着光来。";
+      return "你在黑暗里赌赢了——它倒了，你的胳膊上也挂了彩。" + hurtCostText(vars) + "\n喘息间，你的指尖碰到旁边一辆车的车门：温的，没锁。点火器上插着什么，你甚至来不及确认。\n<span class='warn'>水声近得已经不需要判断方位。黑暗里多待一秒都是赌命。</span>\n你摸黑退了出去。位置记住了——下次，带着光来。";
     },
     choices: [
       { text: "退回深处通道", nextScene: "新达汇-B1停车场F区", effect: updateTime(1) }

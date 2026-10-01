@@ -236,7 +236,7 @@ Object.assign(storyData, {
       var PHARMACY = ["益丰大药房", "益丰大药房-柜台后", "益丰大药房-库房", "益丰大药房-解脱后走廊", "益丰大药房-解释血迹", "益丰大药房-消防通道"];
       var head;
       if (l === "三林路-北侧" || l === "三林路-南侧") head = "你从人行道退回路中央。";
-      else if (l === "三林路-获得一辆轿车" || l === "三林路-轿车门锁了") head = "你从那辆丰田边上直起身，退回路面。";
+      else if (l === "三林路-获得一辆轿车" || l === "三林路-轿车门锁了") head = "你从那辆荣威边上直起身，退回路面。";
       else if (l === "银行门口" || l === "银行内部") head = "你从银行的台阶上下来，回到路边。";
       else if (l === "联华超市-地下室-撬锁" || l === "五金店-暗道-返回") head = "你顺着楼梯爬回地面。";
       else if (l === "联华超市") head = "你从超市里退出来。";
@@ -474,7 +474,7 @@ Object.assign(storyData, {
     },
     onEnter: updateTime(2, { set: { showRain: true, showZombies: true } }),
     text: function(vars) {
-      var desc = "你走近那辆丰田的车，使劲拉了拉车门，密封条咬着，拉不开。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。";
+      var desc = "你走近那辆荣威的车，使劲拉了拉车门，密封条咬着，拉不开。你狠狠用肘部砸了下车窗，手臂生疼，但玻璃看起来质量还挺好的。看来你需要找其他方式来打开车门。";
       // 汞 20+ 皮肤灰白：砸窗时玻璃成了最近的一面镜子
       desc += mercuryMirrorNote(vars, "车窗");
       return desc + "\n" + describeZombieWave(vars);

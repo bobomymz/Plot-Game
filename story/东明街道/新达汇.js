@@ -421,7 +421,7 @@ Object.assign(storyData, {
     onEnter: { set: { _powerOut: true, _catChasing: false, showPowerOut: true } },
     image: "images/placeholder.png" /* TODO: images/新达汇/拉闸.jpg */,
     text: "你双手扣住总闸的胶木把手，往下一压。\n\
-咔的一声闷响，脚下某处传来电流退去的<span class='sfx'>嗡</span>鸣。头顶的应急灯闪了两下，灭了。整个地下层沉进黑里，只有配电柜深处溅了几点橘红的火花。",
+咔的一声闷响，脚下某处传来电流退去的<span class='sfx'>嗡</span>鸣。头顶的应急灯闪了两下，灭了。整个商场这一层沉进黑里，只有配电柜深处溅了几点橘红的火花。",
     choices: [
       {
         text: "摸黑回到值班室",

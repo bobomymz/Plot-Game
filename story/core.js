@@ -69,8 +69,13 @@ const storyData = {
     _jinbaobeiFrontOpen: false, // 金宝贝前门是否已用钥匙牌打开
     _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
     _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
-    _wiredCorrectly: false,    // 新达汇B1停车场：配电箱接线是否已恢复供电（车库检查进度，_garageOps 达 3 预警 / 5 驱逐）
-    _garageOps: 0,             // 新达汇B1停车场：车库检查操作次数（≥3 预警 / ≥5 驱逐）
+    _wiredCorrectly: false,    // 新达汇B1停车场：配电箱接线是否已恢复供电（车库照明走独立回路，不受 _powerOut 影响；_garageOps 达 3 预警 / 5 驱逐）
+    _garageOps: 0,             // 新达汇B1停车场：车库噪音计数（搜车/接线 +1，≥3 预警 / ≥5 驱逐；跨日每天 -2 衰减，驱逐不清零）
+    _garageMapSeen: false,     // 新达汇B1停车场：是否看过消防疏散图（配电室/出口位置；驾驶逃亡时给方向提示）
+    _garageLootLeft: 3,        // 新达汇B1停车场：随机搜车可翻到的即食食品份数（世界库存，拿完即空）
+    _garageLastDay: 1,         // 新达汇B1停车场：上次到访的游戏日（A区 onEnter 跨日衰减 _garageOps）
+    _escapeOps: 0,             // 驾驶逃亡剩余操作次数（上车点火设6，每移动一格-1，0后再移动=围堵QTE）
+    _knowsSurvivorCar: false,  // 金谊长廊情报：知道小明开车去了新达汇B1没回来（只在车库事故点文案里呼应）
     _pipeBroke: false,         // 五金店暗道：铁管撬砸是否已失败（true=砸不断，走另一出口）
     _metPETeacher: false,      // 上实南校2号楼走廊：是否已遭遇体育老师丧尸（走廊再次进入的差异化承接）
     _peTeacherDead: false,     // 上实南校2号楼走廊：体育老师丧尸是否已被击杀
@@ -359,6 +364,7 @@ const storyData = {
     chasedByZombies:  { min: 0, max: 5 },
     phoneBattery: { min: 0, max: 100 },
     mercuryLoad: { min: 0, max: 100 },   // 汞负荷 0-100（死亡阈值 70，见 _globalTriggers）
+    _garageLootLeft: { min: 0, max: 3 }, // 新达汇车库搜车物资（世界库存）
     // 未来随时加：
     // sanity:   { min: 0, max: 100 },
     // bagVolume:{ min: 1, max: 20 },

@@ -198,6 +198,7 @@ Object.assign(storyData, {
       var head;
       if (vars._lastScene === "金谊广场-3F") head = "你穿过三楼的玻璃门，回到长廊上。";
       else if (vars._lastScene === "金谊广场-龙头区扶梯") head = "你顺着扶梯上到廊桥，走到长廊口。";
+      else if (vars._lastScene === "金谊广场-长廊-打听小明") head = "你还站在货架的窄缝前。";
       else if (vars._jinyiHasFoodForSurvivors) head = "你回到长廊上。";
       else head = "你走向龙头区的长廊。";
       var desc = head + "这是一条有顶的走廊，跨过小河通向商场3F。\n";
@@ -232,6 +233,10 @@ Object.assign(storyData, {
       if (vars._jinyiSurvivorsFed) {
         choices.push({ text: "穿过长廊去3F", nextScene: "金谊广场-3F", effect: updateTime(2) });
       }
+      // Day3+ 情报：小明开车去新达汇没回来（错过了就错过了，车库线索不依赖此处）
+      if (vars.dd >= 3 && vars._jinyiSurvivorsFed && !vars._visit["金谊广场-长廊-打听小明"]) {
+        choices.push({ text: "跟他们打听那个开车出去的人", nextScene: "金谊广场-长廊-打听小明", effect: updateTime(2) });
+      }
       if (!vars._jinyiSurvivorsFed && !vars._jinyiSurvivorsRobbed && !vars._jinyiHasFoodForSurvivors) {
         choices.push({ text: "去B1奥乐齐找食物", nextScene: "金谊广场-龙头区扶梯", effect: updateTime(1) });
       }
@@ -241,6 +246,24 @@ Object.assign(storyData, {
       choices.push({ text: "离开长廊", nextScene: "金谊广场-龙头区扶梯", effect: updateTime(1) });
       return choices;
     }
+  },
+
+  // --- 长廊打听小明（Day3+ 情报分支，错过不补——车库线索不依赖此处） ---
+  "金谊广场-长廊-打听小明": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/长廊打听.jpg */,
+    onEnter: { set: { _knowsSurvivorCar: true } },
+    text: function(vars) {
+      var desc = "你问起前几天开车出去的那个人。\n";
+      desc += "货架后面安静了几秒。然后那个中年男人开了口。\n";
+      desc += "“小明。这里最年轻的，胆子也最大——总说光啃饼干不行，要去弄点像样的吃的。”\n";
+      desc += "“前天早上，他把停车场里最后一辆能动的车开走了，往新达汇那边去。到现在没回来。”\n";
+      desc += "旁边有人接了一句：“钥匙都让小明拿走了。要怪就怪我们自己拿不定主意——想追，没人敢出这个门。”\n";
+      desc += "没人再说话。他们的眼睛都看着你，又都躲着你的眼睛。";
+      return desc;
+    },
+    choices: [
+      { text: "离开", nextScene: "金谊广场-龙头区长廊", effect: updateTime(1) }
+    ]
   },
 
   // --- 足球场（U-ball 个人记忆） ---
@@ -1084,6 +1107,10 @@ Object.assign(storyData, {
       if (!vars._visit['金谊广场-3F-幸存者-聊长廊']) {
         choices.push({ text: "跟他聊聊长廊的事", nextScene: "金谊广场-3F-幸存者-聊长廊", effect: updateTime(2) });
       }
+      // 泛提示：幸存者有车、车在地下停车场（不含小明具体去向——他离开长廊，不了解内部动向）
+      if (!vars._visit['金谊广场-3F-幸存者-聊车']) {
+        choices.push({ text: "问问他这几天外面的事", nextScene: "金谊广场-3F-幸存者-聊车", effect: updateTime(2) });
+      }
       if (vars._visit['金谊广场-B1奥乐齐-搜刮-吃完'] > 0 && !vars._visit['金谊广场-3F-幸存者-分食物']) {
         choices.push({ text: "分他一点食物", nextScene: "金谊广场-3F-幸存者-分食物", effect: updateTime(2) });
       }
@@ -1127,6 +1154,21 @@ Object.assign(storyData, {
         desc += "\n“药房应该还有。如果你要下去，顺便看一眼。”";
       }
       desc += "\n\n他把剩下的饼干小心地包好，塞进胸口的口袋里。";
+      return desc;
+    },
+    choices: [
+      { text: "继续", nextScene: "金谊广场-3F-幸存者", effect: updateTime(1) }
+    ]
+  },
+
+  // 3F小林——泛提示：幸存者有车（波波定稿台词；不指小明去向，长廊错过也不断链）
+  "金谊广场-3F-幸存者-聊车": {
+    image: "images/placeholder.png" /* TODO: images/金谊广场/3F幸存者.jpg */,
+    text: function(vars) {
+      var desc = "你问他这几天有没有见过别的活人。\n";
+      desc += "小林转着竹签想了想。“有。长廊那群人，隔几天就会抽个人开车出去找物资。”\n";
+      desc += "“你问我车从哪来？下面停车场都是。车钥匙都在他们手里。”\n";
+      desc += "他把竹签在膝盖上顿了顿，声音压低了些：“不过他们去的地方……我不劝你去。人多的地方，最后都会出事——你是听过我说这个的。”";
       return desc;
     },
     choices: [

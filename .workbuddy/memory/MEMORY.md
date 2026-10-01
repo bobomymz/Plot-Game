@@ -55,3 +55,15 @@
 
 ## 复旦江湾章（09-24）
 - 入口 `建平-后门辅路`（hh<14，错过→`_xinGone`）。2×2（堵门/目击/双逃/救场）+ a 链双窗口（`hasWangPhone&&wangPhoneBattery>=6`）+ b 链 `_phoneOrigin=="own"`；引信 `jpXinFuse` 次日/隔日爆，给药不炸→否则 `结局-变了的忻老师`。
+
+## 部署（10-01 起）
+- **线上 = https://liveamongzombies.cc/**（正式域名，www 同样可访问）→ Cloudflare Pages 项目 `shichao-biji`（账户 `554ccd0d...f19a`，默认域名 `shichao-biji.pages.dev`）。一键重部署 `bash tools/deploy-cloudflare.sh`；产物仍走 `tools/build-dist.mjs` 白名单，未改构建逻辑。
+- Zone `liveamongzombies.cc` = `9e7bf29206b617515a9cfea94950da46`：两条 CNAME（裸域 + www）→ `shichao-biji.pages.dev`、proxied。⚠**Pages 加自定义域名不会自动建 DNS 记录**（zone 原本一条都无），要手动补；域名从 pending→active 约 2 分钟，证书 Google CA。
+- ⚠**凭证绝不能写进命令行**：会被工具脱敏成假值→401。一律 `TOKEN=$(sed -n '4p' ../apikey.txt | tr -d '\r\n ')` 从文件读（第2行 Account ID、第4行 CF Token、第13行 GitHub PAT）。
+- ⚠token 是账户级全权限（名 `liveamongzombies`）：`/user/tokens/verify` 报 Invalid，必须用 `/accounts/{id}/tokens/verify`。
+- ⚠新账户 `wrangler pages project create` 返回 `code:8000000` 未知错误 → 改用 REST `POST /accounts/{id}/pages/projects` 可建。
+- ⚠Windows 上 wrangler 的 workerd/esbuild 平台二进制可能装不上，报 `"@esbuild/win32-x64" could not be found` → 手动补装（详见脚本头部注释）。
+- ⚠**Pages 对 HEAD 请求返回 403**，线上资源校验一律用 GET。
+- CI：`.github/workflows/deploy-cloudflare.yml`（push 到 main 自动 build+部署）。需仓库 Secret `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`；**fine-grained PAT 默认无 "Secrets: Read and write"，写 secret 会 403**（能 push 代码、能读 secrets 列表）。
+- ⚠⚠**仓库同时开着 GitHub Pages**（https://bobomymz.github.io/Plot-Game/ ，source=main 根目录、legacy）→ `人物档案.md`/`核心设定.md`/`CLAUDE.md`/`tools/*` 全部公开可访问。仓库 public 所以非新增泄露，但门面与 Cloudflare 白名单策略相反，要公开与否须波波定。
+- ⚠写 GH Secret 要 libsodium sealed box：**pynacl 装不上（pip 索引不可达）**，用 `npm i libsodium-wrappers` + `crypto_box_seal`。

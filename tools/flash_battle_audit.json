@@ -219,6 +219,50 @@
     ]
   },
   {
+    "id": "新达汇-B1停车场-车旁遭遇",
+    "file": "东明街道/新达汇地下车库.js",
+    "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\",\"白\"],7,{add:{strength:-1}}",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": "结局-车库遭遇战",
+    "timeout": 20000,
+    "isFactory": false,
+    "targets": [
+      "新达汇-B1停车场-车旁搜身",
+      "新达汇-B1停车场-车旁搜身-受伤",
+      "结局-车库遭遇战"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "东明街道/新达汇地下车库.js: if (vars._visit[\"新达汇-B1停车场-车旁遭遇\"] > 0) {",
+      "东明街道/新达汇地下车库.js: nextScene: \"新达汇-B1停车场-车旁遭遇\",",
+      "东明街道/新达汇地下车库.js: \"新达汇-B1停车场-车旁遭遇\": {"
+    ]
+  },
+  {
+    "id": "新达汇-B1停车场-摸黑遭遇",
+    "file": "东明街道/新达汇地下车库.js",
+    "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\",\"白\"],8,{add:{strength:-1}}",
+    "hasRouter": true,
+    "tier": 3,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": "结局-车库遭遇战",
+    "timeout": 18000,
+    "isFactory": false,
+    "targets": [
+      "新达汇-B1停车场-摸黑-脱身",
+      "新达汇-B1停车场-摸黑-带伤",
+      "结局-车库遭遇战"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "东明街道/新达汇地下车库.js: \"新达汇-B1停车场-摸黑遭遇\": {"
+    ]
+  },
+  {
     "id": "全家便利店-员工通道-丧尸的偷袭-迎战",
     "file": "东明街道/全家和公交站.js",
     "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\"],8",
