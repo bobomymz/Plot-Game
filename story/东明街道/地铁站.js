@@ -1,7 +1,13 @@
 // ========== 11号线三林东路站剧情 ==========
-// 地铁站：连接地面的枢纽，高风险高回报
-// 核心设计：噪声积累 → 尸潮强度递增，环境互动（消防栓/灭火器/消防斧）替代道具
-// QTE 随深度递减：站厅8s → 安检6s → 楼梯4s → 站台3s
+// 地铁站：连接地面的枢纽，通往迪士尼方向的唯一出口。
+// 设计文档：docs/区域方案-地铁站改造.md（2026-10 难度重做）
+// 核心设计：
+//   1) 难度来自决策与准备，不是反应力——钥匙串挂在站厅维修工尸体腰间，
+//      员工通道铁门锁死（撞门=软门槛），配电间合闸顺序（站务室规程=信息门槛）；
+//   2) 噪声经济有牙齿：chasedByZombies 每级缩短 QTE 800ms，>=4 进站台触发隧道尸潮；
+//   3) 站台强黑暗（合闸前只认手电/火把，同建平工具间门槛）；
+//   4) 列车没供电就是死火——必须配电间合闸充电后才发车；发车不可逆。
+// QTE 随深度递减：站厅8s → 安检6s → 楼梯4s → 站台3s（均被尸潮等级压缩，下限2s）
 
 Object.assign(storyData, {
 
@@ -15,8 +21,8 @@ Object.assign(storyData, {
       }
       return [
         "你走进11号线三林东路站的1号口。台阶向下延伸，通向一片昏暗的站厅。应急灯亮着，投下惨白的冷光。",
-        "你低下头，看到的是触目惊心的场景————人堆。\n一具尸体压着另一具，层层叠叠，从台阶中部延伸到底部，你甚至看不到一块完整的地板瓷砖。",
-        "其中有些”尸体“好像还在蠕动，你踩着尸体慢慢走下去，绕开那些不知死活的东西。\n前面有几只丧尸挡路，你觉得应该先观察一下。",
+        "你低下头，看到的是触目惊心的场景————人堆。\n一具尸体压着另一具，层层叠叠，从台阶中部延伸到底部，你甚至看不到一块完整的地板瓷砖。其中一具穿着地铁维修工的黄色背心，半埋在最上层。",
+        "其中有些“尸体”好像还在蠕动，你踩着尸体慢慢走下去，绕开那些不知死活的东西。\n前面有几只丧尸挡路，你觉得应该先观察一下。",
         "现在可以看到更多内部场景了。\n闸机全部敞开着——这不是正常关闭的，有些是被暴力撞开的。地上有干涸的血迹和散落的杂物。\n站厅里很安静，但你隐约能听到站台方向传来的回音——什么成群的东西在移动。"
       ];
     },
@@ -32,40 +38,51 @@ Object.assign(storyData, {
         effect: updateTime(3)
       },
       {
-        text: "太不对劲了，退回地面",
+        text: "太不对劲了，回到地面",
         nextScene: "东明路-三林路"
       }
     ]
   },
 
   "地铁站-站厅层-观察": {
-    image: "images/placeholder.png" /* TODO: images/地铁站/stationHall.png */,
+    image: "images/placeholder.png" /* TODO: images/地铁站/stationHallObserve.webp */,
     text: "你在入口处的阴影里蹲了一会儿。站厅里有几只丧尸在漫无目的地游荡——三只在售票机附近，一只靠在墙角。\n\
-它们没有发现你。但你注意到其中一只穿着地铁维修工的黄色背心，腰间挂着一串工具。",
+其中一只穿着地铁维修工的黄色背心，腰间挂着一串工具，就在闸机西侧那扇挂着“员工专用”牌子的铁门附近徘徊。\n\
+那扇铁门关得死死的，门禁读卡器黑着屏。门缝里透出更深的黑——门后好像还有空间。",
     choices: [
+      {
+        text: "捡个水瓶扔向大厅另一头，趁乱去翻维修工的腰间",
+        nextScene: "地铁站-站厅-搜尸",
+        effect: updateTime(2)
+      },
+      {
+        text: "直接扑上去，把工具串抢下来",
+        nextScene: "地铁站-站厅-缠斗",
+        effect: updateTime(1)
+      },
       {
         text: "轻手轻脚翻过闸机",
         nextScene: "地铁站-安检区",
         effect: updateTime(3)
       },
       {
-        text: "从员工通道绕过去",
-        nextScene: "地铁站-安检区",
-        effect: updateTime(2)
+        text: "去闸机西侧的员工通道铁门看看",
+        nextScene: "地铁站-员工通道-铁门",
+        effect: updateTime(1)
       },
       {
-        text: "还是回去吧",
+        text: "还是回到地面吧",
         nextScene: "东明路-三林路"
       }
     ]
   },
 
-  // ==================== 站厅层（QTE: 12s，隐藏） ====================
+  // ==================== 站厅层（QTE: 8s，隐藏） ====================
   "地铁站-站厅层": {
     image: "images/placeholder.png" /* TODO: images/地铁站/stationHall.png */,
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     qte: {
-      timeout: "12000 - chasedByZombies * 500",
+      timeout: "Math.max(2000, 8000 - chasedByZombies * 800)",
       hidden: true,
       onTimeout: "地铁站-站厅层-犹豫"
     },
@@ -89,7 +106,17 @@ Object.assign(storyData, {
         effect: updateTime(1)
       },
       {
-        text: "退回去",
+        text: "扑向售票机边穿黄背心的维修工",
+        nextScene: "地铁站-站厅-缠斗",
+        effect: updateTime(1)
+      },
+      {
+        text: "往站厅西侧的员工通道铁门去",
+        nextScene: "地铁站-员工通道-铁门",
+        effect: updateTime(1)
+      },
+      {
+        text: "退回地面",
         nextScene: "东明路-三林路"
       }
     ]
@@ -130,12 +157,410 @@ Object.assign(storyData, {
     text: "你的体力不够撑住蹲姿太久——腿一软，手掌撑在地上发出一声响。靠在墙角的那只丧尸猛地转过头，<span class='crit'>嘶吼着朝你扑了过来</span>。\n你还没来得及站起来就被扑倒了。\n<span class='end'>—— 结局：地铁站-站厅层-被发现 ——</span>"
   },
 
-  // ==================== 安检区（QTE: 9s，隐藏） ====================
+  // ==================== 站厅·维修工工具串（钥匙链） ====================
+  "地铁站-站厅-搜尸": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/搜尸.webp */,
+    qte: {
+      timeout: "5000",
+      hidden: true,
+      onTimeout: "结局-地铁站-翻尸失手"
+    },
+    text: "水瓶在大厅另一头弹跳的声响把三只丧尸都引了过去。\n\
+你半蹲着挪到黄背心维修工身边——离得近了，那股味道让你胃里翻了个个。它的工牌还别在胸口，姓名栏被血糊住了。\n\
+工具串挂在腰带上，五六把钥匙和一套内六角扳手，扣得死紧。你的手指在冷汗里打滑。",
+    choices: [
+      {
+        text: "稳住手，把腰扣一颗颗解开",
+        nextScene: "地铁站-站厅-工具串到手",
+        effect: updateTime(2)
+      },
+      {
+        text: "不翻了，快走",
+        nextScene: "地铁站-安检区",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  "地铁站-站厅-缠斗": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/缠斗.webp */,
+    qte: {
+      timeout: "Math.max(2000, 4000 - chasedByZombies * 800)",
+      hidden: true,
+      onTimeout: "结局-地铁站-翻尸失手"
+    },
+    text: "你扑了上去，和黄背心的维修工一起撞在售票机上。\n\
+它比你想象的要有力气——你压住它一边肩膀，它的脑袋一扭，牙齿离你的小臂只有一拳远。腰间的工具串硌在你们两个身体中间。",
+    choices: [
+      {
+        text: "死死掐住它的脖子，把工具串整条拽下来",
+        nextScene: "地铁站-站厅-工具串到手",
+        condition: "strength >= 3",
+        elseScene: "结局-地铁站-翻尸失手",
+        effect: { add: { strength: -1, chasedByZombies: 1 } }
+      },
+      {
+        text: "用膝盖压死它的手臂，转成慢慢解扣子",
+        nextScene: "地铁站-站厅-搜尸",
+        condition: "strength >= 2",
+        elseScene: "结局-地铁站-翻尸失手"
+      }
+    ]
+  },
+
+  "结局-地铁站-翻尸失手": {
+    image: "images/zombieKnockYouDown.webp",
+    text: "一只手扣住了你的手腕。\n\
+不是死人那种痉挛式的抽搐——是抓。黄背心底下那具躯体睁开了浑浊的眼睛，喉咙里滚出一声黏腻的咕哝，另一只手已经摸上了你的衣领。\n\
+你翻了一路的死人，只有这一个，等你等得有点不耐烦了。\n<span class='end'>—— 结局：翻尸失手 ——</span>"
+  },
+
+  "地铁站-站厅-工具串到手": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/工具串.webp */,
+    text: function(vars) {
+      var desc = "工具串到你手里了——皮革腰包沉甸甸的，五六把钥匙，一套内六角扳手，还有半截写着编号的塑料牌。\n\
+维修工的脸朝你的方向歪了歪，又垂了下去。你后退两步，才发现自己一直憋着气。";
+      if (vars._lastScene === "地铁站-站厅-缠斗") {
+        desc += "\n刚才那一下动静不小——大厅另一头的几个影子开始朝这边挪了。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      }
+      return desc;
+    },
+    choices: [
+      {
+        text: "把工具串收进包里",
+        condition: "itemCount < bagVolume && !hasMetroTools",
+        elseScene: "整理整理",
+        effect: updateTime(1, { set: { hasMetroTools: true }, add: { itemCount: 1 } }),
+        nextScene: "地铁站-站厅-腰串收好"
+      },
+      {
+        text: "先拎在手里，翻过闸机去安检区",
+        nextScene: "地铁站-安检区",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  "地铁站-站厅-腰串收好": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/stationHall.png */,
+    text: "你把工具串卷紧，塞进包里最顺手的那一层。那扇“员工专用”的铁门就在闸机西侧——上面的钥匙里，总有一把是对得上的。",
+    choices: [
+      {
+        text: "去开员工通道的铁门",
+        nextScene: "地铁站-员工通道-铁门",
+        effect: updateTime(1)
+      },
+      {
+        text: "翻过闸机，去安检区",
+        nextScene: "地铁站-安检区",
+        effect: updateTime(2)
+      },
+      {
+        text: "退回地面",
+        nextScene: "东明路-三林路"
+      }
+    ]
+  },
+
+  // ==================== 员工通道（钥匙解锁的暗线） ====================
+  "地铁站-员工通道-铁门": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/员工铁门.webp */,
+    text: "闸机西侧的这扇铁门比看起来厚得多。“员工专用”的牌子歪挂着，门禁读卡器黑着屏，门缝里透出的黑暗里有股机油混着灰尘的味道。\n\
+门框是焊死的钢架。旁边的墙上用红漆喷着一行褪色的字：“非工作人员止步”。",
+    choices: function(vars) {
+      var cs = [];
+      if (vars.hasMetroTools) {
+        cs.push({
+          text: "用工具串上的钥匙开铁门",
+          nextScene: "地铁站-员工通道-走廊",
+          effect: updateTime(1)
+        });
+      }
+      cs.push({
+        text: "用肩膀撞开铁门",
+        condition: "strength >= 4",
+        elseScene: "地铁站-员工通道-撞门失败",
+        effect: { add: { strength: -1, chasedByZombies: 2 } },
+        nextScene: "地铁站-员工通道-走廊"
+      });
+      cs.push({
+        text: "回到站厅",
+        nextScene: "地铁站-站厅层",
+        effect: updateTime(1)
+      });
+      return cs;
+    }
+  },
+
+  "地铁站-员工通道-撞门失败": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/员工铁门.webp */,
+    text: "你助跑了两步，用肩膀狠狠撞在铁门上。\n\
+<span class='sfx'>哐</span>——门纹丝不动，反震力顺着肩胛骨一路麻到后槽牙。这一下声响在空荡的站厅里格外响亮，游荡的丧尸齐齐停住了脚，朝这个方向转过头来。\n\
+你的肩膀火辣辣地疼，撞不动第二次了。",
+    choices: [
+      {
+        text: "揉着肩膀，快步离开这里",
+        nextScene: "地铁站-站厅层",
+        effect: { add: { strength: -1, chasedByZombies: 1 } }
+      }
+    ]
+  },
+
+  "地铁站-员工通道-走廊": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/员工通道.webp */,
+    text: function(vars) {
+      var desc = "门后的走廊比站厅安静得多——那种被墙体包起来的、闷闷的安静。\n\
+头顶的应急灯带还剩最后几格电，勉强照出：左手边的配电间铁门上挂着“动力照明”的牌子；右手边的站务室木门虚掩着；走廊尽头的墙上钉着一块下行楼梯的指示牌——“站台”。\n\
+里面的门都没有再上锁——这道外门是唯一的一道锁。";
+      if (vars._stationPowered) {
+        desc += "\n灯带现在全亮了，走廊里亮堂得让人有点不习惯。";
+      }
+      return desc;
+    },
+    choices: [
+      {
+        text: "进配电间",
+        nextScene: "地铁站-配电间",
+        effect: updateTime(1)
+      },
+      {
+        text: "进站务室",
+        nextScene: "地铁站-站务室",
+        effect: updateTime(1)
+      },
+      {
+        text: "沿员工楼梯下到站台西端",
+        nextScene: "地铁站-站台层",
+        effect: updateTime(2),
+        condition: "chasedByZombies < 4",
+        elseScene: "地铁站-站台层-隧道尸潮"
+      },
+      {
+        text: "回站厅",
+        nextScene: "地铁站-站厅层",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  // ==================== 配电间（电力门槛：让列车活过来） ====================
+  "地铁站-配电间": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/配电间.webp */,
+    text: function(vars) {
+      var desc = "配电间里一整排柜体靠墙立着，柜面上积着薄灰。\n\
+检修面板上露出三排闸刀把手：红色的事故照明总闸、黄色的站台动力闸、灰色的商业回路闸。\n\
+手电照过去，红色的把手上还留着半枚模糊的指印。";
+      if (vars._procedureKnown) {
+        desc += "\n你脑子里过了一遍站务室规程上那行字：<span class='sys'>恢复送电，先红后黄；灰色回路在故障状态下严禁带载。</span>";
+      } else {
+        desc += "\n哪个该先合？面板上没有任何提示。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (!vars._stationPowered) {
+        cs.push({
+          text: "合上红色闸刀（事故照明总闸）",
+          nextScene: "地铁站-配电间-合红闸",
+          effect: updateTime(1)
+        });
+        cs.push({
+          text: "合上黄色闸刀（站台动力）",
+          nextScene: "地铁站-配电间-跳闸",
+          effect: updateTime(1)
+        });
+        cs.push({
+          text: "合上灰色闸刀（商业回路）",
+          nextScene: "地铁站-配电间-跳闸",
+          effect: updateTime(1)
+        });
+      } else {
+        cs.push({
+          text: "看一眼运转中的配电柜",
+          nextScene: "地铁站-配电间-合黄闸",
+          effect: updateTime(1)
+        });
+      }
+      cs.push({
+        text: "退回走廊",
+        nextScene: "地铁站-员工通道-走廊",
+        effect: updateTime(1)
+      });
+      return cs;
+    }
+  },
+
+  "地铁站-配电间-合红闸": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/配电间.webp */,
+    text: "你把红色柄推到底。\n\
+<span class='sfx'>啪嗒、啪嗒、啪嗒</span>——走廊方向传来灯带逐段点亮的轻响，门缝下面透进来一条稳定的白光。事故照明恢复了。\n\
+配电间里的检修灯也亮了。柜体侧面的铭牌在灯下看得清清楚楚：<span class='sys'>动力送电前，须确认站台负荷已切除。</span>\n\
+现在，还差黄色那一闸。",
+    choices: [
+      {
+        text: "合上黄色闸刀（站台动力）",
+        nextScene: "地铁站-配电间-合黄闸",
+        effect: updateTime(1)
+      },
+      {
+        text: "先停一停，回走廊看看",
+        nextScene: "地铁站-员工通道-走廊",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "地铁站-配电间-跳闸": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/配电间.webp */,
+    onEnter: { shake: true },
+    text: "闸刀合到一半，柜体里<span class='crit'>炸出一团青白色的火花</span>——总闸“砰”地弹了起来，检修灯应声熄灭，配电间重新沉回黑暗里。\n\
+火花爆开的那一声在管道和墙体里嗡嗡地传了很远。你僵在原地，听着黑暗深处——站台方向、隧道方向——应和般地响起了好几声嘶吼。\n\
+它们听见了。",
+    choices: [
+      {
+        text: "把跳起的总闸推回去，回到柜前",
+        nextScene: "地铁站-配电间",
+        effect: { add: { chasedByZombies: 2 } }
+      }
+    ]
+  },
+
+  "地铁站-配电间-合黄闸": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/配电间.webp */,
+    onEnter: updateTime(1, { set: { _stationPowered: true }, add: { chasedByZombies: 1 } }),
+    text: "黄色柄合下的瞬间，整座车站像被人从梦里推醒了。\n\
+站台方向，屏蔽门系统的指示灯一格一格转绿；车站广播发出一声电流杂音般的咳嗽，又归于沉默。站台端头的充电桩亮起绿灯——那节列车的蓄电池正在预充。\n\
+<span class='rot'>而在更深的地方，在隧道两头的黑暗里，有什么东西也醒了——你听见一声悠长的、拖着的吼。</span>\n\
+车站活了。但这座车站的每一寸动静，现在都不只属于你。",
+    choices: [
+      {
+        text: "沿员工楼梯下到站台西端",
+        nextScene: "地铁站-站台层",
+        effect: updateTime(2),
+        condition: "chasedByZombies < 4",
+        elseScene: "地铁站-站台层-隧道尸潮"
+      },
+      {
+        text: "回走廊",
+        nextScene: "地铁站-员工通道-走廊",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  // ==================== 站务室（支线：情报 + 规程 + 物资） ====================
+  "地铁站-站务室": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/站务室.webp */,
+    text: function(vars) {
+      var desc = "站务室的木门一推就开。屋里比走廊暖和一点，还残留着茶叶和打印纸的味道。\n\
+值班台上的监控屏靠独立电池还亮着一格，蓝光映着摊开的值班日志——最后一行停在6月28日，字迹越写越潦草。墙角立着一个贴着红十字的应急柜。";
+      if (!vars._procedureKnown) {
+        desc += "\n手边还摊着一本《车站用电规程》，正翻在“恢复送电”那一页。";
+      }
+      return desc;
+    },
+    choices: function(vars) {
+      var cs = [];
+      cs.push({
+        text: "调出监控回放",
+        nextScene: "地铁站-站务室-监控",
+        effect: updateTime(2)
+      });
+      if (!vars._procedureKnown) {
+        cs.push({
+          text: "翻看《车站用电规程》",
+          nextScene: "地铁站-站务室-规程",
+          effect: updateTime(1, { set: { _procedureKnown: true } })
+        });
+      }
+      if (!vars.hasBottle) {
+        cs.push({
+          text: "从应急柜里拿一瓶矿泉水",
+          condition: "itemCount < bagVolume",
+          elseScene: "整理整理",
+          effect: updateTime(1, { set: { hasBottle: true, bottleWater: 1 }, add: { itemCount: 1 } }),
+          nextScene: "地铁站-站务室-拿水"
+        });
+      }
+      if (!vars.hasBiscuit) {
+        cs.push({
+          text: "拿走应急柜里的压缩饼干",
+          condition: "itemCount < bagVolume",
+          elseScene: "整理整理",
+          effect: updateTime(1, { set: { hasBiscuit: true }, add: { itemCount: 1 } }),
+          nextScene: "地铁站-站务室-拿饼干"
+        });
+      }
+      cs.push({
+        text: "回走廊",
+        nextScene: "地铁站-员工通道-走廊",
+        effect: updateTime(1)
+      });
+      return cs;
+    }
+  },
+
+  "地铁站-站务室-监控": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/监控回放.webp */,
+    text: "你拖动进度条，回到6月28日。\n\
+下午的画面还正常——站厅里人来人往，有人拎着行李，有人在自动售货机前排队。\n\
+然后是傍晚：广播的横幅打了出来，人流猛地朝出入口涌——同时又有一股人流从上面灌下来，两股人在楼梯口对冲、挤压，像两股相反的洪水撞在同一截河道里。\n\
+画面开始剧烈晃动。值班员冲着镜头的方向大喊着什么——监控没有声音，你只能看见他张大的嘴形。再往后，画面里的站台上全是跑动的人影，朝着隧道两端跑——然后一个机位、一个机位地黑下去。\n\
+最后一个黑掉的，就是你现在站着的这层站台。\n\
+值班台上的无线电台还噗噗地响着残电，循环着最后收到的那段：\n<span class='sys'>“……各站滞留人员注意……向迪士尼方向……集结……”</span>\n信号早就断了。它只是不肯承认。",
+    choices: [
+      {
+        text: "关掉回放",
+        nextScene: "地铁站-站务室",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "地铁站-站务室-规程": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/规程.webp */,
+    text: "“恢复送电”那一页被前任值班员用红笔描过一遍，像是怕自己忘了：\n<span class='sys'>先合事故照明总闸（红），后合站台动力（黄）。灰色商业回路在故障状态下严禁带载——短路火花可能触发联动报警。</span>\n\
+页脚还有一行小字：“合闸前确认站台无人作业。”——这一条，你只能装作没看见了。",
+    choices: [
+      {
+        text: "合上规程，记住这页",
+        nextScene: "地铁站-站务室",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "地铁站-站务室-拿水": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/站务室.webp */,
+    text: "应急柜里的矿泉水码得整整齐齐，生产日期就在上个月。你拿了一瓶——瓶身还是凉的。\n<span class='sys'>【系统提示】获得矿泉水（有水）。</span>",
+    choices: [
+      {
+        text: "关上柜门",
+        nextScene: "地铁站-站务室",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "地铁站-站务室-拿饼干": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/站务室.webp */,
+    text: "压缩饼干的包装上落了层薄灰，擦一把就干净了。你把它塞进包里——这种东西，现在比钱值钱。\n<span class='sys'>【系统提示】获得压缩饼干。</span>",
+    choices: [
+      {
+        text: "关上柜门",
+        nextScene: "地铁站-站务室",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  // ==================== 安检区（QTE: 6s，隐藏） ====================
   "地铁站-安检区": {
     image: "images/placeholder.png" /* TODO: images/地铁站/securityCheck.png */,
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     qte: {
-      timeout: "9000 - chasedByZombies * 500",
+      timeout: "Math.max(2000, 6000 - chasedByZombies * 800)",
       hidden: true,
       onTimeout: "地铁站-安检区-犹豫"
     },
@@ -160,7 +585,7 @@ Object.assign(storyData, {
       },
       {
         text: "不碰任何东西，悄悄从X光机下面爬过去",
-        nextScene: "地铁站-安检区-绕路",
+        nextScene: "地铁站-安检区-爬X光机",
         effect: updateTime(3)
       },
       {
@@ -189,7 +614,7 @@ Object.assign(storyData, {
     ]
   },
 
-  // ===== 消防栓路线（你的正解链第一步） =====
+  // ===== 消防栓路线 =====
   "地铁站-安检区-消防栓": {
     image: "images/placeholder.png" /* TODO: images/地铁站/fireHose.png */,
     onEnter: { add: { chasedByZombies: 1 } },
@@ -294,17 +719,36 @@ Object.assign(storyData, {
     ]
   },
 
-  // ===== 绕路 =====
-  "地铁站-安检区-绕路": {
-    image: "images/placeholder.png" /* TODO: images/地铁站/securityCheck.png */,
-    text: "你趴下身子，紧贴着地面，一点一点地从X光机的传送带下方爬过去。机器底部积了一层灰，蹭了你一身。\n你花了些时间，但安全地绕过了丧尸群。站起来时你已经到了安检区后方，楼梯口就在不远处。",
+  // ===== 爬X光机（原免费通道，现在有代价） =====
+  "地铁站-安检区-爬X光机": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/crawlXray.webp */,
+    qte: {
+      timeout: "5000",
+      hidden: true,
+      onTimeout: "结局-地铁站-传送带"
+    },
+    text: "你趴下身子，紧贴着地面，从X光安检机的传送带下方一点一点往前爬。机器底部积着一层灰，蹭了你一身。\n\
+爬到一半，你的脚踝碰到了什么软的东西。\n\
+是一只手。被卡在传送带支架里的、断掉的手。它动了。",
     choices: [
       {
-        text: "走向楼梯",
+        text: "猛地抽回腿，连滚带爬钻出去",
         nextScene: "地铁站-楼梯-绕行",
+        effect: updateTime(1, { add: { chasedByZombies: 1 } })
+      },
+      {
+        text: "缩回手脚，从另一侧退出去",
+        nextScene: "地铁站-安检区",
         effect: updateTime(2)
       }
     ]
+  },
+
+  "结局-地铁站-传送带": {
+    image: "images/zombieKnockYouDown.webp",
+    text: "那只手顺着你的脚踝往上摸，攥住了你的小腿——然后是第二天手、第三只。\n\
+你这才想起来：卡在传送带下面的，从来就不只是一只手。\n\
+它们不着急。这条通道又窄又黑，它们在这里等了几天了，不差你这一会儿。\n<span class='end'>—— 结局：传送带 ——</span>"
   },
 
   // ===== 硬冲 =====
@@ -330,15 +774,15 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 楼梯（QTE: 7s，可见） ====================
+  // ==================== 楼梯（QTE: 4s，可见） ====================
   "地铁站-楼梯": {
     image: "images/地铁站/楼梯.webp",
     qte: {
-      timeout: "7000 - chasedByZombies * 400",
+      timeout: "Math.max(2000, 4000 - chasedByZombies * 800)",
       onTimeout: "地铁站-楼梯-犹豫"
     },
     text: "你来到楼梯口。台阶向下延伸，转角处堆着一些被遗弃的行李箱和几只倒下的垃圾桶。站厅上游荡着十余只丧尸，他们好像看到了你，手脚并用慢慢爬上楼梯，向你围拢了过来。\n\
-而在你身后，被你用水冲散的丧尸群已经开始爬起来了。你听到水花四溅的声音——它们追上来了。",
+而在你身后，被你惊动的那些东西也没有停——它们正朝着楼梯口围过来。",
     choices: [
       {
         text: "冲下去，踹飞挡路的那只！",
@@ -450,17 +894,70 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 站台层（QTE: 6s，可见） ====================
+  // ==================== 楼梯折返（站台死火后回站厅的变体路线） ====================
+  "地铁站-楼梯-折返": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/stairsUp.webp */,
+    text: "你调头往上爬。来路已经不是来时的样子了——被你甩开的那些东西重新聚回了楼梯，横七竖八地堵在台阶上，像一截被灌满的管道。\n\
+有几只听见你的脚步，开始朝上爬。上行的路和下行的路一样难走。",
+    choices: [
+      {
+        text: "踢开挡路的丧尸，硬冲上去",
+        nextScene: "地铁站-安检区-回程",
+        condition: "strength >= 3",
+        elseScene: "结局-地铁站-楼梯-摔倒",
+        effect: updateTime(2)
+      },
+      {
+        text: "贴着台阶外侧，一级一级往上挪",
+        nextScene: "地铁站-安检区-回程",
+        effect: updateTime(4)
+      }
+    ]
+  },
+
+  "地铁站-安检区-回程": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/securityCheckReturn.webp */,
+    qte: {
+      timeout: "5000",
+      hidden: true,
+      onTimeout: "地铁站-安检区-犹豫"
+    },
+    text: "你爬回安检区。地上的水渍还没干透，被冲散的丧尸又聚了回来——比你来时更多，有几只还是从站厅方向新晃过来的。\n\
+它们暂时还没锁定你。闸机和X光机的影子在应急灯下割成一块一块的，你得再穿一次这片地方。",
+    choices: [
+      {
+        text: "快步穿过安检区，回站厅",
+        nextScene: "地铁站-站厅层",
+        effect: updateTime(2)
+      },
+      {
+        text: "再退回站台",
+        nextScene: "地铁站-站台层",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  // ==================== 站台层（QTE: 3s，可见；强黑暗） ====================
   "地铁站-站台层": {
     image: "images/地铁站/站台.webp",
     onEnter: { set: { currentPlace: "东明路", currentPos: "地铁站" } },
     qte: {
-      timeout: "6000 - chasedByZombies * 300",
+      timeout: "Math.max(2000, 3000 - chasedByZombies * 800)",
       onTimeout: "地铁站-站台层-犹豫"
     },
     text: function(vars) {
-      var desc = "你终于下到了站台层。站台比上面更加昏暗，只有应急出口的绿色标志发出微弱的光。轨道两侧的屏蔽门大部分都关着，只有一扇被砸碎了，玻璃渣洒了一地。\n\
-轨道对面也有丧尸在徘徊——它们暂时过不来，但它们的声音在空旷的站厅里回荡。\n站台上有五六只丧尸，分散在屏蔽门沿线，暂时还没注意到你。对面有一扇开着的列车门，车厢里的灯还亮着。";
+      var desc = "你到了站台层。";
+      if (vars._stationPowered) {
+        desc += "恢复供电后的站台亮得晃眼——屏蔽门指示灯一格一格的绿，把每根立柱的影子都钉在地上。轨道对面那节列车的灯带也亮了，隔着玻璃能看见空荡荡的车厢。\n\
+站台上的五六只丧尸被突然亮起的灯光惊动了，正在茫然地原地打转——但它们很快就会想起光线里那个站着的东西是什么。";
+      } else if (vars.hasTorch || vars.hasFireTorch) {
+        desc += "这里黑得像口井，只有头顶的应急出口标志泛着一点绿光。你的光源照出去，只切出窄窄的一小片——屏蔽门沿线的黑影里有五六只丧尸，被光柱扫到的那只迟缓地转过了头。\n\
+轨道对面停着一节列车，车厢黑着，像一条搁浅的鲸。";
+      } else {
+        desc += "<span class='rot'>黑。真正的黑。</span>应急出口标志的绿光浮在几十米外，像水底下的一点磷火。你什么都看不见——只有屏蔽门玻璃上你自己的指尖，和脚下那种踩过无数杂物的、深一脚浅一脚的触感。\n\
+黑暗里有移动的声音。不止一处。";
+      }
       if (vars._extinguisherUsed) {
         desc += "\n你手上已经没有灭火器了——刚才在上面用掉了。";
       } else {
@@ -468,24 +965,54 @@ Object.assign(storyData, {
       }
       return desc;
     },
-    choices: [
-      {
-        text: "拉开灭火器制造雾障，掩护穿行",
-        nextScene: "地铁站-站台层-灭火器雾障",
-        effect: updateTime(2),
-        showCondition: "!_extinguisherUsed"
-      },
-      {
-        text: "沿屏蔽墙边缘摸过去",
-        nextScene: "地铁站-站台层-潜行",
-        effect: updateTime(4)
-      },
-      {
-        text: "直接冲向列车门",
-        nextScene: "地铁站-站台层-硬冲",
-        effect: updateTime(2)
+    choices: function(vars) {
+      var cs = [];
+      var lit = vars._stationPowered || vars.hasTorch || vars.hasFireTorch;
+      if (lit) {
+        if (!vars._extinguisherUsed) {
+          cs.push({
+            text: "拉开灭火器制造雾障，掩护穿行",
+            nextScene: "地铁站-站台层-灭火器雾障",
+            effect: updateTime(2),
+            condition: "chasedByZombies < 4",
+            elseScene: "地铁站-站台层-隧道尸潮"
+          });
+        }
+        cs.push({
+          text: "沿屏蔽墙边缘潜行到列车门",
+          nextScene: "地铁站-站台层-潜行",
+          effect: updateTime(4),
+          condition: "chasedByZombies < 4",
+          elseScene: "地铁站-站台层-隧道尸潮"
+        });
+        cs.push({
+          text: "直接冲向列车门",
+          nextScene: "地铁站-站台层-硬冲",
+          effect: updateTime(2),
+          condition: "chasedByZombies < 4",
+          elseScene: "地铁站-站台层-隧道尸潮"
+        });
+        cs.push({
+          text: "从站台西端的员工门回走廊",
+          nextScene: "地铁站-员工通道-走廊",
+          effect: updateTime(1)
+        });
+      } else {
+        cs.push({
+          text: "贴着屏蔽墙，朝列车的方向摸过去",
+          nextScene: "地铁站-站台层-摸黑",
+          effect: updateTime(3),
+          condition: "chasedByZombies < 4",
+          elseScene: "地铁站-站台层-隧道尸潮"
+        });
       }
-    ],
+      cs.push({
+        text: "沿公共楼梯回站厅",
+        nextScene: "地铁站-楼梯-折返",
+        effect: updateTime(2)
+      });
+      return cs;
+    }
   },
 
   "地铁站-站台层-犹豫": {
@@ -495,11 +1022,13 @@ Object.assign(storyData, {
       {
         text: "拼命冲！撞开挡路的",
         nextScene: "地铁站-站台层-硬冲",
+        condition: "chasedByZombies < 4",
+        elseScene: "地铁站-站台层-隧道尸潮",
         effect: { add: { strength: -1, chasedByZombies: 1 } }
       },
       {
         text: "退回楼梯",
-        nextScene: "地铁站-楼梯-绕行",
+        nextScene: "地铁站-楼梯-折返",
         effect: { add: { chasedByZombies: 1 } }
       }
     ]
@@ -510,7 +1039,7 @@ Object.assign(storyData, {
     onEnter: { set: { _extinguisherUsed: true } },
     text: "你拔掉保险销，对着站台地面按下压把。白色的干粉喷涌而出，在站台上迅速蔓延开来。\n\
 你低身钻入雾中，沿着屏蔽墙快速移动。丧尸的吼叫声在白雾中变得闷钝而遥远——它们看不见你，你也看不见它们，但你记住了列车门的方向。\n\
-你从雾的另一端钻出时，已经站在了那扇亮着灯的列车门前。",
+你从雾的另一端钻出时，已经站在了那扇列车门前。",
     choices: [
       {
         text: "踏入车厢",
@@ -551,56 +1080,166 @@ Object.assign(storyData, {
     ]
   },
 
-  // ==================== 选择列车 ====================
+  // ===== 摸黑（无光源时的赌命通道） =====
+  "地铁站-站台层-摸黑": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/platformDark.webp */,
+    qte: {
+      timeout: "4000",
+      hidden: true,
+      onTimeout: "结局-地铁站-坠落轨道"
+    },
+    text: "你把指尖贴在屏蔽门的玻璃上，当作导航的堤岸，一步一步往前挪。\n\
+脚下的地面黏糊糊的，踩上去有细小的、不肯碎的东西。空气里的味道浓得化不开。\n\
+五十步。六十步。黑暗里有很轻的、指甲刮玻璃的声音——就在你前方，不远。",
+    choices: [
+      {
+        text: "压低身子，贴着立柱从声音旁边绕过去",
+        nextScene: "地铁站-选择列车",
+        effect: updateTime(3)
+      },
+      {
+        text: "不走了，原路摸回去",
+        nextScene: "地铁站-站台层",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  "结局-地铁站-坠落轨道": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/坠落轨道.webp */,
+    text: "你数到第八十一步的时候，脚下忽然没有了地面。\n\
+站台和列车之间的缝隙比你摸出来的任何一段路都宽。你下坠的那半秒里脑子意外地清楚——原来刮玻璃的声音不是在前方，是在下面。\n\
+道床上那些更早摸过来的人，接住了你。\n<span class='end'>—— 结局：坠落轨道 ——</span>"
+  },
+
+  // ===== 隧道尸潮（噪声清算点：chasedByZombies >= 4） =====
+  "地铁站-站台层-隧道尸潮": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/隧道尸潮.webp */,
+    onEnter: { shake: true },
+    text: "你刚要迈步——隧道两端同时响起了脚步声。\n\
+不是一只两只。是墙一样推进的声音，从左右两个方向的黑暗里灌进站台，把整个站台层当成了一根管道。应急灯开始一颗一颗地闪。\n\
+你在站台上，无路可退。",
+    choices: [
+      {
+        text: "冲进列车，抵死关上车门",
+        condition: "_stationPowered",
+        elseScene: "结局-地铁站-尸潮围堵",
+        nextScene: "地铁站-发车确认",
+        effect: updateTime(1)
+      },
+      {
+        text: "退进站台西端的员工楼梯间",
+        nextScene: "地铁站-员工通道-走廊",
+        effect: updateTime(1)
+      },
+      {
+        text: "缩到屏蔽墙后，屏住呼吸",
+        condition: "strength >= 2",
+        elseScene: "结局-地铁站-尸潮围堵",
+        nextScene: "地铁站-站台层-屏息",
+        effect: updateTime(2)
+      }
+    ]
+  },
+
+  "地铁站-站台层-屏息": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/platformHold.webp */,
+    onEnter: { add: { chasedByZombies: -2 } },
+    text: "你把自己折叠进屏蔽墙和立柱之间的死角，把呼吸压成一条线。\n\
+潮水从你面前漫过去——数不清的脚、拖着的身体、撞在屏蔽门玻璃上的手。有什么东西在你的藏身处外停了一瞬，鼻音一样的嗅闻声近得像贴着你的耳朵。\n\
+然后它跟着大部队过去了。\n\
+不知道过了多久，站台重新只剩下滴水声。你从墙后爬出来的时候，腿是软的。",
+    choices: [
+      {
+        text: "从死角里出来，回到站台",
+        nextScene: "地铁站-站台层",
+        effect: updateTime(1)
+      }
+    ]
+  },
+
+  "结局-地铁站-尸潮围堵": {
+    image: "images/zombieKnockYouDown.webp",
+    text: "它们不是跑过来的——是塌方一样塌过来的。\n\
+你最后看到的画面是应急灯，它在成百上千个头顶的碰撞下，一闪、一闪、然后熄灭。\n\
+站台的广播如果还活着，此刻大概会报出那句它最熟悉的话：请勿越过黄色安全线。\n<span class='end'>—— 结局：尸潮围堵 ——</span>"
+  },
+
+  // ==================== 列车 ====================
   "地铁站-选择列车": {
     image: "images/地铁站/车厢里.webp" /* TODO: images/地铁站/trainInterior.png */,
     onEnter: { set: { _extinguisherUsed: false } },
-    text: "你踏进车厢。车厢里的灯还亮着，座椅上散落着几份报纸和一个水杯。穿过整节车厢，你能看到驾驶室的方向。\n车厢另一端的电子显示屏还在闪烁，显示着线路信息。",
-    choices: [
-      {
-        text: "去迪士尼",
-        nextScene: "地铁站-迪士尼方向",
-        effect: updateTime(5)
-      },
-      {
+    text: function(vars) {
+      if (vars._stationPowered) {
+        return "你踏进车厢。灯带亮着，空调口居然还有一丝冷风——蓄电池的预充指示在车门上方一格一格地爬满。\n\
+座椅上散落着几份报纸和一个水杯，都保持着六天前有人在场时的样子。穿过整节车厢，你能看到驾驶室的方向。车厢另一端的电子显示屏亮着，滚动着一行字：“本车以蓄电池救援模式运行，终点站：迪士尼。”";
+      }
+      return "你摸进车厢，反手把门带上。\n\
+车厢里黑得只看得见门缝那一线。座椅上散落着几份报纸和一个水杯——你撞到一副骨架般的东西，过了两秒才反应过来那只是个行李箱。\n\
+你摸到驾驶室门口，凭着记忆按下面板上凸起的几个键。没有反应。再按，还是没有。\n\
+这节车没有电。\n\
+你想起入口台阶上那具穿黄色背心的维修工——它的腰间，挂着一整串工具。";
+    },
+    choices: function(vars) {
+      var cs = [];
+      if (vars._stationPowered) {
+        cs.push({
+          text: "进驾驶室",
+          nextScene: "地铁站-发车确认",
+          condition: "chasedByZombies < 4",
+          elseScene: "地铁站-站台层-隧道尸潮",
+          effect: updateTime(1)
+        });
+      } else {
+        cs.push({
+          text: "沿楼梯回站厅，去找维修工的工具",
+          nextScene: "地铁站-楼梯-折返",
+          effect: updateTime(2)
+        });
+      }
+      cs.push({
         text: "看看车厢里的线路图",
         nextScene: "地铁站-线路图"
-      },
-      {
-        text: "算了，下车退回地面",
-        nextScene: "东明路-三林路"
-      }
-    ]
+      });
+      cs.push({
+        text: "下车，回到站台",
+        nextScene: "地铁站-站台层",
+        effect: updateTime(1)
+      });
+      return cs;
+    }
   },
 
   "地铁站-线路图": {
     image: "images/placeholder.png" /* TODO: images/地铁站/trainMap.png */,
-    text: "你凑到线路图前。11号线贯穿上海西北到东南：嘉定北→……→三林东路→浦三路→御桥→迪士尼。",
+    text: "你凑到线路图前。11号线贯穿上海西北到东南：嘉定北→……→三林东路→浦三路→御桥→迪士尼。\n\
+图下角印着一行小字：往嘉定北方向的隧道因故障封闭——那头的轨道上，据说横着好几节脱线的废车厢。\n\
+能走的，只剩迪士尼这一个方向。",
     choices: [
       {
-        text: "去迪士尼",
-        nextScene: "地铁站-迪士尼方向",
-        effect: updateTime(5)
-      },
-      {
-        text: "下车",
-        nextScene: "东明路-三林路"
+        text: "回到车厢",
+        nextScene: "地铁站-选择列车",
+        effect: updateTime(1)
       }
     ]
   },
 
-  "地铁站-嘉定北方向": {
-    image: "images/placeholder.png" /* TODO: images/地铁站/trainInterior.png */,
-    text: "你试着往驾驶室方向走了几步——透过前窗可以看到隧道里漆黑一片，前方的轨道上横七竖八地停着几节废弃的车厢，堵死了去路。\n显示屏上闪烁着一行字：“因线路故障，本次列车终点站调整为迪士尼。”",
+  // ==================== 发车（不可逆） ====================
+  "地铁站-发车确认": {
+    image: "images/placeholder.png" /* TODO: images/地铁站/驾驶室.webp */,
+    text: "你推开驾驶室的门，坐进驾驶座。蓄电池的余量表停在绿区，救援模式的推杆立在面板正中，红色，很显眼。\n\
+玻璃外是隧道口那团化不开的黑。身后，是你走过的这一整座城市——街道、商场、学校、医院，和你留下来的一切。\n\
+推下推杆，车门关闭，列车启动。这一走，就没有回头路了。",
     choices: [
       {
-        text: "那就去迪士尼",
+        text: "推下牵引推杆",
         nextScene: "地铁站-迪士尼方向",
         effect: updateTime(5)
       },
       {
-        text: "下车",
-        nextScene: "东明路-三林路"
+        text: "松开手，回到车厢再想想",
+        nextScene: "地铁站-选择列车",
+        effect: updateTime(1)
       }
     ]
   },
@@ -609,22 +1248,27 @@ Object.assign(storyData, {
   "地铁站-迪士尼方向": {
     image: "images/placeholder.png" /* TODO: images/地铁站/trainDeparting.png */,
     onEnter: { set: { currentArea: "迪士尼", currentPlace: "迪士尼", currentPos: "迪士尼" } },
-    text: "你走进驾驶室，按下了关门按钮。屏蔽门缓缓合上。你又试了几个按钮——列车启动了。\n列车在隧道中行驶，车窗外的黑暗被偶尔掠过的应急灯打断。你靠在座位上，听着轨道有节奏的撞击声。\n大概二十分钟后，列车开始减速。窗外出现了灯光——站台的轮廓在黑暗中浮现出来。\n显示屏切换了一行文字：“迪士尼站到了。”",
+    text: "你按下了关门按钮。屏蔽门缓缓合上，把站台上所有追过来的东西都关在了外面。\n\
+救援模式的列车开得很慢，慢得像在爬。轨道有节奏地撞击着，车窗外的黑暗被偶尔掠过的应急灯打断。\n\
+大概二十分钟后，列车开始减速。窗外出现了灯光——不是应急灯的惨白，是探照灯那种稳定的、有人维护的亮。站台的轮廓在黑暗中浮现出来。\n\
+显示屏切换了一行文字：“迪士尼站到了。”",
     choices: [
       {
         text: "下车",
-        nextScene: "迪士尼门口"
+        nextScene: "结局-迪士尼-幸存者聚居地"
       }
     ]
   }
 });
 
-// ===== 未实装区域 · 占位 stub（先能走通，剧情待后续制作） =====
+// ===== 迪士尼 · 好结局占位（后续做正片区域时改回普通区域节点） =====
 Object.assign(storyData, {
-  "迪士尼门口": {
-    image: "images/placeholder.png",
-    text: "列车停稳，门开了。站台空无一人，电子屏还在滚动无关紧要的提醒。通往乐园的通道口横着半扇铁栅栏，里面黑漆漆一片。\n（作者尚未更新此处）",
-    choices: [
-    ]
+  "结局-迪士尼-幸存者聚居地": {
+    image: "images/placeholder.png" /* TODO: images/迪士尼/门口.webp */,
+    text: "列车停稳，门开了。\n\
+站台被探照灯照得雪亮，轨道对面垒着沙袋和拒马，沙袋后面有人影在活动——活的、会喊话的人影。\n\
+一只喇叭响起，带着电流的毛边：“站台上的！举起双手！慢慢走过来！”\n\
+你举起双手，朝着灯光走过去。腿还在抖，但你没有停。\n\
+你走到了。\n<span class='end'>—— 抵达：幸存者聚居地 ——</span>\n（作者尚未更新此处，后续剧情待制作）"
   }
 });

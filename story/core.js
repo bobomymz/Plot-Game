@@ -129,6 +129,9 @@ const storyData = {
     hasMap: false,             // 是否有交通地图（三林安居苑藤蔓丧尸）
     _hasPoliceMap: false,      // 是否掌握去警察局的穿行路线（金谊广场陈默地图，解锁上实南校北段车阵）
     hasLubricant: false,       // 是否有润滑油（五金店仓库，可带到安居苑修车）
+    hasMetroTools: false,      // 是否有地铁站维修工工具串（站厅维修工丧尸腰间；开员工通道铁门，站务室/配电间在其后）
+    _stationPowered: false,    // 地铁站是否已恢复送电（配电间先红后黄合闸；站台照明+列车蓄电池预充）
+    _procedureKnown: false,    // 是否看过站务室《车站用电规程》（合闸顺序情报，防跳闸火花）
     hasCrumpledLeaflet: false, // 是否有揉皱的传单
     _cafeteriaEnterMinute: -1, // 长者食堂首次进入的游戏总分钟数（计时难度用，-1=未进入）
     hasPhone: false,           // 是否拥有可用的手机(自己的原机[全家门口妈妈遗物] 或 华为店展示机)
