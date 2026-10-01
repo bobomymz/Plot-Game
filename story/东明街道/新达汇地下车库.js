@@ -1,9 +1,11 @@
-// ========== 新达汇·B1地下停车场（2026-10-01 改造版） ==========
+// ========== 新达汇·B1地下停车场（2026-10-01 改造版 + 同日评审修订） ==========
 // 12区网状结构。Day3 起出现主线目标：金谊广场幸存者小明开车进来搬物资，被排水沟上来的
 // 丧尸袭击身亡，车（钥匙插在点火器上）留在 F 区深处——打赢车旁战斗即可开走，无需钥匙。
 // 障碍链：dd>=3 时间门槛 → 配电室接线通电（独立回路，不受商场总闸影响）→ 车旁闪色战斗
 // → 点火（引擎声=全场信号）→ 限定操作次数的驾驶逃亡 → 撞断杆出库。
 // 随机搜车：未通电/非目标区搜车走加权随机池（空车/即食食品/出声/锁车惊吓），每次 +1 噪音。
+// 评审修订：搜车回原区（_garageSearchFrom）/ 驱逐当天入口播报+跨日衰减正文 / 接线手机60%中间档
+// / 西车道驾驶额外-1 / 车开走后F区空位并关二次点火 / I·K·L 侦查细节 / 涂鸦去重 / 灯态化文案。
 // 方案文档：docs/区域方案-新达汇地下车库改造.md
 
 var XDGAR = "新达汇-B1停车场";
@@ -17,10 +19,11 @@ function xdGarSight(vars) {
 }
 
 // 随机搜车路由（加权）：F区摸黑可能撞上守着小明的车的丧尸（比通电后正面打更险）。
+// 遭遇判定看本轮搜车的起点区（_garageSearchFrom），不看上一次的来路——从F区反复搜，每次都有 30% 撞上。
 // __sceneRefs 供 lint_story 补记入边（否则随机池节点会被误判孤立场景）。
 function xdGarSearchRouter(vars) {
   var r = Math.random();
-  if (vars.dd >= 3 && !vars._wiredCorrectly && vars._lastScene === XDGAR + "F区" && r < 0.3) {
+  if (vars.dd >= 3 && !vars._wiredCorrectly && vars._garageSearchFrom === XDGAR + "F区" && r < 0.3) {
     return XDGAR + "-摸黑遭遇";
   }
   if (r < 0.35) return XDGAR + "-搜车-空车";
@@ -51,44 +54,57 @@ function xdGarDriveText(vars) {
   return "\n身后，排水沟的方向炸开一片水声。整个车库都听见了这声引擎。";
 }
 
-// 看过疏散图的玩家，驾驶时有方向提示（不构成选项、不耗次数）
-function xdGarMapHint(vars) {
-  return vars._garageMapSeen
-    ? "\n疏散图上的线路在你脑子里过了一遍——出口坡道在入口平台的东南角。"
-    : "";
+// 看过疏散图的玩家，驾驶时有方向提示（不构成选项、不耗次数；提示随当前节点变化，不再是同一句）
+function xdGarMapHint(vars, hint) {
+  return vars._garageMapSeen ? "\n" + hint : "";
 }
 
 Object.assign(storyData, {
 
   // ==================== A区 · 入口平台（网状枢纽之一） ====================
   "新达汇-B1停车场A区": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingA.png */,
+    image: "images/placeholder.png" /* TODO: 优先四图之一 images/xindahui/b1ParkingA.png（亮灯湿痕版） */,
     onEnter: function(vars) {
       vars.currentPlace = "新达汇";
       vars.currentPos = "地下车库";
       // 跨日衰减：每天 -2，驱逐不清零（旧版"驱逐=白板重刷"漏洞的修正）
       var last = (vars._garageLastDay === undefined) ? vars.dd : vars._garageLastDay;
       if (vars.dd > last) {
-        vars._garageOps = Math.max(0, (vars._garageOps || 0) - (vars.dd - last) * 2);
+        var before = vars._garageOps || 0;
+        vars._garageOps = Math.max(0, before - (vars.dd - last) * 2);
+        vars._garageDecayDays = (before > 0) ? (vars.dd - last) : 0;
+      } else {
+        vars._garageDecayDays = 0;
       }
       vars._garageLastDay = vars.dd;
       return {};
     },
     text: function(vars) {
-      var desc = "你来到停车场入口的平台。坡道从这里往下延伸进车库深处，头顶几盏应急灯还亮着，昏黄的光勉强照出主通道的轮廓。";
-      if (vars.dd >= 3) {
-        desc += "\n地面上有两道轮胎印，从坡道口一路碾进来——压过积水的地方还没干透，是最近才留下的。";
+      var outside = (vars._lastScene === "新达汇-B1走廊" || vars._lastScene === "新达汇车库出口");
+      var day3 = vars.dd >= 3;
+      var desc = outside ? "你从外面的天光里折回来，顺着坡道下到入口的平台。" : "你回到停车场入口的平台。";
+      if (vars._wiredCorrectly) {
+        desc += "头顶的灯一盏盏亮着，暖黄色的光把坡道照得通透，几盏应急灯反倒显得可有可无。";
+        if (day3) desc += "\n两道新鲜的轮胎印从坡道口一路碾进来，压过积水的地方在灯光下亮得反光——湿痕顺着坡道一路往车库深处去，中间没有断过。";
+      } else {
+        desc += "坡道从这里往下延伸进车库深处，头顶几盏应急灯还亮着，昏黄的光勉强照出主通道的轮廓。";
+        if (day3) desc += "\n地面上有两道轮胎印，从坡道口一路碾进来——压过积水的地方还没干透，是最近才留下的。";
       }
       desc += "\n主通道往前通向车库深处，左侧是西侧车道，右侧拐角堆着杂物。";
+      if (vars._garageDecayDays > 0) {
+        desc += "\n排水沟那头的水声比上次退了些——隔了" + vars._garageDecayDays + "天，它们散了一些。";
+      }
+      if ((vars._garageOps || 0) >= 5) {
+        desc += "\n<span class='warn'>还没往下走你就听见了：车库深处的水声密得像下雨。它们还没散。今天硬闯进去，每一步都是赌。</span>";
+      }
       return desc;
     },
     choices: [
-      { text: "沿主通道往前走", nextScene: "新达汇-B1停车场B区", effect: updateTime(2) },
-      { text: "左拐进西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
-      { text: "右拐到拐角处看看", nextScene: "新达汇-B1停车场H区", effect: updateTime(1) },
-      { text: "下行车道去坡道口", nextScene: "新达汇-B1停车场J区", effect: updateTime(1) },
-      { text: "搜查入口附近的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) },
-      { text: "去B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(2) }
+      { text: "沿主通道往深处走", nextScene: "新达汇-B1停车场B区", effect: updateTime(2) },
+      { text: "去西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
+      { text: "去拐角杂物堆", nextScene: "新达汇-B1停车场H区", effect: updateTime(1) },
+      { text: "去坡道口（出口方向）", nextScene: "新达汇-B1停车场J区", effect: updateTime(1) },
+      { text: "回B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(2) }
     ]
   },
 
@@ -98,10 +114,10 @@ Object.assign(storyData, {
     text: function(vars) {
       var sight = xdGarSight(vars);
       if (sight === "lit") {
-        return "灯亮着。主通道被暖黄色的灯光照得一览无余，你能看清每个方向的岔口：防火门、东北拐角、第二停车排，还有深处那片角落。";
+        return "灯亮着。主通道被暖黄色的灯光照得一览无余：防火门在你左手边第二根立柱后面，中段横道的口子在右手边，车道尽头在最深处那头。四个方向的岔口都看得清清楚楚。";
       }
       if (sight === "torch") {
-        return "你站在主通道中段。手电的光束劈开黑暗，照出立柱上一格格车位编号——前方通向更深处，左右各有岔路。";
+        return "你站在主通道中段。手电的光束劈开黑暗，照出立柱上一格格车位编号——防火门的轮廓在左手边，右手边是横道的岔口，最深处那头黑得像一口井。";
       }
       if (sight === "dim") {
         return "你站在主通道中段，举着手机，靠屏幕的微光辨认方向——电量还剩 " + vars.phoneBattery + "%。左侧有一扇防火门的轮廓，右侧隐约有一条岔路。";
@@ -109,13 +125,11 @@ Object.assign(storyData, {
       return "你站在主通道中段，一只手扶着立柱。这里几乎没有光。左侧好像有一扇门的轮廓，右侧隐约有一条岔路。";
     },
     choices: [
-      { text: "往深处走", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
-      { text: "左前方的防火门", nextScene: "新达汇-B1停车场C区", effect: updateTime(2) },
-      { text: "右前方的东北拐角", nextScene: "新达汇-B1停车场E区", effect: updateTime(2) },
-      { text: "拐进第二停车排", nextScene: "新达汇-B1停车场K区", effect: updateTime(1) },
-      { text: "穿横道去西侧", nextScene: "新达汇-B1停车场I区", effect: updateTime(1) },
-      { text: "回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) },
-      { text: "搜查主通道两侧的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
+      { text: "去车道尽头", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
+      { text: "去防火门后的配电室", nextScene: "新达汇-B1停车场C区", effect: updateTime(2) },
+      { text: "去东北拐角", nextScene: "新达汇-B1停车场E区", effect: updateTime(2) },
+      { text: "穿中段横道去西侧车道", nextScene: "新达汇-B1停车场I区", effect: updateTime(1) },
+      { text: "回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
     ]
   },
 
@@ -124,7 +138,16 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingC.png */,
     text: function(vars) {
       if (vars._wiredCorrectly) return "配电室的灯亮着。墙上的配电箱面板已经合上了——几根重新接好的电线整齐地排列着。没什么需要再做的了。";
-      return "你穿过防火门，走进停车场附属的配电室。墙上的配电箱面板掉了一半，几根不同颜色的电线从接口处松脱，垂落在外面。\n如果你能把它们重新接好，应该能恢复这一片的照明。";
+      var last = vars._lastScene;
+      var head;
+      if (last === "新达汇-B1停车场D区") {
+        head = "你从旧区爬上台阶，推开防火门，回到配电室。";
+      } else if (last === "新达汇-B1停车场-接线" || last === "新达汇-B1停车场-接线成功" || last === "新达汇-B1停车场-接线失败") {
+        head = "你退开半步，重新打量这台配电箱。";
+      } else {
+        head = "你穿过防火门，走进停车场附属的配电室。";
+      }
+      return head + "墙上的配电箱面板掉了一半，几根不同颜色的电线从接口处松脱，垂落在外面。\n如果你能把它们重新接好，应该能恢复这一片的照明。";
     },
     choices: [
       {
@@ -147,7 +170,7 @@ Object.assign(storyData, {
       if (vars.hasTorch) {
         desc += "\n你打着手电筒，仔细擦掉了盖板上的污渍。接线图清晰地显示着每组线的接口位置——虽然电线没颜色，但图纸标得很清楚。你知道了该怎么接。";
       } else if (vars.hasPhone && vars.phoneBattery > 0) {
-        desc += "\n你借着手机屏微弱的亮光辨认图纸。大部分细节都看不清——你只能凭感觉试试了。";
+        desc += "\n你借着手机屏的微光辨认图纸。接线图的大半能看清——只剩两处接口的标注被油污盖死。你把看得清的接上，看不清的那两处，只能赌。";
       } else {
         desc += "\n一片漆黑。你只能用手摸着线头和接口的位置，全凭感觉试试了。";
       }
@@ -161,10 +184,16 @@ Object.assign(storyData, {
         showCondition: "hasTorch"
       },
       {
-        text: "凭感觉把几根线接在一起",
+        text: "借着微光把线接上——推上电闸",
+        nextScene: function() { return Math.random() < 0.6 ? '新达汇-B1停车场-接线成功' : '新达汇-B1停车场-接线失败'; },
+        effect: updateTime(2),
+        showCondition: "!hasTorch && hasPhone && phoneBattery > 0"
+      },
+      {
+        text: "摸黑把几根线接在一起",
         nextScene: function() { return Math.random() < 0.3 ? '新达汇-B1停车场-接线成功' : '新达汇-B1停车场-接线失败'; },
         effect: updateTime(2),
-        showCondition: "!hasTorch"
+        showCondition: "!hasTorch && !(hasPhone && phoneBattery > 0)"
       },
       { text: "算了，不接", nextScene: "新达汇-B1停车场C区" }
     ]
@@ -199,15 +228,32 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingD.png */,
     text: function(vars) {
       var sight = xdGarSight(vars);
-      var light = (sight === "lit" || sight === "torch") ? "灯光" : (sight === "dim" ? "手机的微光" : "黑暗中依稀的轮廓");
-      return "你走下台阶，来到停车场旧区。地面比上面低了一截，脚下的水泥地湿漉漉的，踩上去有细碎的回声。\n地面上有一排排水沟的铁栅栏——栅栏缝隙里能看到浑浊的水面。水面在" + light + "下泛着暗色的光，看起来不深，但有一种……细微的、有节奏的拍水声从下面传来。\n你不太确定那是水流还是别的东西。";
+      var src = vars._lastScene;
+      var head;
+      if (src === "新达汇-B1停车场F区") {
+        head = "你从深处折回来，爬上台阶，回到旧区的地面。";
+      } else if (src === "新达汇-B1停车场G区") {
+        head = "你顺着西侧斜坡下到旧区。";
+      } else {
+        head = "你走下台阶，来到停车场旧区。";
+      }
+      var desc = head + "地面比上面低了一截，脚下的水泥地湿漉漉的，踩上去有细碎的回声。\n地面上有一排排水沟的铁栅栏——栅栏缝隙里能看到浑浊的水面。";
+      if (sight === "lit") {
+        desc += "灯光斜斜地打下来，水面在昏黄里泛着暗色的光。那阵有节奏的拍水声还在——水面下，一道细长的影子贴着栅栏慢慢横移，从这头，到那头。";
+      } else if (sight === "torch") {
+        desc += "手电的光扫过去，水面泛着暗色的光，看起来不深，但有一种……细微的、有节奏的拍水声从下面传来。\n你不太确定那是水流还是别的东西。";
+      } else if (sight === "dim") {
+        desc += "手机的微光只够照出最近的一格栅栏。水面下有动静，但你看不清是什么。细微的、有节奏的拍水声从下面传来，一下，一下，不紧不慢。";
+      } else {
+        desc += "黑暗里你看不清水面，只有一种……细微的、有节奏的拍水声从下面传来。看不见的时候，这声音显得格外近。";
+      }
+      return desc;
     },
     choices: [
       { text: "仔细看看栅栏上的刻字", nextScene: "新达汇-B1停车场-涂鸦" },
       { text: "沿斜坡往深处去", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
       { text: "爬西侧斜坡上去", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
-      { text: "上台阶回配电室", nextScene: "新达汇-B1停车场C区", effect: updateTime(1) },
-      { text: "搜查旧区的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
+      { text: "上台阶回配电室", nextScene: "新达汇-B1停车场C区", effect: updateTime(1) }
     ]
   },
 
@@ -249,7 +295,7 @@ Object.assign(storyData, {
 
   // ==================== F区 · 深处（★事故点） ====================
   "新达汇-B1停车场F区": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
+    image: "images/placeholder.png" /* TODO: 优先四图之一 images/xindahui/parkingF.png（事故点） */,
     text: function(vars) {
       // 从战斗/摸黑脱身退回时的差异化承接（否则"走到尽头"与"你退了出去"矛盾）
       var ret = (vars._lastScene === "新达汇-B1停车场-摸黑-脱身" || vars._lastScene === "新达汇-B1停车场-摸黑-带伤" || vars._lastScene === "新达汇-B1停车场-车旁搜身-受伤")
@@ -266,10 +312,23 @@ Object.assign(storyData, {
       } else if (!vars._wiredCorrectly) {
         // Day3+：车在，但没通电时无法辨认
         body = "车库最深处的角落。黑暗里传来一种细微的、有节奏的湿润声音，像是什么东西在进食。\n你在黑暗里分不清车位的轮廓——只知道那个方向的空气里，多了一股新鲜的血腥气。";
+      } else if (vars.hasCar) {
+        // 车已开走：空车位（关掉二次点火，状态闭环）
+        body = "车道尽头的角落空了。地面上留着一圈干干净净的长方形车印，四边带着轮胎碾出的湿边。驾驶座的门大敞着，遮阳板翻落在一旁。\n排水沟的栅栏歪着，栅栏边那具尸体还在，手里攥着半张购物清单。点火器上空空荡荡——车和钥匙，都不在了。";
       } else if (vars._visit["新达汇-B1停车场-车旁遭遇"] > 0) {
-        body = "车道尽头的角落里，那辆深灰色的荣威轿车安静地停着。驾驶座的门敞开着，车旁的排水沟栅栏歪了两根，栅栏边摊着一具被啃咬过的尸体。\n驾驶座里，钥匙还插在点火器上。";
+        // 打赢但没马上开走：水声不退，拖延有代价
+        if (vars.dd >= 5) {
+          body = "那辆深灰色的荣威还停在车道尽头的角落。引擎盖早就凉透了，车身侧面的血迹干成了深褐色的壳，空气里的甜腥味比几天前厚了一层。栅栏边的尸体已经蜷成一团认不出的轮廓，车里的手机屏幕黑着。\n驾驶座里，钥匙还插在点火器上——这么多天，谁也没来动过。";
+        } else {
+          body = "车道尽头的角落里，那辆深灰色的荣威轿车安静地停着。驾驶座的门敞开着，车旁的排水沟栅栏歪了两根，栅栏边摊着一具被啃咬过的尸体。\n驾驶座里，钥匙还插在点火器上。\n<span class='warn'>水声没有退。栅栏缝里，灰白的轮廓贴着水面缓缓挪动——它们缩回了沟里，只是在等。这地方每多待一刻，都是在花代价。</span>";
+        }
       } else {
-        body = "车道尽头的角落里停着一辆车——<span class='crit'>一辆深灰色的荣威轿车，车身上没有灰。</span>\n驾驶座的门敞开着，车灯熄着，但引擎盖摸上去是温的。车旁的排水沟栅栏歪了两根，一个佝偻的影子正伏在车门边，一下一下地朝车厢里啃咬着什么。\n影子旁边还有一只，正从排水沟里往外爬。";
+        // 目标车在，战斗未发生
+        if (vars.dd >= 5) {
+          body = "车道尽头那个车位上的，就是那辆深灰色的荣威——车身上没有灰，引擎盖却已经凉透了，车身侧面的血迹干成深褐色的壳，血腥气发酵成一股甜腻的腐味。\n车旁的排水沟栅栏歪了两根，一个影子还伏在车门边，动作慢得像在打盹。栅栏缝里，另一只只露出一截湿漉漉的脊背。";
+        } else {
+          body = "车道尽头的角落里停着一辆车——<span class='crit'>一辆深灰色的荣威轿车，车身上没有灰。</span>\n驾驶座的门敞开着，车灯熄着，但引擎盖摸上去是温的。车旁的排水沟栅栏歪了两根，一个佝偻的影子正伏在车门边，一下一下地朝车厢里啃咬着什么。\n影子旁边还有一只，正从排水沟里往外爬。";
+        }
         if (vars._knowsSurvivorCar) {
           body += "\n<span class='think'>长廊的人说过——小明前天开着车出去，到现在没回来。就是它了。</span>";
         }
@@ -279,13 +338,13 @@ Object.assign(storyData, {
     choices: [
       {
         text: "靠近那辆车",
-        showCondition: "dd >= 3 && _wiredCorrectly && !_visit['新达汇-B1停车场-车旁遭遇']",
+        showCondition: "dd >= 3 && _wiredCorrectly && !hasCar && !_visit['新达汇-B1停车场-车旁遭遇']",
         nextScene: "新达汇-B1停车场-车旁遭遇",
         effect: updateTime(1)
       },
       {
         text: "上车",
-        showCondition: "dd >= 3 && _wiredCorrectly && (_visit['新达汇-B1停车场-车旁搜身'] > 0 || _visit['新达汇-B1停车场-车旁搜身-受伤'] > 0)",
+        showCondition: "dd >= 3 && _wiredCorrectly && !hasCar && (_visit['新达汇-B1停车场-车旁搜身'] > 0 || _visit['新达汇-B1停车场-车旁搜身-受伤'] > 0)",
         nextScene: "新达汇-B1停车场-上车点火"
       },
       {
@@ -328,7 +387,10 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
     onEnter: { add: { chasedByZombies: 1 } },
     text: function(vars) {
-      var desc = "最后一只抽搐着倒下，不动了。你喘匀了气，才敢看那具尸体。\n是个年轻人，穿一件洗得发白的外套，手里还攥着半张购物清单——新达汇超市的目录，背面用圆珠笔写着一行字：“多的卖给长廊。”\n他的手机摔在脚边，屏幕裂成了蛛网，还亮着——锁屏壁纸是个笑得很开的小女孩，输入界面停在一条没发出去的短信上：“东西太多，我跑第二趟”\n<span class='term'>信号栏空空如也。</span>\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>——他刚停好车，还没来得及拔。";
+      var phoneLine = (vars.dd >= 5)
+        ? "他的手机摔在脚边，屏幕裂成了蛛网，黑着——电池早就耗干了，谁也没有来过。"
+        : "他的手机摔在脚边，屏幕裂成了蛛网，还亮着——锁屏壁纸是个笑得很开的小女孩，输入界面停在一条没发出去的短信上：“东西太多，我跑第二趟”\n<span class='term'>信号栏空空如也。</span>";
+      var desc = "最后一只抽搐着倒下，不动了。你喘匀了气，才敢看那具尸体。\n是个年轻人，穿一件洗得发白的外套，手里还攥着半张购物清单——新达汇超市的目录，背面用圆珠笔写着一行字：“多的卖给长廊。”\n" + phoneLine + "\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>——他刚停好车，还没来得及拔。";
       desc += "\n<span class='warn'>车库里回荡着打斗的动静。水声正从四面八方聚拢过来。</span>";
       return desc;
     },
@@ -422,7 +484,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingH.png */,
     text: function(vars) {
       var sight = xdGarSight(vars);
-      var desc = "拐角处堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。购物车里有一只落满灰的毛绒熊玩偶，半埋在杂物里。墙上有人用马克笔写着：\n“它们会从排水沟爬上来。”";
+      var desc = "拐角处堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。购物车里有一只落满灰的毛绒熊玩偶，半埋在杂物里。旁边的立柱上，有人用马克笔写了两行字：\n“车别乱开。有的不是空的。——302的胖子”";
       if (sight === "lit" || sight === "torch") {
         desc += "\n杂物堆后面塞着一根带血的撬棍，撬棍底下压着一张折叠的保养单——荣威4S店的，车牌号一栏，写的正是东北角那辆白色SUV。\n<span class='think'>有人比你更早想过这辆车的主意。没成。</span>\n杂物堆侧边留出一条刚够侧身通过的缝——有人清出来的，通向东北拐角的检修通道。";
       }
@@ -430,8 +492,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "侧身穿过检修通道", nextScene: "新达汇-B1停车场E区", effect: updateTime(2) },
-      { text: "退回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(1) },
-      { text: "搜查拐角附近", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
+      { text: "退回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(1) }
     ]
   },
 
@@ -440,15 +501,14 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingI.png */,
     text: function(vars) {
       if (xdGarSight(vars) === "lit") {
-        return "中段横道是一条横穿车库的窄车道，两排立柱把车影切成一段一段的。从这里切过去，东侧主通道和西侧车道之间不用再绕入口平台。";
+        return "中段横道是一条横穿车库的窄车道，两排立柱把车影切成一段一段的。从这里切过去，东侧主通道和西侧车道之间不用再绕入口平台。\n中段有一根立柱上刻满了“正”字，一笔一划刻得很深，密密麻麻数不清有多少个——有人在这里数过什么，数了很久。";
       }
-      return "你摸进一条横穿车库的窄车道，两排立柱擦着肩膀过去。方向感告诉你——这条道横着连通车库的东西两侧。";
+      return "你摸进一条横穿车库的窄车道，两排立柱擦着肩膀过去。方向感告诉你——这条道横着连通车库的东西两侧。指尖划过其中一根立柱，上面刻着一道道深浅不一的凹槽，密得硌手。";
     },
     choices: [
       { text: "往东去主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
       { text: "往西去西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(1) },
-      { text: "拐进第二停车排", nextScene: "新达汇-B1停车场L区", effect: updateTime(1) },
-      { text: "搜查横道两侧的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
+      { text: "拐进西侧第二停车排", nextScene: "新达汇-B1停车场L区", effect: updateTime(1) }
     ]
   },
 
@@ -489,7 +549,13 @@ Object.assign(storyData, {
       if (xdGarSight(vars) === "dark") {
         return "你摸进主通道旁的停车排。车挨着车，中间只留一条窄缝，手电照不到的地方全是金属的棱角。";
       }
-      return "主通道旁边是第二停车排，两排车头对着车头，中间只留一条缝。大多是落了灰的家用车，有一辆的后备箱盖开着，像一张等了很久的嘴。";
+      var desc = "主通道旁边是第二停车排，两排车头对着车头，中间只留一条缝。大多是落了灰的家用车，有一辆的后备箱盖开着，像一张等了很久的嘴。";
+      if (xdGarSight(vars) === "lit") {
+        desc += "\n后备箱是空的，箱底垫着一张被水汽洇过的超市传单——纸角朝着车道尽头那头翘着，水痕洇开的方向也是。这排车离排水沟远，湿气是从深处飘过来的。";
+      } else {
+        desc += "\n你探头往那辆开着后备箱的车里看了一眼——空的，箱底垫着一张纸，被水汽洇得发皱。";
+      }
+      return desc;
     },
     choices: [
       { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
@@ -505,7 +571,13 @@ Object.assign(storyData, {
       if (xdGarSight(vars) === "dark") {
         return "你摸进西侧的停车排。这里的车停得更乱，有几辆是斜插着的。脚下的地面黏腻腻的，不知道是什么。";
       }
-      return "西侧的第二停车排比东边更挤，有几辆车是斜插着停的，像停到一半出了什么事。地面上散着几只一次性手套——修车的人留下的，或者是更晚的什么东西。";
+      var desc = "西侧的第二停车排比东边更挤，有几辆车是斜插着停的，像停到一半出了什么事。地面上散着几只一次性手套——修车的人留下的，或者是更晚的什么东西。";
+      if (xdGarSight(vars) === "lit") {
+        desc += "\n你捡起其中一只翻过来看——指缝里嵌着几截黄色的绝缘胶布碎屑，和配电室里那种电线外皮上缠的，是同一种东西。";
+      } else {
+        desc += "\n你捏起一只手套搓了搓——指缝里嵌着什么硬硬的小碎屑，摸不出来是什么。";
+      }
+      return desc;
     },
     choices: [
       { text: "去西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(1) },
@@ -517,7 +589,15 @@ Object.assign(storyData, {
   // ==================== 随机搜车系统 ====================
   "新达汇-B1停车场-搜车": {
     image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
-    onEnter: { add: { _garageOps: 1 } },
+    onEnter: function(vars) {
+      vars._garageOps = (vars._garageOps || 0) + 1;
+      // 记录本轮搜车起点（链中"换个位置再搜"不覆盖起点；退出搜查时清 pending）
+      if (!vars._garageSearchPending) {
+        vars._garageSearchFrom = vars._lastScene || XDGAR + "B区";
+        vars._garageSearchPending = true;
+      }
+      return {};
+    },
     text: function(vars) {
       var sight = xdGarSight(vars);
       var desc = (sight === "lit")
@@ -541,12 +621,18 @@ Object.assign(storyData, {
   "新达汇-B1停车场-搜车-空车": {
     image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
     text: function(vars) {
-      var models = ["一辆白色的大众polo", "一辆黑色的日产轩逸", "一辆落满灰的别克凯越", "一辆车窗贴满膜的本田飞度"];
-      var m = models[Math.floor(Math.random() * models.length)];
+      var looted = (vars._garageLootLeft || 0) <= 0;
       if (xdGarSight(vars) === "lit") {
-        return "是" + m + "。你拉开驾驶座翻了一遍——储物格里只有过期的保险单和几张停车票。方向盘上的灰厚得能写字，这辆车在爆发前就没人动过。";
+        var models = ["一辆白色的大众polo", "一辆黑色的日产轩逸", "一辆落满灰的别克凯越", "一辆车窗贴满膜的本田飞度"];
+        var m = models[Math.floor(Math.random() * models.length)];
+        var desc = "是" + m + "。你拉开驾驶座翻了一遍——储物格里只有过期的保险单和几张停车票。方向盘上的灰厚得能写字，这辆车在爆发前就没人动过。";
+        if (looted) desc += "\n<span class='think'>该翻的缝都翻过了——这个车库里的车，别指望再翻出吃的。</span>";
+        return desc;
       }
-      return "是" + m + "。你在黑暗里把它摸了个遍——储物格、遮阳板、座椅底下。除了几张摸不出字的票据，什么都没有。";
+      // 全黑/微光：只报触感，不报车型颜色（看不见就是看不见）
+      var desc2 = "你摸到的这辆车引擎盖冰凉，灰厚得糊手。储物格、遮阳板、座椅底下，你挨个摸了过去——只有几张摸不出字的票据。什么都没有。";
+      if (looted) desc2 += "\n车库里的缝，你感觉自己已经摸了个遍。再想捡吃的，得去别的地方。";
+      return desc2;
     },
     choices: [
       { text: "换个位置再搜", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(1) },
@@ -580,7 +666,15 @@ Object.assign(storyData, {
   "新达汇-B1停车场-搜车-出声": {
     image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
     onEnter: { add: { chasedByZombies: 1 } },
-    text: "你拉开副驾车门的瞬间——<span class='sfx'>哐当</span>！车门内侧挂着的灭火器支架被带了下来，砸在水泥地上，滚出去老远。\n回音在空旷的车库里荡了三个来回。你僵在原地，听着自己的心跳。\n黑暗深处，有什么东西改变了方向。",
+    text: function(vars) {
+      var desc = "你拉开副驾车门的瞬间——<span class='sfx'>哐当</span>！车门内侧挂着的灭火器支架被带了下来，砸在水泥地上，滚出去老远。\n回音在空旷的车库里荡了三个来回。你僵在原地，听着自己的心跳。";
+      if (xdGarSight(vars) === "lit") {
+        desc += "\n灯亮着，无处可藏。排水沟那头的拍水声停了一拍——然后变得更密。";
+      } else {
+        desc += "\n黑暗深处，有什么东西改变了方向。";
+      }
+      return desc;
+    },
     choices: [
       { text: "赶紧退开", nextScene: "新达汇-B1停车场-车库检查", effect: updateTime(1) }
     ]
@@ -626,6 +720,10 @@ Object.assign(storyData, {
   // ==================== 噪音检查 / 强制驱逐 ====================
   "新达汇-B1停车场-车库检查": {
     image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingB.png */,
+    onEnter: function(vars) {
+      vars._garageSearchPending = false; // 本轮搜查结束，下次进搜车重新记起点
+      return {};
+    },
     text: function(vars) {
       if (vars._garageOps >= 5) {
         return "排水沟那边传来一阵剧烈的翻涌声——水花四溅，然后是什么沉重的东西爬上了地面的声音。你没有回头看。你跑了。";
@@ -641,7 +739,11 @@ Object.assign(storyData, {
         nextScene: "新达汇-B1停车场-强制驱逐",
         showCondition: "_garageOps >= 5"
       },
-      { text: "继续探索", nextScene: "新达汇-B1停车场B区", showCondition: "_garageOps < 5" },
+      {
+        text: "回到原地继续探索",
+        nextScene: function(v) { return v._garageSearchFrom || XDGAR + "B区"; },
+        showCondition: "_garageOps < 5"
+      },
       { text: "离开车库", nextScene: "新达汇-B1走廊", showCondition: "_garageOps < 5" }
     ]
   },
@@ -684,7 +786,7 @@ Object.assign(storyData, {
     onEnter: xdGarDriveEnter,
     text: function(vars) {
       var desc = "你倒车、掉头，车尾扫翻了一排雪糕筒。<span class='sfx'>哐啷</span>——雪糕筒滚出去老远。车头对准来时的车道，车灯把两排车影照得忽明忽暗。";
-      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      desc += xdGarMapHint(vars, "疏散图上的线过了一遍——从深处出去，往东走外圈经主通道到入口平台，是最稳的走法。") + xdGarDriveText(vars);
       return desc;
     },
     choices: [
@@ -698,7 +800,7 @@ Object.assign(storyData, {
     onEnter: xdGarDriveEnter,
     text: function(vars) {
       var desc = "你沿外圈车道往东北方向开。两侧的车影一模一样——同样的车身、同样的车距，像同一段路在重复。拐角处的柱子上喷着褪色的转向箭头，指向两个方向。";
-      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      desc += xdGarMapHint(vars, "图上的线对得上：这条外圈道一直通向东北拐角，过了拐角，主通道就在正前方。") + xdGarDriveText(vars);
       return desc;
     },
     choices: [
@@ -712,7 +814,7 @@ Object.assign(storyData, {
     onEnter: xdGarDriveEnter,
     text: function(vars) {
       var desc = "主通道比来时宽绰，但车灯的光柱里，<span class='crit'>影子开始从两侧的停车排里渗出来</span>——它们朝着引擎声的方向汇聚，正横穿过你的车道。";
-      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      desc += xdGarMapHint(vars, "主通道尽头就是入口平台——出口坡道在平台的东南角，直行就到。") + xdGarDriveText(vars);
       return desc;
     },
     choices: [
@@ -727,7 +829,7 @@ Object.assign(storyData, {
     onEnter: xdGarDriveEnter,
     text: function(vars) {
       var desc = "你切进中段横道。两排立柱贴着后视镜掠过去，车速不敢提起来——这条道窄得只容一台车。";
-      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      desc += xdGarMapHint(vars, "图上标着：横道往东是主通道，往西是西侧车道；主通道离出口更近。") + xdGarDriveText(vars);
       return desc;
     },
     choices: [
@@ -738,10 +840,15 @@ Object.assign(storyData, {
 
   "新达汇-B1停车场-驾驶-西车道": {
     image: "images/placeholder.png" /* TODO: images/xindahui/driveG.png */,
-    onEnter: xdGarDriveEnter,
+    // 西车道贴着旧区排水沟：路上要甩开扒上来的东西、绕开拖出来的栅栏，这一格额外消耗一次操作
+    onEnter: function(vars) {
+      xdGarDriveEnter(vars);
+      xdGarDriveEnter(vars);
+      return {};
+    },
     text: function(vars) {
-      var desc = "西侧车道贴着旧区的边走。地面开始泛潮，雨刮器扫过一道从地缝里漫出来的水渍——<span class='crit'>排水沟的水正在往上涨，有什么东西顺着车道边的栅栏往外爬</span>。";
-      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      var desc = "西侧车道贴着旧区的边走。地面开始泛潮，雨刮器扫过一道从地缝里漫出来的水渍——<span class='crit'>排水沟的水正在往上涨，有什么东西顺着车道边的栅栏往外爬</span>。\n一只灰白的手扒上了后保险杠，你猛打方向才把它甩脱；前面车道上横着半截从沟里拖出来的栅栏，你绕过去，又慢了一拍。这段路，费时得很。";
+      desc += xdGarMapHint(vars, "沿西侧车道直行就是入口平台——图上只标了出口在东南角，没标这一段贴着旧区。") + xdGarDriveText(vars);
       return desc;
     },
     choices: [
@@ -755,7 +862,7 @@ Object.assign(storyData, {
     onEnter: xdGarDriveEnter,
     text: function(vars) {
       var desc = "入口平台到了——开阔，头顶的应急灯把车漆照出一点反光。出口坡道就在右手边，坡道顶上透下来一线灰白的天光。";
-      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      desc += xdGarMapHint(vars, "出口坡道就在东南角，坡道顶上就是辅路。") + xdGarDriveText(vars);
       return desc;
     },
     choices: [
@@ -770,7 +877,7 @@ Object.assign(storyData, {
     onEnter: xdGarDriveEnter,
     text: function(vars) {
       var desc = "坡道口。收费亭歪在一边，<span class='crit'>断成两截的栏杆还挂在原地</span>——他闯进来时撞断的。坡道顶上的天光越来越亮。\n身后，水声连成了一片。";
-      desc += xdGarMapHint(vars) + xdGarDriveText(vars);
+      desc += xdGarMapHint(vars, "过了这根断杆，外面就是辅路。") + xdGarDriveText(vars);
       return desc;
     },
     choices: [

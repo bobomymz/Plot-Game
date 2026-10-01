@@ -76,6 +76,9 @@ const storyData = {
     _garageLastDay: 1,         // 新达汇B1停车场：上次到访的游戏日（A区 onEnter 跨日衰减 _garageOps）
     _escapeOps: 0,             // 驾驶逃亡剩余操作次数（上车点火设6，每移动一格-1，0后再移动=围堵QTE）
     _knowsSurvivorCar: false,  // 金谊长廊情报：知道小明开车去了新达汇B1没回来（只在车库事故点文案里呼应）
+    _garageSearchFrom: "",     // 新达汇B1停车场：本轮搜车起点区（退出搜查回原地；F区摸黑遭遇判定用）
+    _garageSearchPending: false, // 新达汇B1停车场：是否处于搜车链中（链中"换个位置再搜"不覆盖起点）
+    _garageDecayDays: 0,       // 新达汇B1停车场：本次进入时噪音衰减的天数（>0 时A区正文播报"散了一些"）
     _pipeBroke: false,         // 五金店暗道：铁管撬砸是否已失败（true=砸不断，走另一出口）
     _metPETeacher: false,      // 上实南校2号楼走廊：是否已遭遇体育老师丧尸（走廊再次进入的差异化承接）
     _peTeacherDead: false,     // 上实南校2号楼走廊：体育老师丧尸是否已被击杀

@@ -111,6 +111,9 @@ check(sv && "_garageLootLeft" in sv && sv._garageLootLeft === 3, "_variables 声
 check(sv && "_garageMapSeen" in sv && sv._garageMapSeen === false, "_variables 声明 _garageMapSeen=false");
 check(sv && "_garageLastDay" in sv && sv._garageLastDay === 1, "_variables 声明 _garageLastDay=1");
 check(sv && "_knowsSurvivorCar" in sv && sv._knowsSurvivorCar === false, "_variables 声明 _knowsSurvivorCar=false");
+check(sv && "_garageSearchFrom" in sv && sv._garageSearchFrom === "", "_variables 声明 _garageSearchFrom=''");
+check(sv && "_garageSearchPending" in sv && sv._garageSearchPending === false, "_variables 声明 _garageSearchPending=false");
+check(sv && "_garageDecayDays" in sv && sv._garageDecayDays === 0, "_variables 声明 _garageDecayDays=0");
 check(!!(cap && cap._garageLootLeft && cap._garageLootLeft.max === 3), "_caps 登记 _garageLootLeft 0-3");
 check(!("hasCarKey" in sv) || sv.hasCarKey === false, "hasCarKey 保留（王老师线不动）");
 
@@ -175,16 +178,27 @@ v._visit["新达汇-B1停车场-车旁搜身"] = 1;
 check(!!evalCond(condEnter.showCondition, v), "完胜搜身后（含中途退开）：F区可直接「上车」");
 v = Object.assign({}, base, { dd: 3, _wiredCorrectly: true, _visit: { "新达汇-B1停车场-车旁遭遇": 1, "新达汇-B1停车场-车旁搜身-受伤": 1 } });
 check(!!evalCond(condEnter.showCondition, v), "受伤档搜身后退开：同样可直接「上车」（两条战斗路径都算数）");
+v = Object.assign({}, base, { dd: 3, _wiredCorrectly: true, hasCar: true, _visit: { "新达汇-B1停车场-车旁遭遇": 1, "新达汇-B1停车场-车旁搜身": 1 } });
+check(!evalCond(condEnter.showCondition, v), "车已开走（hasCar）：F区「上车」消失（关掉二次点火）");
+check(!evalCond(condNear.showCondition, v), "车已开走：「靠近那辆车」也消失");
+const ftextGone = fzone.text(v);
+check(ftextGone.indexOf("空空荡荡") >= 0 && ftextGone.indexOf("钥匙还插在点火器上") < 0, "车开走后 F区正文=空车位，钥匙不在（状态闭环）");
 
 console.log("\n=== 4. 随机搜车路由 ===");
 const router = S("xdGarSearchRouter");
 check(typeof router === "function" && Array.isArray(router.__sceneRefs) && router.__sceneRefs.length === 5, "路由函数挂 __sceneRefs（5 目标，供 lint 补入边）");
 const targets = {};
 for (let i = 0; i < 600; i++) {
-  const t = router(Object.assign({}, base, { dd: 3, _wiredCorrectly: false, _lastScene: "新达汇-B1停车场F区" }));
+  const t = router(Object.assign({}, base, { dd: 3, _wiredCorrectly: false, _garageSearchFrom: "新达汇-B1停车场F区" }));
   targets[t] = (targets[t] || 0) + 1;
 }
-check(!!targets["新达汇-B1停车场-摸黑遭遇"], "F区 Day3 摸黑会撞上守车的丧尸（0.3 权重）");
+check(!!targets["新达汇-B1停车场-摸黑遭遇"], "F区搜车链（本轮起点=F区）Day3 摸黑会撞上守车的丧尸（0.3 权重）");
+const tLast = {};
+for (let i = 0; i < 300; i++) {
+  const t = router(Object.assign({}, base, { dd: 3, _wiredCorrectly: false, _lastScene: "新达汇-B1停车场F区", _garageSearchFrom: "新达汇-B1停车场B区" }));
+  tLast[t] = 1;
+}
+check(!tLast["新达汇-B1停车场-摸黑遭遇"], "遭遇只看本轮搜车起点（_garageSearchFrom），不看 _lastScene 来路");
 check(Object.keys(targets).every((t) => router.__sceneRefs.indexOf(t) >= 0), "路由输出全部落在 __sceneRefs 内");
 
 const t2 = {};
@@ -216,7 +230,7 @@ check(iv.chasedByZombies === 1, "点火引擎声 = 追兵 +1");
 check(ign.qte && typeof ign.qte.timeout === "string" && ign.qte.onTimeout === "结局-车库围堵", "点火 QTE：超时=结局-车库围堵");
 
 const driveIds = ["深处掉头", "东车道", "主通道", "横道", "西车道", "入口平台", "坡道口"];
-let driveOk = true, elseOk = true, decOk = true;
+let driveOk = true, elseOk = true, decOk = true, westExtra = false;
 for (const d of driveIds) {
   const sc = S("storyData['新达汇-B1停车场-驾驶-" + d + "']");
   if (!sc) { driveOk = false; continue; }
@@ -225,11 +239,17 @@ for (const d of driveIds) {
   for (const m of moves) { if (m.elseScene !== "新达汇-B1停车场-驾驶-围堵") elseOk = false; }
   var dv = { _escapeOps: 6 };
   sc.onEnter(dv);
-  if (dv._escapeOps !== 5) decOk = false;
+  if (d === "西车道") {
+    if (dv._escapeOps === 4) westExtra = true; // 贴排水沟：额外消耗一格
+    else decOk = false;
+  } else if (dv._escapeOps !== 5) {
+    decOk = false;
+  }
 }
 check(driveOk, "驾驶节点全部在位且移动选项带 _escapeOps 条件（坡道口冲出除外）");
 check(elseOk, "移动选项条件失败一律走 elseScene=围堵");
-check(decOk, "每个驾驶节点 onEnter 使 _escapeOps -1");
+check(decOk, "每个驾驶节点 onEnter 使 _escapeOps -1（西车道除外）");
+check(westExtra, "西车道（贴排水沟）额外消耗一格（-2），东西两路步数对齐");
 check(!evalCond("_escapeOps > 0", { _escapeOps: 0 }), "_escapeOps=0 时移动选项判定为假 → 落入围堵");
 check(!!evalCond("_escapeOps > 0", { _escapeOps: 1 }), "_escapeOps>0 时移动选项可用");
 
@@ -260,7 +280,73 @@ check(av._garageOps === 5, "同日重入：不再衰减（守卫生效，返回�
 av.dd = 4;
 azone.onEnter(av);
 check(av._garageOps === 1, "隔两天再衰减：5 - 4 = 1");
+check(av._garageDecayDays === 2, "衰减发生时记下天数（A区正文播报「散了一些」用）");
+azone.onEnter(av);
+check(av._garageDecayDays === 0, "同日重入：衰减播报标记清零");
 check(av.currentPlace === "新达汇" && av.currentPos === "地下车库", "A区 onEnter 照常设置位置");
+var av2 = Object.assign({}, base, { dd: 3, _garageLastDay: 3, _garageOps: 6, _garageDecayDays: 0, currentPlace: "", currentPos: "" });
+const atext = azone.text(av2);
+check(atext.indexOf("水声密得像下雨") >= 0, "驱逐后当天再进A区：正文播报水声（入口状态可感知）");
+check(atext.indexOf("散了一些") < 0, "同日重入（无衰减）：不播报「散了一些」");
+var av3 = { dd: 1, _wiredCorrectly: false, _garageDecayDays: 0 };
+check(azone.text(av3).indexOf("应急灯还亮着") >= 0, "未通电A区：应急灯文案");
+av3._wiredCorrectly = true;
+check(azone.text(av3).indexOf("暖黄色的光把坡道照得通透") >= 0, "通电A区：整库暖光文案（灯态随通电变化）");
+
+console.log("\n=== 7.5 搜车链回原区（评审建议2） ===");
+const searchHub = S("storyData['新达汇-B1停车场-搜车']");
+var sv1 = { _garageOps: 0, _garageSearchPending: false, _garageSearchFrom: "", _lastScene: "新达汇-B1停车场G区" };
+searchHub.onEnter(sv1);
+check(sv1._garageSearchFrom === "新达汇-B1停车场G区" && sv1._garageSearchPending === true, "搜车hub记录本轮起点（G区）");
+searchHub.onEnter(sv1); // 模拟"换个位置再搜"再进hub（此时_lastScene已是结果节点）
+check(sv1._garageSearchFrom === "新达汇-B1停车场G区", "链中再进hub：起点不被覆盖");
+const backCheck = S("storyData['新达汇-B1停车场-车库检查']");
+const contChoice = backCheck.choices.find((c) => c.text === "回到原地继续探索");
+check(typeof contChoice.nextScene === "function" && contChoice.nextScene({ _garageSearchFrom: "新达汇-B1停车场G区" }) === "新达汇-B1停车场G区", "「回到原地继续探索」→ 本轮搜车起点区（不再固定送B区）");
+check(contChoice.nextScene({}) === "新达汇-B1停车场B区", "无起点记录时兜底回B区");
+var sv2 = { _garageSearchPending: true };
+backCheck.onEnter(sv2);
+check(sv2._garageSearchPending === false, "车库检查清除搜车链标记");
+["新达汇-B1停车场A区", "新达汇-B1停车场B区", "新达汇-B1停车场D区", "新达汇-B1停车场H区", "新达汇-B1停车场I区"].forEach((id) => {
+  const sc = S("storyData[" + JSON.stringify(id) + "]");
+  const hasSearch = sc.choices.some((c) => String(c.nextScene).indexOf("搜车") >= 0);
+  check(!hasSearch, id.slice(-2) + "：枢纽/走廊不再挂搜车选项（搜车集中在车排 K/L/G/E/F）");
+});
+["新达汇-B1停车场G区", "新达汇-B1停车场E区", "新达汇-B1停车场K区", "新达汇-B1停车场L区"].forEach((id) => {
+  const sc = S("storyData[" + JSON.stringify(id) + "]");
+  check(sc.choices.some((c) => c.nextScene === "新达汇-B1停车场-搜车"), id.slice(-2) + "：车排保留搜车入口");
+});
+check(S("storyData['新达汇-B1停车场B区']").choices.length === 5, "B区恰好5个选项（地点名、≤5）");
+check(S("storyData['新达汇-B1停车场A区']").choices.length === 5, "A区恰好5个选项");
+
+console.log("\n=== 7.6 接线手机中间档（评审建议5） ===");
+const wireScene = S("storyData['新达汇-B1停车场-接线']");
+const dimChoice = wireScene.choices.find((c) => c.showCondition === "!hasTorch && hasPhone && phoneBattery > 0");
+const darkChoice = wireScene.choices.find((c) => c.showCondition === "!hasTorch && !(hasPhone && phoneBattery > 0)");
+check(!!dimChoice && !!darkChoice, "接线：手机微光档与摸黑档分离");
+let dimWin = 0, dimLose = 0;
+for (let i = 0; i < 400; i++) { (dimChoice.nextScene() === "新达汇-B1停车场-接线成功") ? dimWin++ : dimLose++; }
+check(dimWin > 100 && dimLose > 20, "手机微光档 0.6 成功率两头都能出现（实测 " + dimWin + "/" + (dimWin + dimLose) + "）");
+let darkWin = 0;
+for (let i = 0; i < 400; i++) { if (darkChoice.nextScene() === "新达汇-B1停车场-接线成功") darkWin++; }
+check(darkWin > 30 && darkWin < 250, "摸黑档 0.3 成功率（实测 " + darkWin + "/400）");
+const wireTextDim = wireScene.text({ hasTorch: false, hasPhone: true, phoneBattery: 50 });
+const wireTextDark = wireScene.text({ hasTorch: false, hasPhone: false, phoneBattery: 0 });
+check(wireTextDim.indexOf("只剩两处接口的标注被油污盖死") >= 0, "手机档文案=半懂（把握介于手电与全黑之间）");
+check(wireTextDark.indexOf("全凭感觉") >= 0, "摸黑档文案=全赌");
+
+console.log("\n=== 7.7 疏散图分节点提示（评审建议1） ===");
+const mapFn = S("xdGarMapHint");
+check(mapFn({ _garageMapSeen: true }, "甲节点提示") === "\n甲节点提示", "图提示随节点变化（看图时）");
+check(mapFn({}, "甲节点提示") === "", "未看图：无提示");
+const hintSeen = new Set();
+for (const d of driveIds) {
+  const sc = S("storyData['新达汇-B1停车场-驾驶-" + d + "']");
+  const t = sc.text({ _escapeOps: 6, _garageMapSeen: true });
+  const idx = t.indexOf("疏散图") >= 0 || d === "坡道口" || d === "入口平台" || d === "东车道" || d === "横道" || d === "主通道" || d === "西车道" || d === "深处掉头";
+  if (sc.text({ _escapeOps: 6, _garageMapSeen: true }).split("\n").some((l) => l.indexOf("过了这根断杆") >= 0 || l.indexOf("出口坡道就在东南角") >= 0 || l.indexOf("最稳的走法") >= 0 || l.indexOf("外圈道一直通向") >= 0 || l.indexOf("主通道尽头就是入口平台") >= 0 || l.indexOf("主通道离出口更近") >= 0 || l.indexOf("直行就是入口平台") >= 0)) hintSeen.add(d);
+}
+check(hintSeen.size === driveIds.length, "7个驾驶节点各自带专属图提示句（不再同一句）");
 
 console.log("\n=== 8. 战斗与结局链 ===");
 const battle = S("storyData['新达汇-B1停车场-车旁遭遇']");
