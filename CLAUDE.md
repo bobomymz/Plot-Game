@@ -54,6 +54,7 @@ explorer index.html
 | 某物品在哪拿/被用 | grep `hasXxx` 全 story/；一键盘点：`node tools/chain_audit.mjs`（拾取/移除/引用矩阵 + 每文件物品预算表） |
 | computed/每小时规则/屏幕特效/全局触发器 | core.js `_reactive` / `_screenEffects` / `_globalTriggers` |
 | 工具函数/工厂用法（updateTime/timeImage/travelScene/initMemoryGame/hasMeleeWeapon/combatDrain…） | utils.js（函数旁注释即文档） |
+| 改/查代码的工具选择：**优先 Serena 符号工具**（find_symbol/find_referencing_symbols/replace_* 等），勿默认用自带 Read/Edit/Grep | `docs/环境与运维.md`「Serena MCP」节 |
 | 某区域剧情/场景结构 | 对应 story 文件 + 顶部注释 |
 | 路网/立交/出城衔接 | 设计细节.md |
 | NPC 人设/去向 | 人物档案.md + 对应场景 |
