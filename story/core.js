@@ -82,6 +82,7 @@ const storyData = {
     _garageFMarked: false,     // 新达汇B1停车场：摸黑撞见过守车丧尸并记住车位（F区未通电/通电首句呼应）
     _garageFacing: "N",        // 新达汇B1停车场：玩家朝向（N/E/S/W，北=坡道口对侧；进格按来向更新，网格方向系统用）
     _driving: false,           // 新达汇B1停车场：是否处于驾驶状态（上车点火置 true，出库/死亡交割；影响格点文案与移动扣次）
+    _garageRev: false,         // 新达汇B1停车场：驾驶倒车标记（倒车移动置 true，下格 onEnter 消费=车头朝向不变）
     _pipeBroke: false,         // 五金店暗道：铁管撬砸是否已失败（true=砸不断，走另一出口）
     _metPETeacher: false,      // 上实南校2号楼走廊：是否已遭遇体育老师丧尸（走廊再次进入的差异化承接）
     _peTeacherDead: false,     // 上实南校2号楼走廊：体育老师丧尸是否已被击杀

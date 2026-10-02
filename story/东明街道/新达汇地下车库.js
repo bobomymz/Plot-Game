@@ -23,7 +23,7 @@ function xdGarNight(vars) {
 }
 
 // ==================== 网格数据（邻接表 = 唯一权威，lint/graph 工具可直接读取） ====================
-// 北=上；坐标 x 向东、y 向北。所有边都是双向车行道；检修通道是唯一的步行-only捷径（POI 实现）。
+// 北=上；坐标 x 向东、y 向北。所有边都是双向车行道（邻接表=全部移动边，无表外捷径）。
 var XDGRID = {
   "新达汇-B1-西车道北段": { x: 0, y: 2, E: "新达汇-B1-主通道北段", S: "新达汇-B1-西车道南段" },
   "新达汇-B1-主通道北段": { x: 1, y: 2, W: "新达汇-B1-西车道北段", E: "新达汇-B1-车道尽头", S: "新达汇-B1-中段枢纽" },
@@ -59,10 +59,17 @@ function xdCellName(id) {
   return id.indexOf(XDCELL) === 0 ? id.slice(XDCELL.length) : id;
 }
 
-// 分区指路（立柱漆字）：按当前朝向给出四向去处（正前/左手边/右手边/身后，与选项槽位同序）。
-// 全黑看不见（不生成）；驾驶/手电/手机微光下都能读到。目的地信息只在这里出现，选项里不写。
-function xdSignLine(id, v) {
-  if (xdGarSight(v) === "dark") return "";
+// 分区指路（立柱漆字）：按照明分两档——
+//   lit/torch（通电/手电）：报当前格 + 四向去处（正前/左手边/右手边/身后，与选项槽位同序）；
+//   dim（手机微光）：光够不着远处的柱子，只能凑近认出当前格字母，不知道四向通哪里；
+//   dark（全黑）：什么也看不见（不生成）。
+// withSelf=false 时省略"你此刻在X区"（头句已经报过）。
+function xdSignLine(id, v, withSelf) {
+  var sight = xdGarSight(v);
+  if (sight === "dark") return "";
+  if (sight === "dim") {
+    return "\n立柱上喷着分区漆字，手机的光只够凑近认出一根——你此刻在「" + xdCellName(id) + "」。远处柱子上的字照不到，前后左右通向哪里，只能走近了看。";
+  }
   var facing = (XD_DIRS.indexOf(v._garageFacing) >= 0) ? v._garageFacing : "N";
   var rels = [["正前", facing], ["左手边", XD_CCW[facing]], ["右手边", XD_CW[facing]], ["身后", XD_OPP[facing]]];
   var segs = [];
@@ -70,7 +77,9 @@ function xdSignLine(id, v) {
     var t = XDGRID[id][rels[i][1]];
     if (t) segs.push(rels[i][0] + "是 " + xdCellName(t));
   }
-  return (segs.length > 0) ? "\n立柱上的分区漆字看得清——" + segs.join("，") + "。" : "";
+  if (segs.length === 0) return "";
+  var head = withSelf ? "立柱上的分区漆字看得清——你此刻在「" + xdCellName(id) + "」：" : "立柱上的分区漆字看得清——";
+  return "\n" + head + segs.join("，") + "。";
 }
 
 // from 格指向 to 格的绝对方向（两格必须相邻）
@@ -162,8 +171,17 @@ function xdCellScene(opts) {
     onEnter: function(v) {
       var from = v._lastScene;
       if (from && from !== id && XDGRID[from]) {
-        var d = xdDirFrom(from, id);
-        if (d) {
+      var d = xdDirFrom(from, id);
+      if (!d) {
+        // 非相邻跳转（POI/异常回退）：按网格坐标推断大致来向，保证朝向永远有定义
+        var gf = XDGRID[from], gt = XDGRID[id];
+        if (gf && gt) {
+          var dx = gt.x - gf.x, dy = gt.y - gf.y;
+          if (dx > 0) d = "E"; else if (dx < 0) d = "W";
+          else if (dy > 0) d = "N"; else if (dy < 0) d = "S";
+        }
+      }
+      if (d) {
           if (v._garageRev) {
             v._garageRev = false;   // 驾驶倒车：车头朝向不变
           } else {
@@ -208,14 +226,10 @@ function xdCellScene(opts) {
         // 驾驶：车灯当光源，用亮态环境描写
         body = opts.lit(v);
         if (opts.trench) body += "\n半截从沟里拖出来的栅栏横在车道上，你打着方向绕了过去——打这里过，就得费这个工夫。";
-        return head + body + xdSignLine(id, v) + xdGarDriveText(v);
+        return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDriveText(v);
       }
       body = (sight === "lit" || sight === "torch") ? opts.lit(v) : opts.dark(v);
-      // 疏散图加成：亮处给出绝对方位定位（信息价值=知道自己在九宫格的哪一格）
-      if (v._garageMapSeen && (sight === "lit" || sight === "torch")) {
-        body += "\n<span class='think'>疏散图上的方位对上了——你此刻在「" + xdCellName(id) + "」。</span>";
-      }
-      return head + body + xdSignLine(id, v) + xdGarNoise(v);
+      return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarNoise(v);
     },
     choices: function(v) {
       var out = [];
@@ -281,6 +295,7 @@ Object.assign(storyData,
       return desc;
     },
     poiArr: [
+      { text: "搜查平台边停着的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) },
       { text: "查看消防疏散图", nextScene: XDGAR + "-疏散图", effect: updateTime(1) },
       { text: "沿坡道出库", nextScene: "新达汇车库出口", effect: updateTime(2) },
       { text: function(v) { return (v._visit && v._visit["新达汇-B1走廊"] > 0) ? "回B1走廊" : "去B1走廊"; }, nextScene: "新达汇-B1走廊", effect: updateTime(2) }
@@ -300,8 +315,11 @@ Object.assign(storyData,
       return "主通道从这里笔直往车库深处去，两侧车位上的家用车落满灰。灯光把通道照出一截纵深，尽头隐在立柱后面。";
     },
     dark: function(v) {
-      return "你沿着车与车之间的空隙往深处摸。两侧全是金属的轮廓，手指划过一辆辆冰凉的引擎盖。方向感告诉你——这条道纵贯车库，一直往前就是深处。";
-    }
+      return "主通道两侧的车排得笔直，指节敲上去，一辆辆都是空膛的回音。头顶的空当里有一缕流动的凉风——从入口那头灌进来，顺着通道一路往深处去。方向感告诉你：这条道纵贯车库，一直往前就是深处。";
+    },
+    poiArr: [
+      { text: "搜查通道两侧的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
+    ]
   }),
 
   // ==================== I · 杂物拐角（南排东 = 东南角） ====================
@@ -310,14 +328,14 @@ Object.assign(storyData,
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingH.png */,
     lit: function(v) {
       var desc = "拐角处堆着几辆废弃的购物车和一个翻倒的儿童安全座椅。购物车里有一只落满灰的毛绒熊玩偶，半埋在杂物里。旁边的立柱上，有人用马克笔写了两行字：\n“车别乱开。有的不是空的。——302的胖子”";
-      desc += "\n杂物堆后面塞着一根带血的撬棍，撬棍底下压着一张折叠的保养单——荣威4S店的，车牌号一栏，写的正是 F 区那辆白色SUV。\n<span class='think'>有人比你更早想过这辆车的主意。没成。</span>\n杂物堆侧边留出一条刚够侧身通过的缝——有人清出来的，通向 C 区的检修通道。";
+      desc += "\n杂物堆后面塞着一根带血的撬棍，撬棍底下压着一张折叠的保养单——荣威4S店的，车牌号一栏，写的正是 F 区那辆白色SUV。\n<span class='think'>有人比你更早想过这辆车的主意。没成。</span>";
       return desc;
     },
     dark: function(v) {
-      return "拐角处堆着几辆废弃的购物车，你伸手摸到了半只毛绒熊的耳朵。杂物堆侧边，你摸到一条刚够侧身通过的缝。";
+      return "拐角处堆着几辆废弃的购物车，你伸手摸到了半只毛绒熊的耳朵。绒毛早被潮气泡硬了，一股旧毛毯的霉味。";
     },
     poiArr: [
-      { text: "侧身穿过检修通道", nextScene: XDCELL + "车道尽头", effect: updateTime(2) }
+      { text: "搜查拐角的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
     ]
   }),
 
@@ -357,7 +375,8 @@ Object.assign(storyData,
       return "你贴着立柱往里走，指尖划过一道道深浅不一的凹槽，密得硌手。黑暗里，一根立柱后露出一扇门的轮廓——你摸到了门框和一块褪色的铁皮牌。";
     },
     poiArr: [
-      { text: "推开那扇门", nextScene: XDGAR + "-配电室", effect: updateTime(1) }
+      { text: "推开那扇门", nextScene: XDGAR + "-配电室", effect: updateTime(1) },
+      { text: "搜查立柱间的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
     ]
   }),
 
@@ -366,10 +385,10 @@ Object.assign(storyData,
     id: "新达汇-B1-第二停车排",
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingK.png */,
     lit: function(v) {
-      return "主通道旁边是第二排车位，两排车头对着车头，中间只留一条缝。有一辆的后备箱盖开着，像一张等了很久的嘴——箱底垫着一张被水汽洇过的超市传单，纸角朝着 C 区那头翘着，水痕洇开的方向也是。这排车离排水沟远，湿气是从深处飘过来的。\n稍近的一格车位上停着一辆白色荣威SUV，驾驶座的门虚掩着，座位上放着一个空了半截的矿泉水瓶。你检查了钥匙孔——上面有明显的划痕，有人拿东西撬过。方向盘上落了一层薄灰，这辆车至少一周没动过了。";
+      return "主通道旁边是第二排车位，两排车头对着车头，中间只留一条缝。有一辆的后备箱盖开着，像一张等了很久的嘴——箱底垫着一张被水汽洇过的超市传单，纸角朝着 C 区那头翘着，水痕洇开的方向也是。这排车离排水沟远，湿气是从深处飘过来的。\n稍近的一格车位上停着一辆白色荣威SUV，驾驶座的门虚掩着，座位上放着一个空了半截的矿泉水瓶。你检查了钥匙孔——上面有明显的划痕，有人拿东西撬过。方向盘上落了一层薄灰，这辆车从爆发前就没动过了。";
     },
     dark: function(v) {
-      return "车挨着车，中间只留一条窄缝，伸手全是金属的棱角。你的手摸到一辆车——引擎盖冰凉，车门虚掩着。伸手进去摸索了一会儿，只摸到一个矿泉水瓶和一些票据。没有钥匙。";
+      return "这里的车两排车头对着车头，缝窄得只能侧身。你侧身挤进去，一绺胶皮味蹭过手背——有辆车的后备箱盖支棱着。摸到的车引擎盖冰凉，车门虚掩着，车里只摸出一个矿泉水瓶和一些票据。没有钥匙。";
     },
     poiArr: [
       { text: "搜查停车排的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
@@ -382,14 +401,14 @@ Object.assign(storyData,
     trench: true,
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingG2.png */,
     lit: function(v) {
-      var desc = "车道靠墙停着一辆银色五菱面包车，后门没有锁，车厢里堆满了纸箱和杂物，方向盘上落满了灰——这辆车已经很久没人碰过了。\n这一段贴着 J 区的边，空气比主通道那边更潮，隐隐有水汽的味道。";
+      var desc = "车道靠墙停着一辆银色五菱面包车，后门没有锁，车厢里堆满了纸箱和杂物，方向盘上落满了灰——看灰的厚度，爆发前就没再碰过了。\n这一段贴着 J 区的边，空气比主通道那边更潮，隐隐有水汽的味道。";
       if ((v._garageOps || 0) >= 5 || v._visit[XDGAR + "-上车点火"] > 0) {
         desc += "\n<span class='warn'>车道边的排水沟栅栏缝里，水面比别处高了一截，正贴着缝往外渗。</span>";
       }
       return desc;
     },
     dark: function(v) {
-      return "手指碰到一个冰冷的金属车身——车厢门没锁，里面堆着一些纸箱。潮气从墙根那头漫过来，空气里全是水汽的味道。";
+      return "水声在这一段贴着耳朵，墙根那头的栅栏缝里，水汽扑在手背上。手指碰到一辆车——后门大敞，车厢里的纸箱被潮气泡得发软，一按一个坑。";
     },
     poiArr: [
       { text: "翻后车厢搜一搜", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
@@ -412,6 +431,7 @@ Object.assign(storyData,
       return "拍水声在这一带格外清楚，一下，一下，不紧不慢。看不见的时候，这声音显得格外近。你的脚碰到一级向下的台阶——墙角有下行的口子。";
     },
     poiArr: [
+      { text: "搜查北头停着的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) },
       { text: "走下台阶，下 J 区", nextScene: XDGAR + "-旧区", effect: updateTime(1), condition: "_garageOps < 5", elseScene: XDGAR + "-强制驱逐" }
     ]
   }),
@@ -427,11 +447,11 @@ Object.assign(storyData,
       var body;
       // Day3 之前：车还没来，普通角落
       if (v.dd < 3) {
-        body = "这里是车道最深的角落，灯照不到的地方堆着几个废弃的轮胎架。角落里的车都落满了灰——很久没人动过了。";
+        body = "这里是车道最深的角落，光照不到的地方堆着几个废弃的轮胎架。角落里的车都落满了灰——爆发前就没再动过了。";
       } else if (!v._wiredCorrectly) {
-        // Day3+：车在，但没通电时无法辨认
-        body = "黑暗里传来一种细微的、有节奏的湿润声音，像是什么东西在进食。\n你在黑暗里分不清车位的轮廓——只知道那个方向的空气里，多了一股新鲜的血腥气。";
-        if (v._garageFMarked) body += "\n<span class='think'>但有个参照忘不了——那辆引擎盖是温的，在左手边第二个车位。你摸黑记下的。</span>";
+        // Day3+：车在，但没通电。这个分支只有手电玩家会走到（手机微光/全黑走 dark()）
+        body = "光柱扫过去——车道尽头的车位上停着一辆车，<span class='crit'>车身上没有灰。</span>驾驶座的门敞开着，看不清车里。\n车旁的排水沟栅栏歪了两根。一个影子伏在车门边，一下一下地动着；光一晃，它抬起头，朝你这边缓缓转过来。\n另一只正从沟里往外爬。";
+        if (v._garageFMarked) body += "\n<span class='think'>你上回摸黑记下的位置——就是它。</span>";
       // 车库线已点火开走（用本线标记，不用全局 hasCar——王老师线拿车不该擦掉这里的事故点）
       } else if (v._visit[XDGAR + "-上车点火"] > 0) {
         // 车已开走：空车位（关掉二次点火，状态闭环）
@@ -674,9 +694,9 @@ Object.assign(storyData,
     onEnter: hurtWinOnEnter({ time: 1 }),
     text: function(v) {
       var phoneLine = (v.dd >= 5)
-        ? "他的手机摔在脚边，屏幕裂成了蛛网，黑着。"
-        : "他的手机屏幕还亮着，锁屏壁纸是个小女孩。";
-      var desc = "你勉强把两只都干掉了——代价是胳膊上添了一道口子，血顺着手腕往下淌。" + hurtCostText(v) + "\n那具年轻的尸体倒在车轮边，手里攥着半张购物清单。" + phoneLine + "驾驶座里，钥匙还插在点火器上。";
+        ? "他的手机摔在脚边，屏幕裂成了蛛网，黑着——电池早就耗干了，谁也没有来过。"
+        : "他的手机屏幕还亮着——锁屏壁纸是个笑得很开的小女孩，输入界面停在一条没发出去的短信上：“东西太多，我跑第二趟”";
+      var desc = "你勉强把两只都干掉了——代价是胳膊上添了一道口子，血顺着手腕往下淌。" + hurtCostText(v) + "\n你喘着粗气看那具尸体：年轻人，手里攥着半张购物清单——背面用圆珠笔写着一行字：“多的卖给长廊。”\n" + phoneLine + "\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>——他刚停好车，还没来得及拔。";
       desc += "\n<span class='warn'>动静已经传出去了。排水沟那头的水声连成了片。</span>";
       return desc;
     },
@@ -748,8 +768,10 @@ Object.assign(storyData,
     text: function(v) {
       var sight = xdGarSight(v);
       var desc = (sight === "lit")
-        ? "你放轻脚步，靠近最近的一排车。灯光下能看清车牌和车型，翻找起来也快得多。"
-        : "你放轻脚步，靠近最近的一辆车。黑暗里只能靠手摸——车门把手、车窗缝、储物格。每一次拉拽都可能出声。";
+        ? "你放轻脚步，靠近最近的一排车。灯亮着，能看清车牌和车型，翻找起来也快得多。"
+        : (sight === "torch")
+          ? "你放轻脚步，靠近最近的一排车。手电的光柱罩住一排车头，车牌和车型看得清，翻找起来也快——只是光柱外的地方，黑得更深了。"
+          : "你放轻脚步，靠近最近的一辆车。黑暗里只能靠手摸——车门把手、车窗缝、储物格。每一次拉拽都可能出声。";
       if (v._garageOps >= 3 && v._garageOps < 5) {
         desc += "\n<span class='warn'>排水沟的方向，又传来那种有节奏的拍水声。比刚才近了。</span>";
       }
@@ -769,7 +791,7 @@ Object.assign(storyData,
     image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
     text: function(v) {
       var looted = (v._garageLootLeft || 0) <= 0;
-      if (xdGarSight(v) === "lit") {
+      if (xdGarSight(v) === "lit" || xdGarSight(v) === "torch") {
         var models = ["一辆白色的大众polo", "一辆黑色的日产轩逸", "一辆落满灰的别克凯越", "一辆车窗贴满膜的本田飞度"];
         var m = models[Math.floor(Math.random() * models.length)];
         var desc = "是" + m + "。你拉开驾驶座翻了一遍——储物格里只有过期的保险单和几张停车票。方向盘上的灰厚得能写字，这辆车在爆发前就没人动过。";
@@ -815,8 +837,11 @@ Object.assign(storyData,
     onEnter: { add: { chasedByZombies: 1 } },
     text: function(v) {
       var desc = "你拉开副驾车门的瞬间——<span class='sfx'>哐当</span>！车门内侧挂着的灭火器支架被带了下来，砸在水泥地上，滚出去老远。\n回音在空旷的车库里荡了三个来回。你僵在原地，听着自己的心跳。";
-      if (xdGarSight(v) === "lit") {
+      var soundSight = xdGarSight(v);
+      if (soundSight === "lit") {
         desc += "\n灯亮着，无处可藏。排水沟那头的拍水声停了一拍——然后变得更密。";
+      } else if (soundSight === "torch") {
+        desc += "\n手电的光柱晃过去，立柱间一览无余——也无处可藏。排水沟那头的拍水声停了一拍——然后变得更密。";
       } else {
         desc += "\n黑暗深处，有什么东西改变了方向。";
       }

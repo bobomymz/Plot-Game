@@ -122,6 +122,7 @@ S("var __sv = storyData._variables, __cap = storyData._caps;");
 const sv = S("__sv"), cap = S("__cap");
 check(sv && "_garageFacing" in sv && sv._garageFacing === "N", "_variables 声明 _garageFacing='N'");
 check(sv && "_driving" in sv && sv._driving === false, "_variables 声明 _driving=false");
+check(sv && "_garageRev" in sv && sv._garageRev === false, "_variables 声明 _garageRev=false（倒车保车头标记）");
 check(sv && "_escapeOps" in sv && sv._escapeOps === 0, "_variables 声明 _escapeOps=0");
 check(sv && "_garageLootLeft" in sv && sv._garageLootLeft === 3, "_variables 声明 _garageLootLeft=3（世界库存）");
 check(sv && "_garageMapSeen" in sv && sv._garageMapSeen === false, "_variables 声明 _garageMapSeen=false");
@@ -206,7 +207,7 @@ check(fixedOk, "9 个分区全部 fixedChoices=true（方位选项不得乱序�
 const gScene = S("storyData[" + JSON.stringify(G) + "]");
 var v = Object.assign({}, base);
 const gChoices = gScene.choices(v);
-check(gChoices.length === 5, "入口平台面北：前(西车道)+右(主通道) 2个移动槽 + 3个POI = 5 选项（实际 " + gChoices.length + "）");
+check(gChoices.length === 6, "入口平台面北：前(西车道)+右(主通道) 2个移动槽 + 4个POI = 6 选项（实际 " + gChoices.length + "）");
 check(gChoices[0].text.indexOf("向前走") === 0 && gChoices[1].text.indexOf("往右手边走") === 0, "前/右 槽位按固定顺序排列");
 check(gChoices[0].nextScene === D && gChoices[1].nextScene === H, "面北时：前=西车道南段，右=主通道南段");
 // 面东时的左右映射
@@ -214,12 +215,12 @@ var v2 = Object.assign({}, base, { _garageFacing: "E", _lastScene: G });
 const gChoicesE = gScene.choices(v2);
 check(gChoicesE[0].nextScene === H, "入口平台面东：前=主通道南段");
 check(gChoicesE[1].text.indexOf("往左手边走") === 0 && gChoicesE[1].nextScene === D, "面东时左转=北=西车道南段（CCW 映射正确）");
-check(gChoicesE.length === 5 && gChoicesE.slice(0, 2).every((c) => c.nextScene === H || c.nextScene === D), "入口平台面东：右(S)/后(W)无邻格 → 槽位隐藏（只剩前+左）");
+check(gChoicesE.length === 6 && gChoicesE.slice(0, 2).every((c) => c.nextScene === H || c.nextScene === D), "入口平台面东：右(S)/后(W)无邻格 → 槽位隐藏（2移动槽+4POI）");
 // 中心枢纽 4 邻 + POI
 const eScene = S("storyData[" + JSON.stringify(E) + "]");
 var v3 = Object.assign({}, base, { _lastScene: H });
 const eChoices = eScene.choices(v3);
-check(eChoices.length === 5, "中段枢纽面北：4 个移动槽 + 配电室 POI = 5（实际 " + eChoices.length + "）");
+check(eChoices.length === 6, "中段枢纽面北：4 个移动槽 + 防火门/搜车 POI = 6（实际 " + eChoices.length + "）");
 check(eChoices[0].nextScene === B && eChoices[1].nextScene === D && eChoices[2].nextScene === F && eChoices[3].nextScene === H, "中段枢纽：前=北段 左=西车道 右=停车排 后=南段");
 // 移动耗时 5 分钟/格（步行）
 var wvW = { weather: "阴", hh: 8, mm: 0, dd: 1 };
@@ -274,6 +275,10 @@ if (eff2 && eff2.add && eff2.add._escapeOps) wv2._escapeOps += eff2.add._escapeO
 check(wv2._escapeOps === 1, "贴沟格离开额外 -1（3→1，一次移动共扣 2）");
 check(dMove.text.indexOf("费工夫") < 0, "过路费不在选项文案里点破（先读到费时描写，离开时才付）");
 // 围堵与冲出
+// 受伤档情报等价：战斗失误不扣情报（短信/清单背面/钥匙三件都在）
+const hurtSearch = S("storyData['新达汇-B1停车场-车旁搜身-受伤']");
+const hurtTxt = hurtSearch.text({ dd: 3 });
+check(hurtTxt.indexOf("东西太多，我跑第二趟") >= 0 && hurtTxt.indexOf("卖给长廊") >= 0 && hurtTxt.indexOf("钥匙还插在点火器上") >= 0, "受伤档搜身情报完整（短信+清单背面+钥匙）");
 const rush = S("storyData['新达汇-B1停车场-围堵']");
 check(rush.qte && rush.qte.onTimeout === "结局-车库围堵" && rush.choices[0].nextScene === "新达汇-B1停车场-冲出坡道", "围堵 QTE：硬冲成功→冲出坡道，超时→死亡");
 const rushTxt = rush.text({ _lastScene: D });
@@ -319,22 +324,27 @@ var nv = Object.assign({}, base, { _lastScene: H, _garageFacing: "N" });
 eScene.onEnter(nv);
 const eText = eScene.text(nv);
 check(eText.indexOf("边过来") < 0, "跨格进入不加绝对方位过渡句（玩家无东南西北感）");
-const eTextMap = eScene.text(Object.assign({}, nv, { _garageMapSeen: true, _wiredCorrectly: true }));
-check(eTextMap.indexOf("疏散图上的方位对上了") >= 0 && eTextMap.indexOf("E 区") >= 0, "看过疏散图：正文给绝对方位定位（含当前格字母）");
-const eTextNoMap = eScene.text(Object.assign({}, nv, { _garageMapSeen: false }));
-check(eTextNoMap.indexOf("疏散图上的方位对上了") < 0, "没看过疏散图：不给方位定位");
-// 立柱漆字指路：亮态给去处（字母），全黑不给；选项本身不写目的地
+// 立柱漆字指路：亮态报当前格+去处（字母，不看疏散图也能定位），全黑不给；选项本身不写目的地
 const eTextLit = eScene.text(Object.assign({}, nv, { _wiredCorrectly: true }));
-check(eTextLit.indexOf("立柱上的分区漆字") >= 0 && eTextLit.indexOf("正前是 B 区") >= 0 && eTextLit.indexOf("右手边是 F 区") >= 0, "亮态正文给漆字指路（正前=B 区 右手边=F 区，按朝向相对表述）");
+check(eTextLit.indexOf("你此刻在「E 区」") >= 0 && eTextLit.indexOf("正前是 B 区") >= 0 && eTextLit.indexOf("右手边是 F 区") >= 0, "亮态漆字句报当前格+四向去处（无需看过疏散图）");
+// 手机微光：只够认当前格字母，看不到四向去处
+const eTextDim = eScene.text(Object.assign({}, nv, { hasPhone: true, phoneBattery: 50 }));
+check(eTextDim.indexOf("你此刻在「E 区」") >= 0 && eTextDim.indexOf("正前是") < 0, "手机微光：只报当前格字母，不报四向去处");
 check(eChoices.slice(0, 4).every((c) => c.text.indexOf("——") < 0), "移动选项只写动词，不写目的地");
 check(eText.indexOf("分区漆字") < 0, "全黑看不见漆字指路");
-// 黑暗降级
+// 黑暗降级（H=风与回音 / A=水声纸箱 / F=窄缝后备箱盖，三格触感锚点不同）
 const hDarkText = S("storyData[" + JSON.stringify(H) + "]").text(Object.assign({}, base, { _lastScene: G }));
-check(hDarkText.indexOf("冰凉的引擎盖") >= 0, "全黑态：触感文案（引擎盖轮廓）");
+check(hDarkText.indexOf("空膛的回音") >= 0 && hDarkText.indexOf("凉风") >= 0, "全黑态 H：听觉锚点（空膛回音+纵向凉风）");
+const aDarkText = S("storyData[" + JSON.stringify(A) + "]").text(Object.assign({}, base, { _lastScene: B }));
+check(aDarkText.indexOf("纸箱") >= 0 && aDarkText.indexOf("水声") >= 0, "全黑态 A：水声贴耳+泡软的纸箱");
+const fDarkText = S("storyData[" + JSON.stringify(F) + "]").text(Object.assign({}, base, { _lastScene: E }));
+check(fDarkText.indexOf("后备箱盖") >= 0 && fDarkText.indexOf("侧身") >= 0, "全黑态 F：窄缝侧身+支棱的后备箱盖");
 // C 区事故点分态
 const cScene = S("storyData[" + JSON.stringify(C) + "]");
 const cTextD3 = cScene.text(Object.assign({}, base, { dd: 3, _wiredCorrectly: true }));
 check(cTextD3.indexOf("深灰色的荣威") >= 0 && cTextD3.indexOf("引擎盖摸上去是温的") >= 0, "Day3+通电：事故点=小明的车（温的引擎盖；钥匙句在战斗后分支）");
+const cTextTorch = cScene.text(Object.assign({}, base, { dd: 3, _wiredCorrectly: false, hasTorch: true }));
+check(cTextTorch.indexOf("车身上没有灰") >= 0 && cTextTorch.indexOf("黑暗里分不清") < 0, "Day3+手电（未通电）：光柱能看见车与影子，不再误读黑暗文案");
 const cTextGone = cScene.text(Object.assign({}, base, { dd: 3, _wiredCorrectly: true, _visit: { "新达汇-B1停车场-上车点火": 1 } }));
 check(cTextGone.indexOf("空空荡荡") >= 0, "车开走后：空车位闭环文案");
 const cTextKnow = cScene.text(Object.assign({}, base, { dd: 3, _wiredCorrectly: true, _knowsSurvivorCar: true }));
@@ -369,8 +379,10 @@ const bChoices = bScene.choices(Object.assign({}, base, { _lastScene: G }));
 const bStairs = bChoices.find((c) => typeof c.text === "string" && c.text === "走下台阶，下 J 区");
 check(!!bStairs && bStairs.condition === "_garageOps < 5" && bStairs.elseScene === "新达汇-B1停车场-强制驱逐", "主通道北段挂旧区 POI，ops>=5 强制驱逐");
 const iChoices = S("storyData[" + JSON.stringify(I) + "]").choices(Object.assign({}, base, { _lastScene: H }));
-const iCrawl = iChoices.find((c) => typeof c.text === "string" && c.text === "侧身穿过检修通道");
-check(!!iCrawl && iCrawl.nextScene === C, "杂物拐角检修通道 → 车道尽头（步行-only 捷径）");
+check(iChoices.every((c) => typeof c.text !== "string" || c.text.indexOf("检修通道") < 0), "杂物拐角检修通道已删除（跨格捷径会漏更新朝向）");
+// 搜车覆盖：9 格全部挂搜车入口
+const searchCells = CELLS.filter((id) => S("storyData[" + JSON.stringify(id) + "]").choices(Object.assign({}, base, { _lastScene: G })).some((c) => c.nextScene === "新达汇-B1停车场-搜车"));
+check(searchCells.length === 9, "9 个分区全部支持搜车（实际 " + searchCells.length + "）");
 const fChoices = S("storyData[" + JSON.stringify(F) + "]").choices(Object.assign({}, base, { _lastScene: E }));
 check(fChoices.some((c) => c.nextScene === "新达汇-B1停车场-搜车"), "第二停车排保留搜车入口（含白荣威假线索）");
 const aChoices = S("storyData[" + JSON.stringify(A) + "]").choices(Object.assign({}, base, { _lastScene: B }));
@@ -378,6 +390,14 @@ check(aChoices.some((c) => c.nextScene === "新达汇-B1停车场-搜车"), "西
 // 搜车入口全局：驾驶态在 F 无搜车
 var fDrv = S("storyData[" + JSON.stringify(F) + "]").choices(Object.assign({}, base, { _driving: true, _escapeOps: 6, _garageFacing: "S" }));
 check(!fDrv.some((c) => c.nextScene === "新达汇-B1停车场-搜车"), "驾驶态不出现搜车入口");
+// 手电档与 lit 同档：搜车三景读"有光"文案，不再读摸黑
+const torchVars = Object.assign({}, base, { hasTorch: true, _garageOps: 0 });
+const searchTorch = S("storyData['新达汇-B1停车场-搜车']").text(Object.assign({}, torchVars));
+check(searchTorch.indexOf("手电的光柱罩住一排车头") >= 0 && searchTorch.indexOf("靠手摸") < 0, "搜车入口手电档：有光文案（不再读'黑暗里靠手摸'）");
+const emptyTorch = S("storyData['新达汇-B1停车场-搜车-空车']").text(torchVars);
+check(emptyTorch.indexOf("方向盘上的灰厚得能写字") >= 0, "搜车-空车手电档：能认出车型（不再只报触感）");
+const noiseTorch = S("storyData['新达汇-B1停车场-搜车-出声']").text(torchVars);
+check(noiseTorch.indexOf("无处可藏") >= 0 && noiseTorch.indexOf("黑暗深处") < 0, "搜车-出声手电档：光柱下无处可藏");
 
 console.log("\n=== 10. 搜车链回原格 ===");
 const router = S("xdGarSearchRouter");
