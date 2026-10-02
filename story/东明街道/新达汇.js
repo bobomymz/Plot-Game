@@ -211,8 +211,8 @@ Object.assign(storyData, {
     text: function(vars) { return "你走进B1走廊。这条通道连接美食广场和停车场，两侧的墙壁上贴着过时的促销海报。荧光灯管在头顶<span class='sfx'>嗡嗡</span>作响，忽明忽暗。\n" + describeZombieWave(vars); },
     choices: [
       {
-        text: "往前走——停车场A区",
-        nextScene: "新达汇-B1停车场A区",
+        text: "往前走——停车场入口平台",
+        nextScene: "新达汇-B1-入口平台",
         effect: updateTime(2),
       },
       {

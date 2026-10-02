@@ -954,7 +954,8 @@ function renderChoices(scene, sceneId) {
   }
 
   // 打乱选项顺序，防止玩家形成肌肉记忆
-  if (_choices && _choices.length > 0) {
+  // scene.fixedChoices = true 时跳过：选项顺序即空间方位（前后左右），乱序会摧毁方位感
+  if (!scene.fixedChoices && _choices && _choices.length > 0) {
     for (let i = _choices.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [_choices[i], _choices[j]] = [_choices[j], _choices[i]];
