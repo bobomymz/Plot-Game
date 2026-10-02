@@ -422,8 +422,8 @@ const bNoise = S("storyData['新达汇-B1停车场B区']").text({ _lastScene: "�
 check(bNoise.indexOf("拍水声一声比一声密") >= 0, "B区步行文本带 ops>=3 水声刻度");
 const gNoise = S("storyData['新达汇-B1停车场G区']").text({ _lastScene: "新达汇-B1停车场A区", _garageOps: 3, hh: 8, dd: 3, _visit: {} });
 check(gNoise.indexOf("拍水声一声比一声密") >= 0, "G区步行文本带 ops>=3 水声刻度");
-const cExit = S("storyData['新达汇-B1停车场C区']").choices.find((c) => c.text === "回主通道");
-check(cExit.condition === "_garageOps < 5" && cExit.elseScene === "新达汇-B1停车场-强制驱逐", "C区离开选项：ops>=5 强制驱逐（接线噪音同样有牙齿）");
+const cExit = S("storyData['新达汇-B1停车场C区']").choices.find((c) => typeof c.text === "function" && c.text({ _visit: {} }) === "去主通道");
+check(cExit && cExit.condition === "_garageOps < 5" && cExit.elseScene === "新达汇-B1停车场-强制驱逐", "C区离开选项：ops>=5 强制驱逐（接线噪音同样有牙齿）");
 const kText = S("storyData['新达汇-B1停车场K区']").text({ hasTorch: true, hasPhone: false, phoneBattery: 0 });
 check(kText.indexOf("纸角") >= 0 && kText.indexOf("湿气是从深处飘过来的") < 0, "K区手电：看见传单朝向（半档线索）");
 const lText = S("storyData['新达汇-B1停车场L区']").text({ hasTorch: true, hasPhone: false, phoneBattery: 0 });
@@ -431,6 +431,20 @@ check(lText.indexOf("绝缘胶布") >= 0 && lText.indexOf("同一种东西") < 0
 const hDark = S("storyData['新达汇-B1停车场H区']").text({ hasTorch: false, hasPhone: false, phoneBattery: 0 });
 check(hDark.indexOf("马克笔") < 0, "H区全黑读不了墙上的字");
 check(S("storyData['新达汇-B1停车场-疏散图']").text.indexOf("两处要紧的位置") >= 0, "疏散图系统提示收窄（不吹「记住整个布局」）");
+
+console.log("\n=== 11. 方向词动态分流（回/去按目标是否去过） ===");
+const fChoices = S("storyData['新达汇-B1停车场F区']").choices;
+const dOpt = fChoices.find((c) => c.nextScene === "新达汇-B1停车场D区");
+check(dOpt.text({ _visit: {} }) === "上台阶去旧区", "F区没去过旧区：选项写「去」（不假设来路）");
+check(dOpt.text({ _visit: { "新达汇-B1停车场D区": 1 } }) === "上台阶回旧区", "F区去过旧区：选项写「回」");
+const eOpt = fChoices.find((c) => c.nextScene === "新达汇-B1停车场E区");
+check(eOpt.text({ _visit: {} }) === "去东北拐角" && eOpt.text({ _visit: { "新达汇-B1停车场E区": 1 } }) === "回东北拐角", "F区→E区 同规则");
+const kC = S("storyData['新达汇-B1停车场K区']").choices.find((c) => c.nextScene === "新达汇-B1停车场B区");
+check(kC.text({ _visit: {} }) === "去主通道", "K区→B区：没去过写「去」");
+const aExit = S("storyData['新达汇-B1停车场A区']").choices.find((c) => c.nextScene === "新达汇-B1走廊");
+check(aExit.text({ _visit: {} }) === "去B1走廊", "A区→B1走廊：辅路直入者没进过商场，写「去」");
+const rampBack = S("storyData['新达汇-B1停车场-驾驶-坡道口']").choices.find((c) => c.nextScene === "新达汇-B1停车场-驾驶-入口平台");
+check(typeof rampBack.text === "string" && rampBack.text === "掉头回入口平台", "坡道口→入口平台：唯一入边刚去过，保留静态「回」");
 const jText = S("storyData['新达汇-B1停车场J区']").text({ dd: 4, hh: 8, _visit: { "新达汇-B1停车场-上车点火": 1 } });
 check(jText.indexOf("第二次撞开") >= 0, "J区车走后：断杆被第二次撞开 + 亭顶砸痕");
 const aTextOut = S("storyData['新达汇-B1停车场A区']").text({ dd: 4, hh: 8, _wiredCorrectly: true, _garageLastDay: 4, _garageOps: 0, _garageDecayDays: 0, _visit: { "新达汇-B1停车场-上车点火": 1 }, _lastScene: "新达汇-B1走廊" });

@@ -29,6 +29,7 @@
 - 只读不写；键名必须=真实场景 ID（悬空键不报错、条件恒假→选项永不出现）。改计数键名前算首达路径。
 - **一次性「开启/解锁」动作做独立节点**，用 `_visit['<动作节点>']>0` 记录；此后不再校验工具（世界状态已改变）。
 - 入口描述差异化：多入度节点按 `_lastScene` 分流（样板`金谊广场.js`/`长者食堂.js`）。**先把默认句改成安全句，再加差异化**；电梯/楼梯来源别播推门动作。审计 `node tools/entry_desc_audit.mjs`；⚠判定覆盖须在剔除 nextScene 行的源码里搜来源名；已支持工厂节点+前缀匹配识别。⚠⚠**来源分支必须写完整场景 ID 字面量**——`XDGAR+"D区"` 这类常量拼接审计器识别不了（10-01 车库 C/D 区踩过）。
+- **网状地图选项方向词**：静态"回X"在目标未到访的路线上穿帮→用 `xdGarGo(targetId, beenText, firstText)`（车库文件顶部，engine 支持 choice.text 为函数）按 `_visit[targetId]` 分流"回/去"；仅目标必经（车库唯一入口A）或单入边链才保留静态"回"。样板=`新达汇地下车库.js`。
 - 建筑类过夜两层门槛：showCondition 加 `_visit['建筑内部']>0`、原 condition/elseScene 保留。场景级=`node.qte`，选项级=`choice.timeout`；工厂 `mallQTE`/`jpChaseQTE`/`travelScene`。`applyEffect` 只认 set/add/mul。
 
 ## 文风/气味
@@ -67,3 +68,4 @@
 - CI：`.github/workflows/deploy-cloudflare.yml`（push 到 main 自动 build+部署）。需仓库 Secret `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`；**fine-grained PAT 默认无 "Secrets: Read and write"，写 secret 会 403**（能 push 代码、能读 secrets 列表）。
 - ⚠⚠**仓库同时开着 GitHub Pages**（https://bobomymz.github.io/Plot-Game/ ，source=main 根目录、legacy）→ `人物档案.md`/`核心设定.md`/`CLAUDE.md`/`tools/*` 全部公开可访问。仓库 public 所以非新增泄露，但门面与 Cloudflare 白名单策略相反，要公开与否须波波定。
 - ⚠写 GH Secret 要 libsodium sealed box：**pynacl 装不上（pip 索引不可达）**，用 `npm i libsodium-wrappers` + `crypto_box_seal`。
+- ⚠⚠**push 时绝不能在 remote URL 里带凭据**（`https://x-access-token:$PAT@github.com/...`）——GCM 会把它存成**独立账户**，此后 AutoPushGame 每次 push 都弹「Select an account」要波波手选、没人点就 Exit 128（10-02 事故）。要临时用 token 一律：`git -c credential.helper= push <带token的url>`。排查/清理：`git credential-manager github list` / `git credential-manager github logout <name>`；`cmdkey /list` 在 Git Bash 必须加 `MSYS_NO_PATHCONV=1`（不然 `/list` 被当路径）。

@@ -97,7 +97,13 @@ wrangler 依赖的 `workerd` / `esbuild` 在 Windows 上可能装不上平台二
 - 步骤：checkout → setup-node 22 → `node tools/build-dist.mjs` → `cloudflare/wrangler-action@v3` 上传 dist
 - 并发控制：同分支连续推送只保留最新一次
 
-**首次运行结果**：`Build dist/` ✅ 通过，`Publish to Cloudflare Pages` ❌ 失败——仓库里还没有 Secret。
+**运行结果**：`Build dist/` ✅ 通过，`Publish to Cloudflare Pages` ❌ 失败——仓库里还没有 Secret。
+在配好 Secret 之前，每次 push（AutoPushGame 每小时一次）都会跑一次失败，等于每小时一封失败邮件
+（已发生 3 次：`1a29071` / `d4ae198` / `f930405`）。
+
+> 已改为**未配置 Secret 时只构建、不上传、且不判失败**（`if: secrets.CLOUDFLARE_API_TOKEN != ''`），
+> 止住失败邮件；配好 Secret 后上传步骤会自动生效，无需再改。
+> 该修改 commit `d984d95` 已在本地，等 `github.com` 恢复连通后由 AutoPushGame 带上去。
 
 **待办：需要你在 GitHub 上加两个 Secret。** 二选一：
 

@@ -15,6 +15,14 @@ function xdGarNight(vars) {
   return vars.hh >= 19 || vars.hh < 6;
 }
 
+// 选项方向词按"目标是否去过"分流：去过写"回"（熟路代入感），没去过写"去"（不能假设玩家来过）。
+// 网状地图同一节点入边多条，静态"回X"在首次直到的路线上会穿帮（如 B区 直达 F区 时"回旧区"）。
+function xdGarGo(targetId, beenText, firstText) {
+  return function(v) {
+    return (v._visit && v._visit[targetId] > 0) ? beenText : firstText;
+  };
+}
+
 // 噪音水位统一反馈：ops>=3 起水声变密，>=5 连爬行声都贴上来（步行区共用一套措辞）
 function xdGarNoise(vars) {
   var ops = vars._garageOps || 0;
@@ -121,7 +129,7 @@ Object.assign(storyData, {
       { text: "去西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
       { text: "去拐角杂物堆", nextScene: "新达汇-B1停车场H区", effect: updateTime(1) },
       { text: "去坡道口（出口方向）", nextScene: "新达汇-B1停车场J区", effect: updateTime(1) },
-      { text: "回B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(2) }
+      { text: xdGarGo("新达汇-B1走廊", "回B1走廊", "去B1走廊"), nextScene: "新达汇-B1走廊", effect: updateTime(2) }
     ]
   },
 
@@ -180,7 +188,7 @@ Object.assign(storyData, {
         showCondition: "!_wiredCorrectly"
       },
       { text: "走下台阶到旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(1), condition: "_garageOps < 5", elseScene: "新达汇-B1停车场-强制驱逐" },
-      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1), condition: "_garageOps < 5", elseScene: "新达汇-B1停车场-强制驱逐" }
+      { text: xdGarGo("新达汇-B1停车场B区", "回主通道", "去主通道"), nextScene: "新达汇-B1停车场B区", effect: updateTime(1), condition: "_garageOps < 5", elseScene: "新达汇-B1停车场-强制驱逐" }
     ]
   },
 
@@ -284,7 +292,7 @@ Object.assign(storyData, {
       { text: "仔细看看栅栏上的刻字", nextScene: "新达汇-B1停车场-涂鸦" },
       { text: "沿斜坡往深处去", nextScene: "新达汇-B1停车场F区", effect: updateTime(2) },
       { text: "爬西侧斜坡上去", nextScene: "新达汇-B1停车场G区", effect: updateTime(2) },
-      { text: "上台阶回配电室", nextScene: "新达汇-B1停车场C区", effect: updateTime(1) }
+      { text: xdGarGo("新达汇-B1停车场C区", "上台阶回配电室", "上台阶去配电室"), nextScene: "新达汇-B1停车场C区", effect: updateTime(1) }
     ]
   },
 
@@ -324,7 +332,7 @@ Object.assign(storyData, {
     choices: [
       { text: "翻过杂物堆走检修通道", nextScene: "新达汇-B1停车场H区", effect: updateTime(2) },
       { text: "往深处去", nextScene: "新达汇-B1停车场F区", effect: updateTime(1) },
-      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
+      { text: xdGarGo("新达汇-B1停车场B区", "回主通道", "去主通道"), nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
       { text: "去第二停车排", nextScene: "新达汇-B1停车场K区", effect: updateTime(1) },
       { text: "搜查拐角的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
     ]
@@ -394,9 +402,9 @@ Object.assign(storyData, {
         nextScene: "新达汇-B1停车场-搜车",
         effect: updateTime(2)
       },
-      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(2) },
-      { text: "上台阶回旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(1) },
-      { text: "回东北拐角", nextScene: "新达汇-B1停车场E区", effect: updateTime(1) }
+      { text: xdGarGo("新达汇-B1停车场B区", "回主通道", "去主通道"), nextScene: "新达汇-B1停车场B区", effect: updateTime(2) },
+      { text: xdGarGo("新达汇-B1停车场D区", "上台阶回旧区", "上台阶去旧区"), nextScene: "新达汇-B1停车场D区", effect: updateTime(1) },
+      { text: xdGarGo("新达汇-B1停车场E区", "回东北拐角", "去东北拐角"), nextScene: "新达汇-B1停车场E区", effect: updateTime(1) }
     ]
   },
 
@@ -531,7 +539,7 @@ Object.assign(storyData, {
       { text: "翻后车厢搜一搜", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) },
       { text: "穿横道去东侧", nextScene: "新达汇-B1停车场I区", effect: updateTime(1) },
       { text: "下斜坡去旧区", nextScene: "新达汇-B1停车场D区", effect: updateTime(2) },
-      { text: "穿过铁门回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
+      { text: xdGarGo("新达汇-B1停车场B区", "穿过铁门回主通道", "穿过铁门去主通道"), nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
       { text: "回入口平台", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
     ]
   },
@@ -637,7 +645,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
-      { text: "回主通道", nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
+      { text: xdGarGo("新达汇-B1停车场B区", "回主通道", "去主通道"), nextScene: "新达汇-B1停车场B区", effect: updateTime(1) },
       { text: "穿到东北拐角", nextScene: "新达汇-B1停车场E区", effect: updateTime(1) },
       { text: "搜查停车排的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
     ]
@@ -662,7 +670,7 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "去西侧车道", nextScene: "新达汇-B1停车场G区", effect: updateTime(1) },
-      { text: "回中段横道", nextScene: "新达汇-B1停车场I区", effect: updateTime(1) },
+      { text: xdGarGo("新达汇-B1停车场I区", "回中段横道", "去中段横道"), nextScene: "新达汇-B1停车场I区", effect: updateTime(1) },
       { text: "搜查停车排的车", nextScene: "新达汇-B1停车场-搜车", effect: updateTime(2) }
     ]
   },
@@ -835,7 +843,7 @@ Object.assign(storyData, {
     image: "images/placeholder.png" /* TODO: images/xindahui/b1Corridor.png */,
     text: "你拔腿就跑，穿过主通道、冲过入口平台，一路没有回头。直到站在B1走廊的灯光下，你才敢停下来喘气。\n身后的停车场深处，水声还在回荡。\n<span class='think'>车库里的东西记仇了。今天最好别再进去——过一晚，等它们散了再说。</span>",
     choices: [
-      { text: "回到B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(1) }
+      { text: xdGarGo("新达汇-B1走廊", "回到B1走廊", "走进B1走廊"), nextScene: "新达汇-B1走廊", effect: updateTime(1) }
     ]
   },
 
@@ -902,7 +910,7 @@ Object.assign(storyData, {
     choices: [
       { text: "直行冲向入口平台", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-入口平台", effect: updateTime(1) },
       { text: "拐横道绕开它们", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-横道", effect: updateTime(1) },
-      { text: "掉头回东车道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-东车道", effect: updateTime(1) }
+      { text: xdGarGo("新达汇-B1停车场-驾驶-东车道", "掉头回东车道", "掉头去东车道"), condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-东车道", effect: updateTime(1) }
     ]
   },
 
@@ -945,8 +953,8 @@ Object.assign(storyData, {
     },
     choices: [
       { text: "冲上出口坡道！", nextScene: "新达汇-B1停车场-驾驶-坡道口", effect: updateTime(1) },
-      { text: "掉头回主通道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-主通道", effect: updateTime(1) },
-      { text: "拐回东车道", condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-东车道", effect: updateTime(1) }
+      { text: xdGarGo("新达汇-B1停车场-驾驶-主通道", "掉头回主通道", "掉头去主通道"), condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-主通道", effect: updateTime(1) },
+      { text: xdGarGo("新达汇-B1停车场-驾驶-东车道", "拐回东车道", "拐进东车道"), condition: "_escapeOps > 0", elseScene: "新达汇-B1停车场-驾驶-围堵", nextScene: "新达汇-B1停车场-驾驶-东车道", effect: updateTime(1) }
     ]
   },
 
@@ -1029,7 +1037,7 @@ Object.assign(storyData, {
       return desc;
     },
     choices: [
-      { text: "回喷泉广场", nextScene: "新达汇-喷泉广场", effect: updateTime(3) },
+      { text: xdGarGo("新达汇-喷泉广场", "回喷泉广场", "去喷泉广场"), nextScene: "新达汇-喷泉广场", effect: updateTime(3) },
       { text: "往西去金谊广场", nextScene: "金谊广场地面入口", effect: updateTime(30) },
       { text: "进入车库", nextScene: "新达汇-B1停车场A区", effect: updateTime(2) }
     ]
