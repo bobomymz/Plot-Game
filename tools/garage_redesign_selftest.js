@@ -445,6 +445,25 @@ const aExit = S("storyData['新达汇-B1停车场A区']").choices.find((c) => c.
 check(aExit.text({ _visit: {} }) === "去B1走廊", "A区→B1走廊：辅路直入者没进过商场，写「去」");
 const rampBack = S("storyData['新达汇-B1停车场-驾驶-坡道口']").choices.find((c) => c.nextScene === "新达汇-B1停车场-驾驶-入口平台");
 check(typeof rampBack.text === "string" && rampBack.text === "掉头回入口平台", "坡道口→入口平台：唯一入边刚去过，保留静态「回」");
+
+console.log("\n=== 12. 出口路线完整性（不许结算点传送跳出口） ===");
+// 车库步行层只有两个合法出口：A区→B1走廊、J区→沿坡道出库→辅路。
+// scripted 例外（交割/逃亡，正文写明跑出路线）：强制驱逐→B1走廊、驾驶-冲出坡道→车库出口。
+const scriptedExits = ["新达汇-B1停车场-强制驱逐", "新达汇-B1停车场-驾驶-冲出坡道"];
+const exitEdges = [];
+const SD = S("storyData");
+for (const [sid, sc] of Object.entries(SD)) {
+  if (sid.indexOf("新达汇-B1停车场") !== 0 || scriptedExits.indexOf(sid) >= 0) continue;
+  (sc.choices || []).forEach((c) => {
+    const nxt = typeof c.nextScene === "function" ? null : c.nextScene;
+    if (nxt === "新达汇-B1走廊" || nxt === "新达汇车库出口") exitEdges.push(sid + " -> " + nxt);
+  });
+}
+check(exitEdges.length === 2 && exitEdges.indexOf("新达汇-B1停车场A区 -> 新达汇-B1走廊") >= 0 && exitEdges.indexOf("新达汇-B1停车场J区 -> 新达汇车库出口") >= 0,
+  "车库步行层→外界仅两条边：A区→B1走廊、J区→坡道出库（实际边：" + exitEdges.join(" / ") + "）");
+check(S("storyData['新达汇-B1停车场-强制驱逐']").choices.some((c) => c.nextScene === "新达汇-B1走廊") && S("storyData['新达汇-B1停车场-驾驶-冲出坡道']").choices.some((c) => c.nextScene === "新达汇车库出口"), "两处 scripted 交割出口在位");
+const gcChoices = S("storyData['新达汇-B1停车场-车库检查']").choices;
+check(!gcChoices.some((c) => c.nextScene === "新达汇-B1走廊" || c.nextScene === "新达汇车库出口"), "车库检查结算点不再直跳出口（沿既有线路走出去）");
 const jText = S("storyData['新达汇-B1停车场J区']").text({ dd: 4, hh: 8, _visit: { "新达汇-B1停车场-上车点火": 1 } });
 check(jText.indexOf("第二次撞开") >= 0, "J区车走后：断杆被第二次撞开 + 亭顶砸痕");
 const aTextOut = S("storyData['新达汇-B1停车场A区']").text({ dd: 4, hh: 8, _wiredCorrectly: true, _garageLastDay: 4, _garageOps: 0, _garageDecayDays: 0, _visit: { "新达汇-B1停车场-上车点火": 1 }, _lastScene: "新达汇-B1走廊" });
