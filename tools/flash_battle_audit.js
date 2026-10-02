@@ -148,9 +148,10 @@ for (const b of battles) {
   const isFactory = /choices\s*:\s*function|return\s*\[/.test(src) && !Array.isArray(sd[b.id].choices);
   const im = /initMemoryGame\s*\(([^)]*)\)/.exec(src);
   const lenArg = im ? im[1].replace(/\s+/g, '') : '(动态/工厂)';
-  const hasRouter3 = /flashCombatRouter\s*\(/.test(src);            // 三档（注意 Safe 不会命中此正则）
+  const hasRouter3 = /flashCombatRouter\s*\(/.test(src);            // 三档（注意 Safe/Deadly 不会命中此正则）
   const hasRouter2 = /flashCombatRouterSafe\s*\(/.test(src);        // 两档（答错不致死）
-  const hasRouter = hasRouter3 || hasRouter2;
+  const hasRouterD = /flashCombatRouterDeadly\s*\(/.test(src);      // 极端两档（偏差0=活，否则=死；车库尸潮密度遭遇，波波 10-02 定）
+  const hasRouter = hasRouter3 || hasRouter2 || hasRouterD;
   const hasOldCond = /condition\s*:\s*checkFlashAnswer/.test(src);
   const elseScene = b.sample.elseScene || null;
   const timeoutScene = b.sample.timeoutScene || null;
@@ -175,6 +176,10 @@ for (const b of battles) {
     const rt = /flashCombatRouterSafe\s*\(\s*["']([^"']+)["']\s*,\s*["']([^"']+)["']/.exec(src);
     if (rt) { targets = [rt[1], rt[2]]; }
     else { console.log('[R2][WARN] ' + b.id + ' 两档路由参数是动态写法，跳过静态目标检查'); warns++; }
+  } else if (hasRouterD) {
+    const rt = /flashCombatRouterDeadly\s*\(\s*["']([^"']+)["']\s*,\s*["']([^"']+)["']/.exec(src);
+    if (rt) { targets = [rt[1], rt[2]]; }
+    else { console.log('[R2][WARN] ' + b.id + ' 极端两档路由参数是动态写法，跳过静态目标检查'); warns++; }
   }
   if (targets) for (const tg of targets) if (!sd[tg]) { console.log('[R2][FAIL] ' + b.id + ' 路由目标不存在: ' + tg); errors++; }
   if (timeoutScene && !sd[timeoutScene]) { console.log('[R2][FAIL] ' + b.id + ' timeoutScene 不存在: ' + timeoutScene); errors++; }

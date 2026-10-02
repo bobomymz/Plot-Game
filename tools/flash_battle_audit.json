@@ -240,24 +240,43 @@
     ]
   },
   {
-    "id": "新达汇-B1停车场-摸黑遭遇",
+    "id": "新达汇-B1停车场-尸潮遭遇",
     "file": "东明街道/新达汇地下车库.js",
-    "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\",\"白\"],8",
+    "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\",\"白\"],6",
     "hasRouter": true,
-    "tier": 3,
+    "tier": 0,
     "hasOldCond": false,
     "elseScene": null,
     "timeoutScene": "结局-车库遭遇战",
     "timeout": 18000,
     "isFactory": false,
     "targets": [
-      "新达汇-B1停车场-摸黑-脱身",
-      "新达汇-B1停车场-摸黑-带伤",
+      "新达汇-B1停车场-尸潮-击散",
       "结局-车库遭遇战"
     ],
     "whitelisted": false,
     "inbound": [
-      "东明街道/新达汇地下车库.js: \"新达汇-B1停车场-摸黑遭遇\": {"
+      "东明街道/新达汇地下车库.js: \"新达汇-B1停车场-尸潮遭遇\": {"
+    ]
+  },
+  {
+    "id": "新达汇-B1停车场-巢穴遭遇",
+    "file": "东明街道/新达汇地下车库.js",
+    "lenArg": "[\"红\",\"蓝\",\"绿\",\"黄\",\"白\"],7",
+    "hasRouter": true,
+    "tier": 0,
+    "hasOldCond": false,
+    "elseScene": null,
+    "timeoutScene": "结局-车库遭遇战",
+    "timeout": 18000,
+    "isFactory": false,
+    "targets": [
+      "新达汇-B1停车场-巢穴-占稳",
+      "结局-车库遭遇战"
+    ],
+    "whitelisted": false,
+    "inbound": [
+      "东明街道/新达汇地下车库.js: \"新达汇-B1停车场-巢穴遭遇\": {"
     ]
   },
   {

@@ -11,7 +11,10 @@
 // 障碍链：dd>=3 时间门槛 → 配电室接线通电（独立回路，不受商场总闸影响）→ 车旁闪色战斗
 //   → 上车点火（引擎声=全场信号）→ 驾驶逃亡（并入网格：_escapeOps 每格 -1，
 //   西侧车道贴沟格离开额外 -1，耗尽后再移动=围堵 QTE）→ 入口平台撞断杆出库。
-// 随机搜车：未通电/非目标格搜车走加权随机池（空车/即食食品/出声/锁车惊吓），每次 +1 噪音。
+// 随机搜车：未通电/非目标格搜车走加权随机池（空车/即食食品/出声/锁车惊吓）。
+// 尸潮密度（波波 10-02 拍板，取代旧 _garageOps 噪音/驱逐）：排水沟 J 区是源头，到过 J 区后激活；
+//   步行进格使所在格密度 +1（上限3）、搜车/接线在作案格 +1、跨日每格 -1；
+//   满密度格：步行进格=尸潮遭遇（二值闪色：偏差0=击散清零，否则=死）/ 驾驶进格=截停 QTE。
 // 方案文档：docs/区域方案-新达汇车库网格化与方向系统.md
 
 var XDGAR = "新达汇-B1停车场";
@@ -92,14 +95,6 @@ function xdDirFrom(fromId, toId) {
   return null;
 }
 
-// 噪音水位统一反馈：ops>=3 起水声变密，>=5 连爬行声都贴上来（步行分区共用一套措辞）
-function xdGarNoise(vars) {
-  var ops = vars._garageOps || 0;
-  if (ops >= 5) return "\n<span class='warn'>排水沟的水声已经连成片，间或混着爪子刮水泥的动静——它们就在车道附近。</span>";
-  if (ops >= 3) return "\n<span class='warn'>排水沟那头，有节奏的拍水声一声比一声密。</span>";
-  return "";
-}
-
 // 车库照明四态："lit"=通电 / "torch"=手电 / "dim"=手机微光 / "dark"=全黑
 function xdGarSight(vars) {
   if (vars._wiredCorrectly) return "lit";
@@ -108,21 +103,84 @@ function xdGarSight(vars) {
   return "dark";
 }
 
-// 随机搜车路由（加权）：车道尽头摸黑可能撞上守着小明的车的丧尸（比通电后正面打更险）。
-// 遭遇判定看本轮搜车的起点格（_garageSearchFrom），不看上一次的来路——从车道尽头反复搜，每次都有 30% 撞上。
+// ==================== 尸潮密度系统（波波 10-02 拍板） ====================
+// 排水沟（J区）是源头：到过 J 区后激活。激活后步行进格使所在格密度 +1（上限 3），
+// 搜车/接线在作案格 +1（替代旧 _garageOps 全局水位）。驾驶不涨密度，但开进满密度格 = 截停 QTE。
+// 进格时该格密度已满 → 记忆闪色遭遇（二值：偏差 0=击散该格清零；任何偏差/超时=死）。
+// 跨日在 G 格结算：每格密度 -1/天。预警分档写进每格正文（xdGarNoise），满格前必有多轮可见警告。
+var XD_DEN = {
+  "新达汇-B1-西车道北段": "_garDenA",
+  "新达汇-B1-主通道北段": "_garDenB",
+  "新达汇-B1-车道尽头": "_garDenC",
+  "新达汇-B1-西车道南段": "_garDenD",
+  "新达汇-B1-中段枢纽": "_garDenE",
+  "新达汇-B1-第二停车排": "_garDenF",
+  "新达汇-B1-入口平台": "_garDenG",
+  "新达汇-B1-主通道南段": "_garDenH",
+  "新达汇-B1-杂物拐角": "_garDenI"
+};
+
+function xdGarDenActive(v) {
+  return !!(v._visit && v._visit[XDGAR + "-旧区"] > 0);
+}
+
+// 格的有效密度 = 存储值 + C 区血腥加成（dd>=3 小明的血把东西引来了；+1 不占存储上限、不可被击散清掉）
+function xdGarDen(v, id) {
+  var d = v[XD_DEN[id]] || 0;
+  if (id === XDCELL + "车道尽头" && v.dd >= 3) d += 1;
+  return d;
+}
+
+function xdGarDenTotal(v) {
+  var sum = 0;
+  for (var k in XD_DEN) sum += (v[XD_DEN[k]] || 0);
+  return sum;
+}
+
+// 进格路由：挂在每个移动选项的 nextScene 上。满密度格：步行→尸潮遭遇 / 驾驶→截停 QTE。
+// （引擎 onEnter 无重定向能力，进格瞬间的密度判定借函数式 nextScene 在点击时完成。）
+function xdCellEntry(id) {
+  return function(v) {
+    if (!xdGarDenActive(v) || xdGarDen(v, id) < 3) return id;
+    if (v._driving) {
+      v._garDriveTarget = id;
+      return XDGAR + "-截停";
+    }
+    v._garFightCell = id;
+    return XDGAR + "-尸潮遭遇";
+  };
+}
+
+// J 区（源头）：密度恒满——进入即巢穴遭遇，打散后当天安静（_garJQuietDay），次日恢复。
+function xdJEntry(v) {
+  if ((v._garJQuietDay || 0) >= v.dd) return XDGAR + "-旧区";
+  v._garFightCell = "J";
+  return XDGAR + "-巢穴遭遇";
+}
+
+// 噪音/密度统一反馈：按当前格的有效密度分档写进每格正文尾部。
+// 满密度格步行进格即遭遇战，"满"档文案只给驾驶路过/击散前驻留时看。
+function xdGarNoise(vars, cellId) {
+  if (!cellId || !XD_DEN[cellId]) return "";
+  var d = xdGarDen(vars, cellId);
+  if (d >= 3) return "\n<span class='warn'>水声贴着这条车道的两头炸，栅栏缝里的水面齐着缝沿——这一片已经被它们占满了。</span>";
+  if (d === 2) return "\n<span class='warn'>排水沟那头的拍水声一声比一声近，间或混着爪子刮水泥的动静。再在这里转悠，要出事。</span>";
+  if (d === 1) return "\n排水沟那头，隐约又有水响了一声。";
+  return "";
+}
+
+// 随机搜车路由（加权）。搜车会惊扰所在格（搜车 hub onEnter 给起点格密度 +1）；
+// 旧的「车道尽头 30% 摸黑遭遇」已并入尸潮密度系统（C 区 dd>=3 血腥加成，满密度进格=遭遇战）。
 // __sceneRefs 供 lint_story 补记入边（否则随机池节点会被误判孤立场景）。
 function xdGarSearchRouter(vars) {
   var r = Math.random();
-  if (vars.dd >= 3 && !vars._wiredCorrectly && vars._garageSearchFrom === XDCELL + "车道尽头" && r < 0.3) {
-    return XDGAR + "-摸黑遭遇";
-  }
   if (r < 0.35) return XDGAR + "-搜车-空车";
   if (r < 0.55) return (vars._garageLootLeft > 0) ? XDGAR + "-搜车-捡到吃的" : XDGAR + "-搜车-空车";
   if (r < 0.80) return XDGAR + "-搜车-出声";
   return XDGAR + "-搜车-锁车惊吓";
 }
 xdGarSearchRouter.__sceneRefs = [
-  XDGAR + "-摸黑遭遇", XDGAR + "-搜车-空车", XDGAR + "-搜车-捡到吃的",
+  XDGAR + "-搜车-空车", XDGAR + "-搜车-捡到吃的",
   XDGAR + "-搜车-出声", XDGAR + "-搜车-锁车惊吓"
 ];
 
@@ -155,14 +213,14 @@ function xdCellScene(opts) {
                                       : { add: { _escapeOps: cost } };
       return {
         text: verb,
-        nextScene: target,
+        nextScene: xdCellEntry(target),
         effect: updateTime(1, extra),
         condition: "_escapeOps > 0",
         elseScene: XDGAR + "-围堵"
       };
     }
     var verb2 = { front: "向前走", left: "往左手边走", right: "往右手边走", back: "转身走" }[relDir];
-    return { text: verb2, nextScene: target, effect: updateTime(5) };
+    return { text: verb2, nextScene: xdCellEntry(target), effect: updateTime(5) };
   }
 
   var scene = {
@@ -191,19 +249,32 @@ function xdCellScene(opts) {
       } else if (XD_DIRS.indexOf(v._garageFacing) < 0) {
         v._garageFacing = "N";
       }
-      // 入口平台专属：跨日噪音衰减（每天 -2，驱逐不清零）+ 位置遥测
+      // 入口平台专属：跨日衰减（每格密度 -1/天）+ 位置遥测
       if (opts.entryAnchor) {
         v.currentPlace = "新达汇";
         v.currentPos = "地下车库";
         var last = (v._garageLastDay === undefined) ? v.dd : v._garageLastDay;
         if (v.dd > last) {
-          var before = v._garageOps || 0;
-          v._garageOps = Math.max(0, before - (v.dd - last) * 2);
-          v._garageDecayDays = (before > 0) ? (v.dd - last) : 0;
+          var gap = v.dd - last;
+          var denBefore = xdGarDenTotal(v);
+          for (var dk in XD_DEN) {
+            v[XD_DEN[dk]] = Math.max(0, (v[XD_DEN[dk]] || 0) - gap);
+          }
+          v._garageDecayDays = (denBefore > 0) ? gap : 0;
         } else {
           v._garageDecayDays = 0;
         }
         v._garageLastDay = v.dd;
+      }
+      // 尸潮密度：激活后每次步行进格，本格 +1（上限 3）；驾驶不涨（波波 10-02）；
+      // 击散后的余波平静（_garGrace）按次消耗，消耗期内不涨。
+      var denKey = XD_DEN[id];
+      if (denKey && xdGarDenActive(v) && !v._driving) {
+        if ((v._garGrace || 0) > 0) {
+          v._garGrace = v._garGrace - 1;
+        } else {
+          v[denKey] = Math.min(3, (v[denKey] || 0) + 1);
+        }
       }
       return {};
     },
@@ -229,7 +300,7 @@ function xdCellScene(opts) {
         return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDriveText(v);
       }
       body = (sight === "lit" || sight === "torch") ? opts.lit(v) : opts.dark(v);
-      return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarNoise(v);
+      return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarNoise(v, id);
     },
     choices: function(v) {
       var out = [];
@@ -282,14 +353,14 @@ Object.assign(storyData,
       if (v._garageDecayDays > 0) {
         desc += "\n排水沟那头的水声比上次退了些——隔了" + v._garageDecayDays + "天，它们散了一些。";
       }
-      if ((v._garageOps || 0) >= 5) {
+      if (xdGarDenActive(v) && xdGarDenTotal(v) >= 4) {
         desc += "\n<span class='warn'>还没往里走你就听见了：车库深处的水声密得像下雨。它们还没散。今天硬闯进去，每一步都是赌。</span>";
       }
       return desc;
     },
     dark: function(v) {
       var desc = "你摸着坡道的护栏走到平台——水泥地在这里展开成一片开阔地，坡度向上收进黑暗里。收费亭的金属框冰凉，玻璃碴子踩在脚下轻响。";
-      if ((v._garageOps || 0) >= 5) {
+      if (xdGarDenActive(v) && xdGarDenTotal(v) >= 4) {
         desc += "\n<span class='warn'>车库深处的水声密得像下雨。它们还没散。</span>";
       }
       return desc;
@@ -346,7 +417,7 @@ Object.assign(storyData,
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingG.png */,
     lit: function(v) {
       var desc = "西侧车道贴着 J 区的边走，地面泛潮，一道水渍从地缝里漫出来。半截从沟里拖出来的栅栏横在车道上，看得出有什么东西费过一番力气。";
-      if ((v._garageOps || 0) >= 5 || v._visit[XDGAR + "-上车点火"] > 0) {
+      if ((xdGarDenActive(v) && xdGarDen(v, id) >= 2) || v._visit[XDGAR + "-上车点火"] > 0) {
         desc += "\n<span class='warn'>车道边的排水沟栅栏缝里，水面比别处高了一截，正贴着缝往外渗。</span>";
       }
       return desc;
@@ -365,7 +436,7 @@ Object.assign(storyData,
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingI.png */,
     lit: function(v) {
       var desc = "两排立柱把这片开阔的车区切成田字。中段有一根立柱上刻满了“正”字，一笔一划刻得很深，密密麻麻数不清有多少个——有人在这里数过什么，数了很久。";
-      if (v.dd >= 3 && (v._garageOps || 0) >= 3) {
+      if (v.dd >= 3 && xdGarDen(v, id) >= 2) {
         desc += "\n最底下那个“正”字的最后一笔，刻痕还是新的，露着白茬——有人还在数。";
       }
       desc += "\n第二根立柱后有一扇防火门，关着。门把手上落了层灰，但没上锁——推得开。";
@@ -402,7 +473,7 @@ Object.assign(storyData,
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingG2.png */,
     lit: function(v) {
       var desc = "车道靠墙停着一辆银色五菱面包车，后门没有锁，车厢里堆满了纸箱和杂物，方向盘上落满了灰——看灰的厚度，爆发前就没再碰过了。\n这一段贴着 J 区的边，空气比主通道那边更潮，隐隐有水汽的味道。";
-      if ((v._garageOps || 0) >= 5 || v._visit[XDGAR + "-上车点火"] > 0) {
+      if ((xdGarDenActive(v) && xdGarDen(v, id) >= 2) || v._visit[XDGAR + "-上车点火"] > 0) {
         desc += "\n<span class='warn'>车道边的排水沟栅栏缝里，水面比别处高了一截，正贴着缝往外渗。</span>";
       }
       return desc;
@@ -432,7 +503,7 @@ Object.assign(storyData,
     },
     poiArr: [
       { text: "搜查北头停着的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) },
-      { text: "走下台阶，下 J 区", nextScene: XDGAR + "-旧区", effect: updateTime(1), condition: "_garageOps < 5", elseScene: XDGAR + "-强制驱逐" }
+      { text: "走下台阶，下 J 区", nextScene: xdJEntry, effect: updateTime(1) }
     ]
   }),
 
@@ -442,7 +513,7 @@ Object.assign(storyData,
     image: "images/placeholder.png" /* TODO: 优先四图之一 images/xindahui/parkingF.png（事故点） */,
     lit: function(v) {
       // 从战斗/摸黑脱身退回时的差异化承接（否则"走到尽头"与"你退了出去"矛盾）
-      var ret = (v._lastScene === XDGAR + "-摸黑-脱身" || v._lastScene === XDGAR + "-摸黑-带伤" || v._lastScene === XDGAR + "-车旁搜身" || v._lastScene === XDGAR + "-车旁搜身-受伤")
+      var ret = (v._lastScene === XDGAR + "-车旁搜身" || v._lastScene === XDGAR + "-车旁搜身-受伤" || v._lastScene === XDGAR + "-尸潮-击散")
         ? "你退回到车库深处。" : "";
       var body;
       // Day3 之前：车还没来，普通角落
@@ -451,7 +522,6 @@ Object.assign(storyData,
       } else if (!v._wiredCorrectly) {
         // Day3+：车在，但没通电。这个分支只有手电玩家会走到（手机微光/全黑走 dark()）
         body = "光柱扫过去——车道尽头的车位上停着一辆车，<span class='crit'>车身上没有灰。</span>驾驶座的门敞开着，看不清车里。\n车旁的排水沟栅栏歪了两根。一个影子伏在车门边，一下一下地动着；光一晃，它抬起头，朝你这边缓缓转过来。\n另一只正从沟里往外爬。";
-        if (v._garageFMarked) body += "\n<span class='think'>你上回摸黑记下的位置——就是它。</span>";
       // 车库线已点火开走（用本线标记，不用全局 hasCar——王老师线拿车不该擦掉这里的事故点）
       } else if (v._visit[XDGAR + "-上车点火"] > 0) {
         // 车已开走：空车位（关掉二次点火，状态闭环）
@@ -471,7 +541,6 @@ Object.assign(storyData,
         } else {
           body = "车道尽头的角落里停着一辆车——<span class='crit'>一辆深灰色的荣威轿车，车身上没有灰。</span>\n驾驶座的门敞开着，车灯熄着，但引擎盖摸上去是温的。车旁的排水沟栅栏歪了两根，一个佝偻的影子正伏在车门边，一下一下地朝车厢里啃咬着什么。\n影子旁边还有一只，正从排水沟里往外爬。";
         }
-        if (v._garageFMarked) body = "灯亮了。你上回摸黑记下的位置——就是它。\n" + body;
         if (v._knowsSurvivorCar) {
           body += "\n<span class='think'>长廊的人说过——小明前天开着车出去，到现在没回来。就是它了。</span>";
         }
@@ -482,7 +551,7 @@ Object.assign(storyData,
       if (v.dd < 3) {
         return "你沿着通道一直摸到尽头。手依次划过几辆车的引擎盖——全是凉的，覆着厚厚的灰。这里很久没有车动过了。";
       }
-      return "黑暗里传来一种细微的、有节奏的湿润声音，像是什么东西在进食。\n你在黑暗里分不清车位的轮廓——只知道那个方向的空气里，多了一股新鲜的血腥气。" + ((v._garageFMarked) ? "\n<span class='think'>但有个参照忘不了——那辆引擎盖是温的，在左手边第二个车位。你摸黑记下的。</span>" : "");
+      return "黑暗里传来一种细微的、有节奏的湿润声音，像是什么东西在进食。\n你在黑暗里分不清车位的轮廓——只知道那个方向的空气里，多了一股新鲜的血腥气。";
     },
     poiArr: [
       {
@@ -527,14 +596,20 @@ Object.assign(storyData,
         effect: updateTime(2),
         showCondition: "!_wiredCorrectly"
       },
-      { text: "退回 E 区", nextScene: "新达汇-B1-中段枢纽", effect: updateTime(1), condition: "_garageOps < 5", elseScene: XDGAR + "-强制驱逐" }
+      { text: "退回 E 区", nextScene: xdCellEntry("新达汇-B1-中段枢纽"), effect: updateTime(1) }
     ]
   },
 
   // ==================== 接线谜题 ====================
   "新达汇-B1停车场-接线": {
     image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
-    onEnter: { add: { _garageOps: 1 } },
+    onEnter: function(v) {
+      // 作案惊扰：动配电箱的动静把东西往 E 区引（+1，上限 3）
+      if (xdGarDenActive(v)) {
+        v._garDenE = Math.min(3, (v._garDenE || 0) + 1);
+      }
+      return {};
+    },
     text: function(v) {
       var desc = "配电箱里的线头脱落了好几根。你凑近一看——所有电线的外皮都是黑色的，没有颜色标记。\n配电箱盖板内侧贴着一张接线图，但被灰尘和油污盖住了大半。";
       if (v.hasTorch) {
@@ -604,7 +679,7 @@ Object.assign(storyData,
         if (v.dd >= 3) {
           desc += "栅栏边的水泥地上有几道拖痕，最深的一道通向台阶口；还有几根栅栏，被从里面顶歪了。";
         }
-        if ((v._garageOps || 0) >= 5 || v._visit[XDGAR + "-上车点火"] > 0) {
+        if (v.chasedByZombies > 0) {
           desc += "水面涨上来一截——那阵有节奏的拍水声还在，一道细长的影子贴着栅栏慢慢横移，从这头，到那头。";
         } else {
           desc += "那阵有节奏的拍水声还在，水面下的动静看不分明。";
@@ -618,7 +693,7 @@ Object.assign(storyData,
     },
     choices: [
       { text: "仔细看看栅栏上的刻字", nextScene: XDGAR + "-涂鸦" },
-      { text: "爬台阶，回主通道北段", nextScene: "新达汇-B1-主通道北段", effect: updateTime(1), condition: "_garageOps < 5", elseScene: XDGAR + "-强制驱逐" }
+      { text: "爬台阶，回主通道北段", nextScene: xdCellEntry("新达汇-B1-主通道北段"), effect: updateTime(1) }
     ]
   },
 
@@ -685,7 +760,7 @@ Object.assign(storyData,
     },
     choices: [
       { text: "上车，马上走", nextScene: XDGAR + "-上车点火" },
-      { text: "先退开，缓一缓", nextScene: XDCELL + "车道尽头", effect: updateTime(1) }
+      { text: "先退开，缓一缓", nextScene: xdCellEntry(XDCELL + "车道尽头"), effect: updateTime(1) }
     ]
   },
 
@@ -702,24 +777,25 @@ Object.assign(storyData,
     },
     choices: [
       { text: "上车，马上走", nextScene: XDGAR + "-上车点火" },
-      { text: "先退开，缓一缓", nextScene: XDCELL + "车道尽头", effect: updateTime(1) }
+      { text: "先退开，缓一缓", nextScene: xdCellEntry(XDCELL + "车道尽头"), effect: updateTime(1) }
     ]
   },
 
-  // ==================== 摸黑遭遇（未通电撞上守车的丧尸） ====================
-  "新达汇-B1停车场-摸黑遭遇": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
-    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 8),
+  // ==================== 尸潮密度遭遇（满密度格伏击 · 二值闪色：偏差0=击散，否则=死） ====================
+  // 走格路由 xdCellEntry 在满密度格把 nextScene 切到这里；_garFightCell 记录所在格。
+  "新达汇-B1停车场-尸潮遭遇": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/hordeAmbush.png */,
+    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 6),
     text: function(v) {
-      return "你的手摸到一辆车——引擎盖是温的。还没等你反应过来，<span class='crit'>一只湿漉漉的手已经攥住了你的手腕</span>。\n黑暗里你看不清它的脸，只闻得到排水沟的腥臭。挣脱，还是赌一把？\n集中注意力——凭声音和触感判断它的动作！";
+      var cn = xdCellName(v._garFightCell || "");
+      return "你刚踏进" + cn + "，水声就在四面炸开了。<span class='crit'>排水沟里的东西已经漫上了车道——不是一个，是一小群。</span>\n它们从车与车的缝隙里挤出来，湿漉漉的影子把你围在立柱边。退路被堵死了。\n集中注意力——凭记忆报出它们的动作节奏，一步都不能错！";
     },
     choices: [
       {
         text: "输入你感觉到的动作节奏",
         input: { placeholder: "例如：3红2蓝" },
-        nextScene: flashCombatRouter(
-          "新达汇-B1停车场-摸黑-脱身",
-          "新达汇-B1停车场-摸黑-带伤",
+        nextScene: flashCombatRouterDeadly(
+          "新达汇-B1停车场-尸潮-击散",
           "结局-车库遭遇战"
         ),
         timeout: 18000,
@@ -728,28 +804,76 @@ Object.assign(storyData,
     ]
   },
 
-  "新达汇-B1停车场-摸黑-脱身": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
-    onEnter: { add: { chasedByZombies: 1, strength: -1 }, set: { _garageFMarked: true } },
+  "新达汇-B1停车场-尸潮-击散": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/hordeAmbush.png */,
+    onEnter: function(v) {
+      var key = XD_DEN[v._garFightCell];
+      if (key) v[key] = 0;   // 打散：这一片的尸潮清空
+      v._garGrace = 2;       // 余波平静：接下来 2 次步行进格密度不涨
+      v.strength = Math.max(0, (v.strength || 0) - 1);
+      return {};
+    },
     text: function(v) {
-      return "你借着它的力道把它甩了出去，抄起半截轮胎架砸了下去——不动了。\n黑暗里，你的手摸到那辆车的车门：温的，没锁。钥匙孔的位置，你甚至摸到了插在点火器上的钥匙的轮廓。\n<span class='warn'>但水声已经围上来了。黑灯瞎火的，你分不清哪辆是它——再摸下去就是送死。</span>\n你退了出去。记住这个位置——下次，带着光来。\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
+      return "最后一个影子的节奏在你手里断了线——它栽倒在水痕里，不动了。\n余下的水声退了半拍，像潮水从礁石边暂且绕开。<span class='think'>这一片，暂时清空了。但排水沟还在往下渗——它们会慢慢聚回来。</span>\n<span class='sys'>【系统提示】体力-1，当前体力：{strength}。</span>";
     },
     choices: [
-      { text: "退回 C 区", nextScene: XDCELL + "车道尽头", effect: updateTime(1) }
+      { text: "站稳，继续走", nextScene: function(v) { return v._garFightCell || XDCELL + "中段枢纽"; } }
     ]
   },
 
-  "新达汇-B1停车场-摸黑-带伤": {
-    image: "images/hurtByzombie.webp",
-    onEnter: function(v) {
-      v._garageFMarked = true;
-      return hurtWinOnEnter({ time: 1 })(v);
-    },
+  // ==================== J 区巢穴遭遇（源头：密度恒满，打散后当天安静） ====================
+  "新达汇-B1停车场-巢穴遭遇": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/drainNest.png */,
+    onEnter: initMemoryGame(["红", "蓝", "绿", "黄", "白"], 7),
     text: function(v) {
-      return "你在黑暗里赌赢了——它倒了，你的胳膊上也挂了彩。" + hurtCostText(v) + "\n喘息间，你的指尖碰到旁边一辆车的车门：温的，没锁。点火器上插着什么，你甚至来不及确认。\n<span class='warn'>水声近得已经不需要判断方位。黑暗里多待一秒都是赌命。</span>\n你摸黑退了出去。位置记住了——下次，带着光来。";
+      return "台阶下到一半你就听见了——排水沟里的水声密得不正常。<span class='crit'>你往 J 区里迈的第一步，水面就炸了。</span>\n它们从栅栏缝里往外挤，湿漉漉的手扒开铁条——这里是它们的巢，你是闯进来的那个。\n集中注意力——报出它们的动作节奏！";
     },
     choices: [
-      { text: "退回 C 区", nextScene: XDCELL + "车道尽头", effect: updateTime(1) }
+      {
+        text: "输入你感觉到的动作节奏",
+        input: { placeholder: "例如：3红2蓝" },
+        nextScene: flashCombatRouterDeadly(
+          "新达汇-B1停车场-巢穴-占稳",
+          "结局-车库遭遇战"
+        ),
+        timeout: 18000,
+        timeoutScene: "结局-车库遭遇战"
+      }
+    ]
+  },
+
+  "新达汇-B1停车场-巢穴-占稳": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/drainNest.png */,
+    onEnter: function(v) {
+      v._garJQuietDay = v.dd;   // 打散巢穴：当天 J 区安静，次日恢复
+      v.strength = Math.max(0, (v.strength || 0) - 1);
+      return {};
+    },
+    text: function(v) {
+      return "你把扑上来的第一个钉死在栅栏上，剩下的缩回了水面之下。<span class='think'>巢被打散了——但水沟还在。隔一天再来，它们多半又聚回去了。</span>\n<span class='sys'>【系统提示】体力-1，当前体力：{strength}。</span>";
+    },
+    choices: [
+      { text: "走进 J 区", nextScene: XDGAR + "-旧区" }
+    ]
+  },
+
+  // ==================== 驾驶截停（开进满密度格 · QTE） ====================
+  "新达汇-B1停车场-截停": {
+    image: "images/placeholder.png" /* TODO: images/xindahui/driveSurrounded.png */,
+    qte: {
+      timeout: "Math.max(3000, 8000 - chasedByZombies * 800)",
+      onTimeout: "结局-车库围堵"
+    },
+    text: function(v) {
+      var cn = xdCellName(v._garDriveTarget || XDCELL + "中段枢纽");
+      return "车灯的光柱扫进" + cn + "——<span class='crit'>满了。整个格子都是影子，水声从栅栏缝里漫上车道。</span>\n它们认得这声引擎，正从三个方向往车道中间合拢。刹车就是死——只有冲！";
+    },
+    choices: [
+      {
+        text: "轰油门，从缝里冲过去！",
+        nextScene: function(v) { return v._garDriveTarget || XDCELL + "中段枢纽"; },
+        effect: updateTime(1, { add: { strength: -2, chasedByZombies: 1 }, set: { hurtByZombie: true } })
+      }
     ]
   },
 
@@ -757,11 +881,15 @@ Object.assign(storyData,
   "新达汇-B1停车场-搜车": {
     image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
     onEnter: function(v) {
-      v._garageOps = (v._garageOps || 0) + 1;
       // 记录本轮搜车起点（链中"换个位置再搜"不覆盖起点；退出搜查时清 pending）
       if (!v._garageSearchPending) {
         v._garageSearchFrom = v._lastScene || XDCELL + "主通道南段";
         v._garageSearchPending = true;
+      }
+      // 作案惊扰：搜车的动静把东西往起点格引（+1，上限 3）
+      var sk = XD_DEN[v._garageSearchFrom];
+      if (sk && xdGarDenActive(v)) {
+        v[sk] = Math.min(3, (v[sk] || 0) + 1);
       }
       return {};
     },
@@ -772,7 +900,8 @@ Object.assign(storyData,
         : (sight === "torch")
           ? "你放轻脚步，靠近最近的一排车。手电的光柱罩住一排车头，车牌和车型看得清，翻找起来也快——只是光柱外的地方，黑得更深了。"
           : "你放轻脚步，靠近最近的一辆车。黑暗里只能靠手摸——车门把手、车窗缝、储物格。每一次拉拽都可能出声。";
-      if (v._garageOps >= 3 && v._garageOps < 5) {
+      var fromDen = (v._garageSearchFrom && XD_DEN[v._garageSearchFrom]) ? xdGarDen(v, v._garageSearchFrom) : 0;
+      if (fromDen >= 2) {
         desc += "\n<span class='warn'>排水沟的方向，又传来那种有节奏的拍水声。比刚才近了。</span>";
       }
       return desc;
@@ -889,7 +1018,7 @@ Object.assign(storyData,
     ]
   },
 
-  // ==================== 噪音检查 / 强制驱逐 ====================
+  // ==================== 搜车链收口（回到原地） ====================
   "新达汇-B1停车场-车库检查": {
     image: "images/placeholder.png" /* TODO: images/xindahui/b1ParkingB.png */,
     onEnter: function(v) {
@@ -897,11 +1026,9 @@ Object.assign(storyData,
       return {};
     },
     text: function(v) {
-      if (v._garageOps >= 5) {
-        return "排水沟那边传来一阵剧烈的翻涌声——水花四溅，然后是什么沉重的东西爬上了地面的声音。你没有回头看。你跑了。";
-      }
-      if (v._garageOps >= 3) {
-        return "你隐约听到排水沟的方向传来水声——是有节奏的拍打声，不像水流，更像别的东西。一声比一声密。地下停车场不再安静了。";
+      var fromDen = (v._garageSearchFrom && XD_DEN[v._garageSearchFrom]) ? xdGarDen(v, v._garageSearchFrom) : 0;
+      if (xdGarDenActive(v) && fromDen >= 2) {
+        return "你站在原地喘了口气。" + (v.chasedByZombies > 0 ? "刚才的回音还没散，" : "") + "起点那片的水声已经贴上立柱了——回去的路上，未必太平。";
       }
       return (v.chasedByZombies > 0)
         ? "你站在原地喘了口气。刚才闹出的动静，回音还在车库里荡——这里已经不算安分了。"
@@ -909,25 +1036,12 @@ Object.assign(storyData,
     },
     choices: [
       {
-        text: "必须马上离开！",
-        nextScene: XDGAR + "-强制驱逐",
-        showCondition: "_garageOps >= 5"
-      },
-      {
         text: "回到原地继续探索",
-        nextScene: function(v) { return v._garageSearchFrom || XDCELL + "主通道南段"; },
-        showCondition: "_garageOps < 5"
+        nextScene: function(v) { return xdCellEntry(v._garageSearchFrom || XDCELL + "主通道南段")(v); }
       }
       // 注意：这里不放"离开车库"直跳——车库的两个出口（入口平台→B1走廊/坡道出库）
       // 结算点传送会绕开既有线路；玩家从原地沿路走到入口平台出去。
-    ]
-  },
-
-  "新达汇-B1停车场-强制驱逐": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/b1Corridor.png */,
-    text: "你拔腿就跑，穿过主通道、冲过入口平台，一路没有回头。直到站在B1走廊的灯光下，你才敢停下来喘气。\n身后的停车场深处，水声还在回荡。\n<span class='think'>车库里的东西记仇了。今天最好别再进去——过一晚，等它们散了再说。</span>",
-    choices: [
-      { text: "走进B1走廊", nextScene: "新达汇-B1走廊", effect: updateTime(1) }
+      // 旧 _garageOps>=5 的"必须马上离开/强制驱逐"已随噪音系统退役（波波 10-02：危险改走尸潮密度）。
     ]
   },
 
@@ -949,7 +1063,7 @@ Object.assign(storyData,
       return "钥匙就在点火器上。你拧下去——<span class='crit'>引擎炸醒，整个车库都听见了。</span>\n<span class='warn'>排水沟的方向，水声炸开了。</span>挂挡！";
     },
     choices: [
-      { text: "挂挡，冲出车位！", nextScene: XDCELL + "车道尽头" }
+      { text: "挂挡，冲出车位！", nextScene: xdCellEntry(XDCELL + "车道尽头") }
     ]
   },
 

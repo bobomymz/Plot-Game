@@ -690,6 +690,16 @@ function flashCombatRouterSafe(winScene, setbackScene) {
   return router;
 }
 
+// 极端两档路由：0 偏差=活，任何偏差/超时=死——波波 10-02 定，用于车库尸潮密度遭遇
+//（满密度格的伏击没有受伤保底：打散或死）。用法：nextScene: flashCombatRouterDeadly("X-击散", "结局-X")
+function flashCombatRouterDeadly(winScene, deadScene) {
+  var router = function(vars) {
+    return flashAnswerDeviation(vars) <= 0 ? winScene : deadScene;
+  };
+  router.__sceneRefs = [winScene, deadScene];   // 同上：供 lint 补记入边
+  return router;
+}
+
 // 受伤档公共惩罚：汞+5×偏差（与偏差量成正比；Math.min 封顶，与复旦江湾写法一致）、
 // hurtByZombie、概率断武器（tryBreakWeapon 同死亡档概率）。玩家可见文案不点破汞机制。
 function hurtPenaltyBase(vars) {

@@ -69,17 +69,28 @@ const storyData = {
     _jinbaobeiFrontOpen: false, // 金宝贝前门是否已用钥匙牌打开
     _extinguisherUsed: false,   // 地铁站里是否使用过灭火器
     _marketEntry: "",          // 菜市场进入路线：""=未进入 / "大厅"=正门(安盛街西侧) / "员工通道"=长者食堂后厨
-    _wiredCorrectly: false,    // 新达汇B1停车场：配电箱接线是否已恢复供电（车库照明走独立回路，不受 _powerOut 影响；_garageOps 达 3 预警 / 5 驱逐）
-    _garageOps: 0,             // 新达汇B1停车场：车库噪音计数（搜车/接线 +1，≥3 预警 / ≥5 驱逐；跨日每天 -2 衰减，驱逐不清零）
+    _wiredCorrectly: false,    // 新达汇B1停车场：配电箱接线是否已恢复供电（车库照明走独立回路，不受 _powerOut 影响）
+    _garDenA: 0,               // 车库尸潮密度·A西车道北段（去过J区后激活：步行进格+1，搜车/接线在所在格+1；上限3；满3进格=闪色遭遇，二值胜=清零/败=死；跨日-1）
+    _garDenB: 0,               // 车库尸潮密度·B主通道北段
+    _garDenC: 0,               // 车库尸潮密度·C车道尽头（dd>=3 另有+1血腥加成，不占存储上限）
+    _garDenD: 0,               // 车库尸潮密度·D西车道南段
+    _garDenE: 0,               // 车库尸潮密度·E中段枢纽（接线在此+1）
+    _garDenF: 0,               // 车库尸潮密度·F第二停车排
+    _garDenG: 0,               // 车库尸潮密度·G入口平台
+    _garDenH: 0,               // 车库尸潮密度·H主通道南段
+    _garDenI: 0,               // 车库尸潮密度·I杂物拐角
+    _garGrace: 0,              // 车库尸潮：击散后的余波平静计数（接下来N次步行进格不涨密度，防死亡螺旋）
+    _garJQuietDay: 0,          // 车库尸潮：J区巢穴被打散的游戏日（=dd 当天J区安全，次日恢复）
+    _garFightCell: "",         // 车库尸潮：当前遭遇战所在格（格ID或"J"；击散/占稳结算用）
+    _garDriveTarget: "",       // 车库尸潮：驾驶截停QTE的目标格ID（QTE成功后落点）
     _garageMapSeen: false,     // 新达汇B1停车场：是否看过消防疏散图（配电室/出口位置；驾驶逃亡时给方向提示）
     _garageLootLeft: 3,        // 新达汇B1停车场：随机搜车可翻到的即食食品份数（世界库存，拿完即空）
-    _garageLastDay: 1,         // 新达汇B1停车场：上次到访的游戏日（A区 onEnter 跨日衰减 _garageOps）
+    _garageLastDay: 1,         // 新达汇B1停车场：上次到访的游戏日（G格 onEnter 跨日衰减密度）
     _escapeOps: 0,             // 驾驶逃亡剩余操作次数（上车点火设6，每移动一格-1，0后再移动=围堵QTE）
     _knowsSurvivorCar: false,  // 金谊长廊情报：知道小明开车去了新达汇B1没回来（只在车库事故点文案里呼应）
-    _garageSearchFrom: "",     // 新达汇B1停车场：本轮搜车起点区（退出搜查回原地；F区摸黑遭遇判定用）
+    _garageSearchFrom: "",     // 新达汇B1停车场：本轮搜车起点区（退出搜查回原地；搜车+1密度落点）
     _garageSearchPending: false, // 新达汇B1停车场：是否处于搜车链中（链中"换个位置再搜"不覆盖起点）
-    _garageDecayDays: 0,       // 新达汇B1停车场：本次进入时噪音衰减的天数（>0 时A区正文播报"散了一些"）
-    _garageFMarked: false,     // 新达汇B1停车场：摸黑撞见过守车丧尸并记住车位（F区未通电/通电首句呼应）
+    _garageDecayDays: 0,       // 新达汇B1停车场：本次进入时尸潮衰减的天数（>0 时G区正文播报"散了一些"）
     _garageFacing: "N",        // 新达汇B1停车场：玩家朝向（N/E/S/W，北=坡道口对侧；进格按来向更新，网格方向系统用）
     _driving: false,           // 新达汇B1停车场：是否处于驾驶状态（上车点火置 true，出库/死亡交割；影响格点文案与移动扣次）
     _garageRev: false,         // 新达汇B1停车场：驾驶倒车标记（倒车移动置 true，下格 onEnter 消费=车头朝向不变）
