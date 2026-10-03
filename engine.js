@@ -671,13 +671,31 @@ function applyReactive() {
 }
 
 // ====== 全局触发检查 ======
-function checkGlobalTriggers() {
+// sceneId 传当前正在渲染的场景（renderScene 内部不给 currentScene 赋值，靠这里传入才准）。
+function checkGlobalTriggers(sceneId) {
   if (!storyData._globalTriggers || !storyData._globalTriggers.length) return null;
+
+  // -------- 过程性节点豁免过夜（波波 10-03）--------
+  // 「天黑必须过夜」会在玩家进入**任何**场景的瞬间把他拉走，连正在进行的 QTE/闪色战斗也照拉
+  // （实测 103 个带 qte 的场景 100% 被吞，战斗整场消失）。所以"正在进行中"的节点要豁免。
+  // 判定两种：
+  //   ① 场景显式声明 `nightImmune: true` 或 `nightImmune: function(v){...}`（函数形态可批处理，
+  //      例：车库九格统一样式 `return !!v._driving`，一条覆盖整个驾驶态）；
+  //   ② 场景带 `qte` —— QTE/闪色战斗本身就是"正在进行"，一律豁免（规则统一，不必逐个标）。
+  // ⚠ 只豁免 id === "night" 那一条。死亡类触发器（体力耗尽/汞中毒/追兵>=5/Harsh）优先级更高、
+  //   且必须生效，否则夜里打架会变成不死身。
+  // ⚠ 豁免只是"延后"不是"免疫"：玩家离开豁免场景走进任何普通场景的那一刻照样被拉走，必然收敛。
+  // ⚠ 属性写在场景定义里、不进存档 —— 回溯/读档天然正确，不需要任何清理（不像状态变量那样会泄漏）。
+  const curScene = storyData[sceneId];
+  const nightImmune = !!(curScene && (
+    typeof curScene.nightImmune === "function" ? curScene.nightImmune(gameState) : curScene.nightImmune
+  )) || !!(curScene && curScene.qte);
 
   let best = null;
   let bestPriority = -Infinity;
 
   for (const trigger of storyData._globalTriggers) {
+    if (nightImmune && trigger.id === "night") continue;   // 豁免只对天黑这一条生效
     if (checkCondition(trigger.condition, gameState)) {
       const prio = trigger.priority || 0;
       if (prio > bestPriority) {
@@ -1535,10 +1553,17 @@ function renderScene(sceneId, skipOnEnter = false, _depth = 0) {
   // 触发器目标本身是结局的（如 结局-体力耗尽）原本就因 resolved === currentScene 天然豁免，
   // 此守卫补齐其余结局。非「结局」前缀的结局全库仅 4 个且均为静态文案（见
   // tools/night_ending_bounce_selftest.js 的命名检查），第二条判定按静态文案兜底。
+  // ⚠派生量兜底下放：车库的 `_garDenTotal` 是 computed 派生量，只在 applyEffect/applySave 里重算；
+  // 而密度是在 onEnter 里**直接写** `v[denKey]` 的（不走 applyEffect）→ 默认会滞后一笔，
+  // 导致同场景自己的 QTE 时限读到旧密度（点火 surge 全库+9 却给出满时限 8.0s）。
+  // 这里在「触发器 + QTE 时限」两处求值之前补一次重算，让两者都拿到最新值。
+  // 只重算 computed、不跑 rules（不会提前结算饥饿/疲劳）。
+  refreshComputed();
+
   const isEndingScene = sceneId.startsWith("结局") ||
     (typeof scene.text === "string" && scene.text.includes("—— 结局："));
   if (!isEndingScene) {
-    const triggeredScene = checkGlobalTriggers();
+    const triggeredScene = checkGlobalTriggers(sceneId);
     if (triggeredScene) {
       currentScene = triggeredScene;
       // 跳过当前场景的渲染，直接跳转至结局

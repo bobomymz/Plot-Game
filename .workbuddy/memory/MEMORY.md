@@ -25,13 +25,19 @@
 - ⚠遥测块只能追加 engine.js 末尾，三处 `__wrapState` 单行；场景锚点带 `: {` 后缀。测量前必须 `__clearStaminaLog()`（日志跨版本混合、行号会漂）。归因：对象式规则→应用侧行号；函数式→真实赋值行。
 - `weather` 唯一改写 `updateWeather()`；雨只能转阴。户外 `outdoor:true` 三选一：placeholder、onEnter 开 showRain（选项 effect 无效）、路径含「雨」专图。`timeImage(map)` 是工厂。
 
+## ⭐引擎契约（踩过血的，别再犯）
+- **`_lastScene` = 上一个渲染完成的场景（"来处"），不是"此刻站在哪"**。engine.js 只写一次（renderScene 开头 `gameState._lastScene = lastRenderedScene`，写完才把 `lastRenderedScene` 更新成新 id）。**任何"当前位置"判断都不能用它**——差别错位一格。10-03 我在搜车起点上搞反过一次（错误结论还写进了这条 MEMORY，已改）。要当前位置就在场景自己的 onEnter 里写专用变量（车库用 `_garageCurCell`）。**验证方式**：`tools/garage_redesign_selftest.js` 那套 vm 沙箱能直接调真实 `renderScene`（缺 `setInterval` 会抛错但那两行已先执行），别靠读行号推理。
+- **跨区域别用 `currentPos` 字符串做判定**：`"地下车库"` 新达汇和建平中学都在用，撞名会把别的区域的代码/文案拉过来（10-03 修）。要么用 `currentPos` + `currentPlace` 组合，要么用专用状态位。
+- **全局触发器（hh>=19 强制过夜）会绕过所有出口节点**——凡是"离开某区域才结算/清理"的状态，必须把清理放进共用的结算函数里（车库三条离库路径全汇到 `xdGarExitSettle`），不能只挂在出口场景的 onEnter。
+- ⚠ **`onEnter`(1516) 早于 `text`(1581)**：onEnter 里自己清掉的键，同一场景的 text 就读不到了；要传给 text 就用文件作用域变量先存快照（如 `_xdNightInGarage`），或走 gameState。
+
 ## `_visit`/过夜/QTE
 - 只读不写；键名必须=真实场景 ID（悬空键不报错、条件恒假→选项永不出现）。改计数键名前算首达路径。
 - **一次性「开启/解锁」动作做独立节点**，用 `_visit['<动作节点>']>0` 记录；此后不再校验工具（世界状态已改变）。
 - 入口描述差异化：多入度节点按 `_lastScene` 分流（样板`金谊广场.js`/`长者食堂.js`）。**先把默认句改成安全句，再加差异化**；电梯/楼梯来源别播推门动作。审计 `node tools/entry_desc_audit.mjs`；⚠判定覆盖须在剔除 nextScene 行的源码里搜来源名；已支持工厂节点+前缀匹配识别。⚠⚠**来源分支必须写完整场景 ID 字面量**——`XDGAR+"D区"` 这类常量拼接审计器识别不了（10-01 车库 C/D 区踩过）。
 - **网状地图选项方向词**：静态"回X"在目标未到访的路线上穿帮→用 `xdGarGo(targetId, beenText, firstText)`（engine 支持 choice.text 为函数）按 `_visit[targetId]` 分流"回/去"；仅目标必经或单入边链才保留静态"回"。样板=`金谊广场.js`/`长者食堂.js`（车库 10-02 起改网格化，不再用 xdGarGo）。
 - **车库网格化+方向系统（10-02 大改，样板=新达汇地下车库.js）**：9 宫格（北=上，邻接表 `XDGRID` 常量=唯一权威）+ `_garageFacing`(N/E/S/W) 朝向；分区移动选项按前/左/右/后相对方位表述（工厂 `xdCellScene`），无邻格方向槽位隐藏；**没有原地转身**（移动方向=新朝向；驾驶倒车 `_garageRev` 保持车头）。驾驶逃亡并入网格：`_driving` 态每格 -1 `_escapeOps`、贴沟格（西车道×2）离开额外 -1、POI 全隐藏；`_visit['新达汇-B1停车场-上车点火']` 键名保留（存档兼容）。**引擎新增 `scene.fixedChoices` 开关**（renderChoices 跳过 shuffle——方位选项不得乱序，其他场景不变）。跨文件入口：新达汇.js B1走廊→`新达汇-B1-入口平台`。自测 `tools/garage_redesign_selftest.js`（102 断言）；新格配图全是 placeholder 待补。方案与实施记录=`docs/区域方案-新达汇车库网格化与方向系统.md`。
-- **搜车无中间节点（10-03）**：分区 POI 点下去直接出结果，原「搜车」hub 已删除。记账（起点+密度）在 `xdGarSearchGo()`（函数式 nextScene，挂 `__searchGo`/`__sceneRefs`），正文在 `xdGarSearchApproach(v)`，由四个结果场景拼在开头。⚠起点读 `_lastScene`（引擎进入新场景后才更新，点击瞬间仍是所在格）。耗时：POI 4 分 /「换个位置再搜」3 分（原 2+2、1+2 合并，总耗时不变）。
+- **搜车无中间节点（10-03）**：分区 POI 点下去直接出结果，原「搜车」hub 已删除。记账（起点+密度）在 `xdGarSearchGo()`（函数式 nextScene，挂 `__searchGo`/`__sceneRefs`），正文在 `xdGarSearchApproach(v)`，由四个结果场景拼在开头。⚠**起点读 `_garageCurCell`（每格 onEnter 写入），绝对不能读 `_lastScene`**。耗时：POI 4 分 /「换个位置再搜」3 分（原 2+2、1+2 合并，总耗时不变）。
 - **车库 追兵⇄密度 换算闸门（10-03 波波拍板：进库清零/出库按 G 区密度/驾驶逃亡 0）**：**车库内一律用密度，禁止直接加减 `chasedByZombies`**，只在进出车库时换算——进库 `G += min(2, chased)` 且 `chased=0`；出库 `chased += (G>=3?2:(G>=1?1:0))` 且 **`G=0`（不清零会变永动机）**；驾驶冲出坡道 `chased+0` 但 G 清零。⚠出库累加**封顶 4**（`chased>=5` 是即死全局触发器）。闸门挂点：进=G 区 onEnter 的 `entryAnchor` 分支；出=G 区两步行出口（函数式 `xdGarExitTo`）+ `-冲出坡道` 的 onEnter（driveExit 与围堵两路都汇这里）。**边界依据**：步行层→外界只有 G 区两条边，selftest 第 11 节守着。
 - **车库密度描写·视觉档（10-03 波波拍板：邻格只报最危险一格 / 报程度不报数字 / 全黑不给邻格）**：总入口 `xdGarDenHint(v,id)` 按光照分流——**lit/torch/驾驶车灯 → `xdGarSightDen`（当前格视觉，表 `XD_SEE_DEN`，**0 档静默**，1/2/3 档各 2~3 变体防刷屏）+ `xdGarNeighborHint`（只报最危险那一邻格，遍历序 前>左>右>后，平局优先正前）**。⚠0 档静默**只关当前格那一句**，邻格提示独立判定照常给（"本格安静但右边堵着"最有用）；本格+邻格都静默时整段返回 ""；**dim/dark → `xdGarNoise`（听觉档，水声）**。⚠⚠**听觉档必须留**：全黑下若零反馈+满格进格即死=处决不是难度。⚠邻格方位词用**相对方位**且与 `xdSignLine` 四向/选项槽位同序，**不报分区字母**（撞立柱漆字）。⚠勿复用 `canSee()`——车库通电是独立回路（`_wiredCorrectly`），一律走 `xdGarSight`。⚠**满档 d>=3 视觉文案几乎看不到**（`xdCellEntry` 会先拦截），只有驾驶路过/格内涨满后驻留能读到。⚠crit ≤24 字且含否定词不上——满档文案都避开否定；邻格提示统一不上 crit（d=3 用 warn）。
 - **车库密度·激活与出向闸门（10-03 补漏）**：新增 `_garDenAwake`，`xdGarDenActive = _garDenAwake || _visit[旧区]>0`。⚠**不能用 `_visit[旧区]` 顶替**——那是"你到过排水沟"，会让 B 区台阶口提前叫出"J 区"。置位处：带尾巴进库（进库闸门）、点火 surge。⚠**进库闸门那脚不与「步行进格 +1」叠加**（`xdGarEnterSettle` 返回是否结算过）——叠加会让 chased>=2 一进门就把 G 顶满、出门必先打一场，"躲进车库"变死刑。⚠**出向闸门**：`xdGarExitTo` 判 `xdGarDenActive && xdGarDen(G)>=3` → 先 `-尸潮遭遇`（旧实现只查"走进下一格"，而人是从库外直接落进 G 区的，满员坡道口能白走出去）。`xdGarExitTo(dest, outPos)` 的 outPos 用于把 currentPos 挪出"地下车库"（B1走廊自身不设）。
@@ -48,7 +54,18 @@
 - ⚠**一次性"展示型"提示别塞进 gameState**：撞开围堵的伤口走 `_garRamHurt`(core.js 声明) + **文件作用域** `_xdRamNote`/`xdGarRamSettle(v)`，落点 onEnter 生产、text 消费（每格先清空防残留）。塞 gameState 会污染存档键、被 save_compat 当未声明变量。⚠引擎 **effect 先于 nextScene**，在 nextScene 里置位时体力已扣完。
 - ⚠**"数值没动就别写威胁句"**：`xdGarDenBump` 在密度系统未激活时直接 return，此时接线失败/搜车出声的正文不能照写"引起了什么东西的注意"——加 `xdGarDenActive(v)` 分支。
 - ⚠**改动若涉及机制/数值/解锁条件，先问波波**（10-03 约定）：Cursor 报的 20 条里，凡动机制/数值/解锁条件的都没擅自改，只改了无争议的 bug 与穿帮文案。
-- ⚠**QTE timeout 只能读 gameState 的键**（engine.js 用 `new Function(...Object.keys(gameState))` 求值）→ 调不了 `xdGarDenTotal()`，改用 `core.js` 派生量 `_garDenTotal`（9 格求和字符串式）。⚠两份口径（JS 函数 vs 派生量）改 `XD_DEN` 要同步。⚠**QTE 在 onEnter 之前求值**（966 vs 1514 行）：同场景 onEnter 改的密度不影响自己这场的时限。
+- ⚠**QTE timeout 只能读 gameState 的键**（engine.js 用 `new Function(...Object.keys(gameState))` 求值）→ 调不了 `xdGarDenTotal()`，改用 `core.js` 派生量 `_garDenTotal`（9 格求和字符串式）。⚠两份口径（JS 函数 vs 派生量）改 `XD_DEN` 要同步。
+- ⚠⚠**更正 10-03（我曾写错）**：`renderScene` 内顺序是 **onEnter(1516) → checkGlobalTriggers(1541) → renderChoices(1626/1634，QTE timeout 在此求值)**，**不是**"QTE 早于 onEnter"（旧笔记写的 966 vs 1514 行是别处，已作废）。所以同源写错衍生了第二条：
+  ⚠**派生量滞后（10-03 实测属实 → 已修）**：`refreshComputed()` 只在 `applyEffect`→`applyReactive` 和 `applySave` 里调；而车库密度是 **onEnter 里直接写 `v[denKey]`**、不走 applyEffect → `_garDenTotal` 会滞后到下一次 applyEffect。
+  **修法（已在 engine.js renderScene 落地）**：checkGlobalTriggers 之前补一次 `refreshComputed()`（只重算 computed、不跑 rules，不会提前结算饥饿/疲劳）。效果：点火 surge 全库+9 立刻反映到自己那场 QTE（8.0s→5.75s）。
+  ⚠**通用陷阱**：任何"onEnter 里直接改普通变量、而别处依赖其 derived 值"的写法都会踩同一坑——派生量不是实时的，只有 applyEffect/applySave/现在新增的 renderScene 三处会同步。
+- ⚠⚠**过程性节点豁免过夜（10-03，波波提议+拍板）**：「天黑必须过夜」触发器会在进入【任何】场景瞬间把人拉走，**实测全库 103 个带 `qte` 的场景 100% 被整场吞掉**（含 47 场闪色战斗），开车途中还会把车丢在库里、`_driving` 带到第二天。
+  **方案 = 场景静态属性 `nightImmune`（布尔 / 函数）+ 自带 `qte` 自动豁免**，core.js 的天黑触发器加 `id:"night"`，引擎 `checkGlobalTriggers(sceneId)` 里 `if (nightImmune && trigger.id === "night") continue;`。
+  ⚠**刻意不用 `_variables` 状态变量**：豁免是"当前节点的属性"不是"玩家的状态"；用状态表达位置属性就要维护"进入置位 + 四条出口清位"，那正是 `_driving` 泄漏 bug 的成因。静态属性不进存档 → 回溯/读档天然正确、零清理。
+  ⚠豁免**只**影响 id==="night"：死亡类触发器（体力耗尽/汞中毒/Harsh）优先级更高且必须生效，豁免不是不死身。
+  ⚠豁免只是**延后**不是免疫：离开豁免场景走进任何普通场景的那一刻照样被拉走，必然收敛，不会卡住。
+  ⚠ **renderScene 内部不给 `currentScene` 赋值**（它靠调用方先赋值）→ 判定必须用入参 `sceneId`，写成读全局 currentScene 会读到上一个场景。
+  自测 `tools/night_process_immune_selftest.js`（20 断言，跑真实 renderScene）。
 - 建筑类过夜两层门槛：showCondition 加 `_visit['建筑内部']>0`、原 condition/elseScene 保留。场景级=`node.qte`，选项级=`choice.timeout`；工厂 `mallQTE`/`jpChaseQTE`/`travelScene`。`applyEffect` 只认 set/add/mul。
 
 ## 文风/气味

@@ -944,15 +944,27 @@ console.log("\n=== 17. Cursor #3/#7/#16/#18 修复专项（波波 10-03 拍板�
   check(sv5._garDenH === 2, "出声后回原地：仍是 2，不会被'往回走'这一步顶满");
 
   // ---------- #16 天黑时人还在车库里 ----------
+  // ⚠判定改用 _garageCurCell（站在哪一格），不再用 currentPos 字符串——"地下车库" 建平中学也在用
   const night = S("storyData['天黑必须过夜']");
-  const nightText = night.text(Object.assign({}, base, { currentPos: "地下车库", hh: 20 }));
+  var ntIn = Object.assign({}, base, { _garageCurCell: H, currentPos: "地下车库", currentPlace: "新达汇", hh: 20 });
+  const nightText = night.text(ntIn);
   check(nightText.indexOf("车库里没有窗") >= 0 && nightText.indexOf("街灯") < 0, "车库过夜文案：不再播街灯/街头尸吼");
-  var nv = Object.assign({}, base, { currentPos: "地下车库", _garDenG: 3, _garDenAwake: true, chasedByZombies: 0 });
+  // 建平中学的地下自行车车库同用 currentPos="地下车库"：不能跑新达汇的出库结算、也不能播新达汇的库内描写
+  var ntJp = Object.assign({}, base, { _garageCurCell: "", currentPos: "地下车库", currentPlace: "建平中学", hh: 20 });
+  check(night.text(ntJp).indexOf("车库里没有窗") < 0, "建平地下车库过夜：不再被误判成新达汇（currentPos 撞名已解）");
+  var njp = Object.assign({}, base, { _garageCurCell: "", currentPos: "地下车库", currentPlace: "建平中学", _garDenG: 3, chasedByZombies: 0 });
+  night.onEnter(njp);
+  check(njp.chasedByZombies === 0 && njp._garDenG === 3, "建平地下车库过夜：G 区密度原封不动（不再被新达汇的出库结算吃掉）");
+  // 通电与否不能一致地写"灯亮着"
+  check(night.text(Object.assign({}, ntIn, { _wiredCorrectly: true })).indexOf("日光灯照旧亮着") >= 0, "车库过夜·通电：写灯亮");
+  var nDarkTxt = night.text(Object.assign({}, ntIn, { _wiredCorrectly: false }));
+  check(nDarkTxt.indexOf("日光灯照旧亮着") < 0 && nDarkTxt.indexOf("没有一盏为你亮着") >= 0, "车库过夜·未通电：不再写死「灯还亮着」");
+  var nv = Object.assign({}, base, { _garageCurCell: H, currentPos: "地下车库", _garDenG: 3, _garDenAwake: true, chasedByZombies: 0 });
   night.onEnter(nv);
   check(nv.chasedByZombies === 2 && nv._garDenG === 0, "车库里撞上天黑：照常走出库换算（G 区密度 → 追兵），不白洗");
-  var nv2 = Object.assign({}, base, { currentPos: "新达汇", _garDenG: 3, chasedByZombies: 0 });
+  var nv2 = Object.assign({}, base, { _garageCurCell: "", currentPos: "新达汇", _garDenG: 3, chasedByZombies: 0 });
   night.onEnter(nv2);
-  check(nv2.chasedByZombies === 0 && nv2._garDenG === 3, "库外撞上天黑：不动车库密度（闸门只认 currentPos=地下车库）");
+  check(nv2.chasedByZombies === 0 && nv2._garDenG === 3, "库外撞上天黑：不动车库密度（闸门只认\"人站在格子里\"）");
 
   // ---------- #18 疏散图不给方位加成 ----------
   const garageSrc2 = fs.readFileSync(path.join(ROOT, "story/东明街道/新达汇地下车库.js"), "utf8");
@@ -1030,6 +1042,85 @@ console.log("\n=== 18. Cursor 第三批：#6 / #11 / #12 / #14 / #15 ===");
   rampSc.onEnter(Object.assign({}, base, { _visit: {}, _garRamHurt: true }));
   check(rampSc.text(Object.assign({}, base, { _visit: {} })).indexOf("肋下一阵闷痛") >= 0,
     "围堵硬冲→冲出坡道：正文同样补上伤口 + 体力提示");
+})();
+
+// ========== 19. _lastScene 语义 / 车库位置标识 / 驾驶态清理 ==========
+// Cursor 2026-10-03 报的三条，全部核实属实。第 1 条推翻了本<｜hy_place▁holder▁no▁813｜>早先的结论
+// （我此前判定"点击瞬间 _lastScene 是玩家所在格"是错的），故这里用真实引擎语义把它钉死。
+(function () {
+  const engSrc = fs.readFileSync(path.join(ROOT, "engine.js"), "utf8");
+  console.log("\n=== 19. _lastScene 语义 / 车库位置标识 / 驾驶态清理 ===");
+
+  // ---- 契约：_lastScene = 上一个渲染完成的场景，不是"当前站的那格" ----
+  check(/gameState\._lastScene\s*=\s*lastRenderedScene\s*;/.test(engSrc),
+    "引擎契约：_lastScene 由 lastRenderedScene 赋值（语义=来处）");
+  check((engSrc.match(/gameState\._lastScene\s*=/g) || []).length === 1,
+    "引擎只在一处写 _lastScene（多处写会让它到底代表'来处'还是'当前格'说不清）");
+
+  // 复刻 engine.js renderScene 开头那两行，走一遍 走廊 → G → H
+  let lastRendered = "";
+  const st = { _lastScene: "" };
+  const render = (id) => { st._lastScene = lastRendered; lastRendered = id; };
+  render("新达汇-B1走廊");
+  render(G);
+  check(st._lastScene === "新达汇-B1走廊", "站在 G 时 _lastScene = 走廊（库外那一格）");
+  render(H);
+  check(st._lastScene === G, "站在 H 时 _lastScene = G（来处）——这正是搜车取错的根源");
+
+  // ---- 真实代码：忠实按引擎顺序「先 onEnter 再点 POI」走一遍 ----
+  const mkCell = (lastId) => ({
+    _garageSearchPending: false, _garageSearchFrom: "", _garageSearchReturn: false,
+    _garageCurCell: "", _lastScene: lastId, dd: 1, hh: 8, mm: 0, weather: "阴",
+    chasedByZombies: 0, strength: 10, hasTorch: false, hasPhone: false, phoneBattery: 0,
+    _garageFacing: "N", _driving: false, _visit: {}, _garDenAwake: true, _garageLastDay: 1,
+    _garDenA: 0, _garDenB: 0, _garDenC: 0, _garDenD: 0, _garDenE: 0,
+    _garDenF: 0, _garDenG: 0, _garDenH: 0, _garDenI: 0,
+  });
+  const pickSearch = (sc, v) => sc.choices(v).filter(
+    (c) => c.nextScene && typeof c.nextScene === "function" && c.nextScene.__searchGo)[0];
+
+  const hSc = S("storyData[" + JSON.stringify(H) + "]");
+  var hv = mkCell(G);          // 从 G 走进 H，此刻站在 H
+  hSc.onEnter(hv);             // 引擎：进格先跑 onEnter（这一步自己就会给本格 +1）
+  const hBefore = hv._garDenH;
+  pickSearch(hSc, hv).nextScene(hv);
+  check(hv._garageCurCell === H, "进格 onEnter 登记 _garageCurCell = 当前格");
+  check(hv._garageSearchFrom === H, "搜车起点 = 当前格 H（旧实现取 _lastScene，记成了 G）");
+  check(hv._garDenH === hBefore + 1 && hv._garDenG === 0, "搜车那笔密度落在当前格 H，来处 G 一笔没欠");
+  check(S("storyData['新达汇-B1停车场-车库检查']").choices[0].nextScene(hv) === H,
+    "「回到原地」把人送回 H（旧实现会退回上一格 G）");
+
+  // 从库外直接落进 G：来处是 B1走廊（不在网格里），旧实现这笔密度直接丢、回程还会跳出库
+  const gSc = S("storyData[" + JSON.stringify(G) + "]");
+  var gv = mkCell("新达汇-B1走廊");
+  gSc.onEnter(gv);
+  const gBefore = gv._garDenG;
+  pickSearch(gSc, gv).nextScene(gv);
+  check(gv._garageSearchFrom === G, "从库外进 G 后搜车：起点仍是 G（旧实现会记成 B1走廊）");
+  check(gv._garDenG === gBefore + 1, "库外进来的这一笔密度没丢（旧实现 XD_DEN 查不到，直接静默丢掉）");
+
+  // ---- #2 位置标识：不能靠 currentPos 字符串（建平中学同用"地下车库"）----
+  const coreSrc = fs.readFileSync(path.join(ROOT, "story/core.js"), "utf8");
+  check(/_garageCurCell\s*:/.test(coreSrc), "core.js 已声明 _garageCurCell");
+  var inCi = { _garageCurCell: H, currentPos: "地下车库", currentPlace: "新达汇" };
+  var jpCi = { _garageCurCell: "", currentPos: "地下车库", currentPlace: "建平中学" };
+  check(S("xdGarInCell")(inCi) === true, "xdGarInCell：站在新达汇格里 → true");
+  check(S("xdGarInCell")(jpCi) === false, "xdGarInCell：在建平地下车库（同 currentPos）→ false");
+  check(S("xdGarInCell")({ _garageCurCell: "", currentPos: "地下车库", currentPlace: "新达汇" }) === true,
+    "xdGarInCell 兼容分支：旧存档没有 _garageCurCell 时退回 currentPos+currentPlace");
+
+  // ---- #3 驾驶态：任何离库路径都必须清 ----
+  const nightSc = S("storyData['天黑必须过夜']");
+  var dv = Object.assign({}, mkCell(H), { _garageCurCell: H, _driving: true, _garDenG: 2, chasedByZombies: 0 });
+  dv._driving = true;                     // 站在 H 格里、正开着车
+  nightSc.onEnter(dv);
+  check(dv._driving === false, "开车途中撞上 19 点：驾驶态被清掉（旧实现要走完出口才清，遗留到第二天）");
+  check(dv._garageCurCell === "", "同一路径把 _garageCurCell 也清了（人已经不站在任何格子里）");
+  var ev = { _garDenG: 2, chasedByZombies: 0, _driving: true, _garageCurCell: H };
+  S("xdGarExitSettle")(ev);
+  check(ev._driving === false && ev._garageCurCell === "",
+    "出库结算统一清驾驶态 + 当前格（步行出口 / 冲出坡道 / 夜里被拉走 三条路径共用）");
+  void 0;
 })();
 
 console.log("\n结果：" + okCount + " 通过 / " + badCount + " 失败");

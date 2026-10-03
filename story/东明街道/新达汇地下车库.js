@@ -245,6 +245,16 @@ function xdGarCurCell(v) {
   return XDCELL + "主通道南段";
 }
 
+// "人是不是正站在新达汇地下车库的某个格子里"（供 夜晚剧情.js 的天黑结算调用）。
+// 主判定 = _garageCurCell（本格 onEnter 写入、任何出库路径都会清零）。
+// ⚠️不能只认 currentPos === "地下车库"：建平中学的地下自行车车库用的是同一个字符串
+//    （建平-地下车库-西口 / 大道口 / 地下车库三处），按字符串判会在建平过夜时跑新达汇的出库结算。
+// 兼容分支：旧存档没有 _garageCurCell 键时，退回 currentPos + currentPlace 组合。
+function xdGarInCell(v) {
+  if (v._garageCurCell && XD_DEN[v._garageCurCell]) return true;
+  return !!(v.currentPos === "地下车库" && v.currentPlace === "新达汇");
+}
+
 // 进库结算：挂 G 区 onEnter，仅当来源是库外场景时触发
 // 返回是否真的结算过（true = 本次进库带了尾巴）。
 // ⚠调用方要读这个返回值：结算过的那一脚**不再叠加"步行进格 +1"**——尾巴本身就是这笔动静，
@@ -529,6 +539,10 @@ function xdCellScene(opts) {
   var scene = {
     image: opts.image || "images/placeholder.png",
     fixedChoices: true,   // 方位选项不得乱序（引擎 renderChoices 定序开关）
+    // ⚠天黑豁免：开车横在半路时不能被 19 点的过夜触发器直接拉走——车会永远停在车库里、
+    //   _driving 还会带过夜。豁免只是"延后"，真的开出坡道（非豁免场景）照样会被拉走。
+    //   九格一次写完；步行穿过车库没有这个问题，不需要豁免。
+    nightImmune: function(v) { return !!v._driving; },
     onEnter: function(v) {
       var from = v._lastScene;
       var enteredWithTail = false;   // 本次是从库外带着尾巴进来的（闸门已记账，不再叠加步行 +1）

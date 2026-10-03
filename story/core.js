@@ -616,7 +616,9 @@ const storyData = {
     { condition: "mercuryLoad >= 70", targetScene: "结局-汞中毒尸变", priority: 9 },
     { condition: "chasedByZombies >= 5", targetScene: "结局-尸潮撕碎了你", priority: 8 },
     { condition: "_backhallDead", targetScene: "结局-后勤通道被堵", priority: 7 },
-    { condition: "hh >= 19", targetScene: "天黑必须过夜", priority: 5 }
+    // id:"night" 供 engine.js 的「过程性节点豁免」识别：场景声明 nightImmune 或自带 qte 时
+    // 只跳过这一条（QTE/闪色战斗不会被天黑整场吞掉），死亡类触发器一律照常生效。
+    { id: "night", condition: "hh >= 19", targetScene: "天黑必须过夜", priority: 5 }
     // 未来可继续添加
     // {
     //   condition: "sanity <= 0",

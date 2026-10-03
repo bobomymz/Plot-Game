@@ -2,12 +2,18 @@
 - 生成：node tools/lint_story.mjs
 - 场景 1567 个，检查范围：全部
 
-## 错误 4 条（必须修）
+## 错误 10 条（必须修）
 
 - [E] 建平中学.js 建平-挹芬楼-3F: 图片不存在: images/建平/挹芬楼-3F走廊.webp
 - [E] 建平中学.js 建平-挹芬楼-3F: 图片不存在: images/建平/挹芬楼-3F走廊-night.webp
 - [E] 建平中学.js 建平-挹芬楼-4F: 图片不存在: images/建平/挹芬楼-4F走廊.webp
 - [E] 建平中学.js 建平-挹芬楼-4F: 图片不存在: images/建平/挹芬楼-4F走廊-night.webp
+- [E] 建平中学.js 建平-挹芬楼-6F: 图片不存在: images/建平/挹芬楼-6F走廊.webp
+- [E] 建平中学.js 建平-挹芬楼-6F: 图片不存在: images/建平/挹芬楼-6F走廊-night.webp
+- [E] 建平中学.js 建平-远翔楼-1F: 图片不存在: images/建平/远翔楼1F走廊.webp
+- [E] 建平中学.js 建平-远翔楼-1F: 图片不存在: images/建平/远翔楼1F走廊-night.webp
+- [E] 建平中学.js 建平-远翔楼-3F: 图片不存在: images/建平/远翔楼-3F走廊.webp
+- [E] 建平中学.js 建平-远翔楼-3F: 图片不存在: images/建平/远翔楼-3F走廊-night.webp
 
 ## 警告 100 条（人工核对）
 

@@ -2,6 +2,11 @@
 // 全局触发器 hh >= 19 时强制跳转到"天黑必须过夜"
 // 玩家必须选择一个安全屋过夜，没有跳过选项
 
+// 天黑这一帧人是不是还在车库里——**onEnter 在出库结算之前**存下的快照。
+// 为什么不能直接让 text 去判定：出库结算会顺手把 _garageCurCell 清零（人不站在任何格子里了），
+// 等 text 运行的时候这个键已经被自己抹掉了；读档跳过 onEnter 时更是压根不会重新判定。
+let _xdNightInGarage = false;
+
 Object.assign(storyData, {
 
   // ==================== 夜间入口 ====================
@@ -12,18 +17,29 @@ Object.assign(storyData, {
     },
     onEnter: function(vars) {
       vars.strength = Math.max(5, vars.strength);
-      // ⚠天黑时人还在新达汇地下车库里：按出库闸门补一次结算（G 区密度 → 追兵，G 区清零）。
-      //   不补的话，"从车库直接传送去安全屋过夜"会把一库房的动静留在库里、追兵也不涨 = 白洗。
+      // ⚠天黑时人还在新达汇地下车库里：按出库闸门补一次结算（G 区密度 → 追兵，G 区清零 +
+      //   清掉驾驶态与当前格）。不补的话，"从车库直接传送去安全屋过夜"会把一库房的动静留在库里、
+      //   追兵也不涨 = 白洗；开车途中被拉过来还会把 _driving 留到第二天。
       //   （函数在新达汇地下车库.js 里定义；所有 story 文件共享同一作用域，运行时必然已声明。）
-      if (vars.currentPos === "地下车库" && typeof xdGarExitSettle === "function") {
+      // ⚠判定用 _garageCurCell（"此刻站在哪一格"，格子 onEnter 写入、出库清零），
+      //   不认 currentPos —— "地下车库" 这个字符串建平中学也在用（建平-地下车库-西口/大道口/地下车库），
+      //   按字符串判会把人当新达汇处理：G 区密度被清、追兵被加，正文还是新达汇的那一套。
+      // ⚠️先存快照再结算：结算会把 _garageCurCell 清零，之后就问不出"人是被从哪儿拉过来的"了。
+      _xdNightInGarage = xdGarInCell(vars);
+      if (_xdNightInGarage && typeof xdGarExitSettle === "function") {
         xdGarExitSettle(vars);
       }
     },
     text: function(vars) {
       let desc = "天色已经完全暗下来了。\n";
-      // 车库里没有窗：先按 currentPos 判定（比 currentArea 准——车库不改 currentArea）
-      if (vars.currentPos === "地下车库") {
-        desc += "车库里没有窗，你看不见天，只能从混凝土渗进来的凉意里猜外面已经黑透了。头顶还是那几盏灯，灯下的车道空空荡荡——可排水沟那头的水声在夜里听得更清楚，一声一声，从你不知道多深的地方传过来。\n这里没有能锁上的门。今晚你得住到别处去。";
+      // 车库里没有窗：按"人是不是还站在库里"判定（比 currentArea 准——车库不改 currentArea）
+      if (_xdNightInGarage || xdGarInCell(vars)) {
+        desc += "车库里没有窗，你看不见天，只能从混凝土渗进来的凉意里猜外面已经黑透了。";
+        // ⚠️不能写死"灯亮着 / 车道是空的"：没通新车库是全黑的，格子里也可能正站着东西
+        desc += vars._wiredCorrectly
+          ? "头顶的日光灯照旧亮着，白惨惨的，把一排排车影摊开在光里——这光能让你看清路，也能让别的什么东西看清你。"
+          : "这里没有一盏为你亮着的灯。黑是一整块的，从头顶一直压到车道尽头，连车库的轮廓都吞了进去。";
+        desc += "排水沟那头的水声在夜里听得更清楚，一声一声，从你不知道多深的地方传过来。\n这里没有能锁上的门。今晚你得住到别处去。";
         return desc;
       }
       if (vars.currentArea === "周边社区") {

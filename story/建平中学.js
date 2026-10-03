@@ -2150,11 +2150,20 @@ Object.assign(storyData, {
   // ==================== 远翔楼（5 层 · 无电梯 · 2 楼梯 · 高三教学楼） ====================
 
   "建平-远翔楼-1F": {
-    image: timeImage({
-      morning: "images/建平/远翔楼门口.webp",
-      evening: "images/建平/远翔楼门口-evening.webp",
-      night: "images/建平/远翔楼门口-night.webp",
-    }),
+    image: function(vars) {
+      if(vars._lastScene == '建平-金苹果大道') {
+        return timeImage({
+          morning: "images/建平/远翔楼门口.webp",
+          evening: "images/建平/远翔楼门口-evening.webp",
+          night: "images/建平/远翔楼门口-night.webp",
+        });
+      }
+      var f = timeImage({
+        morning: "images/建平/远翔楼1F走廊.webp",
+        night: "images/建平/远翔楼1F走廊-night.webp"
+      });
+      return f(vars);
+    },
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.showRain = true;vars.currentPos = "远翔楼1F"; },
     text: function(vars) { return "远翔楼 1 楼。" + describeZombieWave(vars); },
