@@ -48,6 +48,15 @@ var XD_CW  = { N: "E", E: "S", S: "W", W: "N" };   // 右手边
 var XD_OPP = { N: "S", S: "N", E: "W", W: "E" };   // 正后方
 var XD_DIRS = ["N", "E", "S", "W"];
 
+// 绝对方位 → 相对方位（玩家只有朝向感，正文要写"正前/身后/左手边/右手边"，不能写东南西北）
+function xdRelName(facing, absDir) {
+  var f = (XD_DIRS.indexOf(facing) >= 0) ? facing : "N";
+  if (absDir === f) return "正前";
+  if (absDir === XD_OPP[f]) return "身后";
+  if (absDir === XD_CCW[f]) return "左手边";
+  return "右手边";
+}
+
 // 分区字母（玩家可见命名）：北排 A/B/C，中排 D/E/F，南排 G/H/I；旧区（低一层）编 J。
 // 玩家通过立柱漆字/疏散图认识这些字母；正文一律用"X区"，内部 ID 保持分区名不变。
 var XD_LETTER = {
@@ -224,6 +233,18 @@ function xdGarDenSurge(v, n) {
   for (var k in XD_DEN) v[XD_DEN[k]] = Math.min(3, (v[XD_DEN[k]] || 0) + (n || 1));
 }
 
+// 玩家此刻所站的分格——全车库唯一的"当前位置"可信来源。
+// ⚠⚠绝不能用 v._lastScene 顶替：引擎的 _lastScene 语义是「上一个渲染完成的场景」
+//    （engine.js renderScene 开头 gameState._lastScene = lastRenderedScene，写进去的是旧 id）。
+//    站在 H 区时它记的是来处的 G 区——拿它当"当前格"会把密度加错格、回程还会把人送回上一格。
+//    2026-10-03 用真实引擎跑序列（走廊→G→H）实测证实。
+// 兜底两级：旧存档没有这个键 → 退回 _lastScene（若它恰好是格子）→ 再回落到主通道南段。
+function xdGarCurCell(v) {
+  if (v._garageCurCell && XD_DEN[v._garageCurCell]) return v._garageCurCell;
+  if (v._lastScene && XD_DEN[v._lastScene]) return v._lastScene;
+  return XDCELL + "主通道南段";
+}
+
 // 进库结算：挂 G 区 onEnter，仅当来源是库外场景时触发
 // 返回是否真的结算过（true = 本次进库带了尾巴）。
 // ⚠调用方要读这个返回值：结算过的那一脚**不再叠加"步行进格 +1"**——尾巴本身就是这笔动静，
@@ -240,11 +261,19 @@ function xdGarEnterSettle(v) {
 }
 
 // 出库结算：extra===0 用于驾驶冲出坡道（甩在身后，不带尾巴）
+// ⚠凡是"人离开车库"的路径都必须经过这里（G 区两个步行出口 / 驾驶冲出坡道 / 夜里被强制拉去过夜），
+//   所以它顺手把两个状态也一起清掉：
+//   _garageCurCell = ""  → 人不站在任何格子里了（夜里判定"人还在库里"就看这个键）
+//   _driving = false     → 脱离驾驶态。19 点全局触发器会在开车途中把人直接拉去过夜，
+//                          不经过任何出口节点；不在这里清，第二天再进库格子仍按驾驶生成选项
+//                          （搜查和配电室消失、移动改扣 _escapeOps），但车早就没了。
 function xdGarExitSettle(v, extra) {
   var d = v._garDenG || 0;
   var add = (extra === 0) ? 0 : (d >= 3 ? 2 : (d >= 1 ? 1 : 0));
   if (add > 0) v.chasedByZombies = Math.min(4, (v.chasedByZombies || 0) + add);
   v._garDenG = 0;   // 尾巴跟着出去了，坡道口这片散了
+  v._garageCurCell = "";
+  v._driving = false;
 }
 
 // 出库选项：nextScene 包一层，点击时结算再跳（__sceneRefs 供 lint 补入边）
@@ -399,12 +428,15 @@ xdGarSearchRouter.__sceneRefs = [
 
 // 搜车入口（波波 10-03：砍掉「开始搜查 / 不搜了退回去」的中间节点——点 POI 直接出结果）
 // 中间节点原做的两件事搬进这里：① 记本轮起点格（供车库检查收口回原地）② 起点格密度 +1。
-// ⚠起点取 _lastScene：nextScene 函数在点击瞬间求值，此时 _lastScene 仍是玩家所在的分区格。
+// ⚠⚠起点【不能】取 v._lastScene——它记的是"来处"不是"当前"（详见 xdGarCurCell 说明）。
+//    用错的话：从 G 走进 H 再搜车，密度加在 G 上，「回到原地」还会把人送回 G；
+//    若来处不是格子（B1走廊/疏散图/车库出口），XD_DEN 查不到，这一笔密度直接丢掉，
+//    回程更会把人跳去那个库外场景，绕开 xdGarExitTo 的出库结算。
 // ⚠换位置再搜时 _garageSearchPending 已为 true → 不覆盖起点（沿用旧 hub 的守卫逻辑）。
 function xdGarSearchGo() {
   var f = function(v) {
     if (!v._garageSearchPending) {
-      v._garageSearchFrom = v._lastScene || XDCELL + "主通道南段";
+      v._garageSearchFrom = xdGarCurCell(v);
       v._garageSearchPending = true;
     }
     var sk = XD_DEN[v._garageSearchFrom];
@@ -433,6 +465,15 @@ function xdGarSearchApproach(v) {
   return desc;
 }
 
+// 点火器上那把钥匙的说明（Day5 起换口径）：
+// ⚠️ 旧实现一律写"他刚停好车，还没来得及拔"——和同段的"电池早就耗干了"、分区正文的
+//    "引擎盖凉透/血迹结成壳"直接打架：同一个人不可能既是刚停好车，又已经躺了好几天。
+function xdKeyLine(v) {
+  return (v.dd >= 5)
+    ? "——他停好车就再没能下去。这把钥匙，在这里插了好几天。"
+    : "——他刚停好车，还没来得及拔。";
+}
+
 // 驾驶正文尾部：按剩余次数递进的声音暗示（等候区模式：玩家可见文案不点破机制）
 function xdGarDriveText(vars) {
   var n = vars._escapeOps || 0;
@@ -443,6 +484,17 @@ function xdGarDriveText(vars) {
     return "\n<span class='warn'>水声和拍打车身的闷响从四面八方跟上来，一声比一声近。方向感开始变得不重要——重要的是别停。</span>";
   }
   return "\n身后，排水沟的方向炸开一片水声。整个车库都听见了这声引擎。";
+}
+
+// 撞开围堵的伤口提示（一次性）。旧实现截停/围堵成功各扣 2 点体力并挂 hurtByZombie，
+// 但落点正文只写车灯和坡道，既没有伤口也没有体力提示——玩家看不到自己付出了什么。
+// ⚠️ 提示串不进 gameState（避免污染存档键），用文件作用域变量在「落点 onEnter 生产 / 落点 text 消费」。
+var _xdRamNote = "";
+var XD_RAM_NOTE = "\n<span class='warn'>车头顶开一条缝挤了出去，你在驾驶座上被甩得撞上门框，肩膀发麻，肋下一阵闷痛。</span>\n<span class='sys warn'>【系统提示】体力-2，当前体力：{strength}。</span>";
+// 落点 onEnter 调用：把 _garRamHurt 兑现成本格的提示串（无事则清空，防上一格残留）
+function xdGarRamSettle(v) {
+  _xdRamNote = "";
+  if (v._garRamHurt) { v._garRamHurt = false; _xdRamNote = XD_RAM_NOTE; }
 }
 
 // ==================== 分区工厂 ====================
@@ -480,6 +532,10 @@ function xdCellScene(opts) {
     onEnter: function(v) {
       var from = v._lastScene;
       var enteredWithTail = false;   // 本次是从库外带着尾巴进来的（闸门已记账，不再叠加步行 +1）
+      // ⚠️落步即登记"当前所在格"：搜车起点、夜里判定"人还在库里"都靠它。
+      //   这是本格的 id 字面量（工厂闭包内），不依赖 _lastScene——后者是"来处"。
+      v._garageCurCell = id;
+      xdGarRamSettle(v);             // 撞开围堵的伤口感（上一格遗留的先清掉，本格有则兑现）
       if (from && from !== id && XDGRID[from]) {
       var d = xdDirFrom(from, id);
       if (!d) {
@@ -557,10 +613,10 @@ function xdCellScene(opts) {
         // 驾驶：车灯当光源，用亮态环境描写
         body = opts.lit(v);
         if (opts.trench) body += "\n半截从沟里拖出来的栅栏横在车道上，你打着方向绕了过去——打这里过，就得费这个工夫。";
-        return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDenHint(v, id) + xdGarDriveText(v);
+        return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDenHint(v, id) + xdGarDriveText(v) + _xdRamNote;
       }
       body = (sight === "lit" || sight === "torch") ? opts.lit(v) : opts.dark(v);
-      return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDenHint(v, id);
+      return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDenHint(v, id) + _xdRamNote;
     },
     choices: function(v) {
       var out = [];
@@ -599,14 +655,17 @@ Object.assign(storyData,
       var day3 = v.dd >= 3;
       var droveOut = v._visit[XDGAR + "-上车点火"] > 0;
       var desc;
+      // ⚠️ 应急灯一律写成"早就黑了"：它们的电池在爆发后的头两天就耗尽了，和主线通电的
+      //    独立回路不是一回事。旧实现在未通电档写"应急灯还亮着，照出平台轮廓"，
+      //    而 dark()（无手电无手机）写的是伸手不见五指——同一处环境两种说法，直接打架。
       if (v._wiredCorrectly) {
-        desc = "头顶的灯一盏盏亮着，暖黄色的光把坡道口照得通透，几盏应急灯反倒显得可有可无。";
+        desc = "头顶的灯一盏盏亮着，暖黄色的光把坡道口照得通透。角落那几盏应急灯仍是黑的——罩子里的电池早在前几天就耗尽了。";
         if (day3) {
           desc += "\n两道新鲜的轮胎印从坡道口一路碾进来，压过积水的地方在灯光下亮得反光——湿痕顺着坡道一路往车库深处去，中间没有断过。";
           if (droveOut) desc += "\n另有一道更新鲜的印子，从库里往外碾出去，正正压过坡道口那截断杆。";
         }
       } else {
-        desc = "坡道从这里向上通向出口，头顶几盏应急灯还亮着，昏黄的光勉强照出平台开阔的轮廓。";
+        desc = "坡道从这里向上通向出口。头顶几盏应急灯黑着罩子，电池早就耗尽了——你靠手里的光才照出平台开阔的轮廓。";
         if (day3) desc += "\n地面上有两道轮胎印，从坡道口一路碾进来——压过积水的地方还没干透，是最近才留下的。";
       }
       desc += "\n收费亭歪在坡道边，玻璃碎了大半；亭子侧墙上贴着一张消防疏散图，有机玻璃罩着，还没碎。";
@@ -645,8 +704,16 @@ Object.assign(storyData,
     lit: function(v) {
       return "主通道从这里笔直往车库深处去，两侧车位上的家用车落满灰。灯光把通道照出一截纵深，尽头隐在立柱后面。";
     },
+    // ⚠️ 旧实现写死"一直往前就是深处"——面朝南（从枢纽下来）时正前方是墙，面朝西时前面是入口，
+    //    全说成"深处"会当场穿帮。相对方位按当前朝向算：深处=北（通枢纽），入口=西（通入口平台）。
+    // ⚠️ 手机微光档不走这套：立柱漆字紧接着就说"前后左右看不清"，同屏两句方向判断会打架。
     dark: function(v) {
-      return "主通道两侧的车排得笔直，指节敲上去，一辆辆都是空膛的回音。头顶的空当里有一缕流动的凉风——从入口那头灌进来，顺着通道一路往深处去。方向感告诉你：这条道纵贯车库，一直往前就是深处。";
+      var base = "主通道两侧的车排得笔直，指节敲上去，一辆辆都是空膛的回音。头顶的空当里有一缕流动的凉风——顺着通道从这头灌到那头。";
+      if (xdGarSight(v) === "dim") {
+        return base + "手机的光只够照出脚下一截，通道往两头伸进暗里，分不清哪头是哪儿。";
+      }
+      var f = (XD_DIRS.indexOf(v._garageFacing) >= 0) ? v._garageFacing : "N";
+      return base + "\n你辨了辨风向：" + xdRelName(f, "W") + "是坡道口那边的入口，" + xdRelName(f, "N") + "才是车库深处。";
     },
     poiArr: [
       { text: "搜查通道两侧的车", nextScene: xdGarSearchGo(), effect: updateTime(4) }
@@ -940,7 +1007,15 @@ Object.assign(storyData,
     image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
     // 火花起在配电室所在的中段枢纽（E 区）：动静记在这一格，不再全局 chased +1
     onEnter: function(v) { xdGarDenBump(v, XDCELL + "中段枢纽"); return {}; },
-    text: "你把线接上了，但推上电闸的瞬间——<span class='sfx'>啪</span>！一阵火花闪过，灯没亮。你接错了。\n短路的声音在空旷的停车场里回荡……肯定引起了什么东西的注意。你得小心了。",
+    // ⚠️ 密度系统未激活时 xdGarDenBump 直接 return（数值一点没动），正文却照写"引起了什么东西的注意"——
+    //    威胁句和机制对不上。未激活就只写声音本身，不替它加一句回应。
+    text: function(v) {
+      var t = "你把线接上了，但推上电闸的瞬间——<span class='sfx'>啪</span>！一阵火花闪过，灯没亮。你接错了。\n短路的声音在空旷的停车场里回荡";
+      t += xdGarDenActive(v)
+        ? "……<span class='warn'>排水沟那头的水声停了一拍，然后变得更密。</span>肯定引起了什么东西的注意。你得小心了。"
+        : "，撞在立柱和车顶之间，弹了几个来回，然后彻底散了。";
+      return t;
+    },
     choices: [
       { text: "再试一次", nextScene: XDGAR + "-接线", effect: updateTime(2) },
       { text: "算了，不接", nextScene: XDGAR + "-配电室" }
@@ -1017,10 +1092,10 @@ Object.assign(storyData,
         nextScene: flashCombatRouter(
           "新达汇-B1停车场-车旁搜身",
           "新达汇-B1停车场-车旁搜身-受伤",
-          "结局-车库遭遇战"
+          "结局-车库车旁"
         ),
         timeout: 20000,
-        timeoutScene: "结局-车库遭遇战"
+        timeoutScene: "结局-车库车旁"
       }
     ]
   },
@@ -1034,7 +1109,7 @@ Object.assign(storyData,
       var phoneLine = (v.dd >= 5)
         ? "他的手机摔在脚边，屏幕裂成了蛛网，黑着——电池早就耗干了，谁也没有来过。"
         : "他的手机摔在脚边，屏幕裂成了蛛网，还亮着——锁屏壁纸是个笑得很开的小女孩，输入界面停在一条没发出去的短信上：“东西太多，我跑第二趟”\n<span class='term'>信号栏空空如也。</span>";
-      var desc = "最后一只抽搐着倒下，不动了。你喘匀了气，才敢看那具尸体。\n是个年轻人，穿一件洗得发白的外套，手里还攥着半张购物清单——新达汇超市的目录，背面用圆珠笔写着一行字：“多的卖给长廊。”\n" + phoneLine + "\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>——他刚停好车，还没来得及拔。";
+      var desc = "最后一只抽搐着倒下，不动了。你喘匀了气，才敢看那具尸体。\n是个年轻人，穿一件洗得发白的外套，手里还攥着半张购物清单——新达汇超市的目录，背面用圆珠笔写着一行字：“多的卖给长廊。”\n" + phoneLine + "\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>" + xdKeyLine(v);
       desc += "\n<span class='warn'>车库里回荡着打斗的动静。水声正从四面八方聚拢过来。</span>";
       desc += "\n<span class='sys warn'>【系统提示】体力-1，当前体力：{strength}。</span>";
       return desc;
@@ -1053,7 +1128,7 @@ Object.assign(storyData,
       var phoneLine = (v.dd >= 5)
         ? "他的手机摔在脚边，屏幕裂成了蛛网，黑着——电池早就耗干了，谁也没有来过。"
         : "他的手机屏幕还亮着——锁屏壁纸是个笑得很开的小女孩，输入界面停在一条没发出去的短信上：“东西太多，我跑第二趟”";
-      var desc = "你勉强把两只都干掉了——代价是胳膊上添了一道口子，血顺着手腕往下淌。" + hurtCostText(v) + "\n你喘着粗气看那具尸体：年轻人，手里攥着半张购物清单——背面用圆珠笔写着一行字：“多的卖给长廊。”\n" + phoneLine + "\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>——他刚停好车，还没来得及拔。";
+      var desc = "你勉强把两只都干掉了——代价是胳膊上添了一道口子，血顺着手腕往下淌。" + hurtCostText(v) + "\n你喘着粗气看那具尸体：年轻人，手里攥着半张购物清单——背面用圆珠笔写着一行字：“多的卖给长廊。”\n" + phoneLine + "\n驾驶座里，<span class='crit'>钥匙还插在点火器上</span>" + xdKeyLine(v);
       desc += "\n<span class='warn'>动静已经传出去了。排水沟那头的水声连成了片。</span>";
       return desc;
     },
@@ -1078,10 +1153,10 @@ Object.assign(storyData,
         input: { placeholder: "例如：3红2蓝" },
         nextScene: flashCombatRouterDeadly(
           "新达汇-B1停车场-尸潮-击散",
-          "结局-车库遭遇战"
+          "结局-车库尸潮"
         ),
         timeout: 18000,
-        timeoutScene: "结局-车库遭遇战"
+        timeoutScene: "结局-车库尸潮"
       }
     ]
   },
@@ -1122,10 +1197,10 @@ Object.assign(storyData,
         input: { placeholder: "例如：3红2蓝" },
         nextScene: flashCombatRouterDeadly(
           "新达汇-B1停车场-巢穴-占稳",
-          "结局-车库遭遇战"
+          "结局-车库巢穴"
         ),
         timeout: 18000,
-        timeoutScene: "结局-车库遭遇战"
+        timeoutScene: "结局-车库巢穴"
       }
     ]
   },
@@ -1165,6 +1240,7 @@ Object.assign(storyData,
         nextScene: function(v) {
           var t = v._garDriveTarget || XDCELL + "中段枢纽";
           xdGarDenBump(v, t);
+          v._garRamHurt = true;   // 落点正文补一句伤口+体力（effect 先于 nextScene，体力已扣完）
           return t;
         },
         effect: updateTime(1, { add: { strength: -2 }, set: { hurtByZombie: true } })
@@ -1227,7 +1303,10 @@ Object.assign(storyData,
     text: function(v) {
       var desc = xdGarSearchApproach(v) + "\n你拉开副驾车门的瞬间——<span class='sfx'>哐当</span>！车门内侧挂着的灭火器支架被带了下来，砸在水泥地上，滚出去老远。\n回音在空旷的车库里荡了三个来回。你僵在原地，听着自己的心跳。";
       var soundSight = xdGarSight(v);
-      if (soundSight === "lit") {
+      // ⚠️ 未激活时这一声不会惊动任何东西（xdGarDenBump 直接 return），正文不能替它写回应
+      if (!xdGarDenActive(v)) {
+        desc += "\n你僵着不动等了半分钟。回音散尽之后，车库里没有第二声响动——这一次，运气不错。";
+      } else if (soundSight === "lit") {
         desc += "\n灯亮着，无处可藏。排水沟那头的拍水声停了一拍——然后变得更密。";
       } else if (soundSight === "torch") {
         desc += "\n手电的光柱晃过去，立柱间一览无余——也无处可藏。排水沟那头的拍水声停了一拍——然后变得更密。";
@@ -1357,7 +1436,7 @@ Object.assign(storyData,
     choices: [
       {
         text: "踩死油门，赌那条缝！",
-        nextScene: XDGAR + "-冲出坡道",
+        nextScene: function(v) { v._garRamHurt = true; return XDGAR + "-冲出坡道"; },
         effect: updateTime(1, { add: { strength: -2 }, set: { hurtByZombie: true } })
       }
     ]
@@ -1367,10 +1446,10 @@ Object.assign(storyData,
     image: "images/placeholder.png" /* TODO: images/xindahui/driveRamp.png */,
     // 驾驶逃亡结算点：driveExit 与「围堵→冲出坡道」两条路径都汇到这里，闸门挂此处才都覆盖得到。
     // chased +0（波波 10-03 拍板：正文写死"甩在了身后"），但 G 区密度照样清零。
-    onEnter: function(v) { xdGarExitSettle(v, 0); return {}; },
+    onEnter: function(v) { xdGarExitSettle(v, 0); xdGarRamSettle(v); return {}; },
     text: function(v) {
       var night = xdGarNight(v);
-      return "你把油门踩穿。车身擦着断杆冲上坡道，<span class='sfx'>哐</span>的一声，断杆飞出去砸在收费亭顶上。\n" + (night ? "夜色灌进挡风玻璃，坡道顶上就是街口。" : "天光灌进挡风玻璃。") + "后视镜里，坡道口的水声渐渐被引擎声盖过去。\n<span class='crit'>你把整个东明街道的地下，甩在了身后。</span>";
+      return "你把油门踩穿。车身擦着断杆冲上坡道，<span class='sfx'>哐</span>的一声，断杆飞出去砸在收费亭顶上。" + _xdRamNote + "\n" + (night ? "夜色灌进挡风玻璃，坡道顶上就是街口。" : "天光灌进挡风玻璃。") + "后视镜里，坡道口的水声渐渐被引擎声盖过去。\n<span class='crit'>你把整个东明街道的地下，甩在了身后。</span>";
     },
     choices: [
       { text: "继续", nextScene: "新达汇车库出口" }
@@ -1415,10 +1494,31 @@ Object.assign(storyData,
   },
 
   // ==================== 死亡结局 ====================
-  "结局-车库遭遇战": {
+  // ⚠️ 三种死法各自独立成节点。旧实现三处共用「结局-车库遭遇战」，那一段永远写
+  //    "两步外是深灰色荣威，钥匙插在点火器上"——车还没出现（dd<3）、人死在下层巢穴、
+  //    车已经开走，都会把车型和钥匙说死，而且地理位置根本是错的。
+  // 车旁（C 区·目标车边）：车就在半步外，写"差一步"是这一处才成立的画面
+  "结局-车库车旁": {
     image: "images/hurtByzombie.webp",
     text: function(v) {
-      return "排水沟里爬出来的东西比你想的多。第一只被你砸倒，第二只从侧面扑上来，第三只咬住了你的小腿——你倒下去的时候，看到那辆深灰色的荣威静静停在两步之外，钥匙还插在点火器上。\n<span class='end'>—— 结局：车库遭遇战 ——</span>";
+      return "排水沟里爬出来的东西比你想的多。第一只被你砸倒，第二只从侧面扑上来，第三只咬住了你的小腿。\n它们把你往栅栏那头拖，后背在水泥地上磨出一道火辣辣的痕。你伸手去够那扇敞开的驾驶座车门，指尖只擦到冰凉的车身——差了半步。\n<span class='end'>—— 结局：倒在车门外 ——</span>";
+    }
+  },
+
+  // 尸潮（任意满密度格）：死在你踏进去的那一格，不提车（车可能根本不在这里）
+  "结局-车库尸潮": {
+    image: "images/hurtByzombie.webp",
+    text: function(v) {
+      var cn = (v._garFightCell && XD_LETTER[v._garFightCell]) ? xdCellName(v._garFightCell) : "这片车道";
+      return "你报错了节奏。\n第一只撞在你胸口，第二只从车缝里挤出来抱住你的腰。湿透的手从四面扒上来，把你按在" + cn + "的立柱边——水声盖过了你最后的声音。\n<span class='end'>—— 结局：被尸潮按倒 ——</span>";
+    }
+  },
+
+  // 巢穴（J 区·排水沟里）：死在源头的水里，没有车、没有坡道，只有栅栏和水
+  "结局-车库巢穴": {
+    image: "images/hurtByzombie.webp",
+    text: function(v) {
+      return "栅栏缝里伸出来的手比你想的多。它们把你按进齐膝的浑水里，指节抠着腰带和衣领，一寸一寸往下拽。\n水面最后浮上来一串气泡，随即平了。排水沟重新安静——这里是它们的巢，你只是走进来的那个。\n<span class='end'>—— 结局：沉进排水沟 ——</span>";
     }
   },
 

@@ -155,7 +155,7 @@ const newScenes = CELLS.concat([
   "新达汇-B1停车场-巢穴遭遇", "新达汇-B1停车场-巢穴-占稳", "新达汇-B1停车场-截停",
   "新达汇-B1停车场-上车点火", "新达汇-B1停车场-围堵", "新达汇-B1停车场-冲出坡道",
   "新达汇-B1停车场-车库检查",
-  "新达汇车库出口", "结局-车库遭遇战", "结局-车库围堵",
+  "新达汇车库出口", "结局-车库车旁", "结局-车库尸潮", "结局-车库巢穴", "结局-车库围堵",
   "金谊广场-长廊-打听小明", "金谊广场-3F-幸存者-聊车",
 ]);
 let missing = newScenes.filter((id) => !S("storyData[" + JSON.stringify(id) + "]"));
@@ -306,7 +306,9 @@ const hurtSearch = S("storyData['新达汇-B1停车场-车旁搜身-受伤']");
 const hurtTxt = hurtSearch.text({ dd: 3 });
 check(hurtTxt.indexOf("东西太多，我跑第二趟") >= 0 && hurtTxt.indexOf("卖给长廊") >= 0 && hurtTxt.indexOf("钥匙还插在点火器上") >= 0, "受伤档搜身情报完整（短信+清单背面+钥匙）");
 const rush = S("storyData['新达汇-B1停车场-围堵']");
-check(rush.qte && rush.qte.onTimeout === "结局-车库围堵" && rush.choices[0].nextScene === "新达汇-B1停车场-冲出坡道", "围堵 QTE：硬冲成功→冲出坡道，超时→死亡");
+// 硬冲的 nextScene 是函数（顺手置 _garRamHurt，让落点补伤口+体力提示），不再是字面量
+var rushVars = { _garRamHurt: false };
+check(rush.qte && rush.qte.onTimeout === "结局-车库围堵" && rush.choices[0].nextScene(rushVars) === "新达汇-B1停车场-冲出坡道" && rushVars._garRamHurt === true, "围堵 QTE：硬冲成功→冲出坡道（挂伤口提示），超时→死亡");
 const rushTxt = rush.text({ _lastScene: D });
 check(rushTxt.indexOf("D 区") >= 0, "围堵正文按来源分区字母给过渡句");
 const ramp = S("storyData['新达汇-B1停车场-冲出坡道']");
@@ -541,8 +543,12 @@ check(apprTorch.indexOf("手电的光柱罩住一排车头") >= 0 && apprTorch.i
 const emptyTorch = S("storyData['新达汇-B1停车场-搜车-空车']").text(torchVars);
 check(emptyTorch.indexOf("方向盘上的灰厚得能写字") >= 0, "搜车-空车手电档：能认出车型（不再只报触感）");
 check(emptyTorch.indexOf("手电的光柱罩住一排车头") >= 0, "搜车-空车正文自带接近描写（原中间节点正文已下放）");
-const noiseTorch = S("storyData['新达汇-B1停车场-搜车-出声']").text(torchVars);
+// ⚠出声的"有东西回应"只在密度系统激活时给（未激活时 xdGarDenBump 直接 return，正文不能替它写回应）
+const torchAwake = Object.assign({}, torchVars, { _garDenAwake: true, _visit: {} });
+const noiseTorch = S("storyData['新达汇-B1停车场-搜车-出声']").text(torchAwake);
 check(noiseTorch.indexOf("无处可藏") >= 0 && noiseTorch.indexOf("黑暗深处") < 0, "搜车-出声手电档：光柱下无处可藏");
+const noiseAsleep = S("storyData['新达汇-B1停车场-搜车-出声']").text(Object.assign({}, torchVars, { _garDenAwake: false, _visit: {} }));
+check(noiseAsleep.indexOf("没有第二声响动") >= 0 && noiseAsleep.indexOf("无处可藏") < 0, "搜车-出声未激活：只写回音散尽，不写东西被惊动");
 const scareTorch = S("storyData['新达汇-B1停车场-搜车-锁车惊吓']").text(torchVars);
 const foodTorch = S("storyData['新达汇-B1停车场-搜车-捡到吃的']").text(torchVars);
 check(scareTorch.indexOf("光柱罩住一排车头") >= 0 && foodTorch.indexOf("你放轻脚步") >= 0, "四个结果的接近描写全覆盖（惊吓/捡到吃的也在）");
@@ -624,16 +630,31 @@ const battle = S("storyData['新达汇-B1停车场-车旁遭遇']");
 check(typeof battle.onEnter === "function" && battle.choices[0].input && battle.choices[0].timeout === 20000, "车旁遭遇：initMemoryGame 闪色 + 20s 超时");
 // 尸潮密度遭遇链（二值闪色）
 const amb = S("storyData['新达汇-B1停车场-尸潮遭遇']");
-check(amb.choices[0].timeout === 18000 && amb.choices[0].timeoutScene === "结局-车库遭遇战", "尸潮遭遇：18s 超时=死亡结局（二值，无受伤档）");
+check(amb.choices[0].timeout === 18000 && amb.choices[0].timeoutScene === "结局-车库尸潮", "尸潮遭遇：18s 超时=尸潮专属死亡结局（二值，无受伤档）");
 const nest = S("storyData['新达汇-B1停车场-巢穴遭遇']");
-check(nest.choices[0].timeout === 18000 && nest.choices[0].nextScene.__sceneRefs[0] === "新达汇-B1停车场-巢穴-占稳" && nest.choices[0].nextScene.__sceneRefs[1] === "结局-车库遭遇战", "巢穴遭遇：二值路由 击散=占稳 / 败=死亡结局");
-check(S("storyData['新达汇-B1停车场-尸潮遭遇']").choices[0].nextScene.__sceneRefs[1] === "结局-车库遭遇战", "尸潮遭遇路由死亡档=结局-车库遭遇战");
+check(nest.choices[0].timeout === 18000 && nest.choices[0].nextScene.__sceneRefs[0] === "新达汇-B1停车场-巢穴-占稳" && nest.choices[0].nextScene.__sceneRefs[1] === "结局-车库巢穴", "巢穴遭遇：二值路由 击散=占稳 / 败=巢穴专属死亡结局");
+check(S("storyData['新达汇-B1停车场-尸潮遭遇']").choices[0].nextScene.__sceneRefs[1] === "结局-车库尸潮", "尸潮遭遇路由死亡档=结局-车库尸潮");
+const carSide = S("storyData['新达汇-B1停车场-车旁遭遇']");
+check(carSide.choices[0].nextScene.__sceneRefs[2] === "结局-车库车旁" && carSide.choices[0].timeoutScene === "结局-车库车旁", "车旁遭遇死亡档=结局-车库车旁（三处死法各自独立）");
 const wireDim = S("storyData['新达汇-B1停车场-接线']").choices.find((c) => c.showCondition === "!hasTorch && hasPhone && phoneBattery > 0");
 check(!!wireDim, "接线：手机微光档在位");
 check(S("storyData['新达汇-B1停车场-接线成功']").choices[0].nextScene === "新达汇-B1停车场-配电室", "接线成功返回配电室");
-const end1 = S("storyData['结局-车库遭遇战']"), end2 = S("storyData['结局-车库围堵']");
-check(typeof end1.text === "function" && end1.text({}).indexOf("结局：车库遭遇战") >= 0, "结局行格式：end 标记（遭遇战）");
-check(typeof end2.text === "function" && end2.text({}).indexOf("结局：车库围堵") >= 0, "结局行格式：end 标记（围堵）");
+const ENDINGS = {
+  "结局-车库车旁": "倒在车门外",
+  "结局-车库尸潮": "被尸潮按倒",
+  "结局-车库巢穴": "沉进排水沟",
+  "结局-车库围堵": "车库围堵"
+};
+let endOk = 0, endCarHit = 0;
+for (const [eid, label] of Object.entries(ENDINGS)) {
+  const e = S("storyData[" + JSON.stringify(eid) + "]");
+  const t = (e && typeof e.text === "function") ? e.text({}) : "";
+  if (t.indexOf("结局：" + label) >= 0 && t.indexOf("class='end'") >= 0) endOk++;
+  // 旧共用文案的病灶：每种死法都写"两步外是深灰色荣威，钥匙插在点火器上"
+  if (t.indexOf("深灰色") >= 0 || t.indexOf("钥匙还插在点火器上") >= 0) endCarHit++;
+}
+check(endOk === 4, "四个车库结局全部存在且结局行格式正确（" + endOk + "/4）");
+check(endCarHit === 0, "死亡结局不再提「深灰色荣威 / 钥匙插在点火器上」（命中 " + endCarHit + " 处）");
 const mapScene = S("storyData['新达汇-B1停车场-疏散图']");
 check(mapScene.text.indexOf("九宫格") >= 0 && mapScene.onEnter.set._garageMapSeen === true, "疏散图文案升级为九宫格方位 + _garageMapSeen");
 check(typeof mapScene.choices[0].nextScene === "function" && mapScene.choices[0].nextScene({ _lastScene: G }) === G, "疏散图「记下了」返回来时的格");
@@ -939,6 +960,76 @@ console.log("\n=== 17. Cursor #3/#7/#16/#18 修复专项（波波 10-03 拍板�
   const mapReads = (garageSrc2.match(/(v|vars)\._garageMapSeen/g) || []).length;
   check(mapReads === 0, "车库内 _garageMapSeen 只写不读（读取 " + mapReads + " 处），逃亡不给方位加成");
   check(!/看过疏散图有方位定位加成/.test(garageSrc2), "旧注释'看过图有方位定位加成'已删除（避免后人照着实现）");
+})();
+
+console.log("\n=== 18. Cursor 第三批：#6 / #11 / #12 / #14 / #15 ===");
+// 独立作用域：H_ID/G_ID/dkW… 等临时名在前面各节已用过
+(function () {
+  const H_ID = XD + "主通道南段";
+  const G_ID = XD + "入口平台";
+  const E_ID = XD + "中段枢纽";
+  const H = S("storyData[" + JSON.stringify(H_ID) + "]");
+  const gSc = S("storyData[" + JSON.stringify(G_ID) + "]");
+  const eSc = S("storyData[" + JSON.stringify(E_ID) + "]");
+
+  // ---------- #11 H 区摸黑不再写死"往前就是深处" ----------
+  const dkN = H.text(Object.assign({}, base, { _visit: {}, _garageFacing: "N" }));
+  const dkS = H.text(Object.assign({}, base, { _visit: {}, _garageFacing: "S" }));
+  const dkW = H.text(Object.assign({}, base, { _visit: {}, _garageFacing: "W" }));
+  const dkE = H.text(Object.assign({}, base, { _visit: {}, _garageFacing: "E" }));
+  check(dkN.indexOf("正前才是车库深处") >= 0 && dkN.indexOf("左手边是坡道口") >= 0, "H 区摸黑·朝北：正前=深处，入口在左手边");
+  check(dkS.indexOf("身后才是车库深处") >= 0, "H 区摸黑·朝南：深处改写在身后（不再穿帮说成'往前'）");
+  check(dkW.indexOf("右手边才是车库深处") >= 0 && dkW.indexOf("正前是坡道口") >= 0, "H 区摸黑·朝西：正前是入口，深处改写在右手边");
+  check(dkE.indexOf("左手边才是车库深处") >= 0, "H 区摸黑·朝东：深处改写在左手边");
+  const dkDim = H.text(Object.assign({}, base, { _visit: {}, hasPhone: true, phoneBattery: 50 }));
+  check(dkDim.indexOf("分不清哪头是哪儿") >= 0 && dkDim.indexOf("才是车库深处") < 0,
+    "H 区手机微光档不给方向判断（与立柱句'前后左右看不清'不再打架）");
+
+  // ---------- #12 应急灯口径统一（全库一律写成早就黑了） ----------
+  const gTorch = gSc.text(Object.assign({}, base, { _visit: {}, hasTorch: true }));
+  check(gTorch.indexOf("应急灯还亮着") < 0 && gTorch.indexOf("电池早就耗尽") >= 0,
+    "G 区未通电档：应急灯写成早就黑了（不再和全黑档的伸手不见五指打架）");
+  const gWired = gSc.text(Object.assign({}, base, { _visit: {}, _wiredCorrectly: true }));
+  check(gWired.indexOf("应急灯仍是黑的") >= 0, "G 区通电档：应急灯依然黑着（电池耗尽，与主线回路无关）");
+  const gDark = gSc.text(Object.assign({}, base, { _visit: {} }));
+  check(gDark.indexOf("应急灯还亮着") < 0, "G 区全黑档不再与任何'应急灯亮着'的说法冲突");
+
+  // ---------- #6 Day5 时间线：钥匙说明分档 ----------
+  const loot = S("storyData['新达汇-B1停车场-车旁搜身']");
+  const loot3 = loot.text(Object.assign({}, base, { _visit: {}, dd: 3 }));
+  const loot5 = loot.text(Object.assign({}, base, { _visit: {}, dd: 5 }));
+  check(loot3.indexOf("他刚停好车，还没来得及拔") >= 0, "车旁搜身·Day3：刚停好车还没拔钥匙");
+  check(loot5.indexOf("插了好几天") >= 0 && loot5.indexOf("刚停好车") < 0,
+    "车旁搜身·Day5：改口径为'插了好几天'（不再与'电池耗干/引擎盖凉透'打架）");
+  const lootHurt5 = S("storyData['新达汇-B1停车场-车旁搜身-受伤']").text(Object.assign({}, base, { _visit: {}, dd: 5, strength: 5 }));
+  check(lootHurt5.indexOf("插了好几天") >= 0 && lootHurt5.indexOf("刚停好车") < 0, "车旁搜身-受伤·Day5：同口径");
+
+  // ---------- #14 未激活时不替密度系统写威胁句 ----------
+  const wf = S("storyData['新达汇-B1停车场-接线失败']");
+  const wfOn = wf.text(Object.assign({}, base, { _visit: {}, _garDenAwake: true }));
+  const wfOff = wf.text(Object.assign({}, base, { _visit: {}, _garDenAwake: false }));
+  check(wfOn.indexOf("引起了什么东西的注意") >= 0, "接线失败·已激活：写惊动了东西");
+  check(wfOff.indexOf("引起了什么东西的注意") < 0 && wfOff.indexOf("彻底散了") >= 0,
+    "接线失败·未激活：只写回音散尽（数值没动就不写威胁）");
+
+  // ---------- #15 撞开围堵：落点正文补伤口 + 体力提示 ----------
+  const stopSc = S("storyData['新达汇-B1停车场-截停']");
+  var stopVars = { _garDriveTarget: E_ID, _garRamHurt: false };
+  const stopTo = stopSc.choices[0].nextScene(stopVars);
+  check(stopTo === E_ID && stopVars._garRamHurt === true, "截停硬冲：落点=目标格，并挂上 _garRamHurt");
+  var cellV = Object.assign({}, base, { _visit: {}, _garRamHurt: true });
+  eSc.onEnter(cellV);
+  check(cellV._garRamHurt === false, "落点 onEnter 消费掉 _garRamHurt（不会带到下一格）");
+  const cellTxt = eSc.text(cellV);
+  check(cellTxt.indexOf("肋下一阵闷痛") >= 0 && cellTxt.indexOf("体力-2") >= 0,
+    "截停后落点正文补上伤口 + 体力提示（旧实现扣了 2 点却一个字不提）");
+  var cellV2 = Object.assign({}, base, { _visit: {}, _garRamHurt: false });
+  eSc.onEnter(cellV2);
+  check(eSc.text(cellV2).indexOf("肋下一阵闷痛") < 0, "普通进格不残留上一格的伤口提示");
+  const rampSc = S("storyData['新达汇-B1停车场-冲出坡道']");
+  rampSc.onEnter(Object.assign({}, base, { _visit: {}, _garRamHurt: true }));
+  check(rampSc.text(Object.assign({}, base, { _visit: {} })).indexOf("肋下一阵闷痛") >= 0,
+    "围堵硬冲→冲出坡道：正文同样补上伤口 + 体力提示");
 })();
 
 console.log("\n结果：" + okCount + " 通过 / " + badCount + " 失败");

@@ -226,13 +226,13 @@
     "tier": 3,
     "hasOldCond": false,
     "elseScene": null,
-    "timeoutScene": "结局-车库遭遇战",
+    "timeoutScene": "结局-车库车旁",
     "timeout": 20000,
     "isFactory": false,
     "targets": [
       "新达汇-B1停车场-车旁搜身",
       "新达汇-B1停车场-车旁搜身-受伤",
-      "结局-车库遭遇战"
+      "结局-车库车旁"
     ],
     "whitelisted": false,
     "inbound": [
@@ -247,12 +247,12 @@
     "tier": 0,
     "hasOldCond": false,
     "elseScene": null,
-    "timeoutScene": "结局-车库遭遇战",
+    "timeoutScene": "结局-车库尸潮",
     "timeout": 18000,
     "isFactory": false,
     "targets": [
       "新达汇-B1停车场-尸潮-击散",
-      "结局-车库遭遇战"
+      "结局-车库尸潮"
     ],
     "whitelisted": false,
     "inbound": [
@@ -267,12 +267,12 @@
     "tier": 0,
     "hasOldCond": false,
     "elseScene": null,
-    "timeoutScene": "结局-车库遭遇战",
+    "timeoutScene": "结局-车库巢穴",
     "timeout": 18000,
     "isFactory": false,
     "targets": [
       "新达汇-B1停车场-巢穴-占稳",
-      "结局-车库遭遇战"
+      "结局-车库巢穴"
     ],
     "whitelisted": false,
     "inbound": [

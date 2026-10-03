@@ -1771,7 +1771,10 @@ Object.assign(storyData, {
     ]
   },
   "建平-挹芬楼-6F": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/挹芬楼-6F走廊.webp",
+      night: "images/建平/挹芬楼-6F走廊-night.webp"
+    }),
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "挹芬楼6F"; },
     text: function(vars) { return "挹芬楼 6 楼。" + describeZombieWave(vars); },
@@ -2192,7 +2195,10 @@ Object.assign(storyData, {
     ]
   },
   "建平-远翔楼-3F": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/远翔楼-3F走廊.webp",
+      night: "images/建平/远翔楼-3F走廊-night.webp"
+    }),
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼3F"; },
     text: function(vars) { return "远翔楼 3 楼。这里有高三一些班级的教室————早已人去房空，还有物理教学组的办公室。地板上躺着一具尸体，不知道是哪个倒霉蛋。" + describeZombieWave(vars); },

@@ -82,6 +82,7 @@ const storyData = {
     _garDenAwake: false,       // 车库尸潮：密度系统是否已惊动（到过 J 区 / 点过火 / 带着追兵钻进库内 三者任一）
                                //   ⚠与"去过 J 区"是两回事：带尾巴进库也算惊动，但不等于你到过排水沟（别混用 _visit[旧区]）
     _garageSearchReturn: false,// 车库搜车：本轮搜完"回到原地"的回程标记（消费后不再给起点格重复 +1）
+    _garRamHurt: false,        // 车库驾驶：撞开围堵的一次性标记（下一格正文补一句伤口+体力提示，消费后清）
     _garGrace: 0,              // 车库尸潮：击散后的余波平静计数（接下来N次步行进格不涨密度，防死亡螺旋）
     _garJQuietDay: 0,          // 车库尸潮：J区巢穴被打散的游戏日（=dd 当天J区安全，次日恢复）
     _garFightCell: "",         // 车库尸潮：当前遭遇战所在格（格ID或"J"；击散/占稳结算用）
@@ -93,6 +94,8 @@ const storyData = {
     _garageLastDay: 1,         // 新达汇B1停车场：上次到访的游戏日（G格 onEnter 跨日衰减密度）
     _escapeOps: 0,             // 驾驶逃亡剩余操作次数（上车点火设6，每移动一格-1，0后再移动=围堵QTE）
     _knowsSurvivorCar: false,  // 金谊长廊情报：知道小明开车去了新达汇B1没回来（只在车库事故点文案里呼应）
+    _garageCurCell: "",        // 新达汇B1停车场：玩家此刻所站的分格（每格 onEnter 写入，出库清零）
+                               //   ⚠️这是"当前位置"的唯一可信来源，绝不能用 _lastScene 顶替——后者是引擎语义的"来处"
     _garageSearchFrom: "",     // 新达汇B1停车场：本轮搜车起点区（退出搜查回原地；搜车+1密度落点）
     _garageSearchPending: false, // 新达汇B1停车场：是否处于搜车链中（链中"换个位置再搜"不覆盖起点）
     _garageDecayDays: 0,       // 新达汇B1停车场：本次进入时尸潮衰减的天数（>0 时G区正文播报"散了一些"）
