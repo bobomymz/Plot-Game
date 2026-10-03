@@ -2245,7 +2245,10 @@ Object.assign(storyData, {
   },
 
   "建平-远翔楼-4F": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/远翔楼-4F走廊.webp",
+      night: "images/建平/远翔楼-4F走廊-night.webp"
+    }),
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "远翔楼4F"; },
     text: function(vars) { return "远翔楼 4 楼。" + describeZombieWave(vars); },
