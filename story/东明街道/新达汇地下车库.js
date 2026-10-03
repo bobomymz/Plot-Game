@@ -137,6 +137,63 @@ function xdGarDenTotal(v) {
   return sum;
 }
 
+// ==================== 追兵 ⇄ 车库密度 换算闸门（波波 10-03 拍板） ====================
+// 车库内一律用尸潮密度表达威胁，不再直接加减 chasedByZombies；只在进出车库时做一次换算：
+//   进库：尾巴跟到坡道口就散了 → G 区密度 += min(2, chased)，chased 清零
+//         （封闭空间甩尾巴是成立的战术，代价是库内寸步难行、出来还要再付一笔）
+//   出库：库里惊动了多少带出来多少 → chased += (G 区密度 3→+2 / 1~2→+1 / 0→+0)，G 区清零
+//   驾驶冲出坡道：chased +0（正文写死"甩在了身后"），G 区同样清零
+// 边界：步行层通往外界只有 G 区的两条边（沿坡道出库 / 去回B1走廊），所以闸门只挂 G 区。
+// ⚠出库累加封顶 4 不碰 5：chasedByZombies>=5 是即死全局触发器，不该由"跨过出口这一步"瞬间造成。
+function xdGarIsOutside(id) {
+  return !id || (!XDGRID[id] && id.indexOf(XDGAR) !== 0);
+}
+
+// 给某格 +n（沿用统一口径：没惊动过排水沟就不记账；上限 3，与步行进格一致）
+function xdGarDenBump(v, cellId, n) {
+  if (!cellId || !XD_DEN[cellId] || !xdGarDenActive(v)) return;
+  var k = XD_DEN[cellId];
+  v[k] = Math.min(3, (v[k] || 0) + (n || 1));
+}
+
+// 上车点火专用：引擎炸醒整个车库——不判"是否惊动过排水沟"（这是硬信号，等于把源头一起炸醒）
+function xdGarDenSurge(v, n) {
+  v._visit = v._visit || {};
+  v._visit[XDGAR + "-旧区"] = Math.max(1, v._visit[XDGAR + "-旧区"] || 0);
+  for (var k in XD_DEN) v[XD_DEN[k]] = Math.min(3, (v[XD_DEN[k]] || 0) + (n || 1));
+}
+
+// 进库结算：挂 G 区 onEnter，仅当来源是库外场景时触发
+function xdGarEnterSettle(v) {
+  var ch = v.chasedByZombies || 0;
+  if (ch <= 0 || !xdGarIsOutside(v._lastScene)) return;
+  v._garDenG = Math.min(3, (v._garDenG || 0) + Math.min(2, ch));
+  v.chasedByZombies = 0;
+}
+
+// 出库结算：extra===0 用于驾驶冲出坡道（甩在身后，不带尾巴）
+function xdGarExitSettle(v, extra) {
+  var d = v._garDenG || 0;
+  var add = (extra === 0) ? 0 : (d >= 3 ? 2 : (d >= 1 ? 1 : 0));
+  if (add > 0) v.chasedByZombies = Math.min(4, (v.chasedByZombies || 0) + add);
+  v._garDenG = 0;   // 尾巴跟着出去了，坡道口这片散了
+}
+
+// 出库选项：nextScene 包一层，点击时结算再跳（__sceneRefs 供 lint 补入边）
+function xdGarExitTo(destId) {
+  var f = function(v) { xdGarExitSettle(v); return destId; };
+  f.__garExit = true;
+  f.__sceneRefs = [destId];
+  return f;
+}
+
+// 搜车链出声后跳转：把动静记在本轮搜车的起点格（搜车本身已在 xdGarSearchGo 记过一笔）
+function xdGarNoiseTo(destId) {
+  var f = function(v) { xdGarDenBump(v, v._garageSearchFrom); return destId; };
+  f.__sceneRefs = [destId];
+  return f;
+}
+
 // 进格路由：挂在每个移动选项的 nextScene 上。满密度格：步行→尸潮遭遇 / 驾驶→截停 QTE。
 // （引擎 onEnter 无重定向能力，进格瞬间的密度判定借函数式 nextScene 在点击时完成。）
 function xdCellEntry(id) {
@@ -159,7 +216,8 @@ function xdJEntry(v) {
 }
 
 // 噪音/密度统一反馈：按当前格的有效密度分档写进每格正文尾部。
-// 满密度格步行进格即遭遇战，"满"档文案只给驾驶路过/击散前驻留时看。
+// ⚠这是「无光档」——纯听觉（水声/拍水声），黑着也成立。有光时改走 xdGarSightDen（视觉档）。
+// ⚠满档（d>=3）步行进格即遭遇战，只有两种时机能读到：驾驶路过、或在格内闹出动静把本格涨满后驻留。
 function xdGarNoise(vars, cellId) {
   if (!cellId || !XD_DEN[cellId]) return "";
   var d = xdGarDen(vars, cellId);
@@ -169,7 +227,83 @@ function xdGarNoise(vars, cellId) {
   return "";
 }
 
-// 随机搜车路由（加权）。搜车会惊扰所在格（搜车 hub onEnter 给起点格密度 +1）；
+// ==================== 密度描写·视觉档（波波 10-03 拍板） ====================
+// 对标全局的 describeZombieWave：按当前格密度分档，每档多个变体（9 格会反复经过，防刷屏）。
+// 与 describeZombieWave 的三点不同：
+//   ① 只描述「这一片」，不描述「你身后跟了多少」——车库密度是分区级的，不是全局追兵；
+//   ② 报程度不报数字（波波拍板）——密度是 0~3 的抽象值，坐实成"三只"会和二值闪色的设定打架；
+//   ③ 只在有光时给（通电 lit / 手电 torch / 驾驶车灯），全黑与手机微光档走 xdGarNoise 听觉档。
+// ⚠排版铁律：crit 是强强调，≤24 字且含否定词（没有/没能/并未…）一律不上——满档两句都避开了否定。
+var XD_SEE_DEN = [
+  [ // 0 这片是空的
+    "\n灯下的车道空着。一排车停得整整齐齐，只有碎玻璃在反光。",
+    "\n这片是静的。车挨着车，影子都贴在地上，一动不动。",
+    "\n光扫到车道尽头，什么也没拦着——暂时。"
+  ],
+  [ // 1 零星
+    "\n车道那头有一两个影子在慢慢挪。它们还没往这边看。",
+    "\n两排车之间立着个东西，晃了一下。看不清它是站着的还是靠着车。",
+    "\n光照到的边缘，有个影子歪了歪，又不动了。"
+  ],
+  [ // 2 聚集
+    "\n<span class='warn'>这一片已经站了好几个。它们挤在车缝里，肩膀挨着肩膀，慢慢朝这边转过来。</span>",
+    "\n<span class='warn'>车道两侧都立着影子，数量不少。光照过去，好几张脸同时抬了起来。</span>",
+    "\n<span class='warn'>你数不清有多少——只知道这片车道里，能下脚的地方不多了。</span>"
+  ],
+  [ // 3 满（驾驶路过 / 格内涨满后驻留才能读到）
+    "\n<span class='crit'>整条车道全是站着的影子，它们一起转过头来。</span>",
+    "\n<span class='crit'>这一片挤满了，从这头一直排到那头。</span>"
+  ]
+];
+function xdGarSightDen(v, cellId) {
+  if (!cellId || !XD_DEN[cellId]) return "";
+  var d = Math.min(3, xdGarDen(v, cellId));
+  var pool = XD_SEE_DEN[d];
+  if (!pool || pool.length === 0) return "";
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// 邻格提示：只报「最危险的那一个」邻格（波波拍板——报全部会一格四句，且撞立柱漆字）。
+// 方位词用相对方位（正前/左手边/右手边/身后），与 xdSignLine 的四向同序、与选项槽位（前/左/右/后）对齐，
+// 玩家能直接对应到该往哪走；不报分区字母（立柱漆字刚报过，避免同段重复）。
+// 平局取遍历首个：正前 > 左手边 > 右手边 > 身后（优先提示前进方向）。
+// ⚠全黑/手机微光不给——看不见就是看不见，这是光照档的信息优势，不是隐藏数值。
+var XD_NB_DEN = [
+  null,
+  ["影影绰绰立着一两个", "有个东西在慢慢挪"],
+  ["黑压压挤了一片，看不清有多少", "站了好几个，肩膀挨着肩膀"],
+  ["<span class='warn'>已经填满了，那头没有路可走</span>", "<span class='warn'>密密麻麻排到了车道另一头</span>"]
+];
+function xdGarNeighborHint(v, cellId) {
+  var g = XDGRID[cellId];
+  if (!g) return "";
+  var facing = (XD_DIRS.indexOf(v._garageFacing) >= 0) ? v._garageFacing : "N";
+  var rels = [["正前方", facing], ["左手边", XD_CCW[facing]], ["右手边", XD_CW[facing]], ["身后", XD_OPP[facing]]];
+  var bestD = 0, bestRel = "";
+  for (var i = 0; i < rels.length; i++) {
+    var t = g[rels[i][1]];
+    if (!t || !XD_DEN[t]) continue;
+    var d = Math.min(3, xdGarDen(v, t));
+    if (d > bestD) { bestD = d; bestRel = rels[i][0]; }
+  }
+  if (bestD <= 0) return "";
+  var pool = XD_NB_DEN[bestD];
+  if (!pool || pool.length === 0) return "";
+  return "\n" + bestRel + "那条车道，" + pool[Math.floor(Math.random() * pool.length)] + "。";
+}
+
+// 密度反馈总入口（挂每格正文尾部）：按光照分流。
+//   有光（通电/手电/车灯）：当前格视觉档 + 邻格最危险提示（两句）
+//   无光（全黑/手机微光）：只有当前格听觉档（一句）——黑着也能听出水声，保证满格即死不是零信息处决。
+function xdGarDenHint(v, cellId) {
+  var sight = v._driving ? "lit" : xdGarSight(v);
+  if (sight === "lit" || sight === "torch") {
+    return xdGarSightDen(v, cellId) + xdGarNeighborHint(v, cellId);
+  }
+  return xdGarNoise(v, cellId);
+}
+
+// 随机搜车路由（加权）。搜车会惊扰所在格（搜车入口 xdGarSearchGo 给起点格密度 +1）；
 // 旧的「车道尽头 30% 摸黑遭遇」已并入尸潮密度系统（C 区 dd>=3 血腥加成，满密度进格=遭遇战）。
 // __sceneRefs 供 lint_story 补记入边（否则随机池节点会被误判孤立场景）。
 function xdGarSearchRouter(vars) {
@@ -183,6 +317,42 @@ xdGarSearchRouter.__sceneRefs = [
   XDGAR + "-搜车-空车", XDGAR + "-搜车-捡到吃的",
   XDGAR + "-搜车-出声", XDGAR + "-搜车-锁车惊吓"
 ];
+
+// 搜车入口（波波 10-03：砍掉「开始搜查 / 不搜了退回去」的中间节点——点 POI 直接出结果）
+// 中间节点原做的两件事搬进这里：① 记本轮起点格（供车库检查收口回原地）② 起点格密度 +1。
+// ⚠起点取 _lastScene：nextScene 函数在点击瞬间求值，此时 _lastScene 仍是玩家所在的分区格。
+// ⚠换位置再搜时 _garageSearchPending 已为 true → 不覆盖起点（沿用旧 hub 的守卫逻辑）。
+function xdGarSearchGo() {
+  var f = function(v) {
+    if (!v._garageSearchPending) {
+      v._garageSearchFrom = v._lastScene || XDCELL + "主通道南段";
+      v._garageSearchPending = true;
+    }
+    var sk = XD_DEN[v._garageSearchFrom];
+    if (sk && xdGarDenActive(v)) {
+      v[sk] = Math.min(3, (v[sk] || 0) + 1);
+    }
+    return xdGarSearchRouter(v);
+  };
+  f.__searchGo = true;   // 供自测/lint 识别搜车入口（不再靠 nextScene 字面量比对）
+  f.__sceneRefs = xdGarSearchRouter.__sceneRefs;
+  return f;
+}
+
+// 靠近车辆的动作描写 + 本轮起点密度预警（原中间节点的正文，下放到四个搜车结果各带一份）
+function xdGarSearchApproach(v) {
+  var sight = xdGarSight(v);
+  var desc = (sight === "lit")
+    ? "你放轻脚步，靠近最近的一排车。灯亮着，能看清车牌和车型，翻找起来也快得多。"
+    : (sight === "torch")
+      ? "你放轻脚步，靠近最近的一排车。手电的光柱罩住一排车头，车牌和车型看得清，翻找起来也快——只是光柱外的地方，黑得更深了。"
+      : "你放轻脚步，靠近最近的一辆车。黑暗里只能靠手摸——车门把手、车窗缝、储物格。每一次拉拽都可能出声。";
+  var fromDen = (v._garageSearchFrom && XD_DEN[v._garageSearchFrom]) ? xdGarDen(v, v._garageSearchFrom) : 0;
+  if (fromDen >= 2) {
+    desc += "\n<span class='warn'>排水沟的方向，又传来那种有节奏的拍水声。比刚才近了。</span>";
+  }
+  return desc;
+}
 
 // 驾驶正文尾部：按剩余次数递进的声音暗示（等候区模式：玩家可见文案不点破机制）
 function xdGarDriveText(vars) {
@@ -253,6 +423,7 @@ function xdCellScene(opts) {
       if (opts.entryAnchor) {
         v.currentPlace = "新达汇";
         v.currentPos = "地下车库";
+        xdGarEnterSettle(v);   // 进库闸门：chased → G 区密度（仅当来源是库外场景时生效）
         var last = (v._garageLastDay === undefined) ? v.dd : v._garageLastDay;
         if (v.dd > last) {
           var gap = v.dd - last;
@@ -297,10 +468,10 @@ function xdCellScene(opts) {
         // 驾驶：车灯当光源，用亮态环境描写
         body = opts.lit(v);
         if (opts.trench) body += "\n半截从沟里拖出来的栅栏横在车道上，你打着方向绕了过去——打这里过，就得费这个工夫。";
-        return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDriveText(v);
+        return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDenHint(v, id) + xdGarDriveText(v);
       }
       body = (sight === "lit" || sight === "torch") ? opts.lit(v) : opts.dark(v);
-      return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarNoise(v, id);
+      return head + body + xdSignLine(id, v, head.indexOf(xdCellName(id)) < 0) + xdGarDenHint(v, id);
     },
     choices: function(v) {
       var out = [];
@@ -366,10 +537,10 @@ Object.assign(storyData,
       return desc;
     },
     poiArr: [
-      { text: "搜查平台边停着的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) },
+      { text: "搜查平台边停着的车", nextScene: xdGarSearchGo(), effect: updateTime(4) },
       { text: "查看消防疏散图", nextScene: XDGAR + "-疏散图", effect: updateTime(1) },
-      { text: "沿坡道出库", nextScene: "新达汇车库出口", effect: updateTime(2) },
-      { text: function(v) { return (v._visit && v._visit["新达汇-B1走廊"] > 0) ? "回B1走廊" : "去B1走廊"; }, nextScene: "新达汇-B1走廊", effect: updateTime(2) }
+      { text: "沿坡道出库", nextScene: xdGarExitTo("新达汇车库出口"), effect: updateTime(2) },
+      { text: function(v) { return (v._visit && v._visit["新达汇-B1走廊"] > 0) ? "回B1走廊" : "去B1走廊"; }, nextScene: xdGarExitTo("新达汇-B1走廊"), effect: updateTime(2) }
     ],
     driveExit: {
       text: "踩死油门，冲上坡道——撞开断杆！",
@@ -389,7 +560,7 @@ Object.assign(storyData,
       return "主通道两侧的车排得笔直，指节敲上去，一辆辆都是空膛的回音。头顶的空当里有一缕流动的凉风——从入口那头灌进来，顺着通道一路往深处去。方向感告诉你：这条道纵贯车库，一直往前就是深处。";
     },
     poiArr: [
-      { text: "搜查通道两侧的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
+      { text: "搜查通道两侧的车", nextScene: xdGarSearchGo(), effect: updateTime(4) }
     ]
   }),
 
@@ -406,7 +577,7 @@ Object.assign(storyData,
       return "拐角处堆着几辆废弃的购物车，你伸手摸到了半只毛绒熊的耳朵。绒毛早被潮气泡硬了，一股旧毛毯的霉味。";
     },
     poiArr: [
-      { text: "搜查拐角的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
+      { text: "搜查拐角的车", nextScene: xdGarSearchGo(), effect: updateTime(4) }
     ]
   }),
 
@@ -426,7 +597,7 @@ Object.assign(storyData,
       return "潮气贴着地面涌上来，脚下的水泥黏腻腻的。你抬脚时绊到一截铁栅栏——横在车道中间，边缘带着锈。";
     },
     poiArr: [
-      { text: "搜查路边停着的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
+      { text: "搜查路边停着的车", nextScene: xdGarSearchGo(), effect: updateTime(4) }
     ]
   }),
 
@@ -447,7 +618,7 @@ Object.assign(storyData,
     },
     poiArr: [
       { text: "推开那扇门", nextScene: XDGAR + "-配电室", effect: updateTime(1) },
-      { text: "搜查立柱间的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
+      { text: "搜查立柱间的车", nextScene: xdGarSearchGo(), effect: updateTime(4) }
     ]
   }),
 
@@ -462,7 +633,7 @@ Object.assign(storyData,
       return "这里的车两排车头对着车头，缝窄得只能侧身。你侧身挤进去，一绺胶皮味蹭过手背——有辆车的后备箱盖支棱着。摸到的车引擎盖冰凉，车门虚掩着，车里只摸出一个矿泉水瓶和一些票据。没有钥匙。";
     },
     poiArr: [
-      { text: "搜查停车排的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
+      { text: "搜查停车排的车", nextScene: xdGarSearchGo(), effect: updateTime(4) }
     ]
   }),
 
@@ -482,7 +653,7 @@ Object.assign(storyData,
       return "水声在这一段贴着耳朵，墙根那头的栅栏缝里，水汽扑在手背上。手指碰到一辆车——后门大敞，车厢里的纸箱被潮气泡得发软，一按一个坑。";
     },
     poiArr: [
-      { text: "翻后车厢搜一搜", nextScene: XDGAR + "-搜车", effect: updateTime(2) }
+      { text: "翻后车厢搜一搜", nextScene: xdGarSearchGo(), effect: updateTime(4) }
     ]
   }),
 
@@ -502,7 +673,7 @@ Object.assign(storyData,
       return "拍水声在这一带格外清楚，一下，一下，不紧不慢。看不见的时候，这声音显得格外近。你的脚碰到一级向下的台阶——墙角有下行的口子。";
     },
     poiArr: [
-      { text: "搜查北头停着的车", nextScene: XDGAR + "-搜车", effect: updateTime(2) },
+      { text: "搜查北头停着的车", nextScene: xdGarSearchGo(), effect: updateTime(4) },
       { text: "走下台阶，下 J 区", nextScene: xdJEntry, effect: updateTime(1) }
     ]
   }),
@@ -568,8 +739,8 @@ Object.assign(storyData,
       {
         text: "搜查角落的车",
         showCondition: "dd < 3 || !_wiredCorrectly",
-        nextScene: XDGAR + "-搜车",
-        effect: updateTime(2)
+        nextScene: xdGarSearchGo(),
+        effect: updateTime(4)
       }
     ]
   }),
@@ -660,7 +831,8 @@ Object.assign(storyData,
 
   "新达汇-B1停车场-接线失败": {
     image: "images/placeholder.png" /* TODO: images/xindahui/powerPanel.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    // 火花起在配电室所在的中段枢纽（E 区）：动静记在这一格，不再全局 chased +1
+    onEnter: function(v) { xdGarDenBump(v, XDCELL + "中段枢纽"); return {}; },
     text: "你把线接上了，但推上电闸的瞬间——<span class='sfx'>啪</span>！一阵火花闪过，灯没亮。你接错了。\n短路的声音在空旷的停车场里回荡……肯定引起了什么东西的注意。你得小心了。",
     choices: [
       { text: "再试一次", nextScene: XDGAR + "-接线", effect: updateTime(2) },
@@ -679,7 +851,7 @@ Object.assign(storyData,
         if (v.dd >= 3) {
           desc += "栅栏边的水泥地上有几道拖痕，最深的一道通向台阶口；还有几根栅栏，被从里面顶歪了。";
         }
-        if (v.chasedByZombies > 0) {
+        if (xdGarDenTotal(v) >= 2) {
           desc += "水面涨上来一截——那阵有节奏的拍水声还在，一道细长的影子贴着栅栏慢慢横移，从这头，到那头。";
         } else {
           desc += "那阵有节奏的拍水声还在，水面下的动静看不分明。";
@@ -748,7 +920,8 @@ Object.assign(storyData,
 
   "新达汇-B1停车场-车旁搜身": {
     image: "images/placeholder.png" /* TODO: images/xindahui/parkingF.png */,
-    onEnter: { add: { chasedByZombies: 1, strength: -1 } }, // 战斗消耗记在胜利节点（开战页不扣）
+    // 翻尸体的动静留在第二停车排（F 区）；体力消耗记在胜利节点（开战页不扣）
+    onEnter: function(v) { xdGarDenBump(v, XDCELL + "第二停车排"); return { add: { strength: -1 } }; },
     text: function(v) {
       var phoneLine = (v.dd >= 5)
         ? "他的手机摔在脚边，屏幕裂成了蛛网，黑着——电池早就耗干了，谁也没有来过。"
@@ -861,7 +1034,9 @@ Object.assign(storyData,
   "新达汇-B1停车场-截停": {
     image: "images/placeholder.png" /* TODO: images/xindahui/driveSurrounded.png */,
     qte: {
-      timeout: "Math.max(3000, 8000 - chasedByZombies * 800)",
+      // 时限改读派生量 _garDenTotal（core.js computed）：QTE timeout 是字符串，只能读 gameState 的键
+      // 密度 0→8.0s，每 +1 密度 -0.25s，3.0s 封底（原 chased 口径 0~4 → 8.0~4.8s）
+      timeout: "Math.max(3000, 8000 - _garDenTotal * 250)",
       onTimeout: "结局-车库围堵"
     },
     text: function(v) {
@@ -871,51 +1046,20 @@ Object.assign(storyData,
     choices: [
       {
         text: "轰油门，从缝里冲过去！",
-        nextScene: function(v) { return v._garDriveTarget || XDCELL + "中段枢纽"; },
-        effect: updateTime(1, { add: { strength: -2, chasedByZombies: 1 }, set: { hurtByZombie: true } })
+        // 撞开一条路：动静留在冲进去的那一格（驾驶态本身不涨密度，这一笔是撞围堵的代价）
+        nextScene: function(v) {
+          var t = v._garDriveTarget || XDCELL + "中段枢纽";
+          xdGarDenBump(v, t);
+          return t;
+        },
+        effect: updateTime(1, { add: { strength: -2 }, set: { hurtByZombie: true } })
       }
     ]
   },
 
   // ==================== 随机搜车系统 ====================
-  "新达汇-B1停车场-搜车": {
-    image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
-    onEnter: function(v) {
-      // 记录本轮搜车起点（链中"换个位置再搜"不覆盖起点；退出搜查时清 pending）
-      if (!v._garageSearchPending) {
-        v._garageSearchFrom = v._lastScene || XDCELL + "主通道南段";
-        v._garageSearchPending = true;
-      }
-      // 作案惊扰：搜车的动静把东西往起点格引（+1，上限 3）
-      var sk = XD_DEN[v._garageSearchFrom];
-      if (sk && xdGarDenActive(v)) {
-        v[sk] = Math.min(3, (v[sk] || 0) + 1);
-      }
-      return {};
-    },
-    text: function(v) {
-      var sight = xdGarSight(v);
-      var desc = (sight === "lit")
-        ? "你放轻脚步，靠近最近的一排车。灯亮着，能看清车牌和车型，翻找起来也快得多。"
-        : (sight === "torch")
-          ? "你放轻脚步，靠近最近的一排车。手电的光柱罩住一排车头，车牌和车型看得清，翻找起来也快——只是光柱外的地方，黑得更深了。"
-          : "你放轻脚步，靠近最近的一辆车。黑暗里只能靠手摸——车门把手、车窗缝、储物格。每一次拉拽都可能出声。";
-      var fromDen = (v._garageSearchFrom && XD_DEN[v._garageSearchFrom]) ? xdGarDen(v, v._garageSearchFrom) : 0;
-      if (fromDen >= 2) {
-        desc += "\n<span class='warn'>排水沟的方向，又传来那种有节奏的拍水声。比刚才近了。</span>";
-      }
-      return desc;
-    },
-    choices: [
-      {
-        text: "开始搜查",
-        nextScene: xdGarSearchRouter,
-        effect: updateTime(2)
-      },
-      { text: "不搜了，退回去", nextScene: XDGAR + "-车库检查", effect: updateTime(1) }
-    ]
-  },
-
+  // （波波 10-03：原「搜车」中间节点已删除——分区 POI 直接走 xdGarSearchGo() 出结果。
+  //   中间节点的记账逻辑在 xdGarSearchGo、正文在 xdGarSearchApproach，两者都由四个结果场景复用。）
   "新达汇-B1停车场-搜车-空车": {
     image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
     text: function(v) {
@@ -925,15 +1069,15 @@ Object.assign(storyData,
         var m = models[Math.floor(Math.random() * models.length)];
         var desc = "是" + m + "。你拉开驾驶座翻了一遍——储物格里只有过期的保险单和几张停车票。方向盘上的灰厚得能写字，这辆车在爆发前就没人动过。";
         if (looted) desc += "\n<span class='think'>该翻的缝都翻过了——这个车库里的车，别指望再翻出吃的。</span>";
-        return desc;
+        return xdGarSearchApproach(v) + "\n" + desc;
       }
       // 全黑/微光：只报触感，不报车型颜色（看不见就是看不见）
       var desc2 = "你摸到的这辆车引擎盖冰凉，灰厚得糊手。储物格、遮阳板、座椅底下，你挨个摸了过去——只有几张摸不出字的票据。什么都没有。";
       if (looted) desc2 += "\n车库里的缝，你感觉自己已经摸了个遍。再想捡吃的，得去别的地方。";
-      return desc2;
+      return xdGarSearchApproach(v) + "\n" + desc2;
     },
     choices: [
-      { text: "换个位置再搜", nextScene: XDGAR + "-搜车", effect: updateTime(1) },
+      { text: "换个位置再搜", nextScene: xdGarSearchGo(), effect: updateTime(3) },
       { text: "不搜了", nextScene: XDGAR + "-车库检查", effect: updateTime(1) }
     ]
   },
@@ -953,19 +1097,20 @@ Object.assign(storyData,
         "储物格里翻出一小盒午餐肉，拉环完好，罐身上落着灰。"
       ];
       var p = picks[Math.floor(Math.random() * picks.length)];
-      return p + "\n你撕开包装，三两口吃了下去。胃里有了东西，手脚重新听使唤了。\n<span class='sys'>【系统提示】体力有所恢复，当前体力：{strength}。</span>";
+      return xdGarSearchApproach(v) + "\n" + p + "\n你撕开包装，三两口吃了下去。胃里有了东西，手脚重新听使唤了。\n<span class='sys'>【系统提示】体力有所恢复，当前体力：{strength}。</span>";
     },
     choices: [
-      { text: "换个位置再搜", nextScene: XDGAR + "-搜车", effect: updateTime(1) },
+      { text: "换个位置再搜", nextScene: xdGarSearchGo(), effect: updateTime(3) },
       { text: "不搜了", nextScene: XDGAR + "-车库检查", effect: updateTime(1) }
     ]
   },
 
   "新达汇-B1停车场-搜车-出声": {
     image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
-    onEnter: { add: { chasedByZombies: 1 } },
+    // 哐当一声是搜车之外的第二次动静：再给起点格 +1（搜车本身那笔在 xdGarSearchGo）
+    onEnter: function(v) { xdGarDenBump(v, v._garageSearchFrom); return {}; },
     text: function(v) {
-      var desc = "你拉开副驾车门的瞬间——<span class='sfx'>哐当</span>！车门内侧挂着的灭火器支架被带了下来，砸在水泥地上，滚出去老远。\n回音在空旷的车库里荡了三个来回。你僵在原地，听着自己的心跳。";
+      var desc = xdGarSearchApproach(v) + "\n你拉开副驾车门的瞬间——<span class='sfx'>哐当</span>！车门内侧挂着的灭火器支架被带了下来，砸在水泥地上，滚出去老远。\n回音在空旷的车库里荡了三个来回。你僵在原地，听着自己的心跳。";
       var soundSight = xdGarSight(v);
       if (soundSight === "lit") {
         desc += "\n灯亮着，无处可藏。排水沟那头的拍水声停了一拍——然后变得更密。";
@@ -984,19 +1129,19 @@ Object.assign(storyData,
   "新达汇-B1停车场-搜车-锁车惊吓": {
     image: "images/placeholder.png" /* TODO: images/xindahui/searchCars.png */,
     text: function(v) {
-      return "你拉开车门——<span class='crit'>一张脸从车里直冲着你抬起来</span>。\n它不知在车里待了多久，干瘪的手指抠着门框往外套。你向后踉跄，后腰撞在旁边的车身上。<span class='sfx'>咚</span>的一声，整个车库都听得见。";
+      return xdGarSearchApproach(v) + "\n你拉开车门——<span class='crit'>一张脸从车里直冲着你抬起来</span>。\n它不知在车里待了多久，干瘪的手指抠着门框往外套。你向后踉跄，后腰撞在旁边的车身上。<span class='sfx'>咚</span>的一声，整个车库都听得见。";
     },
     choices: [
       {
         text: "撒腿就跑",
-        nextScene: XDGAR + "-车库检查",
-        effect: updateTime(1, { add: { chasedByZombies: 1 } })
+        nextScene: xdGarNoiseTo(XDGAR + "-车库检查"),
+        effect: updateTime(1)
       },
       {
         text: "抄起家伙结果了它",
         showCondition: "hasMeleeWeapon",
-        nextScene: XDGAR + "-搜车-惊吓击杀",
-        effect: updateTime(2, { add: { chasedByZombies: 1 } })
+        nextScene: xdGarNoiseTo(XDGAR + "-搜车-惊吓击杀"),
+        effect: updateTime(2)
       }
     ]
   },
@@ -1027,10 +1172,11 @@ Object.assign(storyData,
     },
     text: function(v) {
       var fromDen = (v._garageSearchFrom && XD_DEN[v._garageSearchFrom]) ? xdGarDen(v, v._garageSearchFrom) : 0;
+      var totalDen = xdGarDenTotal(v);
       if (xdGarDenActive(v) && fromDen >= 2) {
-        return "你站在原地喘了口气。" + (v.chasedByZombies > 0 ? "刚才的回音还没散，" : "") + "起点那片的水声已经贴上立柱了——回去的路上，未必太平。";
+        return "你站在原地喘了口气。起点那片的水声已经贴上立柱了——回去的路上，未必太平。";
       }
-      return (v.chasedByZombies > 0)
+      return (totalDen > 0)
         ? "你站在原地喘了口气。刚才闹出的动静，回音还在车库里荡——这里已经不算安分了。"
         : "你站在原地喘了口气。到目前为止，你的动静还算克制。";
     },
@@ -1051,11 +1197,13 @@ Object.assign(storyData,
     onEnter: function(v) {
       v._escapeOps = 6;
       v._driving = true;   // 进入驾驶模式：分区选项切换为驾驶语义
-      v.chasedByZombies = Math.min(5, (v.chasedByZombies || 0) + 1);
+      xdGarDenSurge(v, 1); // 引擎炸醒整个车库：全库密度 +1（不判"是否惊动过排水沟"——这声就是惊动）
       return {};
     },
     qte: {
-      timeout: "Math.max(3000, 8000 - chasedByZombies * 800)",
+      // 时限改读派生量 _garDenTotal（core.js computed）：QTE timeout 是字符串，只能读 gameState 的键
+      // 密度 0→8.0s，每 +1 密度 -0.25s，3.0s 封底（原 chased 口径 0~4 → 8.0~4.8s）
+      timeout: "Math.max(3000, 8000 - _garDenTotal * 250)",
       onTimeout: "结局-车库围堵"
     },
     text: function(v) {
@@ -1073,7 +1221,9 @@ Object.assign(storyData,
   "新达汇-B1停车场-围堵": {
     image: "images/placeholder.png" /* TODO: images/xindahui/driveSurrounded.png */,
     qte: {
-      timeout: "Math.max(3000, 8000 - chasedByZombies * 800)",
+      // 时限改读派生量 _garDenTotal（core.js computed）：QTE timeout 是字符串，只能读 gameState 的键
+      // 密度 0→8.0s，每 +1 密度 -0.25s，3.0s 封底（原 chased 口径 0~4 → 8.0~4.8s）
+      timeout: "Math.max(3000, 8000 - _garDenTotal * 250)",
       onTimeout: "结局-车库围堵"
     },
     text: function(v) {
@@ -1091,6 +1241,9 @@ Object.assign(storyData,
 
   "新达汇-B1停车场-冲出坡道": {
     image: "images/placeholder.png" /* TODO: images/xindahui/driveRamp.png */,
+    // 驾驶逃亡结算点：driveExit 与「围堵→冲出坡道」两条路径都汇到这里，闸门挂此处才都覆盖得到。
+    // chased +0（波波 10-03 拍板：正文写死"甩在了身后"），但 G 区密度照样清零。
+    onEnter: function(v) { xdGarExitSettle(v, 0); return {}; },
     text: function(v) {
       var night = xdGarNight(v);
       return "你把油门踩穿。车身擦着断杆冲上坡道，<span class='sfx'>哐</span>的一声，断杆飞出去砸在收费亭顶上。\n" + (night ? "夜色灌进挡风玻璃，坡道顶上就是街口。" : "天光灌进挡风玻璃。") + "后视镜里，坡道口的水声渐渐被引擎声盖过去。\n<span class='crit'>你把整个东明街道的地下，甩在了身后。</span>";
@@ -1113,6 +1266,8 @@ Object.assign(storyData,
         v.hasCar = true;
         v.hasEbike = false;
         v.hasRustyBike = false;
+        // 保留 chased：本节点是库外辅路（户外），不在车库密度系统的管辖范围，
+        // 出库换算已在 -冲出坡道 / G 区两个出口选项处结清，这里是库外的独立账。
         v.chasedByZombies = Math.max(0, (v.chasedByZombies || 0) - 1); // 躲进车里稍微安全一点
       }
       return {};

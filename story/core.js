@@ -428,6 +428,10 @@ const storyData = {
             || (v.hasPhone && v.phoneBattery > 0)
             || mercuryTier(v.mercuryLoad) >= 2;   // 高汞：瞳孔固定散大 → 永久暗适应
       },
+      // 车库尸潮总密度（9 格求和，0~27）：QTE timeout / 字符串条件只能读 gameState 的键，
+      // 调不了 JS 函数 xdGarDenTotal(v)（见 新达汇地下车库.js），所以在这里派生一份。
+      // ⚠两份口径必须一致：那边的 XD_DEN 增删格、这边要同步改。
+      _garDenTotal: "(_garDenA + _garDenB + _garDenC + _garDenD + _garDenE + _garDenF + _garDenG + _garDenH + _garDenI)",
       // 也支持函数（复杂逻辑）
       // fatigue: function(v) { return Math.max(0, 10 - v.strength); }
     },
