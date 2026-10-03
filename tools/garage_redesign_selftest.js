@@ -700,7 +700,7 @@ const seen = { 0: new Set(), 1: new Set(), 2: new Set(), 3: new Set() };
 for (var d = 0; d <= 3; d++) {
   for (var i = 0; i < 40; i++) seen[d].add(sightDen(Object.assign({}, base, { _garDenE: d }), E));
 }
-check(seen[0].size >= 3, "密度 0 档 " + seen[0].size + " 变体（防刷屏）");
+check(seen[0].size === 1 && [...seen[0]][0] === "", "密度 0 档静默（安静不刷描写）");
 check(seen[1].size >= 3, "密度 1 档 " + seen[1].size + " 变体");
 check(seen[2].size >= 3, "密度 2 档 " + seen[2].size + " 变体");
 check(seen[3].size >= 2, "密度 3（满）档 " + seen[3].size + " 变体");
@@ -721,6 +721,12 @@ const nbEast = Object.assign({}, base, { _garageFacing: "E", _wiredCorrectly: tr
 check(nbHint(nbEast, E).indexOf("正前方那条车道") >= 0, "方位词跟随 _garageFacing（朝东时 F 是正前方）");
 const nbZero = Object.assign({}, base, { _garageFacing: "N", _wiredCorrectly: true });
 check(nbHint(nbZero, E) === "", "邻格全静默时不生成提示（不刷屏）");
+// 0 档静默只关「当前格」那一句，邻格提示必须照常——"本格安静但右边堵着"是最有价值的信息
+const quietSelf = Object.assign({}, base, { _garageFacing: "N", _wiredCorrectly: true, _garDenE: 0, _garDenB: 2 });
+const quietOut = hint(quietSelf, E);
+check(quietOut.trim().indexOf("正前方") === 0, "本格 0 档静默时只剩邻格一句（实际「" + quietOut.trim() + "」）");
+const allQuiet = Object.assign({}, base, { _garageFacing: "N", _wiredCorrectly: true });
+check(hint(allQuiet, E) === "", "本格与邻格都静默时整段为空（干净的车库不追加任何密度句）");
 check(hint(Object.assign({}, base, { _garDenB: 3 }), E).indexOf("正前方") < 0, "全黑时不给邻格提示（看不见就是看不见）");
 check(nbHint(Object.assign({}, base, { _garageFacing: "N" }), "新达汇-B1停车场-旧区") === "", "旧区 J（网格外）不给邻格提示");
 
