@@ -289,12 +289,17 @@ check(wvT.hh === 8 && wvT.mm === 1, "驾驶移动耗时 1 分钟/格（8:00→8:
 // 贴沟格离开额外 -1
 var tv = Object.assign({}, base, { _driving: true, _escapeOps: 6, _garageFacing: "N", _lastScene: G });
 const dMoves = S("storyData[" + JSON.stringify(D) + "]").choices(tv);
-const dMove = dMoves.find((c) => c.condition === "_escapeOps > 0");
+const dMove = dMoves.find((c) => c.condition && c.condition.indexOf("_escapeOps") >= 0);
 var wv2 = { _escapeOps: 3, weather: "阴", hh: 8, mm: 0, dd: 1 };
 const eff2 = dMove.effect(wv2);
 if (eff2 && eff2.add && eff2.add._escapeOps) wv2._escapeOps += eff2.add._escapeOps;
 check(wv2._escapeOps === 1, "贴沟格离开额外 -1（3→1，一次移动共扣 2）");
 check(dMove.text.indexOf("费工夫") < 0, "过路费不在选项文案里点破（先读到费时描写，离开时才付）");
+// 门槛必须与扣费对齐：贴沟一次扣 2，就不能只要求 >0（剩 1 次开出贴沟格会扣成 -1，
+// 负数撑到坡道口就能白拿逃亡，围堵 QTE 永远不出现）
+check(dMove.condition === "_escapeOps > 1", "贴沟格门槛 >1（与扣 2 对齐，禁止透支，实际 " + dMove.condition + "）");
+check(cDrv.filter((c) => c.condition && c.condition.indexOf("_escapeOps") >= 0)[0].condition === "_escapeOps > 0",
+  "非贴沟格门槛仍是 >0（一次性 −1，剩 1 次可以走）");
 // 围堵与冲出
 // 受伤档情报等价：战斗失误不扣情报（短信/清单背面/钥匙三件都在）
 const hurtSearch = S("storyData['新达汇-B1停车场-车旁搜身-受伤']");
@@ -454,7 +459,9 @@ const cScene = S("storyData[" + JSON.stringify(C) + "]");
 const cTextD3 = cScene.text(Object.assign({}, base, { dd: 3, _wiredCorrectly: true }));
 check(cTextD3.indexOf("深灰色的荣威") >= 0 && cTextD3.indexOf("引擎盖摸上去是温的") >= 0, "Day3+通电：事故点=小明的车（温的引擎盖；钥匙句在战斗后分支）");
 const cTextTorch = cScene.text(Object.assign({}, base, { dd: 3, _wiredCorrectly: false, hasTorch: true }));
-check(cTextTorch.indexOf("车身上没有灰") >= 0 && cTextTorch.indexOf("黑暗里分不清") < 0, "Day3+手电（未通电）：光柱能看见车与影子，不再误读黑暗文案");
+// ⚠波波 10-03 拍板：目标车（深灰荣威）必须通电才认得出，手电乱转不该找到车
+check(cTextTorch.indexOf("深灰色的荣威") < 0 && cTextTorch.indexOf("没有灰") < 0 && cTextTorch.indexOf("光柱扫到车道尽头") >= 0,
+  "Day3+手电（未通电）：只写'角落不对劲'，不点名目标车（拿手电乱转找不到车）");
 const cTextGone = cScene.text(Object.assign({}, base, { dd: 3, _wiredCorrectly: true, _visit: { "新达汇-B1停车场-上车点火": 1 } }));
 check(cTextGone.indexOf("空空荡荡") >= 0, "车开走后：空车位闭环文案");
 const cTextKnow = cScene.text(Object.assign({}, base, { dd: 3, _wiredCorrectly: true, _knowsSurvivorCar: true }));
@@ -486,8 +493,20 @@ check(eScene.text({ dd: 1, _wiredCorrectly: true, _garageOps: 0 }).indexOf("配�
 check(eScene.text({ dd: 1 }).indexOf("配电") < 0, "E 格摸黑描述不点破配电");
 const bScene = S("storyData[" + JSON.stringify(B) + "]");
 const bChoices = bScene.choices(Object.assign({}, base, { _lastScene: G }));
-const bStairs = bChoices.find((c) => typeof c.text === "string" && c.text === "走下台阶，下 J 区");
-check(!!bStairs && typeof bStairs.nextScene === "function" && bStairs.nextScene({ dd: 1, _garJQuietDay: 0 }) === "新达汇-B1停车场-巢穴遭遇", "主通道北段挂 J 区入口：进入走巢穴遭遇路由");
+// 有光（认得台阶口柱子上喷的分区漆字）→ 报 J 区
+const bStairs = bScene.choices(Object.assign({}, base, { _lastScene: G, _wiredCorrectly: true }))
+  .find((c) => typeof c.text === "string" && c.text.indexOf("台阶") >= 0);
+check(!!bStairs && bStairs.text === "走下台阶，下 J 区" && typeof bStairs.nextScene === "function"
+  && bStairs.nextScene({ dd: 1, _garJQuietDay: 0 }) === "新达汇-B1停车场-巢穴遭遇", "主通道北段挂 J 区入口：进入走巢穴遭遇路由");
+// 没见过/没读到 → 不报字母（全黑档正文也认不出台阶口的喷漆，选项不该先把分区名交出来）
+const bDark = bScene.choices(Object.assign({}, base, { _lastScene: G }))
+  .find((c) => typeof c.text === "string" && c.text.indexOf("台阶") >= 0);
+check(!!bDark && bDark.text.indexOf("J") < 0 && typeof bDark.nextScene === "function",
+  "全黑/未读到漆字时不报 J 区字母（实际「" + (bDark && bDark.text) + "」）");
+// 去过之后在黑暗里也认得路
+const bKnown = bScene.choices(Object.assign({}, base, { _lastScene: G, _visit: { "新达汇-B1停车场-旧区": 1 } }))
+  .find((c) => typeof c.text === "string" && c.text.indexOf("台阶") >= 0);
+check(!!bKnown && bKnown.text === "走下台阶，下 J 区", "去过 J 区后即使全黑也仍用字母标记（认得路了）");
 const iChoices = S("storyData[" + JSON.stringify(I) + "]").choices(Object.assign({}, base, { _lastScene: H }));
 check(iChoices.every((c) => typeof c.text !== "string" || c.text.indexOf("检修通道") < 0), "杂物拐角检修通道已删除（跨格捷径会漏更新朝向）");
 // 搜车覆盖：9 格全部挂搜车入口（10-03 起为函数式入口，靠 __searchGo 标记识别）
@@ -777,6 +796,149 @@ check(nbCrit.every((s) => s.indexOf("crit") < 0), "邻格提示不上 crit（避
 const src = fs.readFileSync(path.join(ROOT, "story/东明街道/新达汇地下车库.js"), "utf8");
 check(src.indexOf("xdGarNoise(v, id)") < 0, "每格正文不再直连 xdGarNoise（改走 xdGarDenHint 分流）");
 check((src.match(/xdGarDenHint\(v, id\)/g) || []).length === 2, "步行/驾驶两条正文分支都挂了 xdGarDenHint（实际 " + (src.match(/xdGarDenHint\(v, id\)/g) || []).length + "）");
+})();
+
+console.log("\n=== 15. 九格渲染矩阵（防 ReferenceError 白屏回归） ===");
+// 背景：A/D/E 的 lit() 曾引用 xdCellScene 内部的 opts.id → ReferenceError → 正文与选项都画不出来。
+// 旧自测只用 dd:1 渲染，恰好绕开了 dd>=3 的分支，所以没拦住。这里改成全组合暴力渲染。
+// ⚠️ 驾驶态不看光照一律 body=opts.lit(v)，所以九格驾驶分支必须每种光照都跑一遍。
+(function () {
+  const LIGHTS = [
+    ["通电", { _wiredCorrectly: true }], ["手电", { hasTorch: true }],
+    ["手机", { hasPhone: true, phoneBattery: 50 }], ["全黑", {}],
+  ];
+  let cellsTotal = 0, crashCount = 0;
+  const crashBy = {};
+  for (const cell of CELLS) {
+    const sc = S("storyData[" + JSON.stringify(cell) + "]");
+    for (const [lname, lv] of LIGHTS) {
+      for (const dd of [1, 3, 4, 5, 6]) {
+        for (const drv of [false, true]) {
+          cellsTotal++;
+          const v = Object.assign({}, base, lv, {
+            dd, hh: 12, _visit: { "新达汇-B1停车场-旧区": 1, "新达汇-B1停车场-上车点火": 1 },
+            _garDenA: 2, _garDenB: 2, _garDenC: 2, _garDenD: 2, _garDenE: 2,
+            _garDenF: 2, _garDenG: 2, _garDenH: 2, _garDenI: 2,
+            _escapeOps: 6, _garageLastDay: dd, _driving: drv,
+          });
+          try { sc.text(v); }
+          catch (e) {
+            crashCount++;
+            const k = cell.replace(XD, "") + " :: " + e.message;
+            crashBy[k] = (crashBy[k] || 0) + 1;
+          }
+        }
+      }
+    }
+  }
+  check(crashCount === 0, "九格 × 四光照 × dd{1,3,4,5,6} × 步行/驾驶 = " + cellsTotal + " 组，正文渲染 0 抛错"
+    + (crashCount ? "（" + Object.keys(crashBy).join("；") + "）" : ""));
+})();
+
+console.log("\n=== 16. 车旁战斗记账位置 + 点火掉头 ===");
+(function () {
+  const winScene = S("storyData['新达汇-B1停车场-车旁搜身']");
+  const hurtScene = S("storyData['新达汇-B1停车场-车旁搜身-受伤']");
+  // 打斗发生在 C 区（车道尽头），动静必须落在 C 区——旧实现记在 F 区（第二停车排）
+  const mk = () => Object.assign({}, base, {
+    _visit: { "新达汇-B1停车场-旧区": 1 },
+    _garDenC: 0, _garDenF: 0, strength: 5, weather: "阴", hh: 8, mm: 0,
+  });
+  const wv = mk(); winScene.onEnter(wv);
+  check(wv._garDenC === 1 && wv._garDenF === 0, "完胜搜身：动静记在打斗发生地 C 区（不再错记 F 区）");
+  const hv = mk(); hurtScene.onEnter(hv);
+  check(hv._garDenC === 1 && hv._garDenF === 0, "受伤搜身同样记 C 区（旧实现带伤档完全不记账）");
+  // 点火掉头：正文写"车头对准来时的车道"，朝向必须同步翻转，否则 front 槽位指向墙被隐藏
+  const ign = S("storyData['新达汇-B1停车场-上车点火']");
+  for (const [before, after] of [["E", "W"], ["N", "S"]]) {
+    const iv = Object.assign({}, base, { _escapeOps: 0, _garageFacing: before });
+    ign.onEnter(iv);
+    check(iv._garageFacing === after, "点火掉头：进向 " + before + " → 车头 " + after + "（" + iv._garageFacing + "）");
+  }
+  // 翻转后的 front 必须真的有路（C 区只有 W/S 两个邻格，进入方向只可能是 E/N，故必定成立）
+  for (const facing of ["W", "S"]) {
+    const cv = Object.assign({}, base, { _driving: true, _escapeOps: 6, _garageFacing: facing });
+    const front = S("storyData[" + JSON.stringify(C) + "]").choices(cv)[0];
+    check(front.text === "向前开", "车头 " + facing + " 时「向前开」槽位可见（不会被判无路隐藏）");
+  }
+})();
+
+console.log("\n=== 17. Cursor #3/#7/#16/#18 修复专项（波波 10-03 拍板） ===");
+(function () {
+  // ---------- #3a 带尾巴进库 = 惊动尸潮（旧：未激活，密度照涨却一律放行 = 白洗） ----------
+  const entryFn = S("xdCellEntry");
+  // ⚠_visit 必须新建：base._visit 是共享引用，前面点火 surge 的用例已经往里写过"旧区"了
+  var asleepV = Object.assign({}, base, { _visit: {}, _garDenAwake: false, _garDenD: 3, _lastScene: "新达汇-B1走廊" });
+  check(entryFn(D)(asleepV) === D, "未激活时满格照旧放行（下 J 区之前不拦路）");
+  var tailV = Object.assign({}, base, { chasedByZombies: 3, _garDenG: 0, _lastScene: "新达汇车库出口" });
+  S("storyData[" + JSON.stringify(G) + "].onEnter")(tailV);
+  check(tailV._garDenAwake === true && tailV._garDenG === 2 && tailV.chasedByZombies === 0,
+    "带尾巴进库：置 _garDenAwake + G 区 +2 + chased 清零");
+  check(S("xdGarDenActive")(tailV) === true, "带尾巴进库后密度系统激活（不靠 _visit[旧区]，不谎称去过排水沟）");
+  var blockedV = Object.assign({}, tailV, { _garDenD: 3 });
+  check(entryFn(D)(blockedV) === "新达汇-B1停车场-尸潮遭遇", "激活后满格真的拦人（不再是'描写说站满了却走过去没事'）");
+  // 闸门那一脚不与"步行进格 +1"叠加：chased>=2 进门不该直接把 G 顶满
+  check(tailV._garDenG === 2, "进库闸门不与步行进格 +1 叠加（带尾巴进门不会立刻满格逼战）");
+  var tailV5 = Object.assign({}, base, { chasedByZombies: 5, _garDenG: 0, _lastScene: "新达汇-B1走廊" });
+  S("storyData[" + JSON.stringify(G) + "].onEnter")(tailV5);
+  check(tailV5._garDenG === 2, "chased 5 进门仍只换 +2（不叠加）");
+
+  // ---------- #3b 出向闸门：满员坡道口不能白走出去 ----------
+  const gExits = S("storyData[" + JSON.stringify(G) + "]").choices(Object.assign({}, base, { _garageFacing: "N" }))
+    .filter((c) => c.nextScene && c.nextScene.__garExit);
+  check(gExits.length === 2, "入口平台两个步行出口都挂了出向闸门（实际 " + gExits.length + "）");
+  var fullV = Object.assign({}, base, { _garDenG: 3, _garDenAwake: true });
+  const blocked = gExits.map((c) => nx(c, fullV));
+  check(blocked.every((t) => t === "新达汇-B1停车场-尸潮遭遇"), "G 区满密度：两个出口都被拦下（先接战才能出）");
+  check(fullV._garFightCell === G, "拦下时记下接战格 = 入口平台");
+  var calmV = Object.assign({}, base, { _garDenG: 3, _garDenAwake: true });
+  calmV._garDenG = 0;   // 击散后
+  const through = gExits.map((c) => nx(c, calmV));
+  check(through.some((t) => t === "新达汇车库出口") && through.some((t) => t === "新达汇-B1走廊"),
+    "击散后（G 区清零）两个出口照常放行");
+  var posV = Object.assign({}, base, { _garDenG: 1, _garDenAwake: true, currentPos: "地下车库" });
+  const toCorridor = gExits.find((c) => nx(c, Object.assign({}, base)) === "新达汇-B1走廊");
+  nx(toCorridor, posV);
+  check(posV.currentPos === "新达汇", "出 B1走廊后 currentPos 离开'地下车库'（否则夜里会误判人还在库里）");
+
+  // ---------- #7 搜车回程不再重复记账 ----------
+  const searchGo = S("xdGarSearchGo")();
+  var sv1 = Object.assign({}, base, { _garDenAwake: true, _garDenH: 0, _lastScene: H });
+  searchGo(sv1);   // 点击搜车：起点格 +1
+  check(sv1._garDenH === 1, "搜车点击：起点格 +1（唯一一笔）");
+  var sv2 = Object.assign({}, sv1, { _garageSearchReturn: true, _lastScene: "新达汇-B1停车场-车库检查" });
+  S("storyData[" + JSON.stringify(H) + "].onEnter")(sv2);
+  check(sv2._garDenH === 1 && sv2._garageSearchReturn === false, "安静搜一趟回原地：密度仍为 +1（旧实现 +2）");
+  var sv3 = Object.assign({}, sv1, { _lastScene: "新达汇-B1停车场-车库检查" });
+  S("storyData[" + JSON.stringify(H) + "].onEnter")(sv3);
+  check(sv3._garDenH === 2, "对照：不带回程标记时进格照常 +1（闸门只吃掉回程那一笔）");
+  // 出声链：搜车 +1、出声 +1 = 2，回原地不再 +1（旧实现 +3 直接顶满）
+  var sv4 = Object.assign({}, base, { _garDenAwake: true, _garDenH: 0, _lastScene: H });
+  searchGo(sv4);
+  sv4._garageSearchFrom = H;
+  S("storyData['新达汇-B1停车场-搜车-出声'].onEnter")(sv4);
+  check(sv4._garDenH === 2, "出声链：搜车 + 哐当 = 2（旧实现回原地再 +1 = 3 顶满）");
+  var sv5 = Object.assign({}, sv4, { _garageSearchReturn: true, _lastScene: "新达汇-B1停车场-车库检查" });
+  S("storyData[" + JSON.stringify(H) + "].onEnter")(sv5);
+  check(sv5._garDenH === 2, "出声后回原地：仍是 2，不会被'往回走'这一步顶满");
+
+  // ---------- #16 天黑时人还在车库里 ----------
+  const night = S("storyData['天黑必须过夜']");
+  const nightText = night.text(Object.assign({}, base, { currentPos: "地下车库", hh: 20 }));
+  check(nightText.indexOf("车库里没有窗") >= 0 && nightText.indexOf("街灯") < 0, "车库过夜文案：不再播街灯/街头尸吼");
+  var nv = Object.assign({}, base, { currentPos: "地下车库", _garDenG: 3, _garDenAwake: true, chasedByZombies: 0 });
+  night.onEnter(nv);
+  check(nv.chasedByZombies === 2 && nv._garDenG === 0, "车库里撞上天黑：照常走出库换算（G 区密度 → 追兵），不白洗");
+  var nv2 = Object.assign({}, base, { currentPos: "新达汇", _garDenG: 3, chasedByZombies: 0 });
+  night.onEnter(nv2);
+  check(nv2.chasedByZombies === 0 && nv2._garDenG === 3, "库外撞上天黑：不动车库密度（闸门只认 currentPos=地下车库）");
+
+  // ---------- #18 疏散图不给方位加成 ----------
+  const garageSrc2 = fs.readFileSync(path.join(ROOT, "story/东明街道/新达汇地下车库.js"), "utf8");
+  // 只数"读取"（v./vars. 前缀），注释里提到变量名的不算
+  const mapReads = (garageSrc2.match(/(v|vars)\._garageMapSeen/g) || []).length;
+  check(mapReads === 0, "车库内 _garageMapSeen 只写不读（读取 " + mapReads + " 处），逃亡不给方位加成");
+  check(!/看过疏散图有方位定位加成/.test(garageSrc2), "旧注释'看过图有方位定位加成'已删除（避免后人照着实现）");
 })();
 
 console.log("\n结果：" + okCount + " 通过 / " + badCount + " 失败");

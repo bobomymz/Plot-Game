@@ -1727,7 +1727,10 @@ Object.assign(storyData, {
     ]
   },
   "建平-挹芬楼-3F": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/挹芬楼-3F走廊.webp",
+      night: "images/建平/挹芬楼-3F走廊-night.webp"
+    }),
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "挹芬楼3F"; },
     text: function(vars) { return "挹芬楼 3 楼。" + describeZombieWave(vars); },
@@ -1740,7 +1743,10 @@ Object.assign(storyData, {
     ]
   },
   "建平-挹芬楼-4F": {
-    image: "images/placeholder.png",
+    image: timeImage({
+      morning: "images/建平/挹芬楼-4F走廊.webp",
+      night: "images/建平/挹芬楼-4F走廊-night.webp"
+    }),
     qte: jpChaseQTE(),
     onEnter: function(vars) { vars.currentPos = "挹芬楼4F"; },
     text: function(vars) { return "挹芬楼 4 楼。" + describeZombieWave(vars); },

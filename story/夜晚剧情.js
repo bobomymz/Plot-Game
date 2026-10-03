@@ -12,9 +12,20 @@ Object.assign(storyData, {
     },
     onEnter: function(vars) {
       vars.strength = Math.max(5, vars.strength);
+      // ⚠天黑时人还在新达汇地下车库里：按出库闸门补一次结算（G 区密度 → 追兵，G 区清零）。
+      //   不补的话，"从车库直接传送去安全屋过夜"会把一库房的动静留在库里、追兵也不涨 = 白洗。
+      //   （函数在新达汇地下车库.js 里定义；所有 story 文件共享同一作用域，运行时必然已声明。）
+      if (vars.currentPos === "地下车库" && typeof xdGarExitSettle === "function") {
+        xdGarExitSettle(vars);
+      }
     },
     text: function(vars) {
       let desc = "天色已经完全暗下来了。\n";
+      // 车库里没有窗：先按 currentPos 判定（比 currentArea 准——车库不改 currentArea）
+      if (vars.currentPos === "地下车库") {
+        desc += "车库里没有窗，你看不见天，只能从混凝土渗进来的凉意里猜外面已经黑透了。头顶还是那几盏灯，灯下的车道空空荡荡——可排水沟那头的水声在夜里听得更清楚，一声一声，从你不知道多深的地方传过来。\n这里没有能锁上的门。今晚你得住到别处去。";
+        return desc;
+      }
       if (vars.currentArea === "周边社区") {
         desc += "街灯忽明忽暗地闪着，丧尸的嚎叫声在夜风中此起彼伏，比白天听起来更加刺耳。黑暗中你隐约能看到一些摇晃的身影在远处游荡——夜晚是它们的天下。\n你必须尽快找个地方过夜。";
         if (vars.dd >= 3) {
