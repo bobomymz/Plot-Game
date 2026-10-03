@@ -404,12 +404,44 @@ const eText = eScene.text(nv);
 check(eText.indexOf("边过来") < 0, "跨格进入不加绝对方位过渡句（玩家无东南西北感）");
 // 立柱漆字指路：亮态报当前格+去处（字母，不看疏散图也能定位），全黑不给；选项本身不写目的地
 const eTextLit = eScene.text(Object.assign({}, nv, { _wiredCorrectly: true }));
-check(eTextLit.indexOf("你此刻在「E 区」") >= 0 && eTextLit.indexOf("正前是 B 区") >= 0 && eTextLit.indexOf("右手边是 F 区") >= 0, "亮态漆字句报当前格+四向去处（无需看过疏散图）");
+check(eTextLit.indexOf("E 区") >= 0 && eTextLit.indexOf("正前是 B 区") >= 0 && eTextLit.indexOf("右手边是 F 区") >= 0, "亮态漆字句报当前格+四向去处（无需看过疏散图）");
+// 表述随机化（波波 10-03）：固定句式观感差，每档必须多变体、且信息一次都不能丢
+const litSelfForms = new Set(), litDirForms = new Set();
+const litVars = Object.assign({}, nv, { _wiredCorrectly: true });
+for (let i = 0; i < 60; i++) {
+  const t = eScene.text(litVars);
+  for (const line of t.split("\n")) {
+    if (line.indexOf("E 区") >= 0 && line.indexOf("正前是") < 0) litSelfForms.add(line);
+    if (line.indexOf("正前是 B 区") >= 0) litDirForms.add(line.replace(/正前是 B 区.*/, "…"));
+  }
+}
+check(litSelfForms.size >= 3, "亮态「当前格」句式 " + litSelfForms.size + " 种（随机化生效）");
+check(litDirForms.size >= 3, "亮态「四向去处」句式 " + litDirForms.size + " 种（随机化生效）");
+check(eTextLit.split("\n").every((ln) => ln.indexOf("{self}") < 0 && ln.indexOf("{dirs}") < 0), "模板占位符已全部替换（无 {self}/{dirs} 残留）");
 // 手机微光：只够认当前格字母，看不到四向去处
 const eTextDim = eScene.text(Object.assign({}, nv, { hasPhone: true, phoneBattery: 50 }));
-check(eTextDim.indexOf("你此刻在「E 区」") >= 0 && eTextDim.indexOf("正前是") < 0, "手机微光：只报当前格字母，不报四向去处");
+check(eTextDim.indexOf("E 区") >= 0 && eTextDim.indexOf("正前是") < 0, "手机微光：只报当前格字母，不报四向去处");
+const dimForms = new Set();
+const dimVars = Object.assign({}, nv, { hasPhone: true, phoneBattery: 50 });
+for (let i = 0; i < 60; i++) {
+  for (const line of eScene.text(dimVars).split("\n")) if (line.indexOf("E 区") >= 0) dimForms.add(line);
+}
+check(dimForms.size >= 3, "手机微光「当前格」句式 " + dimForms.size + " 种");
 check(eChoices.slice(0, 4).every((c) => c.text.indexOf("——") < 0), "移动选项只写动词，不写目的地");
 check(eText.indexOf("分区漆字") < 0, "全黑看不见漆字指路");
+// 驾驶态：车灯是独立光源。旧实现按 xdGarSight 判，无手电/无手机时会落进 dark 而整段漏掉指路。
+// ⚠别按具体措辞断言（模板随机，"车头灯"里没有"车灯"子串）——要按「信息是否给出 + 是否错档」断言。
+const drvForms = new Set();
+const drvVars = Object.assign({}, nv, { _driving: true, hasTorch: true }); // 带手电也不该走手电档
+let drvOk = true;
+for (let i = 0; i < 40; i++) {
+  const s = S("xdSignLine")(E, drvVars, true);
+  if (s.indexOf("E 区") < 0 || s.indexOf("正前是 B 区") < 0) drvOk = false;
+  for (const line of s.split("\n")) if (line.indexOf("E 区") >= 0) drvForms.add(line);
+}
+check(drvOk, "驾驶态必定给出当前格+四向（开着车却看不见柱面编号的既有 bug 已修）");
+check(drvForms.size >= 2, "驾驶态「当前格」句式 " + drvForms.size + " 种");
+check([...drvForms].every((f) => f.indexOf("手电") < 0), "驾驶态即使手持手电也不走手电档（双手在方向盘）");
 // 黑暗降级（H=风与回音 / A=水声纸箱 / F=窄缝后备箱盖，三格触感锚点不同）
 const hDarkText = S("storyData[" + JSON.stringify(H) + "]").text(Object.assign({}, base, { _lastScene: G }));
 check(hDarkText.indexOf("空膛的回音") >= 0 && hDarkText.indexOf("凉风") >= 0, "全黑态 H：听觉锚点（空膛回音+纵向凉风）");

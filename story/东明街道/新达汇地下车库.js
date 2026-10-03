@@ -62,16 +62,71 @@ function xdCellName(id) {
   return id.indexOf(XDCELL) === 0 ? id.slice(XDCELL.length) : id;
 }
 
-// 分区指路（立柱漆字）：按照明分两档——
-//   lit/torch（通电/手电）：报当前格 + 四向去处（正前/左手边/右手边/身后，与选项槽位同序）；
-//   dim（手机微光）：光够不着远处的柱子，只能凑近认出当前格字母，不知道四向通哪里；
-//   dark（全黑）：什么也看不见（不生成）。
-// withSelf=false 时省略"你此刻在X区"（头句已经报过）。
+// 分区指路（立柱漆字）：按照明分四档——
+//   lit（独立回路通电）：顶灯亮着，抬头就能认当前格 + 四向去处（与选项槽位同序）
+//   torch（手电）：光柱照到哪才看得见哪，也能认出四向
+//   drive（车灯）：驾驶态专属光源——车头灯扫过柱面（开车时双手在方向盘，手电/手机都用不了）
+//   dim（手机微光）：光够不着远处的柱子，只能凑近认出当前格字母，不知道四向通哪里
+//   dark（全黑）：什么也看不见（不生成）
+// withSelf=false 时省略"你此刻在X区"（头句已经报过），只出四向句。
+// 表述随机化（波波 10-03）：每档多个模板随机抽取——9 格会反复经过，固定句式观感很差。
+// ⚠每档至少 2 个模板，"随机"才有意义（自测第 7 节按收集到的变体数守着）。
+var XD_SIGN_SELF = {           // {self} = 当前格名（「A 区」）
+  lit: [
+    "立柱上的分区漆字看得清——你此刻在「{self}」。",
+    "顶灯把这片照得够亮。旁边柱子上喷着分区号，抬头就能认出这里是「{self}」。",
+    "你抬头确认了一下柱面——白漆刷的分区号，这里是「{self}」。"
+  ],
+  torch: [
+    "手电的光扫过柱子，照亮了上面的漆字——「{self}」。",
+    "你把手电往柱面上照了照。白漆反着光跳出来：这里是「{self}」。",
+    "光柱扫过去，柱子上的编号亮了一瞬——{self}。"
+  ],
+  drive: [
+    "车灯掠过柱面，照出一串分区漆字——这里是「{self}」。",
+    "车头灯打在旁边的柱子上，编号被照亮了一下：{self}。"
+  ],
+  dim: [
+    "立柱上喷着分区漆字，手机的光只够凑近认出一根——你此刻在「{self}」。",
+    "你把手机贴到柱面上，屏幕那点亮光勉强照出一个 {self}。",
+    "凑到最近的一根柱子前，屏幕的光只够照亮几个字：{self}。"
+  ]
+};
+var XD_SIGN_DIR = {            // {dirs} = 四向去处列表（"正前是 B 区，右手边是 F 区"）
+  lit: [
+    "柱子上还标着去处：{dirs}。",
+    "顺着车道望过去，能看清岔向哪边：{dirs}。",
+    "漆字下面压着一行更小的字，写的是通向哪里：{dirs}。"
+  ],
+  torch: [
+    "光往外扩一圈，还能照见别的柱子：{dirs}。",
+    "你把手电往两头各晃了一下：{dirs}。",
+    "光柱不够长，但相邻几根上的去处还是认出来了：{dirs}。"
+  ],
+  drive: [
+    "车灯顺着车道扫出去，照见：{dirs}。",
+    "光柱一路撞见的柱面都写着去处：{dirs}。"
+  ]
+};
+// dim 档补一句"看不清方向"的限制说明（本句不含占位符，每次都给）
+var XD_SIGN_DIM_LIMIT = [
+  "远处柱子上的字照不到，前后左右通向哪里，只能走近了看。",
+  "再远一截就黑了——别的地方通向哪里，得走过去才知道。",
+  "这点光撑不到下一根柱子。要去别处，只能摸着走。"
+];
+function xdSignPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function xdSignFill(tpl, name, dirs) {
+  return tpl.split("{self}").join(name).split("{dirs}").join(dirs);
+}
+
 function xdSignLine(id, v, withSelf) {
-  var sight = xdGarSight(v);
-  if (sight === "dark") return "";
-  if (sight === "dim") {
-    return "\n立柱上喷着分区漆字，手机的光只够凑近认出一根——你此刻在「" + xdCellName(id) + "」。远处柱子上的字照不到，前后左右通向哪里，只能走近了看。";
+  // ⚠驾驶态单独成档：开车时光源是车灯，不受 hasTorch/hasPhone 影响（旧实现会误判成 dark 而漏掉指路）
+  var mode = v._driving ? "drive" : xdGarSight(v);
+  if (mode === "dark") return "";
+  var name = xdCellName(id);
+  if (mode === "dim") {
+    var dOut = withSelf ? "\n" + xdSignFill(xdSignPick(XD_SIGN_SELF.dim), name, "") : "";
+    return dOut + "\n" + xdSignPick(XD_SIGN_DIM_LIMIT);
   }
   var facing = (XD_DIRS.indexOf(v._garageFacing) >= 0) ? v._garageFacing : "N";
   var rels = [["正前", facing], ["左手边", XD_CCW[facing]], ["右手边", XD_CW[facing]], ["身后", XD_OPP[facing]]];
@@ -81,8 +136,9 @@ function xdSignLine(id, v, withSelf) {
     if (t) segs.push(rels[i][0] + "是 " + xdCellName(t));
   }
   if (segs.length === 0) return "";
-  var head = withSelf ? "立柱上的分区漆字看得清——你此刻在「" + xdCellName(id) + "」：" : "立柱上的分区漆字看得清——";
-  return "\n" + head + segs.join("，") + "。";
+  var dirs = segs.join("，");
+  var s = withSelf ? "\n" + xdSignFill(xdSignPick(XD_SIGN_SELF[mode]), name, dirs) : "";
+  return s + "\n" + xdSignFill(xdSignPick(XD_SIGN_DIR[mode]), name, dirs);
 }
 
 // from 格指向 to 格的绝对方向（两格必须相邻）
