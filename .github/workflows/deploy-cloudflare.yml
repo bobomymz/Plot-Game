@@ -16,6 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    # ⚠ secrets 不能直接在 if: 里引用（GitHub 硬规则，会导致整个 job 不创建、报 "No jobs were run"）
+    #   所以先提到 job 级 env，再在 if 里判断 env。
+    env:
+      CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,14 +35,14 @@ jobs:
         run: node tools/build-dist.mjs
 
       - name: 提示：缺少 Secret
-        if: ${{ secrets.CLOUDFLARE_API_TOKEN == '' }}
+        if: ${{ env.CF_API_TOKEN == '' }}
         run: |
           echo "::warning title=跳过部署::仓库未配置 CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID，本次仅构建未上传。配置方法见 tools/Cloudflare部署报告.md"
 
       - name: Publish to Cloudflare Pages
-        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        if: ${{ env.CF_API_TOKEN != '' }}
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          apiToken: ${{ env.CF_API_TOKEN }}
+          accountId: ${{ env.CF_ACCOUNT_ID }}
           command: pages deploy dist --project-name=shichao-biji --branch=main
