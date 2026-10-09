@@ -101,9 +101,13 @@ wrangler 依赖的 `workerd` / `esbuild` 在 Windows 上可能装不上平台二
 在配好 Secret 之前，每次 push（AutoPushGame 每小时一次）都会跑一次失败，等于每小时一封失败邮件
 （已发生 3 次：`1a29071` / `d4ae198` / `f930405`）。
 
-> 已改为**未配置 Secret 时只构建、不上传、且不判失败**（`if: secrets.CLOUDFLARE_API_TOKEN != ''`），
+> 已改为**未配置 Secret 时只构建、不上传、且不判失败**（`if: env.CF_API_TOKEN != ''`），
 > 止住失败邮件；配好 Secret 后上传步骤会自动生效，无需再改。
-> 该修改 commit `d984d95` 已在本地，等 `github.com` 恢复连通后由 AutoPushGame 带上去。
+>
+> ⚠ **2026-10-09 修正**：最初的修法写成了 `if: secrets.CLOUDFLARE_API_TOKEN != ''`，
+> **这是无效的**——GitHub 硬规则「secrets 上下文不能直接出现在 `if:` 中」，
+> 导致整个 job 都不创建，报 `.github/workflows/deploy-cloudflare.yml: No jobs were run`。
+> 已改为把 secret 先提到 job 级 `env`，再在 `if` 里判断 `env`。详见下节。
 
 **待办：需要你在 GitHub 上加两个 Secret。** 二选一：
 
@@ -139,3 +143,110 @@ wrangler 依赖的 `workerd` / `esbuild` 在 Windows 上可能装不上平台二
 2. **www 是否 301 到裸域**：目前两个域名各自独立返回内容，未做归一。
 3. **GitHub Pages**：是否关掉，或改成只发布 `dist/`。
 4. **图片体积**：`images/建平/挹芬楼-1F休息区-没人-*.png` 三张各 5.6～6.2 MB，是 dist 里最大的文件，可转 webp 压缩。
+5. **git push 的代理问题**：见最后一节，需要你决定是修代理还是把 remote 永久切 SSH。
+
+---
+
+## 2026-10-09 排查记录：`No jobs were run` 根因与修复
+
+### 现象
+
+Actions 邮件：`[bobomymz/Plot-Game] Run failed: .github/workflows/deploy-cloudflare.yml - main (c82796f)`
+邮件正文只有一句 **「No jobs were run」**，没有失败步骤、没有日志。
+
+### 根因（已 100% 确认）
+
+`.github/workflows/deploy-cloudflare.yml` 里用了：
+
+```yaml
+- name: 提示：缺少 Secret
+  if: ${{ secrets.CLOUDFLARE_API_TOKEN == '' }}      # ❌ 非法
+- name: Publish to Cloudflare Pages
+  if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}      # ❌ 非法
+```
+
+GitHub 官方文档原文（Using secrets in GitHub Actions）：
+
+> **"Secrets cannot be directly referenced in `if:` conditionals."**
+
+一旦 `if:` 里直接引用 `secrets`，**整个 job 不会被创建**，workflow 判失败但不产生任何 job，
+所以页面只显示 "No jobs were run"。
+
+**三项独立证据：**
+
+1. `GET /actions/runs/37321327950/jobs` → `total_count: 0`（job 一个都没建）
+2. 该 workflow 自创建起 **15 次运行、0 次成功**（最早 run `2026-10-02T01:00`，即文件首次提交那一刻）
+3. 同上，这 15 次全部发生在 **10-03 改密码之前之后都有**，分布连续
+
+### 与「改 GitHub 密码」无关
+
+- 失败从 `2026-10-02 09:00`（workflow 首次提交 `1a29071`）就开始，早于改密码
+- 期间 AutoPushGame 的 push **一直成功**（本地 `push-log.txt` 全绿，10-05 22:00 还正常推上去）
+- 失败发生在 GitHub 服务端解析 workflow 阶段，**引擎都不看凭据**，密码跟它没有因果关系
+
+> 唯一与密码沾边的是：改密码后**本机 git push 开始卡死**（见下节），
+> 但那是网络/代理问题，且推送依然成功，不会产生这条邮件。
+
+### 修复（已提交 `0850f64` 并推送）
+
+```yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:                                        # ✅ 先提到 job 级 env
+      CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      ...
+      - name: 提示：缺少 Secret
+        if: ${{ env.CF_API_TOKEN == '' }}       # ✅ if 里只判断 env
+      - name: Publish to Cloudflare Pages
+        if: ${{ env.CF_API_TOKEN != '' }}
+        with:
+          apiToken: ${{ env.CF_API_TOKEN }}
+          accountId: ${{ env.CF_ACCOUNT_ID }}
+```
+
+### 修复验证（10-09 21:06 实测）
+
+| | 修复前 | 修复后 |
+|---|---|---|
+| run 结论 | `failure` | **`success`** |
+| job 数 | **0** | **1** |
+| 步骤 | 无 | Setup→Checkout→Node→Build 全过 |
+
+`Build dist/` 步骤 ✅ 通过。但 **`提示：缺少 Secret` 被执行了**，说明
+`CLOUDFLARE_API_TOKEN` 仍未配置，`Publish` 步骤被 skip —— 即**构建链路已恢复，云端上传仍未启用**。
+这一步就是「待拍板 #1」。
+
+> 副作用提醒：修复前每次 push 都失败，屏蔽邮件是靠坏掉的 `if` 意外达成的；
+> 现在 job 能正常跑了，如果 Secret 一直不配，**每次 push 会跑一次全绿但不部署的 workflow**
+> —— 不再发失败邮件，但也确实没在部署。要真正上线还是得配 Secret。
+
+### 顺带修好的：git push 卡死
+
+改密码后发现 `git push` 挂起，实测：
+
+| 目标 | 结果 |
+|---|---|
+| `https://github.com`（经代理 `127.0.0.1:7892`） | **502** `CONNECT tunnel failed` ❌ |
+| `https://github.com`（`--noproxy` 直连） | 连接超时 ❌ |
+| `https://api.github.com` | **200** ✅ |
+| `git@ssh.github.com:443` | **推送成功** ✅ |
+
+即 **HTTPS 走代理挂了，SSH 443 可用**。本次推送改用：
+
+```bash
+git -c core.sshCommand="ssh -p 443 -o StrictHostKeyChecking=no" \
+    push git@ssh.github.com:bobomymz/Plot-Game.git main
+```
+
+⚠ `origin` 的 URL **未改动**（仍是 https）。AutoPushGame 走的是 https，所以
+**在代理修好之前，它的 push 会继续失败或挂起**。需要你拍板：修代理，还是把 remote 永久改成 SSH。
+
+### 检查脚本
+
+`tools/ci_health_check.mjs` —— 一条命令复查 workflow 状态、secrets 是否生效、push 连通性。
+
